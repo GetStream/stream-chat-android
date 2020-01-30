@@ -2,10 +2,12 @@ package io.getstream.chat.android.core.poc.app.common
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.library.ChatClientBuilder
-import io.getstream.chat.android.core.poc.library.ChatClientImpl
+import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
@@ -27,7 +29,7 @@ class SocketTestActivity : AppCompatActivity() {
         val client = ChatClientBuilder(apiKey, apiOptions).build()
 
         client.events().subscribe {
-            textSocketEvent.text = it.getType().toString() + " at " + it.createdAt
+
         }
 
         btnConnect.setOnClickListener {
@@ -38,12 +40,21 @@ class SocketTestActivity : AppCompatActivity() {
                 override fun getToken(listener: TokenProvider.TokenProviderListener) {
                     listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
                 }
-            }) {
-                if (it.isSuccess) {
-                    textSocketState.text = "Connected with " + it.data().user.id
-                } else {
-                    textSocketState.text = "Connection error " + it.error()
+            }).subscribe {
+
+                Log.d("evt", it.getType().toString())
+
+                textSocketEvent.text = it.getType().toString() + " at " + it.createdAt
+
+                if (it.getType() == EventType.CONNECTION_RESOLVED) {
+                    Toast.makeText(this, "Connection resolved", Toast.LENGTH_LONG).show()
                 }
+
+//                if (it.isSuccess) {
+//                    textSocketState.text = "Connected with " + it.data().user.id
+//                } else {
+//                    textSocketState.text = "Connection error " + it.error()
+//                }
             }
         }
 

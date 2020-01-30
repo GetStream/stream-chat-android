@@ -5,7 +5,6 @@ import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
-import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 
 internal class ChatClientImpl constructor(
@@ -17,21 +16,19 @@ internal class ChatClientImpl constructor(
 
     override fun setUser(
         user: User,
-        provider: TokenProvider,
-        callback: (Result<ConnectionData>) -> Unit
-    ) {
+        provider: TokenProvider
+    ): ChatObservable {
 
-        if(state.user != null) return
+        if (state.user != null) socket.events()
         else state.user = user
 
-        socket.connect(user, provider).enqueue { result ->
-
-            if (result.isSuccess) {
-                api.setConnection(result.data())
+        socket.events().subscribe {
+            if (it.getType() == EventType.CONNECTION_RESOLVED) {
+                state.user
             }
-
-            callback(result)
         }
+
+        return socket.connect(user, provider)
     }
 
     override fun events(): ChatObservable {
@@ -82,13 +79,17 @@ internal class ChatClientImpl constructor(
         return api.getReplies(messageId, limit)
     }
 
-    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>> {
+    override fun getRepliesMore(
+        messageId: String,
+        firstId: String,
+        limit: Int
+    ): ChatCall<List<Message>> {
         return api.getRepliesMore(messageId, firstId, limit)
     }
 
     override fun getReactions(
         messageId: String,
-        offset:Int,
+        offset: Int,
         limit: Int
     ): ChatCall<List<Reaction>> {
         return api.getReactions(messageId, offset, limit)
@@ -132,7 +133,7 @@ internal class ChatClientImpl constructor(
         return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
     }
 
-    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>{
+    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel> {
         return api.deleteChannel(channelType, channelId)
     }
 

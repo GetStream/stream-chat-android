@@ -31,9 +31,14 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
-        }) {
-            echoResult(it, "Connected", "Socket connection error")
-            initButtons()
+        }).subscribe {
+
+            if(it.getType() == EventType.CONNECTION_RESOLVED){
+                //echoResult(it, "Connected", "Socket connection error")
+                initButtons()
+            }
+
+
         }
     }
 

@@ -4,6 +4,8 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.getstream.chat.android.core.poc.library.Result
+import io.getstream.chat.android.core.poc.library.errors.ChatError
 import io.getstream.chat.android.core.poc.library.errors.ChatHttpError
 import io.getstream.chat.android.core.poc.library.json.ConverterFactory
 import io.getstream.chat.android.core.poc.library.json.IgnoreDeserialisation
@@ -50,6 +52,14 @@ class JsonParserImpl : JsonParser {
 
     override fun <T> fromJson(raw: String, clazz: Class<T>): T {
         return gson.fromJson(raw, clazz)
+    }
+
+    override fun <T> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
+        return try {
+            Result(fromJson(raw, clazz), null)
+        } catch (t: Throwable) {
+            Result(null, ChatError("fromJsonOrError error parsing of $clazz into $raw", t))
+        }
     }
 
     override fun toError(okHttpResponse: Response): ChatHttpError {

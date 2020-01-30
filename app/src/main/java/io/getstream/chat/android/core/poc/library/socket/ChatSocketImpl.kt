@@ -3,9 +3,7 @@ package io.getstream.chat.android.core.poc.library.socket
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
-import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
-import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 
 class ChatSocketImpl(
     val apiKey: String,
@@ -16,35 +14,22 @@ class ChatSocketImpl(
 
     private val service = StreamWebSocketService(jsonParser)
 
-    fun connect(): ChatCall<ConnectionData> {
-        val result = ConnectionCall()
-
-        val callback: (ConnectionData, Throwable?) -> Unit = { c, t ->
-            result.deliverResult(c, t)
-        }
-
-        connect(null, null, callback)
-
-        return result
+    fun connect(): ChatObservable {
+        connect(null, null)
+        return events()
     }
 
-    override fun connect(user: User, tokenProvider: TokenProvider): ChatCall<ConnectionData> {
+    override fun connect(user: User, tokenProvider: TokenProvider): ChatObservable {
 
         cachedTokenProvider.setTokenProvider(tokenProvider)
 
-        val result = ConnectionCall()
-
-        val callback: (ConnectionData, Throwable?) -> Unit = { c, t ->
-            result.deliverResult(c, t)
-        }
-
         tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
-                connect(user, token, callback)
+                connect(user, token)
             }
         })
 
-        return result
+        return events()
     }
 
     override fun events(): ChatObservable {
@@ -57,10 +42,9 @@ class ChatSocketImpl(
 
     private fun connect(
         user: User?,
-        userToken: String?,
-        listener: (ConnectionData, Throwable?) -> Unit
+        userToken: String?
     ) {
-        service.connect(wssUrl, apiKey, user, userToken, listener)
+        service.connect(wssUrl, apiKey, user, userToken, SocketListener())
     }
 
 }

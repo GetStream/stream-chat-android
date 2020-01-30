@@ -1,8 +1,14 @@
 package io.getstream.chat.android.core.poc.library
 
 
+/**
+ * https://getstream.io/chat/docs/js/#event_object
+ */
 enum class EventType(val label: String) {
-    
+
+    /**
+     * Remote
+     */
     USER_PRESENCE_CHANGED("user.presence.changed"),
     USER_WATCHING_START("user.watching.start"),
     USER_WATCHING_STOP("user.watching.stop"),
@@ -25,8 +31,6 @@ enum class EventType(val label: String) {
     CHANNEL_DELETED("channel.deleted"),
     CHANNEL_VISIBLE("channel.visible"),
     HEALTH_CHECK("health.check"),
-    CONNECTION_CHANGED("connection.changed"),
-    CONNECTION_RECOVERED("connection.recovered"),
     NOTIFICATION_MESSAGE_NEW("notification.message_new"),
     NOTIFICATION_MARK_READ("notification.mark_read"),
     NOTIFICATION_INVITED("notification.invited"),
@@ -35,22 +39,22 @@ enum class EventType(val label: String) {
     NOTIFICATION_ADDED_TO_CHANNEL("notification.added_to_channel"),
     NOTIFICATION_REMOVED_FROM_CHANNEL("notification.removed_from_channel"),
     NOTIFICATION_MUTES_UPDATED("notification.mutes_updated"),
+    /**
+     * Local
+     */
+    CONNECTION_SOCKET_OPEN("connection.socket.open"),
+    CONNECTION_SOCKET_CLOSING("connection.socket.closing"),
+    CONNECTION_SOCKET_CLOSED("connection.socket.closed"),
+    CONNECTION_SOCKET_FAILURE("connection.socket.failure"),
+    CONNECTION_RESOLVED("connection.resolved"),
+    CONNECTION_CHANGED("connection.changed"),
+    CONNECTION_RECOVERED("connection.recovered"),
+    CONNECTION_DISCONNECT("connection.disconnection.called"),
+    CONNECTION_ERROR("connection.error"),
+    TOKEN_EXPIRED("token.expired"),
+    /**
+     * Unknown
+     */
     UNKNOWN("");
-
-    companion object {
-        private val lookup: MutableMap<String, EventType> = HashMap()
-        fun findByString(value: String?): EventType {
-            return lookup[value] ?: return UNKNOWN
-        }
-
-        init {
-            for (d in values()) {
-                if (d == UNKNOWN) {
-                    continue
-                }
-                lookup[d.label] = d
-            }
-        }
-    }
 
 }

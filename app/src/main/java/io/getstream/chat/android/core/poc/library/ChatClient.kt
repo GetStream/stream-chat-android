@@ -12,9 +12,8 @@ interface ChatClient {
 
     fun setUser(
         user: User,
-        provider: TokenProvider,
-        callback: (Result<ConnectionData>) -> Unit
-    )
+        provider: TokenProvider
+    ): ChatObservable
 
     fun disconnect()
 
