@@ -16,9 +16,9 @@ class ChatApiImpl(
     private var connectionId: String = ""
     private val callMapper = RetrofitCallMapper(jsonParser)
 
-    override fun setConnection(connection: ConnectionData) {
-        userId = connection.user.id
-        connectionId = connection.connectionId
+    override fun setConnection(userId:String, connectionId:String) {
+        this.userId = userId
+        this.connectionId = connectionId
     }
 
     override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {

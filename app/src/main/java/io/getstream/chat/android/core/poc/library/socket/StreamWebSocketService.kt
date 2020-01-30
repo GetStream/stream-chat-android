@@ -2,10 +2,12 @@ package io.getstream.chat.android.core.poc.library.socket
 
 import android.os.Message
 import android.util.Log
-import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.errors.ChatError
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.LocalEvent
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -105,7 +107,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         webSocketListeners.forEach { it.onError(error) }
     }
 
-    fun onWsEvent(event: Event) {
+    fun onWsEvent(event: ChatEvent) {
         webSocketListeners.forEach { it.onRemoteEvent(event) }
     }
 
@@ -119,7 +121,11 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
 
     private val mOfflineNotifier = Runnable {
         if (!isHealthy)
-            onEvent(Event(EventType.CONNECTION_CHANGED, false))
+            onEvent(
+                LocalEvent(
+                    EventType.CONNECTION_CHANGED
+                )
+            )
     }
 
     private val reconnect = object : Runnable {
@@ -139,7 +145,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
             }
             Log.i(TAG, "send health check")
             try {
-                val event = Event(EventType.HEALTH_CHECK)
+                val event = LocalEvent(EventType.HEALTH_CHECK)
                 webSocket!!.send(jsonParser.toJson(event))
             } finally {
                 eventHandler.postDelayed(this, healthCheckInterval)
@@ -206,7 +212,6 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         connected = false
         isHealthy = false
         lastEvent = null
-        onEvent(Event(EventType.CONNECTION_CHANGED, false))
         //webSocket?.cancel()
         webSocket?.close(1000, "bye")
         webSocket = null
@@ -230,15 +235,13 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         monitor.run()
     }
 
-    fun onConnectionResolved(connectionId: String, user: User) {
+    fun onConnectionResolved(event: ConnectionEvent) {
 
         eventHandler.post {
-
             if (!connectionResolved) {
                 connectionResolved = true
                 connected = true
-                val connectionData = ConnectionData(connectionId, user)
-                webSocketListeners.forEach { it.connectionResolved(connectionData) }
+                webSocketListeners.forEach { it.connectionResolved(event) }
                 startMonitor()
             }
         }
@@ -260,7 +263,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         Log.i(TAG, "setHealth $healthy")
         if (healthy && !isHealthy) {
             isHealthy = true
-            onEvent(Event(EventType.CONNECTION_CHANGED, true))
+            onEvent(LocalEvent(EventType.CONNECTION_CHANGED))
         } else if (!healthy && isHealthy) {
             isHealthy = false
             Log.i(TAG, "spawn mOfflineNotifier")
@@ -268,7 +271,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         }
     }
 
-    fun onEvent(event: Event) {
+    fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
         eventHandler.sendMessage(eventMsg)

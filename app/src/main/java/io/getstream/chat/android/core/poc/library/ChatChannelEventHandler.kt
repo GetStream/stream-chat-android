@@ -1,27 +1,27 @@
 package io.getstream.chat.android.core.poc.library
 
-import android.R
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
 
 
 abstract class ChatChannelEventHandler {
-    fun onAnyEvent(event: Event) {}
-    fun onTypingStart(event: Event) {}
-    fun onTypingStop(event: Event) {}
-    fun onMessageNew(event: Event) {}
-    fun onMessageUpdated(event: Event) {}
-    fun onMessageDeleted(event: Event) {}
-    fun onMessageRead(event: Event) {}
-    fun onReactionNew(event: Event) {}
-    fun onReactionDeleted(event: Event) {}
-    fun onMemberAdded(event: Event) {}
-    fun onMemberRemoved(event: Event) {}
-    fun onMemberUpdated(event: Event) {}
-    fun onChannelUpdated(event: Event) {}
-    fun onChannelHidden(event: Event) {}
-    fun onChannelDeleted(event: Event) {}
-    fun onUserWatchingStart(event: Event) {}
-    fun onUserWatchingStop(event: Event) {}
-    fun dispatchEvent(event: Event) {
+    fun onAnyEvent(event: ChatEvent) {}
+    fun onTypingStart(event: ChatEvent) {}
+    fun onTypingStop(event: ChatEvent) {}
+    fun onMessageNew(event: ChatEvent) {}
+    fun onMessageUpdated(event: ChatEvent) {}
+    fun onMessageDeleted(event: ChatEvent) {}
+    fun onMessageRead(event: ChatEvent) {}
+    fun onReactionNew(event: ChatEvent) {}
+    fun onReactionDeleted(event: ChatEvent) {}
+    fun onMemberAdded(event: ChatEvent) {}
+    fun onMemberRemoved(event: ChatEvent) {}
+    fun onMemberUpdated(event: ChatEvent) {}
+    fun onChannelUpdated(event: ChatEvent) {}
+    fun onChannelHidden(event: ChatEvent) {}
+    fun onChannelDeleted(event: ChatEvent) {}
+    fun onUserWatchingStart(event: ChatEvent) {}
+    fun onUserWatchingStop(event: ChatEvent) {}
+    fun dispatchEvent(event: ChatEvent) {
         onAnyEvent(event)
         when (event.getType()) {
             EventType.TYPING_START -> onTypingStart(event)
@@ -34,7 +34,7 @@ abstract class ChatChannelEventHandler {
             }
             EventType.MESSAGE_DELETED -> {
                 //TODO: define R.string.stream_delete_message
-                event.message?.text = "Deleted message"
+                //event.message?.text = "Deleted message"
                 //event.message?.text = StreamChat.getStrings().get(R.string.stream_delete_message)
                 onMessageDeleted(event)
 

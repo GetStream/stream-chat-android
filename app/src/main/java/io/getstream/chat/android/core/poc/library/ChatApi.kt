@@ -3,11 +3,10 @@ package io.getstream.chat.android.core.poc.library
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.rest.*
-import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 interface ChatApi {
 
-    fun setConnection(connection:ConnectionData)
+    fun setConnection(userId: String, connectionId: String)
 
     fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
     fun deleteDevice(deviceId: String): ChatCall<Unit>

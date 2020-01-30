@@ -1,8 +1,9 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import android.util.Log
-import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.errors.ChatError
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -39,7 +40,7 @@ class ChatSocketListener(
         if (service.shuttingDown) return
 
 
-        val eventMessage = jsonParser.fromJsonOrError(text, Event::class.java)
+        val eventMessage = jsonParser.fromJsonOrError(text, ChatEvent::class.java)
         val errorMessage = jsonParser.fromJsonOrError(text, WsErrorMessage::class.java)
 
         if (eventMessage.isSuccess) {
@@ -51,7 +52,16 @@ class ChatSocketListener(
 
             if (firstMessage) {
                 firstMessage = false
-                service.onConnectionResolved(event.connectionId, event.me!!)
+                val connection = jsonParser.fromJsonOrError(text, ConnectionEvent::class.java)
+
+                if (connection.isSuccess) {
+                    service.onConnectionResolved(connection.data())
+                } else {
+                    service.onSocketError(
+                        ChatError("unable to parse connection event", connection.error())
+                    )
+                }
+
             } else {
                 service.onEvent(event)
             }

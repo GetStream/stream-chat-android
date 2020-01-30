@@ -27,7 +27,7 @@ class ChannelsListActivity : AppCompatActivity() {
             }
         }).subscribe {
 
-            if (it.getType() == EventType.CONNECTION_RESOLVED) {
+            if (it.type == EventType.CONNECTION_RESOLVED.label) {
                 client.queryChannels(
                     QueryChannelsRequest(
                         0,

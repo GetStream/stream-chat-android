@@ -8,6 +8,7 @@ import androidx.core.view.children
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_test_api.*
@@ -33,17 +34,16 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             }
         }).subscribe {
 
-            if(it.getType() == EventType.CONNECTION_RESOLVED){
+            if (it is ConnectionEvent) {
                 //echoResult(it, "Connected", "Socket connection error")
                 initButtons()
             }
-
-
         }
     }
 
     override fun onDestroy() {
         chatSub?.unsubscribe()
+        client.disconnect()
         super.onDestroy()
     }
 

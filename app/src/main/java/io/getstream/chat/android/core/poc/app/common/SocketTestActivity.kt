@@ -7,10 +7,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.library.ChatClientBuilder
-import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 import kotlinx.android.synthetic.main.activity_socket_tests.*
 
 class SocketTestActivity : AppCompatActivity() {
@@ -42,11 +42,11 @@ class SocketTestActivity : AppCompatActivity() {
                 }
             }).subscribe {
 
-                Log.d("evt", it.getType().toString())
+                Log.d("evt", it.type)
 
-                textSocketEvent.text = it.getType().toString() + " at " + it.createdAt
+                textSocketEvent.text = it.type + " at " + it.createdAt
 
-                if (it.getType() == EventType.CONNECTION_RESOLVED) {
+                if (it is ConnectionEvent) {
                     Toast.makeText(this, "Connection resolved", Toast.LENGTH_LONG).show()
                 }
 

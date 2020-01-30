@@ -1,7 +1,8 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import io.getstream.chat.android.core.poc.library.Event
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
 import io.getstream.chat.android.core.poc.library.errors.ChatError
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 
 open class SocketListener {
 
@@ -17,7 +18,7 @@ open class SocketListener {
 
     }
 
-    open fun onRemoteEvent(event: Event) {
+    open fun onRemoteEvent(event: ChatEvent) {
 
     }
 
@@ -25,7 +26,7 @@ open class SocketListener {
 
     }
 
-    open fun connectionResolved(connection: ConnectionData) {
+    open fun connectionResolved(event: ConnectionEvent) {
 
     }
 
