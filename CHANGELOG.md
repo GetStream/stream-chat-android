@@ -27,6 +27,7 @@
 - Client support for anonymous and guest users
 - Client support initialization with Configurator
 - Support auto capitalization for keyboard
+- Add `NotificationManager` with customization opportunity
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
 - Add `StreamLoggerHandler` interface for custom logging client data
