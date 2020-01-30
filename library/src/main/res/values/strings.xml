@@ -1,4 +1,13 @@
 <resources>
+    <!--Notification-->
+    <string name="stream_default_notification_channel_id">stream_GetStreamChat</string>
+    <string name="stream_default_notification_channel_name">stream_GetStreamChat</string>
+    <string name="stream_default_notification_read">Mark as read</string>
+    <string name="stream_default_notification_reply">Reply</string>
+    <string name="stream_default_notification_type">Type message</string>
+    <string name="stream_default_notification_title">Chat message</string>
+    <string name="stream_default_notification_message">You\'ve received new message</string>
+
     <!--Message Date-->
     <string name="stream_just_now">Just Now</string>
     <string name="stream_today">Today</string>
