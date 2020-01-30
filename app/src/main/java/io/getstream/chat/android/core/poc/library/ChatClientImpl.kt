@@ -2,11 +2,12 @@ package io.getstream.chat.android.core.poc.library
 
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
-import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 
 internal class ChatClientImpl constructor(
@@ -15,25 +16,27 @@ internal class ChatClientImpl constructor(
 ) : ChatClient {
 
     private val state = ClientState()
+    private var eventsSub: ChatObservable.Subscription? = null
 
     override fun setUser(
         user: User,
-        provider: TokenProvider,
-        callback: (Result<ConnectionData>) -> Unit
-    ) {
+        provider: TokenProvider
+    ): ChatObservable {
+
         api.anonymousAuth = false
 
-        if (state.user != null) return
+        if (state.user != null) socket.events()
         else state.user = user
 
-        socket.connect(user, provider).enqueue { result ->
-
-            if (result.isSuccess) {
-                api.setConnection(result.data())
+        eventsSub = socket.events().subscribe {
+            if (it is ConnectionEvent) {
+                state.user = it.me
+                state.connectionId = it.connectionId
+                api.setConnection(it.me.id, it.connectionId)
             }
-
-            callback(result)
         }
+
+        return socket.connect(user, provider)
     }
 
     override fun setAnonymousUser(callback: (Result<ConnectionData>) -> Unit) {
@@ -100,6 +103,7 @@ internal class ChatClientImpl constructor(
     }
 
     override fun disconnect() {
+        eventsSub?.unsubscribe()
         socket.disconnect()
         state.reset()
     }
@@ -244,7 +248,7 @@ internal class ChatClientImpl constructor(
         return api.acceptInvite(channelType, channelId, message).map { attachClient(it) }
     }
 
-    override fun markAllRead(): ChatCall<Event> {
+    override fun markAllRead(): ChatCall<ChatEvent> {
         return api.markAllRead().map {
             it.event
         }

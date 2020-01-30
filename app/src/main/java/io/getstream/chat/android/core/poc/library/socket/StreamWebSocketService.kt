@@ -2,15 +2,16 @@ package io.getstream.chat.android.core.poc.library.socket
 
 import android.os.Message
 import android.util.Log
-import io.getstream.chat.android.core.poc.library.Event
 import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.errors.ChatError
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.LocalEvent
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
-import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
-import okhttp3.WebSocketListener
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -20,8 +21,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
-class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
-    WebSocketService {
+class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
 
     private val NORMAL_CLOSURE_STATUS = 1000
     private val TAG = StreamWebSocketService::class.java.simpleName
@@ -31,42 +31,101 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
     private var userToken: String? = ""
     private var user: User? = null
 
-    private val listener: EchoWebSocketListener = EchoWebSocketListener(this, jsonParser)
+    private val listener: ChatSocketListener = ChatSocketListener(this, jsonParser)
     private var httpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
-    private val webSocketListeners = mutableListOf<WsListener>()
+    private val webSocketListeners = mutableListOf<SocketListener>()
 
-    lateinit var connectionCallback: (ConnectionData, Throwable?) -> Unit
+    /**
+     * The connection is considered resolved after the WS connection returned a good message
+     */
+    private var connectionResolved = false
 
-    val eventHandler = EventHandler(this)
+    /**
+     * We only make 1 attempt to reconnectWebSocket at the same time..
+     */
+    var isConnecting = false
 
-    fun connectionRecovered() {
-        webSocketListeners.forEach { it.connectionRecovered() }
+    var connected = false
+
+    /**
+     * Boolean that indicates if we have a working connection to the server
+     */
+    var isHealthy = false
+
+    /**
+     * Store the last event time for health checks
+     */
+    var lastEvent: Date? = null
+
+    /**
+     * Send a health check message every 30 seconds
+     */
+    val healthCheckInterval = 30 * 1000L
+
+    /**
+     * consecutive failures influence the duration of the timeout
+     */
+    var consecutiveFailures = 0
+
+    var shuttingDown = false
+    var wsId = 0
+
+    private val eventHandler = EventHandler(this)
+
+    fun onSocketOpen() {
+        eventHandler.post {
+            webSocketListeners.forEach { it.onSocketOpen() }
+        }
     }
 
-    fun tokenExpired() {
-        webSocketListeners.forEach { it.tokenExpired() }
+    fun onSocketClosing(code: Int, reason: String) {
+        eventHandler.post {
+            webSocketListeners.forEach { it.onSocketClosing(code, reason) }
+        }
     }
 
-    fun onError(error: WsErrorMessage) {
+    fun onSocketClosed(code: Int, reason: String) {
+        eventHandler.post {
+            webSocketListeners.forEach { it.onSocketClosed(code, reason) }
+        }
+    }
+
+    fun onSocketFailure(error: ChatError) {
+        eventHandler.post {
+            webSocketListeners.forEach { it.onSocketFailure(error) }
+        }
+    }
+
+    fun onSocketTokenExpired() {
+        eventHandler.post {
+            webSocketListeners.forEach { it.tokenExpired() }
+        }
+    }
+
+    fun onSocketError(error: ChatError) {
         webSocketListeners.forEach { it.onError(error) }
     }
 
-    fun onWsEvent(event: Event) {
-        webSocketListeners.forEach { it.onWSEvent(event) }
+    fun onWsEvent(event: ChatEvent) {
+        webSocketListeners.forEach { it.onRemoteEvent(event) }
     }
 
-    fun removeSocketListener(listener: WsListener) {
+    fun removeSocketListener(listener: SocketListener) {
         webSocketListeners.remove(listener)
     }
 
-    fun addSocketListener(listener: WsListener) {
+    fun addSocketListener(listener: SocketListener) {
         webSocketListeners.add(listener)
     }
 
     private val mOfflineNotifier = Runnable {
         if (!isHealthy)
-            sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, false))
+            onEvent(
+                LocalEvent(
+                    EventType.CONNECTION_CHANGED
+                )
+            )
     }
 
     private val reconnect = object : Runnable {
@@ -86,7 +145,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
             }
             Log.i(TAG, "send health check")
             try {
-                val event = Event(EventType.HEALTH_CHECK)
+                val event = LocalEvent(EventType.HEALTH_CHECK)
                 webSocket!!.send(jsonParser.toJson(event))
             } finally {
                 eventHandler.postDelayed(this, healthCheckInterval)
@@ -161,12 +220,14 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
         apiKey: String,
         user: User?,
         userToken: String?,
-        listener: (ConnectionData, Throwable?) -> Unit
+        listener: SocketListener
     ) {
         if (isConnecting) {
             Log.w(TAG, "already connecting")
             return
         }
+
+        addSocketListener(listener)
 
         if (user == null) {
             anonymousAuth = true
@@ -174,28 +235,27 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
         } else {
             this.user = user
         }
+
         this.wsEndpoint = wsEndpoint
         this.apiKey = apiKey
         this.userToken = userToken
-        this.connectionCallback = listener
-
         wsId = 0
         isConnecting = true
 
-        resetConsecutiveFailures()
-
-        setupWS()
-
         shuttingDown = false
+
+        resetConsecutiveFailures()
+        setupWS()
     }
 
     override fun disconnect() {
+        webSocketListeners.forEach { it.onDisconnectCalled() }
+        webSocketListeners.clear()
         shuttingDown = true
         connectionResolved = false
         connected = false
         isHealthy = false
         lastEvent = null
-        sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, false))
         //webSocket?.cancel()
         webSocket?.close(1000, "bye")
         webSocket = null
@@ -219,12 +279,16 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
         monitor.run()
     }
 
-    fun setConnectionResolved(connectionId: String, user: User) {
-        connectionResolved = true
-        connected = true
-        val connectionData = ConnectionData(connectionId, user)
-        connectionCallback(connectionData, null)
-        startMonitor()
+    fun onConnectionResolved(event: ConnectionEvent) {
+
+        eventHandler.post {
+            if (!connectionResolved) {
+                connectionResolved = true
+                connected = true
+                webSocketListeners.forEach { it.connectionResolved(event) }
+                startMonitor()
+            }
+        }
     }
 
     private fun getRetryInterval(): Long {
@@ -243,7 +307,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
         Log.i(TAG, "setHealth $healthy")
         if (healthy && !isHealthy) {
             isHealthy = true
-            sendEventToHandlerThread(Event(EventType.CONNECTION_CHANGED, true))
+            onEvent(LocalEvent(EventType.CONNECTION_CHANGED))
         } else if (!healthy && isHealthy) {
             isHealthy = false
             Log.i(TAG, "spawn mOfflineNotifier")
@@ -251,7 +315,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketListener(),
         }
     }
 
-    fun sendEventToHandlerThread(event: Event) {
+    fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
         eventHandler.sendMessage(eventMsg)

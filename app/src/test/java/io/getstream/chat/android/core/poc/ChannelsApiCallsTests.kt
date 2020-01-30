@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc
 
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
@@ -328,7 +329,8 @@ class ChannelsApiCallsTests {
     @Test
     fun markAllReadSuccess() {
 
-        val event = Event("type")
+        val event =
+            ChatEvent("type")
 
         Mockito.`when`(
             retrofitApi.markAllRead(
@@ -363,7 +365,8 @@ class ChannelsApiCallsTests {
     fun markReadSuccess() {
 
         val messageId = "message-id"
-        val event = Event("type")
+        val event =
+            ChatEvent("type")
 
         Mockito.`when`(
             retrofitApi.markRead(

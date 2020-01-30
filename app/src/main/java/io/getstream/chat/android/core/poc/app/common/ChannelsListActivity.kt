@@ -8,10 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
-import io.getstream.chat.android.core.poc.library.FilterObject
-import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
-import io.getstream.chat.android.core.poc.library.TokenProvider
-import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
 
 
@@ -28,10 +25,9 @@ class ChannelsListActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             }
-        }) {
-            if (it.isSuccess) {
+        }).subscribe {
 
-
+            if (it.type == EventType.CONNECTION_RESOLVED.label) {
                 client.queryChannels(
                     QueryChannelsRequest(
                         0,
@@ -46,8 +42,6 @@ class ChannelsListActivity : AppCompatActivity() {
 
                     }
                 }
-            } else {
-
             }
         }
 

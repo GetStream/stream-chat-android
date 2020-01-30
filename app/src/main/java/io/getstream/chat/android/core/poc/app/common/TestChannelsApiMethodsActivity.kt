@@ -9,6 +9,7 @@ import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.extensions.echoResult
 import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_test_api.*
@@ -32,14 +33,18 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
-        }) {
-            echoResult(it, "Connected", "Socket connection error")
-            initButtons()
+        }).subscribe {
+
+            if (it is ConnectionEvent) {
+                //echoResult(it, "Connected", "Socket connection error")
+                initButtons()
+            }
         }
     }
 
     override fun onDestroy() {
         chatSub?.unsubscribe()
+        client.disconnect()
         super.onDestroy()
     }
 

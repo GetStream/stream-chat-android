@@ -1,18 +1,21 @@
 package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.rest.AddDeviceRequest
+import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
+import io.getstream.chat.android.core.poc.library.rest.SearchMessagesRequest
+import io.getstream.chat.android.core.poc.library.rest.SendActionRequest
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
-import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 
 interface ChatClient {
 
     fun setUser(
         user: User,
-        provider: TokenProvider,
-        callback: (Result<ConnectionData>) -> Unit
-    )
+        provider: TokenProvider
+    ): ChatObservable
 
     fun setGuestUser(
         user: User,
@@ -100,7 +103,7 @@ interface ChatClient {
 
     fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
-    fun markAllRead(): ChatCall<Event>
+    fun markAllRead(): ChatCall<ChatEvent>
     fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
     //endregion
 
