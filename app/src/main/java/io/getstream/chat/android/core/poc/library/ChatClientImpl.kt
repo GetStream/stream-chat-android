@@ -28,10 +28,6 @@ internal class ChatClientImpl constructor(
     }
 
     override fun setUser(user: User, provider: TokenProvider) {
-
-        if (state.user != null) socket.events()
-        else state.user = user
-
         socket.connect(user, provider)
     }
 
