@@ -30,16 +30,20 @@ dependencies {
 		.apiKey("api-key")
 		.build()
 	```
+	
+2. Subscribe on events
+
+    ```kotlin
+    client.events().subscribe {
+       if(it is ConnectedEvent) 
+           getChannels()
+    }
+    ```
 
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("id"), "token", { result ->
-	  if(result.isSuccess())
-	    getChannels()
-	  else
-	    showError(result.error())
-	}
+	client.setUser(ChatUser("id"), "api-token")
 	```
 
 3. Get channels

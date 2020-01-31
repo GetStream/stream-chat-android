@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.socket.ChatObservable
 
 interface ChatClient {
 
+    fun setUser(user: User, token:String)
+
     fun setUser(user: User, provider: TokenProvider)
 
     fun setGuestUser(user: User): ChatCall<TokenResponse>
