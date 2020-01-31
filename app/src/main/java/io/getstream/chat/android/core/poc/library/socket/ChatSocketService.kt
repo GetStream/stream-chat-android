@@ -68,14 +68,11 @@ class ChatSocketService(val jsonParser: JsonParser) : WebSocketService {
         wsEndpoint: String,
         apiKey: String,
         user: User?,
-        userToken: String?,
-        listener: SocketListener
+        userToken: String?
     ) {
         if (state is State.Connecting || state is State.Connected) {
             disconnect()
         }
-
-        addSocketListener(listener)
 
         this.wsEndpoint = wsEndpoint
         this.apiKey = apiKey

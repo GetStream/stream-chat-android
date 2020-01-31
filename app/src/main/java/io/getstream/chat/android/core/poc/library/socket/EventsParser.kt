@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import android.util.Log
+import io.getstream.chat.android.core.poc.library.Result
 import io.getstream.chat.android.core.poc.library.errors.ChatError
 import io.getstream.chat.android.core.poc.library.errors.TokenExpiredError
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
@@ -27,11 +28,33 @@ class EventsParser(
 
         Log.d(TAG, "onMessage: $text")
 
-        val eventMessage = jsonParser.fromJsonOrError(text, ChatEvent::class.java)
         val errorMessage = jsonParser.fromJsonOrError(text, WsErrorMessage::class.java)
 
-        if (eventMessage.isSuccess) {
+        if (errorMessage.isSuccess && errorMessage.data().error != null) {
+            handleErrorEvent(errorMessage)
+        } else {
+            handleEvent(text)
+        }
+    }
 
+    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+
+    }
+
+    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+        //treat as failure, socket shouldn't be closed by server
+        onFailure(webSocket, ChatError("server closed connection"), null)
+    }
+
+    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        //Called when socket is connected by client also. See issue here https://stream-io.atlassian.net/browse/CAS-88
+        service.onSocketError(ChatError("listener.onFailure error. reconnecting", t))
+    }
+
+    private fun handleEvent(text: String) {
+        val eventMessage = jsonParser.fromJsonOrError(text, ChatEvent::class.java)
+
+        if (eventMessage.isSuccess) {
             val event = eventMessage.data()
             val now = Date()
             event.receivedAt = now
@@ -52,32 +75,18 @@ class EventsParser(
             } else {
                 service.onEvent(event)
             }
-
-        } else if (errorMessage.isSuccess) {
-
-            val error = errorMessage.data()
-
-            if (error.error.code == 40) {
-                service.onSocketError(TokenExpiredError())
-            } else {
-                service.onSocketError(ChatError("listener.onMessage error: ${error.error}"))
-            }
         } else {
             service.onSocketError(ChatError("Unable to parse message: $text"))
         }
     }
 
-    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+    private fun handleErrorEvent(errorMessage: Result<WsErrorMessage>) {
+        val error = errorMessage.data().error!!
 
-    }
-
-    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-        //treat as failure, socket shouldn't be closed by server
-        onFailure(webSocket, ChatError("server closed connection"), null)
-    }
-
-    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-        //Called when socket is connected by client also. See issue here https://stream-io.atlassian.net/browse/CAS-88
-        service.onSocketError(ChatError("listener.onFailure error. reconnecting", t))
+        if (error.code == 40) {
+            service.onSocketError(TokenExpiredError())
+        } else {
+            service.onSocketError(ChatError("listener.onMessage error code: ${error.code} message: ${error.message}"))
+        }
     }
 }

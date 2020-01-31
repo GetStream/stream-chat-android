@@ -21,7 +21,7 @@ class ChatSocketImpl(
         return events()
     }
 
-    override fun connect(user: User, tokenProvider: TokenProvider): ChatObservable {
+    override fun connect(user: User, tokenProvider: TokenProvider) {
 
         cachedTokenProvider.setTokenProvider(tokenProvider)
 
@@ -30,8 +30,6 @@ class ChatSocketImpl(
                 connect(user, token)
             }
         })
-
-        return events()
     }
 
     override fun events(): ChatObservable {
@@ -42,11 +40,8 @@ class ChatSocketImpl(
         service.disconnect()
     }
 
-    private fun connect(
-        user: User?,
-        userToken: String?
-    ) {
-        service.connect(wssUrl, apiKey, user, userToken, SocketListener())
+    private fun connect(user: User?, userToken: String?) {
+        service.connect(wssUrl, apiKey, user, userToken)
     }
 
 }

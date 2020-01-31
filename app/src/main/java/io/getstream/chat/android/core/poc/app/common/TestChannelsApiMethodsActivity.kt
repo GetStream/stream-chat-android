@@ -27,17 +27,19 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        chatSub = client.setUser(User("stream-eugene"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
-            }
-        }).subscribe {
+        chatSub = client.events().subscribe {
 
             if (it is ConnectedEvent) {
                 //echoResult(it, "Connected", "Socket connection error")
                 initButtons()
             }
         }
+
+        client.setUser(User("stream-eugene"), object : TokenProvider {
+            override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
+            }
+        })
     }
 
     override fun onDestroy() {

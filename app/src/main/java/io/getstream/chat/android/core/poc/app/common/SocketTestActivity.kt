@@ -19,6 +19,8 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
+    var sub: ChatObservable.Subscription? = null
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +34,12 @@ class SocketTestActivity : AppCompatActivity() {
             .build()
         val apiKey = "qk4nn7rpcn75"
         val client = ChatClientBuilder(apiKey, apiOptions).build()
-        var sub: ChatObservable.Subscription? = null
 
         btnConnect.setOnClickListener {
 
             textSocketState.text = "Connecting..."
 
-            sub = client.setUser(User("bender"), object : TokenProvider {
-                override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                    listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
-                }
-            }).subscribe {
+            sub = client.events().subscribe {
 
                 Log.d("evt", it.type)
                 appendEvent(it)
@@ -68,6 +65,12 @@ class SocketTestActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            client.setUser(User("bender"), object : TokenProvider {
+                override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                    listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+                }
+            })
         }
 
         btnDisconnect.setOnClickListener {
@@ -77,6 +80,11 @@ class SocketTestActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    override fun onDestroy() {
+        sub?.unsubscribe()
+        super.onDestroy()
     }
 
     private val sb = StringBuilder()

@@ -37,7 +37,7 @@ class ChannelsApiCallsTests {
 
         Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
 
-        client.setUser(user, tokenProvider) {}
+        client.setUser(user, tokenProvider)
     }
 
     @Test
