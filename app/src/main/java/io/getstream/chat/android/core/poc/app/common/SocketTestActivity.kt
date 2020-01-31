@@ -10,9 +10,12 @@ import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.*
 import kotlinx.android.synthetic.main.activity_socket_tests.*
+import java.text.SimpleDateFormat
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,26 +46,45 @@ class SocketTestActivity : AppCompatActivity() {
             }).subscribe {
 
                 Log.d("evt", it.type)
+                appendEvent(it)
 
-                textSocketEvent.text = it.type + " at " + it.createdAt
-
-                if (it is ConnectionEvent) {
-                    Toast.makeText(this, "Connection resolved", Toast.LENGTH_LONG).show()
+                when (it) {
+                    is ConnectedEvent -> {
+                        textSocketState.text = "Connected"
+                        Toast.makeText(this, "Connection resolved", Toast.LENGTH_SHORT).show()
+                    }
+                    is ErrorEvent -> {
+                        Log.d("error", it.error.toString())
+                        Toast.makeText(this, "Error event", Toast.LENGTH_SHORT).show()
+                    }
+                    is ConnectingEvent -> {
+                        Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
+                    }
+                    is DisconnectedEvent -> {
+                        Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        Toast.makeText(this, "Some event", Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-//                if (it.isSuccess) {
-//                    textSocketState.text = "Connected with " + it.data().user.id
-//                } else {
-//                    textSocketState.text = "Connection error " + it.error()
-//                }
             }
         }
 
         btnDisconnect.setOnClickListener {
+            textSocketState.text = "Disconnecting..."
             client.disconnect()
-            textSocketState.text = "Disconnected"
         }
 
 
+    }
+
+    private val sb = StringBuilder()
+    private val logTimeFormat = SimpleDateFormat("hh:mm:ss")
+
+    private fun appendEvent(event: ChatEvent) {
+        val date = event.receivedAt
+        val log = logTimeFormat.format(date) + ":" + event.type + "\n"
+        sb.insert(0, log)
+        textSocketEvent.text = sb.toString()
     }
 }

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc.app
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 import io.getstream.chat.android.core.poc.app.cache.AppDatabase
 import io.getstream.chat.android.core.poc.app.common.KeyValue
 import io.getstream.chat.android.core.poc.app.repositories.ChannelsRepositoryLive
@@ -15,6 +16,9 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Stetho.initializeWithDefaults(this)
+
         db = AppDatabase.getInstance(this)
         val apiKey = "d2q3juekvgsf"
         val apiOptions = ApiClientOptions.Builder()

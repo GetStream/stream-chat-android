@@ -3,7 +3,7 @@ package io.getstream.chat.android.core.poc.library
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
@@ -26,7 +26,7 @@ internal class ChatClientImpl constructor(
         else state.user = user
 
         eventsSub = socket.events().subscribe {
-            if (it is ConnectionEvent) {
+            if (it is ConnectedEvent) {
                 state.user = it.me
                 state.connectionId = it.connectionId
                 api.setConnection(it.me.id, it.connectionId)

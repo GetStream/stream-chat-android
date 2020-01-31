@@ -1,48 +1,28 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import io.getstream.chat.android.core.poc.library.events.ChatEvent
 import io.getstream.chat.android.core.poc.library.errors.ChatError
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
 
 open class SocketListener {
 
-    open fun onSocketOpen() {
+    open fun onConnecting() {
 
     }
 
-    open fun onSocketClosing(code: Int, reason: String) {
+    open fun onConnected(event: ConnectedEvent) {
 
     }
 
-    open fun onSocketClosed(code: Int, reason: String) {
-
-    }
-
-    open fun onRemoteEvent(event: ChatEvent) {
-
-    }
-
-    open fun onSocketFailure(error: ChatError) {
-
-    }
-
-    open fun connectionResolved(event: ConnectionEvent) {
-
-    }
-
-    open fun connectionRecovered(connection: ConnectionData) {
-
-    }
-
-    open fun onDisconnectCalled() {
-
-    }
-
-    open fun tokenExpired() {
+    open fun onDisconnected() {
 
     }
 
     open fun onError(error: ChatError) {
+
+    }
+
+    open fun onRemoteEvent(event: ChatEvent) {
 
     }
 }
