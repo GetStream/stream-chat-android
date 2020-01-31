@@ -12,7 +12,8 @@ import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 
 internal class ChatClientImpl constructor(
     private val api: ChatApi,
-    private val socket: ChatSocket
+    private val socket: ChatSocket,
+    private val config:ChatClientBuilder.ChatConfig
 ) : ChatClient {
 
     private val state = ClientState()
@@ -23,7 +24,7 @@ internal class ChatClientImpl constructor(
         provider: TokenProvider
     ): ChatObservable {
 
-        api.anonymousAuth = false
+        config.isAnonimous = false
 
         if (state.user != null) socket.events()
         else state.user = user
@@ -52,7 +53,7 @@ internal class ChatClientImpl constructor(
     }
 
     override fun setGuestUser(user: User): ChatObservable? {
-        api.anonymousAuth = true
+        config.isAnonimous = true
 
         eventsSub = socket.events().subscribe {
             if (it is ConnectionEvent) {

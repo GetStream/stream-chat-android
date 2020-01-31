@@ -7,8 +7,6 @@ import io.getstream.chat.android.core.poc.library.rest.*
 
 interface ChatApi {
 
-    var anonymousAuth: Boolean
-
     fun setConnection(userId: String, connectionId: String)
 
     fun addDevice(request: AddDeviceRequest): ChatCall<Unit>

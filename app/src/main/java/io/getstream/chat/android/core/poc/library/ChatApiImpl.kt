@@ -13,19 +13,12 @@ import java.util.*
 class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
-    private val jsonParser: JsonParser,
-    private val application: App
+    private val jsonParser: JsonParser
 ) : ChatApi {
 
     private var userId: String = ""
     private var connectionId: String = ""
     private val callMapper = RetrofitCallMapper(jsonParser)
-
-    override var anonymousAuth: Boolean = false
-        set(value) {
-            field = value
-            application.isAnonymous = value
-        }
 
     override fun setConnection(userId:String, connectionId:String) {
         this.userId = userId

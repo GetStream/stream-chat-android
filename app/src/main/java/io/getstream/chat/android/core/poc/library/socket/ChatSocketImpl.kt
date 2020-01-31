@@ -1,6 +1,7 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
+import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
@@ -10,7 +11,7 @@ import java.util.*
 class ChatSocketImpl(
     val apiKey: String,
     val wssUrl: String,
-    val cachedTokenProvider: CachedTokenProvider,
+    val config: ChatClientBuilder.ChatConfig,
     val jsonParser: JsonParser
 ) : ChatSocket {
 
@@ -23,7 +24,7 @@ class ChatSocketImpl(
 
     override fun connect(user: User, tokenProvider: TokenProvider): ChatObservable {
 
-        cachedTokenProvider.setTokenProvider(tokenProvider)
+        config.tokenProvider.setTokenProvider(tokenProvider)
 
         tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {

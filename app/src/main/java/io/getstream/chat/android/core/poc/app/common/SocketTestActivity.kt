@@ -28,7 +28,7 @@ class SocketTestActivity : AppCompatActivity() {
             .build()
         val apiKey = "qk4nn7rpcn75"
 
-        val client = ChatClientBuilder(application as App, apiKey, apiOptions, anonymousAuth = { false }).build()
+        val client = ChatClientBuilder(apiKey, apiOptions).build()
 
         client.events().subscribe {
 
