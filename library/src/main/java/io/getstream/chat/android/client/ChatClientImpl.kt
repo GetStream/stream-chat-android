@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatObservable
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 
 
@@ -52,6 +53,14 @@ internal class ChatClientImpl constructor(
     }
 
     //endregion
+
+    override fun addSocketListener(listener: SocketListener) {
+        socket.addListener(listener)
+    }
+
+    override fun removeSocketListener(listener: SocketListener) {
+        socket.removeListener(listener)
+    }
 
     override fun events(): ChatObservable {
         return socket.events()

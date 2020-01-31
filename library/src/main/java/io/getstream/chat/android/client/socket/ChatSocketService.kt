@@ -51,11 +51,11 @@ class ChatSocketService(val jsonParser: JsonParser) : WebSocketService {
         listeners.forEach { it.onEvent(event) }
     }
 
-    fun removeSocketListener(listener: SocketListener) {
+    fun removeListener(listener: SocketListener) {
         listeners.remove(listener)
     }
 
-    fun addSocketListener(listener: SocketListener) {
+    fun addListener(listener: SocketListener) {
         listeners.add(listener)
     }
 
