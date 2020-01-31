@@ -35,8 +35,7 @@ dependencies {
 
     ```kotlin
     client.events().subscribe {
-       if(it is ConnectedEvent) 
-           getChannels()
+       if(it is ConnectedEvent) getChannels()
     }
     ```
 
