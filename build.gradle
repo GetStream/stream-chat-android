@@ -16,6 +16,11 @@ buildscript {
 }
 
 allprojects {
+
+    ext {
+        releaseSdkVersion = '0.9.0'
+    }
+
     repositories {
         google()
         jcenter()
