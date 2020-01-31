@@ -15,7 +15,6 @@ internal class ChatClientImpl constructor(
 ) : ChatClient {
 
     private val state = ClientState()
-    private var eventsSub: ChatObservable.Subscription? = null
 
     init {
         socket.events().subscribe {
@@ -53,7 +52,6 @@ internal class ChatClientImpl constructor(
     }
 
     override fun disconnect() {
-        eventsSub?.unsubscribe()
         socket.disconnect()
         state.reset()
     }
