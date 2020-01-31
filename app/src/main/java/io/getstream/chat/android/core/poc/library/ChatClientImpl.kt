@@ -3,9 +3,8 @@ package io.getstream.chat.android.core.poc.library
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
-import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
@@ -14,7 +13,7 @@ import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 internal class ChatClientImpl constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val config:ChatClientBuilder.ChatConfig
+    private val config: ChatClientBuilder.ChatConfig
 ) : ChatClient {
 
     private val state = ClientState()
@@ -29,53 +28,24 @@ internal class ChatClientImpl constructor(
         }
     }
 
+    //region Set user
+
     override fun setUser(user: User, provider: TokenProvider) {
+        config.isAnonimous = false
         socket.connect(user, provider)
     }
 
-    override fun setAnonymousUser(): ChatObservable {
-        eventsSub = socket.events().subscribe {
-            if (it is ConnectionEvent) {
-                state.user = it.me
-                state.connectionId = it.connectionId
-                api.setConnection(it.me.id, it.connectionId)
-            }
-        }
-
-        return socket.connect()
-    }
-
-    override fun setGuestUser(user: User): ChatObservable? {
+    override fun setAnonymousUser() {
         config.isAnonimous = true
-
-        eventsSub = socket.events().subscribe {
-            if (it is ConnectionEvent) {
-                state.user = it.me
-                state.connectionId = it.connectionId
-                api.setConnection(it.me.id, it.connectionId)
-            }
-        }
-
-        var chatObservable: ChatObservable? = null
-
-        api.setGuestUser(
-            userId = user.id,
-            userName = user.name
-        ).enqueue { result ->
-            if (result.isSuccess) {
-                state.user = user
-                val provider = object : TokenProvider {
-                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                        listener.onSuccess(result.data().access_token)
-                    }
-                }
-
-                chatObservable = socket.connect(user, provider)
-            }
-        }
-
-        return chatObservable
+        socket.connectAnonymously()
     }
+
+    override fun setGuestUser(user: User): ChatCall<TokenResponse> {
+        config.isAnonimous = true
+        return api.setGuestUser(user.id, user.name)
+    }
+
+    //endregion
 
     override fun events(): ChatObservable {
         return socket.events()

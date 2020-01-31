@@ -16,9 +16,8 @@ class ChatSocketImpl(
 
     private val service = ChatSocketService(jsonParser)
 
-    fun connect(): ChatObservable {
+    override fun connectAnonymously() {
         connect(null, null)
-        return events()
     }
 
     override fun connect(user: User, tokenProvider: TokenProvider) {

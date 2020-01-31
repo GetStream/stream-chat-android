@@ -351,7 +351,7 @@ class ChatApiImpl(
         )
     }
 
-    override fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse> {
+    override fun setGuestUser(userId: String, userName: String): ChatCall<TokenResponse> {
         return callMapper.map(
             retrofitApi.setGuestUser(
                 apiKey = apiKey,

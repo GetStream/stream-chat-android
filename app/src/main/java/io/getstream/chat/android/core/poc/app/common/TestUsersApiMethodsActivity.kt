@@ -74,34 +74,37 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setGuestUser() {
         testUserApiLoadingShapeContainer.makeVisible()
 
-        client.setGuestUser(User("guest_user"))?.subscribe {
-            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
-                initButtons()
+        client.setGuestUser(User("guest_user")).enqueue {
+
+            if (it.isSuccess) {
+                val user = it.data().user
+                val token = it.data().access_token
+                client.setUser(user, object : TokenProvider {
+                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                        listener.onSuccess(token)
+                    }
+                })
             }
         }
     }
 
     private fun setAnonymousUser() {
         testUserApiLoadingShapeContainer.makeVisible()
-        client.setAnonymousUser().subscribe {
-            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
-                initButtons()
-            }
-        }
+        client.setAnonymousUser()
     }
 
     private fun setRegularUser() {
         testUserApiLoadingShapeContainer.makeVisible()
 
+        client.events().subscribe {
+
+        }
+
         client.setUser(User("stream-eugene"), object : TokenProvider {
             override fun getToken(listener: TokenProvider.TokenProviderListener) {
                 listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
             }
-        }).subscribe {
-            if (it.type == EventType.CONNECTION_SOCKET_OPEN.label) {
-                initButtons()
-            }
-        }
+        })
     }
 
     private fun getUsers() {

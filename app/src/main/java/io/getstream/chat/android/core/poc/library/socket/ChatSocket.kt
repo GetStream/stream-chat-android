@@ -4,6 +4,7 @@ import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 
 interface ChatSocket {
+    fun connectAnonymously()
     fun connect(user: User, tokenProvider: TokenProvider)
     fun events(): ChatObservable
     fun disconnect()

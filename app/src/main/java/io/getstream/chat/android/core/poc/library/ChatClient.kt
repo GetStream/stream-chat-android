@@ -10,9 +10,9 @@ interface ChatClient {
 
     fun setUser(user: User, provider: TokenProvider)
 
-    fun setGuestUser(user: User): ChatObservable?
+    fun setGuestUser(user: User): ChatCall<TokenResponse>
 
-    fun setAnonymousUser(): ChatObservable
+    fun setAnonymousUser()
 
     fun disconnect()
 

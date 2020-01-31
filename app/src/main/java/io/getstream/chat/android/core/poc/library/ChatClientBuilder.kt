@@ -16,7 +16,7 @@ class ChatClientBuilder(
 
     private val config = ChatConfig()
     private val jsonParser = JsonParserImpl()
-    private val socket: ChatSocket = ChatSocketImpl(apiKey, apiOptions.wssURL, config, jsonParser)
+    private val socket: ChatSocket = ChatSocketImpl(apiKey, apiOptions.wssURL, config.tokenProvider, jsonParser, logger)
 
     private val api: ChatApi = ChatApiImpl(
         apiKey,

@@ -61,7 +61,7 @@ interface ChatApi {
     fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
     fun markAllRead(): ChatCall<EventResponse>
 
-    fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse>
+    fun setGuestUser(userId: String, userName: String): ChatCall<TokenResponse>
 
     fun getUsers(
         queryUser: QueryUsers
