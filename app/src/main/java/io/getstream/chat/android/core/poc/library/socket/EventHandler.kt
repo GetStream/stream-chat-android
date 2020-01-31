@@ -4,7 +4,7 @@ import android.os.Handler
 import android.os.Message
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
 
-class EventHandler(private val webSocketService: StreamWebSocketService) : Handler() {
+class EventHandler(private val webSocketService: ChatSocketService) : Handler() {
     override fun handleMessage(msg: Message) {
         super.handleMessage(msg)
         webSocketService.onRemoteEvent(msg.obj as ChatEvent)

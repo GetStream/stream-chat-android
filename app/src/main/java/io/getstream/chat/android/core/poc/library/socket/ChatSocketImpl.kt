@@ -12,7 +12,7 @@ class ChatSocketImpl(
     val jsonParser: JsonParser
 ) : ChatSocket {
 
-    private val service = StreamWebSocketService(jsonParser)
+    private val service = ChatSocketService(jsonParser)
 
     fun connect(): ChatObservable {
         connect(null, null)

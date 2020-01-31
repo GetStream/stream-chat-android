@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
+class ChatSocketService(val jsonParser: JsonParser) : WebSocketService {
 
     private var wsEndpoint: String = ""
     private var apiKey: String = ""
@@ -131,32 +131,6 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         webSocket = StethoWebSocketsFactory(httpClient).newWebSocket(request, eventsParser)
     }
 
-    private fun getWsUrl(): String {
-        var json = buildUserDetailJson(user)
-        return try {
-            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val baseWsUrl: String =
-                wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
-            if (user == null) {
-                "$baseWsUrl&stream-auth-type=anonymous"
-            } else {
-                "$baseWsUrl&authorization=$userToken&stream-auth-type=jwt"
-            }
-        } catch (throwable: Throwable) {
-            throw UnsupportedEncodingException("Unable to encode user details json: $json")
-        }
-    }
-
-    private fun buildUserDetailJson(user: User?): String {
-        val data = mutableMapOf<String, Any>()
-        user?.let {
-            data["user_details"] = user
-            data["user_id"] = user.id
-        }
-        data["server_determines_connection_id"] = true
-        return jsonParser.toJson(data)
-    }
-
     private fun updateState(state: State) {
 
         this.state = state
@@ -183,6 +157,32 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
                 }
             }
         }
+    }
+
+    private fun getWsUrl(): String {
+        var json = buildUserDetailJson(user)
+        return try {
+            json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
+            val baseWsUrl: String =
+                wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
+            if (user == null) {
+                "$baseWsUrl&stream-auth-type=anonymous"
+            } else {
+                "$baseWsUrl&authorization=$userToken&stream-auth-type=jwt"
+            }
+        } catch (throwable: Throwable) {
+            throw UnsupportedEncodingException("Unable to encode user details json: $json")
+        }
+    }
+
+    private fun buildUserDetailJson(user: User?): String {
+        val data = mutableMapOf<String, Any>()
+        user?.let {
+            data["user_details"] = user
+            data["user_id"] = user.id
+        }
+        data["server_determines_connection_id"] = true
+        return jsonParser.toJson(data)
     }
 
     sealed class State {

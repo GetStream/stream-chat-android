@@ -3,7 +3,7 @@ package io.getstream.chat.android.core.poc.library.socket
 import io.getstream.chat.android.core.poc.library.errors.ChatError
 import io.getstream.chat.android.core.poc.library.events.*
 
-class ChatObservable(private val service: StreamWebSocketService) {
+class ChatObservable(private val service: ChatSocketService) {
 
     private val subscriptions = mutableListOf<Subscription>()
     private var wsListener: SocketListener = EventsMapper(this)

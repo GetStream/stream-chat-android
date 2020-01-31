@@ -8,7 +8,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class HealthMonitor(val socket: StreamWebSocketService) {
+class HealthMonitor(val socket: ChatSocketService) {
 
     private val delayHandler = Handler()
     private val healthCheckInterval = 30 * 1000L
@@ -20,14 +20,14 @@ class HealthMonitor(val socket: StreamWebSocketService) {
     }
 
     private val healthCheck: Runnable = Runnable {
-        if (socket.state is StreamWebSocketService.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
             socket.sendEvent(LocalEvent(EventType.HEALTH_CHECK))
             delayHandler.postDelayed(monitor, 1000)
         }
     }
 
     private val monitor = Runnable {
-        if (socket.state is StreamWebSocketService.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
             val millisNow = Date().time
             val monitorInterval = 1000L
 
@@ -57,7 +57,7 @@ class HealthMonitor(val socket: StreamWebSocketService) {
         reconnect()
     }
 
-    internal fun reconnect() {
+    private fun reconnect() {
         delayHandler.postDelayed(
             reconnect,
             getRetryInterval()
