@@ -3,12 +3,10 @@ package io.getstream.chat.android.core.poc.library.socket
 import android.os.Message
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.core.poc.app.utils.StethoWebSocketsFactory
-import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.errors.ChatError
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
 import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
-import io.getstream.chat.android.core.poc.library.events.LocalEvent
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -17,9 +15,6 @@ import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
 
 
 class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
@@ -28,20 +23,19 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
     private var apiKey: String = ""
     private var userToken: String? = ""
     private var user: User? = null
-    private val listener: EventsParser = EventsParser(this, jsonParser)
+    private val eventsParser: EventsParser = EventsParser(this, jsonParser)
     private var httpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
-    private val webSocketListeners = mutableListOf<SocketListener>()
-    private var state: State = State.Disconnected
-    private var lastEvent: Date? = null
-    private val healthCheckInterval = 30 * 1000L
-    private var consecutiveFailures = 0
-    private var wsId = 0
+    private val listeners = mutableListOf<SocketListener>()
 
+    private var wsId = 0
     private val eventHandler = EventHandler(this)
+    private val healthMonitor = HealthMonitor(this)
+
+    internal var state: State = State.Disconnected
 
     fun setLastEventDate(date: Date) {
-        this.lastEvent = date
+        healthMonitor.lastEventDate = date
     }
 
     fun onSocketError(error: ChatError) {
@@ -50,53 +44,24 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
             updateState(State.Error(error))
             updateState(State.Disconnected)
             clearWebSocket()
-            reconnect()
+            healthMonitor.onError()
         }
     }
 
     fun onRemoteEvent(event: ChatEvent) {
-        webSocketListeners.forEach { it.onRemoteEvent(event) }
+        listeners.forEach { it.onEvent(event) }
     }
 
     fun removeSocketListener(listener: SocketListener) {
-        webSocketListeners.remove(listener)
+        listeners.remove(listener)
     }
 
     fun addSocketListener(listener: SocketListener) {
-        webSocketListeners.add(listener)
+        listeners.add(listener)
     }
 
-    private val mOfflineNotifier = Runnable {
-        onEvent(LocalEvent(EventType.CONNECTION_CHANGED))
-    }
-
-    private val reconnect = Runnable {
-        setupWS()
-    }
-
-    private val healthCheck: Runnable = Runnable {
-        if (state is State.Connected) {
-            val event = LocalEvent(EventType.HEALTH_CHECK)
-            webSocket?.send(jsonParser.toJson(event))
-        }
-    }
-
-    private val monitor = Runnable {
-        if (state is State.Connected) {
-            val millisNow = Date().time
-            val monitorInterval = 1000L
-
-            lastEvent?.let {
-                val diff = millisNow - it.time
-                val checkInterval = healthCheckInterval + 10 * 1000
-                if (diff > checkInterval) {
-                    consecutiveFailures += 1
-                    reconnect()
-                }
-            }
-
-            eventHandler.postDelayed(healthCheck, monitorInterval)
-        }
+    internal fun sendEvent(event: ChatEvent) {
+        webSocket?.send(jsonParser.toJson(event))
     }
 
     override fun connect(
@@ -106,8 +71,8 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         userToken: String?,
         listener: SocketListener
     ) {
-        if (state != State.Disconnected) {
-            return
+        if (state is State.Connecting || state is State.Connected) {
+            disconnect()
         }
 
         addSocketListener(listener)
@@ -117,38 +82,25 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         this.user = user
         this.userToken = userToken
         wsId = 0
-        consecutiveFailures = 0
+        healthMonitor.reset()
 
         setupWS()
     }
 
     override fun disconnect() {
-
         updateState(State.Disconnected)
-        //webSocketListeners.clear()
         clearWebSocket()
-        eventHandler.removeCallbacksAndMessages(null)
     }
 
     private fun clearWebSocket() {
-        consecutiveFailures = 0
-        consecutiveFailures++
-        lastEvent = null
+        healthMonitor.reset()
         webSocket?.cancel()
         webSocket?.close(1000, "bye")
         webSocket = null
     }
 
-    private fun reconnect() {
-        eventHandler.postDelayed(
-            reconnect,
-            getRetryInterval()
-        )
-    }
-
     private fun startMonitor() {
-        healthCheck.run()
-        monitor.run()
+        healthMonitor.start()
     }
 
     fun onConnectionResolved(event: ConnectedEvent) {
@@ -156,25 +108,6 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         startMonitor()
     }
 
-    private fun getRetryInterval(): Long {
-        val max = min(500 + consecutiveFailures * 2000, 25000)
-        val min = min(
-            max(250, (consecutiveFailures - 1) * 2000), 25000
-        )
-        return floor(Math.random() * (max - min) + min).toLong()
-    }
-
-//    fun setHealth(healthy: Boolean) {
-//        Log.i(TAG, "setHealth $healthy")
-//        if (healthy && !isHealthy) {
-//            isHealthy = true
-//            onEvent(LocalEvent(EventType.CONNECTION_CHANGED))
-//        } else if (!healthy && isHealthy) {
-//            isHealthy = false
-//            Log.i(TAG, "spawn mOfflineNotifier")
-//            eventHandler.postDelayed(mOfflineNotifier, 5000)
-//        }
-//    }
 
     fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
@@ -182,7 +115,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         eventHandler.sendMessage(eventMsg)
     }
 
-    private fun setupWS() {
+    internal fun setupWS() {
 
         updateState(State.Connecting)
 
@@ -195,9 +128,7 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
             .build()
 
         //webSocket = httpClient.newWebSocket(request, listener)
-        webSocket = StethoWebSocketsFactory(httpClient).newWebSocket(request, listener)
-
-        //httpClient.dispatcher.executorService.shutdown()
+        webSocket = StethoWebSocketsFactory(httpClient).newWebSocket(request, eventsParser)
     }
 
     private fun getWsUrl(): String {
@@ -233,22 +164,22 @@ class StreamWebSocketService(val jsonParser: JsonParser) : WebSocketService {
         when (state) {
             is State.Error -> {
                 eventHandler.post {
-                    webSocketListeners.forEach { it.onError(state.error) }
+                    listeners.forEach { it.onError(state.error) }
                 }
             }
             is State.Connecting -> {
                 eventHandler.post {
-                    webSocketListeners.forEach { it.onConnecting() }
+                    listeners.forEach { it.onConnecting() }
                 }
             }
             is State.Connected -> {
                 eventHandler.post {
-                    webSocketListeners.forEach { it.onConnected(state.event) }
+                    listeners.forEach { it.onConnected(state.event) }
                 }
             }
             is State.Disconnected -> {
                 eventHandler.post {
-                    webSocketListeners.forEach { it.onDisconnected() }
+                    listeners.forEach { it.onDisconnected() }
                 }
             }
         }

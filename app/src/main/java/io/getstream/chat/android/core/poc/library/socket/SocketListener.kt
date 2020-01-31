@@ -22,7 +22,7 @@ open class SocketListener {
 
     }
 
-    open fun onRemoteEvent(event: ChatEvent) {
+    open fun onEvent(event: ChatEvent) {
 
     }
 }

@@ -55,7 +55,7 @@ class ChatObservable(private val service: StreamWebSocketService) {
             observable.onNext(ConnectingEvent())
         }
 
-        override fun onRemoteEvent(event: ChatEvent) {
+        override fun onEvent(event: ChatEvent) {
             observable.onNext(event)
         }
 

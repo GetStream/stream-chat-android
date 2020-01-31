@@ -11,12 +11,14 @@ import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.events.*
+import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_socket_tests.*
 import java.text.SimpleDateFormat
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,16 +32,13 @@ class SocketTestActivity : AppCompatActivity() {
             .build()
         val apiKey = "qk4nn7rpcn75"
         val client = ChatClientBuilder(apiKey, apiOptions).build()
-
-        client.events().subscribe {
-
-        }
+        var sub: ChatObservable.Subscription? = null
 
         btnConnect.setOnClickListener {
 
             textSocketState.text = "Connecting..."
 
-            client.setUser(User("bender"), object : TokenProvider {
+            sub = client.setUser(User("bender"), object : TokenProvider {
                 override fun getToken(listener: TokenProvider.TokenProviderListener) {
                     listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
                 }
@@ -61,6 +60,7 @@ class SocketTestActivity : AppCompatActivity() {
                         Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
                     }
                     is DisconnectedEvent -> {
+                        textSocketState.text = "Disconnected"
                         Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
@@ -71,8 +71,9 @@ class SocketTestActivity : AppCompatActivity() {
         }
 
         btnDisconnect.setOnClickListener {
-            textSocketState.text = "Disconnecting..."
+            textSocketState.text = "Disconnected"
             client.disconnect()
+            sub?.unsubscribe()
         }
 
 
