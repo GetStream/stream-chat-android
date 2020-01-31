@@ -46,10 +46,11 @@ enum class EventType(val label: String) {
     CONNECTION_SOCKET_CLOSING("connection.socket.closing"),
     CONNECTION_SOCKET_CLOSED("connection.socket.closed"),
     CONNECTION_SOCKET_FAILURE("connection.socket.failure"),
+    CONNECTION_CONNECTING("connection.connecting"),
     CONNECTION_RESOLVED("connection.resolved"),
     CONNECTION_CHANGED("connection.changed"),
     CONNECTION_RECOVERED("connection.recovered"),
-    CONNECTION_DISCONNECT("connection.disconnection.called"),
+    CONNECTION_DISCONNECTED("connection.disconnected"),
     CONNECTION_ERROR("connection.error"),
     TOKEN_EXPIRED("token.expired"),
     /**

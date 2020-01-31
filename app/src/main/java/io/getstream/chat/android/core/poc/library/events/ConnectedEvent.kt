@@ -3,7 +3,7 @@ package io.getstream.chat.android.core.poc.library.events
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.core.poc.library.*
 
-class ConnectionEvent : RemoteEvent() {
+class ConnectedEvent : RemoteEvent() {
 
     val cid: String = ""
     val user: User? = null
@@ -29,7 +29,6 @@ class ConnectionEvent : RemoteEvent() {
 
     val isChannelEvent: Boolean
         get() = cid != "*"
-
 
     val isAnonymous: Boolean
         get() = if (me != null) {

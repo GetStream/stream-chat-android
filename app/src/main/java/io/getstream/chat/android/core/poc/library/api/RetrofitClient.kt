@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.poc.library.api
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
@@ -64,6 +65,7 @@ object RetrofitClient {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             .addInterceptor(TokenAuthInterceptor(config, jsonParser))
+            .addNetworkInterceptor(StethoInterceptor())
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
@@ -71,4 +73,6 @@ object RetrofitClient {
 
         return jsonParser.configRetrofit(builder).build()
     }
+
+
 }

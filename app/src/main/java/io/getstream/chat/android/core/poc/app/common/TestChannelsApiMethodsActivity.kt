@@ -1,7 +1,6 @@
 package io.getstream.chat.android.core.poc.app.common
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
@@ -9,7 +8,7 @@ import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.extensions.echoResult
 import io.getstream.chat.android.core.poc.library.*
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 import kotlinx.android.synthetic.main.activity_test_api.*
@@ -29,17 +28,19 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        client.setUser(User("stream-eugene"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
-            }
-        }).subscribe {
+        chatSub = client.events().subscribe {
 
-            if (it is ConnectionEvent) {
+            if (it is ConnectedEvent) {
                 //echoResult(it, "Connected", "Socket connection error")
                 initButtons()
             }
         }
+
+        client.setUser(User("stream-eugene"), object : TokenProvider {
+            override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -63,11 +64,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnShowChannel.setOnClickListener { showChannel() }
         btnMarkReadMessage.setOnClickListener { markReadMessage() }
         btnWatchChannel.setOnClickListener { watchChannel() }
-
-
-        chatSub = client.events().subscribe {
-            Log.d("events", it.toString())
-        }
     }
 
     private fun watchChannel() {

@@ -1,38 +1,35 @@
 package io.getstream.chat.android.core.poc.library.socket
 
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
-import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
-import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
-import java.util.*
+import io.getstream.chat.android.core.poc.library.logger.StreamLogger
 
 class ChatSocketImpl(
     val apiKey: String,
     val wssUrl: String,
-    val config: ChatClientBuilder.ChatConfig,
-    val jsonParser: JsonParser
+    val cachedTokenProvider: CachedTokenProvider,
+    val jsonParser: JsonParser,
+    logger: StreamLogger?
 ) : ChatSocket {
 
-    private val service = StreamWebSocketService(jsonParser)
+    private val service = ChatSocketService(jsonParser)
 
-    override fun connect(): ChatObservable {
+    fun connect(): ChatObservable {
         connect(null, null)
         return events()
     }
 
-    override fun connect(user: User, tokenProvider: TokenProvider): ChatObservable {
+    override fun connect(user: User, tokenProvider: TokenProvider) {
 
-        config.tokenProvider.setTokenProvider(tokenProvider)
+        cachedTokenProvider.setTokenProvider(tokenProvider)
 
         tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
                 connect(user, token)
             }
         })
-
-        return events()
     }
 
     override fun events(): ChatObservable {
@@ -43,11 +40,8 @@ class ChatSocketImpl(
         service.disconnect()
     }
 
-    private fun connect(
-        user: User?,
-        userToken: String?
-    ) {
-        service.connect(wssUrl, apiKey, user, userToken, SocketListener())
+    private fun connect(user: User?, userToken: String?) {
+        service.connect(wssUrl, apiKey, user, userToken)
     }
 
 }

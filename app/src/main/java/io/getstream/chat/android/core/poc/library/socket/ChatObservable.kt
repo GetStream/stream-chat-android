@@ -1,18 +1,16 @@
 package io.getstream.chat.android.core.poc.library.socket
 
-import io.getstream.chat.android.core.poc.library.events.ChatEvent
-import io.getstream.chat.android.core.poc.library.EventType
 import io.getstream.chat.android.core.poc.library.errors.ChatError
-import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
-import io.getstream.chat.android.core.poc.library.events.LocalEvent
+import io.getstream.chat.android.core.poc.library.events.*
 
-class ChatObservable(private val service: StreamWebSocketService) {
+class ChatObservable(private val service: ChatSocketService) {
 
     private val subscriptions = mutableListOf<Subscription>()
     private var wsListener: SocketListener = EventsMapper(this)
     private var subscirbed = false
 
     fun onNext(event: ChatEvent) {
+        //TODO: deliver connection event if it exists
         subscriptions.forEach { it.onNext(event) }
     }
 
@@ -53,76 +51,24 @@ class ChatObservable(private val service: StreamWebSocketService) {
 
     private class EventsMapper(val observable: ChatObservable) : SocketListener() {
 
-        override fun onSocketOpen() {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_SOCKET_OPEN
-                )
-            )
+        override fun onConnecting() {
+            observable.onNext(ConnectingEvent())
         }
 
-        override fun onSocketClosing(code: Int, reason: String) {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_SOCKET_CLOSING
-                )
-            )
-        }
-
-        override fun onSocketClosed(code: Int, reason: String) {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_SOCKET_CLOSED
-                )
-            )
-        }
-
-        override fun onRemoteEvent(event: ChatEvent) {
+        override fun onEvent(event: ChatEvent) {
             observable.onNext(event)
         }
 
-        override fun onSocketFailure(error: ChatError) {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_SOCKET_FAILURE
-                )
-            )
-        }
-
-        override fun connectionResolved(event: ConnectionEvent) {
+        override fun onConnected(event: ConnectedEvent) {
             observable.onNext(event)
         }
 
-        override fun connectionRecovered(connection: ConnectionData) {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_RECOVERED
-                )
-            )
-        }
-
-        override fun onDisconnectCalled() {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_DISCONNECT
-                )
-            )
-        }
-
-        override fun tokenExpired() {
-            observable.onNext(
-                LocalEvent(
-                    EventType.TOKEN_EXPIRED
-                )
-            )
+        override fun onDisconnected() {
+            observable.onNext(DisconnectedEvent())
         }
 
         override fun onError(error: ChatError) {
-            observable.onNext(
-                LocalEvent(
-                    EventType.CONNECTION_ERROR
-                )
-            )
+            observable.onNext(ErrorEvent(error))
         }
     }
 }

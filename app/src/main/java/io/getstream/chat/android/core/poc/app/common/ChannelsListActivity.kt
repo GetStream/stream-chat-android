@@ -8,26 +8,33 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
-import io.getstream.chat.android.core.poc.library.*
+import io.getstream.chat.android.core.poc.library.FilterObject
+import io.getstream.chat.android.core.poc.library.QueryChannelsRequest
+import io.getstream.chat.android.core.poc.library.TokenProvider
+import io.getstream.chat.android.core.poc.library.User
+import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
+import io.getstream.chat.android.core.poc.library.events.ErrorEvent
 import io.getstream.chat.android.core.poc.library.requests.QuerySort
+import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 
 
 class ChannelsListActivity : AppCompatActivity() {
+
+    val client = App.client
+    var sub: ChatObservable.Subscription? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
 
-        val client = App.client
 
-        client.setUser(User("bender"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
-            }
-        }).subscribe {
 
-            if (it.type == EventType.CONNECTION_RESOLVED.label) {
+        sub = client.events().subscribe {
+
+            if (it is ErrorEvent) {
+
+            } else if (it is ConnectedEvent) {
                 client.queryChannels(
                     QueryChannelsRequest(
                         0,
@@ -44,6 +51,12 @@ class ChannelsListActivity : AppCompatActivity() {
                 }
             }
         }
+
+        client.setUser(User("bender"), object : TokenProvider {
+            override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
+            }
+        })
 
         client.events().subscribe {
             Log.d("chat-events", it.toString())
@@ -95,6 +108,12 @@ class ChannelsListActivity : AppCompatActivity() {
 //                .add(R.id.root, fragment)
 //                .commit()
 //        }
+    }
+
+    override fun onDestroy() {
+        sub?.unsubscribe()
+        client.disconnect()
+        super.onDestroy()
     }
 
     private fun showRemoveChannel() {

@@ -6,6 +6,7 @@ import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
 import io.getstream.chat.android.core.poc.library.requests.QueryUsers
+import io.getstream.chat.android.core.poc.library.logger.StreamLogger
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
 import java.util.*
@@ -13,7 +14,8 @@ import java.util.*
 class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
-    private val jsonParser: JsonParser
+    private val jsonParser: JsonParser,
+    private val logger: StreamLogger?
 ) : ChatApi {
 
     private var userId: String = ""

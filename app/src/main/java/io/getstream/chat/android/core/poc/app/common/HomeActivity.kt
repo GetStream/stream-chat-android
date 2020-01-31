@@ -6,7 +6,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

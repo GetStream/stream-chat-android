@@ -8,10 +8,7 @@ import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 
 interface ChatClient {
 
-    fun setUser(
-        user: User,
-        provider: TokenProvider
-    ): ChatObservable
+    fun setUser(user: User, provider: TokenProvider)
 
     fun setGuestUser(user: User): ChatObservable?
 

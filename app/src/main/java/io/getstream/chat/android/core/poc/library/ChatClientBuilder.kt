@@ -3,12 +3,15 @@ package io.getstream.chat.android.core.poc.library
 import io.getstream.chat.android.core.poc.library.api.ApiClientOptions
 import io.getstream.chat.android.core.poc.library.api.RetrofitClient
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
+import io.getstream.chat.android.core.poc.library.logger.StreamChatSilentLogger
+import io.getstream.chat.android.core.poc.library.logger.StreamLogger
 import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 import io.getstream.chat.android.core.poc.library.socket.ChatSocketImpl
 
 class ChatClientBuilder(
     apiKey: String,
-    apiOptions: ApiClientOptions
+    apiOptions: ApiClientOptions,
+    logger: StreamLogger? = StreamChatSilentLogger()
 ) {
 
     private val config = ChatConfig()
@@ -24,7 +27,8 @@ class ChatClientBuilder(
         ).create(
             RetrofitApi::class.java
         ),
-        jsonParser
+        jsonParser,
+        logger
     )
 
     fun build(): ChatClient {
