@@ -18,7 +18,7 @@ buildscript {
 allprojects {
 
     ext {
-        releaseSdkVersion = '0.9.0'
+        releaseSdkVersion = '0.9.1'
     }
 
     repositories {

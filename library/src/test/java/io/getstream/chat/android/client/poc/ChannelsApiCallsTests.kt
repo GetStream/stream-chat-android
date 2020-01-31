@@ -30,12 +30,11 @@ class ChannelsApiCallsTests {
 
     @Before
     fun before() {
+        val config = ChatClientBuilder.ChatConfig()
         api = Mockito.mock(ChatApi::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl()), socket)
-
-        Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
+        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl(), null), socket, config)
 
         client.setUser(user, tokenProvider)
     }
@@ -327,8 +326,7 @@ class ChannelsApiCallsTests {
     @Test
     fun markAllReadSuccess() {
 
-        val event =
-            ChatEvent("type")
+        val event = ChatEvent().apply { type = "any" }
 
         Mockito.`when`(
             retrofitApi.markAllRead(
@@ -363,8 +361,7 @@ class ChannelsApiCallsTests {
     fun markReadSuccess() {
 
         val messageId = "message-id"
-        val event =
-            ChatEvent("type")
+        val event = ChatEvent().apply { type = "any" }
 
         Mockito.`when`(
             retrofitApi.markRead(
