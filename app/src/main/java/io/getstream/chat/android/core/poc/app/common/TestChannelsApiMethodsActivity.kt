@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import io.getstream.chat.android.core.poc.R
 import io.getstream.chat.android.core.poc.app.App
+import io.getstream.chat.android.core.poc.extensions.echoResult
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
 import io.getstream.chat.android.core.poc.library.rest.ChannelWatchRequest
@@ -80,7 +81,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
             if (channelsResult.isSuccess) {
                 val watchResult = channelsResult.data()[0].watch(ChannelWatchRequest()).execute()
-
                 echoResult(watchResult)
             }
         }.start()

@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.rest.*
 
 interface ChatApi {
@@ -59,4 +60,48 @@ interface ChatApi {
     fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
     fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
     fun markAllRead(): ChatCall<EventResponse>
+
+    fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse>
+
+    fun getUsers(
+        queryUser: QueryUsers
+    ): ChatCall<QueryUserListResponse>
+
+    fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse>
+
+    fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse>
+
+    fun muteUser(
+        targetId: String
+    ): ChatCall<MuteUserResponse>
+
+    fun unMuteUser(
+        targetId: String
+    ): ChatCall<MuteUserResponse>
+
+    fun flag(
+        targetId: String
+    ): ChatCall<FlagResponse>
+
+    fun banUser(
+        targetId: String,
+        timeout: Int?,
+        reason: String?,
+        channelType: String?,
+        channelId: String?
+    ): ChatCall<CompletableResponse>
+
+    fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): ChatCall<CompletableResponse>
 }

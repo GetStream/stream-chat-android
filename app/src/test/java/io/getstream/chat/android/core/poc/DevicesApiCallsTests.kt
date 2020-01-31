@@ -1,5 +1,6 @@
 package io.getstream.chat.android.core.poc
 
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.*
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import io.getstream.chat.android.core.poc.library.rest.AddDeviceRequest
@@ -20,21 +21,26 @@ class DevicesApiCallsTests {
     val apiKey = "api-key"
     val serverErrorCode = 500
 
+    lateinit var app: App
     lateinit var api: ChatApi
+    lateinit var anonymousApi: ChatApi
     lateinit var socket: ChatSocket
     lateinit var client: ChatClient
     lateinit var retrofitApi: RetrofitApi
 
     @Before
     fun before() {
+        app = Mockito.mock(App::class.java)
         api = Mockito.mock(ChatApi::class.java)
+        anonymousApi = Mockito.mock(ChatApi::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl()), socket)
+        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl(), app), socket)
 
         Mockito.`when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
 
-        client.setUser(user, tokenProvider) {}
+        api.anonymousAuth = false
+        client.setUser(user, tokenProvider)
     }
 
     @Test

@@ -1,9 +1,26 @@
 package io.getstream.chat.android.core.poc.library.rest
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-class GuestUserRequest(id: String, name: String) {
 
-    val user: GuestUserBody = GuestUserBody(id, name)
+class GuestUserRequest constructor(id: String, name: String?) {
 
-    data class GuestUserBody(val id: String, val name: String)
+    @SerializedName("user")
+    @Expose
+    var user: GuestUserBody
+
+    init {
+        this.user = GuestUserBody(id = id, name = name)
+    }
+
+    data class GuestUserBody(
+        @SerializedName("id")
+        @Expose
+        val id: String,
+
+        @SerializedName("name")
+        @Expose
+        val name: String?
+    )
 }

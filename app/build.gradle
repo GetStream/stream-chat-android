@@ -72,6 +72,9 @@ dependencies {
     //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
 
+    //Anko
+    implementation "org.jetbrains.anko:anko:0.10.8"
+
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'

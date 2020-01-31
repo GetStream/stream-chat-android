@@ -2,6 +2,7 @@ package io.getstream.chat.android.core.poc.library.api
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.core.poc.library.CachedTokenProvider
+import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.gson.JsonParserImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,23 +16,21 @@ object RetrofitClient {
 
     fun buildClient(
         options: ApiClientOptions,
-        tokenProvider: () -> CachedTokenProvider,
-        anonymousAuth: () -> Boolean,
-        jsonParser: JsonParserImpl
+        jsonParser: JsonParserImpl,
+        config: ChatClientBuilder.ChatConfig
     ): Retrofit {
         return buildClient(
             options.httpURL,
             options.timeout.toLong(),
             options.timeout.toLong(),
             options.timeout.toLong(),
-            tokenProvider,
-            anonymousAuth,
+            config,
             jsonParser
         )
     }
 
     fun getAuthorizedCDNClient(
-        tokenProvider: () -> CachedTokenProvider,
+        config: ChatClientBuilder.ChatConfig,
         options: ApiClientOptions,
         jsonParser: JsonParserImpl
     ): Retrofit {
@@ -40,20 +39,17 @@ object RetrofitClient {
             options.cdntimeout.toLong(),
             options.cdntimeout.toLong(),
             options.cdntimeout.toLong(),
-            tokenProvider,
-            { false },
+            config,
             jsonParser
         )
     }
-
 
     private fun buildClient(
         endpoint: String,
         connectTimeout: Long,
         writeTimeout: Long,
         readTimeout: Long,
-        tokenProvider: () -> CachedTokenProvider,
-        anonymousAuth: () -> Boolean,
+        config:ChatClientBuilder.ChatConfig,
         jsonParser: JsonParserImpl
     ): Retrofit {
 
@@ -64,11 +60,11 @@ object RetrofitClient {
             .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             // interceptors
-            .addInterceptor(HeadersInterceptor(anonymousAuth))
+            .addInterceptor(HeadersInterceptor(config))
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-            .addInterceptor(TokenAuthInterceptor(tokenProvider, anonymousAuth, jsonParser))
+            .addInterceptor(TokenAuthInterceptor(config, jsonParser))
             .addNetworkInterceptor(StethoInterceptor())
 
         val builder = Retrofit.Builder()

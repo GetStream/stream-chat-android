@@ -3,6 +3,8 @@ package io.getstream.chat.android.core.poc.library
 import android.text.TextUtils
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.core.poc.library.events.ConnectionEvent
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.events.ConnectedEvent
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
@@ -11,7 +13,8 @@ import io.getstream.chat.android.core.poc.library.socket.ChatSocket
 
 internal class ChatClientImpl constructor(
     private val api: ChatApi,
-    private val socket: ChatSocket
+    private val socket: ChatSocket,
+    private val config:ChatClientBuilder.ChatConfig
 ) : ChatClient {
 
     private val state = ClientState()
@@ -28,6 +31,50 @@ internal class ChatClientImpl constructor(
 
     override fun setUser(user: User, provider: TokenProvider) {
         socket.connect(user, provider)
+    }
+
+    override fun setAnonymousUser(): ChatObservable {
+        eventsSub = socket.events().subscribe {
+            if (it is ConnectionEvent) {
+                state.user = it.me
+                state.connectionId = it.connectionId
+                api.setConnection(it.me.id, it.connectionId)
+            }
+        }
+
+        return socket.connect()
+    }
+
+    override fun setGuestUser(user: User): ChatObservable? {
+        config.isAnonimous = true
+
+        eventsSub = socket.events().subscribe {
+            if (it is ConnectionEvent) {
+                state.user = it.me
+                state.connectionId = it.connectionId
+                api.setConnection(it.me.id, it.connectionId)
+            }
+        }
+
+        var chatObservable: ChatObservable? = null
+
+        api.setGuestUser(
+            userId = user.id,
+            userName = user.name
+        ).enqueue { result ->
+            if (result.isSuccess) {
+                state.user = user
+                val provider = object : TokenProvider {
+                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
+                        listener.onSuccess(result.data().access_token)
+                    }
+                }
+
+                chatObservable = socket.connect(user, provider)
+            }
+        }
+
+        return chatObservable
     }
 
     override fun events(): ChatObservable {
@@ -201,6 +248,66 @@ internal class ChatClientImpl constructor(
             it.event
         }
     }
+
+    override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
+        return api.getUsers(
+            queryUser = query
+        ).map { it.users }
+    }
+
+    override fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse> {
+        return api.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            members = members
+        )
+    }
+
+    override fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = api.removeMembers(
+        channelType = channelType,
+        channelId = channelId,
+        members = members
+    )
+
+    override fun muteUser(targetId: String) = api.muteUser(
+        targetId = targetId
+    )
+
+    override fun unMuteUser(targetId: String) = api.unMuteUser(
+        targetId = targetId
+    )
+
+    override fun flag(targetId: String) = api.flag(
+        targetId = targetId
+    )
+
+    override fun banUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        reason: String?,
+        timeout: Int?
+    ): ChatCall<CompletableResponse> = api.banUser(
+        targetId, timeout, reason, channelType, channelId
+    )
+
+    override fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ) = api.unBanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId
+    )
 
     //endregion
 

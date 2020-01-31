@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.core.poc.library.FilterObject
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.api.UserGsonAdapter
+import io.getstream.chat.android.core.poc.library.json.adapters.QuerySortAdapter
 
 class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
 
@@ -14,6 +15,9 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
         return when (type.rawType) {
             FilterObject::class -> {
                 FilterObjectAdapter(gson) as TypeAdapter<T>
+            }
+            QuerySortAdapter::class -> {
+                QuerySortAdapter(gson) as TypeAdapter<T>
             }
             User::class -> {
                 UserGsonAdapter(gson) as TypeAdapter<T>

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.core.poc.library
 
-
 class FilterObject {
     private var data: HashMap<String, Any>
 

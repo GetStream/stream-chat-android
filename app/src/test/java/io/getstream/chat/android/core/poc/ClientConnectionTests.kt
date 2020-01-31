@@ -20,6 +20,7 @@ class ClientConnectionTests {
     val error = ChatError("connection-error")
 
     lateinit var api: ChatApi
+    lateinit var anonymousApi: ChatApi
     lateinit var socket: ChatSocket
     lateinit var client: ChatClient
     lateinit var call: Callback<Result<ConnectionData>>
@@ -27,9 +28,11 @@ class ClientConnectionTests {
     @Before
     fun before() {
         api = mock(ChatApi::class.java)
+        anonymousApi = mock(ChatApi::class.java)
         socket = mock(ChatSocket::class.java)
         client = ChatClientImpl(api, socket)
 
+        api.anonymousAuth = false
         call = mock(Callback::class.java) as Callback<Result<ConnectionData>>
     }
 
@@ -39,7 +42,7 @@ class ClientConnectionTests {
         `when`(socket.connect(user, tokenProvider)).thenReturn(SuccessCall(connection))
         val callback: (Result<ConnectionData>) -> Unit = { call.call(it) }
 
-        client.setUser(user, tokenProvider, callback)
+        client.setUser(user, tokenProvider)
 
         verify(call, times(1)).call(Result(connection, null))
     }

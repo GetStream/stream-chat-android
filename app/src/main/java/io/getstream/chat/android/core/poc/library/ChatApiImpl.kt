@@ -1,11 +1,15 @@
 package io.getstream.chat.android.core.poc.library
 
+import com.google.gson.Gson
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.api.QueryChannelsResponse
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
 import io.getstream.chat.android.core.poc.library.logger.StreamLogger
 import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ConnectionData
+import java.util.*
 
 class ChatApiImpl(
     private val apiKey: String,
@@ -343,6 +347,153 @@ class ChatApiImpl(
                 apiKey,
                 userId,
                 connectionId
+            )
+        )
+    }
+
+    override fun setGuestUser(userId: String, userName: String?): ChatCall<TokenResponse> {
+        return callMapper.map(
+            retrofitApi.setGuestUser(
+                apiKey = apiKey,
+                body = GuestUserRequest(
+                    id = userId,
+                    name = userName
+                )
+            )
+        )
+    }
+
+    override fun getUsers(
+        queryUser: QueryUsers
+    ): ChatCall<QueryUserListResponse> {
+        val payload = Gson().toJson(queryUser)
+        return callMapper.map(
+            retrofitApi.queryUsers(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                payload = payload
+            )
+        )
+    }
+
+    override fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = callMapper.map(
+        retrofitApi.addMembers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            body = AddMembersRequest(
+                members = members
+            )
+        )
+    )
+
+    override fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ) = callMapper.map(
+        retrofitApi.removeMembers(
+            apiKey = apiKey,
+            connectionId = connectionId,
+            channelType = channelType,
+            channelId = channelId,
+            body = RemoveMembersRequest(
+                members = members
+            )
+        )
+    )
+
+    override fun muteUser(
+        targetId: String
+    ): ChatCall<MuteUserResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_id"] = targetId
+        body["user_id"] = userId
+
+        return callMapper.map(
+            retrofitApi.muteUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
+            )
+        )
+    }
+
+    override fun unMuteUser(
+        targetId: String
+    ): ChatCall<MuteUserResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_id"] = targetId
+        body["user_id"] = userId
+
+        return callMapper.map(
+            retrofitApi.unMuteUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
+            )
+        )
+    }
+
+    override fun flag(
+        targetId: String
+    ): ChatCall<FlagResponse> {
+        val body: MutableMap<String, String> = HashMap()
+        body["target_user_id"] = targetId
+
+        return callMapper.map(
+            retrofitApi.flag(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                userId = userId,
+                body = body
+            )
+        )
+    }
+
+    override fun banUser(
+        targetId: String,
+        timeout: Int?,
+        reason: String?,
+        channelType: String?,
+        channelId: String?
+    ): ChatCall<CompletableResponse> {
+
+        return callMapper.map(
+            retrofitApi.banUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                body = BanUserRequest(
+                    targetUserId = targetId,
+                    timeout = timeout,
+                    reason = reason,
+                    channelType = channelType,
+                    channelId = channelId
+                )
+            )
+        )
+    }
+
+    override fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): ChatCall<CompletableResponse> {
+
+        return callMapper.map(
+            retrofitApi.unBanUser(
+                apiKey = apiKey,
+                connectionId = connectionId,
+                targetUserId = targetId,
+                channelId = channelId,
+                channelType = channelType
             )
         )
     }

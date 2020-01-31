@@ -2,21 +2,57 @@ package io.getstream.chat.android.core.poc.library
 
 import io.getstream.chat.android.core.poc.library.call.ChatCall
 import io.getstream.chat.android.core.poc.library.events.ChatEvent
-import io.getstream.chat.android.core.poc.library.rest.AddDeviceRequest
-import io.getstream.chat.android.core.poc.library.rest.ChannelQueryRequest
-import io.getstream.chat.android.core.poc.library.rest.SearchMessagesRequest
-import io.getstream.chat.android.core.poc.library.rest.SendActionRequest
+import io.getstream.chat.android.core.poc.library.requests.QueryUsers
+import io.getstream.chat.android.core.poc.library.rest.*
 import io.getstream.chat.android.core.poc.library.socket.ChatObservable
 
 interface ChatClient {
 
     fun setUser(user: User, provider: TokenProvider)
 
+    fun setGuestUser(user: User): ChatObservable?
+
+    fun setAnonymousUser(): ChatObservable
+
     fun disconnect()
 
     //region Events
 
     fun events(): ChatObservable
+
+    //endregion
+
+    //region Users
+
+    fun getUsers(query: QueryUsers): ChatCall<List<User>>
+    fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse>
+
+    fun removeMembers(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): ChatCall<ChannelResponse>
+
+    fun muteUser(targetId: String): ChatCall<MuteUserResponse>
+    fun unMuteUser(targetId: String): ChatCall<MuteUserResponse>
+    fun flag(targetId: String): ChatCall<FlagResponse>
+    fun banUser(
+        targetId: String,
+        channelType: String,
+        channelId: String,
+        reason: String? = null,
+        timeout: Int? = null
+    ): ChatCall<CompletableResponse>
+
+    fun unBanUser(
+        targetId: String,
+        channelType: String,
+        channelId: String
+    ): ChatCall<CompletableResponse>
 
     //endregion
 

@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.core.poc.R
+import io.getstream.chat.android.core.poc.app.App
 import io.getstream.chat.android.core.poc.library.ChatClientBuilder
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
@@ -33,6 +34,7 @@ class SocketTestActivity : AppCompatActivity() {
             .cdnTimeout(10000)
             .build()
         val apiKey = "qk4nn7rpcn75"
+
         val client = ChatClientBuilder(apiKey, apiOptions).build()
 
         btnConnect.setOnClickListener {
