@@ -78,13 +78,14 @@ dependencies {
 
 
 ## Sync / Async
-All methods of the library return `Call` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
+All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
-interface Call<T> {
+interface ChatCall<T> {
     fun execute(): Result<T>
     fun enqueue(callback: (Result<T>) -> Unit)
     fun cancel()
+    fun <K> map(mapper: (T) -> K): ChatCall<K>
 }
 ```
 ```
