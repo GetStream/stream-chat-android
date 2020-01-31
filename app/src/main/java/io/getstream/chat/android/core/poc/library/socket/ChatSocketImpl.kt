@@ -4,12 +4,14 @@ import io.getstream.chat.android.core.poc.library.CachedTokenProvider
 import io.getstream.chat.android.core.poc.library.TokenProvider
 import io.getstream.chat.android.core.poc.library.User
 import io.getstream.chat.android.core.poc.library.gson.JsonParser
+import io.getstream.chat.android.core.poc.library.logger.StreamLogger
 
 class ChatSocketImpl(
     val apiKey: String,
     val wssUrl: String,
     val cachedTokenProvider: CachedTokenProvider,
-    val jsonParser: JsonParser
+    val jsonParser: JsonParser,
+    logger: StreamLogger?
 ) : ChatSocket {
 
     private val service = ChatSocketService(jsonParser)
