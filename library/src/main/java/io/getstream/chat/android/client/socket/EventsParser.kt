@@ -1,11 +1,13 @@
 package io.getstream.chat.android.client.socket
 
 import android.util.Log
+import io.getstream.chat.android.client.EventType
 import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.TokenExpiredError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.gson.JsonParser
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -73,7 +75,7 @@ class EventsParser(
                 }
 
             } else {
-                service.onEvent(event)
+                service.onEvent(parseEvent(event.type, text))
             }
         } else {
             service.onSocketError(ChatError("Unable to parse message: $text"))
@@ -89,4 +91,14 @@ class EventsParser(
             service.onSocketError(ChatError("listener.onMessage error code: ${error.code} message: ${error.message}"))
         }
     }
+
+    private fun parseEvent(type: String, data: String): ChatEvent {
+        return if (type == EventType.MESSAGE_NEW.label) {
+            jsonParser.fromJson(data, NewMessageEvent::class.java)
+        } else {
+            jsonParser.fromJson(data, ChatEvent::class.java)
+        }
+    }
+
+    private data class EventWithType(val type: String)
 }
