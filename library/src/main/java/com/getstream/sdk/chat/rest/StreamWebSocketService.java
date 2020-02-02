@@ -107,8 +107,8 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
                 StreamChat.getLogger().logI(this, "connection is shutting down, quit monitor");
                 return;
             }
-            StreamChat.getLogger().logI(this, "check connection health");
-            long millisNow = new Date().getTime();
+            //StreamChat.getLogger().logI(this, "check connection health");
+            long millisNow = System.currentTimeMillis();
             int monitorInterval = 1000;
             if (getLastEvent() != null) {
                 if (millisNow - getLastEvent().getTime() > (healthCheckInterval + 10 * 1000)) {
