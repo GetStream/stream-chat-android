@@ -117,7 +117,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
                     reconnect(true);
                 }
             }
-            eventThread.mHandler.postDelayed(mHealthCheck, monitorInterval);
+            eventThread.mHandler.postDelayed(mMonitor, monitorInterval);
         }
     };
 
