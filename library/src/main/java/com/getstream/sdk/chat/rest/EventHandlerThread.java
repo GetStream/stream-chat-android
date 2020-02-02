@@ -12,7 +12,6 @@ class EventHandlerThread extends Thread {
 
     @Override
     public void run() {
-        super.run();
         Looper.prepare();
         mHandler = new EventHandler(webSocketService);
         Looper.loop();
