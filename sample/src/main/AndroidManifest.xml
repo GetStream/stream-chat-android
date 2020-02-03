@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.getstream.chat.android.client.sample">
+
+    <application android:name=".App">
+        <activity android:name=".common.HomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".common.ChannelsListActivity" />
+        <activity android:name=".common.SocketTestActivity" />
+        <activity android:name=".common.TestChannelsApiMethodsActivity" />
+        <activity android:name=".common.TestUsersApiMethodsActivity" />
+    </application>
+
+</manifest>

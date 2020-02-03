@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client
 
-import androidx.room.Embedded
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.rest.ChannelWatchRequest
@@ -29,7 +28,6 @@ class Channel {
 
     var lastStartTypingEvent: Date = UndefinedDate
 
-    @Embedded(prefix = "state_")
     var lastState: ChannelState? = null
 
     @SerializedName("created_at")
@@ -56,7 +54,6 @@ class Channel {
 
     @SerializedName("config")
 
-    @Embedded(prefix = "config_")
     val config: Config? = null
 
     var extraData = mutableMapOf<String, Any>()
