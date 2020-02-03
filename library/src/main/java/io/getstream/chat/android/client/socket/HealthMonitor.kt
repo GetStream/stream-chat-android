@@ -8,7 +8,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class HealthMonitor(val socket: ChatSocketService) {
+class HealthMonitor(val socket: ChatSocketServiceImpl) {
 
     private val delayHandler = Handler()
     private val healthCheckInterval = 30 * 1000L
@@ -20,14 +20,14 @@ class HealthMonitor(val socket: ChatSocketService) {
     }
 
     private val healthCheck: Runnable = Runnable {
-        if (socket.state is ChatSocketService.State.Connected) {
+        if (socket.state is ChatSocketServiceImpl.State.Connected) {
             socket.sendEvent(LocalEvent(EventType.HEALTH_CHECK))
             delayHandler.postDelayed(monitor, 1000)
         }
     }
 
     private val monitor = Runnable {
-        if (socket.state is ChatSocketService.State.Connected) {
+        if (socket.state is ChatSocketServiceImpl.State.Connected) {
             val millisNow = Date().time
             val monitorInterval = 1000L
 

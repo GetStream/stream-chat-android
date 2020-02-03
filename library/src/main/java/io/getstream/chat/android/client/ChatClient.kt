@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
-import io.getstream.chat.android.client.socket.ChatObservable
+import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.socket.SocketListener
 
 interface ChatClient {

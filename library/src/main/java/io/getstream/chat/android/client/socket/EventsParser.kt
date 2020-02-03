@@ -13,7 +13,7 @@ import java.util.*
 
 
 class EventsParser(
-    val service: ChatSocketService,
+    val service: ChatSocketServiceImpl,
     val jsonParser: JsonParser
 ) : okhttp3.WebSocketListener() {
 

@@ -1,41 +1,28 @@
 package io.getstream.chat.android.client.poc
 
-import io.getstream.chat.android.client.*
-import io.getstream.chat.android.client.gson.JsonParserImpl
-import io.getstream.chat.android.client.poc.utils.*
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.CompletableResponse
+import io.getstream.chat.android.client.Device
+import io.getstream.chat.android.client.MockClientBuilder
+import io.getstream.chat.android.client.poc.utils.RetroError
+import io.getstream.chat.android.client.poc.utils.RetroSuccess
+import io.getstream.chat.android.client.poc.utils.verifyError
+import io.getstream.chat.android.client.poc.utils.verifySuccess
 import io.getstream.chat.android.client.rest.AddDeviceRequest
 import io.getstream.chat.android.client.rest.GetDevicesResponse
-import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ConnectionData
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
 class DevicesApiCallsTests {
 
-    val user = User("test-id")
-    val connection = ConnectionData("connection-id", user)
-    val tokenProvider = SuccessTokenProvider()
-
-    val apiKey = "api-key"
-    val serverErrorCode = 500
-
-    lateinit var api: ChatApi
-    lateinit var anonymousApi: ChatApi
-    lateinit var socket: ChatSocket
+    lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient
-    lateinit var retrofitApi: RetrofitApi
 
     @Before
     fun before() {
-        val config = ChatClientBuilder.ChatConfig()
-        api = Mockito.mock(ChatApi::class.java)
-        anonymousApi = Mockito.mock(ChatApi::class.java)
-        socket = Mockito.mock(ChatSocket::class.java)
-        retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        client = ChatClientImpl(ChatApiImpl(apiKey, retrofitApi, JsonParserImpl(), null), socket, config)
-
-        client.setUser(user, tokenProvider)
+        mock = MockClientBuilder()
+        client = mock.build()
     }
 
     @Test
@@ -44,10 +31,10 @@ class DevicesApiCallsTests {
         val device = Device("device-id")
 
         Mockito.`when`(
-            retrofitApi.getDevices(
-                apiKey,
-                user.id,
-                connection.connectionId
+            mock.retrofitApi.getDevices(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId
             )
         ).thenReturn(RetroSuccess(GetDevicesResponse(listOf(device))))
 
@@ -60,29 +47,29 @@ class DevicesApiCallsTests {
     fun getDevicesError() {
 
         Mockito.`when`(
-            retrofitApi.getDevices(
-                apiKey,
-                user.id,
-                connection.connectionId
+            mock.retrofitApi.getDevices(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId
             )
-        ).thenReturn(RetroError(serverErrorCode))
+        ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result = client.getDevices().execute()
 
-        verifyError(result, serverErrorCode)
+        verifyError(result, mock.serverErrorCode)
     }
 
     @Test
     fun addDevicesSuccess() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, user.id)
+        val request = AddDeviceRequest(device.id, mock.user.id)
 
         Mockito.`when`(
-            retrofitApi.addDevices(
-                apiKey,
-                user.id,
-                connection.connectionId,
+            mock.retrofitApi.addDevices(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 request
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
@@ -96,20 +83,20 @@ class DevicesApiCallsTests {
     fun addDevicesError() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, user.id)
+        val request = AddDeviceRequest(device.id, mock.userId)
 
         Mockito.`when`(
-            retrofitApi.addDevices(
-                apiKey,
-                user.id,
-                connection.connectionId,
+            mock.retrofitApi.addDevices(
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 request
             )
-        ).thenReturn(RetroError(serverErrorCode))
+        ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result = client.addDevice(request).execute()
 
-        verifyError(result, serverErrorCode)
+        verifyError(result, mock.serverErrorCode)
     }
 
     @Test
@@ -118,11 +105,11 @@ class DevicesApiCallsTests {
         val device = Device("device-id")
 
         Mockito.`when`(
-            retrofitApi.deleteDevice(
+            mock.retrofitApi.deleteDevice(
                 device.id,
-                apiKey,
-                user.id,
-                connection.connectionId
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
 
@@ -137,16 +124,16 @@ class DevicesApiCallsTests {
         val device = Device("device-id")
 
         Mockito.`when`(
-            retrofitApi.deleteDevice(
+            mock.retrofitApi.deleteDevice(
                 device.id,
-                apiKey,
-                user.id,
-                connection.connectionId
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId
             )
-        ).thenReturn(RetroError(serverErrorCode))
+        ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result = client.deleteDevice(device.id).execute()
 
-        verifyError(result, serverErrorCode)
+        verifyError(result, mock.serverErrorCode)
     }
 }
