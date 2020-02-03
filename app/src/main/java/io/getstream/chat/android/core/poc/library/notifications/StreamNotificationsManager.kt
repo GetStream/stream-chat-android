@@ -46,11 +46,19 @@ class StreamNotificationsManager constructor(
     }
 
     override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage, context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val payload: Map<String, String> = remoteMessage.getData()
+        Log.d(
+            TAG,
+            "onLoadMessageFail: " + remoteMessage.toString().toString() + " data: " + payload
+        )
+
+        handleRemoteMessage(context, remoteMessage)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent, context: Context) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.d(TAG, "onReceiveWebSocketEvent: $event")
+
+        handleEvent(context, event)
     }
 
     override fun handleRemoteMessage(context: Context?, remoteMessage: RemoteMessage?) {
@@ -58,6 +66,16 @@ class StreamNotificationsManager constructor(
     }
 
     override fun handleEvent(context: Context?, event: ChatEvent?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (event.getType() === EventType.MESSAGE_NEW) {
+            val messageId: String = event.getMessage().getId()
+            if (checkSentNotificationWithId(messageId)) {
+                val notificationModel =
+                    StreamNotification(System.currentTimeMillis() as Int, null, event)
+                notificationsMap.put(messageId, notificationModel)
+                loadMessage(context, messageId)
+            } else {
+                Log.i(TAG, "Notification with id:$messageId already showed")
+            }
+        }
     }
 }
