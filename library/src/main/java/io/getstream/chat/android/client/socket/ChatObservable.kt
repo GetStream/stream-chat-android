@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.events.*
 class ChatObservable(private val service: ChatSocketService) {
 
     private val subscriptions = mutableListOf<Subscription>()
-    private var wsListener: SocketListener = EventsMapper(this)
+    private var listener: SocketListener = EventsMapper(this)
     private var subscirbed = false
 
     fun onNext(event: ChatEvent) {
@@ -20,7 +20,7 @@ class ChatObservable(private val service: ChatSocketService) {
 
         if (!subscirbed) {
             subscirbed = true
-            service.addSocketListener(wsListener)
+            service.addListener(this.listener)
         }
 
         return result
@@ -30,7 +30,7 @@ class ChatObservable(private val service: ChatSocketService) {
         subscriptions.remove(subscription)
 
         if (subscriptions.isEmpty()) {
-            service.removeSocketListener(wsListener)
+            service.removeListener(listener)
         }
     }
 

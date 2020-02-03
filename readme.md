@@ -18,7 +18,7 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 ## Setup
 ```groovy
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android-client:<latest-version>'
+    implementation 'com.github.getstream:stream-chat-android-client:0.9.6'
 }
 ```
 
@@ -30,16 +30,19 @@ dependencies {
 		.apiKey("api-key")
 		.build()
 	```
+	
+2. Subscribe on events
+
+    ```kotlin
+    client.events().subscribe {
+       if(it is ConnectedEvent) getChannels()
+    }
+    ```
 
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("id"), "token", { result ->
-	  if(result.isSuccess())
-	    getChannels()
-	  else
-	    showError(result.error())
-	}
+	client.setUser(ChatUser("id"), "api-token")
 	```
 
 3. Get channels
@@ -75,13 +78,14 @@ dependencies {
 
 
 ## Sync / Async
-All methods of the library return `Call` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
+All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
-interface Call<T> {
+interface ChatCall<T> {
     fun execute(): Result<T>
     fun enqueue(callback: (Result<T>) -> Unit)
     fun cancel()
+    fun <K> map(mapper: (T) -> K): ChatCall<K>
 }
 ```
 ```

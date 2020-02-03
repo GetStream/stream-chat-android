@@ -5,8 +5,11 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatObservable
+import io.getstream.chat.android.client.socket.SocketListener
 
 interface ChatClient {
+
+    fun setUser(user: User, token:String)
 
     fun setUser(user: User, provider: TokenProvider)
 
@@ -17,6 +20,10 @@ interface ChatClient {
     fun disconnect()
 
     //region Events
+
+    fun addSocketListener(listener: SocketListener)
+
+    fun removeSocketListener(listener: SocketListener)
 
     fun events(): ChatObservable
 

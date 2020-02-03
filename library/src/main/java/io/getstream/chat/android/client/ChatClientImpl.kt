@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatObservable
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 
 
 internal class ChatClientImpl constructor(
@@ -40,12 +42,25 @@ internal class ChatClientImpl constructor(
         socket.connectAnonymously()
     }
 
+    override fun setUser(user: User, token: String) {
+        config.isAnonimous = false
+        socket.connect(user, ImmediateTokenProvider(token))
+    }
+
     override fun setGuestUser(user: User): ChatCall<TokenResponse> {
         config.isAnonimous = true
         return api.setGuestUser(user.id, user.name)
     }
 
     //endregion
+
+    override fun addSocketListener(listener: SocketListener) {
+        socket.addListener(listener)
+    }
+
+    override fun removeSocketListener(listener: SocketListener) {
+        socket.removeListener(listener)
+    }
 
     override fun events(): ChatObservable {
         return socket.events()

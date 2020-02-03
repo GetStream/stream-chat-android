@@ -7,5 +7,7 @@ interface ChatSocket {
     fun connectAnonymously()
     fun connect(user: User, tokenProvider: TokenProvider)
     fun events(): ChatObservable
+    fun addListener(listener: SocketListener)
+    fun removeListener(listener: SocketListener)
     fun disconnect()
 }

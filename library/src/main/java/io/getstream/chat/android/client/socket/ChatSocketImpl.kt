@@ -39,6 +39,14 @@ class ChatSocketImpl(
         service.disconnect()
     }
 
+    override fun addListener(listener: SocketListener) {
+        service.addListener(listener)
+    }
+
+    override fun removeListener(listener: SocketListener) {
+        service.removeListener(listener)
+    }
+
     private fun connect(user: User?, userToken: String?) {
         service.connect(wssUrl, apiKey, user, userToken)
     }

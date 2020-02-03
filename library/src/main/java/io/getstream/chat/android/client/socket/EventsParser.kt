@@ -1,11 +1,11 @@
 package io.getstream.chat.android.client.socket
 
 import android.util.Log
+import io.getstream.chat.android.client.EventType
 import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.TokenExpiredError
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.gson.JsonParser
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -73,7 +73,7 @@ class EventsParser(
                 }
 
             } else {
-                service.onEvent(event)
+                service.onEvent(parseEvent(event.type, text))
             }
         } else {
             service.onSocketError(ChatError("Unable to parse message: $text"))
@@ -87,6 +87,29 @@ class EventsParser(
             service.onSocketError(TokenExpiredError())
         } else {
             service.onSocketError(ChatError("listener.onMessage error code: ${error.code} message: ${error.message}"))
+        }
+    }
+
+    private fun parseEvent(type: String, data: String): ChatEvent {
+        return when (type) {
+            EventType.MESSAGE_NEW.label -> {
+                jsonParser.fromJson(data, NewMessageEvent::class.java)
+            }
+            EventType.TYPING_START.label -> {
+                jsonParser.fromJson(data, TypingStartEvent::class.java)
+            }
+            EventType.TYPING_STOP.label -> {
+                jsonParser.fromJson(data, TypingStopEvent::class.java)
+            }
+            EventType.MESSAGE_DELETED.label -> {
+                jsonParser.fromJson(data, MessageDeletedEvent::class.java)
+            }
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL.label -> {
+                jsonParser.fromJson(data, AddedToChannelEvent::class.java)
+            }
+            else -> {
+                jsonParser.fromJson(data, ChatEvent::class.java)
+            }
         }
     }
 }
