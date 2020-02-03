@@ -1,8 +1,8 @@
-package io.getstream.chat.android.core.poc.library.models
+package io.getstream.chat.android.client.models
 
 import android.app.PendingIntent
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.core.poc.library.events.ChatEvent
+import io.getstream.chat.android.client.events.ChatEvent
 
 class StreamNotification constructor(
     val notificationId: Int = 0,

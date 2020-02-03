@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import io.getstream.chat.android.client.notifications.options.NotificationIntentProvider
 
 interface NotificationOptions {
 

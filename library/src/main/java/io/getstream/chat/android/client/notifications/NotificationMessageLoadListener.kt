@@ -1,6 +1,6 @@
-package io.getstream.chat.android.core.poc.library.notifications
+package io.getstream.chat.android.client.notifications
 
-import io.getstream.chat.android.core.poc.library.Message
+import io.getstream.chat.android.client.Message
 
 interface NotificationMessageLoadListener {
 

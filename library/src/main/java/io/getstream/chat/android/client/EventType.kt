@@ -39,6 +39,7 @@ enum class EventType(val label: String) {
     NOTIFICATION_ADDED_TO_CHANNEL("notification.added_to_channel"),
     NOTIFICATION_REMOVED_FROM_CHANNEL("notification.removed_from_channel"),
     NOTIFICATION_MUTES_UPDATED("notification.mutes_updated"),
+
     /**
      * Local
      */

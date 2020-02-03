@@ -57,7 +57,7 @@ class Channel {
     @SerializedName("config")
 
     @Embedded(prefix = "config_")
-    val config: Config? = null
+    var config: Config? = null
 
     var extraData = mutableMapOf<String, Any>()
 

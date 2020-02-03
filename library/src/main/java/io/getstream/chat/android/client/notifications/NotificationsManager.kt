@@ -1,8 +1,8 @@
-package io.getstream.chat.android.core.poc.library.notifications
+package io.getstream.chat.android.client.notifications
 
 import android.content.Context
-import io.getstream.chat.android.core.poc.library.events.ChatEvent
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.events.ChatEvent
 
 interface NotificationsManager {
     fun setFirebaseToken(
@@ -24,5 +24,5 @@ interface NotificationsManager {
 
     fun handleEvent(context: Context?, event: ChatEvent?)
 
-    //fun setFailMessageListener(failMessageListener: NotificationMessageLoadListener)
+    fun setFailMessageListener(failMessageListener: NotificationMessageLoadListener)
 }
