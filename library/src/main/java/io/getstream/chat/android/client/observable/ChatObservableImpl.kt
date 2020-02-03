@@ -1,12 +1,19 @@
-package io.getstream.chat.android.client.socket
+package io.getstream.chat.android.client.observable
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.socket.ChatSocketService
+import io.getstream.chat.android.client.socket.ChatSocketServiceImpl
+import io.getstream.chat.android.client.socket.SocketListener
 
-class ChatObservable(private val service: ChatSocketService) {
+class ChatObservableImpl(private val service: ChatSocketService) :
+    ChatObservable {
 
     private val subscriptions = mutableListOf<Subscription>()
-    private var listener: SocketListener = EventsMapper(this)
+    private var listener: SocketListener =
+        EventsMapper(
+            this
+        )
     private var subscirbed = false
 
     fun onNext(event: ChatEvent) {
@@ -14,8 +21,12 @@ class ChatObservable(private val service: ChatSocketService) {
         subscriptions.forEach { it.onNext(event) }
     }
 
-    fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
-        val result = Subscription(this, listener)
+    override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
+        val result =
+            Subscription(
+                this,
+                listener
+            )
         subscriptions.add(result)
 
         if (!subscirbed) {
@@ -26,7 +37,7 @@ class ChatObservable(private val service: ChatSocketService) {
         return result
     }
 
-    fun unsubscribe(subscription: Subscription) {
+    override fun unsubscribe(subscription: Subscription) {
         subscriptions.remove(subscription)
 
         if (subscriptions.isEmpty()) {
@@ -34,22 +45,7 @@ class ChatObservable(private val service: ChatSocketService) {
         }
     }
 
-    class Subscription(
-        private val observable: ChatObservable,
-        private var listener: ((ChatEvent) -> Unit)?
-    ) {
-
-        fun unsubscribe() {
-            listener = null
-            observable.unsubscribe(this)
-        }
-
-        fun onNext(event: ChatEvent) {
-            listener?.invoke(event)
-        }
-    }
-
-    private class EventsMapper(val observable: ChatObservable) : SocketListener() {
+    private class EventsMapper(val observable: ChatObservableImpl) : SocketListener() {
 
         override fun onConnecting() {
             observable.onNext(ConnectingEvent())

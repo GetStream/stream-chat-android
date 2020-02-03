@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.TokenProvider
 import io.getstream.chat.android.client.User
 import io.getstream.chat.android.client.gson.JsonParser
 import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.observable.ChatObservableImpl
 
 class ChatSocketImpl(
     val apiKey: String,
@@ -14,7 +15,7 @@ class ChatSocketImpl(
     logger: StreamLogger?
 ) : ChatSocket {
 
-    private val service = ChatSocketService(jsonParser)
+    private val service = ChatSocketServiceImpl(jsonParser)
 
     override fun connectAnonymously() {
         connect(null, null)
@@ -31,8 +32,10 @@ class ChatSocketImpl(
         })
     }
 
-    override fun events(): ChatObservable {
-        return ChatObservable(service)
+    override fun events(): ChatObservableImpl {
+        return ChatObservableImpl(
+            service
+        )
     }
 
     override fun disconnect() {

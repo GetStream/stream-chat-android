@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.*
 class ConnectedEvent : RemoteEvent() {
 
     val cid: String = ""
-    val user: User? = null
+    lateinit var user: User
     lateinit var me: User
     val member: Member? = null
     var message: Message? = null

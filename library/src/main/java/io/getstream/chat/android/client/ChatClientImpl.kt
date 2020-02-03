@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
-import io.getstream.chat.android.client.socket.ChatObservable
+import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
@@ -21,7 +21,8 @@ internal class ChatClientImpl constructor(
     private val state = ClientState()
 
     init {
-        socket.events().subscribe {
+        val events = socket.events()
+        events.subscribe {
             if (it is ConnectedEvent) {
                 state.user = it.me
                 state.connectionId = it.connectionId
