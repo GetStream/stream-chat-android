@@ -12,9 +12,11 @@ import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
 import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.Event;
+import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.StreamChatNavigator;
 import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
+import com.getstream.sdk.chat.notifications.NotificationsManager;
+import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
@@ -31,8 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class StreamChat {
-    private static final String TAG = StreamChat.class.getSimpleName();
-
     private static Client INSTANCE;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
@@ -46,6 +46,7 @@ public class StreamChat {
     private static boolean userWasInitialized;
     private static Context context;
     private static StringsProvider stringsProvider;
+    private static NotificationsManager notificationsManager;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
     private static StreamLogger logger;
@@ -88,7 +89,7 @@ public class StreamChat {
         }
     }
 
-    public static boolean isConnected(){
+    public static boolean isConnected() {
         return INSTANCE != null && INSTANCE.isConnected();
     }
 
@@ -204,6 +205,10 @@ public class StreamChat {
                         currentUser.postValue(state.getCurrentUser());
                     }
                 }
+
+                if (lifecycleStopped) {
+                    notificationsManager.onReceiveWebSocketEvent(event, context);
+                }
             }
         });
     }
@@ -234,6 +239,14 @@ public class StreamChat {
         chatStyle = style;
     }
 
+    public static void setNotificationsManager(@NotNull NotificationsManager notificationsManager) {
+        StreamChat.notificationsManager = notificationsManager;
+    }
+
+    public static NotificationsManager getNotificationsManager() {
+        return notificationsManager;
+    }
+
     @NotNull
     public static StreamChatStyle getChatStyle() {
         return chatStyle;
@@ -244,20 +257,36 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static StreamLogger getLogger() { return  logger; }
+    public static StreamLogger getLogger() {
+        return logger;
+    }
 
     public static synchronized boolean init(@NonNull Config config) {
         ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
         StreamLogger logger = config.getLogger() != null ? config.getLogger() : new StreamChatSilentLogger();
+        NotificationsManager notificationsManager = config.getNotificationsManager() != null ? config.getNotificationsManager() : new StreamNotificationsManager();
         navigator.setHandler(config.getNavigationHandler());
-        return init(config.getApiKey(), options, context, logger);
+        return init(config.getApiKey(), options, context, logger, notificationsManager);
     }
 
     public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger());
+        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger(), new StreamNotificationsManager());
     }
 
-    public static synchronized boolean init(String apiKey, ApiClientOptions apiClientOptions, @NonNull Context context, StreamLogger logger) {
+    public static synchronized boolean init(String apiKey,
+                                            ApiClientOptions apiClientOptions,
+                                            @NonNull Context context) {
+        return init(apiKey, apiClientOptions, context, new StreamChatSilentLogger(), new StreamNotificationsManager());
+    }
+
+    public static synchronized boolean init(String apiKey,
+                                            ApiClientOptions apiClientOptions,
+                                            @NonNull Context context,
+                                            StreamLogger logger,
+                                            @NonNull NotificationsManager notificationsManager) {
+        StreamChat.context = context;
+        StreamChat.notificationsManager = notificationsManager;
+
         if (INSTANCE != null) {
             return true;
         }
@@ -276,19 +305,21 @@ public class StreamChat {
         }
     }
 
+
     public static class Config {
 
         private String apiKey;
         private ApiClientOptions apiClientOptions;
         private StreamLogger logger;
         private ChatNavigationHandler navigationHandler;
+        private NotificationsManager notificationsManager;
 
         public Config(@NonNull Context context, @NonNull String apiKey) {
             StreamChat.context = context;
             this.apiKey = apiKey;
         }
 
-        public void navigationHandler(ChatNavigationHandler navigationHandler){
+        public void navigationHandler(ChatNavigationHandler navigationHandler) {
             this.navigationHandler = navigationHandler;
         }
 
@@ -312,10 +343,20 @@ public class StreamChat {
 
         /**
          * Set custom logger.
+         *
          * @param logger - {@link StreamLogger}
          */
         public void setLogger(StreamLogger logger) {
             this.logger = logger;
+        }
+
+        /**
+         * Set custom notification manager.
+         *
+         * @param notificationsManager - {@link NotificationsManager}
+         */
+        public void setNotificationsManager(NotificationsManager notificationsManager) {
+            this.notificationsManager = notificationsManager;
         }
 
         private String getApiKey() {
@@ -330,8 +371,12 @@ public class StreamChat {
             return logger;
         }
 
-        private ChatNavigationHandler getNavigationHandler(){
+        private ChatNavigationHandler getNavigationHandler() {
             return navigationHandler;
+        }
+
+        private NotificationsManager getNotificationsManager() {
+            return notificationsManager;
         }
     }
 }

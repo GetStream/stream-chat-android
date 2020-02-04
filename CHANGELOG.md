@@ -2,6 +2,13 @@
 
 - Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
 
+## January 28th, 2020 - 3.6.3
+
+- ViewModel & ViewHolder classes now use protected instead of private variables to allow customization via subclassing
+- ChannelViewHolderFactory is now easier to customize
+- Added ChannelViewHolder.messageInputText for 2 way data binding
+- Documentation improvements
+
 ## January 10th, 2020 - 3.6.2
 
 - Enable multiline edit text
@@ -23,6 +30,7 @@
 - Client support for anonymous and guest users
 - Client support initialization with Configurator
 - Support auto capitalization for keyboard
+- Add `NotificationManager` with customization opportunity
 - Update `UpdateChannelRequest` for reserved fields
 - renamed `MoreActionDialog` to `MessageMoreActionDialog`
 - Add `StreamLoggerHandler` interface for custom logging client data
