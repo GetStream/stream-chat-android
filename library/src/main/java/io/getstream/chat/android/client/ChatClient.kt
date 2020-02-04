@@ -40,6 +40,7 @@ interface ChatClient {
     //region Users
 
     fun getUsers(query: QueryUsers): ChatCall<List<User>>
+
     fun addMembers(
         channelType: String,
         channelId: String,
@@ -59,8 +60,8 @@ interface ChatClient {
         targetId: String,
         channelType: String,
         channelId: String,
-        reason: String? = null,
-        timeout: Int? = null
+        reason: String,
+        timeout: Int
     ): ChatCall<CompletableResponse>
 
     fun unBanUser(

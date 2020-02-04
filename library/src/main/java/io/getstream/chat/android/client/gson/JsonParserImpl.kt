@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder
 import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatHttpError
-import io.getstream.chat.android.client.json.ConverterFactory
+import io.getstream.chat.android.client.json.RequestsBodiesConverter
 import io.getstream.chat.android.client.json.IgnoreDeserialisation
 import io.getstream.chat.android.client.json.IgnoreSerialisation
 import io.getstream.chat.android.client.json.TypeAdapterFactory
@@ -80,7 +80,7 @@ class JsonParserImpl : JsonParser {
 
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
         return builder
-            .addConverterFactory(ConverterFactory(gson))
+            .addConverterFactory(RequestsBodiesConverter(gson))
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 

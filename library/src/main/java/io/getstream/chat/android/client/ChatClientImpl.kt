@@ -285,8 +285,8 @@ internal class ChatClientImpl constructor(
         targetId: String,
         channelType: String,
         channelId: String,
-        reason: String?,
-        timeout: Int?
+        reason: String,
+        timeout: Int
     ): ChatCall<CompletableResponse> = api.banUser(
         targetId, timeout, reason, channelType, channelId
     )

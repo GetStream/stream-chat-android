@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client
 
-import com.google.gson.Gson
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.call.ChatCall
@@ -363,14 +362,13 @@ class ChatApiImpl(
     }
 
     override fun getUsers(
-        queryUser: QueryUsers
+        queryUsers: QueryUsers
     ): ChatCall<QueryUserListResponse> {
-        val payload = Gson().toJson(queryUser)
         return callMapper.map(
             retrofitApi.queryUsers(
-                apiKey = chatConfig.apiKey,
-                connectionId = connectionId,
-                payload = payload
+                chatConfig.apiKey,
+                connectionId,
+                queryUsers
             )
         )
     }
@@ -444,25 +442,26 @@ class ChatApiImpl(
     override fun flag(
         targetId: String
     ): ChatCall<FlagResponse> {
+
         val body: MutableMap<String, String> = HashMap()
         body["target_user_id"] = targetId
 
         return callMapper.map(
             retrofitApi.flag(
-                apiKey = chatConfig.apiKey,
-                connectionId = connectionId,
-                userId = userId,
-                body = body
+                chatConfig.apiKey,
+                userId,
+                connectionId,
+                body
             )
         )
     }
 
     override fun banUser(
         targetId: String,
-        timeout: Int?,
-        reason: String?,
-        channelType: String?,
-        channelId: String?
+        timeout: Int,
+        reason: String,
+        channelType: String,
+        channelId: String
     ): ChatCall<CompletableResponse> {
 
         return callMapper.map(
