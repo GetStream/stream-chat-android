@@ -1,2 +1,2 @@
-include ':library'
-rootProject.name='stream-chat-android-core-poc'
+include ':library', ':sample'
+rootProject.name='stream-chat-android-client'
