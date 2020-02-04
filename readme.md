@@ -73,7 +73,7 @@ dependencies {
 	
 5. Handle events
 
-	```
+	```kotlin
 	// either with listener
 	client.addSocketListener(object: SocketListener() {
 	    //override required methods
