@@ -128,7 +128,7 @@ interface ChatClient {
 
         private lateinit var config: ChatConfig
 
-        fun setLogger(logger: StreamLogger): Builder {
+        fun logger(logger: StreamLogger): Builder {
             this.logger = logger
             return this
         }

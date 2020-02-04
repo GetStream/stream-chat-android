@@ -45,7 +45,7 @@ class App : Application() {
         client = ChatClient.init(
             ChatClient.Builder()
                 .config(config)
-                .setLogger(initLogger())
+                .logger(initLogger())
         )
 
         keyValue = KeyValue(this)

@@ -83,7 +83,11 @@ dependencies {
        if(it is ConnectedEvent) doSomething()
     }
 	```
+6. Keep using instance
 
+    ```kotlin
+    val client = ChatClient.instance()
+    ```
 
 ## Sync / Async
 All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
