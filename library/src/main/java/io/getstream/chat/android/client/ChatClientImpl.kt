@@ -1,21 +1,24 @@
 package io.getstream.chat.android.client
 
 import android.text.TextUtils
+import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
-import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
-import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 
 
 internal class ChatClientImpl constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val config: ChatClientBuilder.ChatConfig
+    private val config: ChatConfig,
+    private val logger: StreamLogger
 ) : ChatClient {
 
     private val state = ClientState()
@@ -27,29 +30,32 @@ internal class ChatClientImpl constructor(
                 state.user = it.me
                 state.connectionId = it.connectionId
                 api.setConnection(it.me.id, it.connectionId)
+            } else if (it is DisconnectedEvent) {
+                state.user = null
+                state.connectionId = null
             }
         }
     }
 
     //region Set user
 
-    override fun setUser(user: User, provider: TokenProvider) {
-        config.isAnonimous = false
-        socket.connect(user, provider)
+    override fun setUser(user: User) {
+        config.isAnonymous = false
+        socket.connect(user)
     }
 
     override fun setAnonymousUser() {
-        config.isAnonimous = true
+        config.isAnonymous = true
         socket.connectAnonymously()
     }
 
     override fun setUser(user: User, token: String) {
-        config.isAnonimous = false
-        socket.connect(user, ImmediateTokenProvider(token))
+        config.isAnonymous = false
+        socket.connect(user)
     }
 
     override fun setGuestUser(user: User): ChatCall<TokenResponse> {
-        config.isAnonimous = true
+        config.isAnonymous = true
         return api.setGuestUser(user.id, user.name)
     }
 

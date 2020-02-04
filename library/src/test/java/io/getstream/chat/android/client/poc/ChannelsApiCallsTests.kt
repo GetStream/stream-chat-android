@@ -3,10 +3,11 @@ package io.getstream.chat.android.client.poc
 import io.getstream.chat.android.client.*
 import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.poc.utils.RetroError
+import io.getstream.chat.android.client.poc.utils.RetroSuccess
+import io.getstream.chat.android.client.poc.utils.verifyError
+import io.getstream.chat.android.client.poc.utils.verifySuccess
 import io.getstream.chat.android.client.rest.*
-import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.poc.utils.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -39,7 +40,8 @@ class ChannelsApiCallsTests {
             )
         ).thenReturn(RetroSuccess(ChannelState().apply { channel = response }))
 
-        val result = client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+        val result =
+            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
 
         verifySuccess(result, response)
     }
@@ -58,7 +60,8 @@ class ChannelsApiCallsTests {
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
-        val result = client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+        val result =
+            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
 
         verifyError(result, mock.serverErrorCode)
     }
@@ -191,7 +194,8 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
 
         val result =
-            client.updateChannel(mock.channelType, mock.channelId, updateMessage, updateChannelData).execute()
+            client.updateChannel(mock.channelType, mock.channelId, updateMessage, updateChannelData)
+                .execute()
 
         verifySuccess(result, responseChannel)
     }
@@ -213,7 +217,8 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.updateChannel(mock.channelType, mock.channelId, updateMessage, updateChannelData).execute()
+            client.updateChannel(mock.channelType, mock.channelId, updateMessage, updateChannelData)
+                .execute()
 
         verifyError(result, mock.serverErrorCode)
     }

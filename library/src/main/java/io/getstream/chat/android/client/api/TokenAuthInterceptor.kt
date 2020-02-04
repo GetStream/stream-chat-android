@@ -1,9 +1,8 @@
 package io.getstream.chat.android.client.api
 
 import android.util.Log
-import io.getstream.chat.android.client.ChatClientBuilder
 import io.getstream.chat.android.client.TokenProvider.TokenProviderListener
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.gson.JsonParser
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -12,8 +11,8 @@ import java.util.concurrent.CountDownLatch
 
 
 class TokenAuthInterceptor internal constructor(
-    private val config: ChatClientBuilder.ChatConfig,
-    private val jsonParser: JsonParserImpl
+    private val config: ChatConfig,
+    private val jsonParser: JsonParser
 ) : Interceptor {
 
     private val TOKEN_EXPIRED_CODE = 40
@@ -22,7 +21,7 @@ class TokenAuthInterceptor internal constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        if (config.isAnonimous) {
+        if (config.isAnonymous) {
             return chain.proceed(chain.request())
         } else {
             val latch = CountDownLatch(if (token == null) 1 else 0)

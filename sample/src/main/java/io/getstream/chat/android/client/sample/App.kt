@@ -3,8 +3,7 @@ package io.getstream.chat.android.client.sample
 import android.app.Application
 import com.facebook.stetho.Stetho
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClientBuilder
-import io.getstream.chat.android.client.api.ApiClientOptions
+import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.logger.StreamChatLogger
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
@@ -27,8 +26,6 @@ class App : Application() {
         lateinit var keyValue: KeyValue
     }
 
-    private lateinit var logger: StreamLogger
-
     override fun onCreate() {
         super.onCreate()
 
@@ -36,18 +33,21 @@ class App : Application() {
 
         db = AppDatabase.getInstance(this)
 
-        val apiKey = "d2q3juekvgsf"
-
-        val apiOptions = ApiClientOptions.Builder()
+        val config = ChatConfig.Builder()
+            .apiKey("qk4nn7rpcn75")
             .baseURL("chat-us-east-staging.stream-io-api.com")
             .cdnUrl("chat-us-east-staging.stream-io-api.com")
-            .timeout(10000)
+            .baseTimeout(10000)
             .cdnTimeout(10000)
+            .token("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             .build()
 
-        setupLogger()
+        client = ChatClient.init(
+            ChatClient.Builder()
+                .config(config)
+                .setLogger(initLogger())
+        )
 
-        client = ChatClientBuilder(apiKey, apiOptions, logger).build()
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
@@ -55,7 +55,7 @@ class App : Application() {
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
     }
 
-    private fun setupLogger() {
+    private fun initLogger(): StreamLogger {
         val loggerHandler: StreamLoggerHandler = object : StreamLoggerHandler {
             override fun logT(throwable: Throwable) {
                 // display throwable logs here
@@ -82,7 +82,7 @@ class App : Application() {
             }
         }
 
-        logger = StreamChatLogger.Builder()
+        return StreamChatLogger.Builder()
             .loggingLevel(if (BuildConfig.DEBUG) StreamLoggerLevel.ALL else StreamLoggerLevel.NOTHING)
             .setLoggingHandler(loggerHandler)
             .build()
