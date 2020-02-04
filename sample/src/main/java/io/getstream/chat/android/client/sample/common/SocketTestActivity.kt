@@ -5,13 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.ChatClientBuilder
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.TokenProvider
 import io.getstream.chat.android.client.User
-import io.getstream.chat.android.client.api.ApiClientOptions
-import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.observable.Subscription
 import io.getstream.chat.android.client.sample.R
 import kotlinx.android.synthetic.main.activity_socket_tests.*
@@ -28,15 +26,7 @@ class SocketTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_socket_tests)
 
-        val apiOptions = ApiClientOptions.Builder()
-            .baseURL("chat-us-east-1.stream-io-api.com")
-            .cdnUrl("chat-us-east-1.stream-io-api.com")
-            .timeout(10000)
-            .cdnTimeout(10000)
-            .build()
-        val apiKey = "qk4nn7rpcn75"
-
-        val client = ChatClientBuilder(apiKey, apiOptions).build()
+        val client = ChatClient.instance()
 
         btnConnect.setOnClickListener {
 
@@ -69,11 +59,7 @@ class SocketTestActivity : AppCompatActivity() {
                 }
             }
 
-            client.setUser(User("bender"), object : TokenProvider {
-                override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                    listener.onSuccess("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
-                }
-            })
+            client.setUser(User("bender"))
         }
 
         btnDisconnect.setOnClickListener {

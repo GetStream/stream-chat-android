@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.ChatClientBuilder
+import io.getstream.chat.android.client.gson.JsonParser
 import io.getstream.chat.android.client.gson.JsonParserImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -14,30 +14,30 @@ object RetrofitClient {
     private val TAG = RetrofitClient::class.java.simpleName
 
     fun buildClient(
-        options: ApiClientOptions,
-        jsonParser: JsonParserImpl,
-        config: ChatClientBuilder.ChatConfig
+        options: ChatConfig,
+        jsonParser: JsonParser,
+        config: ChatConfig
     ): Retrofit {
         return buildClient(
             options.httpURL,
-            options.timeout.toLong(),
-            options.timeout.toLong(),
-            options.timeout.toLong(),
+            options.baseTimeout.toLong(),
+            options.baseTimeout.toLong(),
+            options.baseTimeout.toLong(),
             config,
             jsonParser
         )
     }
 
     fun getAuthorizedCDNClient(
-        config: ChatClientBuilder.ChatConfig,
-        options: ApiClientOptions,
+        config: ChatConfig,
+        options: ChatConfig,
         jsonParser: JsonParserImpl
     ): Retrofit {
         return buildClient(
             options.cdnHttpURL,
-            options.cdntimeout.toLong(),
-            options.cdntimeout.toLong(),
-            options.cdntimeout.toLong(),
+            options.cdnTimeout.toLong(),
+            options.cdnTimeout.toLong(),
+            options.cdnTimeout.toLong(),
             config,
             jsonParser
         )
@@ -48,8 +48,8 @@ object RetrofitClient {
         connectTimeout: Long,
         writeTimeout: Long,
         readTimeout: Long,
-        config:ChatClientBuilder.ChatConfig,
-        jsonParser: JsonParserImpl
+        config: ChatConfig,
+        jsonParser: JsonParser
     ): Retrofit {
 
         val clientBuilder = OkHttpClient.Builder()

@@ -21,11 +21,8 @@ class ChatSocketImpl(
         connect(null, null)
     }
 
-    override fun connect(user: User, tokenProvider: TokenProvider) {
-
-        cachedTokenProvider.setTokenProvider(tokenProvider)
-
-        tokenProvider.getToken(object : TokenProvider.TokenProviderListener {
+    override fun connect(user: User) {
+        cachedTokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
                 connect(user, token)
             }

@@ -7,9 +7,9 @@ import androidx.core.view.children
 import io.getstream.chat.android.client.Message
 import io.getstream.chat.android.client.QueryChannelsRequest
 import io.getstream.chat.android.client.Result
-import io.getstream.chat.android.client.TokenProvider
 import io.getstream.chat.android.client.User
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.observable.Subscription
 import io.getstream.chat.android.client.rest.ChannelWatchRequest
 import io.getstream.chat.android.client.sample.App
@@ -34,16 +34,13 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         chatSub = client.events().subscribe {
 
             if (it is ConnectedEvent) {
-                //echoResult(it, "Connected", "Socket connection error")
                 initButtons()
+            } else if (it is ErrorEvent) {
+                Toast.makeText(this, "Error chat connecting", Toast.LENGTH_SHORT).show()
             }
         }
 
-        client.setUser(User("stream-eugene"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
-            }
-        })
+        client.setUser(User("bender"))
     }
 
     override fun onDestroy() {

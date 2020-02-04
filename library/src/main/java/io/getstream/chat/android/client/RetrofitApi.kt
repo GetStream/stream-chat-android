@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.QueryChannelsResponse
+import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -183,7 +184,7 @@ interface RetrofitApi {
     fun queryUsers(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Query("payload") payload: String
+        @Query("payload") payload: QueryUsers
     ): Call<QueryUserListResponse>
 
     @POST("/channels/{type}/{id}")

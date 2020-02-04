@@ -3,37 +3,26 @@ package io.getstream.chat.android.client.observable
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.socket.ChatSocketService
-import io.getstream.chat.android.client.socket.ChatSocketServiceImpl
 import io.getstream.chat.android.client.socket.SocketListener
 
-class ChatObservableImpl(private val service: ChatSocketService) :
-    ChatObservable {
+class ChatObservableImpl(private val service: ChatSocketService) : ChatObservable {
 
     private val subscriptions = mutableListOf<Subscription>()
-    private var listener: SocketListener =
-        EventsMapper(
-            this
-        )
-    private var subscirbed = false
+    private var eventsMapper: SocketListener = EventsMapper(this)
 
     fun onNext(event: ChatEvent) {
-        //TODO: deliver connection event if it exists
         subscriptions.forEach { it.onNext(event) }
     }
 
     override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
-        val result =
-            Subscription(
-                this,
-                listener
-            )
-        subscriptions.add(result)
+        val result = Subscription(this, listener)
 
-        if (!subscirbed) {
-            subscirbed = true
-            service.addListener(this.listener)
+        if (subscriptions.isEmpty()) {
+            //subscribe to socket events only once
+            service.addListener(eventsMapper)
         }
 
+        subscriptions.add(result)
         return result
     }
 
@@ -41,7 +30,7 @@ class ChatObservableImpl(private val service: ChatSocketService) :
         subscriptions.remove(subscription)
 
         if (subscriptions.isEmpty()) {
-            service.removeListener(listener)
+            service.removeListener(eventsMapper)
         }
     }
 

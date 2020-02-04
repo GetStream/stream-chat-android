@@ -1,9 +1,8 @@
 package io.getstream.chat.android.client.api
 
 import android.util.Log
-import io.getstream.chat.android.client.ChatClientBuilder
 import io.getstream.chat.android.client.TokenProvider.TokenProviderListener
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.gson.JsonParser
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -12,8 +11,8 @@ import java.util.concurrent.CountDownLatch
 
 
 class TokenAuthInterceptor internal constructor(
-    private val config: ChatClientBuilder.ChatConfig,
-    private val jsonParser: JsonParserImpl
+    private val config: ChatConfig,
+    private val jsonParser: JsonParser
 ) : Interceptor {
 
     private val TOKEN_EXPIRED_CODE = 40

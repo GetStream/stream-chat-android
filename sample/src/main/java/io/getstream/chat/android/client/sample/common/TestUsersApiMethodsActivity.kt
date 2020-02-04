@@ -74,11 +74,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             if (it.isSuccess) {
                 val user = it.data().user
                 val token = it.data().access_token
-                client.setUser(user, object : TokenProvider {
-                    override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                        listener.onSuccess(token)
-                    }
-                })
+                client.setUser(user, token)
             }
         }
     }
@@ -95,11 +91,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
         }
 
-        client.setUser(User("stream-eugene"), object : TokenProvider {
-            override fun getToken(listener: TokenProvider.TokenProviderListener) {
-                listener.onSuccess("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I")
-            }
-        })
+        client.setUser(User("stream-eugene"))
     }
 
     private fun getUsers() {

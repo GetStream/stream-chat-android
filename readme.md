@@ -26,9 +26,13 @@ dependencies {
 1. Create instance of client
 
 	```kotlin
-	val client = StreamChatClient.Builder()
-		.apiKey("api-key")
-		.build()
+    val config = ChatConfig.Builder()
+        .apiKey("api-key")
+        .baseURL("chat-us-east-staging.stream-io-api.com")
+        .token("token")
+        .build()
+        
+    val client = ChatClient.init(ChatClient.Builder().setConfig(config))
 	```
 	
 2. Subscribe on events
@@ -36,13 +40,14 @@ dependencies {
     ```kotlin
     client.events().subscribe {
        if(it is ConnectedEvent) getChannels()
+       else if(it is ChatError) handleError(it)
     }
     ```
 
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("id"), "api-token")
+	client.setUser(ChatUser("user-id"))
 	```
 
 3. Get channels
@@ -68,14 +73,21 @@ dependencies {
 	
 5. Handle events
 
-	```
-	client.addEventsListener(StreamChatEventsListener() {
-	    override fun newChannel(event: ChatEvent) {
-	        
-	    }
+	```kotlin
+	// either with listener
+	client.addSocketListener(object: SocketListener() {
+	    //override required methods
 	})
+	// or with observable instance
+    client.events().subscribe {
+       if(it is ConnectedEvent) doSomething()
+    }
 	```
+6. Keep using instance
 
+    ```kotlin
+    val client = ChatClient.instance()
+    ```
 
 ## Sync / Async
 All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:

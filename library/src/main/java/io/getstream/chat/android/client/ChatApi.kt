@@ -93,10 +93,10 @@ interface ChatApi {
 
     fun banUser(
         targetId: String,
-        timeout: Int?,
-        reason: String?,
-        channelType: String?,
-        channelId: String?
+        timeout: Int,
+        reason: String,
+        channelType: String,
+        channelId: String
     ): ChatCall<CompletableResponse>
 
     fun unBanUser(
