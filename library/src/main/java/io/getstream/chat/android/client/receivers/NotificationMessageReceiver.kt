@@ -4,13 +4,9 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import android.view.inputmethod.InputMethodSession
 import androidx.core.app.RemoteInput
-import io.getstream.chat.android.client.Channel
-import io.getstream.chat.android.client.Config
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.safeLet
-import io.getstream.chat.android.client.rest.EventResponse
 
 class NotificationMessageReceiver : BroadcastReceiver() {
 
@@ -22,8 +18,6 @@ class NotificationMessageReceiver : BroadcastReceiver() {
         const val KEY_CHANNEL_TYPE = "type"
         const val KEY_TEXT_REPLY = "text_reply"
     }
-
-    private val TAG = NotificationMessageReceiver::class.java.canonicalName
 
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
@@ -54,16 +48,13 @@ class NotificationMessageReceiver : BroadcastReceiver() {
         )
     }
 
-    /*private fun markAsRead(
+    private fun markAsRead(
         context: Context?,
         id: String?,
         type: String?
     ) {
-        if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
-            Log.e(
-                NotificationMessageReceiver.TAG,
-                "Invalid replyText  parameters: id:$id type:$type"
-            )
+        /*if (id.isNullOrBlank() || type.isNullOrBlank()) {
+            Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
         val channel = Channel(StreamChat.getInstance(context), type, id)
@@ -72,7 +63,7 @@ class NotificationMessageReceiver : BroadcastReceiver() {
         channel.config = config
         channel.markRead(object : InputMethodSession.EventCallback() {
             fun onSuccess(response: EventResponse?) {
-                Log.i(NotificationMessageReceiver.TAG, "Channel marked as read")
+                Log.i(TAG, "Channel marked as read")
             }
 
             fun onError(errMsg: String, errCode: Int) {
@@ -81,16 +72,16 @@ class NotificationMessageReceiver : BroadcastReceiver() {
                     "Cant mark as read. Error: $errMsg Code: $errCode"
                 )
             }
-        })
+        })*/
     }
 
     private fun replyText(
-        context: Context,
+        context: Context?,
         id: String?,
         type: String?,
         messageChars: CharSequence?
     ) {
-        if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
+        /*if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
             Log.e(
                 NotificationMessageReceiver.TAG,
                 "Invalid replyText  parameters: id: $id type: $type"
@@ -121,8 +112,8 @@ class NotificationMessageReceiver : BroadcastReceiver() {
                     "Cant send reply. Error: $errMsg Code: $errCode"
                 )
             }
-        })
-    }*/
+        })*/
+    }
 
     private fun cancelNotification(
         context: Context?,

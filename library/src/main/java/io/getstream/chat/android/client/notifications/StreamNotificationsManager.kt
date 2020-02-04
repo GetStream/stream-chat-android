@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -27,15 +28,13 @@ import io.getstream.chat.android.client.models.StreamNotification
 import io.getstream.chat.android.client.poc.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.client.rest.AddDeviceRequest
-import io.getstream.chat.android.core.poc.library.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.core.poc.library.notifications.options.NotificationOptions
-import org.jetbrains.anko.intentFor
+import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import java.util.*
 
 class StreamNotificationsManager constructor(
     private val notificationOptions: NotificationOptions,
     private val registerListener: DeviceRegisteredListener? = null,
-    val api: ChatApi
+    private val api: ChatApi
 ) : NotificationsManager {
 
     companion object {
@@ -100,15 +99,13 @@ class StreamNotificationsManager constructor(
     override fun handleEvent(context: Context?, event: ChatEvent?) {
         if (event?.getType() == EventType.MESSAGE_NEW) {
 
-            event.message?.id?.let { messageId ->
-                if (checkSentNotificationWithId(messageId)) {
-                    val notificationModel =
-                        StreamNotification(System.currentTimeMillis().toInt(), null, event)
-                    notificationsMap[messageId] = notificationModel
-                    loadMessage(context, messageId)
-                } else {
-                    Log.i(TAG, "Notification with id:$messageId already showed")
-                }
+            if (checkSentNotificationWithId(event.message.id)) {
+                val notificationModel =
+                    StreamNotification(System.currentTimeMillis().toInt(), null, event)
+                notificationsMap[event.message.id] = notificationModel
+                loadMessage(context, event.message.id)
+            } else {
+                Log.i(TAG, "Notification with id:${event.message.id} already showed")
             }
         }
     }
@@ -213,12 +210,13 @@ class StreamNotificationsManager constructor(
         type: String,
         notificationId: Int
     ): PendingIntent? {
-        val notifyIntent = context?.intentFor<NotificationMessageReceiver>(
-            NotificationMessageReceiver.KEY_NOTIFICATION_ID to notificationId,
-            NotificationMessageReceiver.KEY_CHANNEL_ID to id,
-            NotificationMessageReceiver.KEY_CHANNEL_TYPE to type
-        )
-        notifyIntent?.action = NotificationMessageReceiver.ACTION_REPLY
+        val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
+        notifyIntent.apply {
+            putExtra(NotificationMessageReceiver.KEY_NOTIFICATION_ID, notificationId)
+            putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, id)
+            putExtra(NotificationMessageReceiver.KEY_CHANNEL_TYPE, type)
+            action = NotificationMessageReceiver.ACTION_REPLY
+        }
 
         return PendingIntent.getBroadcast(
             context,

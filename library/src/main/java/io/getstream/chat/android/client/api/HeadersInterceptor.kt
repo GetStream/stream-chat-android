@@ -6,7 +6,7 @@ import okhttp3.Response
 
 class HeadersInterceptor(val config: ChatClientBuilder.ChatConfig) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val authType = if (config.isAnonimous) "anonymous" else "jwt"
+        val authType = if (config.isAnonymous) "anonymous" else "jwt"
         val request = chain.request()
             .newBuilder()
             .addHeader("Content-Type", "application/json")

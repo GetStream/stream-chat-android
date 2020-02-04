@@ -36,7 +36,7 @@ class ChatClientBuilder(
     }
 
     class ChatConfig {
-        var isAnonimous: Boolean = false
+        var isAnonymous: Boolean = false
         val tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
     }
 }

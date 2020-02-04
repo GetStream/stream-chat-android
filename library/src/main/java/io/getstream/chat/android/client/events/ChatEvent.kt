@@ -17,7 +17,7 @@ open class ChatEvent {
 
     @SerializedName("message")
     @Expose
-    val message: Message? = null
+    lateinit var message: Message
 
     var receivedAt: Date = Date()
 

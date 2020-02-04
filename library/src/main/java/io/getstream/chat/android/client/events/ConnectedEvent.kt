@@ -1,7 +1,10 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.*
+import io.getstream.chat.android.client.Channel
+import io.getstream.chat.android.client.Member
+import io.getstream.chat.android.client.Reaction
+import io.getstream.chat.android.client.User
 
 class ConnectedEvent : RemoteEvent() {
 
@@ -9,7 +12,6 @@ class ConnectedEvent : RemoteEvent() {
     lateinit var user: User
     lateinit var me: User
     val member: Member? = null
-    var message: Message? = null
     val reaction: Reaction? = null
     val channel: Channel? = null
     var online = false

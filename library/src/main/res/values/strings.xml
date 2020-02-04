@@ -7,4 +7,6 @@
     <string name="stream_default_notification_reply">Reply</string>
     <string name="stream_default_notification_type">Type message</string>
     <string name="stream_default_notification_read">Mark as read</string>
+    <string name="stream_default_notification_channel_id">stream_GetStreamClient</string>
+    <string name="stream_default_notification_channel_name">stream_GetStreamClient</string>
 </resources>

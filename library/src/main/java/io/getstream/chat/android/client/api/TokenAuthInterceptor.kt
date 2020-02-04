@@ -22,7 +22,7 @@ class TokenAuthInterceptor internal constructor(
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        if (config.isAnonimous) {
+        if (config.isAnonymous) {
             return chain.proceed(chain.request())
         } else {
             val latch = CountDownLatch(if (token == null) 1 else 0)

@@ -34,22 +34,22 @@ internal class ChatClientImpl constructor(
     //region Set user
 
     override fun setUser(user: User, provider: TokenProvider) {
-        config.isAnonimous = false
+        config.isAnonymous = false
         socket.connect(user, provider)
     }
 
     override fun setAnonymousUser() {
-        config.isAnonimous = true
+        config.isAnonymous = true
         socket.connectAnonymously()
     }
 
     override fun setUser(user: User, token: String) {
-        config.isAnonimous = false
+        config.isAnonymous = false
         socket.connect(user, ImmediateTokenProvider(token))
     }
 
     override fun setGuestUser(user: User): ChatCall<TokenResponse> {
-        config.isAnonimous = true
+        config.isAnonymous = true
         return api.setGuestUser(user.id, user.name)
     }
 

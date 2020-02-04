@@ -1,4 +1,4 @@
-package io.getstream.chat.android.core.poc.library.notifications.options
+package io.getstream.chat.android.client.notifications.options
 
 import android.app.NotificationChannel
 import android.content.Context
@@ -17,7 +17,7 @@ interface NotificationOptions {
      * @return NotificationChannel
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    fun getNotificationChannel(context: Context?): NotificationChannel?
+    fun getNotificationChannel(context: Context): NotificationChannel?
 
     /**
      * Get channel ID
@@ -25,7 +25,7 @@ interface NotificationOptions {
      * @param context
      * @return channel ID
      */
-    fun getNotificationChannelId(context: Context?): String?
+    fun getNotificationChannelId(context: Context): String?
 
     /**
      * Get channel name
@@ -33,7 +33,7 @@ interface NotificationOptions {
      * @param context - App context
      * @return Channel name
      */
-    fun getNotificationChannelName(context: Context?): String?
+    fun getNotificationChannelName(context: Context): String?
 
     /**
      * Get notification builder object
@@ -41,7 +41,7 @@ interface NotificationOptions {
      * @param context - App context
      * @return NotificationBuilder
      */
-    fun getNotificationBuilder(context: Context?): NotificationCompat.Builder?
+    fun getNotificationBuilder(context: Context): NotificationCompat.Builder?
 
     /**
      * Get intent from launched activity
@@ -49,7 +49,7 @@ interface NotificationOptions {
      * @param context - App context
      * @return Intent with extras
      */
-    fun getDefaultLauncherIntent(context: Context?): Intent?
+    fun getDefaultLauncherIntent(context: Context): Intent?
 
     /**
      * Interface witch pass event from firebase or WebSocket
@@ -91,7 +91,7 @@ interface NotificationOptions {
      *
      * @param notificationChannel - Configured object for notification channel
      */
-    fun setNotificationChannel(notificationChannel: NotificationChannel?)
+    fun setNotificationChannel(notificationChannel: NotificationChannel)
 
     /**
      * Set builder for notifications
