@@ -18,7 +18,7 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 ## Setup
 ```groovy
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android-client:0.9.6'
+    implementation 'com.github.getstream:stream-chat-android-client:0.9.7'
 }
 ```
 
