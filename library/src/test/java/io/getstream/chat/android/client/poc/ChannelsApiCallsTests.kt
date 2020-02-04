@@ -114,7 +114,7 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.connectionId
             )
-        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = response }))
+        ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
 
         val result = client.deleteChannel(mock.channelType, mock.channelId).execute()
@@ -191,7 +191,7 @@ class ChannelsApiCallsTests {
                 mock.connectionId,
                 UpdateChannelRequest(updateChannelData, updateMessage)
             )
-        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
+        ).thenReturn(RetroSuccess(ChannelResponse(responseChannel)))
 
         val result =
             client.updateChannel(mock.channelType, mock.channelId, updateMessage, updateChannelData)
@@ -240,7 +240,7 @@ class ChannelsApiCallsTests {
                     AcceptInviteRequest.AcceptInviteMessage(acceptInviteMessage)
                 )
             )
-        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
+        ).thenReturn(RetroSuccess(ChannelResponse(responseChannel)))
 
         val result =
             client.acceptInvite(mock.channelType, mock.channelId, acceptInviteMessage).execute()
@@ -285,7 +285,7 @@ class ChannelsApiCallsTests {
                 mock.connectionId,
                 RejectInviteRequest()
             )
-        ).thenReturn(RetroSuccess(ChannelResponse().apply { channel = responseChannel }))
+        ).thenReturn(RetroSuccess(ChannelResponse(responseChannel)))
 
         val result =
             client.rejectInvite(mock.channelType, mock.channelId).execute()

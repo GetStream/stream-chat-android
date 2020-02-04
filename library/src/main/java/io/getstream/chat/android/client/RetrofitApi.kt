@@ -210,7 +210,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: MuteUserRequest
     ): Call<MuteUserResponse>
 
     @POST("/moderation/unmute")
@@ -218,7 +218,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
-        @Body body: Map<String, String>
+        @Body body: MuteUserRequest
     ): Call<MuteUserResponse>
 
     @POST("/moderation/flag")

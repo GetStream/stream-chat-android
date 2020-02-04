@@ -408,16 +408,12 @@ class ChatApiImpl(
     override fun muteUser(
         targetId: String
     ): ChatCall<MuteUserResponse> {
-        val body: MutableMap<String, String> = HashMap()
-        body["target_id"] = targetId
-        body["user_id"] = userId
-
         return callMapper.map(
             retrofitApi.muteUser(
-                apiKey = chatConfig.apiKey,
-                connectionId = connectionId,
-                userId = userId,
-                body = body
+                chatConfig.apiKey,
+                userId,
+                connectionId,
+                MuteUserRequest(targetId, userId)
             )
         )
     }
@@ -425,16 +421,13 @@ class ChatApiImpl(
     override fun unMuteUser(
         targetId: String
     ): ChatCall<MuteUserResponse> {
-        val body: MutableMap<String, String> = HashMap()
-        body["target_id"] = targetId
-        body["user_id"] = userId
 
         return callMapper.map(
             retrofitApi.unMuteUser(
-                apiKey = chatConfig.apiKey,
-                connectionId = connectionId,
-                userId = userId,
-                body = body
+                chatConfig.apiKey,
+                userId,
+                connectionId,
+                MuteUserRequest(targetId, userId)
             )
         )
     }

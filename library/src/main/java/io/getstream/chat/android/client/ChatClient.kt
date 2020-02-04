@@ -51,7 +51,7 @@ interface ChatClient {
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): ChatCall<Channel>
 
     fun muteUser(targetId: String): ChatCall<MuteUserResponse>
     fun unMuteUser(targetId: String): ChatCall<MuteUserResponse>

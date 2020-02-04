@@ -1,23 +1,14 @@
 package io.getstream.chat.android.client
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 
-class Mute {
-    @SerializedName("user")
-    
-    var user: User? = null
-
-    @SerializedName("target")
-    
-    var target: User? = null
-
+data class Mute(
+    var user: User,
+    var target: User,
     @SerializedName("created_at")
-    
-    var created_at: String = ""
-
+    var createdAt: Date,
     @SerializedName("updated_at")
-    
-    var updated_at: String = ""
-
-}
+    var updatedAt: Date
+)

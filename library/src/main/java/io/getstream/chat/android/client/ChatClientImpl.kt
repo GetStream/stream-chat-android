@@ -264,10 +264,12 @@ internal class ChatClientImpl constructor(
         channelId: String,
         members: List<String>
     ) = api.removeMembers(
-        channelType = channelType,
-        channelId = channelId,
-        members = members
-    )
+        channelType,
+        channelId,
+        members
+    ).map {
+        it.channel
+    }
 
     override fun muteUser(targetId: String) = api.muteUser(
         targetId = targetId
