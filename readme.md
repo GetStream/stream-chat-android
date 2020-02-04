@@ -74,11 +74,14 @@ dependencies {
 5. Handle events
 
 	```
-	client.addEventsListener(StreamChatEventsListener() {
-	    override fun newChannel(event: ChatEvent) {
-	        
-	    }
+	// either with listener
+	client.addSocketListener(object: SocketListener() {
+	    //override required methods
 	})
+	// or with observable instance
+    client.events().subscribe {
+       if(it is ConnectedEvent) doSomething()
+    }
 	```
 
 
