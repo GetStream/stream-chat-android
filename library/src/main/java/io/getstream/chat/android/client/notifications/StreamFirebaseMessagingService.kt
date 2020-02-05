@@ -1,15 +1,16 @@
-package io.getstream.chat.android.core.poc.library.notifications
+package io.getstream.chat.android.client.notifications
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.ChatClient
 
 class StreamFirebaseMessagingService: FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        //StreamChat.getNotificationsManager().onReceiveFirebaseMessage(remoteMessage, this)
+        ChatClient.instance().onMessageReceived(remoteMessage, this)
     }
 
     override fun onNewToken(token: String) {
-        //StreamChat.getNotificationsManager().setFirebaseToken(token, this)
+        ChatClient.instance().onNewTokenReceived(token, this)
     }
 }

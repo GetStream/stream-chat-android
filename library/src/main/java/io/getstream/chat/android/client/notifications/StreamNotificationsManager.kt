@@ -25,32 +25,36 @@ import io.getstream.chat.android.client.Message
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.safeLet
 import io.getstream.chat.android.client.models.StreamNotification
+import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.poc.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.client.rest.AddDeviceRequest
-import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import java.util.*
 
 class StreamNotificationsManager constructor(
     private val notificationOptions: NotificationOptions,
     private val registerListener: DeviceRegisteredListener? = null,
-    private val api: ChatApi
+    private val client: ChatApi
 ) : NotificationsManager {
 
     companion object {
         const val DEFAULT_REQUEST_CODE = 999
+        const val CHANNEL_TYPE_KEY = "type"
+        const val CHANNEL_ID_KEY = "id"
+
+        private const val FIREBASE_MESSAGE_ID_KEY = "message_id"
     }
 
     private val TAG = StreamNotificationsManager::class.java.simpleName
-    private val FIREBASE_MESSAGE_ID_KEY = "message_id"
 
     private val notificationsMap: HashMap<String, StreamNotification> = HashMap()
     private var failMessageListener: NotificationMessageLoadListener? = null
+    private var deviceRegisteredListener: DeviceRegisteredListener? = null
 
     override fun setFirebaseToken(firebaseToken: String, context: Context) {
         Log.d(TAG, "setFirebaseToken: $firebaseToken")
 
-        api.addDevice(
+        client.addDevice(
             request = AddDeviceRequest(
                 id = firebaseToken
             )
@@ -78,7 +82,7 @@ class StreamNotificationsManager constructor(
         handleEvent(context, event)
     }
 
-    override fun handleRemoteMessage(context: Context?, remoteMessage: RemoteMessage?) {
+    override fun handleRemoteMessage(context: Context, remoteMessage: RemoteMessage?) {
         val messageId = remoteMessage?.data?.get(FIREBASE_MESSAGE_ID_KEY)
 
         if (checkSentNotificationWithId(messageId)) {
@@ -96,7 +100,7 @@ class StreamNotificationsManager constructor(
         }
     }
 
-    override fun handleEvent(context: Context?, event: ChatEvent?) {
+    override fun handleEvent(context: Context, event: ChatEvent?) {
         if (event?.getType() == EventType.MESSAGE_NEW) {
 
             if (checkSentNotificationWithId(event.message.id)) {
@@ -114,14 +118,18 @@ class StreamNotificationsManager constructor(
         this.failMessageListener = failMessageListener
     }
 
+    override fun setDeviceRegisterListener(deviceRegisteredListener: DeviceRegisteredListener) {
+        this.deviceRegisteredListener = deviceRegisteredListener
+    }
+
     private fun checkSentNotificationWithId(messageId: String?) =
         notificationsMap[messageId] == null
 
     private fun loadMessage(
-        context: Context?,
+        context: Context,
         messageId: String
     ) {
-        api.getMessage(messageId).enqueue { result ->
+        client.getMessage(messageId).enqueue { result ->
             if (result.isSuccess) {
                 failMessageListener?.onLoadMessageSuccess(result.data())
                 onMessageLoaded(context, result.data())
@@ -139,31 +147,33 @@ class StreamNotificationsManager constructor(
     ) {
         val type: String = message.channel.type
 
-        val id: String = message.channel.cid
+        val messageId: String = message.id
+        val channelId: String = message.channel.cid
 
         notificationsMap[message.id]?.let { notificationItem ->
             notificationItem.channelName = message.channel.getName()
             notificationItem.messageText = message.text
             notificationItem.pendingIntent = preparePendingIntent(
-                context,
-                id,
-                type,
-                notificationItem.notificationId
+                context = context,
+                messageId = messageId,
+                channelId = channelId,
+                type = type,
+                notificationId = notificationItem.notificationId
             )
             loadUserImage(context, message.id, message.user.image)
         }
     }
 
     private fun showDefaultNotification(
-        context: Context?,
+        context: Context,
         messageId: String
     ) {
         val notificationItem = notificationsMap[messageId]
         if (notificationItem != null && !isForeground()) {
             notificationItem.channelName =
-                context?.getString(R.string.stream_default_notification_title)
+                context.getString(R.string.stream_default_notification_title)
             notificationItem.messageText =
-                context?.getString(R.string.stream_default_notification_message)
+                context.getString(R.string.stream_default_notification_message)
             val notification = prepareNotification(context, messageId, null, true)
             showNotification(notificationItem.notificationId, notification, context)
         }
@@ -172,10 +182,10 @@ class StreamNotificationsManager constructor(
     private fun showNotification(
         notificationId: Int,
         notification: Notification?,
-        context: Context?
+        context: Context
     ) {
         val notificationManager =
-            context?.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         if (!isForeground()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notificationOptions.getNotificationChannel(context)?.let { notificationChannel ->
@@ -206,14 +216,16 @@ class StreamNotificationsManager constructor(
 
     private fun preparePendingIntent(
         context: Context?,
-        id: String,
+        messageId: String,
+        channelId: String,
         type: String,
         notificationId: Int
     ): PendingIntent? {
         val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
         notifyIntent.apply {
             putExtra(NotificationMessageReceiver.KEY_NOTIFICATION_ID, notificationId)
-            putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, id)
+            putExtra(NotificationMessageReceiver.KEY_MESSAGE_ID, messageId)
+            putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, channelId)
             putExtra(NotificationMessageReceiver.KEY_CHANNEL_TYPE, type)
             action = NotificationMessageReceiver.ACTION_REPLY
         }
@@ -276,7 +288,7 @@ class StreamNotificationsManager constructor(
     }
 
     private fun prepareNotification(
-        context: Context?,
+        context: Context,
         messageId: String,
         image: Bitmap?,
         defaultNotification: Boolean
@@ -313,7 +325,7 @@ class StreamNotificationsManager constructor(
     }
 
     private fun getContentIntent(
-        context: Context?,
+        context: Context,
         item: StreamNotification,
         defaultNotification: Boolean
     ): PendingIntent? {

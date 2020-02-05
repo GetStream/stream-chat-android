@@ -1,12 +1,15 @@
 package io.getstream.chat.android.client
 
+import android.content.Context
 import android.text.TextUtils
+import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.notifications.NotificationsManager
 import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
@@ -18,7 +21,8 @@ internal class ChatClientImpl constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val config: ChatConfig,
-    private val logger: StreamLogger
+    private val logger: StreamLogger,
+    private val notificationsManager: NotificationsManager
 ) : ChatClient {
 
     private val state = ClientState()
@@ -302,6 +306,14 @@ internal class ChatClientImpl constructor(
     )
 
     //endregion
+
+    override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
+        notificationsManager.onReceiveFirebaseMessage(remoteMessage, context)
+    }
+
+    override fun onNewTokenReceived(token: String, context: Context) {
+        notificationsManager.setFirebaseToken(token, context)
+    }
 
     private fun attachClient(channels: List<Channel>): List<Channel> {
         channels.forEach { attachClient(it) }
