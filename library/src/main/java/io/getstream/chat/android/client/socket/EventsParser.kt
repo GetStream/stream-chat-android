@@ -2,9 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import android.util.Log
 import io.getstream.chat.android.client.EventType
-import io.getstream.chat.android.client.Result
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.TokenExpiredError
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.gson.JsonParser
 import okhttp3.Response
@@ -28,10 +26,11 @@ class EventsParser(
 
         Log.d(TAG, "onMessage: $text")
 
-        val errorMessage = parser.fromJsonOrError(text, WsErrorMessage::class.java)
+        val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
+        val errorData = errorMessage.data()
 
-        if (errorMessage.isSuccess && errorMessage.data().error != null) {
-            handleErrorEvent(errorMessage)
+        if (errorMessage.isSuccess && errorData.error != null) {
+            handleErrorEvent(errorData.error)
         } else {
             handleEvent(text)
         }
@@ -43,13 +42,13 @@ class EventsParser(
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         // Treat as failure and reconnect, socket shouldn't be closed by server
-        onFailure(webSocket, ChatError("server closed connection"), null)
+        onFailure(webSocket, ChatNetworkError("server closed connection"), null)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         // Called when socket is disconnected by client also (client.disconnect())
         // See issue here https://stream-io.atlassian.net/browse/CAS-88
-        service.onSocketError(ChatError("listener.onFailure error. reconnecting", t))
+        service.onSocketError(ChatNetworkError("listener.onFailure error. reconnecting", t))
     }
 
     private fun handleEvent(text: String) {
@@ -66,7 +65,7 @@ class EventsParser(
                     service.onConnectionResolved(connection.data())
                 } else {
                     service.onSocketError(
-                        ChatError("unable to parse connection event", connection.error())
+                        ChatNetworkError("unable to parse connection event", connection.error())
                     )
                 }
 
@@ -74,18 +73,19 @@ class EventsParser(
                 service.onEvent(parseEvent(event.type, text))
             }
         } else {
-            service.onSocketError(ChatError("Unable to parse message: $text"))
+            service.onSocketError(
+                ChatNetworkError("Unable to parse message: $text")
+            )
         }
     }
 
-    private fun handleErrorEvent(errorMessage: Result<WsErrorMessage>) {
-        val error = errorMessage.data().error!!
-
-        if (error.code == 40) {
-            service.onSocketError(TokenExpiredError())
-        } else {
-            service.onSocketError(ChatError("listener.onMessage error code: ${error.code} message: ${error.message}"))
-        }
+    private fun handleErrorEvent(error: ErrorResponse) {
+        service.onSocketError(
+            ChatNetworkError(
+                "$TAG error. Error code: ${error.code}. Message: ${error.message}",
+                streamCode = error.code
+            )
+        )
     }
 
     private fun parseEvent(type: String, data: String): ChatEvent {

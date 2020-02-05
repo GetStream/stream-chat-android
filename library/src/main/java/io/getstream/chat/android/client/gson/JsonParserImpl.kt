@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatHttpError
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.json.RequestsBodiesConverter
 import io.getstream.chat.android.client.json.IgnoreDeserialisation
 import io.getstream.chat.android.client.json.IgnoreSerialisation
@@ -62,7 +62,7 @@ class JsonParserImpl : JsonParser {
         }
     }
 
-    override fun toError(okHttpResponse: Response): ChatHttpError {
+    override fun toError(okHttpResponse: Response): ChatNetworkError {
 
         var statusCode = -1
 
@@ -72,9 +72,9 @@ class JsonParserImpl : JsonParser {
 
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
             val error = toError(body)
-            ChatHttpError(error.code, statusCode, error.message)
+            ChatNetworkError(error.message, streamCode = error.code, statusCode = statusCode)
         } catch (t: Throwable) {
-            ChatHttpError(okHttpResponse.code, statusCode, t.message.toString(), t)
+            ChatNetworkError(t.message.toString(), t, okHttpResponse.code, statusCode)
         }
     }
 
