@@ -334,11 +334,9 @@ class ChannelState {
                 return
             }
         }
-        val channelUserRead =
-            ChannelUserRead(
-                user,
-                readDate
-            )
+        val channelUserRead = ChannelUserRead()
+        channelUserRead.user = user
+        channelUserRead.lastRead = readDate
         read.add(channelUserRead)
     }
 
