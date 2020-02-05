@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.models.ChannelState
 import io.getstream.chat.android.client.api.QueryChannelsResponse
 import retrofit2.Call
 import retrofit2.http.*
@@ -26,7 +25,7 @@ interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
         @Body request: ChannelQueryRequest
-    ): Call<ChannelState>
+    ): Call<ChannelResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(
@@ -35,7 +34,7 @@ interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
         @Body request: ChannelQueryRequest
-    ): Call<ChannelState>
+    ): Call<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateChannel(

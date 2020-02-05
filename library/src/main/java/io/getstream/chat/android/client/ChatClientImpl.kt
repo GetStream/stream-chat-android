@@ -234,7 +234,6 @@ internal class ChatClientImpl constructor(
         request: QueryChannelsRequest
     ): ChatCall<List<Channel>> {
         return api.queryChannels(request)
-            .map { response -> response.getChannels() }
             .map { attachClient(it) }
     }
 
@@ -250,7 +249,6 @@ internal class ChatClientImpl constructor(
 
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
         return api.updateChannel(channelType, channelId, request)
-            .map { response -> response.channel }
             .map { attachClient(it) }
     }
 
@@ -273,9 +271,7 @@ internal class ChatClientImpl constructor(
     }
 
     override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
-        return api.getUsers(
-            queryUser = query
-        ).map { it.users }
+        return api.getUsers(query).map { it.users }
     }
 
     override fun addMembers(

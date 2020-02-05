@@ -65,7 +65,7 @@ interface ChatApi {
         message: Message
     ): ChatCall<Message>
 
-    fun queryChannels(query: QueryChannelsRequest): ChatCall<QueryChannelsResponse>
+    fun queryChannels(query: QueryChannelsRequest): ChatCall<List<Channel>>
     fun stopWatching(
         channelType: String,
         channelId: String
@@ -81,7 +81,7 @@ interface ChatApi {
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest
-    ): ChatCall<ChannelResponse>
+    ): ChatCall<Channel>
 
     fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit>
     fun showChannel(channelType: String, channelId: String): ChatCall<Unit>
@@ -98,9 +98,7 @@ interface ChatApi {
 
     fun setGuestUser(userId: String, userName: String): ChatCall<TokenResponse>
 
-    fun getUsers(
-        queryUser: QueryUsers
-    ): ChatCall<QueryUserListResponse>
+    fun getUsers(queryUsers: QueryUsers): ChatCall<QueryUserListResponse>
 
     fun addMembers(
         channelType: String,

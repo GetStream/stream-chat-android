@@ -3,7 +3,6 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelState
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -40,7 +39,7 @@ class ChannelsApiCallsTests {
                 mock.connectionId,
                 ChannelQueryRequest()
             )
-        ).thenReturn(RetroSuccess(ChannelState().apply { channel = response }))
+        ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
         val result =
             client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
@@ -403,14 +402,11 @@ class ChannelsApiCallsTests {
         val channel = Channel()
             .apply { id = "10" }
 
-        val channelState = ChannelState()
-        channelState.channel = channel
-        channel.channelState = channelState
-
         val request = QueryChannelsRequest(
             offset,
             limit
         )
+
 
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
@@ -419,7 +415,7 @@ class ChannelsApiCallsTests {
                 mock.connectionId,
                 request
             )
-        ).thenReturn(RetroSuccess(QueryChannelsResponse(listOf(channelState))))
+        ).thenReturn(RetroSuccess(QueryChannelsResponse(listOf(ChannelResponse(channel)))))
 
         val result = client.queryChannels(request).execute()
 
@@ -434,9 +430,6 @@ class ChannelsApiCallsTests {
         val channel = Channel()
             .apply { id = "10" }
 
-        val channelState = ChannelState()
-        channelState.channel = channel
-        channel.channelState = channelState
 
         val request = QueryChannelsRequest(
             offset,
@@ -463,10 +456,6 @@ class ChannelsApiCallsTests {
         val channel = Channel()
             .apply { id = "10" }
 
-        val channelState = ChannelState()
-        channelState.channel = channel
-        channel.channelState = channelState
-
         Mockito.`when`(
             mock.retrofitApi.stopWatching(
                 mock.channelType,
@@ -487,10 +476,6 @@ class ChannelsApiCallsTests {
 
         val channel = Channel()
             .apply { id = "10" }
-
-        val channelState = ChannelState()
-        channelState.channel = channel
-        channel.channelState = channelState
 
         Mockito.`when`(
             mock.retrofitApi.stopWatching(

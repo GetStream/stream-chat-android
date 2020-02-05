@@ -1,11 +1,10 @@
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.ChatCall
-import io.getstream.chat.android.client.parser.JsonParser
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsers
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.parser.JsonParser
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MultipartBody.Part.Companion.createFormData
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -287,7 +286,7 @@ class ChatApiImpl(
     }
 
 
-    override fun queryChannels(query: QueryChannelsRequest): ChatCall<QueryChannelsResponse> {
+    override fun queryChannels(query: QueryChannelsRequest): ChatCall<List<Channel>> {
         return callMapper.map(
             retrofitApi.queryChannels(
                 config.apiKey,
@@ -295,7 +294,9 @@ class ChatApiImpl(
                 connectionId,
                 query
             )
-        )
+        ).map {
+            flattenChannels(it.channels)
+        }
     }
 
     override fun stopWatching(
@@ -330,9 +331,7 @@ class ChatApiImpl(
                     connectionId,
                     query
                 )
-            ).map {
-                it.channel
-            }
+            ).map { flattenChannel(it) }
         } else {
             return callMapper.map(
                 retrofitApi.queryChannel(
@@ -343,9 +342,7 @@ class ChatApiImpl(
                     connectionId,
                     query
                 )
-            ).map {
-                it.channel
-            }
+            ).map { flattenChannel(it) }
         }
     }
 
@@ -353,7 +350,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest
-    ): ChatCall<ChannelResponse> {
+    ): ChatCall<Channel> {
         return callMapper.map(
             retrofitApi.updateChannel(
                 channelType,
@@ -362,7 +359,7 @@ class ChatApiImpl(
                 connectionId,
                 request
             )
-        )
+        ).map { flattenChannel(it) }
     }
 
     override fun markRead(
@@ -434,7 +431,8 @@ class ChatApiImpl(
                 AcceptInviteRequest(
                     User(
                         userId
-                    ), AcceptInviteRequest.AcceptInviteMessage(message))
+                    ), AcceptInviteRequest.AcceptInviteMessage(message)
+                )
             )
         ).map {
             it.channel
@@ -445,7 +443,7 @@ class ChatApiImpl(
         return callMapper.map(
             retrofitApi.deleteChannel(channelType, channelId, config.apiKey, connectionId)
         ).map {
-            it.channel
+            flattenChannel(it)
         }
     }
 
@@ -597,6 +595,20 @@ class ChatApiImpl(
                 channelType = channelType
             )
         )
+    }
+
+    private fun flattenChannels(responses: List<ChannelResponse>): List<Channel> {
+        return responses.map {
+            flattenChannel(it)
+        }
+    }
+
+    private fun flattenChannel(response: ChannelResponse): Channel {
+        response.channel.watcherCount = response.watcher_count
+        response.channel.read = response.read.orEmpty()
+        response.channel.members = response.members.orEmpty()
+        response.channel.messages = response.messages.orEmpty()
+        return response.channel
     }
 
 }
