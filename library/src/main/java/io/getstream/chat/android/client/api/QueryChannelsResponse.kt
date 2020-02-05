@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.api
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.Channel
-import io.getstream.chat.android.client.ChannelState
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelState
 
 
 data class QueryChannelsResponse(

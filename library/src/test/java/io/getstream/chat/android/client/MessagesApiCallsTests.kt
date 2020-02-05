@@ -1,10 +1,12 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
-import io.getstream.chat.android.client.rest.*
+import io.getstream.chat.android.client.api.models.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -25,7 +27,8 @@ class MessagesApiCallsTests {
     fun getMessageSuccess() {
 
         val messageId = "message-id"
-        val message = Message().apply { text = "a-message" }
+        val message = Message()
+            .apply { text = "a-message" }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -67,7 +70,8 @@ class MessagesApiCallsTests {
     fun deleteMessageSuccess() {
 
         val messageId = "message-id"
-        val message = Message().apply { text = "a-message" }
+        val message = Message()
+            .apply { text = "a-message" }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -109,7 +113,8 @@ class MessagesApiCallsTests {
     fun searchMessageSuccess() {
 
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
         val searchRequest = SearchMessagesRequest("search-text", 0, 1)
 
         Mockito.`when`(
@@ -143,7 +148,8 @@ class MessagesApiCallsTests {
     fun sendMessageSuccess() {
 
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -166,7 +172,8 @@ class MessagesApiCallsTests {
     fun sendMessageError() {
 
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -190,7 +197,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
 
         val request = SendActionRequest(mock.channelId, messageId, "type", emptyMap())
 
@@ -237,7 +245,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
         val limit = 10
 
         Mockito.`when`(
@@ -283,7 +292,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
         val limit = 10
         val firstId = "first-id"
 
@@ -333,7 +343,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message().apply { text = messageText }
+        val message = Message()
+            .apply { text = messageText }
         val reactionType = "reactionType"
 
         Mockito.`when`(
@@ -380,7 +391,8 @@ class MessagesApiCallsTests {
         val messageId = "message-id"
         val offset = 0
         val limit = 1
-        val reaction = Reaction(messageId)
+        val reaction =
+            Reaction(messageId)
 
         Mockito.`when`(
             mock.retrofitApi
@@ -427,7 +439,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message(messageId).apply { text = messageText }
+        val message = Message(messageId)
+            .apply { text = messageText }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -451,7 +464,8 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message(messageId).apply { text = messageText }
+        val message = Message(messageId)
+            .apply { text = messageText }
 
         Mockito.`when`(
             mock.retrofitApi

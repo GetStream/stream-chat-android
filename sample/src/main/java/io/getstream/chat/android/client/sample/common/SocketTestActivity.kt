@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.client.sample.R

@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.Result
+import io.getstream.chat.android.client.utils.Result
 
 interface ChatCall<T> {
     fun execute(): Result<T>

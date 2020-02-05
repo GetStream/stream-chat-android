@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.socket
 
 import android.os.Handler
-import io.getstream.chat.android.client.EventType
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.events.LocalEvent
 import java.util.*
 import kotlin.math.floor

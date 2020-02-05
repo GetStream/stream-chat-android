@@ -1,10 +1,13 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.*
+import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -43,7 +46,9 @@ class UsersApiCallsTests {
             timeout
         ).execute()
 
-        verifySuccess(result, CompletableResponse())
+        verifySuccess(result,
+            CompletableResponse()
+        )
     }
 
     @Test
@@ -64,7 +69,9 @@ class UsersApiCallsTests {
             mock.channelId
         ).execute()
 
-        verifySuccess(result, CompletableResponse())
+        verifySuccess(result,
+            CompletableResponse()
+        )
     }
 
     @Test
@@ -111,7 +118,8 @@ class UsersApiCallsTests {
     @Test
     fun removeMembersSuccess() {
 
-        val channel = Channel().apply { id = "a-channel" }
+        val channel = Channel()
+            .apply { id = "a-channel" }
 
         Mockito.`when`(
             mock.retrofitApi.removeMembers(
@@ -129,8 +137,14 @@ class UsersApiCallsTests {
     @Test
     fun muteUserSuccess() {
 
-        val targetUser = User("target-id")
-        val mute = Mute(mock.user, targetUser, Date(1), Date(2))
+        val targetUser =
+            User("target-id")
+        val mute = Mute(
+            mock.user,
+            targetUser,
+            Date(1),
+            Date(2)
+        )
 
         Mockito.`when`(
             mock.retrofitApi.muteUser(
@@ -147,8 +161,14 @@ class UsersApiCallsTests {
     @Test
     fun unMuteUserSuccess() {
 
-        val targetUser = User("target-id")
-        val mute = Mute(mock.user, targetUser, Date(1), Date(2))
+        val targetUser =
+            User("target-id")
+        val mute = Mute(
+            mock.user,
+            targetUser,
+            Date(1),
+            Date(2)
+        )
 
         Mockito.`when`(
             mock.retrofitApi.unMuteUser(

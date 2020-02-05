@@ -1,16 +1,19 @@
 package io.getstream.chat.android.client
 
 import android.text.TextUtils
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.*
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 

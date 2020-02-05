@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.call.ChatCallImpl
 import io.getstream.chat.android.client.errors.ChatError
 

@@ -2,11 +2,11 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Message
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.gson.JsonParser
+import io.getstream.chat.android.client.parser.JsonParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket

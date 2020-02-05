@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import org.assertj.core.api.Assertions
 

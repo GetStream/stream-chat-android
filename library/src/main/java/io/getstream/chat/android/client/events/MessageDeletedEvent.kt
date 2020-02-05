@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.events
 
-import io.getstream.chat.android.client.Message
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 
 class MessageDeletedEvent : RemoteEvent() {
     lateinit var cid: String

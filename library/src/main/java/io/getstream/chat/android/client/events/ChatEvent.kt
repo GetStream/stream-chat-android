@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.EventType
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.utils.UndefinedDate
 import java.util.*
 

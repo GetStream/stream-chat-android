@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.socket
 
-import io.getstream.chat.android.client.CachedTokenProvider
-import io.getstream.chat.android.client.TokenProvider
-import io.getstream.chat.android.client.User
-import io.getstream.chat.android.client.gson.JsonParser
+import io.getstream.chat.android.client.token.CachedTokenProvider
+import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.parser.JsonParser
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 

@@ -1,20 +1,20 @@
 package io.getstream.chat.android.client
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.api.HeadersInterceptor
-import io.getstream.chat.android.client.api.TokenAuthInterceptor
+import io.getstream.chat.android.client.api.*
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.gson.JsonParser
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamChatSilentLogger
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.*
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -154,7 +154,8 @@ interface ChatClient {
 
     class Builder {
 
-        private val parser = JsonParserImpl()
+        private val parser =
+            JsonParserImpl()
         private var logger: StreamLogger = StreamChatSilentLogger()
 
         private lateinit var config: ChatConfig

@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.*
+import io.getstream.chat.android.client.models.*
 
 class ConnectedEvent : RemoteEvent() {
 

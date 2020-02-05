@@ -1,15 +1,13 @@
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.CompletableResponse
-import io.getstream.chat.android.client.Device
-import io.getstream.chat.android.client.MockClientBuilder
+import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyError
 import io.getstream.chat.android.client.utils.verifySuccess
-import io.getstream.chat.android.client.rest.AddDeviceRequest
-import io.getstream.chat.android.client.rest.GetDevicesResponse
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.GetDevicesResponse
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito

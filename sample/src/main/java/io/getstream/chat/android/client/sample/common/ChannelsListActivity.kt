@@ -6,13 +6,13 @@ import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.FilterObject
-import io.getstream.chat.android.client.QueryChannelsRequest
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.utils.observable.Subscription
-import io.getstream.chat.android.client.requests.QuerySort
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 
