@@ -1,23 +1,16 @@
 package io.getstream.chat.android.client
 
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.QueryChannelsResponse
-import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.gson.JsonParser
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import okhttp3.MultipartBody.Part.Companion.createFormData
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
 import java.io.File
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class ChatApiImpl(
     private val retrofitApi: RetrofitApi,
@@ -596,36 +589,6 @@ class ChatApiImpl(
                 channelType = channelType
             )
         )
-    }
-
-    private fun buildRetrofit(
-        endpoint: String,
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
-        config: ChatConfig,
-        parser: JsonParser
-    ): Retrofit {
-
-        val clientBuilder = OkHttpClient.Builder()
-            .followRedirects(false)
-            // timeouts
-            .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
-            .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
-            // interceptors
-            .addInterceptor(HeadersInterceptor(config))
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .addInterceptor(TokenAuthInterceptor(config, parser))
-            .addNetworkInterceptor(StethoInterceptor())
-
-        val builder = Retrofit.Builder()
-            .baseUrl(endpoint)
-            .client(clientBuilder.build())
-
-        return parser.configRetrofit(builder).build()
     }
 
 }

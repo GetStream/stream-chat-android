@@ -8,85 +8,52 @@ import java.util.*
 
 
 class Channel {
-
-    @SerializedName("cid")
-
     var cid: String = ""
-
-    @SerializedName("id")
-
     var id: String = ""
-
-    @SerializedName("type")
-
     var type: String = ""
 
     @SerializedName("last_message_at")
     var lastMessageDate: Date = UndefinedDate
-
     var lastKeystrokeAt: Date = UndefinedDate
-
     var lastStartTypingEvent: Date = UndefinedDate
-
     var lastState: ChannelState? = null
 
     @SerializedName("created_at")
-
     var createdAt: Date = UndefinedDate
 
     @SerializedName("deleted_at")
-
     var deletedAt: Date = UndefinedDate
 
     @SerializedName("updated_at")
-
     var updatedAt: Date = UndefinedDate
 
     @SerializedName("created_by")
-
     val createdByUser: User? = null
-
     val createdByUserID: String? = null
-
-    @SerializedName("frozen")
-
     val frozen = false
-
-    @SerializedName("config")
-
     val config: Config? = null
 
     var extraData = mutableMapOf<String, Any>()
 
-    val reactionTypes: Map<String, String>? = null
+    val reactionTypes = mutableMapOf<String, String>()
 
-    val subRegistery: EventSubscriberRegistry<ChatChannelEventHandler>? = null
+    internal lateinit var client: ChatClient
 
-    lateinit var client: ChatClient
-
+    //TODO: check if field is filled/used
     lateinit var channelState: ChannelState
 
-    var isInitialized = false
-
     fun getName(): String {
-        val name = extraData!!["name"]
+        val name = extraData["name"]
         return if (name is String) {
             name
         } else ""
     }
 
-    fun watch(
-        request: ChannelWatchRequest
-    ): ChatCall<Channel> {
+    fun watch(request: ChannelWatchRequest): ChatCall<Channel> {
         return client.queryChannel(type, id, request)
     }
 
     override fun toString(): String {
         return "Channel(cid='$cid')"
-    }
-
-
-    companion object {
-        private val TAG = Channel::class.java.simpleName
     }
 }
