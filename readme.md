@@ -32,7 +32,7 @@ dependencies {
         .token("token")
         .build()
         
-    val client = ChatClient.init(ChatClient.Builder().setConfig(config))
+    val client = ChatClient.init(ChatClient.Builder().config(config))
 	```
 	
 2. Subscribe on events
@@ -47,7 +47,7 @@ dependencies {
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("user-id"))
+	client.setUser(User("user-id"))
 	```
 
 3. Get channels
