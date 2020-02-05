@@ -7,11 +7,12 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import java.io.File
 
 
 internal class ChatClientImpl constructor(
@@ -57,6 +58,33 @@ internal class ChatClientImpl constructor(
     override fun setGuestUser(user: User): ChatCall<TokenResponse> {
         config.isAnonymous = true
         return api.setGuestUser(user.id, user.name)
+    }
+
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String,
+        callback: ProgressCallback
+    ) {
+        api.sendFile(channelType, channelId, file, mimeType, callback)
+    }
+
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String
+    ): ChatCall<String> {
+        return api.sendFile(channelType, channelId, file, mimeType)
+    }
+
+    override fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+        return api.deleteFile(channelType, channelId, url)
+    }
+
+    override fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+        return api.deleteImage(channelType, channelId, url)
     }
 
     //endregion

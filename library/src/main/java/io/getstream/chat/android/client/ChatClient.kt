@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 interface ChatClient {
@@ -32,6 +33,29 @@ interface ChatClient {
     fun setAnonymousUser()
 
     fun disconnect()
+
+    //region CDN
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String
+    ): ChatCall<String>
+
+    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    //endregion
 
     //region Events
 
