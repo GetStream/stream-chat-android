@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.TokenProvider
 import io.getstream.chat.android.client.User
 import io.getstream.chat.android.client.gson.JsonParser
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.observable.ChatObservableImpl
+import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 class ChatSocketImpl(
     val apiKey: String,

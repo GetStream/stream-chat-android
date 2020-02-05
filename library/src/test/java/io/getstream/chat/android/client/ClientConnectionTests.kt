@@ -1,13 +1,13 @@
-package io.getstream.chat.android.client.poc
+package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.*
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.gson.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.observable.JustObservable
 import io.getstream.chat.android.client.rest.RetrofitApi
+import io.getstream.chat.android.client.rest.RetrofitCdnApi
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -28,16 +28,17 @@ class ClientConnectionTests {
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket
     lateinit var retrofitApi: RetrofitApi
+    lateinit var retrofitCdnApi: RetrofitCdnApi
     lateinit var client: ChatClient
     lateinit var logger: StreamLogger
-
 
     @Before
     fun before() {
         socket = mock(ChatSocket::class.java)
         retrofitApi = mock(RetrofitApi::class.java)
+        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
         logger = mock(StreamLogger::class.java)
-        api = ChatApiImpl(config, retrofitApi, JsonParserImpl(), null)
+        api = ChatApiImpl(retrofitApi, retrofitCdnApi, config, JsonParserImpl(), logger)
     }
 
     @Test

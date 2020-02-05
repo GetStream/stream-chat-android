@@ -1,18 +1,25 @@
 package io.getstream.chat.android.client
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.ChatConfig
+import io.getstream.chat.android.client.api.HeadersInterceptor
+import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.gson.JsonParser
 import io.getstream.chat.android.client.gson.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamChatSilentLogger
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 
 interface ChatClient {
 
@@ -163,7 +170,65 @@ interface ChatClient {
             parser: JsonParser,
             logger: StreamLogger
         ): ChatApi {
-            return ChatApiImpl(chatConfig, parser, logger)
+            return ChatApiImpl(
+                buildRetrofitApi(),
+                buildRetrofitCdnApi(),
+                chatConfig,
+                parser,
+                logger
+            )
+        }
+
+        private fun buildRetrofit(
+            endpoint: String,
+            connectTimeout: Long,
+            writeTimeout: Long,
+            readTimeout: Long,
+            config: ChatConfig,
+            parser: JsonParser
+        ): Retrofit {
+
+            val clientBuilder = OkHttpClient.Builder()
+                .followRedirects(false)
+                // timeouts
+                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
+                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                // interceptors
+                .addInterceptor(HeadersInterceptor(config))
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+                .addInterceptor(TokenAuthInterceptor(config, parser))
+                .addNetworkInterceptor(StethoInterceptor())
+
+            val builder = Retrofit.Builder()
+                .baseUrl(endpoint)
+                .client(clientBuilder.build())
+
+            return parser.configRetrofit(builder).build()
+        }
+
+        private fun buildRetrofitApi(): RetrofitApi {
+            return buildRetrofit(
+                config.httpURL,
+                config.baseTimeout.toLong(),
+                config.baseTimeout.toLong(),
+                config.baseTimeout.toLong(),
+                config,
+                parser
+            ).create(RetrofitApi::class.java)
+        }
+
+        private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+            return buildRetrofit(
+                config.cdnHttpURL,
+                config.cdnTimeout.toLong(),
+                config.cdnTimeout.toLong(),
+                config.cdnTimeout.toLong(),
+                config,
+                parser
+            ).create(RetrofitCdnApi::class.java)
         }
     }
 

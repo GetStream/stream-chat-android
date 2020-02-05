@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.observable
+package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*

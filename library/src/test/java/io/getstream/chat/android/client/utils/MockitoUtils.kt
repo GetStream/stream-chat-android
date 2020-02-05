@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.poc.utils
+package io.getstream.chat.android.client.utils
 
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito

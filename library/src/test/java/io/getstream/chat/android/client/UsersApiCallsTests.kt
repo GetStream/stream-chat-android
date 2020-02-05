@@ -1,9 +1,8 @@
-package io.getstream.chat.android.client.poc
+package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.*
 import io.getstream.chat.android.client.models.Flag
-import io.getstream.chat.android.client.poc.utils.RetroSuccess
-import io.getstream.chat.android.client.poc.utils.verifySuccess
+import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
 import org.junit.Before

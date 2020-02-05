@@ -1,13 +1,13 @@
-package io.getstream.chat.android.client.poc
+package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.CompletableResponse
 import io.getstream.chat.android.client.Device
 import io.getstream.chat.android.client.MockClientBuilder
-import io.getstream.chat.android.client.poc.utils.RetroError
-import io.getstream.chat.android.client.poc.utils.RetroSuccess
-import io.getstream.chat.android.client.poc.utils.verifyError
-import io.getstream.chat.android.client.poc.utils.verifySuccess
+import io.getstream.chat.android.client.utils.RetroError
+import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifyError
+import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.rest.AddDeviceRequest
 import io.getstream.chat.android.client.rest.GetDevicesResponse
 import org.junit.Before

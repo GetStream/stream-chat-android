@@ -20,6 +20,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ChatApiImpl(
+    private val retrofitApi: RetrofitApi,
+    private val retrofitCdnApi: RetrofitCdnApi,
     private val config: ChatConfig,
     private val parser: JsonParser,
     private val logger: StreamLogger
@@ -28,28 +30,6 @@ class ChatApiImpl(
     private var userId: String = ""
     private var connectionId: String = ""
     private val callMapper = RetrofitCallMapper(parser)
-
-    private val retrofitApi: RetrofitApi by lazy {
-        buildRetrofit(
-            config.httpURL,
-            config.baseTimeout.toLong(),
-            config.baseTimeout.toLong(),
-            config.baseTimeout.toLong(),
-            config,
-            parser
-        ).create(RetrofitApi::class.java)
-    }
-
-    private val retrofitCdnApi: RetrofitCdnApi by lazy {
-        buildRetrofit(
-            config.cdnHttpURL,
-            config.cdnTimeout.toLong(),
-            config.cdnTimeout.toLong(),
-            config.cdnTimeout.toLong(),
-            config,
-            parser
-        ).create(RetrofitCdnApi::class.java)
-    }
 
     override fun setConnection(userId: String, connectionId: String) {
         this.userId = userId

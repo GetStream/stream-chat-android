@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.Result
 import io.getstream.chat.android.client.User
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.client.rest.ChannelWatchRequest
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R

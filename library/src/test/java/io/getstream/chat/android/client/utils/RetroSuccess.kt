@@ -1,13 +1,11 @@
-package io.getstream.chat.android.client.poc.utils
+package io.getstream.chat.android.client.utils
 
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
-import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RetroError<T>(val statusCode: Int) : Call<T> {
+class RetroSuccess<T>(val result: T) : Call<T> {
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }
@@ -29,10 +27,7 @@ class RetroError<T>(val statusCode: Int) : Call<T> {
     }
 
     override fun execute(): Response<T> {
-        return Response.error(
-            statusCode,
-            "{Server error}".toResponseBody("text/plain".toMediaType())
-        )
+        return Response.success(result)
     }
 
     override fun request(): Request {
