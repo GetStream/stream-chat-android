@@ -1,15 +1,14 @@
 package io.getstream.chat.android.client.sample.common
 
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.FilterObject
-import io.getstream.chat.android.client.TokenProvider
 import io.getstream.chat.android.client.User
 import io.getstream.chat.android.client.requests.QuerySort
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.sample.App
 import kotlinx.android.synthetic.main.activity_test_user_api.*
+
 //import org.jetbrains.anko.intentFor
 
 class TestUsersApiMethodsActivity : AppCompatActivity() {
@@ -146,10 +145,11 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun banUser() {
         client.banUser(
-            targetId = "stream-eugene",
-            channelType = channelType,
-            channelId = channelId,
-            timeout = 10
+            "stream-eugene",
+            channelType,
+            channelId,
+            "reason",
+            10
         ).enqueue { result ->
             //echoResult(result, "User baned successful")
         }

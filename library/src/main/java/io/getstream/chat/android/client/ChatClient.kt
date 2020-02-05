@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.api.RetrofitClient
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.gson.JsonParser
@@ -164,16 +163,7 @@ interface ChatClient {
             parser: JsonParser,
             logger: StreamLogger
         ): ChatApi {
-            return ChatApiImpl(
-                chatConfig,
-                RetrofitClient.buildClient(
-                    chatConfig,
-                    parser,
-                    chatConfig
-                ).create(RetrofitApi::class.java),
-                parser,
-                logger
-            )
+            return ChatApiImpl(chatConfig, parser, logger)
         }
     }
 

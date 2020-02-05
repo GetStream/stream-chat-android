@@ -4,14 +4,43 @@ import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
+import java.io.File
 
 interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)
 
+    //region CDN calls
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String
+    ): ChatCall<String>
+
+    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    //endregion
+
+    //region Device calls
+
     fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
     fun deleteDevice(deviceId: String): ChatCall<Unit>
     fun getDevices(): ChatCall<List<Device>>
+
+    //endregion
+
     fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
     fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>

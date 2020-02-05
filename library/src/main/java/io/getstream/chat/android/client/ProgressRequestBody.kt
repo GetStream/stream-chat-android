@@ -11,45 +11,34 @@ import java.io.FileInputStream
 
 
 class ProgressRequestBody(
-    val mFile: File,
-    val content_type: String,
-    val mListener: UploadFileCallback<File, Int>
-) :
-    RequestBody() {
+    private val file: File,
+    private val contentType: String,
+    private val callback: ProgressCallback
+) : RequestBody() {
 
     override fun contentType(): MediaType? {
-        return content_type.toMediaTypeOrNull()
+        return contentType.toMediaTypeOrNull()
     }
 
     override fun contentLength(): Long {
-        return mFile.length()
+        return file.length()
     }
 
     override fun writeTo(sink: BufferedSink) {
-        val fileLength: Long = mFile.length()
-        val buffer =
-            ByteArray(DEFAULT_BUFFER_SIZE)
-        val `in` = FileInputStream(mFile)
-        var uploaded: Long = 0
-        try {
-            var read = 0
+        val total = file.length()
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        var uploaded = 0L
+        FileInputStream(file).use { fis ->
+            var read: Int
             val handler = Handler(Looper.getMainLooper())
-            while (`in`.read(buffer).also({ read = it }) != -1) { // update progress on UI thread
-                handler.post(ProgressUpdater(uploaded, fileLength))
+            while (fis.read(buffer).also { read = it } != -1) {
+                handler.post {
+                    callback.onProgress((100 * uploaded / total))
+                }
                 uploaded += read.toLong()
                 sink.write(buffer, 0, read)
             }
-        } finally {
-            `in`.close()
         }
-    }
-
-    private inner class ProgressUpdater(private val mUploaded: Long, private val mTotal: Long) :
-        Runnable {
-        override fun run() {
-            mListener.onProgress((100 * mUploaded / mTotal).toInt())
-        }
-
     }
 
     companion object {

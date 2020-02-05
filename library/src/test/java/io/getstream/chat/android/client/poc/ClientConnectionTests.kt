@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.gson.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.observable.JustObservable
+import io.getstream.chat.android.client.rest.RetrofitApi
 import io.getstream.chat.android.client.socket.ChatSocket
 import org.junit.Before
 import org.junit.Test
