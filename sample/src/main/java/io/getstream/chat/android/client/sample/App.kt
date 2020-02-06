@@ -39,7 +39,6 @@ class App : Application() {
         lateinit var db: AppDatabase
         lateinit var cache: ChannelsCache
         lateinit var keyValue: KeyValue
-        lateinit var notificationsManager: NotificationsManager
         lateinit var logger: StreamLogger
 
         private const val EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE"

@@ -6,17 +6,14 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.aminography.redirectglide.RedirectGlideUrl
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
@@ -29,7 +26,12 @@ import io.getstream.chat.android.client.models.StreamNotification
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.poc.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
+
 
 class StreamNotificationsManager constructor(
     private val notificationOptions: NotificationOptions,
@@ -256,58 +258,18 @@ class StreamNotificationsManager constructor(
         if (notificationItem != null) {
 
             context?.let {
-                if (!photoUrl.isNullOrEmpty()) {
-                    Glide.with(it)
-                        .asBitmap()
-                        .load(RedirectGlideUrl(photoUrl, 10))
-                        .into(object : CustomTarget<Bitmap?>() {
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap?>?
-                            ) {
-                                val notification = prepareNotification(
-                                    context,
-                                    messageId,
-                                    resource,
-                                    false
-                                )
-                                showNotification(
-                                    notificationItem.notificationId,
-                                    notification,
-                                    context
-                                )
-                                removeNotificationItem(messageId)
-                            }
-
-                            override fun onLoadCleared(placeholder: Drawable?) {
-                                val notification = prepareNotification(
-                                    context,
-                                    messageId,
-                                    null,
-                                    false
-                                )
-                                showNotification(
-                                    notificationItem.notificationId,
-                                    notification,
-                                    context
-                                )
-                                removeNotificationItem(messageId)
-                            }
-                        })
-                } else {
-                    val notification = prepareNotification(
-                        context,
-                        messageId,
-                        null,
-                        false
-                    )
-                    showNotification(
-                        notificationItem.notificationId,
-                        notification,
-                        context
-                    )
-                    removeNotificationItem(messageId)
-                }
+                val notification = prepareNotification(
+                    context,
+                    messageId,
+                    getBitmapFromURL(photoUrl),
+                    false
+                )
+                showNotification(
+                    notificationItem.notificationId,
+                    notification,
+                    context
+                )
+                removeNotificationItem(messageId)
             }
         }
     }
@@ -410,5 +372,18 @@ class StreamNotificationsManager constructor(
     private fun isForeground(): Boolean {
         return ProcessLifecycleOwner.get().lifecycle.currentState
             .isAtLeast(Lifecycle.State.STARTED)
+    }
+
+    fun getBitmapFromURL(src: String?): Bitmap? {
+        return try {
+            val url = URL(src)
+            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+            connection.doInput = true
+            connection.connect()
+            val input: InputStream = connection.inputStream
+            BitmapFactory.decodeStream(input)
+        } catch (e: IOException) { // Log exception
+            null
+        }
     }
 }

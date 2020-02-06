@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:964144059857:android:f30e2bf4686dd0b7c33cf0",
         "android_client_info": {
-          "package_name": "io.getstream.chat.android.client.sample"
+          "package_name": "io.getstream.chat.android.client.poc"
         }
       },
       "oauth_client": [
