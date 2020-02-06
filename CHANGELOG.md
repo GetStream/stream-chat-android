@@ -1,3 +1,6 @@
+## Upcoming
+
+- Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
 
 ## January 28th, 2020 - 3.6.3
 
