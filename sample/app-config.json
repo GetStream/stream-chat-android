@@ -1,6 +1,6 @@
 {
   "api_key": "qk4nn7rpcn75",
-  "api_endpoint": "chat-us-east-1.stream-io-api.com",
+  "api_endpoint": "chat-us-east-staging.stream-io-api.com",
   "api_timeout": 6000,
   "cdn_timeout": 30000,
   "users": [
