@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.notifications
 
-import io.getstream.chat.android.client.Message
+import io.getstream.chat.android.client.models.Message
 
 interface NotificationMessageLoadListener {
 

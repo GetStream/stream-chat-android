@@ -11,9 +11,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.observable.ChatObservable
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*

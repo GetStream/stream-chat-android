@@ -4,12 +4,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.iid.FirebaseInstanceId
-import io.getstream.chat.android.client.FilterObject
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.requests.QuerySort
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.AddDeviceRequest
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.QuerySort

@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.*
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.api.RetrofitClient
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.JsonParser
@@ -21,9 +20,6 @@ import io.getstream.chat.android.client.notifications.NotificationsManager
 import io.getstream.chat.android.client.notifications.StreamNotificationsManager
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
-import io.getstream.chat.android.client.observable.ChatObservable
-import io.getstream.chat.android.client.requests.QueryUsers
-import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener

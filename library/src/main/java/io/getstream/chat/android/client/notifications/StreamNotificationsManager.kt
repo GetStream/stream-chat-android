@@ -18,17 +18,17 @@ import com.aminography.redirectglide.RedirectGlideUrl
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.ChatApi
-import io.getstream.chat.android.client.EventType
-import io.getstream.chat.android.client.Message
+import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.safeLet
 import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.StreamNotification
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.poc.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
-import io.getstream.chat.android.client.rest.AddDeviceRequest
 import java.util.*
 
 class StreamNotificationsManager constructor(

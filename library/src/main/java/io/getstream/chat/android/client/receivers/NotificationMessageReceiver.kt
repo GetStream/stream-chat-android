@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Message
 import io.getstream.chat.android.client.extensions.safeLet
+import io.getstream.chat.android.client.models.Message
 
 class NotificationMessageReceiver : BroadcastReceiver() {
 

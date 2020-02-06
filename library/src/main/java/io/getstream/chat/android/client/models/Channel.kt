@@ -42,6 +42,13 @@ class Channel {
         return client.queryChannel(type, id, request)
     }
 
+    fun getName(): String? {
+        val name = extraData["name"]
+        return if (name is String) {
+            name
+        } else null
+    }
+
     override fun toString(): String {
         return "Channel(cid='$cid')"
     }

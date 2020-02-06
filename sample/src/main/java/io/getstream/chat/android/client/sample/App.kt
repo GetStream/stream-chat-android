@@ -7,7 +7,6 @@ import android.content.Intent
 import com.facebook.stetho.Stetho
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Message
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -15,6 +14,7 @@ import io.getstream.chat.android.client.logger.StreamChatLogger
 import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.logger.StreamLoggerLevel
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
 import io.getstream.chat.android.client.notifications.NotificationsManager
@@ -162,7 +162,7 @@ class App : Application() {
         )
     }
 
-    private fun provideDeviceRegisteredListener()= object : DeviceRegisteredListener {
+    private fun provideDeviceRegisteredListener() = object : DeviceRegisteredListener {
         override fun onDeviceRegisteredSuccess() { // Device successfully registered on server
             logger.logI(this, "Device registered successfully")
         }
@@ -172,13 +172,14 @@ class App : Application() {
         }
     }
 
-    private fun provideNotificationMessageLoadListener() = object : NotificationMessageLoadListener {
-        override fun onLoadMessageSuccess(message: Message) {
-            logger.logD(this, "On message loaded. Message:$message")
-        }
+    private fun provideNotificationMessageLoadListener() =
+        object : NotificationMessageLoadListener {
+            override fun onLoadMessageSuccess(message: Message) {
+                logger.logD(this, "On message loaded. Message:$message")
+            }
 
-        override fun onLoadMessageFail(messageId: String) {
-            logger.logD(this, "Message from notification load fails. MessageId:$messageId")
+            override fun onLoadMessageFail(messageId: String) {
+                logger.logD(this, "Message from notification load fails. MessageId:$messageId")
+            }
         }
-    }
 }
