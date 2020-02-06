@@ -1,5 +1,8 @@
 # Push messages
 
+By default channel name is the title of the notification. The message text is content of the notification.
+Users photo is the large photo on notification. On click on notification will be opened the default launcher activity of the application.
+
 To customize notifications you need to pass the configuration to ChatClient builder.
 
 ```kotlin
