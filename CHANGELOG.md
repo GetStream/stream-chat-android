@@ -1,6 +1,7 @@
 ## Upcoming
 
 - Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
+- update target api level to 29
 
 ## January 28th, 2020 - 3.6.3
 
@@ -13,7 +14,6 @@
 
 - Enable multiline edit text
 - Fix deprecated getColumnIndexOrThrow for 29 Api Level
-- update target api level to 29
 
 ## January 7th, 2020 - 3.6.1
 
