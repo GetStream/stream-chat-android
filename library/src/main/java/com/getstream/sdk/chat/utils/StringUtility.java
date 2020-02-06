@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
@@ -98,5 +99,23 @@ public class StringUtility {
             return true;
         String s = text.replaceAll("\\s+", "");
         return TextUtils.isEmpty(s);
+    }
+
+    @Nullable
+    public static String getChannelIdFromCid(@NonNull String cid) {
+        String[] array = cid.split(":");
+        if (array.length > 1) {
+            return array[1];
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String getChannelTypeFromCid(@NonNull String cid) {
+        String[] array = cid.split(":");
+        if (array.length > 1) {
+            return array[0];
+        }
+        return null;
     }
 }

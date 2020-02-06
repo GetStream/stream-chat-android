@@ -96,11 +96,9 @@ public class Message implements UserEntity {
     @TypeConverters(AttachmentListConverter.class)
     private List<Attachment> attachments;
 
-    @SerializedName("latest_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> latestReactions;
 
-    @SerializedName("own_reactions")
     @TypeConverters(ReactionListConverter.class)
     private List<Reaction> ownReactions;
 

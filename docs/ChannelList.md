@@ -238,16 +238,41 @@ If you need to make a bigger change you can swap the layout for the channel prev
 ```
 
 That only works for simple changes where you don't change the IDs of views, or their types.
-You can find the default layout and copy and paste it in **list_item_channel.xml**
+You can find the default layout in **stream_item_channel.xml**
 
 #### Custom Viewholder
 
-If you need full control over the styling for the channel preview you can overwrite the view holder.
+If you need full control over the styling for the channel preview you can overwrite the view holder using a view holder factory. Here is an example view holder factory:
 
-```java
-ChannelListItemAdapter adapter = new ChannelListItemAdapter(this);
-adapter.setCustomViewHolder(MyCustomViewHolder.class);
-binding.channelList.setViewModel(viewModel, this, adapter);
+```kotlin
+/*
+Make the view holder factory return CustomChannelListItemViewHolder
+ */
+class CustomViewHolderFactory : ChannelViewHolderFactory() {
+    override fun createChannelViewHolder(
+        adapter: ChannelListItemAdapter,
+        parent: ViewGroup,
+        viewType: Int
+    ): BaseChannelListItemViewHolder? { // get the style object
+        val style = adapter.style
+        // inflate the layout specified in the style
+        val v = LayoutInflater.from(parent.context)
+            .inflate(style.channelPreviewLayout, parent, false)
+        // configure the viewholder
+        val holder = CustomChannelListItemViewHolder(v)
+        configureHolder(holder, adapter)
+        // return..
+        return holder
+    }
+}
+```
+
+And this is how you can tell the ChannelList to use your view holder factory
+
+```kotlin
+val  adapter =  ChannelListItemAdapter(activity)
+adapter.setViewHolderFactory(CustomViewHolderFactory())
+binding.channelList.setViewModel(viewModel, this, adapter)
 ```
 
 You'll typically want to extend either the `ChannelListItemViewHolder` or the `BaseChannelListItemViewHolder` class.
