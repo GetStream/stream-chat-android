@@ -13,13 +13,13 @@
         <activity android:name=".common.TestChannelsApiMethodsActivity" />
         <activity android:name=".common.TestUsersApiMethodsActivity" />
 
-        <service
+        <!--<service
             android:name="io.getstream.chat.android.client.notifications.StreamFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
+        </service>-->
     </application>
 
 </manifest>
