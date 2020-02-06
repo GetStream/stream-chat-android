@@ -5,12 +5,12 @@
 - ChannelViewHolderFactory is now easier to customize
 - Added ChannelViewHolder.messageInputText for 2 way data binding
 - Documentation improvements
+- Fix bug with mediaplayer
 
 ## January 10th, 2020 - 3.6.2
 
 - Enable multiline edit text
 - Fix deprecated getColumnIndexOrThrow for 29 Api Level
-- Fix bug with mediaplayer
 
 ## January 7th, 2020 - 3.6.1
 
