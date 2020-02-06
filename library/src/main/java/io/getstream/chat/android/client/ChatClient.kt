@@ -212,7 +212,8 @@ interface ChatClient {
             return StreamNotificationsManager(
                 notificationOptions = notificationOptions,
                 registerListener = registeredListener,
-                client = client
+                client = client,
+                logger = logger
             )
         }
     }

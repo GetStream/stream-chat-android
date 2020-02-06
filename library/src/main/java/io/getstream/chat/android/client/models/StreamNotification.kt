@@ -12,5 +12,6 @@ class StreamNotification constructor(
 
     var channelName: String? = null
     var messageText: String? = null
-    var pendingIntent: PendingIntent? = null
+    var pendingReplyIntent: PendingIntent? = null
+    var pendingReadIntent: PendingIntent? = null
 }

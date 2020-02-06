@@ -29,18 +29,19 @@ class StreamNotificationOptions : NotificationOptions {
     private var largeIcon: Bitmap? = null
     private var notificationIntentProvider: NotificationIntentProvider? = null
     private var defaultLauncherIntent: Intent? = null
-    private lateinit var notificationChannel: NotificationChannel
+    private var notificationChannel: NotificationChannel? = null
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     override fun getNotificationChannel(context: Context): NotificationChannel? {
-        return if (::notificationChannel.isInitialized) {
+        return if (notificationChannel == null) {
             val channel = NotificationChannel(
                 getNotificationChannelId(context),
                 getNotificationChannelName(context),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
             channel.setShowBadge(true)
-            channel
+            notificationChannel = channel
+            notificationChannel
         } else {
             notificationChannel
         }

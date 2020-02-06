@@ -247,7 +247,7 @@ internal class ChatClientImpl constructor(
 
     override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
         return api.getUsers(
-            queryUser = query
+            queryUsers = query
         ).map { it.users }
     }
 

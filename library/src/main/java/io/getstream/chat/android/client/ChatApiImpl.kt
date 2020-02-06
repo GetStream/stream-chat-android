@@ -67,7 +67,14 @@ class ChatApiImpl(
         limit: Int
     ): ChatCall<List<Message>> {
         return callMapper.map(
-            retrofitApi.getRepliesMore(messageId, chatConfig.apiKey, userId, connectionId, limit, firstId)
+            retrofitApi.getRepliesMore(
+                messageId,
+                chatConfig.apiKey,
+                userId,
+                connectionId,
+                limit,
+                firstId
+            )
         ).map {
             it.messages
         }
@@ -202,7 +209,13 @@ class ChatApiImpl(
         channelId: String
     ): ChatCall<Unit> {
         return callMapper.map(
-            retrofitApi.stopWatching(channelType, channelId, chatConfig.apiKey, connectionId, emptyMap())
+            retrofitApi.stopWatching(
+                channelType,
+                channelId,
+                chatConfig.apiKey,
+                connectionId,
+                emptyMap()
+            )
         ).map {
             Unit
         }
@@ -279,7 +292,13 @@ class ChatApiImpl(
 
     override fun showChannel(channelType: String, channelId: String): ChatCall<Unit> {
         return callMapper.map(
-            retrofitApi.showChannel(channelType, channelId, chatConfig.apiKey, connectionId, emptyMap())
+            retrofitApi.showChannel(
+                channelType,
+                channelId,
+                chatConfig.apiKey,
+                connectionId,
+                emptyMap()
+            )
         ).map {
             Unit
         }

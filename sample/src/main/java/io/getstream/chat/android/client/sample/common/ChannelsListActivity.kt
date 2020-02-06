@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.iid.FirebaseInstanceId
 import io.getstream.chat.android.client.FilterObject
 import io.getstream.chat.android.client.QueryChannelsRequest
 import io.getstream.chat.android.client.TokenProvider
@@ -14,6 +15,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.observable.Subscription
 import io.getstream.chat.android.client.requests.QuerySort
+import io.getstream.chat.android.client.rest.AddDeviceRequest
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 

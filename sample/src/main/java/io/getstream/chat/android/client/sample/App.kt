@@ -57,6 +57,7 @@ class App : Application() {
         val config = ChatConfig.Builder()
             .apiKey("qk4nn7rpcn75")
             .baseURL("chat-us-east-staging.stream-io-api.com")
+            .baseURL("chat-us-east-1.stream-io-api.com")
             .cdnUrl("chat-us-east-staging.stream-io-api.com")
             .baseTimeout(10000)
             .cdnTimeout(10000)

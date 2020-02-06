@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:674907137625:android:c41e48c4c799aee8d7f348",
         "android_client_info": {
-          "package_name": "io.getstream.chat.example"
+          "package_name": "io.getstream.chat.android.client.sample"
         }
       },
       "oauth_client": [
@@ -35,7 +35,7 @@
               "client_id": "674907137625-9lrni0i7lqfoc6d1tkohpdndgnlg7mjl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.getstream.ChatExample"
+                "bundle_id": "io.getstream.chat.android.client.sample"
               }
             }
           ]
@@ -46,7 +46,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:674907137625:android:ff6593c705df1c43d7f348",
         "android_client_info": {
-          "package_name": "io.getstream.chat.sdk"
+          "package_name": "io.getstream.chat.android.client.sample"
         }
       },
       "oauth_client": [
@@ -54,7 +54,7 @@
           "client_id": "674907137625-khntpmmm3s1756v4jugnhcifgjlqrmd0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "io.getstream.chat.sdk",
+            "package_name": "io.getstream.chat.android.client.sample",
             "certificate_hash": "38f7d663a2ed58ae8990d365c41bd82df62185dc"
           }
         },
@@ -79,7 +79,7 @@
               "client_id": "674907137625-9lrni0i7lqfoc6d1tkohpdndgnlg7mjl.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "io.getstream.ChatExample"
+                "bundle_id": "io.getstream.chat.android.client.sample"
               }
             }
           ]

@@ -10,7 +10,6 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import androidx.lifecycle.Lifecycle
@@ -24,6 +23,7 @@ import io.getstream.chat.android.client.EventType
 import io.getstream.chat.android.client.Message
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.safeLet
+import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.models.StreamNotification
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.poc.R
@@ -34,7 +34,8 @@ import java.util.*
 class StreamNotificationsManager constructor(
     private val notificationOptions: NotificationOptions,
     private val registerListener: DeviceRegisteredListener? = null,
-    private val client: ChatApi
+    private val client: ChatApi,
+    private val logger: StreamLogger
 ) : NotificationsManager {
 
     companion object {
@@ -45,14 +46,12 @@ class StreamNotificationsManager constructor(
         private const val FIREBASE_MESSAGE_ID_KEY = "message_id"
     }
 
-    private val TAG = StreamNotificationsManager::class.java.simpleName
-
     private val notificationsMap: HashMap<String, StreamNotification> = HashMap()
     private var failMessageListener: NotificationMessageLoadListener? = null
     private var deviceRegisteredListener: DeviceRegisteredListener? = null
 
     override fun setFirebaseToken(firebaseToken: String, context: Context) {
-        Log.d(TAG, "setFirebaseToken: $firebaseToken")
+        logger.logD(this, "setFirebaseToken: $firebaseToken")
 
         client.addDevice(
             request = AddDeviceRequest(
@@ -61,23 +60,23 @@ class StreamNotificationsManager constructor(
         ).enqueue { result ->
             if (result.isSuccess) {
                 registerListener?.onDeviceRegisteredSuccess()
-                Log.i(TAG, "DeviceRegisteredSuccess")
+                logger.logI(this, "DeviceRegisteredSuccess")
             } else {
                 registerListener?.onDeviceRegisteredError(result.error())
-                Log.e(TAG, "Error register device ${result.error().message}")
+                logger.logE(this, "Error register device ${result.error().message}")
             }
         }
     }
 
     override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage, context: Context) {
         val payload: Map<String, String> = remoteMessage.data
-        Log.d(TAG, "onLoadMessageFail: $remoteMessage data: $payload")
+        logger.logD(this, "onLoadMessageFail: $remoteMessage data: $payload")
 
         handleRemoteMessage(context, remoteMessage)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent, context: Context) {
-        Log.d(TAG, "onReceiveWebSocketEvent: $event")
+        logger.logD(this, "onReceiveWebSocketEvent: $event")
 
         handleEvent(context, event)
     }
@@ -95,7 +94,7 @@ class StreamNotificationsManager constructor(
                 notificationsMap[messageId] = notificationModel
                 loadMessage(context, messageId)
             } else {
-                Log.e(TAG, "RemoteMessage: messageId = $messageId")
+                logger.logE(this, "RemoteMessage: messageId = $messageId")
             }
         }
     }
@@ -109,7 +108,7 @@ class StreamNotificationsManager constructor(
                 notificationsMap[event.message.id] = notificationModel
                 loadMessage(context, event.message.id)
             } else {
-                Log.i(TAG, "Notification with id:${event.message.id} already showed")
+                logger.logI(this, "Notification with id:${event.message.id} already showed")
             }
         }
     }
@@ -134,7 +133,7 @@ class StreamNotificationsManager constructor(
                 failMessageListener?.onLoadMessageSuccess(result.data())
                 onMessageLoaded(context, result.data())
             } else {
-                Log.e(TAG, "Can\'t load message. Error: ${result.error().message}")
+                logger.logE(this, "Can\'t load message. Error: ${result.error().message}")
                 showDefaultNotification(context, messageId)
                 failMessageListener?.onLoadMessageFail(messageId)
             }
@@ -148,17 +147,26 @@ class StreamNotificationsManager constructor(
         val type: String = message.channel.type
 
         val messageId: String = message.id
-        val channelId: String = message.channel.cid
+        val channelId: String = message.channel.id
 
         notificationsMap[message.id]?.let { notificationItem ->
             notificationItem.channelName = message.channel.getName()
             notificationItem.messageText = message.text
-            notificationItem.pendingIntent = preparePendingIntent(
+            notificationItem.pendingReplyIntent = preparePendingIntent(
                 context = context,
                 messageId = messageId,
                 channelId = channelId,
                 type = type,
-                notificationId = notificationItem.notificationId
+                notificationId = notificationItem.notificationId,
+                actionType = NotificationMessageReceiver.ACTION_REPLY
+            )
+            notificationItem.pendingReadIntent = preparePendingIntent(
+                context = context,
+                messageId = messageId,
+                channelId = channelId,
+                type = type,
+                notificationId = notificationItem.notificationId,
+                actionType = NotificationMessageReceiver.ACTION_READ
             )
             loadUserImage(context, message.id, message.user.image)
         }
@@ -219,7 +227,8 @@ class StreamNotificationsManager constructor(
         messageId: String,
         channelId: String,
         type: String,
-        notificationId: Int
+        notificationId: Int,
+        actionType: String
     ): PendingIntent? {
         val notifyIntent = Intent(context, NotificationMessageReceiver::class.java)
         notifyIntent.apply {
@@ -227,7 +236,7 @@ class StreamNotificationsManager constructor(
             putExtra(NotificationMessageReceiver.KEY_MESSAGE_ID, messageId)
             putExtra(NotificationMessageReceiver.KEY_CHANNEL_ID, channelId)
             putExtra(NotificationMessageReceiver.KEY_CHANNEL_TYPE, type)
-            action = NotificationMessageReceiver.ACTION_REPLY
+            action = actionType
         }
 
         return PendingIntent.getBroadcast(
@@ -241,48 +250,64 @@ class StreamNotificationsManager constructor(
     private fun loadUserImage(
         context: Context?,
         messageId: String,
-        photoUrl: String
+        photoUrl: String?
     ) {
         val notificationItem = notificationsMap[messageId]
         if (notificationItem != null) {
-            context?.let {
-                Glide.with(it)
-                    .asBitmap()
-                    .load(RedirectGlideUrl(photoUrl, 10))
-                    .into(object : CustomTarget<Bitmap?>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: com.bumptech.glide.request.transition.Transition<in Bitmap?>?
-                        ) {
-                            val notification = prepareNotification(
-                                context,
-                                messageId,
-                                resource,
-                                false
-                            )
-                            showNotification(
-                                notificationItem.notificationId,
-                                notification,
-                                context
-                            )
-                            removeNotificationItem(messageId)
-                        }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            val notification = prepareNotification(
-                                context,
-                                messageId,
-                                null,
-                                false
-                            )
-                            showNotification(
-                                notificationItem.notificationId,
-                                notification,
-                                context
-                            )
-                            removeNotificationItem(messageId)
-                        }
-                    })
+            context?.let {
+                if (!photoUrl.isNullOrEmpty()) {
+                    Glide.with(it)
+                        .asBitmap()
+                        .load(RedirectGlideUrl(photoUrl, 10))
+                        .into(object : CustomTarget<Bitmap?>() {
+                            override fun onResourceReady(
+                                resource: Bitmap,
+                                transition: com.bumptech.glide.request.transition.Transition<in Bitmap?>?
+                            ) {
+                                val notification = prepareNotification(
+                                    context,
+                                    messageId,
+                                    resource,
+                                    false
+                                )
+                                showNotification(
+                                    notificationItem.notificationId,
+                                    notification,
+                                    context
+                                )
+                                removeNotificationItem(messageId)
+                            }
+
+                            override fun onLoadCleared(placeholder: Drawable?) {
+                                val notification = prepareNotification(
+                                    context,
+                                    messageId,
+                                    null,
+                                    false
+                                )
+                                showNotification(
+                                    notificationItem.notificationId,
+                                    notification,
+                                    context
+                                )
+                                removeNotificationItem(messageId)
+                            }
+                        })
+                } else {
+                    val notification = prepareNotification(
+                        context,
+                        messageId,
+                        null,
+                        false
+                    )
+                    showNotification(
+                        notificationItem.notificationId,
+                        notification,
+                        context
+                    )
+                    removeNotificationItem(messageId)
+                }
             }
         }
     }
@@ -299,26 +324,24 @@ class StreamNotificationsManager constructor(
         val notificationItem = notificationsMap[messageId]
         val notificationBuilder = notificationOptions.getNotificationBuilder(context)
         if (notificationItem != null) {
-            val contentIntent =
-                getContentIntent(context, notificationItem, defaultNotification)
-            notificationBuilder!!.setContentTitle(notificationItem.channelName)
-                .setContentText(notificationItem.messageText)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setShowWhen(true)
-                .setContentIntent(contentIntent)
-                .setSound(defaultSoundUri)
-            if (notificationItem.pendingIntent != null) {
-                notificationBuilder.addAction(
-                    getReadAction(
-                        context,
-                        notificationItem.pendingIntent
-                    )
-                )
-                    .addAction(getReplyAction(context, notificationItem.pendingIntent))
+            val contentIntent = getContentIntent(context, notificationItem, defaultNotification)
+
+            notificationBuilder?.setContentTitle(notificationItem.channelName)
+                ?.setContentText(notificationItem.messageText)
+                ?.setPriority(NotificationCompat.PRIORITY_HIGH)
+                ?.setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                ?.setShowWhen(true)
+                ?.setContentIntent(contentIntent)
+                ?.setSound(defaultSoundUri)
+
+            if (notificationItem.pendingReplyIntent != null) {
+                notificationBuilder?.apply {
+                    addAction(getReadAction(context, notificationItem.pendingReadIntent))
+                    addAction(getReplyAction(context, notificationItem.pendingReplyIntent))
+                }
             }
             if (image != null) {
-                notificationBuilder.setLargeIcon(image)
+                notificationBuilder?.setLargeIcon(image)
             }
         }
         return notificationBuilder?.build()
@@ -357,7 +380,8 @@ class StreamNotificationsManager constructor(
     ): NotificationCompat.Action? {
         return NotificationCompat.Action.Builder(
             android.R.drawable.ic_menu_view,
-            context?.getString(R.string.stream_default_notification_read), pendingIntent
+            context?.getString(R.string.stream_default_notification_read),
+            pendingIntent
         ).build()
     }
 

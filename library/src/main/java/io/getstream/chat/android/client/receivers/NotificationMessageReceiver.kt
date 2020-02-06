@@ -29,8 +29,7 @@ class NotificationMessageReceiver : BroadcastReceiver() {
                 intent.getStringExtra(KEY_CHANNEL_TYPE)
             )
             ACTION_REPLY -> {
-                val results =
-                    RemoteInput.getResultsFromIntent(intent)
+                val results = RemoteInput.getResultsFromIntent(intent)
                 if (results != null) {
                     replyText(
                         intent.getStringExtra(KEY_CHANNEL_ID),

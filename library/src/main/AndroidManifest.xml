@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <receiver
-            android:name=".receivers.NotificationMessageReceiver"
+            android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
