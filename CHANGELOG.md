@@ -2,6 +2,7 @@
 
 - Enable multiline edit text
 - Fix deprecated getColumnIndexOrThrow for 29 Api Level
+- update target api level to 29
 
 ## January 7th, 2020 - 3.6.1
 
