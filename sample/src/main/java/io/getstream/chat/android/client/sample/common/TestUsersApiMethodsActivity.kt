@@ -10,9 +10,14 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.requests.QuerySort
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.AddDeviceRequest
+import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import kotlinx.android.synthetic.main.activity_test_user_api.*
+
 
 class TestUsersApiMethodsActivity : AppCompatActivity() {
 
@@ -187,8 +192,12 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun getQueryUserRequest(): QueryUsers {
         val filter = FilterObject()
-        val sort: QuerySort = QuerySort().asc("last_active")
-        return QueryUsers(filter, sort).withLimit(10).withOffset(0)
+        val sort: QuerySort = QuerySort()
+            .asc("last_active")
+        return QueryUsers(
+            filter,
+            sort
+        ).withLimit(10).withOffset(0)
     }
 
     private fun initButtons() {

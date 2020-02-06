@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client.models
 
-import io.getstream.chat.android.client.User
-
 
 class Flag {
     lateinit var user: User

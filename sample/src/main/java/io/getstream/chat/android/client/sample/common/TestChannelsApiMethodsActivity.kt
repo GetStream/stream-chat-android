@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import io.getstream.chat.android.client.Message
-import io.getstream.chat.android.client.QueryChannelsRequest
-import io.getstream.chat.android.client.Result
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.observable.Subscription
-import io.getstream.chat.android.client.rest.ChannelWatchRequest
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_test_api.*
 
 class TestChannelsApiMethodsActivity : AppCompatActivity() {
@@ -70,10 +70,11 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
         Thread {
 
-            val withLimit = QueryChannelsRequest(
-                0,
-                100
-            )
+            val withLimit =
+                QueryChannelsRequest(
+                    0,
+                    100
+                )
 
             val channelsResult = client.queryChannels(withLimit).execute()
 
@@ -129,7 +130,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         client.queryChannels(
             QueryChannelsRequest(
                 0,
-                100
+                1
             )
         ).enqueue {
             echoResult(it)

@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.Channel
 import io.getstream.chat.android.client.Member
 import io.getstream.chat.android.client.Reaction
 import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.models.*
 
 class ConnectedEvent : RemoteEvent() {
 

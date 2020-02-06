@@ -1,15 +1,20 @@
 package io.getstream.chat.android.client
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
+import io.getstream.chat.android.client.api.*
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.api.RetrofitClient
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.gson.JsonParser
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamChatSilentLogger
 import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationConfig
 import io.getstream.chat.android.client.notifications.NotificationsManager
@@ -22,6 +27,13 @@ import io.getstream.chat.android.client.rest.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 interface ChatClient {
 
@@ -34,6 +46,29 @@ interface ChatClient {
     fun setAnonymousUser()
 
     fun disconnect()
+
+    //region CDN
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String
+    ): ChatCall<String>
+
+    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+
+    //endregion
 
     //region Events
 
@@ -59,7 +94,7 @@ interface ChatClient {
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): ChatCall<Channel>
 
     fun muteUser(targetId: String): ChatCall<MuteUserResponse>
     fun unMuteUser(targetId: String): ChatCall<MuteUserResponse>
@@ -137,7 +172,8 @@ interface ChatClient {
 
     class Builder {
 
-        private val parser = JsonParserImpl()
+        private val parser =
+            JsonParserImpl()
         private var logger: StreamLogger = StreamChatSilentLogger()
         private var notificationConfig: NotificationConfig = NotificationConfig(
             notificationOptions = StreamNotificationOptions(),
@@ -193,12 +229,9 @@ interface ChatClient {
             logger: StreamLogger
         ): ChatApi {
             return ChatApiImpl(
+                buildRetrofitApi(),
+                buildRetrofitCdnApi(),
                 chatConfig,
-                RetrofitClient.buildClient(
-                    chatConfig,
-                    parser,
-                    chatConfig
-                ).create(RetrofitApi::class.java),
                 parser,
                 logger
             )
@@ -215,6 +248,58 @@ interface ChatClient {
                 client = client,
                 logger = logger
             )
+        }
+
+        private fun buildRetrofit(
+            endpoint: String,
+            connectTimeout: Long,
+            writeTimeout: Long,
+            readTimeout: Long,
+            config: ChatConfig,
+            parser: JsonParser
+        ): Retrofit {
+
+            val clientBuilder = OkHttpClient.Builder()
+                .followRedirects(false)
+                // timeouts
+                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
+                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                // interceptors
+                .addInterceptor(HeadersInterceptor(config))
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+                .addInterceptor(TokenAuthInterceptor(config, parser))
+                .addNetworkInterceptor(StethoInterceptor())
+
+            val builder = Retrofit.Builder()
+                .baseUrl(endpoint)
+                .client(clientBuilder.build())
+
+            return parser.configRetrofit(builder).build()
+        }
+
+        private fun buildRetrofitApi(): RetrofitApi {
+            return buildRetrofit(
+                config.httpURL,
+                config.baseTimeout.toLong(),
+                config.baseTimeout.toLong(),
+                config.baseTimeout.toLong(),
+                config,
+                parser
+            ).create(RetrofitApi::class.java)
+        }
+
+        private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+            return buildRetrofit(
+                config.cdnHttpURL,
+                config.cdnTimeout.toLong(),
+                config.cdnTimeout.toLong(),
+                config.cdnTimeout.toLong(),
+                config,
+                parser
+            ).create(RetrofitCdnApi::class.java)
         }
     }
 

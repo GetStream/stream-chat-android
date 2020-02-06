@@ -1,7 +1,5 @@
 package io.getstream.chat.android.client.sample.common
 
-import io.getstream.chat.android.client.ChatChannel
-
 object ApiMapper {
 
     fun mapChannel(channel: ChatChannel): Channel {

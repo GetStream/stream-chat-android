@@ -18,7 +18,7 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 ## Setup
 ```groovy
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android-client:0.9.6'
+    implementation 'com.github.getstream:stream-chat-android-client:0.9.7'
 }
 ```
 
@@ -32,7 +32,7 @@ dependencies {
         .token("token")
         .build()
         
-    val client = ChatClient.init(ChatClient.Builder().setConfig(config))
+    val client = ChatClient.init(ChatClient.Builder().config(config))
 	```
 	
 2. Subscribe on events
@@ -47,7 +47,7 @@ dependencies {
 2. Set user
 
 	```kotlin
-	client.setUser(ChatUser("user-id"))
+	client.setUser(User("user-id"))
 	```
 
 3. Get channels
@@ -133,6 +133,7 @@ client.getChannels { result -> showChannels(result) }
 - No `m` field name prefix
 - `id`, not `ID`
 - `t` for `Throwable`
+- `interface RetrfitCdnApi`, not `interface RetrofitCDNAPI`
 
 ```kotlin
 open interface ChatClient {

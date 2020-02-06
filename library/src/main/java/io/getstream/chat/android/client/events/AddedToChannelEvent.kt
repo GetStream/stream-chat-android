@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.Channel
+import io.getstream.chat.android.client.models.Channel
 
 class AddedToChannelEvent : RemoteEvent() {
     lateinit var channel: Channel

@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.CachedTokenProvider
-import io.getstream.chat.android.client.CachedTokenProviderImpl
-import io.getstream.chat.android.client.TokenProvider
+import io.getstream.chat.android.client.token.CachedTokenProvider
+import io.getstream.chat.android.client.token.CachedTokenProviderImpl
+import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 
 
@@ -14,7 +14,8 @@ class ChatConfig(
     val cdnTimeout: Int
 ) {
 
-    val tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
+    val tokenProvider: CachedTokenProvider =
+        CachedTokenProviderImpl()
     var isAnonymous: Boolean = false
 
     val httpURL: String
@@ -31,8 +32,8 @@ class ChatConfig(
         private var apiKey: String = ""
         private var baseURL: String = ""
         private var cdnURL: String = ""
-        private var baseTimeout: Int = 0
-        private var cdnTimeout: Int = 0
+        private var baseTimeout: Int = 10000
+        private var cdnTimeout: Int = 10000
         private lateinit var tokenProvider: TokenProvider
 
         fun apiKey(apiKey: String): Builder {

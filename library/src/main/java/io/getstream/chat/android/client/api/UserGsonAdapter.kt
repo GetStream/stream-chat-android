@@ -2,9 +2,9 @@ package io.getstream.chat.android.client.api
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import io.getstream.chat.android.client.Device
-import io.getstream.chat.android.client.Mute
-import io.getstream.chat.android.client.User
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.User
 import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap

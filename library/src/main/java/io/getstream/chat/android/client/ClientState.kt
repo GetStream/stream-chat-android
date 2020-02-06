@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.models.User
+
 class ClientState {
 
     var user: User? = null

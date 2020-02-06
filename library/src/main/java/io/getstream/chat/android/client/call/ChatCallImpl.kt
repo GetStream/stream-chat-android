@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.Result
+import io.getstream.chat.android.client.utils.Result
 
 abstract class ChatCallImpl<T> : ChatCall<T> {
 
@@ -29,9 +29,16 @@ abstract class ChatCallImpl<T> : ChatCall<T> {
                     val resultA = callA.execute()
 
                     return if (resultA.isSuccess) {
-                        Result(mapper(resultA.data()), null)
+                        Result(
+                            mapper(
+                                resultA.data()
+                            ), null
+                        )
                     } else {
-                        Result(null, resultA.error())
+                        Result(
+                            null,
+                            resultA.error()
+                        )
                     }
                 }
 
@@ -40,9 +47,19 @@ abstract class ChatCallImpl<T> : ChatCall<T> {
 
                         if (!canceled) {
                             if (it.isSuccess) {
-                                callback(Result(mapper(it.data()), null))
+                                callback(
+                                    Result(
+                                        mapper(it.data()),
+                                        null
+                                    )
+                                )
                             } else {
-                                callback(Result(null, it.error()))
+                                callback(
+                                    Result(
+                                        null,
+                                        it.error()
+                                    )
+                                )
                             }
                         }
                     }

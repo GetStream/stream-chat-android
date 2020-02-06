@@ -1,12 +1,16 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.gson.JsonParserImpl
+import io.getstream.chat.android.client.parser.JsonParserImpl
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.observable.JustObservable
-import io.getstream.chat.android.client.poc.utils.SuccessTokenProvider
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.api.models.RetrofitApi
+import io.getstream.chat.android.client.api.models.RetrofitCdnApi
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
 
 /**
@@ -31,6 +35,7 @@ class MockClientBuilder {
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket
     lateinit var retrofitApi: RetrofitApi
+    lateinit var retrofitCdnApi: RetrofitCdnApi
 
     private lateinit var client: ChatClient
 
@@ -43,7 +48,14 @@ class MockClientBuilder {
         val logger = Mockito.mock(StreamLogger::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        api = ChatApiImpl(config, retrofitApi, JsonParserImpl(), null)
+        retrofitCdnApi = Mockito.mock(RetrofitCdnApi::class.java)
+        api = ChatApiImpl(
+            retrofitApi,
+            retrofitCdnApi,
+            config,
+            JsonParserImpl(),
+            logger
+        )
 
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 

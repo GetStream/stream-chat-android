@@ -3,6 +3,7 @@ package io.getstream.chat.android.client
 import android.content.Context
 import android.text.TextUtils
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
@@ -13,8 +14,14 @@ import io.getstream.chat.android.client.notifications.NotificationsManager
 import io.getstream.chat.android.client.observable.ChatObservable
 import io.getstream.chat.android.client.requests.QueryUsers
 import io.getstream.chat.android.client.rest.*
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import java.io.File
 
 
 internal class ChatClientImpl constructor(
@@ -61,6 +68,33 @@ internal class ChatClientImpl constructor(
     override fun setGuestUser(user: User): ChatCall<TokenResponse> {
         config.isAnonymous = true
         return api.setGuestUser(user.id, user.name)
+    }
+
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String,
+        callback: ProgressCallback
+    ) {
+        api.sendFile(channelType, channelId, file, mimeType, callback)
+    }
+
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File,
+        mimeType: String
+    ): ChatCall<String> {
+        return api.sendFile(channelType, channelId, file, mimeType)
+    }
+
+    override fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+        return api.deleteFile(channelType, channelId, url)
+    }
+
+    override fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+        return api.deleteImage(channelType, channelId, url)
     }
 
     //endregion
@@ -207,7 +241,6 @@ internal class ChatClientImpl constructor(
         request: QueryChannelsRequest
     ): ChatCall<List<Channel>> {
         return api.queryChannels(request)
-            .map { response -> response.getChannels() }
             .map { attachClient(it) }
     }
 
@@ -223,7 +256,6 @@ internal class ChatClientImpl constructor(
 
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
         return api.updateChannel(channelType, channelId, request)
-            .map { response -> response.channel }
             .map { attachClient(it) }
     }
 
@@ -246,9 +278,7 @@ internal class ChatClientImpl constructor(
     }
 
     override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
-        return api.getUsers(
-            queryUsers = query
-        ).map { it.users }
+        return api.getUsers(query).map { it.users }
     }
 
     override fun addMembers(
@@ -268,10 +298,12 @@ internal class ChatClientImpl constructor(
         channelId: String,
         members: List<String>
     ) = api.removeMembers(
-        channelType = channelType,
-        channelId = channelId,
-        members = members
-    )
+        channelType,
+        channelId,
+        members
+    ).map {
+        it.channel
+    }
 
     override fun muteUser(targetId: String) = api.muteUser(
         targetId = targetId
