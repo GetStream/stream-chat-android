@@ -1,4 +1,6 @@
 # Stream Chat Client
+# stream-chat-android
+[![Build Status](https://travis-ci.com/GetStream/stream-chat-android-client.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-client)
 
 Note: This is an updated version of the Stream low level chat client. It's a preview and not yet suitable for production usage. Right now we recommend using the regular Java based SDK.
 
