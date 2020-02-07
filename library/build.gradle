@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 group = 'com.github.getstream'
 
@@ -59,4 +60,10 @@ dependencies {
     //Stetho
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+
+    //Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 }

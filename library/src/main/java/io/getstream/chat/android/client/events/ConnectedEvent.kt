@@ -9,7 +9,6 @@ class ConnectedEvent : RemoteEvent() {
     lateinit var user: User
     lateinit var me: User
     val member: Member? = null
-    var message: Message? = null
     val reaction: Reaction? = null
     val channel: Channel? = null
     var online = false

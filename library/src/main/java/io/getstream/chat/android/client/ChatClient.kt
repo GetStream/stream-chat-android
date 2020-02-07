@@ -2,6 +2,9 @@ package io.getstream.chat.android.client
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.*
+import android.content.Context
+import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.JsonParser
@@ -11,6 +14,12 @@ import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
+import io.getstream.chat.android.client.notifications.NotificationConfig
+import io.getstream.chat.android.client.notifications.NotificationsManager
+import io.getstream.chat.android.client.notifications.StreamNotificationsManager
+import io.getstream.chat.android.client.notifications.options.NotificationOptions
+import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
@@ -152,13 +161,28 @@ interface ChatClient {
     fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
     //endregion
 
+    // region messages
+    fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
+    fun onNewTokenReceived(token: String, context: Context)
+    //endregion
+
     class Builder {
 
         private val parser =
             JsonParserImpl()
         private var logger: StreamLogger = StreamChatSilentLogger()
+        private var notificationConfig: NotificationConfig = NotificationConfig(
+            notificationOptions = StreamNotificationOptions(),
+            deviceRegisteredListener = null,
+            messageListener = null
+        )
 
         private lateinit var config: ChatConfig
+
+        fun notification(notificationConfig: NotificationConfig): Builder {
+            this.notificationConfig = notificationConfig
+            return this
+        }
 
         fun logger(logger: StreamLogger): Builder {
             this.logger = logger
@@ -173,7 +197,12 @@ interface ChatClient {
         internal fun build(): ChatClient {
             val socket = buildSocket(config, parser, logger)
             val api = buildApi(config, parser, logger)
-            return ChatClientImpl(api, socket, config, logger)
+            val notificationsManager = buildNotificationManager(
+                notificationOptions = notificationConfig.notificationOptions,
+                registeredListener = notificationConfig.deviceRegisteredListener,
+                client = api
+            )
+            return ChatClientImpl(api, socket, config, logger, notificationsManager)
         }
 
         private fun buildSocket(
@@ -201,6 +230,19 @@ interface ChatClient {
                 chatConfig,
                 parser,
                 logger
+            )
+        }
+
+        private fun buildNotificationManager(
+            notificationOptions: NotificationOptions,
+            registeredListener: DeviceRegisteredListener?,
+            client: ChatApi
+        ): NotificationsManager {
+            return StreamNotificationsManager(
+                notificationOptions = notificationOptions,
+                registerListener = registeredListener,
+                client = client,
+                logger = logger
             )
         }
 

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "964144059857",
+    "firebase_url": "https://low-level-client-sample.firebaseio.com",
+    "project_id": "low-level-client-sample",
+    "storage_bucket": "low-level-client-sample.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964144059857:android:f30e2bf4686dd0b7c33cf0",
+        "android_client_info": {
+          "package_name": "io.getstream.chat.android.client.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964144059857-ieq7416mql0lcmuc6rnbnili18hn3ts1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO0kLwyETBr96zAM6KESNTOeLjjpSt9pI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964144059857-ieq7416mql0lcmuc6rnbnili18hn3ts1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
