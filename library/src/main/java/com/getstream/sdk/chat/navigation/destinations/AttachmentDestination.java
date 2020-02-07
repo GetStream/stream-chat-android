@@ -124,6 +124,7 @@ public class AttachmentDestination extends ChatDestination {
 
         if (mimeType == null) {
             StreamChat.getLogger().logE(this, "MimeType is null");
+            Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_mime_type, attachment.getName()));
         } else {
             // Media
             if (mimeType.contains("audio") ||

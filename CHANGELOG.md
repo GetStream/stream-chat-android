@@ -2,7 +2,7 @@
 
 - Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
 - update target api level to 29
-- Fix bug with mediaplayer
+- Fixed media playback error on api 29 devices
 
 ## January 28th, 2020 - 3.6.3
 
