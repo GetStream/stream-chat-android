@@ -16,7 +16,13 @@ public class ConnectionLiveData extends LiveData<ConnectionLiveData.ConnectionMo
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getExtras() != null) {
-                NetworkInfo activeNetwork = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+                ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if (connectivityManager == null) {
+                    StreamChat.getLogger().logE(this, "Can\'t get access to ConnectivityManager");
+                    return;
+                }
+                NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+
                 boolean isConnected = activeNetwork != null &&
                         activeNetwork.isConnectedOrConnecting();
                 if (isConnected) {
