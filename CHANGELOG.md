@@ -9,6 +9,7 @@
 - ChannelViewHolderFactory is now easier to customize
 - Added ChannelViewHolder.messageInputText for 2 way data binding
 - Documentation improvements
+- Fix problem with wrong scroll position
 
 ## January 10th, 2020 - 3.6.2
 
