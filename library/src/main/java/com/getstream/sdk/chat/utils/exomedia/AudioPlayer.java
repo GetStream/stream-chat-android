@@ -363,7 +363,7 @@ public class AudioPlayer {
      */
     @Deprecated
     public void setTrack(ExoMedia.RendererType trackType, int trackIndex) {
-        audioPlayerImpl.setTrack(trackType, trackIndex);
+        audioPlayerImpl.setTrack(trackType,0, trackIndex);
     }
 
     /**
