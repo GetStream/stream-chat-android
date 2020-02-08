@@ -672,7 +672,7 @@ public class VideoView extends RelativeLayout {
      */
     @Deprecated
     public void setTrack(ExoMedia.RendererType trackType, int trackIndex) {
-        videoViewImpl.setTrack(trackType, trackIndex);
+        videoViewImpl.setTrack(trackType, 0, trackIndex);
     }
 
     /**
