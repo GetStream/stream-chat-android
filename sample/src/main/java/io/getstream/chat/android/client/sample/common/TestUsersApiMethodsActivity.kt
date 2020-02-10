@@ -29,6 +29,11 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         initViews()
     }
 
+    override fun onDestroy() {
+        client.disconnect()
+        super.onDestroy()
+    }
+
     private fun initViews() {
         testUserApiGuestBtn?.setOnClickListener {
             setGuestUser()
@@ -100,9 +105,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 task.result?.token?.let { firebaseToken ->
-                     client.addDevice(
-                        AddDeviceRequest(firebaseToken)
-                    ).enqueue { result ->
+                     client.addDevice(firebaseToken).enqueue { result ->
                         if (result.isSuccess) {
                             //User device registered success
                         } else {

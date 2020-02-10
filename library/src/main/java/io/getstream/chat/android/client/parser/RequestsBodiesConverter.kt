@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.parser
 
 import com.google.gson.Gson
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.RemoveMembersRequest
@@ -16,7 +17,9 @@ class RequestsBodiesConverter(val gson: Gson) : Converter.Factory() {
         retrofit: Retrofit
     ): Converter<*, String>? {
 
-        return if (type === RemoveMembersRequest::class.java) {
+        return if (type === AddDeviceRequest::class.java) {
+            AddDeviceRequestConverter(gson)
+        } else if (type === RemoveMembersRequest::class.java) {
             RemoveMembersRequestConverter(gson)
         } else if (type === QueryUsers::class.java) {
             QueryUsersConverter(gson)
@@ -42,6 +45,13 @@ private class QueryUsersConverter(val gson: Gson) : Converter<QueryUsers, String
 private class RemoveMembersRequestConverter(val gson: Gson) :
     Converter<RemoveMembersRequest, String> {
     override fun convert(value: RemoveMembersRequest): String {
+        return gson.toJson(value)
+    }
+}
+
+private class AddDeviceRequestConverter(val gson: Gson) :
+    Converter<AddDeviceRequest, String> {
+    override fun convert(value: AddDeviceRequest): String {
         return gson.toJson(value)
     }
 }
