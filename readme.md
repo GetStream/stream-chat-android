@@ -17,6 +17,14 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 
 ## Setup
 ```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+```groovy
 dependencies {
     implementation 'com.github.getstream:stream-chat-android-client:0.9.7'
 }
