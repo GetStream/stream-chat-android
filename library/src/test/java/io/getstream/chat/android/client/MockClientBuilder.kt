@@ -46,6 +46,7 @@ class MockClientBuilder {
         val config = ChatConfig.Builder()
             .apiKey(apiKey)
             .token(token)
+            .baseUrl("test-url")
             .build()
         val logger = Mockito.mock(ChatLogger::class.java)
         socket = Mockito.mock(ChatSocket::class.java)

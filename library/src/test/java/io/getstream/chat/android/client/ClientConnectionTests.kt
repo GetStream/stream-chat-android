@@ -22,7 +22,10 @@ class ClientConnectionTests {
     val connectionId = "connection-id"
     val user = User(userId)
     val token = "token"
-    val config = ChatConfig.Builder().token(token).build()
+    val config = ChatConfig.Builder()
+        .apiKey("api-key")
+        .baseUrl("base-url")
+        .token(token).build()
 
     val connectedEvent = ConnectedEvent().apply {
         me = this@ClientConnectionTests.user
@@ -59,7 +62,7 @@ class ClientConnectionTests {
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(api, socket, config, logger, notificationsManager)
-        client.setUser(user, token)
+        client.setUser(user)
 
         verify(socket, times(1)).connect(user)
     }
@@ -69,7 +72,7 @@ class ClientConnectionTests {
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(api, socket, config, logger, notificationsManager)
-        client.setUser(user, token)
+        client.setUser(user)
 
         client.disconnect()
 

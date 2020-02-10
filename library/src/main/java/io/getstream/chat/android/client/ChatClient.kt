@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit
 
 interface ChatClient {
 
-    fun setUser(user: User, token: String)
-
     fun setUser(user: User)
 
     fun setGuestUser(user: User): Call<TokenResponse>
