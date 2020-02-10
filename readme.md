@@ -101,7 +101,7 @@ dependencies {
 All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
-interface ChatCall<T> {
+interface Call<T> {
     fun execute(): Result<T>
     fun enqueue(callback: (Result<T>) -> Unit)
     fun cancel()
@@ -136,7 +136,7 @@ client.getChannels { result -> showChannels(result) }
 
 ### Naming
 
-- Prefix `Chat` for all public classes to avoid spoiling public class name space
+- Prefix `Chat` for public classes to avoid spoiling public class name space (generic util classes like `Result` or `Call` are exceptions)
 - Postix `Impl` for interface implementations
 - No `m` field name prefix
 - `id`, not `ID`
