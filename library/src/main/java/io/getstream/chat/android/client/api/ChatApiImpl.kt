@@ -118,18 +118,18 @@ class ChatApiImpl(
         }
     }
 
-    override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {
+    override fun addDevice(firebaseToken: String): ChatCall<Unit> {
         return callMapper.map(
-            retrofitApi.addDevices(config.apiKey, userId, connectionId, request)
+            retrofitApi.addDevices(config.apiKey, userId, connectionId, AddDeviceRequest(firebaseToken))
         ).map {
             Unit
         }
     }
 
-    override fun deleteDevice(deviceId: String): ChatCall<Unit> {
+    override fun deleteDevice(firebaseToken: String): ChatCall<Unit> {
         return callMapper.map(
             retrofitApi.deleteDevice(
-                deviceId, config.apiKey, userId, connectionId
+                firebaseToken, config.apiKey, userId, connectionId
             )
         ).map {
             Unit

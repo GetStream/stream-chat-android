@@ -119,7 +119,7 @@ interface ChatClient {
     fun getClientId(): String
     fun getDevices(): ChatCall<List<Device>>
     fun deleteDevice(deviceId: String): ChatCall<Unit>
-    fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
+    fun addDevice(firebaseToken: String): ChatCall<Unit>
     fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
     fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>

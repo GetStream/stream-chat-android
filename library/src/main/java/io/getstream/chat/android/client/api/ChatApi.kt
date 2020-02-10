@@ -1,15 +1,12 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.api.models.CompletableResponse
-import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.api.models.QueryUsers
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
 interface ChatApi {
@@ -41,8 +38,8 @@ interface ChatApi {
 
     //region Device calls
 
-    fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
-    fun deleteDevice(deviceId: String): ChatCall<Unit>
+    fun addDevice(firebaseToken: String): ChatCall<Unit>
+    fun deleteDevice(firebaseToken: String): ChatCall<Unit>
     fun getDevices(): ChatCall<List<Device>>
 
     //endregion

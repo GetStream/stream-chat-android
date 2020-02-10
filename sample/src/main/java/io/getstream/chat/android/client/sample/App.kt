@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.facebook.stetho.Stetho
+import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatConfig
@@ -49,6 +50,8 @@ class App : Application() {
         super.onCreate()
 
         Stetho.initializeWithDefaults(this)
+
+        FirebaseApp.initializeApp(this)
 
         logger = provideLogger()
         db = AppDatabase.getInstance(this)

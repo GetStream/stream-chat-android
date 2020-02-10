@@ -140,8 +140,8 @@ internal class ChatClientImpl constructor(
         return api.deleteDevice(deviceId)
     }
 
-    override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {
-        return api.addDevice(request)
+    override fun addDevice(firebaseToken: String): ChatCall<Unit> {
+        return api.addDevice(firebaseToken)
     }
 
     override fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>> {
