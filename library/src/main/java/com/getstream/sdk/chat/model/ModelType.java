@@ -45,6 +45,7 @@ public class ModelType {
     public static final String attach_mime_mov = "video/mov";
     public static final String attach_mime_mp4 = "video/mp4";
     public static final String attach_mime_mp3 = "audio/mp3";
+    public static final String attach_mime_m4a = "audio/m4a";
     // Action Type
     public static final String action_send = "send";
     public static final String action_shuffle = "shuffle";
