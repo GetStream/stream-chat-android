@@ -7,8 +7,8 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.parser.JsonParser
-import io.getstream.chat.android.client.parser.JsonParserImpl
+import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.logger.ChatSilentLogger
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
@@ -168,16 +168,14 @@ interface ChatClient {
 
     class Builder {
 
-        private val parser =
-            JsonParserImpl()
+        private lateinit var config: ChatConfig
+        private val parser = ChatParserImpl()
         private var logger: ChatLogger = ChatSilentLogger()
         private var notificationConfig: ChatNotificationConfig = ChatNotificationConfig(
             notificationOptions = ChatNotificationOptions(),
             deviceRegisteredListener = null,
             messageListener = null
         )
-
-        private lateinit var config: ChatConfig
 
         fun notification(notificationConfig: ChatNotificationConfig): Builder {
             this.notificationConfig = notificationConfig
@@ -207,7 +205,7 @@ interface ChatClient {
 
         private fun buildSocket(
             chatConfig: ChatConfig,
-            parser: JsonParser,
+            parser: ChatParser,
             logger: ChatLogger
         ): ChatSocket {
             return ChatSocketImpl(
@@ -221,7 +219,7 @@ interface ChatClient {
 
         private fun buildApi(
             chatConfig: ChatConfig,
-            parser: JsonParser,
+            parser: ChatParser,
             logger: ChatLogger
         ): ChatApi {
             return ChatApiImpl(
@@ -252,7 +250,7 @@ interface ChatClient {
             writeTimeout: Long,
             readTimeout: Long,
             config: ChatConfig,
-            parser: JsonParser
+            parser: ChatParser
         ): Retrofit {
 
             val clientBuilder = OkHttpClient.Builder()

@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MultipartBody.Part.Companion.createFormData
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -15,7 +15,7 @@ class ChatApiImpl(
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
     private val config: ChatConfig,
-    private val parser: JsonParser,
+    private val parser: ChatParser,
     private val logger: ChatLogger
 ) : ChatApi {
 

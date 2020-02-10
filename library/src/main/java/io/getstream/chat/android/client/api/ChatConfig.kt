@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.token.CachedTokenProvider
 import io.getstream.chat.android.client.token.CachedTokenProviderImpl
 import io.getstream.chat.android.client.token.TokenProvider
@@ -30,11 +31,11 @@ class ChatConfig(
     class Builder {
 
         private var apiKey: String = ""
-        private var baseURL: String = ""
-        private var cdnURL: String = ""
+        private var baseUrl: String = ""
+        private var cdnUrl: String = ""
         private var baseTimeout: Int = 10000
         private var cdnTimeout: Int = 10000
-        private lateinit var tokenProvider: TokenProvider
+        private lateinit var tokenProviderInstance: TokenProvider
 
         fun apiKey(apiKey: String): Builder {
             this.apiKey = apiKey
@@ -42,12 +43,12 @@ class ChatConfig(
         }
 
         fun token(token: String): Builder {
-            this.tokenProvider = ImmediateTokenProvider(token)
+            this.tokenProviderInstance = ImmediateTokenProvider(token)
             return this
         }
 
         fun tokenProvider(tokenProvider: TokenProvider): Builder {
-            this.tokenProvider = tokenProvider
+            this.tokenProviderInstance = tokenProvider
             return this
         }
 
@@ -61,8 +62,8 @@ class ChatConfig(
             return this
         }
 
-        fun baseUrl(baseURL: String): Builder {
-            var baseUrl = baseURL
+        fun baseUrl(value: String): Builder {
+            var baseUrl = value
             if (baseUrl.startsWith("https://")) {
                 baseUrl = baseUrl.split("https://").toTypedArray()[1]
             }
@@ -72,34 +73,43 @@ class ChatConfig(
             if (baseUrl.endsWith("/")) {
                 baseUrl = baseUrl.substring(0, baseUrl.length - 1)
             }
-            this.baseURL = baseUrl
+            this.baseUrl = baseUrl
             return this
         }
 
-        fun cdnUrl(cdnURL: String): Builder {
-            var cdnURL = cdnURL
-            if (cdnURL.startsWith("https://")) {
-                cdnURL = cdnURL.split("https://").toTypedArray()[1]
+        fun cdnUrl(value: String): Builder {
+            var cdnUrl = value
+            if (cdnUrl.startsWith("https://")) {
+                cdnUrl = cdnUrl.split("https://").toTypedArray()[1]
             }
-            if (cdnURL.startsWith("http://")) {
-                cdnURL = cdnURL.split("http://").toTypedArray()[1]
+            if (cdnUrl.startsWith("http://")) {
+                cdnUrl = cdnUrl.split("http://").toTypedArray()[1]
             }
-            if (cdnURL.endsWith("/")) {
-                cdnURL = cdnURL.substring(0, cdnURL.length - 1)
+            if (cdnUrl.endsWith("/")) {
+                cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1)
             }
-            this.cdnURL = cdnURL
+            this.cdnUrl = cdnUrl
             return this
         }
 
         fun build(): ChatConfig {
             val result = ChatConfig(
                 apiKey,
-                baseURL,
-                cdnURL,
+                baseUrl,
+                cdnUrl,
                 baseTimeout,
                 cdnTimeout
             )
-            result.tokenProvider.setTokenProvider(tokenProvider)
+
+            if (!this::tokenProviderInstance.isInitialized) {
+                throw ChatError("token or token provider is not defined in ChatConfig.Builder")
+            } else if (apiKey.isEmpty()) {
+                throw ChatError("apiKey is not defined in ChatConfig.Builder")
+            } else if (baseUrl.isEmpty()) {
+                throw ChatError("baseUrl is not defined in ChatConfig.Builder")
+            }
+
+            result.tokenProvider.setTokenProvider(tokenProviderInstance)
             return result
         }
     }

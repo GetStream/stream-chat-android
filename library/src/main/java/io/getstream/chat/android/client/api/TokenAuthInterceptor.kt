@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api
 import android.util.Log
 import io.getstream.chat.android.client.token.TokenProvider.TokenProviderListener
 import io.getstream.chat.android.client.errors.ErrorCode
-import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -13,7 +13,7 @@ import java.util.concurrent.CountDownLatch
 
 class TokenAuthInterceptor internal constructor(
     private val config: ChatConfig,
-    private val parser: JsonParser
+    private val parser: ChatParser
 ) : Interceptor {
 
     private val TAG = javaClass.simpleName

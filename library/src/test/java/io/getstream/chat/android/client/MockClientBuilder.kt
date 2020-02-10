@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.parser.JsonParserImpl
+import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.RetrofitApi
@@ -56,7 +56,7 @@ class MockClientBuilder {
             retrofitApi,
             retrofitCdnApi,
             config,
-            JsonParserImpl(),
+            ChatParserImpl(),
             logger
         )
 

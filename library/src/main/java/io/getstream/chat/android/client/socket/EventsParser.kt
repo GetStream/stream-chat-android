@@ -4,7 +4,7 @@ import android.util.Log
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket
 import java.util.*
@@ -12,7 +12,7 @@ import java.util.*
 
 class EventsParser(
     private val service: ChatSocketServiceImpl,
-    private val parser: JsonParser
+    private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
     private var firstReceivedMessage = false
