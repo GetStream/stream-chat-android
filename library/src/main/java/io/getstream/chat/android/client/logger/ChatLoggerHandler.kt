@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.logger
 
-interface StreamLoggerHandler {
+interface ChatLoggerHandler {
     fun logT(throwable: Throwable)
 
     fun logT(className: String, throwable: Throwable)

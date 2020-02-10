@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
@@ -25,7 +25,7 @@ internal class ChatClientImpl constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val config: ChatConfig,
-    private val logger: StreamLogger,
+    private val logger: ChatLogger,
     private val notificationsManager: ChatNotificationsManager
 ) : ChatClient {
 

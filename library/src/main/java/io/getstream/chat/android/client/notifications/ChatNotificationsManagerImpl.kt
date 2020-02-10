@@ -18,10 +18,10 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.safeLet
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.StreamNotification
+import io.getstream.chat.android.client.models.ChatNotification
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.poc.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
@@ -36,7 +36,7 @@ class ChatNotificationsManagerImpl constructor(
     private val notificationOptions: NotificationOptions,
     private val registerListener: DeviceRegisteredListener? = null,
     private val client: ChatApi,
-    private val logger: StreamLogger
+    private val logger: ChatLogger
 ) : ChatNotificationsManager {
 
     companion object {
@@ -47,7 +47,7 @@ class ChatNotificationsManagerImpl constructor(
         private const val FIREBASE_MESSAGE_ID_KEY = "message_id"
     }
 
-    private val notificationsMap: HashMap<String, StreamNotification> = HashMap()
+    private val notificationsMap: HashMap<String, ChatNotification> = HashMap()
     private var failMessageListener: NotificationMessageLoadListener? = null
     private var deviceRegisteredListener: DeviceRegisteredListener? = null
 
@@ -83,7 +83,7 @@ class ChatNotificationsManagerImpl constructor(
 
         if (checkSentNotificationWithId(messageId)) {
             if (messageId != null && messageId.isNotEmpty()) {
-                val notificationModel = StreamNotification(
+                val notificationModel = ChatNotification(
                     System.currentTimeMillis().toInt(),
                     remoteMessage,
                     null
@@ -101,7 +101,7 @@ class ChatNotificationsManagerImpl constructor(
 
             if (checkSentNotificationWithId(event.message.id)) {
                 val notificationModel =
-                    StreamNotification(System.currentTimeMillis().toInt(), null, event)
+                    ChatNotification(System.currentTimeMillis().toInt(), null, event)
                 notificationsMap[event.message.id] = notificationModel
                 loadMessage(context, event.message.id)
             } else {
@@ -306,7 +306,7 @@ class ChatNotificationsManagerImpl constructor(
 
     private fun getContentIntent(
         context: Context,
-        item: StreamNotification,
+        item: ChatNotification,
         defaultNotification: Boolean
     ): PendingIntent? {
         if (defaultNotification) {

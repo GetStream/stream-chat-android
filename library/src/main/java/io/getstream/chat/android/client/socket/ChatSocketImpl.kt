@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.token.CachedTokenProvider
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.JsonParser
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 class ChatSocketImpl(
@@ -12,7 +12,7 @@ class ChatSocketImpl(
     val wssUrl: String,
     val cachedTokenProvider: CachedTokenProvider,
     val jsonParser: JsonParser,
-    logger: StreamLogger?
+    logger: ChatLogger?
 ) : ChatSocket {
 
     private val service = ChatSocketServiceImpl(jsonParser)

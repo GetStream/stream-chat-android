@@ -5,12 +5,11 @@ import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.parser.JsonParserImpl
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
-import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
@@ -48,7 +47,7 @@ class MockClientBuilder {
             .apiKey(apiKey)
             .token(token)
             .build()
-        val logger = Mockito.mock(StreamLogger::class.java)
+        val logger = Mockito.mock(ChatLogger::class.java)
         socket = Mockito.mock(ChatSocket::class.java)
         retrofitApi = Mockito.mock(RetrofitApi::class.java)
         retrofitCdnApi = Mockito.mock(RetrofitCdnApi::class.java)

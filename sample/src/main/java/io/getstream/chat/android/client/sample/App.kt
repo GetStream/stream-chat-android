@@ -11,17 +11,17 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.logger.StreamChatLogger
-import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.logger.StreamLoggerHandler
-import io.getstream.chat.android.client.logger.StreamLoggerLevel
+import io.getstream.chat.android.client.logger.ChatLoggerImpl
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.logger.ChatLoggerLevel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.notifications.options.NotificationIntentProvider
-import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
+import io.getstream.chat.android.client.notifications.options.ChatNotificationOptions
 import io.getstream.chat.android.client.sample.cache.AppDatabase
 import io.getstream.chat.android.client.sample.common.HomeActivity
 import io.getstream.chat.android.client.sample.common.KeyValue
@@ -40,7 +40,7 @@ class App : Application() {
         lateinit var db: AppDatabase
         lateinit var cache: ChannelsCache
         lateinit var keyValue: KeyValue
-        lateinit var logger: StreamLogger
+        lateinit var logger: ChatLogger
 
         private const val EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE"
         private const val EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID"
@@ -85,8 +85,8 @@ class App : Application() {
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
     }
 
-    private fun provideLogger(): StreamLogger {
-        val loggerHandler: StreamLoggerHandler = object : StreamLoggerHandler {
+    private fun provideLogger(): ChatLogger {
+        val loggerHandler: ChatLoggerHandler = object : ChatLoggerHandler {
             override fun logT(throwable: Throwable) {
                 // display throwable logs here
             }
@@ -112,15 +112,15 @@ class App : Application() {
             }
         }
 
-        return StreamChatLogger.Builder()
-            .loggingLevel(if (BuildConfig.DEBUG) StreamLoggerLevel.ALL else StreamLoggerLevel.NOTHING)
+        return ChatLoggerImpl.Builder()
+            .loggingLevel(if (BuildConfig.DEBUG) ChatLoggerLevel.ALL else ChatLoggerLevel.NOTHING)
             .setLoggingHandler(loggerHandler)
             .build()
     }
 
 
     @UseExperimental(ExperimentalTime::class)
-    private fun provideNotificationOptions() = StreamNotificationOptions().apply {
+    private fun provideNotificationOptions() = ChatNotificationOptions().apply {
         setNotificationIntentProvider(
             object : NotificationIntentProvider {
                 override fun getIntentForFirebaseMessage(

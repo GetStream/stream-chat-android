@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.logger
 
-class StreamChatSilentLogger : StreamLogger {
+class ChatSilentLogger : ChatLogger {
     override fun logT(throwable: Throwable) {
         // unused
     }

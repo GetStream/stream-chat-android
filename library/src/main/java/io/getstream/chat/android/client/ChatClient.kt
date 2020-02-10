@@ -9,8 +9,8 @@ import io.getstream.chat.android.client.call.ChatCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.JsonParser
 import io.getstream.chat.android.client.parser.JsonParserImpl
-import io.getstream.chat.android.client.logger.StreamChatSilentLogger
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.logger.ChatSilentLogger
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*
@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.notifications.NotificationConfig
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
+import io.getstream.chat.android.client.notifications.options.ChatNotificationOptions
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
@@ -170,9 +170,9 @@ interface ChatClient {
 
         private val parser =
             JsonParserImpl()
-        private var logger: StreamLogger = StreamChatSilentLogger()
+        private var logger: ChatLogger = ChatSilentLogger()
         private var notificationConfig: NotificationConfig = NotificationConfig(
-            notificationOptions = StreamNotificationOptions(),
+            notificationOptions = ChatNotificationOptions(),
             deviceRegisteredListener = null,
             messageListener = null
         )
@@ -184,7 +184,7 @@ interface ChatClient {
             return this
         }
 
-        fun logger(logger: StreamLogger): Builder {
+        fun logger(logger: ChatLogger): Builder {
             this.logger = logger
             return this
         }
@@ -208,7 +208,7 @@ interface ChatClient {
         private fun buildSocket(
             chatConfig: ChatConfig,
             parser: JsonParser,
-            logger: StreamLogger
+            logger: ChatLogger
         ): ChatSocket {
             return ChatSocketImpl(
                 chatConfig.apiKey,
@@ -222,7 +222,7 @@ interface ChatClient {
         private fun buildApi(
             chatConfig: ChatConfig,
             parser: JsonParser,
-            logger: StreamLogger
+            logger: ChatLogger
         ): ChatApi {
             return ChatApiImpl(
                 buildRetrofitApi(),

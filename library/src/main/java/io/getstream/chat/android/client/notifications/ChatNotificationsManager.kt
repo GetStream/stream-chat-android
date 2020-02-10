@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
+import io.getstream.chat.android.client.notifications.options.ChatNotificationOptions
 
 interface ChatNotificationsManager {
     fun setFirebaseToken(
@@ -31,7 +31,7 @@ interface ChatNotificationsManager {
     fun setDeviceRegisterListener(deviceRegisteredListener: DeviceRegisteredListener)
 
     class Builder {
-        private var notificationOptions: NotificationOptions = StreamNotificationOptions()
+        private var notificationOptions: NotificationOptions = ChatNotificationOptions()
         private var deviceRegisteredListener: DeviceRegisteredListener? = null
         private var messageListener: NotificationMessageLoadListener? = null
 

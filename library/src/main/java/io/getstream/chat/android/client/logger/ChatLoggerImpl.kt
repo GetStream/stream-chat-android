@@ -2,48 +2,48 @@ package io.getstream.chat.android.client.logger
 
 import android.util.Log
 
-class StreamChatLogger constructor(
-    private val loggingLevel: StreamLoggerLevel? = StreamLoggerLevel.NOTHING,
-    private val loggingHandler: StreamLoggerHandler? = null
-) : StreamLogger {
+class ChatLoggerImpl constructor(
+    private val loggingLevel: ChatLoggerLevel? = ChatLoggerLevel.NOTHING,
+    private val loggingHandler: ChatLoggerHandler? = null
+) : ChatLogger {
 
     override fun logT(throwable: Throwable) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.ERROR) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.ERROR) != false) {
             throwable.printStackTrace()
         }
         loggingHandler?.logT(throwable)
     }
 
     override fun logT(tag: Any, throwable: Throwable) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.ERROR) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.ERROR) != false) {
             throwable.printStackTrace()
         }
         loggingHandler?.logT(getTag(tag), throwable)
     }
 
     override fun logI(tag: Any, message: String) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.ALL) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.ALL) != false) {
             Log.i(getTag(tag), message)
         }
         loggingHandler?.logI(getTag(tag), message)
     }
 
     override fun logD(tag: Any, message: String) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.DEBUG) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.DEBUG) != false) {
             Log.d(getTag(tag), message)
         }
         loggingHandler?.logD(getTag(tag), message)
     }
 
     override fun logW(tag: Any, message: String) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.WARN) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.WARN) != false) {
             Log.w(getTag(tag), message)
         }
         loggingHandler?.logW(getTag(tag), message)
     }
 
     override fun logE(tag: Any, message: String) {
-        if (loggingLevel?.isMoreOrEqualsThan(StreamLoggerLevel.ERROR) != false) {
+        if (loggingLevel?.isMoreOrEqualsThan(ChatLoggerLevel.ERROR) != false) {
             Log.e(getTag(tag), message)
         }
         loggingHandler?.logE(getTag(tag), message)
@@ -59,28 +59,28 @@ class StreamChatLogger constructor(
     }
 
     class Builder {
-        private var loggingLevel: StreamLoggerLevel? = null
-        private var loggingHandler: StreamLoggerHandler? = null
+        private var loggingLevel: ChatLoggerLevel? = null
+        private var loggingHandler: ChatLoggerHandler? = null
 
         /**
          * Set logging level
          *
-         * @param level - Logging [StreamLoggerLevel]
+         * @param level - Logging [ChatLoggerLevel]
          * @return - builder
          */
 
-        fun loggingLevel(level: StreamLoggerLevel): Builder {
+        fun loggingLevel(level: ChatLoggerLevel): Builder {
             loggingLevel = level
             return this
         }
 
-        fun setLoggingHandler(handler: StreamLoggerHandler): Builder {
+        fun setLoggingHandler(handler: ChatLoggerHandler): Builder {
             loggingHandler = handler
             return this
         }
 
-        fun build(): StreamChatLogger {
-            return StreamChatLogger(loggingLevel, loggingHandler)
+        fun build(): ChatLoggerImpl {
+            return ChatLoggerImpl(loggingLevel, loggingHandler)
         }
     }
 }

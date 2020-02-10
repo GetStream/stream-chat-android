@@ -15,9 +15,9 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.poc.R
 
-class StreamNotificationOptions : NotificationOptions {
+class ChatNotificationOptions : NotificationOptions {
 
-    private val TAG = StreamNotificationOptions::class.java.simpleName
+    private val TAG = ChatNotificationOptions::class.java.simpleName
     private val DEFAULT_REQUEST_CODE = 999
 
     private var notificationChannelId: String? = null
