@@ -1,21 +1,21 @@
 package io.getstream.chat.android.client.sample.common
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.iid.FirebaseInstanceId
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.sample.App
+import io.getstream.chat.android.client.sample.R
 import kotlinx.android.synthetic.main.activity_test_user_api.*
 
-//import org.jetbrains.anko.intentFor
 
 class TestUsersApiMethodsActivity : AppCompatActivity() {
-
-//    companion object {
-//        fun getIntent(context: Context) = context.intentFor<TestUsersApiMethodsActivity>()
-//    }
 
     private val client = App.client
     private val channelId = "new-ch"
@@ -24,7 +24,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //setContentView(R.layout.activity_test_user_api)
+        setContentView(R.layout.activity_test_user_api)
 
         initViews()
     }
@@ -87,10 +87,31 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         //testUserApiLoadingShapeContainer.makeVisible()
 
         client.events().subscribe {
-
+            if (it is ConnectedEvent) {
+                registerDevice()
+                initButtons()
+            }
         }
 
-        client.setUser(User("stream-eugene"))
+        client.setUser(User("bender"))
+    }
+
+    private fun registerDevice() {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                task.result?.token?.let { firebaseToken ->
+                     client.addDevice(
+                        AddDeviceRequest(firebaseToken)
+                    ).enqueue { result ->
+                        if (result.isSuccess) {
+                            //User device registered success
+                        } else {
+                            //Device not registered
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun getUsers() {
@@ -145,11 +166,11 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun banUser() {
         client.banUser(
-            "stream-eugene",
-            channelType,
-            channelId,
-            "reason",
-            10
+            targetId = "stream-eugene",
+            channelType = channelType,
+            channelId = channelId,
+            timeout = 10,
+            reason = "reason"
         ).enqueue { result ->
             //echoResult(result, "User baned successful")
         }
@@ -176,9 +197,9 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
-        //testUserApiFunctionalityGroup?.makeVisible()
-        //testUserApiLoginGroup?.makeGone()
+        testUserApiFunctionalityGroup?.visibility = View.VISIBLE
+        testUserApiLoginGroup?.visibility = View.GONE
 
-        //testUserApiLoadingShapeContainer.makeGone()
+        testUserApiLoadingShapeContainer.visibility = View.GONE
     }
 }

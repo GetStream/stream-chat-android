@@ -59,6 +59,10 @@ dependencies {
     kapt "androidx.room:room-compiler:2.2.3"
     implementation "androidx.room:room-rxjava2:2.2.3"
 
+    //Firebase
+    implementation 'com.google.firebase:firebase-messaging:20.1.0'
+    implementation "com.google.firebase:firebase-core:17.2.2"
+
     //Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1'
