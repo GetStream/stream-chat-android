@@ -11,17 +11,17 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.logger.ChatLoggerImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.logger.ChatLoggerImpl
 import io.getstream.chat.android.client.logger.ChatLoggerLevel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
-import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
-import io.getstream.chat.android.client.notifications.options.NotificationIntentProvider
+import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
+import io.getstream.chat.android.client.notifications.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
 import io.getstream.chat.android.client.notifications.options.ChatNotificationOptions
+import io.getstream.chat.android.client.notifications.options.NotificationIntentProvider
 import io.getstream.chat.android.client.sample.cache.AppDatabase
 import io.getstream.chat.android.client.sample.common.HomeActivity
 import io.getstream.chat.android.client.sample.common.KeyValue
@@ -58,17 +58,17 @@ class App : Application() {
 
         val config = ChatConfig.Builder()
             .apiKey("qk4nn7rpcn75")
-            .baseURL("chat-us-east-staging.stream-io-api.com")
+            .baseUrl("chat-us-east-staging.stream-io-api.com")
             .cdnUrl("chat-us-east-staging.stream-io-api.com")
             .baseTimeout(10000)
             .cdnTimeout(10000)
             .token("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             .build()
 
-        val notificationConfig = ChatNotificationsManager.Builder()
-            .setNotificationOptions(provideNotificationOptions())
-            .setRegisterListener(provideDeviceRegisteredListener())
-            .setNotificationMessageLoadListener(provideNotificationMessageLoadListener())
+        val notificationConfig = ChatNotificationConfig.Builder()
+            .options(provideNotificationOptions())
+            .registerListener(provideDeviceRegisteredListener())
+            .messageLoadListener(provideNotificationMessageLoadListener())
             .build()
 
         client = ChatClient.init(
@@ -113,8 +113,8 @@ class App : Application() {
         }
 
         return ChatLoggerImpl.Builder()
-            .loggingLevel(if (BuildConfig.DEBUG) ChatLoggerLevel.ALL else ChatLoggerLevel.NOTHING)
-            .setLoggingHandler(loggerHandler)
+            .level(if (BuildConfig.DEBUG) ChatLoggerLevel.ALL else ChatLoggerLevel.NOTHING)
+            .handler(loggerHandler)
             .build()
     }
 

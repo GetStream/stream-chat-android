@@ -29,29 +29,4 @@ interface ChatNotificationsManager {
     fun setFailMessageListener(failMessageListener: NotificationMessageLoadListener)
 
     fun setDeviceRegisterListener(deviceRegisteredListener: DeviceRegisteredListener)
-
-    class Builder {
-        private var notificationOptions: NotificationOptions = ChatNotificationOptions()
-        private var deviceRegisteredListener: DeviceRegisteredListener? = null
-        private var messageListener: NotificationMessageLoadListener? = null
-
-        fun setNotificationOptions(notificationOptions: NotificationOptions): Builder {
-            this.notificationOptions = notificationOptions
-            return this
-        }
-
-        fun setRegisterListener(deviceRegisteredListener: DeviceRegisteredListener): Builder {
-            this.deviceRegisteredListener = deviceRegisteredListener
-            return this
-        }
-
-        fun setNotificationMessageLoadListener(messageListener: NotificationMessageLoadListener) : Builder {
-            this.messageListener = messageListener
-            return this
-        }
-
-        fun build() = NotificationConfig(
-            notificationOptions, deviceRegisteredListener, messageListener
-        )
-    }
 }

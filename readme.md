@@ -142,6 +142,7 @@ client.getChannels { result -> showChannels(result) }
 - `id`, not `ID`
 - `t` for `Throwable`
 - `interface RetrfitCdnApi`, not `interface RetrofitCDNAPI`
+- not `setName`, but `name` with `Builder` classes 
 
 ```kotlin
 open interface ChatClient {

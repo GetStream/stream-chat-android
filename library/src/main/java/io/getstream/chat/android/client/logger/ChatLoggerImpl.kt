@@ -69,12 +69,12 @@ class ChatLoggerImpl constructor(
          * @return - builder
          */
 
-        fun loggingLevel(level: ChatLoggerLevel): Builder {
+        fun level(level: ChatLoggerLevel): Builder {
             loggingLevel = level
             return this
         }
 
-        fun setLoggingHandler(handler: ChatLoggerHandler): Builder {
+        fun handler(handler: ChatLoggerHandler): Builder {
             loggingHandler = handler
             return this
         }

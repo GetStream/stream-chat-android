@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.NotificationConfig
+import io.getstream.chat.android.client.notifications.ChatNotificationConfig
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
@@ -171,7 +171,7 @@ interface ChatClient {
         private val parser =
             JsonParserImpl()
         private var logger: ChatLogger = ChatSilentLogger()
-        private var notificationConfig: NotificationConfig = NotificationConfig(
+        private var notificationConfig: ChatNotificationConfig = ChatNotificationConfig(
             notificationOptions = ChatNotificationOptions(),
             deviceRegisteredListener = null,
             messageListener = null
@@ -179,7 +179,7 @@ interface ChatClient {
 
         private lateinit var config: ChatConfig
 
-        fun notification(notificationConfig: NotificationConfig): Builder {
+        fun notification(notificationConfig: ChatNotificationConfig): Builder {
             this.notificationConfig = notificationConfig
             return this
         }

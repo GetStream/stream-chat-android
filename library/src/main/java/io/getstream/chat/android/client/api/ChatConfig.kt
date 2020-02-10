@@ -61,18 +61,18 @@ class ChatConfig(
             return this
         }
 
-        fun baseURL(baseURL: String): Builder {
-            var baseURL = baseURL
-            if (baseURL.startsWith("https://")) {
-                baseURL = baseURL.split("https://").toTypedArray()[1]
+        fun baseUrl(baseURL: String): Builder {
+            var baseUrl = baseURL
+            if (baseUrl.startsWith("https://")) {
+                baseUrl = baseUrl.split("https://").toTypedArray()[1]
             }
-            if (baseURL.startsWith("http://")) {
-                baseURL = baseURL.split("http://").toTypedArray()[1]
+            if (baseUrl.startsWith("http://")) {
+                baseUrl = baseUrl.split("http://").toTypedArray()[1]
             }
-            if (baseURL.endsWith("/")) {
-                baseURL = baseURL.substring(0, baseURL.length - 1)
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length - 1)
             }
-            this.baseURL = baseURL
+            this.baseURL = baseUrl
             return this
         }
 
