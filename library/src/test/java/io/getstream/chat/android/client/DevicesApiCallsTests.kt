@@ -61,7 +61,7 @@ class DevicesApiCallsTests {
     fun addDevicesSuccess() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, mock.user.id)
+        val request = AddDeviceRequest(device.id)
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
@@ -81,7 +81,7 @@ class DevicesApiCallsTests {
     fun addDevicesError() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, mock.userId)
+        val request = AddDeviceRequest(device.id)
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
