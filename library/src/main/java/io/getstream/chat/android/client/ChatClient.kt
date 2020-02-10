@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.api.*
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.call.ChatCall
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.JsonParser
 import io.getstream.chat.android.client.parser.JsonParserImpl
@@ -37,7 +37,7 @@ interface ChatClient {
 
     fun setUser(user: User)
 
-    fun setGuestUser(user: User): ChatCall<TokenResponse>
+    fun setGuestUser(user: User): Call<TokenResponse>
 
     fun setAnonymousUser()
 
@@ -58,11 +58,11 @@ interface ChatClient {
         channelId: String,
         file: File,
         mimeType: String
-    ): ChatCall<String>
+    ): Call<String>
 
-    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
     //endregion
 
@@ -78,36 +78,36 @@ interface ChatClient {
 
     //region Users
 
-    fun getUsers(query: QueryUsers): ChatCall<List<User>>
+    fun getUsers(query: QueryUsers): Call<List<User>>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): Call<ChannelResponse>
 
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun muteUser(targetId: String): ChatCall<MuteUserResponse>
-    fun unMuteUser(targetId: String): ChatCall<MuteUserResponse>
-    fun flag(targetId: String): ChatCall<FlagResponse>
+    fun muteUser(targetId: String): Call<MuteUserResponse>
+    fun unMuteUser(targetId: String): Call<MuteUserResponse>
+    fun flag(targetId: String): Call<FlagResponse>
     fun banUser(
         targetId: String,
         channelType: String,
         channelId: String,
         reason: String,
         timeout: Int
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 
     fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 
     //endregion
 
@@ -117,48 +117,48 @@ interface ChatClient {
     fun fromCurrentUser(entity: UserEntity): Boolean
     fun getUserId(): String
     fun getClientId(): String
-    fun getDevices(): ChatCall<List<Device>>
-    fun deleteDevice(deviceId: String): ChatCall<Unit>
-    fun addDevice(firebaseToken: String): ChatCall<Unit>
-    fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
-    fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>
-    fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
-    fun getReactions(messageId: String, offset: Int, limit: Int): ChatCall<List<Reaction>>
-    fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message>
-    fun sendAction(request: SendActionRequest): ChatCall<Message>
-    fun deleteMessage(messageId: String): ChatCall<Message>
-    fun getMessage(messageId: String): ChatCall<Message>
-    fun sendMessage(channelType: String, channelId: String, message: Message): ChatCall<Message>
-    fun updateMessage(message: Message): ChatCall<Message>
+    fun getDevices(): Call<List<Device>>
+    fun deleteDevice(deviceId: String): Call<Unit>
+    fun addDevice(firebaseToken: String): Call<Unit>
+    fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
+    fun getReplies(messageId: String, limit: Int): Call<List<Message>>
+    fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
+    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    fun sendAction(request: SendActionRequest): Call<Message>
+    fun deleteMessage(messageId: String): Call<Message>
+    fun getMessage(messageId: String): Call<Message>
+    fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message>
+    fun updateMessage(message: Message): Call<Message>
 
     fun queryChannel(
         channelType: String,
         channelId: String,
         request: ChannelQueryRequest
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit>
-    fun showChannel(channelType: String, channelId: String): ChatCall<Unit>
+    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false
-    ): ChatCall<Unit>
+    ): Call<Unit>
 
-    fun stopWatching(channelType: String, channelId: String): ChatCall<Unit>
-    fun queryChannels(request: QueryChannelsRequest): ChatCall<List<Channel>>
+    fun stopWatching(channelType: String, channelId: String): Call<Unit>
+    fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>>
 
     fun updateChannel(
         channelType: String,
         channelId: String,
         updateMessage: Message,
         channelExtraData: Map<String, Any> = emptyMap()
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
-    fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
-    fun markAllRead(): ChatCall<ChatEvent>
-    fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
+    fun rejectInvite(channelType: String, channelId: String): Call<Channel>
+    fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
+    fun markAllRead(): Call<ChatEvent>
+    fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     //endregion
 
     // region messages

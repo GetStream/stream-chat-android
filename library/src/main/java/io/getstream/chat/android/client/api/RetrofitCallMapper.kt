@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.call.ChatCall
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ChatCallImpl
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.parser.JsonParser
@@ -9,7 +9,7 @@ import retrofit2.Response
 
 class RetrofitCallMapper(private val jsonParser: JsonParser) {
 
-    fun <T> map(call: retrofit2.Call<T>): ChatCall<T> {
+    fun <T> map(call: retrofit2.Call<T>): Call<T> {
 
         return object : ChatCallImpl<T>() {
 

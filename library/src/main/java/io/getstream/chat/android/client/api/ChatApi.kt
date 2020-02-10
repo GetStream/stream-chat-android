@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.call.ChatCall
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
@@ -28,98 +28,98 @@ interface ChatApi {
         channelId: String,
         file: File,
         mimeType: String
-    ): ChatCall<String>
+    ): Call<String>
 
-    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
     //endregion
 
     //region Device calls
 
-    fun addDevice(firebaseToken: String): ChatCall<Unit>
-    fun deleteDevice(firebaseToken: String): ChatCall<Unit>
-    fun getDevices(): ChatCall<List<Device>>
+    fun addDevice(firebaseToken: String): Call<Unit>
+    fun deleteDevice(firebaseToken: String): Call<Unit>
+    fun getDevices(): Call<List<Device>>
 
     //endregion
 
-    fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
-    fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
-    fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>
-    fun getReactions(messageId: String, offset: Int, limit: Int): ChatCall<List<Reaction>>
-    fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message>
-    fun deleteMessage(messageId: String): ChatCall<Message>
-    fun sendAction(request: SendActionRequest): ChatCall<Message>
-    fun getMessage(messageId: String): ChatCall<Message>
+    fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
+    fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
+    fun getReplies(messageId: String, limit: Int): Call<List<Message>>
+    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    fun deleteMessage(messageId: String): Call<Message>
+    fun sendAction(request: SendActionRequest): Call<Message>
+    fun getMessage(messageId: String): Call<Message>
     fun sendMessage(
         channelType: String,
         channelId: String,
         message: Message
-    ): ChatCall<Message>
+    ): Call<Message>
 
     fun updateMessage(
         message: Message
-    ): ChatCall<Message>
+    ): Call<Message>
 
-    fun queryChannels(query: QueryChannelsRequest): ChatCall<List<Channel>>
+    fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>>
     fun stopWatching(
         channelType: String,
         channelId: String
-    ): ChatCall<Unit>
+    ): Call<Unit>
 
     fun queryChannel(
         channelType: String,
         channelId: String = "",
         query: ChannelQueryRequest
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
     fun updateChannel(
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit>
-    fun showChannel(channelType: String, channelId: String): ChatCall<Unit>
+    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false
-    ): ChatCall<Unit>
+    ): Call<Unit>
 
-    fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
-    fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
-    fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
-    fun markAllRead(): ChatCall<EventResponse>
+    fun rejectInvite(channelType: String, channelId: String): Call<Channel>
+    fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
+    fun deleteChannel(channelType: String, channelId: String): Call<Channel>
+    fun markAllRead(): Call<EventResponse>
 
-    fun setGuestUser(userId: String, userName: String): ChatCall<TokenResponse>
+    fun setGuestUser(userId: String, userName: String): Call<TokenResponse>
 
-    fun getUsers(queryUsers: QueryUsers): ChatCall<QueryUserListResponse>
+    fun getUsers(queryUsers: QueryUsers): Call<QueryUserListResponse>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): Call<ChannelResponse>
 
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): Call<ChannelResponse>
 
     fun muteUser(
         targetId: String
-    ): ChatCall<MuteUserResponse>
+    ): Call<MuteUserResponse>
 
     fun unMuteUser(
         targetId: String
-    ): ChatCall<MuteUserResponse>
+    ): Call<MuteUserResponse>
 
     fun flag(
         targetId: String
-    ): ChatCall<FlagResponse>
+    ): Call<FlagResponse>
 
     fun banUser(
         targetId: String,
@@ -127,11 +127,11 @@ interface ChatApi {
         reason: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 
     fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 }
