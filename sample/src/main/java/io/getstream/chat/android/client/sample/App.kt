@@ -18,8 +18,8 @@ import io.getstream.chat.android.client.logger.StreamLoggerLevel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
-import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.notifications.StreamNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.notifications.options.NotificationIntentProvider
 import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
 import io.getstream.chat.android.client.sample.cache.AppDatabase
@@ -65,7 +65,7 @@ class App : Application() {
             .token("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ")
             .build()
 
-        val notificationConfig = NotificationsManager.Builder()
+        val notificationConfig = ChatNotificationsManager.Builder()
             .setNotificationOptions(provideNotificationOptions())
             .setRegisterListener(provideDeviceRegisteredListener())
             .setNotificationMessageLoadListener(provideNotificationMessageLoadListener())
@@ -132,11 +132,11 @@ class App : Application() {
                     intent.apply {
                         putExtra(
                             EXTRA_CHANNEL_TYPE,
-                            payload[StreamNotificationsManager.CHANNEL_TYPE_KEY]
+                            payload[ChatNotificationsManagerImpl.CHANNEL_TYPE_KEY]
                         )
                         putExtra(
                             EXTRA_CHANNEL_ID,
-                            payload[StreamNotificationsManager.CHANNEL_ID_KEY]
+                            payload[ChatNotificationsManagerImpl.CHANNEL_ID_KEY]
                         )
                     }
                     return PendingIntent.getActivity(

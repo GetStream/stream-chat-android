@@ -16,7 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.safeLet
 import io.getstream.chat.android.client.logger.StreamLogger
@@ -33,12 +32,12 @@ import java.net.URL
 import java.util.*
 
 
-class StreamNotificationsManager constructor(
+class ChatNotificationsManagerImpl constructor(
     private val notificationOptions: NotificationOptions,
     private val registerListener: DeviceRegisteredListener? = null,
     private val client: ChatApi,
     private val logger: StreamLogger
-) : NotificationsManager {
+) : ChatNotificationsManager {
 
     companion object {
         const val DEFAULT_REQUEST_CODE = 999
@@ -55,11 +54,7 @@ class StreamNotificationsManager constructor(
     override fun setFirebaseToken(firebaseToken: String, context: Context) {
         logger.logD(this, "setFirebaseToken: $firebaseToken")
 
-        client.addDevice(
-            request = AddDeviceRequest(
-                id = firebaseToken
-            )
-        ).enqueue { result ->
+        client.addDevice(firebaseToken).enqueue { result ->
             if (result.isSuccess) {
                 registerListener?.onDeviceRegisteredSuccess()
                 logger.logI(this, "DeviceRegisteredSuccess")

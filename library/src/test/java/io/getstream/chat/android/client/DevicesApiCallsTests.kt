@@ -61,7 +61,7 @@ class DevicesApiCallsTests {
     fun addDevicesSuccess() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, mock.user.id)
+        val request = AddDeviceRequest(device.id)
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
@@ -72,7 +72,7 @@ class DevicesApiCallsTests {
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
 
-        val result = client.addDevice(request).execute()
+        val result = client.addDevice(device.id).execute()
 
         verifySuccess(result, Unit)
     }
@@ -81,7 +81,7 @@ class DevicesApiCallsTests {
     fun addDevicesError() {
 
         val device = Device("device-id")
-        val request = AddDeviceRequest(device.id, mock.userId)
+        val request = AddDeviceRequest(device.id)
 
         Mockito.`when`(
             mock.retrofitApi.addDevices(
@@ -92,7 +92,7 @@ class DevicesApiCallsTests {
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
-        val result = client.addDevice(request).execute()
+        val result = client.addDevice(device.id).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

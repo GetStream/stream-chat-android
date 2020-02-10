@@ -16,8 +16,8 @@ import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationConfig
-import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.notifications.StreamNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -237,8 +237,8 @@ interface ChatClient {
             notificationOptions: NotificationOptions,
             registeredListener: DeviceRegisteredListener?,
             client: ChatApi
-        ): NotificationsManager {
-            return StreamNotificationsManager(
+        ): ChatNotificationsManager {
+            return ChatNotificationsManagerImpl(
                 notificationOptions = notificationOptions,
                 registerListener = registeredListener,
                 client = client,

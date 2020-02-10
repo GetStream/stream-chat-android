@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
 import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
 
-interface NotificationsManager {
+interface ChatNotificationsManager {
     fun setFirebaseToken(
         firebaseToken: String,
         context: Context

@@ -9,6 +9,8 @@ import io.getstream.chat.android.client.logger.StreamLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.notifications.ChatNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
@@ -34,6 +36,7 @@ class ClientConnectionTests {
     lateinit var retrofitCdnApi: RetrofitCdnApi
     lateinit var client: ChatClient
     lateinit var logger: StreamLogger
+    lateinit var notificationsManager: ChatNotificationsManager
 
     @Before
     fun before() {
@@ -41,6 +44,7 @@ class ClientConnectionTests {
         retrofitApi = mock(RetrofitApi::class.java)
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
         logger = mock(StreamLogger::class.java)
+        notificationsManager = mock(ChatNotificationsManager::class.java)
         api = ChatApiImpl(
             retrofitApi,
             retrofitCdnApi,
@@ -55,7 +59,7 @@ class ClientConnectionTests {
 
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
-        client = ChatClientImpl(api, socket, config, logger)
+        client = ChatClientImpl(api, socket, config, logger, notificationsManager)
         client.setUser(user, token)
 
         verify(socket, times(1)).connect(user)
@@ -65,7 +69,7 @@ class ClientConnectionTests {
     fun connectAndDisconnect() {
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
-        client = ChatClientImpl(api, socket, config, logger)
+        client = ChatClientImpl(api, socket, config, logger, notificationsManager)
         client.setUser(user, token)
 
         client.disconnect()

@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.notifications.NotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.api.models.QueryUsers
 import io.getstream.chat.android.client.api.models.*
@@ -26,7 +26,7 @@ internal class ChatClientImpl constructor(
     private val socket: ChatSocket,
     private val config: ChatConfig,
     private val logger: StreamLogger,
-    private val notificationsManager: NotificationsManager
+    private val notificationsManager: ChatNotificationsManager
 ) : ChatClient {
 
     private val state = ClientState()
@@ -136,8 +136,8 @@ internal class ChatClientImpl constructor(
         return api.getDevices()
     }
 
-    override fun deleteDevice(deviceId: String): ChatCall<Unit> {
-        return api.deleteDevice(deviceId)
+    override fun deleteDevice(firebaseToken: String): ChatCall<Unit> {
+        return api.deleteDevice(firebaseToken)
     }
 
     override fun addDevice(firebaseToken: String): ChatCall<Unit> {
