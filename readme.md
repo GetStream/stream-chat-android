@@ -29,6 +29,14 @@ dependencies {
     implementation 'com.github.getstream:stream-chat-android-client:0.9.10'
 }
 ```
+```groovy
+android {
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+```
 
 ## Usage
 1. Create instance of client
