@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.logger.ChatSilentLogger
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.ChatNotificationConfig
@@ -76,7 +76,7 @@ interface ChatClient {
 
     //region Users
 
-    fun getUsers(query: QueryUsers): Call<List<User>>
+    fun getUsers(query: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,

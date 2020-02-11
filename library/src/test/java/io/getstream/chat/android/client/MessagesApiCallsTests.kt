@@ -2,11 +2,8 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.utils.RetroError
-import io.getstream.chat.android.client.utils.RetroSuccess
-import io.getstream.chat.android.client.utils.verifyError
-import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.utils.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -115,7 +112,7 @@ class MessagesApiCallsTests {
         val messageText = "message-a"
         val message = Message()
             .apply { text = messageText }
-        val searchRequest = SearchMessagesRequest("search-text", 0, 1)
+        val searchRequest = SearchMessagesRequest("search-text", 0, 1, FilterObject("type", "a"))
 
         Mockito.`when`(
             mock.retrofitApi
@@ -132,7 +129,7 @@ class MessagesApiCallsTests {
     @Test
     fun searchMessageError() {
 
-        val searchRequest = SearchMessagesRequest("search-text", 0, 1)
+        val searchRequest = SearchMessagesRequest("search-text", 0, 1, FilterObject("type", "a"))
 
         Mockito.`when`(
             mock.retrofitApi
@@ -439,8 +436,11 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message(messageId)
-            .apply { text = messageText }
+        val message = Message()
+            .apply {
+                text = messageText
+                id = messageId
+            }
 
         Mockito.`when`(
             mock.retrofitApi
@@ -464,8 +464,11 @@ class MessagesApiCallsTests {
 
         val messageId = "message-id"
         val messageText = "message-a"
-        val message = Message(messageId)
-            .apply { text = messageText }
+        val message = Message()
+            .apply {
+                text = messageText
+                id = messageId
+            }
 
         Mockito.`when`(
             mock.retrofitApi

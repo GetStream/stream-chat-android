@@ -12,7 +12,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
@@ -269,7 +269,7 @@ internal class ChatClientImpl constructor(
         }
     }
 
-    override fun getUsers(query: QueryUsers): Call<List<User>> {
+    override fun getUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.getUsers(query).map { it.users }
     }
 

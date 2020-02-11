@@ -1,11 +1,8 @@
 package io.getstream.chat.android.client.utils
 
 class FilterObject {
-    private var data: HashMap<String, Any>
 
-    constructor() {
-        data = HashMap()
-    }
+    private var data = HashMap<String, Any>()
 
     constructor(data: HashMap<String, Any>) {
         this.data = data
@@ -44,4 +41,21 @@ class FilterObject {
         clone[key] = v
         return FilterObject(clone)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FilterObject
+
+        if (data != other.data) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return data.hashCode()
+    }
+
+
 }

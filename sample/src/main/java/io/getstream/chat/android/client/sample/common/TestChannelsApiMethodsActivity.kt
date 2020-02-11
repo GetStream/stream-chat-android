@@ -8,10 +8,12 @@ import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_test_api.*
@@ -72,6 +74,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
             val withLimit =
                 QueryChannelsRequest(
+                    FilterObject("type", "messaging"),
                     0,
                     100
                 )
@@ -129,6 +132,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     private fun queryChannels() {
         client.queryChannels(
             QueryChannelsRequest(
+                eq("type", "messaging"),
                 0,
                 1
             )

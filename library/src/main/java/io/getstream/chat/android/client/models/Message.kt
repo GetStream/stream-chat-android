@@ -7,10 +7,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-data class Message constructor(val id: String = ""):
-    UserEntity {
+class Message : UserEntity {
 
-
+    var id: String = ""
     var cid: String = ""
     var text: String = ""
     val html: String = ""
@@ -47,7 +46,7 @@ data class Message constructor(val id: String = ""):
     val commandInfo: Map<String, String>? = null
 
 
-    val extraData: HashMap<String, Any>? = null
+    val extraData = mutableMapOf<String, Any>()
 
     var isStartDay = false
     var isYesterday = false
@@ -59,7 +58,8 @@ data class Message constructor(val id: String = ""):
 
         val locale = Locale("en", "US", "POSIX")
         val messageDateFormat: DateFormat =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",
+            SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS",
                 locale
             )
 

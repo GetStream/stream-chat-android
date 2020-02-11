@@ -31,24 +31,23 @@ class ChannelsListActivity : AppCompatActivity() {
 
         sub = client.events().subscribe {
 
-            if (it is ErrorEvent) {
-
-            } else if (it is ConnectedEvent) {
-                client.queryChannels(
-                    QueryChannelsRequest(
-                        0,
-                        1,
-                        FilterObject(),
-                        QuerySort()
-                    )
-                ).enqueue { channels ->
-                    if (channels.isSuccess) {
-
-                    } else {
-
-                    }
-                }
-            }
+//            if (it is ErrorEvent) {
+//
+//            } else if (it is ConnectedEvent) {
+//                client.queryChannels(
+//                    QueryChannelsRequest(
+//                        FilterObject(),
+//                        0,
+//                        1
+//                    )
+//                ).enqueue { channels ->
+//                    if (channels.isSuccess) {
+//
+//                    } else {
+//
+//                    }
+//                }
+//            }
         }
 
         client.setUser(User("bender"))

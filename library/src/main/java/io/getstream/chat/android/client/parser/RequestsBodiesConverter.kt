@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.parser
 import com.google.gson.Gson
 import io.getstream.chat.android.client.api.models.AddDeviceRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.RemoveMembersRequest
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -17,15 +17,24 @@ class RequestsBodiesConverter(val gson: Gson) : Converter.Factory() {
         retrofit: Retrofit
     ): Converter<*, String>? {
 
-        return if (type === AddDeviceRequest::class.java) {
-            AddDeviceRequestConverter(gson)
-        } else if (type === RemoveMembersRequest::class.java) {
-            RemoveMembersRequestConverter(gson)
-        } else if (type === QueryUsers::class.java) {
-            QueryUsersConverter(gson)
-        } else if (type === QueryChannelsRequest::class.java) {
-            QueryChannelsRequestConverter(gson)
-        } else super.stringConverter(type, annotations, retrofit)
+        return when {
+            type === QueryUsersRequest::class.java -> {
+                QueryUsersRequestConverter(gson)
+            }
+            type === AddDeviceRequest::class.java -> {
+                AddDeviceRequestConverter(gson)
+            }
+            type === RemoveMembersRequest::class.java -> {
+                RemoveMembersRequestConverter(gson)
+            }
+            type === QueryUsersRequest::class.java -> {
+                QueryUsersConverter(gson)
+            }
+            type === QueryChannelsRequest::class.java -> {
+                QueryChannelsRequestConverter(gson)
+            }
+            else -> super.stringConverter(type, annotations, retrofit)
+        }
     }
 }
 
@@ -36,8 +45,8 @@ private class QueryChannelsRequestConverter(val gson: Gson) :
     }
 }
 
-private class QueryUsersConverter(val gson: Gson) : Converter<QueryUsers, String> {
-    override fun convert(value: QueryUsers): String {
+private class QueryUsersConverter(val gson: Gson) : Converter<QueryUsersRequest, String> {
+    override fun convert(value: QueryUsersRequest): String {
         return gson.toJson(value)
     }
 }
@@ -52,6 +61,13 @@ private class RemoveMembersRequestConverter(val gson: Gson) :
 private class AddDeviceRequestConverter(val gson: Gson) :
     Converter<AddDeviceRequest, String> {
     override fun convert(value: AddDeviceRequest): String {
+        return gson.toJson(value)
+    }
+}
+
+private class QueryUsersRequestConverter(val gson: Gson) :
+    Converter<QueryUsersRequest, String> {
+    override fun convert(value: QueryUsersRequest): String {
         return gson.toJson(value)
     }
 }

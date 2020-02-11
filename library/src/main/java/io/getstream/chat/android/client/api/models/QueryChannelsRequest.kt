@@ -1,17 +1,20 @@
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
 
 data class QueryChannelsRequest(
-    var offset: Int = 0,
-    var limit: Int = 0,
-    val filter: FilterObject = FilterObject(),
+    @IgnoreSerialisation
+    val filter: FilterObject,
+    var offset: Int,
+    var limit: Int,
     val querySort: QuerySort = QuerySort(),
     var message_limit: Int = 0
 ) : BaseQueryChannelRequest<QueryChannelsRequest>() {
 
     val sort = querySort.data
+    val filter_conditions: Map<String, Any> = filter.getData()
 
     fun withMessageLimit(limit: Int): QueryChannelsRequest {
         val clone = cloneOpts()
@@ -38,9 +41,9 @@ data class QueryChannelsRequest(
 
     override fun cloneOpts(): QueryChannelsRequest {
         val _this = QueryChannelsRequest(
+            filter,
             offset,
             limit,
-            filter,
             querySort
         )
         _this.state = this.state

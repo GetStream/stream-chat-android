@@ -95,7 +95,7 @@ interface ChatApi {
 
     fun setGuestUser(userId: String, userName: String): Call<TokenResponse>
 
-    fun getUsers(queryUsers: QueryUsers): Call<QueryUserListResponse>
+    fun getUsers(queryUsers: QueryUsersRequest): Call<QueryUserListResponse>
 
     fun addMembers(
         channelType: String,

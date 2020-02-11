@@ -141,7 +141,7 @@ interface RetrofitApi {
     fun queryUsers(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Query("payload") payload: QueryUsers
+        @Query("payload") payload: QueryUsersRequest
     ): Call<QueryUserListResponse>
 
     @POST("/channels/{type}/{id}")
