@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.getstream.chat.android.client.sample">
 
-    <application android:name=".App">
+    <application
+        android:name=".App"
+        android:theme="@style/Theme.AppCompat">
         <activity android:name=".common.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

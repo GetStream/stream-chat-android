@@ -77,8 +77,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
             if (it.isSuccess) {
                 val user = it.data().user
-                val token = it.data().access_token
-                client.setUser(user, token)
+                client.setUser(user)
             }
         }
     }
