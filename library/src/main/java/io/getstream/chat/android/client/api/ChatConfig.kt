@@ -31,8 +31,8 @@ class ChatConfig(
     class Builder {
 
         private var apiKey: String = ""
-        private var baseUrl: String = ""
-        private var cdnUrl: String = ""
+        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var cdnUrl: String = baseUrl
         private var baseTimeout: Int = 10000
         private var cdnTimeout: Int = 10000
         private lateinit var tokenProviderInstance: TokenProvider
@@ -105,8 +105,6 @@ class ChatConfig(
                 throw ChatError("token or token provider is not defined in ChatConfig.Builder")
             } else if (apiKey.isEmpty()) {
                 throw ChatError("apiKey is not defined in ChatConfig.Builder")
-            } else if (baseUrl.isEmpty()) {
-                throw ChatError("baseUrl is not defined in ChatConfig.Builder")
             }
 
             result.tokenProvider.setTokenProvider(tokenProviderInstance)
