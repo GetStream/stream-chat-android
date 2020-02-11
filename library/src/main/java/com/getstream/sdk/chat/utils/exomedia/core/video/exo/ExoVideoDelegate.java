@@ -189,7 +189,7 @@ public class ExoVideoDelegate {
      */
     @Deprecated
     public void setTrack(ExoMedia.RendererType trackType, int trackIndex) {
-        exoMediaPlayer.setSelectedTrack(trackType, trackIndex);
+        exoMediaPlayer.setSelectedTrack(trackType, 0, trackIndex);
     }
 
     public void setTrack(@NonNull ExoMedia.RendererType trackType, int groupIndex, int trackIndex) {

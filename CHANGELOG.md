@@ -1,3 +1,8 @@
+## Upcoming
+
+- Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
+- update target api level to 29
+- Fixed media playback error on api 29 devices
 
 ## January 28th, 2020 - 3.6.3
 
@@ -5,6 +10,7 @@
 - ChannelViewHolderFactory is now easier to customize
 - Added ChannelViewHolder.messageInputText for 2 way data binding
 - Documentation improvements
+- Fix problem with wrong scroll position
 
 ## January 10th, 2020 - 3.6.2
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
@@ -121,21 +122,26 @@ public class AttachmentDestination extends ChatDestination {
         String mimeType = attachment.getMime_type();
         String url = attachment.getAssetURL();
 
-        // Media
-        if (mimeType.contains("audio") ||
-                mimeType.contains("video")) {
-            Intent intent = new Intent(context, AttachmentMediaActivity.class);
-            intent.putExtra("mimeType", mimeType);
-            intent.putExtra("url", url);
-            start(intent);
-        } else if (mimeType.equals("application/msword") ||
-                mimeType.equals(ModelType.attach_mime_txt) ||
-                mimeType.equals(ModelType.attach_mime_pdf) ||
-                mimeType.contains("application/vnd")) {
+        if (mimeType == null) {
+            StreamChat.getLogger().logE(this, "MimeType is null");
+            Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_mime_type, attachment.getName()));
+        } else {
+            // Media
+            if (mimeType.contains("audio") ||
+                    mimeType.contains("video")) {
+                Intent intent = new Intent(context, AttachmentMediaActivity.class);
+                intent.putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType);
+                intent.putExtra(AttachmentMediaActivity.URL_KEY, url);
+                start(intent);
+            } else if (mimeType.equals("application/msword") ||
+                    mimeType.equals(ModelType.attach_mime_txt) ||
+                    mimeType.equals(ModelType.attach_mime_pdf) ||
+                    mimeType.contains("application/vnd")) {
 
-            Intent intent = new Intent(context, AttachmentDocumentActivity.class);
-            intent.putExtra("url", url);
-            start(intent);
+                Intent intent = new Intent(context, AttachmentDocumentActivity.class);
+                intent.putExtra("url", url);
+                start(intent);
+            }
         }
     }
 }

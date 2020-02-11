@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest.controller;
 
-import android.util.Log;
-
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
@@ -38,11 +36,11 @@ public class RetrofitClient {
     public static Retrofit getClient(ApiClientOptions options, CachedTokenProvider tokenProvider, boolean anonymousAuth) {
 
         if (tokenProvider != null && anonymousAuth) {
-            StreamChat.getLogger().logE(RetrofitClient.class,"Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
+            StreamChat.getLogger().logE(RetrofitClient.class, "Can\'t use anonymous mode with tokenProvider. TokenProvider will be ignored");
         }
 
         if (tokenProvider == null && !anonymousAuth) {
-            StreamChat.getLogger().logE(RetrofitClient.class,"tokenProvider must be non-null in not anonymous mode");
+            StreamChat.getLogger().logE(RetrofitClient.class, "tokenProvider must be non-null in not anonymous mode");
             return null;
         }
 
