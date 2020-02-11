@@ -67,7 +67,17 @@ import static java.util.UUID.randomUUID;
  */
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
-    private static final String TAG = ChannelViewModel.class.getSimpleName();
+    protected static final String TAG = ChannelViewModel.class.getSimpleName();
+
+    /** The A livedata object for the list of messages */
+    protected LazyQueryChannelLiveData<List<Message>> messages;
+    /** The numbers of users currently watching this channel */
+    protected LiveData<Number> watcherCount;
+    /** The list of users currently typing */
+    protected LazyQueryChannelLiveData<List<User>> typingUsers;
+    /** Mutable live data object for the current messageInputText */
+    protected MutableLiveData<String> messageInputText;
+
 
     public void setChannel(Channel channel) {
         this.channel = channel;
@@ -101,42 +111,49 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         initEventHandlers();
     }
 
-    private Channel channel;
-    private Looper looper;
-    private Map<String, Event> typingState;
+    protected Channel channel;
+    protected Looper looper;
+    protected Map<String, Event> typingState;
 
-    private int channelSubscriptionId = 0;
-    private int threadParentPosition = 0;
-    private AtomicBoolean initialized;
-    private AtomicBoolean isLoading;
-    private AtomicBoolean isLoadingMore;
-    private boolean reachedEndOfPagination;
-    private boolean reachedEndOfPaginationThread;
-    private Date lastMarkRead;
+    protected int channelSubscriptionId = 0;
+    protected int threadParentPosition = 0;
+    protected AtomicBoolean initialized;
+    protected AtomicBoolean isLoading;
+    protected AtomicBoolean isLoadingMore;
+    protected boolean reachedEndOfPagination;
+    protected boolean reachedEndOfPaginationThread;
+    protected Date lastMarkRead;
+
+
 
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;
     }
 
-    private MutableLiveData<Number> currentUserUnreadMessageCount;
-    private Integer lastCurrentUserUnreadMessageCount;
-    private MutableLiveData<Boolean> loading;
-    private MutableLiveData<Boolean> messageListScrollUp;
-    private MutableLiveData<Boolean> loadingMore;
-    private MutableLiveData<Boolean> failed;
-    private MutableLiveData<Message> editMessage;
-    private MutableLiveData<Message> threadParentMessage;
-    private MutableLiveData<ChannelState> channelState;
-    private LazyQueryChannelLiveData<List<Message>> messages;
-    private LazyQueryChannelLiveData<List<Message>> threadMessages;
-    private LiveData<Boolean> anyOtherUsersOnline;
-    private LiveData<Number> watcherCount;
-    private MutableLiveData<Boolean> hasNewMessages;
-    private LazyQueryChannelLiveData<List<User>> typingUsers;
-    private LazyQueryChannelLiveData<Map<String, ChannelUserRead>> reads;
-    private MutableLiveData<InputType> inputType;
-    private MessageListItemLiveData entities;
-    private boolean enableMarkRead; // Used to prevent automatic mark reading messages.
+
+
+
+    protected MutableLiveData<Number> currentUserUnreadMessageCount;
+    protected Integer lastCurrentUserUnreadMessageCount;
+    protected MutableLiveData<Boolean> loading;
+    protected MutableLiveData<Boolean> messageListScrollUp;
+    protected MutableLiveData<Boolean> loadingMore;
+    protected MutableLiveData<Boolean> failed;
+    protected MutableLiveData<Message> editMessage;
+    protected MutableLiveData<Message> threadParentMessage;
+    protected MutableLiveData<ChannelState> channelState;
+
+    protected LazyQueryChannelLiveData<List<Message>> threadMessages;
+    protected LiveData<Boolean> anyOtherUsersOnline;
+
+    protected MutableLiveData<Boolean> hasNewMessages;
+
+    protected LazyQueryChannelLiveData<Map<String, ChannelUserRead>> reads;
+    protected MutableLiveData<InputType> inputType;
+    protected MessageListItemLiveData entities;
+    protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
+
+
 
     public ChannelViewModel(@NonNull Application application) {
         super(application);
@@ -151,6 +168,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         loading = new MutableLiveData<>(false);
         threadParentMessage = new MutableLiveData<>(null);
         messageListScrollUp = new MutableLiveData<>(false);
+        messageInputText = new MutableLiveData<>("");
         loadingMore = new MutableLiveData<>(false);
         failed = new MutableLiveData<>(false);
         inputType = new MutableLiveData<>(InputType.DEFAULT);
@@ -306,7 +324,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return threadParentMessage.getValue() != null;
     }
 
-    private void configThread(Message message) {
+    protected void configThread(Message message) {
 
         if (message.getReplyCount() == 0) {
             reachedEndOfPaginationThread = true;
@@ -343,14 +361,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     // endregion
 
-    private String getThreadOldestMessageId() {
+    protected String getThreadOldestMessageId() {
         List<Message> messages = threadMessages.getValue();
         if (messages != null && messages.size() > 1)
             return threadMessages.getValue().get(1).getId();
         return "";
     }
 
-    private boolean setLoading() {
+    protected boolean setLoading() {
         if (isLoading.compareAndSet(false, true)) {
             loading.postValue(true);
             return true;
@@ -358,12 +376,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void setLoadingDone() {
+    protected void setLoadingDone() {
         if (isLoading.compareAndSet(true, false))
             loading.postValue(false);
     }
 
-    private boolean setLoadingMore() {
+    protected boolean setLoadingMore() {
         if (isLoadingMore.compareAndSet(false, true)) {
             loadingMore.postValue(true);
             return true;
@@ -371,7 +389,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void setLoadingMoreDone() {
+    protected void setLoadingMoreDone() {
         if (isLoadingMore.compareAndSet(true, false))
             loadingMore.postValue(false);
     }
@@ -388,7 +406,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private boolean isEnableMarkRead() {
+    protected boolean isEnableMarkRead() {
         return enableMarkRead;
     }
 
@@ -445,7 +463,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
-    private void initEventHandlers() {
+    protected void initEventHandlers() {
         channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
             @Override
             public void onMessageNew(Event event) {
@@ -536,7 +554,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         });
     }
 
-    private void replaceMessage(Message oldMessage, Message newMessage) {
+    protected void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = messagesCopy.size() - 1; i >= 0; i--) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
@@ -555,7 +573,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private void upsertMessage(Message message) {
+    protected void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         
         if (message.getType().equals(ModelType.message_reply)
@@ -588,7 +606,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private boolean updateMessage(Message message) {
+    protected boolean updateMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = getMessages().getValue();
         boolean updated = false;
@@ -625,7 +643,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return updated;
     }
 
-    private void updateFailedMessage(Message message) {
+    protected void updateFailedMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
         int index = messagesCopy.indexOf(message);
@@ -638,7 +656,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private void shuffleGiphy(Message oldMessage, Message message) {
+    protected void shuffleGiphy(Message oldMessage, Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         int index = messagesCopy.indexOf(oldMessage);
         if (index != -1) {
@@ -651,7 +669,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
 
-    private boolean deleteMessage(Message message) {
+    protected boolean deleteMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             if (message.getId().equals(messagesCopy.get(i).getId())) {
@@ -670,7 +688,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    private void checkErrorOrPendingMessage(){
+    protected void checkErrorOrPendingMessage(){
         boolean hasErrorOrPendingMessage = false;
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
@@ -689,7 +707,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
     }
 
-    private void checkFailedMessage(Message message){
+    protected void checkFailedMessage(Message message){
         if (message.getSyncStatus() != Sync.LOCAL_FAILED)
             return;
 
@@ -706,7 +724,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private void addMessage(Message message) {
+    protected void addMessage(Message message) {
         List<Message> messagesCopy = getMessages().getValue();
         messagesCopy.add(message);
         if (isThread())
@@ -717,7 +735,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
 
-    private void addMessages(List<Message> newMessages) {
+    protected void addMessages(List<Message> newMessages) {
         List<Message> messagesCopy = messages.getValue();
         if (messagesCopy == null) {
             messagesCopy = new ArrayList<>();
@@ -737,7 +755,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         messages.postValue(messagesCopy);
     }
 
-    private void channelLoadingDone() {
+    protected void channelLoadingDone() {
         initialized.set(true);
         setLoadingDone();
         channelState.postValue(channel.getChannelState());
@@ -747,7 +765,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return entities;
     }
 
-    private List<User> getCleanedTypingUsers() {
+    protected List<User> getCleanedTypingUsers() {
         List<User> users = new ArrayList<>();
         long now = new Date().getTime();
         for (Event event : typingState.values()) {
@@ -793,7 +811,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    private void setupConnectionRecovery() {
+    protected void setupConnectionRecovery() {
         client().addEventHandler(new ChatEventHandler() {
             @Override
             public void onConnectionRecovered(Event event) {
@@ -1168,7 +1186,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * Cleans up the typing state by removing typing users that did not send
      * typing.stop event for long time
      */
-    private void cleanupTypingUsers() {
+    protected void cleanupTypingUsers() {
         List<User> prev = typingUsers.getValue();
         List<User> cleaned = getCleanedTypingUsers();
         if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
@@ -1176,12 +1194,20 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
+    public MutableLiveData<String> getMessageInputText() {
+        return messageInputText;
+    }
+
+    public void setMessageInputText(MutableLiveData<String> messageInputText) {
+        this.messageInputText = messageInputText;
+    }
+
     /**
      * Service thread to keep state neat and clean. Ticks twice per second
      */
     class Looper extends Thread {
-        private Callable<Void> markReadFn;
-        private AtomicInteger pendingMarkReadRequests;
+        protected Callable<Void> markReadFn;
+        protected AtomicInteger pendingMarkReadRequests;
 
         Looper(Callable<Void> markReadFn) {
             this.markReadFn = markReadFn;
@@ -1192,7 +1218,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             pendingMarkReadRequests.incrementAndGet();
         }
 
-        private void sendStoppedTyping() {
+        protected void sendStoppedTyping() {
 
             // typing did not start, quit
             if (channel == null || channel.getLastStartTypingEvent() == null) {
@@ -1208,7 +1234,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             }
         }
 
-        private void throttledMarkRead() {
+        protected void throttledMarkRead() {
             int pendingCalls = pendingMarkReadRequests.get();
             if (pendingCalls == 0) {
                 return;

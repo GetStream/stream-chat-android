@@ -191,6 +191,11 @@ public class Attachment {
 
     public int getIcon() {
         int fileTyineRes = 0;
+        if (this.getMime_type() == null) {
+            fileTyineRes = R.drawable.stream_ic_file;
+            return fileTyineRes;
+        }
+
         switch (this.getMime_type()) {
             case ModelType.attach_mime_pdf:
                 fileTyineRes = R.drawable.stream_ic_file_pdf;
@@ -219,6 +224,7 @@ public class Attachment {
             case ModelType.attach_mime_mp4:
                 fileTyineRes = R.drawable.stream_ic_file_mov;
                 break;
+            case ModelType.attach_mime_m4a:
             case ModelType.attach_mime_mp3:
                 fileTyineRes = R.drawable.stream_ic_file_mp3;
                 break;

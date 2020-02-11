@@ -232,7 +232,7 @@ public class ExoAudioPlayer implements AudioPlayerApi {
 
     @Override
     public void setTrack(@NonNull ExoMedia.RendererType type, int trackIndex) {
-        exoMediaPlayer.setSelectedTrack(type, trackIndex);
+        exoMediaPlayer.setSelectedTrack(type, 0, trackIndex);
     }
 
     @Override

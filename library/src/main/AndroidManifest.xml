@@ -15,6 +15,15 @@
         <activity android:name=".view.activity.AttachmentDocumentActivity" />
         <activity android:name=".view.activity.AttachmentActivity" />
 
+        <receiver
+            android:name=".receiver.NotificationMessageReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.getstream.sdk.chat.READ" />
+                <action android:name="com.getstream.sdk.chat.REPLY" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

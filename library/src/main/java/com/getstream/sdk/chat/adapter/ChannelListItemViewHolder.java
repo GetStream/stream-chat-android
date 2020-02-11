@@ -36,19 +36,19 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
 
-    private TextView tv_name, tv_last_message, tv_date;
-    private ReadStateView<ChannelListViewStyle> read_state;
-    private AvatarGroupView<ChannelListViewStyle> avatarGroupView;
-    private ImageView iv_attachment_type;
-    private View click_area;
-    private Context context;
+    protected TextView tv_name, tv_last_message, tv_date;
+    protected ReadStateView<ChannelListViewStyle> read_state;
+    protected AvatarGroupView<ChannelListViewStyle> avatarGroupView;
+    protected ImageView iv_attachment_type;
+    protected View click_area;
+    protected Context context;
 
-    private ChannelListView.UserClickListener userClickListener;
-    private ChannelListView.ChannelClickListener channelClickListener;
-    private ChannelListView.ChannelClickListener channelLongClickListener;
-    private ChannelListViewStyle style;
+    protected ChannelListView.UserClickListener userClickListener;
+    protected ChannelListView.ChannelClickListener channelClickListener;
+    protected ChannelListView.ChannelClickListener channelLongClickListener;
+    protected ChannelListViewStyle style;
 
-    private MarkdownImpl.MarkdownListener markdownListener;
+    protected MarkdownImpl.MarkdownListener markdownListener;
 
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -68,7 +68,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         channelLongClickListener = l;
     }
 
-    private void findReferences() {
+    protected void findReferences() {
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_last_message = itemView.findViewById(R.id.tv_last_message);
         iv_attachment_type = itemView.findViewById(R.id.iv_attachment_type);
@@ -115,12 +115,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     // set the channel name
-    private void configChannelName(ChannelState channelState){
+    protected void configChannelName(ChannelState channelState){
         String channelName = channelState.getChannelNameOrMembers();
         tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
     }
 
-    private void configAvatarView(ChannelState channelState){
+    protected void configAvatarView(ChannelState channelState){
         Channel channel = channelState.getChannel();
         List<User> otherUsers = channelState.getOtherUsers();
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
@@ -136,7 +136,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @SuppressLint("ResourceType")
-    private void configLastMessage(ChannelState channelState){
+    protected void configLastMessage(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
         iv_attachment_type.setVisibility(View.GONE);
         if (lastMessage == null){
@@ -192,7 +192,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
     }
 
-    private void configLastMessageDate(ChannelState channelState){
+    protected void configLastMessageDate(ChannelState channelState){
         Message lastMessage = channelState.getLastMessage();
         if (lastMessage == null) {
             tv_date.setText("");
@@ -205,12 +205,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
     }
 
-    private void configReadState(ChannelState channelState){
+    protected void configReadState(ChannelState channelState){
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         read_state.setReads(lastMessageReads, true, style);
     }
 
-    private void configClickListeners(ChannelState channelState){
+    protected void configClickListeners(ChannelState channelState){
         Channel channel = channelState.getChannel();
         click_area.setOnClickListener(view -> {
             if (this.channelClickListener != null)
@@ -225,7 +225,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         });
     }
 
-    private void applyStyle(ChannelState channelState){
+    protected void applyStyle(ChannelState channelState){
         tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.size);
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
@@ -239,7 +239,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             applyUnreadStyle();
     }
 
-    private void applyReadStyle() {
+    protected void applyReadStyle() {
         // channel name
         style.channelTitleText.apply(tv_name);
         // last messsage
@@ -250,7 +250,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.color);
     }
 
-    private void applyUnreadStyle() {
+    protected void applyUnreadStyle() {
         // channel name
         style.channelTitleUnreadText.apply(tv_name);
         // last message
