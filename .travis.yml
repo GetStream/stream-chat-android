@@ -28,8 +28,8 @@ after_success:
 before_deploy:
   - ./gradlew clean
   - ./gradlew :library:createFullJarRelease
-  - ./gradlew :library:exportJar
   - ./gradlew :library:bundleReleaseAar
+  - ./gradlew :library:copyJar
   - export NAME="v$(./gradlew version -q)"
   - git tag $NAME
 
