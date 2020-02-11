@@ -42,4 +42,4 @@ deploy:
     name: $NAME
     on:
         tags: true
-        branch: jar
+        branch: feature/jar
