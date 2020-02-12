@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">core-poc</string>
 
     <!--Notification-->
     <string name="stream_default_notification_title">Chat message</string>

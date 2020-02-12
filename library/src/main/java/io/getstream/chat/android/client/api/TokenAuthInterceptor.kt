@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.api
 
 import android.util.Log
-import io.getstream.chat.android.client.token.TokenProvider.TokenProviderListener
 import io.getstream.chat.android.client.errors.ErrorCode
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.token.TokenProvider.TokenProviderListener
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response

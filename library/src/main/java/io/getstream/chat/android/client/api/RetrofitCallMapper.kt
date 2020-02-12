@@ -46,10 +46,7 @@ class RetrofitCallMapper(private val chatParser: ChatParser) {
     }
 
     private fun <T> failedResult(t: Throwable): Result<T> {
-        return Result(
-            null,
-            failedError(t)
-        )
+        return Result(null, failedError(t))
     }
 
     private fun failedError(t: Throwable): ChatNetworkError {
