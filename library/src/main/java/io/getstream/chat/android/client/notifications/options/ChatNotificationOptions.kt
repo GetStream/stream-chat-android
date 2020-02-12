@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.poc.R
+import io.getstream.chat.android.client.R
 
 class ChatNotificationOptions : NotificationOptions {
 

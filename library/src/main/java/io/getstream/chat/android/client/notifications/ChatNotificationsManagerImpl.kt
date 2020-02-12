@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.ChatNotification
 import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.poc.R
+import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import java.io.IOException
 import java.io.InputStream
