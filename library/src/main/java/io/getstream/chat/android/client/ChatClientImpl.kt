@@ -5,15 +5,14 @@ import android.text.TextUtils
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatConfig
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.notifications.ChatNotificationsManager
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -37,10 +36,10 @@ internal class ChatClientImpl constructor(
             if (it is ConnectedEvent) {
                 state.user = it.me
                 state.connectionId = it.connectionId
+                state.socketConnected = true
                 api.setConnection(it.me.id, it.connectionId)
             } else if (it is DisconnectedEvent) {
-                state.user = null
-                state.connectionId = null
+                state.socketConnected = false
             }
         }
     }
@@ -89,6 +88,19 @@ internal class ChatClientImpl constructor(
     }
 
     //endregion
+
+    override fun disconnectSocket() {
+        socket.disconnect()
+    }
+
+    override fun reconnectSocket() {
+        val user = state.user
+        if (user != null) socket.connect(user)
+    }
+
+    override fun isSocketConnected(): Boolean {
+        return state.socketConnected
+    }
 
     override fun addSocketListener(listener: SocketListener) {
         socket.addListener(listener)

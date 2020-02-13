@@ -41,6 +41,12 @@ interface ChatClient {
 
     fun disconnect()
 
+    fun disconnectSocket()
+
+    fun reconnectSocket()
+
+    fun isSocketConnected(): Boolean
+
     //region CDN
 
     fun sendFile(

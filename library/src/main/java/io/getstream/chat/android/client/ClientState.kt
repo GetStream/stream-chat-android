@@ -6,6 +6,7 @@ class ClientState {
 
     var user: User? = null
     var connectionId: String? = null
+    var socketConnected = false
 
     fun reset() {
         user = null
