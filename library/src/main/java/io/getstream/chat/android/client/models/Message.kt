@@ -109,7 +109,75 @@ class Message : UserEntity {
     }
 
     override fun getUserId(): String {
-        return user.id
+        return user!!.id
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Message
+
+        if (id != other.id) return false
+        if (cid != other.cid) return false
+        if (text != other.text) return false
+        if (html != other.html) return false
+        if (user != other.user) return false
+        if (channel != other.channel) return false
+        if (userID != other.userID) return false
+        if (attachments != other.attachments) return false
+        if (type != other.type) return false
+        if (latest_reactions != other.latest_reactions) return false
+        if (own_reactions != other.own_reactions) return false
+        if (reply_count != other.reply_count) return false
+        if (created_at != other.created_at) return false
+        if (updated_at != other.updated_at) return false
+        if (deleted_at != other.deleted_at) return false
+        if (mentioned_users != other.mentioned_users) return false
+        if (mentionedUsersId != other.mentionedUsersId) return false
+        if (reactionCounts != other.reactionCounts) return false
+        if (parentId != other.parentId) return false
+        if (command != other.command) return false
+        if (commandInfo != other.commandInfo) return false
+        if (extraData != other.extraData) return false
+        if (isStartDay != other.isStartDay) return false
+        if (isYesterday != other.isYesterday) return false
+        if (isToday != other.isToday) return false
+        if (date != other.date) return false
+        if (time != other.time) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + cid.hashCode()
+        result = 31 * result + text.hashCode()
+        result = 31 * result + html.hashCode()
+        result = 31 * result + user.hashCode()
+        result = 31 * result + channel.hashCode()
+        result = 31 * result + userID.hashCode()
+        result = 31 * result + attachments.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + latest_reactions.hashCode()
+        result = 31 * result + own_reactions.hashCode()
+        result = 31 * result + reply_count
+        result = 31 * result + created_at.hashCode()
+        result = 31 * result + updated_at.hashCode()
+        result = 31 * result + deleted_at.hashCode()
+        result = 31 * result + mentioned_users.hashCode()
+        result = 31 * result + (mentionedUsersId?.hashCode() ?: 0)
+        result = 31 * result + (reactionCounts?.hashCode() ?: 0)
+        result = 31 * result + (parentId?.hashCode() ?: 0)
+        result = 31 * result + (command?.hashCode() ?: 0)
+        result = 31 * result + (commandInfo?.hashCode() ?: 0)
+        result = 31 * result + extraData.hashCode()
+        result = 31 * result + isStartDay.hashCode()
+        result = 31 * result + isYesterday.hashCode()
+        result = 31 * result + isToday.hashCode()
+        result = 31 * result + date.hashCode()
+        result = 31 * result + time.hashCode()
+        return result
     }
 
 

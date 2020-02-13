@@ -20,7 +20,7 @@ class ClientConnectionTests {
 
     val userId = "test-id"
     val connectionId = "connection-id"
-    val user = User(userId)
+    val user = User().apply { id = userId }
     val token = "token"
     val config = ChatConfig.Builder()
         .apiKey("api-key")

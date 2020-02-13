@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.sample.common
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.iid.FirebaseInstanceId
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -72,7 +73,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setGuestUser() {
         //testUserApiLoadingShapeContainer.makeVisible()
 
-        client.setGuestUser(User("guest_user")).enqueue {
+        client.getGuestToken("id", "name").enqueue {
 
             if (it.isSuccess) {
                 val user = it.data().user
@@ -119,7 +120,10 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         client.getUsers(getQueryUserRequest()).enqueue { result ->
 
             if (result.isSuccess) {
-
+                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+            } else {
+                result.error().printStackTrace()
+                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
             }
 
             //echoResult(result, "Users gets successful")

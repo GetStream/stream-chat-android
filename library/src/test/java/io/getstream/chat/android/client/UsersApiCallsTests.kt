@@ -81,7 +81,7 @@ class UsersApiCallsTests {
 
         val targetUserId = "target-id"
         val flag = Flag().apply {
-            user = User(targetUserId)
+            user = User().apply { id = targetUserId }
         }
 
         Mockito.`when`(
@@ -101,7 +101,7 @@ class UsersApiCallsTests {
     @Test
     fun getUsersSuccess() {
 
-        val user = User("a-user")
+        val user = User().apply { id = "a-user" }
 
         val request = QueryUsersRequest(FilterObject("id", "1"), 0, 1)
 
@@ -141,8 +141,7 @@ class UsersApiCallsTests {
     @Test
     fun muteUserSuccess() {
 
-        val targetUser =
-            User("target-id")
+        val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
             targetUser,
@@ -165,8 +164,7 @@ class UsersApiCallsTests {
     @Test
     fun unMuteUserSuccess() {
 
-        val targetUser =
-            User("target-id")
+        val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
             targetUser,

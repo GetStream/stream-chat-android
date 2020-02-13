@@ -57,9 +57,8 @@ internal class ChatClientImpl constructor(
         socket.connectAnonymously()
     }
 
-    override fun setGuestUser(user: User): Call<TokenResponse> {
-        config.isAnonymous = true
-        return api.setGuestUser(user.id, user.name)
+    override fun getGuestToken(userId: String, userName: String): Call<TokenResponse> {
+        return api.setGuestUser(userId, userName)
     }
 
     override fun sendFile(

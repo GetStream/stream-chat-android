@@ -97,7 +97,7 @@ class ChatNotificationsManagerImpl constructor(
     }
 
     override fun handleEvent(context: Context, event: ChatEvent?) {
-        if (event?.getType() == EventType.MESSAGE_NEW) {
+        if (event?.type == EventType.MESSAGE_NEW) {
 
             if (checkSentNotificationWithId(event.message.id)) {
                 val notificationModel =

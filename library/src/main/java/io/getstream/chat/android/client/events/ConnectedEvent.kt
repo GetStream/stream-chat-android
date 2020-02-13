@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.events
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.*
 
-class ConnectedEvent : RemoteEvent() {
+class ConnectedEvent : ChatEvent() {
 
     val cid: String = ""
     lateinit var user: User
@@ -17,10 +17,6 @@ class ConnectedEvent : RemoteEvent() {
     var connectionId: String = ""
     @SerializedName("client_id")
     var clientId: String = ""
-    @SerializedName("total_unread_count")
-    val totalUnreadCount: Number = 0
-    @SerializedName("unread_channels")
-    val unreadChannels: Number = 0
     @SerializedName("watcher_count")
     val watcherCount: Number = 0
     @SerializedName("clear_history")

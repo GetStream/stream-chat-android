@@ -315,7 +315,7 @@ class ChannelsApiCallsTests {
     @Test
     fun markAllReadSuccess() {
 
-        val event = ChatEvent().apply { type = "any" }
+        val event = ChatEvent("any")
 
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
@@ -350,7 +350,7 @@ class ChannelsApiCallsTests {
     fun markReadSuccess() {
 
         val messageId = "message-id"
-        val event = ChatEvent().apply { type = "any" }
+        val event = ChatEvent("any")
 
         Mockito.`when`(
             mock.retrofitApi.markRead(

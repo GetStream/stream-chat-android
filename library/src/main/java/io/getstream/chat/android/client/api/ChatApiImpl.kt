@@ -429,9 +429,8 @@ class ChatApiImpl(
                 config.apiKey,
                 connectionId,
                 AcceptInviteRequest(
-                    User(
-                        userId
-                    ), AcceptInviteRequest.AcceptInviteMessage(message)
+                    User().apply { id = userId },
+                    AcceptInviteRequest.AcceptInviteMessage(message)
                 )
             )
         ).map {
@@ -461,9 +460,9 @@ class ChatApiImpl(
         return callMapper.map(
             retrofitApi.setGuestUser(
                 config.apiKey,
-                body = GuestUserRequest(
-                    id = userId,
-                    name = userName
+                GuestUserRequest(
+                    userId,
+                    userName
                 )
             )
         )

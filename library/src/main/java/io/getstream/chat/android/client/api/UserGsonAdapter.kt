@@ -30,7 +30,7 @@ class UserGsonAdapter(val gson: Gson) : TypeAdapter<User>() {
         val adapter: TypeAdapter<*> = gson.getAdapter(HashMap::class.java)
 
         val value = adapter.read(reader) as HashMap<String, Any>
-        val user = User("")
+        val user = User()
         val extraData: HashMap<String, Any> = HashMap()
         for (set in value.entries) {
             val json = gson.toJson(set.value)

@@ -13,5 +13,5 @@ data class QueryUsersRequest(
     var presence: Boolean = false
 ) {
     val sort = querySort.data
-    val filter_conditions: Map<String, Any> = filter.getData()
+    val filter_conditions: Map<String, Any> = filter.getMap()
 }

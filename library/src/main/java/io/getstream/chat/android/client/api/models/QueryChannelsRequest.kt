@@ -14,7 +14,7 @@ data class QueryChannelsRequest(
 ) : BaseQueryChannelRequest<QueryChannelsRequest>() {
 
     val sort = querySort.data
-    val filter_conditions: Map<String, Any> = filter.getData()
+    val filter_conditions: Map<String, Any> = filter.getMap()
 
     fun withMessageLimit(limit: Int): QueryChannelsRequest {
         val clone = cloneOpts()

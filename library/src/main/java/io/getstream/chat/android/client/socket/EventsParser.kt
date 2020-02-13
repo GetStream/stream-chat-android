@@ -93,73 +93,73 @@ class EventsParser(
 
             //region Messages
 
-            EventType.MESSAGE_NEW.label -> {
+            EventType.MESSAGE_NEW -> {
                 parser.fromJson(data, NewMessageEvent::class.java)
             }
-            EventType.MESSAGE_DELETED.label -> {
+            EventType.MESSAGE_DELETED -> {
                 parser.fromJson(data, MessageDeletedEvent::class.java)
             }
-            EventType.MESSAGE_UPDATED.label -> {
+            EventType.MESSAGE_UPDATED -> {
                 parser.fromJson(data, MessageUpdatedEvent::class.java)
             }
-            EventType.MESSAGE_READ.label -> {
+            EventType.MESSAGE_READ -> {
                 parser.fromJson(data, MessageReadEvent::class.java)
             }
 
             //region Typing
 
-            EventType.TYPING_START.label -> {
+            EventType.TYPING_START -> {
                 parser.fromJson(data, TypingStartEvent::class.java)
             }
-            EventType.TYPING_STOP.label -> {
+            EventType.TYPING_STOP -> {
                 parser.fromJson(data, TypingStopEvent::class.java)
             }
 
             //region Reactions
 
-            EventType.REACTION_NEW.label -> {
+            EventType.REACTION_NEW -> {
                 parser.fromJson(data, ReactionNewEvent::class.java)
             }
-            EventType.REACTION_DELETED.label -> {
+            EventType.REACTION_DELETED -> {
                 parser.fromJson(data, ReactionDeletedEvent::class.java)
             }
 
             //region Members
 
-            EventType.MEMBER_ADDED.label -> {
+            EventType.MEMBER_ADDED -> {
                 parser.fromJson(data, MemberAddedEvent::class.java)
             }
-            EventType.MEMBER_REMOVED.label -> {
+            EventType.MEMBER_REMOVED -> {
                 parser.fromJson(data, MemberRemovedEvent::class.java)
             }
-            EventType.MEMBER_UPDATED.label -> {
+            EventType.MEMBER_UPDATED -> {
                 parser.fromJson(data, MemberUpdatedEvent::class.java)
             }
 
             //region Channels
 
-            EventType.CHANNEL_UPDATED.label -> {
+            EventType.CHANNEL_UPDATED -> {
                 parser.fromJson(data, ChannelUpdatedEvent::class.java)
             }
-            EventType.CHANNEL_HIDDEN.label -> {
+            EventType.CHANNEL_HIDDEN -> {
                 parser.fromJson(data, ChannelHiddenEvent::class.java)
             }
-            EventType.CHANNEL_DELETED.label -> {
+            EventType.CHANNEL_DELETED -> {
                 parser.fromJson(data, ChannelDeletedEvent::class.java)
             }
 
             //region Watching
 
-            EventType.USER_WATCHING_START.label -> {
+            EventType.USER_WATCHING_START -> {
                 parser.fromJson(data, UserStartWatchingEvent::class.java)
             }
-            EventType.USER_WATCHING_STOP.label -> {
+            EventType.USER_WATCHING_STOP -> {
                 parser.fromJson(data, UserStopWatchingEvent::class.java)
             }
 
             //region Notifications
 
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL.label -> {
+            EventType.NOTIFICATION_ADDED_TO_CHANNEL -> {
                 parser.fromJson(data, AddedToChannelEvent::class.java)
             }
             else -> {

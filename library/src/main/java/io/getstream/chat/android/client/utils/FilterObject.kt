@@ -1,31 +1,24 @@
 package io.getstream.chat.android.client.utils
 
-class FilterObject {
+data class FilterObject(val data: HashMap<String, Any> = HashMap()) {
 
-    private var data = HashMap<String, Any>()
-
-    constructor(data: HashMap<String, Any>) {
-        this.data = data
-    }
-
-    constructor(key: String, v: Any) {
-        data = HashMap()
+    constructor(key: String, v: Any) : this() {
         data[key] = v
     }
 
-    fun getData(): HashMap<String, Any> {
+    fun getMap(): HashMap<String, Any> {
         val data: HashMap<String, Any> = HashMap()
 
         for ((key, value) in this.data.entries) {
 
 
             if (value is FilterObject) {
-                data[key] = value.getData()
+                data[key] = value.getMap()
             } else if (value is Array<*> && value.isArrayOf<FilterObject>()) {
                 val listOfMaps: ArrayList<HashMap<String, Any>> = ArrayList()
                 val values = value as Array<FilterObject>
                 for (subVal in values) {
-                    listOfMaps.add(subVal.getData())
+                    listOfMaps.add(subVal.getMap())
                 }
                 data[key] = listOfMaps
             } else {

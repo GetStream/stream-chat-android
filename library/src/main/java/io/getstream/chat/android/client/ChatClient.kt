@@ -35,9 +35,9 @@ interface ChatClient {
 
     fun setUser(user: User)
 
-    fun setGuestUser(user: User): Call<TokenResponse>
-
     fun setAnonymousUser()
+
+    fun getGuestToken(userId: String, userName: String): Call<TokenResponse>
 
     fun disconnect()
 
