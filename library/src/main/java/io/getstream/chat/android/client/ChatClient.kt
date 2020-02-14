@@ -1,35 +1,16 @@
 package io.getstream.chat.android.client
 
-import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.api.*
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatConfig
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.logger.ChatSilentLogger
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.ChatNotificationConfig
-import io.getstream.chat.android.client.notifications.ChatNotificationsManager
-import io.getstream.chat.android.client.notifications.ChatNotificationsManagerImpl
-import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.notifications.options.ChatNotificationOptions
-import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ChatSocketImpl
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 interface ChatClient {
 
@@ -46,6 +27,10 @@ interface ChatClient {
     fun reconnectSocket()
 
     fun isSocketConnected(): Boolean
+
+    fun getConnectionId(): String?
+
+    fun getCurrentUser(): User?
 
     //region CDN
 
@@ -117,10 +102,6 @@ interface ChatClient {
 
     //region Api calls
 
-    fun getState(): ClientState
-    fun fromCurrentUser(entity: UserEntity): Boolean
-    fun getUserId(): String
-    fun getClientId(): String
     fun getDevices(): Call<List<Device>>
     fun deleteDevice(deviceId: String): Call<Unit>
     fun addDevice(firebaseToken: String): Call<Unit>
@@ -167,152 +148,32 @@ interface ChatClient {
 
     // region messages
     fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
+
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
-    class Builder {
-
-        private lateinit var config: ChatConfig
-        private val parser = ChatParserImpl()
-        private var logger: ChatLogger = ChatSilentLogger()
-        private var notificationConfig: ChatNotificationConfig = ChatNotificationConfig(
-            notificationOptions = ChatNotificationOptions(),
-            deviceRegisteredListener = null,
-            messageListener = null
-        )
-
-        fun notification(notificationConfig: ChatNotificationConfig): Builder {
-            this.notificationConfig = notificationConfig
-            return this
-        }
-
-        fun logger(logger: ChatLogger): Builder {
-            this.logger = logger
-            return this
-        }
-
-        fun config(config: ChatConfig): Builder {
-            this.config = config
-            return this
-        }
-
-        internal fun build(): ChatClient {
-            val socket = buildSocket(config, parser, logger)
-            val api = buildApi(config, parser, logger)
-            val notificationsManager = buildNotificationManager(
-                notificationOptions = notificationConfig.notificationOptions,
-                registeredListener = notificationConfig.deviceRegisteredListener,
-                client = api
-            )
-            return ChatClientImpl(api, socket, config, logger, notificationsManager)
-        }
-
-        private fun buildSocket(
-            chatConfig: ChatConfig,
-            parser: ChatParser,
-            logger: ChatLogger
-        ): ChatSocket {
-            return ChatSocketImpl(
-                chatConfig.apiKey,
-                chatConfig.wssURL,
-                chatConfig.tokenProvider,
-                parser,
-                logger
-            )
-        }
-
-        private fun buildApi(
-            chatConfig: ChatConfig,
-            parser: ChatParser,
-            logger: ChatLogger
-        ): ChatApi {
-            return ChatApiImpl(
-                buildRetrofitApi(),
-                buildRetrofitCdnApi(),
-                chatConfig,
-                parser,
-                logger
-            )
-        }
-
-        private fun buildNotificationManager(
-            notificationOptions: NotificationOptions,
-            registeredListener: DeviceRegisteredListener?,
-            client: ChatApi
-        ): ChatNotificationsManager {
-            return ChatNotificationsManagerImpl(
-                notificationOptions = notificationOptions,
-                registerListener = registeredListener,
-                client = client,
-                logger = logger
-            )
-        }
-
-        private fun buildRetrofit(
-            endpoint: String,
-            connectTimeout: Long,
-            writeTimeout: Long,
-            readTimeout: Long,
-            config: ChatConfig,
-            parser: ChatParser
-        ): Retrofit {
-
-            val clientBuilder = OkHttpClient.Builder()
-                .followRedirects(false)
-                // timeouts
-                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
-                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
-                // interceptors
-                .addInterceptor(HeadersInterceptor(config))
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .addInterceptor(TokenAuthInterceptor(config, parser))
-                .addNetworkInterceptor(StethoInterceptor())
-
-            val builder = Retrofit.Builder()
-                .baseUrl(endpoint)
-                .client(clientBuilder.build())
-
-            return parser.configRetrofit(builder).build()
-        }
-
-        private fun buildRetrofitApi(): RetrofitApi {
-            return buildRetrofit(
-                config.httpURL,
-                config.baseTimeout.toLong(),
-                config.baseTimeout.toLong(),
-                config.baseTimeout.toLong(),
-                config,
-                parser
-            ).create(RetrofitApi::class.java)
-        }
-
-        private fun buildRetrofitCdnApi(): RetrofitCdnApi {
-            return buildRetrofit(
-                config.cdnHttpURL,
-                config.cdnTimeout.toLong(),
-                config.cdnTimeout.toLong(),
-                config.cdnTimeout.toLong(),
-                config,
-                parser
-            ).create(RetrofitCdnApi::class.java)
-        }
-    }
 
     companion object {
 
         private lateinit var instance: ChatClient
 
-        fun init(builder: Builder): ChatClient {
-            instance = builder.build()
+        fun init(config: ChatConfig): ChatClient {
+
+            instance = ChatClientImpl(
+                config,
+                config.modules.api(),
+                config.modules.socket(),
+                config.modules.logger(),
+                config.modules.notifications()
+            )
             return instance
         }
 
         fun instance(): ChatClient {
             return instance
         }
+
+
     }
 
 }

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client
 
+import android.content.Context
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatConfig
@@ -9,10 +10,11 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
-import io.getstream.chat.android.client.notifications.ChatNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 
 /**
  * Used for integrations tests.
@@ -37,22 +39,18 @@ class MockClientBuilder {
     lateinit var socket: ChatSocket
     lateinit var retrofitApi: RetrofitApi
     lateinit var retrofitCdnApi: RetrofitCdnApi
-    lateinit var notificationsManager: ChatNotificationsManager
+    lateinit var notificationsManager: ChatNotifications
 
     private lateinit var client: ChatClient
 
     fun build(): ChatClient {
 
-        val config = ChatConfig.Builder()
-            .apiKey(apiKey)
-            .token(token)
-            .baseUrl("test-url")
-            .build()
-        val logger = Mockito.mock(ChatLogger::class.java)
-        socket = Mockito.mock(ChatSocket::class.java)
-        retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        retrofitCdnApi = Mockito.mock(RetrofitCdnApi::class.java)
-        notificationsManager = Mockito.mock(ChatNotificationsManager::class.java)
+        val config = ChatConfig.Builder(apiKey, token, mock(Context::class.java)).build()
+        val logger = mock(ChatLogger::class.java)
+        socket = mock(ChatSocket::class.java)
+        retrofitApi = mock(RetrofitApi::class.java)
+        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
+        notificationsManager = mock(ChatNotifications::class.java)
         api = ChatApiImpl(
             retrofitApi,
             retrofitCdnApi,
@@ -63,7 +61,7 @@ class MockClientBuilder {
 
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
-        client = ChatClientImpl(api, socket, config, logger, notificationsManager)
+        client = ChatClientImpl(config, api, socket, logger, notificationsManager)
         client.setUser(user)
 
         return client

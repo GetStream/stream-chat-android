@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import android.text.TextUtils
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatConfig
@@ -12,7 +11,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.notifications.ChatNotificationsManager
+import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -20,12 +19,12 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 
-internal class ChatClientImpl constructor(
+internal class ChatClientImpl(
+    private val config: ChatConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val config: ChatConfig,
     private val logger: ChatLogger,
-    private val notificationsManager: ChatNotificationsManager
+    private val notificationsManager: ChatNotifications
 ) : ChatClient {
 
     private val state = ClientState()
@@ -33,6 +32,9 @@ internal class ChatClientImpl constructor(
     init {
         val events = socket.events()
         events.subscribe {
+
+            notificationsManager.onReceiveWebSocketEvent(it)
+
             if (it is ConnectedEvent) {
                 state.user = it.me
                 state.connectionId = it.connectionId
@@ -98,10 +100,6 @@ internal class ChatClientImpl constructor(
         if (user != null) socket.connect(user)
     }
 
-    override fun isSocketConnected(): Boolean {
-        return state.socketConnected
-    }
-
     override fun addSocketListener(listener: SocketListener) {
         socket.addListener(listener)
     }
@@ -112,23 +110,6 @@ internal class ChatClientImpl constructor(
 
     override fun events(): ChatObservable {
         return socket.events()
-    }
-
-    override fun getState(): ClientState {
-        return state
-    }
-
-    override fun fromCurrentUser(entity: UserEntity): Boolean {
-        val otherUserId = entity.getUserId()
-        return if (getUser() == null) false else TextUtils.equals(getUserId(), otherUserId)
-    }
-
-    override fun getUserId(): String {
-        return state.user?.id!!
-    }
-
-    override fun getClientId(): String {
-        return state.connectionId!!
     }
 
     override fun disconnect() {
@@ -343,11 +324,11 @@ internal class ChatClientImpl constructor(
     //endregion
 
     override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
-        notificationsManager.onReceiveFirebaseMessage(remoteMessage, context)
+        notificationsManager.onReceiveFirebaseMessage(remoteMessage)
     }
 
     override fun onNewTokenReceived(token: String, context: Context) {
-        notificationsManager.setFirebaseToken(token, context)
+        notificationsManager.setFirebaseToken(token)
     }
 
     private fun attachClient(channels: List<Channel>): List<Channel> {
@@ -360,7 +341,15 @@ internal class ChatClientImpl constructor(
         return channel
     }
 
-    private fun getUser(): User? {
+    override fun getConnectionId(): String? {
+        return state.connectionId
+    }
+
+    override fun getCurrentUser(): User? {
         return state.user
+    }
+
+    override fun isSocketConnected(): Boolean {
+        return state.socketConnected
     }
 }

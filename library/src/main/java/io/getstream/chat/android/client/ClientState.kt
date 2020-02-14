@@ -12,8 +12,4 @@ class ClientState {
         user = null
         connectionId = null
     }
-
-    fun getUser(id: String): User {
-        return null!!
-    }
 }

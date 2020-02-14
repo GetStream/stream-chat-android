@@ -15,71 +15,61 @@ import androidx.core.app.RemoteInput
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
+import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.safeLet
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.ChatNotification
-import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
 
 
-class ChatNotificationsManagerImpl constructor(
-    private val notificationOptions: NotificationOptions,
-    private val registerListener: DeviceRegisteredListener? = null,
+class ChatNotificationsImpl constructor(
+    private val config: ChatNotificationConfig,
     private val client: ChatApi,
-    private val logger: ChatLogger
-) : ChatNotificationsManager {
+    private val logger: ChatLogger,
+    private val context: Context
+) : ChatNotifications {
 
-    companion object {
-        const val DEFAULT_REQUEST_CODE = 999
-        const val CHANNEL_TYPE_KEY = "type"
-        const val CHANNEL_ID_KEY = "id"
+    private val notificationsMap = mutableMapOf<String, ChatNotification>()
+    //private var failMessageListener: NotificationMessageLoadListener? = null
+    //private var deviceRegisteredListener: DeviceRegisteredListener? = null
 
-        private const val FIREBASE_MESSAGE_ID_KEY = "message_id"
-    }
-
-    private val notificationsMap: HashMap<String, ChatNotification> = HashMap()
-    private var failMessageListener: NotificationMessageLoadListener? = null
-    private var deviceRegisteredListener: DeviceRegisteredListener? = null
-
-    override fun setFirebaseToken(firebaseToken: String, context: Context) {
+    override fun setFirebaseToken(firebaseToken: String) {
         logger.logD(this, "setFirebaseToken: $firebaseToken")
 
         client.addDevice(firebaseToken).enqueue { result ->
             if (result.isSuccess) {
-                registerListener?.onDeviceRegisteredSuccess()
+                config.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
                 logger.logI(this, "DeviceRegisteredSuccess")
             } else {
-                registerListener?.onDeviceRegisteredError(result.error())
+                config.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
                 logger.logE(this, "Error register device ${result.error().message}")
             }
         }
     }
 
-    override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage, context: Context) {
+    override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage) {
         val payload: Map<String, String> = remoteMessage.data
         logger.logD(this, "onLoadMessageFail: $remoteMessage data: $payload")
 
-        handleRemoteMessage(context, remoteMessage)
+        handleRemoteMessage(remoteMessage)
     }
 
-    override fun onReceiveWebSocketEvent(event: ChatEvent, context: Context) {
+    override fun onReceiveWebSocketEvent(event: ChatEvent) {
         logger.logD(this, "onReceiveWebSocketEvent: $event")
 
-        handleEvent(context, event)
+        handleEvent(event)
     }
 
-    override fun handleRemoteMessage(context: Context, remoteMessage: RemoteMessage?) {
-        val messageId = remoteMessage?.data?.get(FIREBASE_MESSAGE_ID_KEY)
+    private fun handleRemoteMessage(remoteMessage: RemoteMessage) {
+        val messageId = remoteMessage?.data?.get(config.getFirebaseMessageKey())
 
         if (checkSentNotificationWithId(messageId)) {
             if (messageId != null && messageId.isNotEmpty()) {
@@ -96,26 +86,19 @@ class ChatNotificationsManagerImpl constructor(
         }
     }
 
-    override fun handleEvent(context: Context, event: ChatEvent?) {
-        if (event?.type == EventType.MESSAGE_NEW) {
+    private fun handleEvent(event: ChatEvent) {
+
+        if (event is NewMessageEvent) {
 
             if (checkSentNotificationWithId(event.message.id)) {
-                val notificationModel =
-                    ChatNotification(System.currentTimeMillis().toInt(), null, event)
+                val currentTime = System.currentTimeMillis().toInt()
+                val notificationModel = ChatNotification(currentTime, null, event)
                 notificationsMap[event.message.id] = notificationModel
                 loadMessage(context, event.message.id)
             } else {
                 logger.logI(this, "Notification with id:${event.message.id} already showed")
             }
         }
-    }
-
-    override fun setFailMessageListener(failMessageListener: NotificationMessageLoadListener) {
-        this.failMessageListener = failMessageListener
-    }
-
-    override fun setDeviceRegisterListener(deviceRegisteredListener: DeviceRegisteredListener) {
-        this.deviceRegisteredListener = deviceRegisteredListener
     }
 
     private fun checkSentNotificationWithId(messageId: String?) =
@@ -127,18 +110,18 @@ class ChatNotificationsManagerImpl constructor(
     ) {
         client.getMessage(messageId).enqueue { result ->
             if (result.isSuccess) {
-                failMessageListener?.onLoadMessageSuccess(result.data())
+                config.getFailMessageListener()?.onLoadMessageSuccess(result.data())
                 onMessageLoaded(context, result.data())
             } else {
                 logger.logE(this, "Can\'t load message. Error: ${result.error().message}")
                 showDefaultNotification(context, messageId)
-                failMessageListener?.onLoadMessageFail(messageId)
+                config.getFailMessageListener()?.onLoadMessageFail(messageId)
             }
         }
     }
 
     private fun onMessageLoaded(
-        context: Context?,
+        context: Context,
         message: Message
     ) {
         val type: String = message.channel.type
@@ -193,7 +176,7 @@ class ChatNotificationsManagerImpl constructor(
             context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
         if (!isForeground()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notificationOptions.getNotificationChannel(context)?.let { notificationChannel ->
+                config.getNotificationChannel().let { notificationChannel ->
                     notificationChannel.apply {
                         importance = NotificationManager.IMPORTANCE_HIGH
                         enableLights(true)
@@ -245,27 +228,24 @@ class ChatNotificationsManagerImpl constructor(
     }
 
     private fun loadUserImage(
-        context: Context?,
+        context: Context,
         messageId: String,
         photoUrl: String?
     ) {
         val notificationItem = notificationsMap[messageId]
         if (notificationItem != null) {
-
-            context?.let {
-                val notification = prepareNotification(
-                    context,
-                    messageId,
-                    getBitmapFromURL(photoUrl),
-                    false
-                )
-                showNotification(
-                    notificationItem.notificationId,
-                    notification,
-                    context
-                )
-                removeNotificationItem(messageId)
-            }
+            val notification = prepareNotification(
+                context,
+                messageId,
+                getBitmapFromURL(photoUrl),
+                false
+            )
+            showNotification(
+                notificationItem.notificationId,
+                notification,
+                context
+            )
+            removeNotificationItem(messageId)
         }
     }
 
@@ -275,11 +255,9 @@ class ChatNotificationsManagerImpl constructor(
         image: Bitmap?,
         defaultNotification: Boolean
     ): Notification? {
-        val defaultSoundUri = RingtoneManager.getDefaultUri(
-            RingtoneManager.TYPE_NOTIFICATION
-        )
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationItem = notificationsMap[messageId]
-        val notificationBuilder = notificationOptions.getNotificationBuilder(context)
+        val notificationBuilder = config.getNotificationBuilder()
         if (notificationItem != null) {
             val contentIntent = getContentIntent(context, notificationItem, defaultNotification)
 
@@ -298,35 +276,31 @@ class ChatNotificationsManagerImpl constructor(
                 }
             }
             if (image != null) {
-                notificationBuilder?.setLargeIcon(image)
+                notificationBuilder.setLargeIcon(image)
             }
         }
-        return notificationBuilder?.build()
+        return notificationBuilder.build()
     }
 
     private fun getContentIntent(
         context: Context,
-        item: ChatNotification,
+        notification: ChatNotification,
         defaultNotification: Boolean
     ): PendingIntent? {
         if (defaultNotification) {
             return PendingIntent.getActivity(
                 context,
-                DEFAULT_REQUEST_CODE,
-                notificationOptions.getDefaultLauncherIntent(context),
+                config.getRequestCode(),
+                config.getLauncherIntent(),
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
 
-        safeLet(item.event, context) { event, ctx ->
-            return@safeLet notificationOptions.getNotificationIntentProvider()
-                ?.getIntentForWebSocketEvent(ctx, event)
-        }
+        if (notification.event != null) return config.getIntentForSocketEvent(notification.event)
 
-        safeLet(item.remoteMessage, context) { remoteMessage, ctx ->
-            return@safeLet notificationOptions.getNotificationIntentProvider()
-                ?.getIntentForFirebaseMessage(ctx, remoteMessage)
-        }
+        if (notification.remoteMessage != null) return config.getIntentForFirebaseMessage(
+            notification.remoteMessage
+        )
 
         return null
     }
