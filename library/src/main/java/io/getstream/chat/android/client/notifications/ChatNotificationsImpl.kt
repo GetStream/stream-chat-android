@@ -30,46 +30,46 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-class ChatNotificationsImpl constructor(
+class ChatNotificationsImpl(
     private val config: ChatNotificationConfig,
     private val client: ChatApi,
-    private val logger: ChatLogger,
     private val context: Context
 ) : ChatNotifications {
 
+    private val TAG = ChatNotifications::class.java.simpleName
     private val notificationsMap = mutableMapOf<String, ChatNotification>()
-    //private var failMessageListener: NotificationMessageLoadListener? = null
-    //private var deviceRegisteredListener: DeviceRegisteredListener? = null
+    private val logger: ChatLogger? = ChatLogger.instance
+
 
     override fun setFirebaseToken(firebaseToken: String) {
-        logger.logD(this, "setFirebaseToken: $firebaseToken")
+        logger?.logI(TAG, "setFirebaseToken: $firebaseToken")
 
         client.addDevice(firebaseToken).enqueue { result ->
             if (result.isSuccess) {
                 config.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
-                logger.logI(this, "DeviceRegisteredSuccess")
+                logger?.logI(TAG, "DeviceRegisteredSuccess")
             } else {
                 config.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
-                logger.logE(this, "Error register device ${result.error().message}")
+                logger?.logE(TAG, "Error register device ${result.error().message}")
             }
         }
     }
 
     override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage) {
         val payload: Map<String, String> = remoteMessage.data
-        logger.logD(this, "onLoadMessageFail: $remoteMessage data: $payload")
+        logger?.logI(TAG, "onLoadMessageFail: $remoteMessage data: $payload")
 
         handleRemoteMessage(remoteMessage)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent) {
-        logger.logD(this, "onReceiveWebSocketEvent: $event")
+        logger?.logI(TAG, "onReceiveWebSocketEvent: $event")
 
         handleEvent(event)
     }
 
     private fun handleRemoteMessage(remoteMessage: RemoteMessage) {
-        val messageId = remoteMessage?.data?.get(config.getFirebaseMessageKey())
+        val messageId = remoteMessage.data[config.getFirebaseMessageKey()]
 
         if (checkSentNotificationWithId(messageId)) {
             if (messageId != null && messageId.isNotEmpty()) {
@@ -81,7 +81,7 @@ class ChatNotificationsImpl constructor(
                 notificationsMap[messageId] = notificationModel
                 loadMessage(context, messageId)
             } else {
-                logger.logE(this, "RemoteMessage: messageId = $messageId")
+                logger?.logE(TAG, "RemoteMessage: messageId = $messageId")
             }
         }
     }
@@ -96,7 +96,7 @@ class ChatNotificationsImpl constructor(
                 notificationsMap[event.message.id] = notificationModel
                 loadMessage(context, event.message.id)
             } else {
-                logger.logI(this, "Notification with id:${event.message.id} already showed")
+                logger?.logI(TAG, "Notification with id:${event.message.id} already showed")
             }
         }
     }
@@ -113,7 +113,7 @@ class ChatNotificationsImpl constructor(
                 config.getFailMessageListener()?.onLoadMessageSuccess(result.data())
                 onMessageLoaded(context, result.data())
             } else {
-                logger.logE(this, "Can\'t load message. Error: ${result.error().message}")
+                logger?.logE(TAG, "Can\'t load message. Error: ${result.error().message}")
                 showDefaultNotification(context, messageId)
                 config.getFailMessageListener()?.onLoadMessageFail(messageId)
             }

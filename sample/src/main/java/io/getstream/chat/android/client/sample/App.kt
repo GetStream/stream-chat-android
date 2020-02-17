@@ -7,12 +7,11 @@ import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatConfig
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.logger.ChatLoggerImpl
-import io.getstream.chat.android.client.logger.ChatLoggerLevel
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.cache.AppDatabase
 import io.getstream.chat.android.client.sample.common.HomeActivity
@@ -32,7 +31,6 @@ class App : Application() {
         lateinit var db: AppDatabase
         lateinit var cache: ChannelsCache
         lateinit var keyValue: KeyValue
-        lateinit var logger: ChatLogger
 
         val CHANNEL_TYPE_KEY = "type"
         val CHANNEL_ID_KEY = "id"
@@ -48,57 +46,22 @@ class App : Application() {
 
         FirebaseApp.initializeApp(this)
 
-        logger = provideLogger()
         db = AppDatabase.getInstance(this)
 
         val apiKey = "qk4nn7rpcn75"
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        val config = ChatConfig.Builder(apiKey, token, this)
+        client = ChatClient.Builder(apiKey, token, this)
             .notifications(provideNotificationConfig())
+            .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()
-
-        client = ChatClient.init(config)
 
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
-    }
-
-    private fun provideLogger(): ChatLogger {
-        val loggerHandler: ChatLoggerHandler = object : ChatLoggerHandler {
-            override fun logT(throwable: Throwable) {
-                // display throwable logs here
-            }
-
-            override fun logT(className: String, throwable: Throwable) {
-                // display throwable logs here
-            }
-
-            override fun logI(className: String, message: String) {
-                // display info logs here
-            }
-
-            override fun logD(className: String, message: String) {
-                // display debug logs here
-            }
-
-            override fun logW(className: String, message: String) {
-                // display warning logs here
-            }
-
-            override fun logE(className: String, message: String) {
-                // display error logs here
-            }
-        }
-
-        return ChatLoggerImpl.Builder()
-            .level(if (BuildConfig.DEBUG) ChatLoggerLevel.ALL else ChatLoggerLevel.NOTHING)
-            .handler(loggerHandler)
-            .build()
     }
 
 

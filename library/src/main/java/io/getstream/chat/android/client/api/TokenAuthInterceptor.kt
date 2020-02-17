@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import android.util.Log
 import io.getstream.chat.android.client.errors.ErrorCode
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenProvider.TokenProviderListener
 import okhttp3.Interceptor
@@ -12,7 +13,7 @@ import java.util.concurrent.CountDownLatch
 
 
 class TokenAuthInterceptor internal constructor(
-    private val config: ChatConfig,
+    private val config: ChatClientConfig,
     private val parser: ChatParser
 ) : Interceptor {
 
@@ -37,7 +38,7 @@ class TokenAuthInterceptor internal constructor(
             try {
                 latch.await()
             } catch (e: InterruptedException) {
-                e.printStackTrace()
+                ChatLogger.instance?.logT(TAG, e)
             }
             val request: Request = addTokenHeader(chain.request())
             var response: Response = chain.proceed(request)

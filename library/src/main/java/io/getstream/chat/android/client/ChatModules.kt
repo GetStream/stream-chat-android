@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.api.*
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.ChatSilentLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -18,10 +17,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-open class ChatModules(val config: ChatConfig) {
+open class ChatModules(val config: ChatClientConfig) {
 
     private val defaultParser by lazy { ChatParserImpl() }
-    private val defaultLogger by lazy { ChatSilentLogger() }
+    private val defaultLogger by lazy { ChatLogger.Builder().level(config.logLevel).build() }
     private val defaultNotifications by lazy {
         buildNotification(
             config.notificationsConfig,
@@ -59,7 +58,7 @@ open class ChatModules(val config: ChatConfig) {
         config: ChatNotificationConfig,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotificationsImpl(config, api, logger(), config.context)
+        return ChatNotificationsImpl(config, api, config.context)
     }
 
     private fun buildRetrofit(
@@ -67,7 +66,7 @@ open class ChatModules(val config: ChatConfig) {
         connectTimeout: Long,
         writeTimeout: Long,
         readTimeout: Long,
-        config: ChatConfig,
+        config: ChatClientConfig,
         parser: ChatParser
     ): Retrofit {
 
@@ -93,13 +92,13 @@ open class ChatModules(val config: ChatConfig) {
     }
 
     private fun buildSocket(
-        chatConfig: ChatConfig,
+        chatConfig: ChatClientConfig,
         parser: ChatParser,
         logger: ChatLogger
     ): ChatSocket {
         return ChatSocketImpl(
             chatConfig.apiKey,
-            chatConfig.wssURL,
+            chatConfig.wssUrl,
             chatConfig.tokenProvider,
             parser,
             logger
@@ -107,7 +106,7 @@ open class ChatModules(val config: ChatConfig) {
     }
 
     private fun buildApi(
-        chatConfig: ChatConfig,
+        chatConfig: ChatClientConfig,
         parser: ChatParser,
         logger: ChatLogger
     ): ChatApi {
@@ -115,14 +114,13 @@ open class ChatModules(val config: ChatConfig) {
             buildRetrofitApi(),
             buildRetrofitCdnApi(),
             chatConfig,
-            parser,
-            logger
+            parser
         )
     }
 
     private fun buildRetrofitApi(): RetrofitApi {
         return buildRetrofit(
-            config.httpURL,
+            config.httpUrl,
             config.baseTimeout,
             config.baseTimeout,
             config.baseTimeout,
@@ -133,7 +131,7 @@ open class ChatModules(val config: ChatConfig) {
 
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {
         return buildRetrofit(
-            config.cdnHttpURL,
+            config.cdnHttpUrl,
             config.cdnTimeout,
             config.cdnTimeout,
             config.cdnTimeout,

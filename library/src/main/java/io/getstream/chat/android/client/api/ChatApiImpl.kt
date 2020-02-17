@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -14,9 +13,8 @@ import java.util.*
 class ChatApiImpl(
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
-    private val config: ChatConfig,
-    private val parser: ChatParser,
-    private val logger: ChatLogger
+    private val config: ChatClientConfig,
+    private val parser: ChatParser
 ) : ChatApi {
 
     private var userId: String = ""

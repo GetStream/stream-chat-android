@@ -2,12 +2,17 @@ package io.getstream.chat.android.client
 
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.api.ChatConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -152,22 +157,118 @@ interface ChatClient {
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
+    class Builder {
+        private val apiKey: String
+        private val appContext: Context
+
+        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var cdnUrl: String = baseUrl
+        private var baseTimeout = 10000L
+        private var cdnTimeout = 10000L
+        private var tokenProviderInstance: TokenProvider
+        private var logLevel = ChatLogLevel.NOTHING
+        private lateinit var notificationsConfig: ChatNotificationConfig
+
+        constructor(apiKey: String, token: String, appContext: Context) {
+            this.apiKey = apiKey
+            this.tokenProviderInstance = ImmediateTokenProvider(token)
+            this.appContext = appContext
+        }
+
+        constructor(apiKey: String, tokenProvider: TokenProvider, appContext: Context) {
+            this.apiKey = apiKey
+            this.tokenProviderInstance = tokenProvider
+            this.appContext = appContext
+        }
+
+        fun logLevel(level: ChatLogLevel): Builder {
+            logLevel = level
+            return this
+        }
+
+        fun notifications(notificationsConfig: ChatNotificationConfig): Builder {
+            this.notificationsConfig = notificationsConfig
+            return this
+        }
+
+        fun baseTimeout(timeout: Long): Builder {
+            baseTimeout = timeout
+            return this
+        }
+
+        fun cdnTimeout(timeout: Long): Builder {
+            cdnTimeout = timeout
+            return this
+        }
+
+        fun baseUrl(value: String): Builder {
+            var baseUrl = value
+            if (baseUrl.startsWith("https://")) {
+                baseUrl = baseUrl.split("https://").toTypedArray()[1]
+            }
+            if (baseUrl.startsWith("http://")) {
+                baseUrl = baseUrl.split("http://").toTypedArray()[1]
+            }
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length - 1)
+            }
+            this.baseUrl = baseUrl
+            return this
+        }
+
+        fun cdnUrl(value: String): Builder {
+            var cdnUrl = value
+            if (cdnUrl.startsWith("https://")) {
+                cdnUrl = cdnUrl.split("https://").toTypedArray()[1]
+            }
+            if (cdnUrl.startsWith("http://")) {
+                cdnUrl = cdnUrl.split("http://").toTypedArray()[1]
+            }
+            if (cdnUrl.endsWith("/")) {
+                cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1)
+            }
+            this.cdnUrl = cdnUrl
+            return this
+        }
+
+        fun build(): ChatClient {
+
+            if (apiKey.isEmpty()) {
+                throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
+            }
+
+            if (!this::notificationsConfig.isInitialized) {
+                notificationsConfig = ChatNotificationConfig(appContext)
+            }
+
+            val config = ChatClientConfig(
+                apiKey,
+                "https://$baseUrl/",
+                "https://$cdnUrl/",
+                "wss://$baseUrl/",
+                baseTimeout,
+                cdnTimeout,
+                logLevel,
+                notificationsConfig
+            )
+
+            config.tokenProvider.setTokenProvider(tokenProviderInstance)
+
+            val modules = ChatModules(config)
+            val result = ChatClientImpl(
+                config,
+                modules.api(),
+                modules.socket(),
+                modules.notifications()
+            )
+            instance = result
+            return result
+        }
+    }
 
     companion object {
 
         private lateinit var instance: ChatClient
-
-        fun init(config: ChatConfig): ChatClient {
-
-            instance = ChatClientImpl(
-                config,
-                config.modules.api(),
-                config.modules.socket(),
-                config.modules.logger(),
-                config.modules.notifications()
-            )
-            return instance
-        }
 
         fun instance(): ChatClient {
             return instance

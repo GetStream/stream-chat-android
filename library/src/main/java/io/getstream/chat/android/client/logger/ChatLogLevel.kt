@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.logger
 
-enum class ChatLoggerLevel(private val severity: Int) {
+enum class ChatLogLevel(private val severity: Int) {
     /**
      * Show all Logs.
      */
@@ -22,7 +22,7 @@ enum class ChatLoggerLevel(private val severity: Int) {
      */
     NOTHING(4);
 
-    fun isMoreOrEqualsThan(level: ChatLoggerLevel): Boolean {
+    fun isMoreOrEqualsThan(level: ChatLogLevel): Boolean {
         return level.severity >= severity
     }
 

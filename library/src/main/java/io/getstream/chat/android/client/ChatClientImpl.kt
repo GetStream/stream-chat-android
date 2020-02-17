@@ -3,13 +3,12 @@ package io.getstream.chat.android.client
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatConfig
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -20,10 +19,9 @@ import java.io.File
 
 
 internal class ChatClientImpl(
-    private val config: ChatConfig,
+    private val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val logger: ChatLogger,
     private val notificationsManager: ChatNotifications
 ) : ChatClient {
 

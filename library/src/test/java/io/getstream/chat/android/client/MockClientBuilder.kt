@@ -3,14 +3,15 @@ package io.getstream.chat.android.client
 import android.content.Context
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
-import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
@@ -45,8 +46,19 @@ class MockClientBuilder {
 
     fun build(): ChatClient {
 
-        val config = ChatConfig.Builder(apiKey, token, mock(Context::class.java)).build()
-        val logger = mock(ChatLogger::class.java)
+        val context = mock(Context::class.java)
+
+        val config = ChatClientConfig(
+            apiKey,
+            "hello.http",
+            "cdn.http",
+            "socket.url",
+            1000,
+            1000,
+            ChatLogLevel.NOTHING,
+            ChatNotificationConfig(context)
+        )
+
         socket = mock(ChatSocket::class.java)
         retrofitApi = mock(RetrofitApi::class.java)
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
@@ -55,13 +67,12 @@ class MockClientBuilder {
             retrofitApi,
             retrofitCdnApi,
             config,
-            ChatParserImpl(),
-            logger
+            ChatParserImpl()
         )
 
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
-        client = ChatClientImpl(config, api, socket, logger, notificationsManager)
+        client = ChatClientImpl(config, api, socket, notificationsManager)
         client.setUser(user)
 
         return client
