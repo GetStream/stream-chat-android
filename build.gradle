@@ -11,7 +11,7 @@ buildscript {
         espressoVersion = '3.2.0'
         glideVersion = '4.9.0'
         googleServiceVersion = '4.3.2'
-        gradleVersion = '3.5.2'
+        androidGradlePluginVersion = '3.5.3'
         gradlePluginVersion = '2.1'
         crashlyticsVersion = '2.10.1'
         fabricVersion = '1.31.1'
@@ -39,7 +39,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$gradleVersion"
+        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
         classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
         classpath "com.google.gms:google-services:$googleServiceVersion"
         classpath "io.fabric.tools:gradle:$fabricVersion"
