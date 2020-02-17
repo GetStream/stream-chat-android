@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.models
 
+import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import io.getstream.chat.android.client.utils.UndefinedDate
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,20 +22,26 @@ class Message : UserEntity {
     @IgnoreSerialisation
     val type: String = ""
     @IgnoreSerialisation
-    val latest_reactions = emptyList<Reaction>()
+    @SerializedName("latest_reactions")
+    val latestReactions = emptyList<Reaction>()
     @IgnoreSerialisation
-    val own_reactions = emptyList<Reaction>()
+    @SerializedName("own_reactions")
+    val ownReactions = emptyList<Reaction>()
     @IgnoreSerialisation
-    val reply_count = 0
+    @SerializedName("reply_count")
+    val replyCount = 0
 
     @IgnoreSerialisation
-    var created_at: Date = UndefinedDate
+    @SerializedName("created_at")
+    var createdAt: Date? = null
     @IgnoreSerialisation
-    var updated_at: Date = UndefinedDate
+    @SerializedName("updated_at")
+    var updatedAt: Date? = null
     @IgnoreSerialisation
-    var deleted_at: Date = UndefinedDate
-
-    val mentioned_users = emptyList<User>()
+    @SerializedName("deleted_at")
+    var deletedAt: Date? = null
+    @SerializedName("mentioned_users")
+    val mentionedUsers = emptyList<User>()
     val mentionedUsersId: List<String>? = null
     val reactionCounts: Map<String, Int>? = null
 
@@ -88,7 +94,7 @@ class Message : UserEntity {
             if (message == null || message.date != null) return
             messageDateFormat.timeZone = TimeZone.getTimeZone("GMT")
             val smsTime = Calendar.getInstance()
-            smsTime.timeInMillis = message.created_at.time
+            smsTime.timeInMillis = message.createdAt!!.time!!
             val now = Calendar.getInstance()
             if (now[Calendar.DATE] === smsTime[Calendar.DATE]) {
                 message.isToday = true
@@ -98,13 +104,13 @@ class Message : UserEntity {
                 message.date = "yesterday"
             } else if (now[Calendar.WEEK_OF_YEAR] === smsTime[Calendar.WEEK_OF_YEAR]) {
                 val dayName: DateFormat = SimpleDateFormat("EEEE")
-                message.date = dayName.format(message.created_at)
+                message.date = dayName.format(message.createdAt)
             } else {
                 val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG)
-                message.date = dateFormat.format(message.created_at)
+                message.date = dateFormat.format(message.createdAt)
             }
             val timeFormat: DateFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
-            message.time = timeFormat.format(message.created_at)
+            message.time = timeFormat.format(message.createdAt)
         }
     }
 
@@ -127,13 +133,13 @@ class Message : UserEntity {
         if (userID != other.userID) return false
         if (attachments != other.attachments) return false
         if (type != other.type) return false
-        if (latest_reactions != other.latest_reactions) return false
-        if (own_reactions != other.own_reactions) return false
-        if (reply_count != other.reply_count) return false
-        if (created_at != other.created_at) return false
-        if (updated_at != other.updated_at) return false
-        if (deleted_at != other.deleted_at) return false
-        if (mentioned_users != other.mentioned_users) return false
+        if (latestReactions != other.latestReactions) return false
+        if (ownReactions != other.ownReactions) return false
+        if (replyCount != other.replyCount) return false
+        if (createdAt != other.createdAt) return false
+        if (updatedAt != other.updatedAt) return false
+        if (deletedAt != other.deletedAt) return false
+        if (mentionedUsers != other.mentionedUsers) return false
         if (mentionedUsersId != other.mentionedUsersId) return false
         if (reactionCounts != other.reactionCounts) return false
         if (parentId != other.parentId) return false
@@ -159,13 +165,13 @@ class Message : UserEntity {
         result = 31 * result + userID.hashCode()
         result = 31 * result + attachments.hashCode()
         result = 31 * result + type.hashCode()
-        result = 31 * result + latest_reactions.hashCode()
-        result = 31 * result + own_reactions.hashCode()
-        result = 31 * result + reply_count
-        result = 31 * result + created_at.hashCode()
-        result = 31 * result + updated_at.hashCode()
-        result = 31 * result + deleted_at.hashCode()
-        result = 31 * result + mentioned_users.hashCode()
+        result = 31 * result + latestReactions.hashCode()
+        result = 31 * result + ownReactions.hashCode()
+        result = 31 * result + replyCount
+        result = 31 * result + createdAt.hashCode()
+        result = 31 * result + updatedAt.hashCode()
+        result = 31 * result + deletedAt.hashCode()
+        result = 31 * result + mentionedUsers.hashCode()
         result = 31 * result + (mentionedUsersId?.hashCode() ?: 0)
         result = 31 * result + (reactionCounts?.hashCode() ?: 0)
         result = 31 * result + (parentId?.hashCode() ?: 0)
