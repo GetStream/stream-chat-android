@@ -65,9 +65,6 @@ android {
 
             def usersConfig = loadJson(false)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
-
-
-            buildConfigField "String", "SDK_VERSION", '"master"'
         }
 
         applicationVariants.all { variant ->
