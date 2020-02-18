@@ -1,47 +1,41 @@
 package io.getstream.chat.android.client
 
-import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.api.*
 import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.call.ChatCall
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.parser.JsonParser
-import io.getstream.chat.android.client.parser.JsonParserImpl
-import io.getstream.chat.android.client.logger.StreamChatSilentLogger
-import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.NotificationConfig
-import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.notifications.StreamNotificationsManager
-import io.getstream.chat.android.client.notifications.options.NotificationOptions
-import io.getstream.chat.android.client.notifications.options.StreamNotificationOptions
-import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 interface ChatClient {
 
-    fun setUser(user: User, token: String)
-
     fun setUser(user: User)
-
-    fun setGuestUser(user: User): ChatCall<TokenResponse>
 
     fun setAnonymousUser()
 
+    fun getGuestToken(userId: String, userName: String): Call<TokenResponse>
+
     fun disconnect()
+
+    fun disconnectSocket()
+
+    fun reconnectSocket()
+
+    fun isSocketConnected(): Boolean
+
+    fun getConnectionId(): String?
+
+    fun getCurrentUser(): User?
 
     //region CDN
 
@@ -58,11 +52,11 @@ interface ChatClient {
         channelId: String,
         file: File,
         mimeType: String
-    ): ChatCall<String>
+    ): Call<String>
 
-    fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit>
+    fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
     //endregion
 
@@ -78,224 +72,197 @@ interface ChatClient {
 
     //region Users
 
-    fun getUsers(query: QueryUsers): ChatCall<List<User>>
+    fun getUsers(query: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse>
+    ): Call<ChannelResponse>
 
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun muteUser(targetId: String): ChatCall<MuteUserResponse>
-    fun unMuteUser(targetId: String): ChatCall<MuteUserResponse>
-    fun flag(targetId: String): ChatCall<FlagResponse>
+    fun muteUser(targetId: String): Call<MuteUserResponse>
+    fun unMuteUser(targetId: String): Call<MuteUserResponse>
+    fun flag(targetId: String): Call<FlagResponse>
     fun banUser(
         targetId: String,
         channelType: String,
         channelId: String,
         reason: String,
         timeout: Int
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 
     fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse>
+    ): Call<CompletableResponse>
 
     //endregion
 
     //region Api calls
 
-    fun getState(): ClientState
-    fun fromCurrentUser(entity: UserEntity): Boolean
-    fun getUserId(): String
-    fun getClientId(): String
-    fun getDevices(): ChatCall<List<Device>>
-    fun deleteDevice(deviceId: String): ChatCall<Unit>
-    fun addDevice(request: AddDeviceRequest): ChatCall<Unit>
-    fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>>
-    fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>>
-    fun getRepliesMore(messageId: String, firstId: String, limit: Int): ChatCall<List<Message>>
-    fun getReactions(messageId: String, offset: Int, limit: Int): ChatCall<List<Reaction>>
-    fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message>
-    fun sendAction(request: SendActionRequest): ChatCall<Message>
-    fun deleteMessage(messageId: String): ChatCall<Message>
-    fun getMessage(messageId: String): ChatCall<Message>
-    fun sendMessage(channelType: String, channelId: String, message: Message): ChatCall<Message>
-    fun updateMessage(message: Message): ChatCall<Message>
+    fun getDevices(): Call<List<Device>>
+    fun deleteDevice(deviceId: String): Call<Unit>
+    fun addDevice(firebaseToken: String): Call<Unit>
+    fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
+    fun getReplies(messageId: String, limit: Int): Call<List<Message>>
+    fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
+    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    fun sendAction(request: SendActionRequest): Call<Message>
+    fun deleteMessage(messageId: String): Call<Message>
+    fun getMessage(messageId: String): Call<Message>
+    fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message>
+    fun updateMessage(message: Message): Call<Message>
 
     fun queryChannel(
         channelType: String,
         channelId: String,
         request: ChannelQueryRequest
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): ChatCall<Unit>
-    fun showChannel(channelType: String, channelId: String): ChatCall<Unit>
+    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false
-    ): ChatCall<Unit>
+    ): Call<Unit>
 
-    fun stopWatching(channelType: String, channelId: String): ChatCall<Unit>
-    fun queryChannels(request: QueryChannelsRequest): ChatCall<List<Channel>>
+    fun stopWatching(channelType: String, channelId: String): Call<Unit>
+    fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>>
 
     fun updateChannel(
         channelType: String,
         channelId: String,
         updateMessage: Message,
         channelExtraData: Map<String, Any> = emptyMap()
-    ): ChatCall<Channel>
+    ): Call<Channel>
 
-    fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel>
-    fun acceptInvite(channelType: String, channelId: String, message: String): ChatCall<Channel>
-    fun markAllRead(): ChatCall<ChatEvent>
-    fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel>
+    fun rejectInvite(channelType: String, channelId: String): Call<Channel>
+    fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
+    fun markAllRead(): Call<ChatEvent>
+    fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     //endregion
 
     // region messages
     fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
+
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
     class Builder {
+        private val apiKey: String
+        private val appContext: Context
 
-        private val parser =
-            JsonParserImpl()
-        private var logger: StreamLogger = StreamChatSilentLogger()
-        private var notificationConfig: NotificationConfig = NotificationConfig(
-            notificationOptions = StreamNotificationOptions(),
-            deviceRegisteredListener = null,
-            messageListener = null
-        )
+        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var cdnUrl: String = baseUrl
+        private var baseTimeout = 10000L
+        private var cdnTimeout = 10000L
+        private var tokenProviderInstance: TokenProvider
+        private var logLevel = ChatLogLevel.NOTHING
+        private lateinit var notificationsConfig: ChatNotificationConfig
 
-        private lateinit var config: ChatConfig
+        constructor(apiKey: String, token: String, appContext: Context) {
+            this.apiKey = apiKey
+            this.tokenProviderInstance = ImmediateTokenProvider(token)
+            this.appContext = appContext
+        }
 
-        fun notification(notificationConfig: NotificationConfig): Builder {
-            this.notificationConfig = notificationConfig
+        constructor(apiKey: String, tokenProvider: TokenProvider, appContext: Context) {
+            this.apiKey = apiKey
+            this.tokenProviderInstance = tokenProvider
+            this.appContext = appContext
+        }
+
+        fun logLevel(level: ChatLogLevel): Builder {
+            logLevel = level
             return this
         }
 
-        fun logger(logger: StreamLogger): Builder {
-            this.logger = logger
+        fun notifications(notificationsConfig: ChatNotificationConfig): Builder {
+            this.notificationsConfig = notificationsConfig
             return this
         }
 
-        fun config(config: ChatConfig): Builder {
-            this.config = config
+        fun baseTimeout(timeout: Long): Builder {
+            baseTimeout = timeout
             return this
         }
 
-        internal fun build(): ChatClient {
-            val socket = buildSocket(config, parser, logger)
-            val api = buildApi(config, parser, logger)
-            val notificationsManager = buildNotificationManager(
-                notificationOptions = notificationConfig.notificationOptions,
-                registeredListener = notificationConfig.deviceRegisteredListener,
-                client = api
+        fun cdnTimeout(timeout: Long): Builder {
+            cdnTimeout = timeout
+            return this
+        }
+
+        fun baseUrl(value: String): Builder {
+            var baseUrl = value
+            if (baseUrl.startsWith("https://")) {
+                baseUrl = baseUrl.split("https://").toTypedArray()[1]
+            }
+            if (baseUrl.startsWith("http://")) {
+                baseUrl = baseUrl.split("http://").toTypedArray()[1]
+            }
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.length - 1)
+            }
+            this.baseUrl = baseUrl
+            return this
+        }
+
+        fun cdnUrl(value: String): Builder {
+            var cdnUrl = value
+            if (cdnUrl.startsWith("https://")) {
+                cdnUrl = cdnUrl.split("https://").toTypedArray()[1]
+            }
+            if (cdnUrl.startsWith("http://")) {
+                cdnUrl = cdnUrl.split("http://").toTypedArray()[1]
+            }
+            if (cdnUrl.endsWith("/")) {
+                cdnUrl = cdnUrl.substring(0, cdnUrl.length - 1)
+            }
+            this.cdnUrl = cdnUrl
+            return this
+        }
+
+        fun build(): ChatClient {
+
+            if (apiKey.isEmpty()) {
+                throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
+            }
+
+            if (!this::notificationsConfig.isInitialized) {
+                notificationsConfig = ChatNotificationConfig(appContext)
+            }
+
+            val config = ChatClientConfig(
+                apiKey,
+                "https://$baseUrl/",
+                "https://$cdnUrl/",
+                "wss://$baseUrl/",
+                baseTimeout,
+                cdnTimeout,
+                logLevel,
+                notificationsConfig
             )
-            return ChatClientImpl(api, socket, config, logger, notificationsManager)
-        }
 
-        private fun buildSocket(
-            chatConfig: ChatConfig,
-            parser: JsonParser,
-            logger: StreamLogger
-        ): ChatSocket {
-            return ChatSocketImpl(
-                chatConfig.apiKey,
-                chatConfig.wssURL,
-                chatConfig.tokenProvider,
-                parser,
-                logger
-            )
-        }
+            config.tokenProvider.setTokenProvider(tokenProviderInstance)
 
-        private fun buildApi(
-            chatConfig: ChatConfig,
-            parser: JsonParser,
-            logger: StreamLogger
-        ): ChatApi {
-            return ChatApiImpl(
-                buildRetrofitApi(),
-                buildRetrofitCdnApi(),
-                chatConfig,
-                parser,
-                logger
-            )
-        }
-
-        private fun buildNotificationManager(
-            notificationOptions: NotificationOptions,
-            registeredListener: DeviceRegisteredListener?,
-            client: ChatApi
-        ): NotificationsManager {
-            return StreamNotificationsManager(
-                notificationOptions = notificationOptions,
-                registerListener = registeredListener,
-                client = client,
-                logger = logger
-            )
-        }
-
-        private fun buildRetrofit(
-            endpoint: String,
-            connectTimeout: Long,
-            writeTimeout: Long,
-            readTimeout: Long,
-            config: ChatConfig,
-            parser: JsonParser
-        ): Retrofit {
-
-            val clientBuilder = OkHttpClient.Builder()
-                .followRedirects(false)
-                // timeouts
-                .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
-                .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
-                // interceptors
-                .addInterceptor(HeadersInterceptor(config))
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .addInterceptor(TokenAuthInterceptor(config, parser))
-                .addNetworkInterceptor(StethoInterceptor())
-
-            val builder = Retrofit.Builder()
-                .baseUrl(endpoint)
-                .client(clientBuilder.build())
-
-            return parser.configRetrofit(builder).build()
-        }
-
-        private fun buildRetrofitApi(): RetrofitApi {
-            return buildRetrofit(
-                config.httpURL,
-                config.baseTimeout.toLong(),
-                config.baseTimeout.toLong(),
-                config.baseTimeout.toLong(),
+            val modules = ChatModules(config)
+            val result = ChatClientImpl(
                 config,
-                parser
-            ).create(RetrofitApi::class.java)
-        }
-
-        private fun buildRetrofitCdnApi(): RetrofitCdnApi {
-            return buildRetrofit(
-                config.cdnHttpURL,
-                config.cdnTimeout.toLong(),
-                config.cdnTimeout.toLong(),
-                config.cdnTimeout.toLong(),
-                config,
-                parser
-            ).create(RetrofitCdnApi::class.java)
+                modules.api(),
+                modules.socket(),
+                modules.notifications()
+            )
+            instance = result
+            return result
         }
     }
 
@@ -303,14 +270,11 @@ interface ChatClient {
 
         private lateinit var instance: ChatClient
 
-        fun init(builder: Builder): ChatClient {
-            instance = builder.build()
-            return instance
-        }
-
         fun instance(): ChatClient {
             return instance
         }
+
+
     }
 
 }

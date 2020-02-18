@@ -1,6 +1,11 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
 
-class AddDeviceRequest(val id: String) {
+
+data class AddDeviceRequest(
+    @SerializedName("id")
+    val firebaseToken: String
+) {
     val push_provider = "firebase"
 }

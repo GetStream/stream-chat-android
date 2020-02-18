@@ -1,16 +1,15 @@
 package io.getstream.chat.android.client.models
 
+import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import io.getstream.chat.android.client.utils.UndefinedDate
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-data class Message constructor(val id: String = ""):
-    UserEntity {
+class Message : UserEntity {
 
-
+    var id: String = ""
     var cid: String = ""
     var text: String = ""
     val html: String = ""
@@ -23,20 +22,26 @@ data class Message constructor(val id: String = ""):
     @IgnoreSerialisation
     val type: String = ""
     @IgnoreSerialisation
-    val latest_reactions = emptyList<Reaction>()
+    @SerializedName("latest_reactions")
+    val latestReactions = emptyList<Reaction>()
     @IgnoreSerialisation
-    val own_reactions = emptyList<Reaction>()
+    @SerializedName("own_reactions")
+    val ownReactions = emptyList<Reaction>()
     @IgnoreSerialisation
-    val reply_count = 0
+    @SerializedName("reply_count")
+    val replyCount = 0
 
     @IgnoreSerialisation
-    var created_at: Date = UndefinedDate
+    @SerializedName("created_at")
+    var createdAt: Date? = null
     @IgnoreSerialisation
-    var updated_at: Date = UndefinedDate
+    @SerializedName("updated_at")
+    var updatedAt: Date? = null
     @IgnoreSerialisation
-    var deleted_at: Date = UndefinedDate
-
-    val mentioned_users = emptyList<User>()
+    @SerializedName("deleted_at")
+    var deletedAt: Date? = null
+    @SerializedName("mentioned_users")
+    val mentionedUsers = emptyList<User>()
     val mentionedUsersId: List<String>? = null
     val reactionCounts: Map<String, Int>? = null
 
@@ -47,7 +52,7 @@ data class Message constructor(val id: String = ""):
     val commandInfo: Map<String, String>? = null
 
 
-    val extraData: HashMap<String, Any>? = null
+    val extraData = mutableMapOf<String, Any>()
 
     var isStartDay = false
     var isYesterday = false
@@ -59,7 +64,8 @@ data class Message constructor(val id: String = ""):
 
         val locale = Locale("en", "US", "POSIX")
         val messageDateFormat: DateFormat =
-            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",
+            SimpleDateFormat(
+                "yyyy-MM-dd'T'HH:mm:ss.SSS",
                 locale
             )
 
@@ -88,7 +94,7 @@ data class Message constructor(val id: String = ""):
             if (message == null || message.date != null) return
             messageDateFormat.timeZone = TimeZone.getTimeZone("GMT")
             val smsTime = Calendar.getInstance()
-            smsTime.timeInMillis = message.created_at.time
+            smsTime.timeInMillis = message.createdAt!!.time!!
             val now = Calendar.getInstance()
             if (now[Calendar.DATE] === smsTime[Calendar.DATE]) {
                 message.isToday = true
@@ -98,18 +104,86 @@ data class Message constructor(val id: String = ""):
                 message.date = "yesterday"
             } else if (now[Calendar.WEEK_OF_YEAR] === smsTime[Calendar.WEEK_OF_YEAR]) {
                 val dayName: DateFormat = SimpleDateFormat("EEEE")
-                message.date = dayName.format(message.created_at)
+                message.date = dayName.format(message.createdAt)
             } else {
                 val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG)
-                message.date = dateFormat.format(message.created_at)
+                message.date = dateFormat.format(message.createdAt)
             }
             val timeFormat: DateFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
-            message.time = timeFormat.format(message.created_at)
+            message.time = timeFormat.format(message.createdAt)
         }
     }
 
     override fun getUserId(): String {
-        return user.id
+        return user!!.id
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Message
+
+        if (id != other.id) return false
+        if (cid != other.cid) return false
+        if (text != other.text) return false
+        if (html != other.html) return false
+        if (user != other.user) return false
+        if (channel != other.channel) return false
+        if (userID != other.userID) return false
+        if (attachments != other.attachments) return false
+        if (type != other.type) return false
+        if (latestReactions != other.latestReactions) return false
+        if (ownReactions != other.ownReactions) return false
+        if (replyCount != other.replyCount) return false
+        if (createdAt != other.createdAt) return false
+        if (updatedAt != other.updatedAt) return false
+        if (deletedAt != other.deletedAt) return false
+        if (mentionedUsers != other.mentionedUsers) return false
+        if (mentionedUsersId != other.mentionedUsersId) return false
+        if (reactionCounts != other.reactionCounts) return false
+        if (parentId != other.parentId) return false
+        if (command != other.command) return false
+        if (commandInfo != other.commandInfo) return false
+        if (extraData != other.extraData) return false
+        if (isStartDay != other.isStartDay) return false
+        if (isYesterday != other.isYesterday) return false
+        if (isToday != other.isToday) return false
+        if (date != other.date) return false
+        if (time != other.time) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + cid.hashCode()
+        result = 31 * result + text.hashCode()
+        result = 31 * result + html.hashCode()
+        result = 31 * result + user.hashCode()
+        result = 31 * result + channel.hashCode()
+        result = 31 * result + userID.hashCode()
+        result = 31 * result + attachments.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + latestReactions.hashCode()
+        result = 31 * result + ownReactions.hashCode()
+        result = 31 * result + replyCount
+        result = 31 * result + createdAt.hashCode()
+        result = 31 * result + updatedAt.hashCode()
+        result = 31 * result + deletedAt.hashCode()
+        result = 31 * result + mentionedUsers.hashCode()
+        result = 31 * result + (mentionedUsersId?.hashCode() ?: 0)
+        result = 31 * result + (reactionCounts?.hashCode() ?: 0)
+        result = 31 * result + (parentId?.hashCode() ?: 0)
+        result = 31 * result + (command?.hashCode() ?: 0)
+        result = 31 * result + (commandInfo?.hashCode() ?: 0)
+        result = 31 * result + extraData.hashCode()
+        result = 31 * result + isStartDay.hashCode()
+        result = 31 * result + isYesterday.hashCode()
+        result = 31 * result + isToday.hashCode()
+        result = 31 * result + date.hashCode()
+        result = 31 * result + time.hashCode()
+        return result
     }
 
 

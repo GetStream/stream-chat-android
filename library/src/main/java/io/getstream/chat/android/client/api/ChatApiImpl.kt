@@ -1,10 +1,9 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.call.ChatCall
-import io.getstream.chat.android.client.logger.StreamLogger
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MultipartBody.Part.Companion.createFormData
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -14,9 +13,8 @@ import java.util.*
 class ChatApiImpl(
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
-    private val config: ChatConfig,
-    private val parser: JsonParser,
-    private val logger: StreamLogger
+    private val config: ChatClientConfig,
+    private val parser: ChatParser
 ) : ChatApi {
 
     private var userId: String = ""
@@ -69,7 +67,7 @@ class ChatApiImpl(
         channelId: String,
         file: File,
         mimeType: String
-    ): ChatCall<String> {
+    ): Call<String> {
 
         val part = createFormData("file", file.name, file.asRequestBody())
 
@@ -102,7 +100,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+    override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return callMapper.map(
             retrofitCdnApi.deleteFile(channelType, channelId, config.apiKey, connectionId, url)
         ).map {
@@ -110,7 +108,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+    override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return callMapper.map(
             retrofitCdnApi.deleteImage(channelType, channelId, config.apiKey, connectionId, url)
         ).map {
@@ -118,25 +116,25 @@ class ChatApiImpl(
         }
     }
 
-    override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {
+    override fun addDevice(firebaseToken: String): Call<Unit> {
         return callMapper.map(
-            retrofitApi.addDevices(config.apiKey, userId, connectionId, request)
+            retrofitApi.addDevices(config.apiKey, userId, connectionId, AddDeviceRequest(firebaseToken))
         ).map {
             Unit
         }
     }
 
-    override fun deleteDevice(deviceId: String): ChatCall<Unit> {
+    override fun deleteDevice(firebaseToken: String): Call<Unit> {
         return callMapper.map(
             retrofitApi.deleteDevice(
-                deviceId, config.apiKey, userId, connectionId
+                firebaseToken, config.apiKey, userId, connectionId
             )
         ).map {
             Unit
         }
     }
 
-    override fun getDevices(): ChatCall<List<Device>> {
+    override fun getDevices(): Call<List<Device>> {
         return callMapper.map(
             retrofitApi.getDevices(config.apiKey, userId, connectionId)
         ).map {
@@ -144,7 +142,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>> {
+    override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return callMapper.map(
             retrofitApi.searchMessages(config.apiKey, connectionId, request)
         ).map {
@@ -158,7 +156,7 @@ class ChatApiImpl(
         messageId: String,
         firstId: String,
         limit: Int
-    ): ChatCall<List<Message>> {
+    ): Call<List<Message>> {
         return callMapper.map(
             retrofitApi.getRepliesMore(
                 messageId,
@@ -173,7 +171,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>> {
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return callMapper.map(
             retrofitApi.getReplies(
                 messageId,
@@ -191,7 +189,7 @@ class ChatApiImpl(
         messageId: String,
         offset: Int,
         limit: Int
-    ): ChatCall<List<Reaction>> {
+    ): Call<List<Reaction>> {
         return callMapper.map(
             retrofitApi.getReactions(
                 messageId,
@@ -205,7 +203,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message> {
+    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return callMapper.map(
             retrofitApi.deleteReaction(
                 messageId,
@@ -219,7 +217,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteMessage(messageId: String): ChatCall<Message> {
+    override fun deleteMessage(messageId: String): Call<Message> {
         return callMapper.map(
             retrofitApi.deleteMessage(
                 messageId,
@@ -232,7 +230,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun sendAction(request: SendActionRequest): ChatCall<Message> {
+    override fun sendAction(request: SendActionRequest): Call<Message> {
         return callMapper.map(
             retrofitApi.sendAction(
                 request.messageId, config.apiKey, userId, connectionId, request
@@ -242,7 +240,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun getMessage(messageId: String): ChatCall<Message> {
+    override fun getMessage(messageId: String): Call<Message> {
         return callMapper.map(
             retrofitApi.getMessage(messageId, config.apiKey, userId, connectionId)
         ).map {
@@ -254,7 +252,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         message: Message
-    ): ChatCall<Message> {
+    ): Call<Message> {
         return callMapper.map(
             retrofitApi.sendMessage(
                 channelType,
@@ -271,7 +269,7 @@ class ChatApiImpl(
 
     override fun updateMessage(
         message: Message
-    ): ChatCall<Message> {
+    ): Call<Message> {
         return callMapper.map(
             retrofitApi.updateMessage(
                 message.id,
@@ -286,7 +284,7 @@ class ChatApiImpl(
     }
 
 
-    override fun queryChannels(query: QueryChannelsRequest): ChatCall<List<Channel>> {
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
         return callMapper.map(
             retrofitApi.queryChannels(
                 config.apiKey,
@@ -302,7 +300,7 @@ class ChatApiImpl(
     override fun stopWatching(
         channelType: String,
         channelId: String
-    ): ChatCall<Unit> {
+    ): Call<Unit> {
         return callMapper.map(
             retrofitApi.stopWatching(
                 channelType,
@@ -320,7 +318,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         query: ChannelQueryRequest
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
 
         if (channelId.isEmpty()) {
             return callMapper.map(
@@ -350,7 +348,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
         return callMapper.map(
             retrofitApi.updateChannel(
                 channelType,
@@ -366,7 +364,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         messageId: String
-    ): ChatCall<Unit> {
+    ): Call<Unit> {
         return callMapper.map(
             retrofitApi.markRead(
                 channelType,
@@ -381,7 +379,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun showChannel(channelType: String, channelId: String): ChatCall<Unit> {
+    override fun showChannel(channelType: String, channelId: String): Call<Unit> {
         return callMapper.map(
             retrofitApi.showChannel(channelType, channelId, config.apiKey, connectionId, emptyMap())
         ).map {
@@ -393,7 +391,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         clearHistory: Boolean
-    ): ChatCall<Unit> {
+    ): Call<Unit> {
         return callMapper.map(
             retrofitApi.hideChannel(
                 channelType,
@@ -407,7 +405,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel> {
+    override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return callMapper.map(
             retrofitApi.rejectInvite(
                 channelType, channelId, config.apiKey, connectionId, RejectInviteRequest()
@@ -421,7 +419,7 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         message: String
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
         return callMapper.map(
             retrofitApi.acceptInvite(
                 channelType,
@@ -429,9 +427,8 @@ class ChatApiImpl(
                 config.apiKey,
                 connectionId,
                 AcceptInviteRequest(
-                    User(
-                        userId
-                    ), AcceptInviteRequest.AcceptInviteMessage(message)
+                    User().apply { id = userId },
+                    AcceptInviteRequest.AcceptInviteMessage(message)
                 )
             )
         ).map {
@@ -439,7 +436,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel> {
+    override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return callMapper.map(
             retrofitApi.deleteChannel(channelType, channelId, config.apiKey, connectionId)
         ).map {
@@ -447,7 +444,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun markAllRead(): ChatCall<EventResponse> {
+    override fun markAllRead(): Call<EventResponse> {
         return callMapper.map(
             retrofitApi.markAllRead(
                 config.apiKey,
@@ -457,21 +454,21 @@ class ChatApiImpl(
         )
     }
 
-    override fun setGuestUser(userId: String, userName: String): ChatCall<TokenResponse> {
+    override fun setGuestUser(userId: String, userName: String): Call<TokenResponse> {
         return callMapper.map(
             retrofitApi.setGuestUser(
                 config.apiKey,
-                body = GuestUserRequest(
-                    id = userId,
-                    name = userName
+                GuestUserRequest(
+                    userId,
+                    userName
                 )
             )
         )
     }
 
     override fun getUsers(
-        queryUsers: QueryUsers
-    ): ChatCall<QueryUserListResponse> {
+        queryUsers: QueryUsersRequest
+    ): Call<QueryUserListResponse> {
         return callMapper.map(
             retrofitApi.queryUsers(
                 config.apiKey,
@@ -515,7 +512,7 @@ class ChatApiImpl(
 
     override fun muteUser(
         targetId: String
-    ): ChatCall<MuteUserResponse> {
+    ): Call<MuteUserResponse> {
         return callMapper.map(
             retrofitApi.muteUser(
                 config.apiKey,
@@ -528,7 +525,7 @@ class ChatApiImpl(
 
     override fun unMuteUser(
         targetId: String
-    ): ChatCall<MuteUserResponse> {
+    ): Call<MuteUserResponse> {
 
         return callMapper.map(
             retrofitApi.unMuteUser(
@@ -542,7 +539,7 @@ class ChatApiImpl(
 
     override fun flag(
         targetId: String
-    ): ChatCall<FlagResponse> {
+    ): Call<FlagResponse> {
 
         val body: MutableMap<String, String> = HashMap()
         body["target_user_id"] = targetId
@@ -563,7 +560,7 @@ class ChatApiImpl(
         reason: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse> {
+    ): Call<CompletableResponse> {
 
         return callMapper.map(
             retrofitApi.banUser(
@@ -584,7 +581,7 @@ class ChatApiImpl(
         targetId: String,
         channelType: String,
         channelId: String
-    ): ChatCall<CompletableResponse> {
+    ): Call<CompletableResponse> {
 
         return callMapper.map(
             retrofitApi.unBanUser(

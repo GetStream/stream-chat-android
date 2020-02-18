@@ -1,13 +1,13 @@
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
-import io.getstream.chat.android.client.api.models.QueryUsers
-import io.getstream.chat.android.client.api.models.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -46,7 +46,8 @@ class UsersApiCallsTests {
             timeout
         ).execute()
 
-        verifySuccess(result,
+        verifySuccess(
+            result,
             CompletableResponse()
         )
     }
@@ -69,7 +70,8 @@ class UsersApiCallsTests {
             mock.channelId
         ).execute()
 
-        verifySuccess(result,
+        verifySuccess(
+            result,
             CompletableResponse()
         )
     }
@@ -79,7 +81,7 @@ class UsersApiCallsTests {
 
         val targetUserId = "target-id"
         val flag = Flag().apply {
-            user = User(targetUserId)
+            user = User().apply { id = targetUserId }
         }
 
         Mockito.`when`(
@@ -99,17 +101,19 @@ class UsersApiCallsTests {
     @Test
     fun getUsersSuccess() {
 
-        val user = User("a-user")
+        val user = User().apply { id = "a-user" }
+
+        val request = QueryUsersRequest(FilterObject("id", "1"), 0, 1)
 
         Mockito.`when`(
             mock.retrofitApi.queryUsers(
                 mock.apiKey, mock.connectionId,
-                QueryUsers()
+                request
             )
         ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))))
 
         val result = client.getUsers(
-            QueryUsers()
+            request
         ).execute()
 
         verifySuccess(result, listOf(user))
@@ -137,8 +141,7 @@ class UsersApiCallsTests {
     @Test
     fun muteUserSuccess() {
 
-        val targetUser =
-            User("target-id")
+        val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
             targetUser,
@@ -161,8 +164,7 @@ class UsersApiCallsTests {
     @Test
     fun unMuteUserSuccess() {
 
-        val targetUser =
-            User("target-id")
+        val targetUser = User().apply { id = "target-id" }
         val mute = Mute(
             mock.user,
             targetUser,

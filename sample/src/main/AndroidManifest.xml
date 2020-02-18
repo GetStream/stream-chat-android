@@ -1,7 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.getstream.chat.android.client.sample">
 
-    <application android:name=".App">
+    <application
+        android:name=".App"
+        android:theme="@style/Theme.AppCompat">
         <activity android:name=".common.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -14,7 +16,7 @@
         <activity android:name=".common.TestUsersApiMethodsActivity" />
 
         <service
-            android:name="io.getstream.chat.android.client.notifications.StreamFirebaseMessagingService"
+            android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 
-abstract class ChatCallImpl<T> : ChatCall<T> {
+abstract class ChatCallImpl<T> : Call<T> {
 
     protected var canceled = false
 
@@ -14,13 +14,13 @@ abstract class ChatCallImpl<T> : ChatCall<T> {
         canceled = true
     }
 
-    override fun <K> map(mapper: (T) -> K): ChatCall<K> {
+    override fun <K> map(mapper: (T) -> K): Call<K> {
         return callMapper(this, mapper)
     }
 
     companion object {
         private fun <A, B> callMapper(
-            callA: ChatCall<A>,
+            callA: Call<A>,
             mapper: (A) -> B
         ): ChatCallImpl<B> {
             return object : ChatCallImpl<B>() {

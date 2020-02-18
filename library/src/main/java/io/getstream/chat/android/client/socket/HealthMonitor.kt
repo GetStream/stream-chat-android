@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.socket
 
 import android.os.Handler
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.events.LocalEvent
 import java.util.*
 import kotlin.math.floor
 import kotlin.math.max
@@ -21,7 +21,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
 
     private val healthCheck: Runnable = Runnable {
         if (socket.state is ChatSocketServiceImpl.State.Connected) {
-            socket.sendEvent(LocalEvent(EventType.HEALTH_CHECK))
+            socket.sendEvent(ChatEvent(EventType.HEALTH_CHECK))
             delayHandler.postDelayed(monitor, 1000)
         }
     }

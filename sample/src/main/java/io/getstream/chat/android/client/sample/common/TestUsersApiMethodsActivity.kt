@@ -2,16 +2,16 @@ package io.getstream.chat.android.client.sample.common
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.iid.FirebaseInstanceId
-import io.getstream.chat.android.client.api.models.AddDeviceRequest
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.QueryUsers
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.utils.FilterObject
 import kotlinx.android.synthetic.main.activity_test_user_api.*
 
 
@@ -27,6 +27,11 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_test_user_api)
 
         initViews()
+    }
+
+    override fun onDestroy() {
+        client.disconnect()
+        super.onDestroy()
     }
 
     private fun initViews() {
@@ -68,12 +73,11 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setGuestUser() {
         //testUserApiLoadingShapeContainer.makeVisible()
 
-        client.setGuestUser(User("guest_user")).enqueue {
+        client.getGuestToken("id", "name").enqueue {
 
             if (it.isSuccess) {
                 val user = it.data().user
-                val token = it.data().access_token
-                client.setUser(user, token)
+                client.setUser(user)
             }
         }
     }
@@ -100,9 +104,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 task.result?.token?.let { firebaseToken ->
-                     client.addDevice(
-                        AddDeviceRequest(firebaseToken)
-                    ).enqueue { result ->
+                    client.addDevice(firebaseToken).enqueue { result ->
                         if (result.isSuccess) {
                             //User device registered success
                         } else {
@@ -116,6 +118,14 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun getUsers() {
         client.getUsers(getQueryUserRequest()).enqueue { result ->
+
+            if (result.isSuccess) {
+                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+            } else {
+                result.error().printStackTrace()
+                Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+            }
+
             //echoResult(result, "Users gets successful")
         }
     }
@@ -186,14 +196,12 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         }
     }
 
-    private fun getQueryUserRequest(): QueryUsers {
-        val filter = FilterObject()
-        val sort: QuerySort = QuerySort()
+    private fun getQueryUserRequest(): QueryUsersRequest {
+        val filter = FilterObject("type", "messaging")
+        val sort = QuerySort()
             .asc("last_active")
-        return QueryUsers(
-            filter,
-            sort
-        ).withLimit(10).withOffset(0)
+        //return QueryUsers(0, 10, filter, sort)
+        return QueryUsersRequest(filter, 0, 10)
     }
 
     private fun initButtons() {

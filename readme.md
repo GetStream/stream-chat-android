@@ -1,3 +1,5 @@
+![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-client.svg)
+
 # Stream Chat Client
 # stream-chat-android
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android-client.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-client)
@@ -19,8 +21,24 @@ This library integrates directly with Stream Chat APIs and does not include UI; 
 
 ## Setup
 ```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+```groovy
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android-client:0.9.7'
+    implementation 'com.github.getstream:stream-chat-android-client:latest-version'
+}
+```
+```groovy
+android {
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
 }
 ```
 
@@ -95,7 +113,7 @@ dependencies {
 All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
-interface ChatCall<T> {
+interface Call<T> {
     fun execute(): Result<T>
     fun enqueue(callback: (Result<T>) -> Unit)
     fun cancel()
@@ -130,12 +148,13 @@ client.getChannels { result -> showChannels(result) }
 
 ### Naming
 
-- Prefix `Chat` for all public classes to avoid spoiling public class name space
+- Prefix `Chat` for public classes to avoid spoiling public class name space (generic util classes like `Result` or `Call` are exceptions)
 - Postix `Impl` for interface implementations
 - No `m` field name prefix
 - `id`, not `ID`
 - `t` for `Throwable`
 - `interface RetrfitCdnApi`, not `interface RetrofitCDNAPI`
+- not `setName`, but `name` with `Builder` classes 
 
 ```kotlin
 open interface ChatClient {

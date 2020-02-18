@@ -4,11 +4,8 @@ import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.RetroError
-import io.getstream.chat.android.client.utils.RetroSuccess
-import io.getstream.chat.android.client.utils.verifyError
-import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.utils.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -318,7 +315,7 @@ class ChannelsApiCallsTests {
     @Test
     fun markAllReadSuccess() {
 
-        val event = ChatEvent().apply { type = "any" }
+        val event = ChatEvent("any")
 
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
@@ -353,7 +350,7 @@ class ChannelsApiCallsTests {
     fun markReadSuccess() {
 
         val messageId = "message-id"
-        val event = ChatEvent().apply { type = "any" }
+        val event = ChatEvent("any")
 
         Mockito.`when`(
             mock.retrofitApi.markRead(
@@ -403,6 +400,7 @@ class ChannelsApiCallsTests {
             .apply { id = "10" }
 
         val request = QueryChannelsRequest(
+            FilterObject("type", "messaging"),
             offset,
             limit
         )
@@ -432,6 +430,7 @@ class ChannelsApiCallsTests {
 
 
         val request = QueryChannelsRequest(
+            FilterObject("type", "messaging"),
             offset,
             limit
         )

@@ -1,19 +1,23 @@
 package io.getstream.chat.android.client
 
+import android.content.Context
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
-import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.parser.JsonParserImpl
-import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.notifications.NotificationsManager
 import io.getstream.chat.android.client.notifications.StreamNotificationsManager
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
+import org.mockito.Mockito.mock
 
 /**
  * Used for integrations tests.
@@ -28,7 +32,7 @@ class MockClientBuilder {
     val channelId = "channel-id"
     val token = "token"
     val serverErrorCode = 500
-    val user = User(userId)
+    val user = User().apply { id = userId }
     val connectedEvent = ConnectedEvent().apply {
         me = this@MockClientBuilder.user
         connectionId = this@MockClientBuilder.connectionId
@@ -38,32 +42,39 @@ class MockClientBuilder {
     lateinit var socket: ChatSocket
     lateinit var retrofitApi: RetrofitApi
     lateinit var retrofitCdnApi: RetrofitCdnApi
-    lateinit var notificationsManager: NotificationsManager
+    lateinit var notificationsManager: ChatNotifications
 
     private lateinit var client: ChatClient
 
     fun build(): ChatClient {
 
-        val config = ChatConfig.Builder()
-            .apiKey(apiKey)
-            .token(token)
-            .build()
-        val logger = Mockito.mock(StreamLogger::class.java)
-        notificationsManager = Mockito.mock(NotificationsManager::class.java)
-        socket = Mockito.mock(ChatSocket::class.java)
-        retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        retrofitCdnApi = Mockito.mock(RetrofitCdnApi::class.java)
+        val context = mock(Context::class.java)
+
+        val config = ChatClientConfig(
+            apiKey,
+            "hello.http",
+            "cdn.http",
+            "socket.url",
+            1000,
+            1000,
+            ChatLogLevel.NOTHING,
+            ChatNotificationConfig(context)
+        )
+
+        socket = mock(ChatSocket::class.java)
+        retrofitApi = mock(RetrofitApi::class.java)
+        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
+        notificationsManager = mock(ChatNotifications::class.java)
         api = ChatApiImpl(
             retrofitApi,
             retrofitCdnApi,
             config,
-            JsonParserImpl(),
-            logger
+            ChatParserImpl()
         )
 
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
-        client = ChatClientImpl(api, socket, config, logger, notificationsManager)
+        client = ChatClientImpl(config, api, socket, notificationsManager)
         client.setUser(user)
 
         return client

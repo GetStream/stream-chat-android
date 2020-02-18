@@ -1,19 +1,16 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import android.text.TextUtils
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatConfig
-import io.getstream.chat.android.client.call.ChatCall
+import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.logger.StreamLogger
-import io.getstream.chat.android.client.notifications.NotificationsManager
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.api.models.QueryUsers
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -21,12 +18,11 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 
-internal class ChatClientImpl constructor(
+internal class ChatClientImpl(
+    private val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val config: ChatConfig,
-    private val logger: StreamLogger,
-    private val notificationsManager: NotificationsManager
+    private val notificationsManager: ChatNotifications
 ) : ChatClient {
 
     private val state = ClientState()
@@ -34,13 +30,16 @@ internal class ChatClientImpl constructor(
     init {
         val events = socket.events()
         events.subscribe {
+
+            notificationsManager.onReceiveWebSocketEvent(it)
+
             if (it is ConnectedEvent) {
                 state.user = it.me
                 state.connectionId = it.connectionId
+                state.socketConnected = true
                 api.setConnection(it.me.id, it.connectionId)
             } else if (it is DisconnectedEvent) {
-                state.user = null
-                state.connectionId = null
+                state.socketConnected = false
             }
         }
     }
@@ -57,14 +56,8 @@ internal class ChatClientImpl constructor(
         socket.connectAnonymously()
     }
 
-    override fun setUser(user: User, token: String) {
-        config.isAnonymous = false
-        socket.connect(user)
-    }
-
-    override fun setGuestUser(user: User): ChatCall<TokenResponse> {
-        config.isAnonymous = true
-        return api.setGuestUser(user.id, user.name)
+    override fun getGuestToken(userId: String, userName: String): Call<TokenResponse> {
+        return api.setGuestUser(userId, userName)
     }
 
     override fun sendFile(
@@ -82,19 +75,28 @@ internal class ChatClientImpl constructor(
         channelId: String,
         file: File,
         mimeType: String
-    ): ChatCall<String> {
+    ): Call<String> {
         return api.sendFile(channelType, channelId, file, mimeType)
     }
 
-    override fun deleteFile(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+    override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteFile(channelType, channelId, url)
     }
 
-    override fun deleteImage(channelType: String, channelId: String, url: String): ChatCall<Unit> {
+    override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteImage(channelType, channelId, url)
     }
 
     //endregion
+
+    override fun disconnectSocket() {
+        socket.disconnect()
+    }
+
+    override fun reconnectSocket() {
+        val user = state.user
+        if (user != null) socket.connect(user)
+    }
 
     override fun addSocketListener(listener: SocketListener) {
         socket.addListener(listener)
@@ -108,23 +110,6 @@ internal class ChatClientImpl constructor(
         return socket.events()
     }
 
-    override fun getState(): ClientState {
-        return state
-    }
-
-    override fun fromCurrentUser(entity: UserEntity): Boolean {
-        val otherUserId = entity.getUserId()
-        return if (getUser() == null) false else TextUtils.equals(getUserId(), otherUserId)
-    }
-
-    override fun getUserId(): String {
-        return state.user?.id!!
-    }
-
-    override fun getClientId(): String {
-        return state.connectionId!!
-    }
-
     override fun disconnect() {
         socket.disconnect()
         state.reset()
@@ -132,23 +117,23 @@ internal class ChatClientImpl constructor(
 
     //region: api calls
 
-    override fun getDevices(): ChatCall<List<Device>> {
+    override fun getDevices(): Call<List<Device>> {
         return api.getDevices()
     }
 
-    override fun deleteDevice(deviceId: String): ChatCall<Unit> {
-        return api.deleteDevice(deviceId)
+    override fun deleteDevice(firebaseToken: String): Call<Unit> {
+        return api.deleteDevice(firebaseToken)
     }
 
-    override fun addDevice(request: AddDeviceRequest): ChatCall<Unit> {
-        return api.addDevice(request)
+    override fun addDevice(firebaseToken: String): Call<Unit> {
+        return api.addDevice(firebaseToken)
     }
 
-    override fun searchMessages(request: SearchMessagesRequest): ChatCall<List<Message>> {
+    override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         return api.searchMessages(request)
     }
 
-    override fun getReplies(messageId: String, limit: Int): ChatCall<List<Message>> {
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return api.getReplies(messageId, limit)
     }
 
@@ -156,7 +141,7 @@ internal class ChatClientImpl constructor(
         messageId: String,
         firstId: String,
         limit: Int
-    ): ChatCall<List<Message>> {
+    ): Call<List<Message>> {
         return api.getRepliesMore(messageId, firstId, limit)
     }
 
@@ -164,23 +149,23 @@ internal class ChatClientImpl constructor(
         messageId: String,
         offset: Int,
         limit: Int
-    ): ChatCall<List<Reaction>> {
+    ): Call<List<Reaction>> {
         return api.getReactions(messageId, offset, limit)
     }
 
-    override fun deleteReaction(messageId: String, reactionType: String): ChatCall<Message> {
+    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return api.deleteReaction(messageId, reactionType)
     }
 
-    override fun sendAction(request: SendActionRequest): ChatCall<Message> {
+    override fun sendAction(request: SendActionRequest): Call<Message> {
         return api.sendAction(request)
     }
 
-    override fun deleteMessage(messageId: String): ChatCall<Message> {
+    override fun deleteMessage(messageId: String): Call<Message> {
         return api.deleteMessage(messageId)
     }
 
-    override fun getMessage(messageId: String): ChatCall<Message> {
+    override fun getMessage(messageId: String): Call<Message> {
         return api.getMessage(messageId)
     }
 
@@ -188,13 +173,13 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         message: Message
-    ): ChatCall<Message> {
+    ): Call<Message> {
         return api.sendMessage(channelType, channelId, message)
     }
 
     override fun updateMessage(
         message: Message
-    ): ChatCall<Message> {
+    ): Call<Message> {
         return api.updateMessage(message)
     }
 
@@ -202,11 +187,11 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         request: ChannelQueryRequest
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
         return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
     }
 
-    override fun deleteChannel(channelType: String, channelId: String): ChatCall<Channel> {
+    override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
     }
 
@@ -214,11 +199,11 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         messageId: String
-    ): ChatCall<Unit> {
+    ): Call<Unit> {
         return api.markRead(channelType, channelId, messageId)
     }
 
-    override fun showChannel(channelType: String, channelId: String): ChatCall<Unit> {
+    override fun showChannel(channelType: String, channelId: String): Call<Unit> {
         return api.showChannel(channelType, channelId)
     }
 
@@ -226,17 +211,17 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         clearHistory: Boolean
-    ): ChatCall<Unit> {
+    ): Call<Unit> {
         return api.hideChannel(channelType, channelId, clearHistory)
     }
 
-    override fun stopWatching(channelType: String, channelId: String): ChatCall<Unit> {
+    override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
         return api.stopWatching(channelType, channelId)
     }
 
     override fun queryChannels(
         request: QueryChannelsRequest
-    ): ChatCall<List<Channel>> {
+    ): Call<List<Channel>> {
         return api.queryChannels(request)
             .map { attachClient(it) }
     }
@@ -246,7 +231,7 @@ internal class ChatClientImpl constructor(
         channelId: String,
         updateMessage: Message,
         channelExtraData: Map<String, Any>
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
 
         val toMutableMap = channelExtraData.toMutableMap()
         toMutableMap.remove("members")
@@ -256,7 +241,7 @@ internal class ChatClientImpl constructor(
             .map { attachClient(it) }
     }
 
-    override fun rejectInvite(channelType: String, channelId: String): ChatCall<Channel> {
+    override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId).map { attachClient(it) }
     }
 
@@ -264,17 +249,17 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         message: String
-    ): ChatCall<Channel> {
+    ): Call<Channel> {
         return api.acceptInvite(channelType, channelId, message).map { attachClient(it) }
     }
 
-    override fun markAllRead(): ChatCall<ChatEvent> {
+    override fun markAllRead(): Call<ChatEvent> {
         return api.markAllRead().map {
             it.event
         }
     }
 
-    override fun getUsers(query: QueryUsers): ChatCall<List<User>> {
+    override fun getUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.getUsers(query).map { it.users }
     }
 
@@ -282,7 +267,7 @@ internal class ChatClientImpl constructor(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): ChatCall<ChannelResponse> {
+    ): Call<ChannelResponse> {
         return api.addMembers(
             channelType = channelType,
             channelId = channelId,
@@ -320,7 +305,7 @@ internal class ChatClientImpl constructor(
         channelId: String,
         reason: String,
         timeout: Int
-    ): ChatCall<CompletableResponse> = api.banUser(
+    ): Call<CompletableResponse> = api.banUser(
         targetId, timeout, reason, channelType, channelId
     )
 
@@ -337,11 +322,11 @@ internal class ChatClientImpl constructor(
     //endregion
 
     override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
-        notificationsManager.onReceiveFirebaseMessage(remoteMessage, context)
+        notificationsManager.onReceiveFirebaseMessage(remoteMessage)
     }
 
     override fun onNewTokenReceived(token: String, context: Context) {
-        notificationsManager.setFirebaseToken(token, context)
+        notificationsManager.setFirebaseToken(token)
     }
 
     private fun attachClient(channels: List<Channel>): List<Channel> {
@@ -354,7 +339,15 @@ internal class ChatClientImpl constructor(
         return channel
     }
 
-    private fun getUser(): User? {
+    override fun getConnectionId(): String? {
+        return state.connectionId
+    }
+
+    override fun getCurrentUser(): User? {
         return state.user
+    }
+
+    override fun isSocketConnected(): Boolean {
+        return state.socketConnected
     }
 }

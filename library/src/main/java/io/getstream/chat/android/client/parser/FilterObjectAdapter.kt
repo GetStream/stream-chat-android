@@ -11,7 +11,7 @@ class FilterObjectAdapter(val gson: Gson) : TypeAdapter<FilterObject>() {
 
     override fun write(out: JsonWriter, value: FilterObject) {
         val adapter = gson.getAdapter(HashMap::class.java)
-        adapter.write(out, value.getData())
+        adapter.write(out, value.getMap())
     }
 
     override fun read(reader: JsonReader): FilterObject {

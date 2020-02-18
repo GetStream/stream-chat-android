@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.parser.JsonParser
+import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -16,13 +16,13 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-class ChatSocketServiceImpl(val jsonParser: JsonParser) : ChatSocketService {
+class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
     private var wsEndpoint: String = ""
     private var apiKey: String = ""
     private var userToken: String? = ""
     private var user: User? = null
-    private val eventsParser: EventsParser = EventsParser(this, jsonParser)
+    private val eventsParser: EventsParser = EventsParser(this, chatParser)
     private var httpClient = OkHttpClient()
     private var webSocket: WebSocket? = null
     private val listeners = mutableListOf<SocketListener>()
@@ -60,7 +60,7 @@ class ChatSocketServiceImpl(val jsonParser: JsonParser) : ChatSocketService {
     }
 
     internal fun sendEvent(event: ChatEvent) {
-        webSocket?.send(jsonParser.toJson(event))
+        webSocket?.send(chatParser.toJson(event))
     }
 
     override fun connect(
@@ -178,7 +178,7 @@ class ChatSocketServiceImpl(val jsonParser: JsonParser) : ChatSocketService {
             data["user_id"] = user.id
         }
         data["server_determines_connection_id"] = true
-        return jsonParser.toJson(data)
+        return chatParser.toJson(data)
     }
 
     sealed class State {

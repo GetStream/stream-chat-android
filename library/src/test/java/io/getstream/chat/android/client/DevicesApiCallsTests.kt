@@ -72,7 +72,7 @@ class DevicesApiCallsTests {
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
 
-        val result = client.addDevice(request).execute()
+        val result = client.addDevice(device.id).execute()
 
         verifySuccess(result, Unit)
     }
@@ -92,7 +92,7 @@ class DevicesApiCallsTests {
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
-        val result = client.addDevice(request).execute()
+        val result = client.addDevice(device.id).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

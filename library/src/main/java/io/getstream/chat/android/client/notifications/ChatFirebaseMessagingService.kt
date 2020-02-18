@@ -4,7 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 
-class StreamFirebaseMessagingService: FirebaseMessagingService() {
+class ChatFirebaseMessagingService: FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         ChatClient.instance().onMessageReceived(remoteMessage, this)

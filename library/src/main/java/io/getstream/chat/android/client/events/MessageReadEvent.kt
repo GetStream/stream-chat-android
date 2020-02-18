@@ -1,3 +1,3 @@
 package io.getstream.chat.android.client.events
 
-class MessageReadEvent: RemoteEvent()
+class MessageReadEvent: ChatEvent()

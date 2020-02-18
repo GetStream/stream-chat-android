@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.models.User
 
-class TypingStopEvent : RemoteEvent() {
+class TypingStopEvent : ChatEvent() {
     lateinit var cid: String
     lateinit var user: User
 }

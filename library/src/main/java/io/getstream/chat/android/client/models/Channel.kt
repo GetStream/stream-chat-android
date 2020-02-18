@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
-import io.getstream.chat.android.client.call.ChatCall
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.UndefinedDate
 import java.util.*
 
@@ -38,7 +38,7 @@ class Channel {
 
     internal lateinit var client: ChatClient
 
-    fun watch(request: ChannelWatchRequest): ChatCall<Channel> {
+    fun watch(request: ChannelWatchRequest): Call<Channel> {
         return client.queryChannel(type, id, request)
     }
 

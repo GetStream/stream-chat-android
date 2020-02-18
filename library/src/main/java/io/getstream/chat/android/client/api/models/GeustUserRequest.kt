@@ -1,26 +1,19 @@
 package io.getstream.chat.android.client.api.models
 
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.parser.IgnoreSerialisation
 
 
-class GuestUserRequest constructor(id: String, name: String?) {
+data class GuestUserRequest constructor(
+    @IgnoreSerialisation
+    val id: String,
+    @IgnoreSerialisation
+    val name: String
+) {
 
-    @SerializedName("user")
-    @Expose
-    var user: GuestUserBody
-
-    init {
-        this.user = GuestUserBody(id = id, name = name)
-    }
+    var user = GuestUserBody(id, name)
 
     data class GuestUserBody(
-        @SerializedName("id")
-        @Expose
         val id: String,
-
-        @SerializedName("name")
-        @Expose
-        val name: String?
+        val name: String
     )
 }
