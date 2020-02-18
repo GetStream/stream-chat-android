@@ -1,11 +1,16 @@
 package com.getstream.sdk.chat.adapter;
 
-import androidx.recyclerview.widget.DiffUtil;
-
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.StreamChat;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.DiffUtil;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
+
+import static com.getstream.sdk.chat.utils.DataUtils.computeLastMessage;
 
 public class ChannelListDiffCallback extends DiffUtil.Callback {
     private List<Channel> oldList, newList;
@@ -55,8 +60,8 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
         // Check Message Update
-        Message oldLastMessage = oldChannel.getChannelState().getLastMessage();
-        Message newLastMessage = newChannel.getChannelState().getLastMessage();
+        Message oldLastMessage = computeLastMessage(oldChannel);
+        Message newLastMessage = computeLastMessage(newChannel);
         if (oldLastMessage != null &&
                 newLastMessage != null &&
                 newLastMessage.getUpdatedAt() != null &&
@@ -69,6 +74,37 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
 
-        return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
+        User oldChannelUser = getLastReader(oldChannel);
+        User newChannelUser = getLastReader(newChannel);
+
+        if (oldChannelUser != null && newChannelUser != null) {
+            return oldChannelUser.getId().equals(newChannelUser.getId());
+        } else {
+            return false;
+        }
+    }
+
+
+    public static User getLastReader(Channel channel) {
+        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.getRead();
+        if (read == null || read.isEmpty()) return null;
+        User lastReadUser = null;
+        for (int i = read.size() - 1; i >= 0; i--) {
+
+            User currentUser = StreamChat.getInstance().getCurrentUser();
+
+            ChannelUserRead channelUserRead = read.get(i);
+
+            if (currentUser != null) {
+                String id = currentUser.getId();
+                String readUserId = channelUserRead.user.getId();
+
+                if (!id.equals(readUserId)) {
+                    lastReadUser = channelUserRead.getUser();
+                    break;
+                }
+            }
+        }
+        return lastReadUser;
     }
 }

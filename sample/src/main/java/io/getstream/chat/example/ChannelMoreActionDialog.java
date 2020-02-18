@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -13,17 +12,20 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
-import com.getstream.sdk.chat.rest.request.HideChannelRequest;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.utils.ResultCallback;
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.HashMap;
+
+import androidx.annotation.NonNull;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 
 public class ChannelMoreActionDialog extends Dialog {
@@ -73,35 +75,55 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private boolean canEditOrDeleteChannel() {
-        return channel.getCreatedByUser() != null && channel.getCreatedByUser().getId().equals(channel.getClient().getUserId());
+        User createdByUser = channel.getCreatedByUser();
+        User currentUser = StreamChat.getCurrentUser().getValue();
+
+        if (createdByUser != null && currentUser != null) {
+            return createdByUser.getId().equals(currentUser.getId());
+        } else {
+            return false;
+        }
     }
 
     private void hideChannel() {
         dismiss();
-        viewModel.hideChannel(channel, new HideChannelRequest(true), new ResultCallback<Void, String>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Utils.showMessage(context, context.getString(R.string.channel_action_hide_alert));
-            }
 
-            @Override
-            public void onError(String s) {
-                Utils.showMessage(context, s);
-            }
-        });
+        String id = channel.getId();
+        String type = channel.getType();
+
+        viewModel.hideChannel(type, id, false).enqueue(
+                new Function1<Result<Unit>, Unit>() {
+                    @Override
+                    public Unit invoke(Result<Unit> unitResult) {
+
+                        if (unitResult.isSuccess()) {
+                            Utils.showMessage(context, context.getString(R.string.channel_action_hide_alert));
+                        } else {
+                            Utils.showMessage(context, unitResult.error().getMessage());
+                        }
+
+                        return null;
+                    }
+                }
+        );
     }
 
     private void showChannel() {
         dismiss();
-        viewModel.showChannel(channel, new ResultCallback<Void, String>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Utils.showMessage(context, context.getString(R.string.channel_action_show_alert));
-            }
+        String type = channel.getType();
+        String id = channel.getId();
 
+        viewModel.showChannel(type, id).enqueue(new Function1<Result<Unit>, Unit>() {
             @Override
-            public void onError(String s) {
-                Utils.showMessage(context, s);
+            public Unit invoke(Result<Unit> unitResult) {
+
+                if (unitResult.isSuccess()) {
+                    Utils.showMessage(context, context.getString(R.string.channel_action_show_alert));
+                } else {
+                    Utils.showMessage(context, unitResult.error().getMessage());
+                }
+
+                return null;
             }
         });
     }
@@ -139,26 +161,32 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private void editChannel(String channelName, String image, String updateMessage) {
-        channel.setName(channelName);
-        channel.setImage(image);
 
         Message message = null;
         if (!TextUtils.isEmpty(updateMessage)) {
             message = new Message();
             message.setText(updateMessage);
         }
-        channel.update(message, new ChannelCallback() {
-            @Override
-            public void onSuccess(ChannelResponse response) {
-                Utils.showMessage(context, context.getString(R.string.channel_action_update_alert));
-            }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                Utils.showMessage(context, errMsg);
-                Log.d(TAG, "Channel Update Error: " + errMsg);
-            }
-        });
+        String type = channel.getType();
+        String id = channel.getId();
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("image", image);
+        data.put("name", channelName);
+
+        StreamChat.getInstance().updateChannel(type, id, message, data).enqueue(
+                channelResult -> {
+
+                    if (channelResult.isSuccess()) {
+                        Utils.showMessage(context, context.getString(R.string.channel_action_update_alert));
+                    } else {
+                        Utils.showMessage(context, channelResult.error().getMessage());
+                    }
+
+                    return null;
+                }
+        );
     }
 
     @Override

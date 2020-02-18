@@ -88,7 +88,7 @@ public class MessageSearchVM extends AndroidViewModel {
     }
 
     private void initComponents() {
-        client = StreamChat.getInstance(context);
+        client = StreamChat.getInstance();
     }
 
     private void loadQueryData(int offset, int limit, UserConfig userConf) {

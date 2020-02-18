@@ -65,7 +65,7 @@ public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
         iv_media_thumb.setShape(context, background);
 
         Glide.with(context)
-                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
+                .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(attachment.getThumbURL()))
                 .into(iv_media_thumb);
     }
 

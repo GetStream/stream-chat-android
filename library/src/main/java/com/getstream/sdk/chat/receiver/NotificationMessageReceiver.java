@@ -39,12 +39,12 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
         if (action != null) {
             switch (intent.getAction()) {
                 case ACTION_READ:
-                    markAsRead(context, intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE));
+                    markAsRead(intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE));
                     break;
                 case ACTION_REPLY:
                     Bundle results = RemoteInput.getResultsFromIntent(intent);
                     if (results != null) {
-                        replyText(context, intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE), results.getCharSequence(KEY_TEXT_REPLY));
+                        replyText(intent.getStringExtra(KEY_CHANNEL_ID), intent.getStringExtra(KEY_CHANNEL_TYPE), results.getCharSequence(KEY_TEXT_REPLY));
                     }
                     break;
                 default:
@@ -54,7 +54,7 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
         cancelNotification(context, intent.getIntExtra(KEY_NOTIFICATION_ID, 0));
     }
 
-    private void replyText(@NotNull Context context, String id, String type, CharSequence messageChars) {
+    private void replyText(String id, String type, CharSequence messageChars) {
         if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
             Log.e(TAG, "Invalid replyText  parameters: id: " +  id + " type: " + type);
             return;
@@ -65,7 +65,7 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
             return;
         }
 
-        Channel channel = new Channel(StreamChat.getInstance(context), type, id);
+        Channel channel = new Channel(StreamChat.getInstance(), type, id);
         Config config = new Config();
         config.setReadEvents(true);
         channel.setConfig(config);
@@ -86,13 +86,13 @@ public class NotificationMessageReceiver extends BroadcastReceiver {
         });
     }
 
-    private void markAsRead(@NotNull Context context, String id, String type) {
+    private void markAsRead(String id, String type) {
         if (id == null || type == null || id.isEmpty() || type.isEmpty()) {
             Log.e(TAG, "Invalid replyText  parameters: id:" + id + " type:" + type);
             return;
         }
 
-        Channel channel = new Channel(StreamChat.getInstance(context), type, id);
+        Channel channel = new Channel(StreamChat.getInstance(), type, id);
         Config config = new Config();
         config.setReadEvents(true);
         channel.setConfig(config);

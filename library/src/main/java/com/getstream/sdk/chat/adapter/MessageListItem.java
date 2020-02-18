@@ -2,10 +2,10 @@ package com.getstream.sdk.chat.adapter;
 
 
 import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.util.ArrayList;
 import java.util.Date;

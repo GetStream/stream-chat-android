@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.storage;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Transaction;
@@ -302,7 +301,7 @@ public class StreamStorage implements Storage {
             for (String cid : selectedChannelIDs) {
                 Channel channel = channelMap.get(cid);
                 channel.setChannelState(channel.getLastState());
-                channel.setClient(StreamChat.getInstance(context));
+                channel.setClient(StreamChat.getInstance());
                 if (channel == null) {
                     StreamChat.getLogger().logW(this, "Missing channel for cid " + cid);
                 } else {

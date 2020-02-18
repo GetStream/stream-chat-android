@@ -82,7 +82,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
         tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
         tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
-        client = StreamChat.getInstance(context);
+        client = StreamChat.getInstance();
     }
 
     @Override

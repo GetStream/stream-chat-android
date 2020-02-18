@@ -86,7 +86,7 @@ public class MessageMoreActionDialog extends Dialog {
 
         ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
-        if (!message.getUserId().equals(StreamChat.getInstance(context).getUserId())) {
+        if (!message.getUserId().equals(StreamChat.getInstance().getUserId())) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {

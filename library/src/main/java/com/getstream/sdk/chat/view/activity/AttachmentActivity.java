@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.*;
 import android.widget.ImageView;
@@ -81,7 +80,7 @@ public class AttachmentActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (StreamChat.isConnected()) {
-            webView.loadUrl(StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+            webView.loadUrl(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
         } else {
             finish();
         }
@@ -102,7 +101,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .load(StreamChat.getInstance(this).getUploadStorage().signGlideUrl(url))
+                .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(url))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
@@ -110,13 +109,13 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.getInstance(AttachmentActivity.this).getUploadStorage().signFileUrl(url));
+            view.loadUrl(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, StreamChat.getInstance(AttachmentActivity.this).getUploadStorage().signFileUrl(url));
+            super.onPageFinished(view, StreamChat.getInstance().getUploadStorage().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
 

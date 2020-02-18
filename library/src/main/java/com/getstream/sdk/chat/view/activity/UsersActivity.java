@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -223,7 +222,7 @@ public class UsersActivity extends AppCompatActivity {
         binding.setShowMainProgressbar(true);
         isCalling = true;
         if (client == null)
-            client = StreamChat.getInstance(this);
+            client = StreamChat.getInstance();
 
         client.queryUsers(getQueryUserRequest(), new QueryUserListCallback() {
             @Override

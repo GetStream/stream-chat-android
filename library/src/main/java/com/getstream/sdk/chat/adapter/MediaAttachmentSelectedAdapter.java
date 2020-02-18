@@ -93,7 +93,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 }
             } else if (!TextUtils.isEmpty(attachment.getImageURL())) {
                 Glide.with(context)
-                        .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getImageURL()))
+                        .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(attachment.getImageURL()))
                         .into(binding.ivMedia);
             } else {
                 try {

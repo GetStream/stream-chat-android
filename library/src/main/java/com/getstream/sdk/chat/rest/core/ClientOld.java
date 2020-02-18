@@ -111,9 +111,13 @@ import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
 import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
-public class Client implements WSResponseHandler {
+public class ClientOld implements WSResponseHandler {
 
-    private static final String TAG = Client.class.getSimpleName();
+    static class ApiClientOptions{
+
+    }
+
+    private static final String TAG = ClientOld.class.getSimpleName();
     private String clientID;
 
     @NotNull

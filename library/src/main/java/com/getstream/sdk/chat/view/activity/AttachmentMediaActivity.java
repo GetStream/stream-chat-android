@@ -47,7 +47,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         else
             iv_audio.setVisibility(View.GONE);
 
-        playVideo(StreamChat.getInstance(this).getUploadStorage().signFileUrl(url));
+        playVideo(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
     }
 
     /**
@@ -56,7 +56,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(StreamChat.getInstance(this).getUploadStorage().signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(StreamChat.getInstance().getUploadStorage().signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }

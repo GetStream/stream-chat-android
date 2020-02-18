@@ -11,12 +11,12 @@ import android.widget.TextView;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.drawable.DrawableCompat;
+import io.getstream.chat.android.client.models.Channel;
 
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.rest.User;
@@ -88,7 +88,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, @NonNull ChannelState channelState, int position) {
+    public void bind(Context context, @NonNull Channel channelState, int position) {
 
         // setup the click listeners and the markdown builder
         this.context = context;
@@ -115,12 +115,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     // set the channel name
-    protected void configChannelName(ChannelState channelState){
+    protected void configChannelName(Channel channelState){
         String channelName = channelState.getChannelNameOrMembers();
         tv_name.setText((!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText()));
     }
 
-    protected void configAvatarView(ChannelState channelState){
+    protected void configAvatarView(Channel channelState){
         Channel channel = channelState.getChannel();
         List<User> otherUsers = channelState.getOtherUsers();
         avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), otherUsers, style);
@@ -205,12 +205,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
     }
 
-    protected void configReadState(ChannelState channelState){
+    protected void configReadState(ChannelState channelState) {
         List<ChannelUserRead> lastMessageReads = channelState.getLastMessageReads();
         read_state.setReads(lastMessageReads, true, style);
     }
 
-    protected void configClickListeners(ChannelState channelState){
+    protected void configClickListeners(ChannelState channelState) {
         Channel channel = channelState.getChannel();
         click_area.setOnClickListener(view -> {
             if (this.channelClickListener != null)

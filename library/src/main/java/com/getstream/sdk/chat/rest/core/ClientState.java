@@ -64,14 +64,14 @@ public class ClientState {
     private ConcurrentHashMap<String, List<String>> userIDToChannelsMap;
 
     @NotNull
-    private Client client;
+    private ClientOld client;
 
     /**
      * Creates the client state, only required paramter is a client object
      *
      * @param client
      */
-    public ClientState(Client client) {
+    public ClientState(ClientOld client) {
         this.client = client;
         userIDToChannelsMap = new ConcurrentHashMap<>();
         users = new ConcurrentHashMap<>();
@@ -126,7 +126,6 @@ public class ClientState {
         StreamChat.getLogger().logD(this,"getUser: " + userID + " with result: " + result);
         return result;
     }
-
 
     void updateUser(User newUser) {
         List<User> newUsers = new ArrayList<>();

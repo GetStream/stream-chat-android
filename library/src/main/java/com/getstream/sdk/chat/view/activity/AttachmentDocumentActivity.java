@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.*;
 import android.widget.ProgressBar;
@@ -61,7 +60,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         if (StreamChat.isConnected()) {
-            Client client = StreamChat.getInstance(this);
+            Client client = StreamChat.getInstance();
             webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + client.getUploadStorage().signFileUrl(url));
         } else {
             finish();
@@ -71,7 +70,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
+            view.loadUrl(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
             return true;
         }
 
