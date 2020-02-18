@@ -12,8 +12,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.notifications.StreamNotificationsManager
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito

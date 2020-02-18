@@ -13,8 +13,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.notifications.NotificationsManager
-import io.getstream.chat.android.client.notifications.StreamNotificationsManager
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
@@ -58,8 +56,6 @@ class ClientConnectionTests {
         socket = mock(ChatSocket::class.java)
         retrofitApi = mock(RetrofitApi::class.java)
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
-        logger = mock(StreamLogger::class.java)
-        notificationsManager = mock(NotificationsManager::class.java)
         logger = mock(ChatLogger::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
         api = ChatApiImpl(
