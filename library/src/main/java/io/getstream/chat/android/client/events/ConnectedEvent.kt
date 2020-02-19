@@ -9,7 +9,6 @@ class ConnectedEvent : ChatEvent() {
     lateinit var me: User
     val member: Member? = null
     val reaction: Reaction? = null
-    val channel: Channel? = null
     var online = false
 
     @SerializedName("connection_id")
