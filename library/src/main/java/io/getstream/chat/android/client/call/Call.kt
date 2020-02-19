@@ -8,5 +8,6 @@ interface Call<T> {
     fun enqueue(callback: (Result<T>) -> Unit)
     fun cancel()
     fun <K> map(mapper: (T) -> K): Call<K>
-    fun onError(errorHandler: (ChatError) -> Unit)
+    fun onError(handler: (ChatError) -> Unit): Call<T>
+    fun onNext(handler: (T) -> Unit): Call<T>
 }

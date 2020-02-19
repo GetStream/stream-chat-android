@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.ChatCallImpl
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
@@ -14,33 +13,26 @@ class RetrofitCallMapper(private val chatParser: ChatParser) {
 
         return object : ChatCallImpl<T>() {
 
-            private var errorHandler: ((ChatError) -> Unit)? = null
-
             override fun execute(): Result<T> {
                 val result = execute(call)
                 if (!result.isSuccess) errorHandler?.invoke(result.error())
+                else nextHandler?.invoke(result.data())
                 return result
             }
 
             override fun enqueue(callback: (Result<T>) -> Unit) {
-                enqueue(call) { result -> deliverFinalResult(result, callback) }
+                enqueue(call) {
+                    if (!canceled) {
+                        if (!it.isSuccess) errorHandler?.invoke(it.error())
+                        else nextHandler?.invoke(it.data())
+                        callback(it)
+                    }
+                }
             }
 
             override fun cancel() {
                 super.cancel()
                 call.cancel()
-            }
-
-            override fun onError(errorHandler: (ChatError) -> Unit) {
-                this.errorHandler = errorHandler
-            }
-
-
-            private fun deliverFinalResult(it: Result<T>, callback: (Result<T>) -> Unit) {
-                if (!canceled) {
-                    if (!it.isSuccess) errorHandler?.invoke(it.error())
-                    callback(it)
-                }
             }
         }
     }
