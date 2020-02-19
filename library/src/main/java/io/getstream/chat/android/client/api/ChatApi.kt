@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Message
@@ -134,4 +135,11 @@ interface ChatApi {
         channelType: String,
         channelId: String
     ): Call<CompletableResponse>
+
+    fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any> = emptyMap()
+    ): Call<ChatEvent>
 }
