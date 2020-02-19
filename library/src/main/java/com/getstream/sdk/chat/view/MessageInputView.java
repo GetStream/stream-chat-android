@@ -25,6 +25,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.call.Call;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
@@ -349,11 +350,11 @@ public class MessageInputView extends RelativeLayout {
      Prepare message takes the message input string and returns a message object
      You can overwrite this method in case you want to attach more custom properties to the message
      */
-    private void onSendMessage(Message message, MessageCallback callback) {
+    private Call<io.getstream.chat.android.client.models.Message> onSendMessage(Message message) {
         if (isEdit())
-            viewModel.editMessage(message, callback);
+            return viewModel.editMessage(message);
         else
-            viewModel.sendMessage(message, callback);
+            return viewModel.sendMessage(message);
     }
 
     protected void onSendMessage(){

@@ -2,53 +2,13 @@ package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
 import android.text.TextUtils;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import io.getstream.chat.android.client.api.models.CompletableResponse;
-import io.getstream.chat.android.client.call.Call;
-import io.getstream.chat.android.client.events.ChatEvent;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.enums.Pagination;
-//import com.getstream.sdk.chat.model.Channel;
-//import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.ModelType;
-//import com.getstream.sdk.chat.rest.Message;
-//import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
-import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.OnQueryListener;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.DataUtils;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
@@ -56,16 +16,25 @@ import com.getstream.sdk.chat.utils.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+import io.getstream.chat.android.client.api.models.*;
+import io.getstream.chat.android.client.call.Call;
+import io.getstream.chat.android.client.events.*;
+import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+
 import static java.util.UUID.randomUUID;
 
 /*
@@ -77,14 +46,25 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();
 
-    /** The A livedata object for the list of messages */
+    /**
+     * The A livedata object for the list of messages
+     */
     protected LazyQueryChannelLiveData<List<Message>> messages;
-    /** The numbers of users currently watching this channel */
+    /**
+     * The numbers of users currently watching this channel
+     */
     protected LiveData<Number> watcherCount;
-    /** The list of users currently typing */
+    /**
+     * The list of users currently typing
+     */
     protected LazyQueryChannelLiveData<List<User>> typingUsers;
-    /** Mutable live data object for the current messageInputText */
+    /**
+     * Mutable live data object for the current messageInputText
+     */
     protected MutableLiveData<String> messageInputText;
+
+    private Date lastKeystrokeAt;
+    private Date lastStartTypingEvent;
 
 
     public Map<String, ChannelUserRead> getReadsByUser(Channel channel) {
@@ -142,12 +122,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected Date lastMarkRead;
 
 
-
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;
     }
-
-
 
 
     protected MutableLiveData<Number> currentUserUnreadMessageCount;
@@ -171,11 +148,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
 
-
     public ChannelViewModel(@NonNull Application application) {
         super(application);
 
-        StreamChat.getLogger().logD(this,"instance created");
+        StreamChat.getLogger().logD(this, "instance created");
 
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
@@ -224,9 +200,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 @Override
                 public Unit invoke(Result<Unit> result) {
 
-                    if(result.isSuccess()){
-                        StreamChat.getLogger().logD(this,"Marked read message");
-                    }else{
+                    if (result.isSuccess()) {
+                        StreamChat.getLogger().logD(this, "Marked read message");
+                    } else {
                         StreamChat.getLogger().logE(this, result.error().getMessage());
                     }
 
@@ -361,7 +337,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 @Override
                 public Unit invoke(Result<List<Message>> result) {
 
-                    if(result.isSuccess()){
+                    if (result.isSuccess()) {
                         List<Message> newMessages = new ArrayList<>(result.data());
                         newMessages.add(0, message);
                         reachedEndOfPaginationThread = newMessages.size() < 30 + 1;
@@ -472,110 +448,96 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
             @Override
-            public Unit invoke(ChatEvent chatEvent) {
+            public Unit invoke(ChatEvent event) {
+
+                if (event instanceof NewMessageEvent) {
+
+                    upsertMessage(event.getMessage());
+
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+
+                    User currentUser = StreamChat.getInstance().getCurrentUser();
+                    String currentUserId = currentUser.getId();
+
+                    int unreadMessageCount = DataUtils.getUnreadMessageCount(currentUserId, channel);
+
+                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
+                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                    }
+
+                } else if (event instanceof UserStartWatchingEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                } else if (event instanceof UserStopWatchingEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                } else if (event instanceof ChannelUpdatedEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                } else if (event instanceof MessageUpdatedEvent) {
+                    updateMessage(event.message);
+                } else if (event instanceof MessageDeletedEvent) {
+                    deleteMessage(event.message);
+                } else if (event instanceof MessageReadEvent) {
+
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                    reads.postValue(DataUtils.getReadsByUser(channel));
+
+                    User currentUser = StreamChat.getInstance().getCurrentUser();
+                    String currentUserId = currentUser.getId();
+
+                    int unreadMessageCount = DataUtils.getUnreadMessageCount(currentUserId, channel);
+
+                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
+                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                    }
+                } else if (event instanceof ReactionNewEvent) {
+                    updateMessage(event.message);
+                } else if (event instanceof ReactionDeletedEvent) {
+                    updateMessage(event.message);
+                } else if (event instanceof TypingStartEvent) {
+                    if (!DataUtils.isFromCurrentUser(event)) {
+                        User user = event.getUser();
+                        typingState.put(user.getId(), event);
+                        typingUsers.postValue(getCleanedTypingUsers());
+                    }
+                } else if (event instanceof TypingStopEvent) {
+                    if (!DataUtils.isFromCurrentUser(event)) {
+                        User user = event.getUser();
+                        typingState.remove(user.getId());
+                        typingUsers.postValue(getCleanedTypingUsers());
+                    }
+                } else if (event instanceof MemberAddedEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                } else if (event instanceof MemberRemovedEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                } else if (event instanceof MemberUpdatedEvent) {
+                    channel = event.getChannel();
+                    channelState.postValue(event.getChannel());
+                }
+
                 return null;
             }
         });
 
-        channelSubscriptionId = channel.addEventHandler(new ChatChannelEventHandler() {
-            @Override
-            public void onMessageNew(Event event) {
-                upsertMessage(event.getMessage());
-                channelState.postValue(channel.getChannelState());
-                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
-                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
-                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                }
-
-            }
-
-            @Override
-            public void onUserWatchingStart(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-
-            @Override
-            public void onUserWatchingStop(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-
-            @Override
-            public void onChannelUpdated(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-
-            @Override
-            public void onMessageUpdated(Event event) {
-                updateMessage(event.getMessage());
-            }
-
-            @Override
-            public void onMessageDeleted(Event event) {
-                deleteMessage(event.getMessage());
-            }
-
-            @Override
-            public void onMessageRead(Event event) {
-                StreamChat.getLogger().logI(this,"Message read by " + event.getUser().getId());
-                reads.postValue(channel.getChannelState().getReadsByUser());
-                if (channel.getChannelState().getCurrentUserUnreadMessageCount() != lastCurrentUserUnreadMessageCount ) {
-                    lastCurrentUserUnreadMessageCount = channel.getChannelState().getCurrentUserUnreadMessageCount();
-                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                }
-            }
-
-            @Override
-            public void onReactionNew(Event event) {
-                updateMessage(event.getMessage());
-            }
-
-            @Override
-            public void onReactionDeleted(Event event) {
-                updateMessage(event.getMessage());
-            }
-
-            @Override
-            public void onTypingStart(Event event) {
-                if (client().fromCurrentUser(event)) return;
-                User user = event.getUser();
-                typingState.put(user.getId(), event);
-                typingUsers.postValue(getCleanedTypingUsers());
-            }
-
-            @Override
-            public void onTypingStop(Event event) {
-                if (client().fromCurrentUser(event)) return;
-                User user = event.getUser();
-                typingState.remove(user.getId());
-                typingUsers.postValue(getCleanedTypingUsers());
-            }
-
-            @Override
-            public void onMemberAdded(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-
-            @Override
-            public void onMemberRemoved(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-
-            @Override
-            public void onMemberUpdated(Event event) {
-                channelState.postValue(channel.getChannelState());
-            }
-        });
     }
 
     protected void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = messagesCopy.size() - 1; i >= 0; i--) {
             if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
-                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
-                    messagesCopy.remove(oldMessage);
-                } else {
-                    messagesCopy.set(i, newMessage);
-                }
+                //TODO: llc test offline case
+//                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
+//                    messagesCopy.remove(oldMessage);
+//                } else {
+//                    messagesCopy.set(i, newMessage);
+//                }
                 if (isThread())
                     threadMessages.postValue(messagesCopy);
                 else
@@ -588,7 +550,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected void upsertMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
-        
+
         if (message.getType().equals(ModelType.message_reply)
                 || !TextUtils.isEmpty(message.getParentId())) {
             if (!isThread()
@@ -651,7 +613,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 threadMessages.postValue(messagesCopy_);
                 updated = true;
             }
-            StreamChat.getLogger().logD(this,"updateMessage:" + updated);
+            StreamChat.getLogger().logD(this, "updateMessage:" + updated);
         }
         return updated;
     }
@@ -702,17 +664,17 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return false;
     }
 
-    protected void checkErrorOrPendingMessage(){
+    protected void checkErrorOrPendingMessage() {
         boolean hasErrorOrPendingMessage = false;
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
             Message message = getMessages().getValue().get(i);
             if (message.getType().equals(ModelType.message_error)) {
                 messagesCopy.remove(i);
-                hasErrorOrPendingMessage  = true;
+                hasErrorOrPendingMessage = true;
             }
         }
-        if (!hasErrorOrPendingMessage ) return;
+        if (!hasErrorOrPendingMessage) return;
 
         if (isThread()) {
             threadMessages.postValue(messagesCopy);
@@ -720,7 +682,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             messages.postValue(messagesCopy);
     }
 
-    protected void checkFailedMessage(Message message){
+    protected void checkFailedMessage(Message message) {
 
         List<Message> messagesCopy = getMessages().getValue();
         for (int i = 0; i < messagesCopy.size(); i++) {
@@ -804,7 +766,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void stopped() {
-        StreamChat.getLogger().logD(this,"stopped");
+        StreamChat.getLogger().logD(this, "stopped");
     }
 
     @Override
@@ -818,278 +780,251 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
 
         if (channelSubscriptionId != 0) {
-            channel.removeEventHandler(channelSubscriptionId);
+            //TODO: llc unsubscribe
+            //channel.removeEventHandler(channelSubscriptionId);
         }
     }
 
     protected void setupConnectionRecovery() {
-        client().addEventHandler(new ChatEventHandler() {
+
+        //TODO: llc unsubscrube
+        StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
             @Override
-            public void onConnectionRecovered(Event event) {
-                addMessages(channel.getChannelState().getMessages());
-                channelLoadingDone();
+            public Unit invoke(ChatEvent chatEvent) {
+                if (chatEvent instanceof ConnectedEvent) {
+
+                    //TODO: llc refresh on connected
+
+//                    String type = channel.getType();
+//                    String id = channel.getId();
+//                    StreamChat.getInstance().queryChannel(type, id, new ChannelQueryRequest().withMessages()).enqueue(
+//                            new Function1<Result<Channel>, Unit>() {
+//                                @Override
+//                                public Unit invoke(Result<Channel> channelResult) {
+//                                    addMessages(channel.getMessages());
+//                                    channelLoadingDone();
+//                                    return null;
+//                                }
+//                            }
+//                    );
+                }
+                return null;
             }
         });
     }
 
     /**
      * watches channel
-     *
-     * @param callback the result callback
      */
-    public void watchChannel(QueryWatchCallback callback) {
+    public void watchChannel() {
         int limit = 10; // Constant.DEFAULT_LIMIT
         if (!setLoading()) return;
 
         ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
-        channel.watch(request, new QueryWatchCallback() {
+
+        channel.watch(request).enqueue(new Function1<Result<Channel>, Unit>() {
             @Override
-            public void onSuccess(ChannelState response) {
-                reachedEndOfPagination = response.getMessages().size() < 10;
-                addMessages(response.getMessages());
+            public Unit invoke(Result<Channel> channelResult) {
+
+                Channel channel = channelResult.data();
+
+                if (channelResult.isSuccess()) {
+                    reachedEndOfPagination = channel.getMessages().size() < 10;
+                    addMessages(channel.getMessages());
+                }
+
                 channelLoadingDone();
-                callback.onSuccess(response);
-            }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                channelLoadingDone();
-                callback.onError(errMsg, errCode);
-            }
-        });
-    }
-
-    public void watchChannel() {
-        watchChannel(new QueryWatchCallback() {
-            @Override
-            public void onSuccess(ChannelState response) {
-                Log.d(TAG, "watchChannel successful. Response:" + response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
+                return null;
             }
         });
     }
 
     /**
      * loads more messages, use this to load a previous page
-     *
-     * @param callback the result callback
      */
-    public void loadMore(ResultCallback<Object, String> callback) {
-        if (!client().isConnected()) {
-            StreamChat.getLogger().logI(this,"connection failed.");
+    public void loadMore() {
+        if (!StreamChat.getInstance().isSocketConnected()) {
+            StreamChat.getLogger().logI(this, "connection failed.");
             return;
         }
 
         if (isLoading.get()) {
-            StreamChat.getLogger().logI(this,"already loading, skip loading more");
+            StreamChat.getLogger().logI(this, "already loading, skip loading more");
             return;
         }
 
         if (!setLoadingMore()) {
-            StreamChat.getLogger().logI(this,"already loading next page, skip loading more");
+            StreamChat.getLogger().logI(this, "already loading next page, skip loading more");
             return;
         }
 
-        StreamChat.getLogger().logI(this, String.format("Loading %d more messages, oldest message is %s", Constant.DEFAULT_LIMIT, channel.getChannelState().getOldestMessageId()));
         if (isThread()) {
             if (reachedEndOfPaginationThread) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this,"already reached end of pagination, skip loading more");
+                StreamChat.getLogger().logI(this, "already reached end of pagination, skip loading more");
                 return;
             }
 
             if (threadParentMessage.getValue() == null) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this,"Can't find thread parent message.");
+                StreamChat.getLogger().logI(this, "Can't find thread parent message.");
                 return;
             }
 
-            channel.getReplies(threadParentMessage.getValue().getId(),
-                    Constant.DEFAULT_LIMIT,
-                    getThreadOldestMessageId(),
-                    new GetRepliesCallback() {
-                        @Override
-                        public void onSuccess(GetRepliesResponse response) {
-                            entities.setIsLoadingMore(true);
-                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-                            List<Message> messagesCopy = threadMessages.getValue();
-                            for (int i = newMessages.size() - 1; i > -1; i--)
-                                messagesCopy.add(1, newMessages.get(i));
+            String id = threadParentMessage.getValue().getId();
+            String oldestMessageId = getThreadOldestMessageId();
 
-                            threadMessages.postValue(messagesCopy);
-                            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
-                            setLoadingMoreDone();
-                            callback.onSuccess(response);
-                        }
-
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            setLoadingMoreDone();
-                            callback.onError(errMsg);
-                        }
-                    });
+            if (oldestMessageId.isEmpty()) {
+                StreamChat.getInstance().getReplies(id, Constant.DEFAULT_LIMIT).enqueue(result -> {
+                    onReactionsLoaded(result);
+                    return null;
+                });
+            } else {
+                StreamChat.getInstance().getRepliesMore(id, oldestMessageId, Constant.DEFAULT_LIMIT).enqueue(result -> {
+                    onReactionsLoaded(result);
+                    return null;
+                });
+            }
         } else {
+
             if (reachedEndOfPagination) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this,"already reached end of pagination, skip loading more");
+                StreamChat.getLogger().logI(this, "already reached end of pagination, skip loading more");
                 return;
             }
+
+            String oldestMessageId = DataUtils.getOldestMessageId(channel);
 
             ChannelQueryRequest request = new ChannelQueryRequest().
                     withMessages(Pagination.LESS_THAN,
-                            channel.getChannelState().getOldestMessageId(),
+                            oldestMessageId,
                             Constant.DEFAULT_LIMIT);
 
-            channel.query(
-                    request,
-                    new QueryChannelCallback() {
-                        @Override
-                        public void onSuccess(ChannelState response) {
-//                            reachedEndOfPagination = response.getMessages().size() < Constant.DEFAULT_LIMIT;
-                            reachedEndOfPagination = response.getMessages().isEmpty();
-                            List<Message> newMessages = new ArrayList<>(response.getMessages());
-                            // used to modify the scroll behaviour...
-                            entities.setIsLoadingMore(true);
-                            addMessages(newMessages);
-                            setLoadingMoreDone();
-                            callback.onSuccess(response);
-                        }
+            String type = channel.getType();
+            String id = channel.getId();
 
-                        @Override
-                        public void onError(String errMsg, int errCode) {
-                            setLoadingMoreDone();
-                            callback.onError(errMsg);
-                        }
+            StreamChat.getInstance().queryChannel(id, type, request).enqueue(new Function1<Result<Channel>, Unit>() {
+                @Override
+                public Unit invoke(Result<Channel> result) {
+
+                    if (result.isSuccess()) {
+
+                        Channel channel = result.data();
+
+
+                        reachedEndOfPagination = channel.messages.isEmpty();
+                        List<Message> newMessages = new ArrayList<>(channel.messages);
+                        // used to modify the scroll behaviour...
+                        entities.setIsLoadingMore(true);
+                        addMessages(newMessages);
+                        setLoadingMoreDone();
+                    } else {
+                        setLoadingMoreDone();
                     }
-            );
+
+                    return null;
+                }
+            });
         }
     }
 
-    public void loadMore() {
-        loadMore(new ResultCallback<Object, String>() {
-            @Override
-            public void onSuccess(Object response) {
+    private void onReactionsLoaded(Result<List<Message>> result) {
+        if (result.isSuccess()) {
 
-            }
+            List<Message> messages = result.data();
 
-            @Override
-            public void onError(String s) {
-                StreamChat.getLogger().logE(this, s);
-            }
-        });
+            entities.setIsLoadingMore(true);
+            List<Message> newMessages = new ArrayList<>(messages);
+            List<Message> messagesCopy = threadMessages.getValue();
+            for (int i = newMessages.size() - 1; i > -1; i--)
+                messagesCopy.add(1, newMessages.get(i));
+
+            threadMessages.postValue(messagesCopy);
+            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
+            setLoadingMoreDone();
+        } else {
+            setLoadingMoreDone();
+        }
     }
 
     /**
      * sends message
      *
-     * @param message  the Message sent
-     * @param callback the result callback
+     * @param message the Message sent
      */
-    public void sendMessage(Message message, MessageCallback callback) {
+    public Call<Message> sendMessage(Message message) {
         // set the current user
-//        message.setUser(client().getUser());
+        // message.setUser(client().getUser());
         // set the thread id if we are viewing a thread
-        if (isThread())
-            message.setParentId(getThreadParentMessage().getValue().getId());
 
-        if (message.getSyncStatus() == LOCAL_ONLY) return;
+        if (isThread()) {
+            String parentMessageId = getThreadParentMessage().getValue().getId();
+            message.setParentId(parentMessageId);
+        }
+
+        //if (message.getSyncStatus() == LOCAL_ONLY) return;
 
         checkErrorOrPendingMessage();
         checkFailedMessage(message);
         stopTyping();
+
+        //TODO: llc check in memory offline
+
         // Check uploading file
-        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
-            addMessage(message);
-            return;
-        }
+//        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
+//            addMessage(message);
+//            return;
+//        }
+//
+//        if (message.getSyncStatus() == Sync.IN_MEMORY) {
+//            // insert the message into local storage
+//            client().getStorage().insertMessageForChannel(channel, message);
+//
+//            // add the message here
+//            addMessage(message);
+//        }
 
-        if (message.getSyncStatus() == Sync.IN_MEMORY) {
-            // insert the message into local storage
-            client().getStorage().insertMessageForChannel(channel, message);
+        String type = channel.getType();
+        String id = channel.getType();
 
-            // add the message here
-            addMessage(message);
-        }
-
-        // afterwards send the request
-        channel.sendMessage(message,
-                new MessageCallback() {
-                    @Override
-                    public void onSuccess(MessageResponse response) {
-                        replaceMessage(message, response.getMessage());
-                        callback.onSuccess(response);
-                    }
-
-                    @Override
-                    public void onError(String errMsg, int errCode) {
-                        updateFailedMessage(message);
-                        callback.onError(errMsg, errCode);
-                    }
+        return StreamChat.getInstance()
+                .sendMessage(type, id, message)
+                .onNext(m -> {
+                    replaceMessage(m, m);
+                    return Unit.INSTANCE;
+                }).onError(chatError -> {
+                    updateFailedMessage(message);
+                    return Unit.INSTANCE;
                 });
-    }
-
-    public void sendMessage(Message message) {
-        sendMessage(message, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
-            }
-        });
     }
 
 
     /**
      * Edit message
      *
-     * @param message  the Message sent
-     * @param callback the result callback
+     * @param message the Message sent
      */
-    public void editMessage(Message message, @NonNull MessageCallback callback) {
-        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING){
-            replaceMessage(message, message);
-            return;
-        }
+    public Call<Message> editMessage(Message message) {
+//        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
+//            replaceMessage(message, message);
+//            return;
+//        }
 
         // Check Error or Pending Messages
         checkErrorOrPendingMessage();
 
-        channel.updateMessage(message, callback);
-    }
-
-    public void editMessage(Message message) {
-        editMessage(message, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
-            }
-        });
+        return StreamChat.getInstance().updateMessage(message);
     }
 
     /**
      * sendGiphy - Send giphy with shuffle and cancel.
      *
-     * @param message  the message that has giphy attachment
-     * @param action   the giphy send, shuffle and cancel
-     * @param callback the result callback
+     * @param message the message that has giphy attachment
+     * @param action  the giphy send, shuffle and cancel
      */
-    public void sendGiphy(Message message,
-                          GiphyAction action,
-                          @NonNull MessageCallback callback) {
-        Map<String, String> map = new HashMap<>();
+    public void sendGiphy(Message message, GiphyAction action) {
+        Map<Object, Object> map = new HashMap<>();
         switch (action) {
             case SEND:
                 map.put("image_action", ModelType.action_send);
@@ -1114,83 +1049,54 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 message.getId(),
                 ModelType.channel_messaging,
                 map);
-        channel.sendAction(message.getId(), request, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                if (action == GiphyAction.SHUFFLE)
-                    shuffleGiphy(message, response.getMessage());
-                callback.onSuccess(response);
-            }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
-    }
+        StreamChat.getInstance().sendAction(request).enqueue(result -> {
 
-    public void sendGiphy(Message message, GiphyAction action) {
-        sendGiphy(message, action, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
+            if (result.isSuccess())
+                if (action == GiphyAction.SHUFFLE) shuffleGiphy(message, result.data());
 
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
-            }
+            return null;
         });
     }
 
     /**
      * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
      * Call this on every keystroke
-     *
-     * @param callback the result callback
      */
-    public synchronized void keystroke(EventCallback callback) {
-        if (isThread()) return;
-        channel.keystroke(callback);
-    }
-
     public synchronized void keystroke() {
-        keystroke(new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
+        if (isThread()) return;
 
-            }
+        Date now = new Date();
+        lastKeystrokeAt = now;
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
-            }
-        });
+        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
+            lastStartTypingEvent = now;
+
+            String type = channel.getType();
+            String id = channel.getId();
+
+            StreamChat.getInstance()
+                    .sendEvent(EventType.INSTANCE.getTYPING_START(), type, id, new HashMap<>())
+                    .enqueue(
+                            chatEventResult -> null
+                    );
+        }
     }
 
     /**
      * stopTyping - Sets last typing to null and sends the typing.stop event
-     *
-     * @param callback the result callback
      */
 
-    public synchronized void stopTyping(EventCallback callback) {
+    public void stopTyping() {
         if (isThread()) return;
-        channel.stopTyping(callback);
-    }
+        String type = channel.getType();
+        String id = channel.getId();
 
-    public synchronized void stopTyping() {
-        stopTyping(new EventCallback() {
-            @Override
-            public void onSuccess(EventResponse response) {
-
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logE(this, errMsg);
-            }
-        });
+        StreamChat.getInstance()
+                .sendEvent(EventType.INSTANCE.getTYPING_STOP(), type, id, new HashMap<>())
+                .enqueue(
+                        chatEventResult -> null
+                );
     }
 
     /**
@@ -1232,12 +1138,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         protected void sendStoppedTyping() {
 
             // typing did not start, quit
-            if (channel == null || channel.getLastStartTypingEvent() == null) {
+            if (channel == null || lastStartTypingEvent == null) {
                 return;
             }
 
             // if we didn't press a key for more than 5 seconds send the stopTyping event
-            long timeSinceLastKeystroke = new Date().getTime() - channel.getLastKeystrokeAt().getTime();
+
+            long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
 
             // TODO: this should be a config value on the client or channel object...
             if (timeSinceLastKeystroke > 5000) {
@@ -1281,11 +1188,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         protected void onActive() {
             super.onActive();
             if (viewModel.initialized.compareAndSet(false, true)) {
-                if (channel.isInitialized()) {
-                    channelLoadingDone();
-                } else {
-                    viewModel.watchChannel();
-                }
+
+                viewModel.watchChannel();
+
+                //TODO: llc test initialisation
+//                if (channel.isInitialized()) {
+//                    channelLoadingDone();
+//                } else {
+//                    viewModel.watchChannel();
+//                }
             }
         }
     }

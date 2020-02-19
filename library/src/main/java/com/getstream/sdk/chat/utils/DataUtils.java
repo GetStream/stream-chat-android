@@ -1,8 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
-//import com.getstream.sdk.chat.StreamChat;
-//import com.getstream.sdk.chat.rest.Message;
 
+import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 
 import java.text.DateFormat;
@@ -10,14 +9,56 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
 public class DataUtils {
+
+    public static boolean isFromCurrentUser(ChatEvent event){
+        User user = event.getUser();
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        if(user == null || currentUser == null) return false;
+        return user.getId().equals(currentUser.getId());
+    }
+
+    public static Map<String, ChannelUserRead> getReadsByUser(Channel channel) {
+        Map<String, ChannelUserRead> result = new HashMap<>();
+        for (ChannelUserRead r : channel.read) result.put(r.getUserId(), r);
+        return result;
+    }
+
+    @Nullable
+    public static String getOldestMessageId(Channel channel) {
+        Message oldestMessage = getOldestMessage(channel.getMessages());
+        if (oldestMessage == null) {
+            return null;
+        } else {
+            return oldestMessage.getId();
+        }
+    }
+
+    @Nullable
+    public static String getOldestMessageId(List<Message> messages) {
+        Message message = getOldestMessage(messages);
+        if (message == null) return null;
+        else return message.getId();
+    }
+
+    @Nullable
+    private static Message getOldestMessage(List<Message> messages) {
+        if (messages == null || messages.isEmpty()) {
+            return null;
+        }
+
+        return messages.get(0);
+    }
 
     public static int getUnreadMessageCount(String userId, Channel channel) {
         int unreadMessageCount = 0;
