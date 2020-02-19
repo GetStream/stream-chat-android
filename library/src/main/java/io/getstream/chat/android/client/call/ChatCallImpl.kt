@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
 abstract class ChatCallImpl<T> : Call<T> {
@@ -24,21 +25,19 @@ abstract class ChatCallImpl<T> : Call<T> {
             mapper: (A) -> B
         ): ChatCallImpl<B> {
             return object : ChatCallImpl<B>() {
+
+                private var errorHandler: ((ChatError) -> Unit)? = null
+
                 override fun execute(): Result<B> {
 
                     val resultA = callA.execute()
 
                     return if (resultA.isSuccess) {
-                        Result(
-                            mapper(
-                                resultA.data()
-                            ), null
-                        )
+                        Result(mapper(resultA.data()), null)
                     } else {
-                        Result(
-                            null,
-                            resultA.error()
-                        )
+                        val error = resultA.error()
+                        errorHandler?.invoke(error)
+                        Result(null, error)
                     }
                 }
 
@@ -47,22 +46,18 @@ abstract class ChatCallImpl<T> : Call<T> {
 
                         if (!canceled) {
                             if (it.isSuccess) {
-                                callback(
-                                    Result(
-                                        mapper(it.data()),
-                                        null
-                                    )
-                                )
+                                callback(Result(mapper(it.data()), null))
                             } else {
-                                callback(
-                                    Result(
-                                        null,
-                                        it.error()
-                                    )
-                                )
+                                val error = it.error()
+                                errorHandler?.invoke(error)
+                                callback(Result(null, error))
                             }
                         }
                     }
+                }
+
+                open override fun onError(errorHandler: (ChatError) -> Unit) {
+                    this.errorHandler = errorHandler
                 }
             }
         }

@@ -12,4 +12,8 @@ class ErrorCall<T>(val t: ChatError) : ChatCallImpl<T>() {
     override fun enqueue(callback: (Result<T>) -> Unit) {
         callback(Result(null, t))
     }
+
+    override fun onError(errorHandler: (ChatError) -> Unit) {
+        errorHandler(t)
+    }
 }
