@@ -66,3 +66,5 @@ dependencies {
     //Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 }
+
+apply from: 'scripts/docs.gradle'
