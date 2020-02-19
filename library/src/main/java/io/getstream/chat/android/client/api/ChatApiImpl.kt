@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -118,7 +119,12 @@ class ChatApiImpl(
 
     override fun addDevice(firebaseToken: String): Call<Unit> {
         return callMapper.map(
-            retrofitApi.addDevices(config.apiKey, userId, connectionId, AddDeviceRequest(firebaseToken))
+            retrofitApi.addDevices(
+                config.apiKey,
+                userId,
+                connectionId,
+                AddDeviceRequest(firebaseToken)
+            )
         ).map {
             Unit
         }
@@ -592,6 +598,31 @@ class ChatApiImpl(
                 channelType = channelType
             )
         )
+    }
+
+    override fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>
+    ): Call<ChatEvent> {
+
+        val map = mutableMapOf<Any, Any>()
+        map["type"] = eventType
+        map.putAll(extraData)
+
+        return callMapper.map(
+            retrofitApi.sendEvent(
+                channelType,
+                channelId,
+                config.apiKey,
+                userId,
+                connectionId,
+                SendEventRequest(map)
+            )
+        ).map {
+            it.event
+        }
     }
 
     private fun flattenChannels(responses: List<ChannelResponse>): List<Channel> {

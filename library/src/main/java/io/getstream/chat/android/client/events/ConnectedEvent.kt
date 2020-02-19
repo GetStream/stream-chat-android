@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.models.*
 class ConnectedEvent : ChatEvent() {
 
     val cid: String = ""
-    lateinit var user: User
     lateinit var me: User
     val member: Member? = null
     val reaction: Reaction? = null

@@ -245,6 +245,15 @@ internal class ChatClientImpl(
         return api.rejectInvite(channelType, channelId).map { attachClient(it) }
     }
 
+    override fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any>
+    ): Call<ChatEvent> {
+        return api.sendEvent(eventType, channelType, channelId, extraData)
+    }
+
     override fun acceptInvite(
         channelType: String,
         channelId: String,

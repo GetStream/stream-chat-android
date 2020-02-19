@@ -157,6 +157,8 @@ interface ChatClient {
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
+    fun sendEvent(eventType:String, channelType: String, channelId: String, extraData: Map<Any, Any> = emptyMap()): Call<ChatEvent>
+
     class Builder {
         private val apiKey: String
         private val appContext: Context

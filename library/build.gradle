@@ -75,3 +75,5 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.23.0"
     testImplementation "org.json:json:20190722"
 }
+
+apply from: 'scripts/docs.gradle'

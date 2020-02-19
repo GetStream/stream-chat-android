@@ -1,10 +1,14 @@
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
 abstract class ChatCallImpl<T> : Call<T> {
 
+    @Volatile
     protected var canceled = false
+    protected var errorHandler: ((ChatError) -> Unit)? = null
+    protected var nextHandler: ((T) -> Unit)? = null
 
     abstract override fun execute(): Result<T>
 
@@ -18,27 +22,36 @@ abstract class ChatCallImpl<T> : Call<T> {
         return callMapper(this, mapper)
     }
 
+    override fun onNext(handler: (T) -> Unit): Call<T> {
+        nextHandler = handler
+        return this
+    }
+
+    override fun onError(handler: (ChatError) -> Unit): Call<T> {
+        errorHandler = handler
+        return this
+    }
+
     companion object {
         private fun <A, B> callMapper(
             callA: Call<A>,
             mapper: (A) -> B
         ): ChatCallImpl<B> {
             return object : ChatCallImpl<B>() {
+
+
                 override fun execute(): Result<B> {
 
                     val resultA = callA.execute()
 
                     return if (resultA.isSuccess) {
-                        Result(
-                            mapper(
-                                resultA.data()
-                            ), null
-                        )
+                        val data = mapper(resultA.data())
+                        nextHandler?.invoke(data)
+                        Result(data, null)
                     } else {
-                        Result(
-                            null,
-                            resultA.error()
-                        )
+                        val error = resultA.error()
+                        errorHandler?.invoke(error)
+                        Result(null, error)
                     }
                 }
 
@@ -47,19 +60,13 @@ abstract class ChatCallImpl<T> : Call<T> {
 
                         if (!canceled) {
                             if (it.isSuccess) {
-                                callback(
-                                    Result(
-                                        mapper(it.data()),
-                                        null
-                                    )
-                                )
+                                val data = mapper(it.data())
+                                nextHandler?.invoke(data)
+                                callback(Result(data, null))
                             } else {
-                                callback(
-                                    Result(
-                                        null,
-                                        it.error()
-                                    )
-                                )
+                                val error = it.error()
+                                errorHandler?.invoke(error)
+                                callback(Result(null, error))
                             }
                         }
                     }

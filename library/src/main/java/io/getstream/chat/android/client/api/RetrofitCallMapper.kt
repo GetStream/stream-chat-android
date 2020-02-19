@@ -14,11 +14,20 @@ class RetrofitCallMapper(private val chatParser: ChatParser) {
         return object : ChatCallImpl<T>() {
 
             override fun execute(): Result<T> {
-                return execute(call)
+                val result = execute(call)
+                if (!result.isSuccess) errorHandler?.invoke(result.error())
+                else nextHandler?.invoke(result.data())
+                return result
             }
 
             override fun enqueue(callback: (Result<T>) -> Unit) {
-                enqueue(call, callback)
+                enqueue(call) {
+                    if (!canceled) {
+                        if (!it.isSuccess) errorHandler?.invoke(it.error())
+                        else nextHandler?.invoke(it.data())
+                        callback(it)
+                    }
+                }
             }
 
             override fun cancel() {
