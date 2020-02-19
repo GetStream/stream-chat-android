@@ -45,7 +45,8 @@ class Message : UserEntity {
     val mentionedUsersId: List<String>? = null
     val reactionCounts: Map<String, Int>? = null
 
-    val parentId: String? = null
+    @SerializedName("parent_id")
+    var parentId: String? = null
 
     val command: String? = null
 
