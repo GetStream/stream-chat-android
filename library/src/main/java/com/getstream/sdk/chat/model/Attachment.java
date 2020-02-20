@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.model;
 
-import androidx.room.TypeConverters;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.rest.adapter.AttachmentGsonAdapter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
@@ -12,12 +10,14 @@ import com.google.gson.annotations.SerializedName;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
+import androidx.room.TypeConverters;
+
 /**
  * An attachment
  */
 @JsonAdapter(AttachmentGsonAdapter.class)
 public class Attachment {
-    public Config config = new Config(); // Local file Attach Config
+    public UploadAttachment config = new UploadAttachment(); // Local file Attach Config
     @SerializedName("title")
     @Expose
     private String title;
@@ -253,55 +253,6 @@ public class Attachment {
         final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-    public class Config {
-        private String filePath;
-        private boolean isSelected = false;
-        private int videoLengh = 0;
-        private boolean isUploaded = false;
-        private int progress = 0;
-
-        public String getFilePath() {
-            return filePath;
-        }
-
-        public void setFilePath(String filePath) {
-            this.filePath = filePath;
-        }
-
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        public void setSelected(boolean selected) {
-            isSelected = selected;
-        }
-
-        public int getVideoLengh() {
-            return videoLengh;
-        }
-
-        public void setVideoLengh(int videoLengh) {
-            this.videoLengh = videoLengh;
-        }
-
-        public boolean isUploaded() {
-            return isUploaded;
-        }
-
-        public void setUploaded(boolean uploaded) {
-            isUploaded = uploaded;
-        }
-
-        public int getProgress() {
-            return progress;
-        }
-
-        public void setProgress(int progress) {
-            this.progress = progress;
-        }
-
     }
 
 }

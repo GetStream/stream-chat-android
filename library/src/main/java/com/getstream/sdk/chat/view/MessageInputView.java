@@ -16,6 +16,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
+import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageInputType;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.UploadAttachment;
+import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
+import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
+import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.storage.Sync;
+import com.getstream.sdk.chat.utils.*;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BuildCompat;
@@ -26,37 +49,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.call.Call;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
-import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.Sync;
-import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.utils.TextViewUtils;
-import com.getstream.sdk.chat.utils.CaptureController;
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
-import com.getstream.sdk.chat.utils.MessageInputController;
-import com.getstream.sdk.chat.utils.PermissionChecker;
-import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import static java.util.UUID.randomUUID;
 
 
 /**
@@ -83,9 +80,13 @@ public class MessageInputView extends RelativeLayout {
      * Styling class for the MessageInput
      */
     private MessageInputStyle style;
-    /** Fired when a message is sent */
+    /**
+     * Fired when a message is sent
+     */
     private MessageSendListener messageSendListener;
-    /** Permission Request listener */
+    /**
+     * Permission Request listener
+     */
     private PermissionRequestListener permissionRequestListener;
     /**
      * The viewModel for handling typing etc.
@@ -150,7 +151,7 @@ public class MessageInputView extends RelativeLayout {
         style.inputBackgroundText.apply(binding.tvUploadCamera);
     }
 
-    private void configOnClickListener(){
+    private void configOnClickListener() {
         binding.ivSend.setOnClickListener(view -> onSendMessage());
         binding.ivOpenAttach.setOnClickListener(view -> {
             binding.setIsAttachFile(true);
@@ -174,14 +175,14 @@ public class MessageInputView extends RelativeLayout {
         binding.etMessage.setCallback(this::sendGiphyFromKeyboard);
     }
 
-    private void keyStroke(Editable editable){
+    private void keyStroke(Editable editable) {
         if (editable.toString().length() > 0)
             viewModel.keystroke();
 
         String messageText = getMessageText();
         // detect commands
         messageInputController.checkCommand(messageText);
-        String s_ = messageText.replaceAll("\\s+","");
+        String s_ = messageText.replaceAll("\\s+", "");
         if (TextUtils.isEmpty(s_))
             binding.setActiveMessageSend(false);
         else
@@ -189,7 +190,7 @@ public class MessageInputView extends RelativeLayout {
         configSendButtonEnableState();
     }
 
-    private void configMessageInputBackground(LifecycleOwner lifecycleOwner){
+    private void configMessageInputBackground(LifecycleOwner lifecycleOwner) {
 
         viewModel.getInputType().observe(lifecycleOwner, inputType -> {
             switch (inputType) {
@@ -223,10 +224,10 @@ public class MessageInputView extends RelativeLayout {
 
     private void configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style,  attachment-> {
+        messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style, attachment -> {
             if (binding.ivSend.isEnabled()) return;
-            for (Attachment attachment_ : messageInputController.getSelectedAttachments())
-                if (!attachment_.config.isUploaded())
+            for (UploadAttachment attachment_ : messageInputController.getSelectedAttachments())
+                if (!attachment_.isUploaded)
                     return;
 
             onSendMessage();
@@ -297,7 +298,7 @@ public class MessageInputView extends RelativeLayout {
         });
     }
 
-    private void setKeyboardEventListener(){
+    private void setKeyboardEventListener() {
         KeyboardVisibilityEvent.setEventListener(
                 (Activity) getContext(), (boolean isOpen) -> {
                     if (!isOpen) {
@@ -346,9 +347,10 @@ public class MessageInputView extends RelativeLayout {
     // endregion
 
     // region send message
+
     /**
-     Prepare message takes the message input string and returns a message object
-     You can overwrite this method in case you want to attach more custom properties to the message
+     * Prepare message takes the message input string and returns a message object
+     * You can overwrite this method in case you want to attach more custom properties to the message
      */
     private Call<io.getstream.chat.android.client.models.Message> onSendMessage(Message message) {
         if (isEdit())
@@ -357,8 +359,8 @@ public class MessageInputView extends RelativeLayout {
             return viewModel.sendMessage(message);
     }
 
-    protected void onSendMessage(){
-        Message message = isEdit() ? getEditMessage(): new Message(getMessageText());
+    protected void onSendMessage() {
+        Message message = isEdit() ? getEditMessage() : new Message(getMessageText());
         onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
         if (isEdit())
             Utils.hideSoftKeyboard((Activity) getContext());
@@ -393,37 +395,40 @@ public class MessageInputView extends RelativeLayout {
     }
 
     /**
-     Prepare message takes the message input string and returns a message object
-     You can overwrite this method in case you want to attach more custom properties to the message
+     * Prepare message takes the message input string and returns a message object
+     * You can overwrite this method in case you want to attach more custom properties to the message
      */
     protected Message prepareNewMessage(Message message) {
         // Check file uploading
-        if (messageInputController.isUploadingFile()){
-            message.setUser(viewModel.client().getUser());
-            String clientSideID = viewModel.getChannel().getClient().generateMessageID();
+        if (messageInputController.isUploadingFile()) {
+            message.user = StreamChat.getInstance().getCurrentUser();
+            String clientSideID = generateMessageID();
             message.setId(clientSideID);
             message.setCreatedAt(new Date());
-            message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-        }else
-            message.setAttachments(messageInputController.getSelectedAttachments());
+            //TODO: llc check sync
+            //message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
+        } else{
+            message.getAttachments().addAll(messageInputController.getSelectedAttachments());
+        }
+
         return message;
     }
 
     protected Message prepareEditMessage(Message message) {
         message.setText(getMessageText());
-        List<Attachment>newAttachments = messageInputController.getSelectedAttachments();
+        List<Attachment> newAttachments = messageInputController.getSelectedAttachments();
         message.setAttachments(newAttachments);
         return message;
     }
 
-    protected Message getEditMessage(){
+    protected Message getEditMessage() {
         return viewModel.getEditMessage().getValue();
     }
     // endregion
 
     // region send giphy from keyboard
     private boolean sendGiphyFromKeyboard(InputContentInfoCompat inputContentInfo,
-                                       int flags, Bundle opts){
+                                          int flags, Bundle opts) {
         if (BuildCompat.isAtLeastQ()
                 && (flags & InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION) != 0) {
             try {
@@ -436,7 +441,7 @@ public class MessageInputView extends RelativeLayout {
 
         String url = inputContentInfo.getLinkUri().toString();
         Attachment attachment = new Attachment();
-        attachment.setThumbURL(url);
+        attachment.setThumbUrl(url);
         attachment.setTitleLink(url);
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
@@ -447,9 +452,10 @@ public class MessageInputView extends RelativeLayout {
     }
     // endregion
 
-    protected boolean isEdit(){
+    protected boolean isEdit() {
         return viewModel.isEditing();
     }
+
     // region edit message
     protected void editMessage(@Nullable Message message) {
         if (message == null) return;
@@ -458,7 +464,7 @@ public class MessageInputView extends RelativeLayout {
         setMessageText(message.getText());
         binding.etMessage.requestFocus();
 
-        List<Attachment>attachments = new ArrayList<>(message.getAttachments());
+        List<Attachment> attachments = new ArrayList<>(message.getAttachments());
         if (!attachments.isEmpty())
             binding.ivOpenAttach.setVisibility(GONE);
         // Set Attachments to Inputbox
@@ -467,14 +473,13 @@ public class MessageInputView extends RelativeLayout {
                 || attachments.get(0).getType().equals(ModelType.attach_unknown))
             return;
 
-        for (Attachment attachment : attachments)
-            attachment.config.setUploaded(true);
+        //for (Attachment attachment : attachments)
+        //attachment.setUploaded(true);
 
         Attachment attachment = attachments.get(0);
         if (attachment.getType().equals(ModelType.attach_file)) {
-            String fileType = attachment.getMime_type();
-            if (fileType.equals(ModelType.attach_mime_mov) ||
-                    fileType.equals(ModelType.attach_mime_mp4)) {
+            String fileType = attachment.getMimeType();
+            if (fileType.equals(ModelType.attach_mime_mov) || fileType.equals(ModelType.attach_mime_mp4)) {
                 messageInputController.onClickOpenSelectView(attachments, true);
             } else {
                 messageInputController.onClickOpenSelectView(attachments, false);
@@ -499,32 +504,34 @@ public class MessageInputView extends RelativeLayout {
             if (imageFile != null && imageFile.length() > 0) {
                 messageInputController.progressCapturedMedia(imageFile, true);
                 updateGallery(imageFile);
-            }else if (vieoFile != null && vieoFile.length() > 0) {
+            } else if (vieoFile != null && vieoFile.length() > 0) {
                 messageInputController.progressCapturedMedia(vieoFile, false);
                 updateGallery(vieoFile);
-            }else
+            } else
                 Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));
         }
     }
 
-    private void updateGallery(File outputFile){
+    private void updateGallery(File outputFile) {
         final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         final Uri contentUri = Uri.fromFile(outputFile);
         scanIntent.setData(contentUri);
         getContext().sendBroadcast(scanIntent);
     }
+
     /*Used for handling requestPermissionsResult*/
     public void permissionResult(int requestCode, @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
-            boolean storageGranted  = true, cameraGranted = true;
-            String permission; int grantResult;
+            boolean storageGranted = true, cameraGranted = true;
+            String permission;
+            int grantResult;
             for (int i = 0; i < permissions.length; i++) {
                 permission = permissions[i];
                 grantResult = grantResults[i];
-                if (permission.equals(Manifest.permission.CAMERA)){
+                if (permission.equals(Manifest.permission.CAMERA)) {
                     cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED;
-                }else if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                } else if (grantResult != PackageManager.PERMISSION_GRANTED) {
                     storageGranted = false;
                 }
             }
@@ -532,7 +539,7 @@ public class MessageInputView extends RelativeLayout {
             if (storageGranted && cameraGranted) {
                 messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE);
                 style.setCheckPermissions(true);
-            }else {
+            } else {
                 String message;
                 if (!storageGranted && !cameraGranted) {
                     message = getContext().getString(R.string.stream_both_permissions_message);
@@ -560,12 +567,19 @@ public class MessageInputView extends RelativeLayout {
         this.permissionRequestListener = l;
     }
 
+    private String generateMessageID() {
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        String id = currentUser.getId();
+        return id + "-" + randomUUID().toString();
+    }
+
     /**
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachment(Attachment attachment);
+        void onAddAttachment(UploadAttachment attachment);
     }
+
     /**
      * Interface for Permission request
      */

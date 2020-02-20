@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
 
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 
@@ -20,6 +21,56 @@ import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
 public class DataUtils {
+
+    public static int getIcon(String mimeType) {
+        int fileTyineRes = 0;
+        if (mimeType == null) {
+            fileTyineRes = R.drawable.stream_ic_file;
+            return fileTyineRes;
+        }
+
+        switch (mimeType) {
+            case ModelType.attach_mime_pdf:
+                fileTyineRes = R.drawable.stream_ic_file_pdf;
+                break;
+            case ModelType.attach_mime_csv:
+                fileTyineRes = R.drawable.stream_ic_file_csv;
+                break;
+            case ModelType.attach_mime_tar:
+                fileTyineRes = R.drawable.stream_ic_file_tar;
+                break;
+            case ModelType.attach_mime_zip:
+                fileTyineRes = R.drawable.stream_ic_file_zip;
+                break;
+            case ModelType.attach_mime_doc:
+            case ModelType.attach_mime_docx:
+            case ModelType.attach_mime_txt:
+                fileTyineRes = R.drawable.stream_ic_file_doc;
+                break;
+            case ModelType.attach_mime_xlsx:
+                fileTyineRes = R.drawable.stream_ic_file_xls;
+                break;
+            case ModelType.attach_mime_ppt:
+                fileTyineRes = R.drawable.stream_ic_file_ppt;
+                break;
+            case ModelType.attach_mime_mov:
+            case ModelType.attach_mime_mp4:
+                fileTyineRes = R.drawable.stream_ic_file_mov;
+                break;
+            case ModelType.attach_mime_m4a:
+            case ModelType.attach_mime_mp3:
+                fileTyineRes = R.drawable.stream_ic_file_mp3;
+                break;
+            default:
+                if (mimeType.contains("audio")) {
+                    fileTyineRes = R.drawable.stream_ic_file_mp3;
+                } else if (mimeType.contains("video")) {
+                    fileTyineRes = R.drawable.stream_ic_file_mov;
+                }
+                break;
+        }
+        return fileTyineRes;
+    }
 
     public static boolean isFromCurrentUser(ChatEvent event){
         User user = event.getUser();

@@ -26,9 +26,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.UploadAttachment;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +46,7 @@ public class Utils {
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     private static String TAG = Utils.class.getSimpleName();
-    public static List<Attachment> attachments = new ArrayList<>();
+    public static List<UploadAttachment> attachments = new ArrayList<>();
 
     public static String readInputStream(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
@@ -60,11 +60,10 @@ public class Utils {
         return Uri.parse(path);
     }
 
-
     public static void circleImageLoad(ImageView view, String url) {
         Glide.with(view.getContext())
                 .asBitmap()
-                .load(StreamChat.getInstance(view.getContext()).getUploadStorage().signGlideUrl(url))
+                .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(url))
                 .centerCrop()
                 .into(new BitmapImageViewTarget(view) {
                     @Override
@@ -140,7 +139,7 @@ public class Utils {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static List<Attachment> getFileAttachments(File dir) {
+    public static List<UploadAttachment> getFileAttachments(File dir) {
         String pdfPattern = ".pdf";
         String pptPattern = ".ppt";
         String csvPattern = ".csv";
@@ -159,7 +158,7 @@ public class Utils {
                 if (file.isDirectory()) {
                     getFileAttachments(file);
                 } else {
-                    Attachment attachment = new Attachment();
+                    UploadAttachment attachment = new UploadAttachment();
                     String mimeType = "";
                     if (file.getName().endsWith(pdfPattern)) {
                         mimeType = ModelType.attach_mime_pdf;
@@ -194,7 +193,7 @@ public class Utils {
         return attachments;
     }
 
-    public static ArrayList<Attachment> getMediaAttachments(Context context) {
+    public static List<UploadAttachment> getMediaAttachments(Context context) {
         String[] columns = {MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,
@@ -230,10 +229,10 @@ public class Utils {
         int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
         int count = imagecursor.getCount();
 
-        ArrayList<Attachment> attachments = new ArrayList<>();
+        ArrayList<UploadAttachment> attachments = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            Attachment attachment = new Attachment();
+            UploadAttachment attachment = new UploadAttachment();
             imagecursor.moveToPosition(i);
             int id = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
@@ -241,12 +240,12 @@ public class Utils {
             int t = imagecursor.getInt(type);
             File file = new File(imagecursor.getString(dataColumnIndex));
             if (!file.exists()) continue;
-            attachment.config.setFilePath(imagecursor.getString(dataColumnIndex));
+            attachment.setFilePath(imagecursor.getString(dataColumnIndex));
             if (t == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.setType(ModelType.attach_image);
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {
                 float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
-                attachment.config.setVideoLengh((int) (videolengh / 1000));
+                attachment.setVideoLength((int) (videolengh / 1000));
                 configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
             }
             attachments.add(attachment);
@@ -255,16 +254,14 @@ public class Utils {
         return attachments;
     }
 
-    public static void configFileAttachment(Attachment attachment,
+    public static void configFileAttachment(UploadAttachment attachment,
                                             File file,
                                             String type,
                                             String mimeType) {
-        attachment.setType(type);
-        attachment.setMime_type(mimeType);
-        attachment.setTitle(file.getName());
-        attachment.config.setFilePath(file.getPath());
-        long size = file.length();
-        attachment.setFile_size((int) size);
+        attachment.type = type;
+        attachment.mimeType = mimeType;
+        attachment.title = file.getName();
+        attachment.file = file;
     }
 
     public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {

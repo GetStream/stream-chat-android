@@ -5,13 +5,12 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelViewModelFactory implements ViewModelProvider.Factory {
+
     private Application mApplication;
     private Channel mChannel;
-
 
     public ChannelViewModelFactory(Application application, Channel channel) {
         mApplication = application;
