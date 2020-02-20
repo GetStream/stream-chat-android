@@ -18,7 +18,7 @@ class Message : UserEntity {
     lateinit var channel: Channel
     val userID: String = ""
 
-    val attachments = emptyList<Reaction>()
+    val attachments = emptyList<Attachment>()
     @IgnoreSerialisation
     val type: String = ""
     @IgnoreSerialisation

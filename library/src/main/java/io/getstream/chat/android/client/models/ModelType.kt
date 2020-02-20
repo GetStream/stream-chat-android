@@ -49,9 +49,9 @@ object ModelType {
     const val action_cancel = "cancel"
     fun getAssetUrl(attachment: Attachment): String? {
         return when (attachment.type) {
-            attach_image -> attachment.imageURL
-            attach_giphy, attach_video -> attachment.thumbURL
-            else -> if (TextUtils.isEmpty(attachment.imageURL)) attachment.image else attachment.imageURL
+            attach_image -> attachment.imageUrl
+            attach_giphy, attach_video -> attachment.thumbUrl
+            else -> if (TextUtils.isEmpty(attachment.imageUrl)) attachment.image else attachment.imageUrl
         }
     }
 }
