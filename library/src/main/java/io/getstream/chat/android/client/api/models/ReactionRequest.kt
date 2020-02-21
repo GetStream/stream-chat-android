@@ -6,11 +6,10 @@ import io.getstream.chat.android.client.models.Reaction
 
 class ReactionRequest(reaction: Reaction) {
 
-    @SerializedName("reaction")
-    val data: Map<String, Any>
+    val reaction: Map<String, Any>
 
     init {
-        this.data = reaction.extraData.toMutableMap()
-        this.data["type"] = reaction.type
+        this.reaction = reaction.extraData.toMutableMap()
+        this.reaction["type"] = reaction.type
     }
 }

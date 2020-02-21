@@ -153,6 +153,10 @@ internal class ChatClientImpl(
         return api.getReactions(messageId, offset, limit)
     }
 
+    override fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
+        return api.sendReaction(messageId, reactionType)
+    }
+
     override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return api.deleteReaction(messageId, reactionType)
     }

@@ -209,6 +209,20 @@ class ChatApiImpl(
         }
     }
 
+    override fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
+        return callMapper.map(
+            retrofitApi.sendReaction(
+                messageId, config.apiKey, userId, connectionId, ReactionRequest(
+                    Reaction(messageId).apply {
+                        type = reactionType
+                    }
+                )
+            )
+        ).map {
+            it.reaction
+        }
+    }
+
     override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return callMapper.map(
             retrofitApi.deleteReaction(

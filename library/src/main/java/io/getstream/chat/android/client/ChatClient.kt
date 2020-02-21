@@ -114,6 +114,7 @@ interface ChatClient {
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun sendReaction(messageId: String, reactionType:String): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun sendAction(request: SendActionRequest): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>
@@ -163,7 +164,7 @@ interface ChatClient {
         private val apiKey: String
         private val appContext: Context
 
-        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
+        private var baseUrl: String = "chat-us-east-staging.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L

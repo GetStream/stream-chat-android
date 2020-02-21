@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.socket
 
 import android.util.Log
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket

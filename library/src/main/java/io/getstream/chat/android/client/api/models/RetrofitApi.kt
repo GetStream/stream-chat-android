@@ -259,7 +259,7 @@ interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: ReactionRequest
-    ): Call<MessageResponse>
+    ): Call<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
     fun deleteReaction(
