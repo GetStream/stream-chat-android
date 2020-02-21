@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.models;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.rest.core.Client;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ public class ChannelComparisonTest {
     private static String TEST_CHANNEL_ID_3 = "testChannelId_3";
 
     @Mock
-    Client client;
+    ClientOld client;
 
     private Channel a, b, c, aClone;
 

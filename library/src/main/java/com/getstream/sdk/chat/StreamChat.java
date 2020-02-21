@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.android.client.socket.SocketListener;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class StreamChat {
 

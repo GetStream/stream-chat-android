@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat;
 
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 
 import java.util.Date;

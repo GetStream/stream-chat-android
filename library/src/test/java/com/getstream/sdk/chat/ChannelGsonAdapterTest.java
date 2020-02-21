@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

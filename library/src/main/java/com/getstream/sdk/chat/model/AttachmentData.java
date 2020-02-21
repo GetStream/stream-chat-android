@@ -2,17 +2,22 @@ package com.getstream.sdk.chat.model;
 
 import java.io.File;
 
-public class UploadAttachment {
+import io.getstream.chat.android.client.models.Attachment;
+
+public class AttachmentData {
+
+    public Attachment uploaded;
 
     public boolean isSelected;
     public int videoLength;
     public int progress;
-    public boolean isUploaded;
     public File file;
     public String type;
     public String mimeType;
     public String title;
 
-    public String uploadedUrl;
+    public boolean isUploaded() {
+        return uploaded != null;
+    }
 
 }

@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.adapter;
 
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;

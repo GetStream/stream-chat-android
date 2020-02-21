@@ -36,7 +36,7 @@ public class MessageSearchVM extends AndroidViewModel {
     MutableLiveData<List<MessageResponse>> searchResult;
     SingleLiveEvent<String> onError;
 
-    private Client client;
+    private ClientOld client;
 
     private Context context;
     private AppConfig appConfig;

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.rest.response;
 
 import android.text.TextUtils;
 
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;

@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.Gson;

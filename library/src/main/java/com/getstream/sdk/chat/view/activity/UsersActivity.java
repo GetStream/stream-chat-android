@@ -12,31 +12,32 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
-import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.QuerySort;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.request.QueryUserRequest;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.QueryUsersRequest;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.FilterObject;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * An Activity of user list.
@@ -47,7 +48,6 @@ public class UsersActivity extends AppCompatActivity {
     boolean isLastPage = false;
     RecyclerView.LayoutManager mLayoutManager;
     boolean isCalling;
-    private Client client;
     private StreamActivityUsersBinding binding;
     private UserListItemAdapter adapter;
     private UserGroupListAdapter groupListAdapter;
@@ -215,46 +215,78 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void getUsers() {
-        StreamChat.getLogger().logD(this,"queryUsers");
-        StreamChat.getLogger().logD(this,"isLastPage: " + isLastPage);
-        StreamChat.getLogger().logD(this,"isCalling: " + isCalling);
+        StreamChat.getLogger().logD(this, "queryUsers");
+        StreamChat.getLogger().logD(this, "isLastPage: " + isLastPage);
+        StreamChat.getLogger().logD(this, "isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
-        if (client == null)
-            client = StreamChat.getInstance();
 
-        client.queryUsers(getQueryUserRequest(), new QueryUserListCallback() {
+
+        StreamChat.getInstance().getUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
             @Override
-            public void onSuccess(QueryUserListResponse response) {
-                binding.setShowMainProgressbar(false);
-                isCalling = false;
-                if (response.getUsers().isEmpty()) {
-                    Utils.showMessage(UsersActivity.this, "There is no any active user(s)!");
-                    return;
-                }
+            public Unit invoke(Result<List<User>> listResult) {
+
+                if (listResult.isSuccess()) {
+
+                    List<User> data = listResult.data();
+
+                    binding.setShowMainProgressbar(false);
+                    isCalling = false;
+                    if (data.isEmpty()) {
+                        Utils.showMessage(UsersActivity.this, "There is no any active user(s)!");
+
+                    } else {
+                        adapter.notifyDataSetChanged();
+                        isLastPage = (data.size() < Constant.USER_LIMIT);
+                    }
 
 //                if (client.users.isEmpty()) {
 //                    configChannelListView();
 //                }
-                adapter.notifyDataSetChanged();
-                isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
-            }
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                binding.setShowMainProgressbar(false);
-                isCalling = false;
-                Utils.showMessage(UsersActivity.this, errMsg);
-                StreamChat.getLogger().logD(this,"Failed Get Channels : " + errMsg);
+                } else {
+                    binding.setShowMainProgressbar(false);
+                    isCalling = false;
+                    Utils.showMessage(UsersActivity.this, listResult.error().getMessage());
+                    StreamChat.getLogger().logD(this, "Failed Get Channels : " + listResult.error().getMessage());
+                }
+
+                return null;
             }
         });
+
+//        StreamChat.getInstance().getUsers(getQueryUserRequest(), new QueryUserListCallback() {
+//            @Override
+//            public void onSuccess(QueryUserListResponse response) {
+//                binding.setShowMainProgressbar(false);
+//                isCalling = false;
+//                if (response.getUsers().isEmpty()) {
+//                    Utils.showMessage(UsersActivity.this, "There is no any active user(s)!");
+//                    return;
+//                }
+//
+////                if (client.users.isEmpty()) {
+////                    configChannelListView();
+////                }
+//                adapter.notifyDataSetChanged();
+//                isLastPage = (response.getUsers().size() < Constant.USER_LIMIT);
+//            }
+//
+//            @Override
+//            public void onError(String errMsg, int errCode) {
+//                binding.setShowMainProgressbar(false);
+//                isCalling = false;
+//                Utils.showMessage(UsersActivity.this, errMsg);
+//                StreamChat.getLogger().logD(this,"Failed Get Channels : " + errMsg);
+//            }
+//        });
     }
 
-    private QueryUserRequest getQueryUserRequest() {
+    private QueryUsersRequest getQueryUserRequest() {
         FilterObject filter = new FilterObject();
         QuerySort sort = new QuerySort().asc("last_active");
-        return new QueryUserRequest(filter, sort).withLimit(10);
+        return new QueryUsersRequest(filter,  0, 10, sort, false);
     }
 
     private void getChannel(List<User> users) {

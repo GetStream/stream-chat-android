@@ -1,10 +1,10 @@
 package com.getstream.sdk.chat.models;
 
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.PaginationOptions;
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
@@ -53,7 +53,7 @@ public class ChannelTest {
     private static String TEST_CHANNEL_ID = "testChannelId";
 
     @Mock
-    Client client;
+    ClientOld client;
 
     private Channel channel;
 

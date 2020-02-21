@@ -2,42 +2,15 @@ package com.getstream.sdk.chat.model;
 
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
-import androidx.room.Embedded;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
-import androidx.room.RoomWarnings;
-import androidx.room.TypeConverters;
-
 import com.getstream.sdk.chat.EventSubscriberRegistry;
 import com.getstream.sdk.chat.enums.EventType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.adapter.ChannelGsonAdapter;
 import com.getstream.sdk.chat.rest.core.ChatChannelEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryWatchCallback;
-import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.ChannelWatchRequest;
-import com.getstream.sdk.chat.rest.request.HideChannelRequest;
-import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.request.SendEventRequest;
+import com.getstream.sdk.chat.rest.core.ClientOld;
+import com.getstream.sdk.chat.rest.interfaces.*;
+import com.getstream.sdk.chat.rest.request.*;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
@@ -50,12 +23,11 @@ import com.google.gson.annotations.SerializedName;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.*;
 
 /**
  * A channel
@@ -173,7 +145,7 @@ public class Channel {
     private EventSubscriberRegistry<ChatChannelEventHandler> subRegistery;
 
     @Ignore
-    private Client client;
+    private ClientOld client;
 
     @Ignore
     private ChannelState channelState;
@@ -202,7 +174,7 @@ public class Channel {
      * @param id     the id of the chat
      * @return Returns a new uninitialized channel
      */
-    public Channel(Client client, String type, String id) {
+    public Channel(ClientOld client, String type, String id) {
         this(client, type, id, new HashMap<>());
     }
 
@@ -215,7 +187,7 @@ public class Channel {
      * @param extraData any additional custom params
      * @return Returns a new uninitialized channel
      */
-    public Channel(Client client, String type, String id, HashMap<String, Object> extraData) {
+    public Channel(ClientOld client, String type, String id, HashMap<String, Object> extraData) {
         this.type = type;
         this.id = id;
         this.cid = String.format("%1$s:%2$s", type, id);
@@ -230,11 +202,11 @@ public class Channel {
         }
 
         subRegistery = new EventSubscriberRegistry<>();
-        channelState = new ChannelState(this);
+        //channelState = new ChannelState(this);
         initialized = false;
     }
 
-    public Channel(Client client, String type, HashMap<String, Object> extraData, List<String> members) {
+    public Channel(ClientOld client, String type, HashMap<String, Object> extraData, List<String> members) {
         this(client, type, null, extraData);
         this.extraData.put("members", members);
     }
@@ -425,11 +397,11 @@ public class Channel {
         this.createdByUserID = this.createdByUser.getId();
     }
 
-    public Client getClient() {
+    public ClientOld getClient() {
         return this.client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(ClientOld client) {
         this.client = client;
     }
 
@@ -452,31 +424,31 @@ public class Channel {
 
     public void mergeWithState(ChannelState state) {
         channelState.init(state);
-        config = state.getChannel().config;
-        lastMessageDate = state.getChannel().lastMessageDate;
-        extraData = state.getChannel().extraData;
-        createdAt = state.getChannel().createdAt;
-        updatedAt = state.getChannel().updatedAt;
-        deletedAt = state.getChannel().deletedAt;
+//        config = state.getChannel().config;
+//        lastMessageDate = state.getChannel().lastMessageDate;
+//        extraData = state.getChannel().extraData;
+//        createdAt = state.getChannel().createdAt;
+//        updatedAt = state.getChannel().updatedAt;
+//        deletedAt = state.getChannel().deletedAt;
     }
 
     /**
      * watch - Loads the initial channel state and watches for changes
      */
-    public void watch(@NonNull ChannelWatchRequest request,
-                      @NonNull QueryWatchCallback callback) {
-        query(request, new QueryChannelCallback() {
-            @Override
-            public void onSuccess(ChannelState response) {
-                callback.onSuccess(response);
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                callback.onError(errMsg, errCode);
-            }
-        });
-    }
+//    public void watch(@NonNull ChannelWatchRequest request,
+//                      @NonNull QueryWatchCallback callback) {
+//        query(request, new QueryChannelCallback() {
+//            @Override
+//            public void onSuccess(ChannelState response) {
+//                callback.onSuccess(response);
+//            }
+//
+//            @Override
+//            public void onError(String errMsg, int errCode) {
+//                callback.onError(errMsg, errCode);
+//            }
+//        });
+//    }
 
     /**
      * Query the API, get messages, members or other channel fields
@@ -484,10 +456,10 @@ public class Channel {
      * @param request  request options
      * @param callback the result callback
      */
-    public void query(@NonNull ChannelQueryRequest request,
-                      @NonNull QueryChannelCallback callback) {
-        client.queryChannel(this, request, callback);
-    }
+//    public void query(@NonNull ChannelQueryRequest request,
+//                      @NonNull QueryChannelCallback callback) {
+//        client.queryChannel(this, request, callback);
+//    }
 
     /**
      * Only for Test
@@ -495,9 +467,9 @@ public class Channel {
      *
      * @param callback the result callback
      */
-    public void query(@NonNull QueryChannelCallback callback) {
-        client.queryChannel(this, new ChannelQueryRequest().withData(this.extraData).withWatch(), callback);
-    }
+//    public void query(@NonNull QueryChannelCallback callback) {
+//        client.queryChannel(this, new ChannelQueryRequest().withData(this.extraData).withWatch(), callback);
+//    }
 
     /**
      * getReplies - List the message replies for a parent message
@@ -569,62 +541,62 @@ public class Channel {
     }
 
     // region Message
-    public void sendMessage(@NonNull Message message,
-                            @NonNull MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
-            message.setMentionedUsersId(mentionedUserIDs);
-        client.sendMessage(this, message, callback);
-    }
-
-    public void updateMessage(@NonNull Message message,
-                              MessageCallback callback) {
-        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
-        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
-            message.setMentionedUsersId(mentionedUserIDs);
-        client.updateMessage(message, callback);
-    }
+//    public void sendMessage(@NonNull Message message,
+//                            @NonNull MessageCallback callback) {
+//        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
+//        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+//            message.setMentionedUsersId(mentionedUserIDs); TODO: llc add mentioned users to llc
+//        client.sendMessage(this, message, callback);
+//    }
+//
+//    public void updateMessage(@NonNull Message message,
+//                              MessageCallback callback) {
+//        List<String> mentionedUserIDs = Utils.getMentionedUserIDs(channelState, message.getText());
+//        if (mentionedUserIDs != null && !mentionedUserIDs.isEmpty())
+//            message.setMentionedUsersId(mentionedUserIDs); TODO: llc add mentioned users to llc
+//        client.updateMessage(message, callback);
+//    }
 
     public void deleteMessage(@NonNull Message message,
                               MessageCallback callback) {
         client.deleteMessage(message.getId(), callback);
     }
 
-    public void sendImage(@NotNull String filePath,
-                          @NotNull String mimeType,
-                          @NotNull UploadFileCallback fileCallback) {
-        File file = new File(filePath);
+//    public void sendImage(@NotNull String filePath,
+//                          @NotNull String mimeType,
+//                          @NotNull UploadFileCallback fileCallback) {
+//        File file = new File(filePath);
+//
+//        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
+//    }
 
-        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
-    }
-
-    public void sendFile(@NotNull String filePath,
-                         @NotNull String mimeType,
-                         @NotNull UploadFileCallback fileCallback) {
-        File file = new File(filePath);
-
-        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
-    }
-
-    /**
-     * Delete a file with a given URL.
-     *
-     * @param url      the file URL
-     * @param callback the result callback
-     */
-    public void deleteFile(@NotNull String url, @NotNull CompletableCallback callback) {
-        client.getUploadStorage().deleteFile(this, url, callback);
-    }
-
-    /**
-     * Delete a image with a given URL.
-     *
-     * @param url      the image URL
-     * @param callback the result callback
-     */
-    public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
-        client.getUploadStorage().deleteImage(this, url, callback);
-    }
+//    public void sendFile(@NotNull String filePath,
+//                         @NotNull String mimeType,
+//                         @NotNull UploadFileCallback fileCallback) {
+//        File file = new File(filePath);
+//
+//        client.getUploadStorage().sendFile(this, file, mimeType, fileCallback);
+//    }
+//
+//    /**
+//     * Delete a file with a given URL.
+//     *
+//     * @param url      the file URL
+//     * @param callback the result callback
+//     */
+//    public void deleteFile(@NotNull String url, @NotNull CompletableCallback callback) {
+//        client.getUploadStorage().deleteFile(this, url, callback);
+//    }
+//
+//    /**
+//     * Delete a image with a given URL.
+//     *
+//     * @param url      the image URL
+//     * @param callback the result callback
+//     */
+//    public void deleteImage(@NotNull String url, @NotNull CompletableCallback callback) {
+//        client.getUploadStorage().deleteImage(this, url, callback);
+//    }
 
     // endregion
 
@@ -634,31 +606,31 @@ public class Channel {
      * @param reaction {Reaction} the reaction object
      * @param callback {MessageCallback} the request callback
      */
-    public void sendReaction(@NotNull Reaction reaction,
-                             @NotNull MessageCallback callback) {
-        ReactionRequest r = new ReactionRequest(reaction);
-        client.sendReaction(r, callback);
-    }
-
-    /**
-     * sendReaction - Send a reaction about a message
-     *
-     * @param messageID {string} the message id
-     * @param type      {string} the type of reaction (ie. like)
-     * @param extraData {Map<String, Object>} reaction extra data
-     * @param callback  {MessageCallback} the request callback
-     */
-    public void sendReaction(@NotNull String messageID,
-                             @NotNull String type,
-                             Map<String, Object> extraData,
-                             @NotNull MessageCallback callback) {
-        Reaction reaction = new Reaction();
-        reaction.setMessageId(messageID);
-        reaction.setType(type);
-        reaction.setExtraData(extraData);
-        ReactionRequest r = new ReactionRequest(reaction);
-        client.sendReaction(r, callback);
-    }
+//    public void sendReaction(@NotNull Reaction reaction,
+//                             @NotNull MessageCallback callback) {
+//        ReactionRequest r = new ReactionRequest(reaction);
+//        client.sendReaction(r, callback);
+//    }
+//
+//    /**
+//     * sendReaction - Send a reaction about a message
+//     *
+//     * @param messageID {string} the message id
+//     * @param type      {string} the type of reaction (ie. like)
+//     * @param extraData {Map<String, Object>} reaction extra data
+//     * @param callback  {MessageCallback} the request callback
+//     */
+//    public void sendReaction(@NotNull String messageID,
+//                             @NotNull String type,
+//                             Map<String, Object> extraData,
+//                             @NotNull MessageCallback callback) {
+//        Reaction reaction = new Reaction();
+//        reaction.setMessageId(messageID);
+//        reaction.setType(type);
+//        reaction.setExtraData(extraData);
+//        ReactionRequest r = new ReactionRequest(reaction);
+//        client.sendReaction(r, callback);
+//    }
 
     /**
      * list the reactions, supports pagination
@@ -713,87 +685,87 @@ public class Channel {
         client.unFlagMessage(messageId, callback);
     }
 
-    /**
-     * bans a user from this channel
-     *
-     * @param targetUserId the ID of the user to ban
-     * @param reason       the reason the ban was created
-     * @param timeout      the timeout in minutes until the ban is automatically expired
-     * @param callback     the result callback
-     */
-    public void banUser(@NotNull String targetUserId, @Nullable String reason, @Nullable Integer timeout,
-                        @NotNull CompletableCallback callback) {
-        client.banUser(targetUserId, this, reason, timeout, callback);
-    }
+//    /**
+//     * bans a user from this channel
+//     *
+//     * @param targetUserId the ID of the user to ban
+//     * @param reason       the reason the ban was created
+//     * @param timeout      the timeout in minutes until the ban is automatically expired
+//     * @param callback     the result callback
+//     */
+//    public void banUser(@NotNull String targetUserId, @Nullable String reason, @Nullable Integer timeout,
+//                        @NotNull CompletableCallback callback) {
+//        client.banUser(targetUserId, this, reason, timeout, callback);
+//    }
+//
+//    /**
+//     * removes the ban for a user on this channel
+//     *
+//     * @param targetUserId the ID of the user to remove the ban
+//     * @param callback     the result callback
+//     */
+//    public void unBanUser(@NotNull String targetUserId, @NotNull CompletableCallback callback) {
+//        client.unBanUser(targetUserId, this, callback);
+//    }
+//
+//    /**
+//     * adds members with given user IDs to this channel
+//     *
+//     * @param members  list of user IDs to add as members
+//     * @param callback the result callback
+//     */
+//    public void addMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
+//        client.addMembers(this, members, callback);
+//    }
+//
+//    /**
+//     * remove members with given user IDs from this channel
+//     *
+//     * @param members  list of user IDs to remove from the member list
+//     * @param callback the result callback
+//     */
+//    public void removeMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
+//        client.removeMembers(this, members, callback);
+//    }
+//
+//    /**
+//     * Accept an invite to this channel
+//     *
+//     * @param message  message object allowing you to show a system message in the Channel
+//     * @param callback the result callback
+//     */
+//    public void acceptInvite(@Nullable String message, @NotNull ChannelCallback callback) {
+//        client.acceptInvite(this, message, callback);
+//    }
+//
+//    /**
+//     * Accept an invite to this channel
+//     *
+//     * @param callback the result callback
+//     */
+//    public void acceptInvite(@NotNull ChannelCallback callback) {
+//        client.acceptInvite(this, null, callback);
+//    }
 
-    /**
-     * removes the ban for a user on this channel
-     *
-     * @param targetUserId the ID of the user to remove the ban
-     * @param callback     the result callback
-     */
-    public void unBanUser(@NotNull String targetUserId, @NotNull CompletableCallback callback) {
-        client.unBanUser(targetUserId, this, callback);
-    }
+//    /**
+//     * Reject an invite to this channel
+//     *
+//     * @param callback the result callback
+//     */
+//    public void rejectInvite(@NotNull ChannelCallback callback) {
+//        client.rejectInvite(this, callback);
+//    }
 
-    /**
-     * adds members with given user IDs to this channel
-     *
-     * @param members  list of user IDs to add as members
-     * @param callback the result callback
-     */
-    public void addMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
-        client.addMembers(this, members, callback);
-    }
-
-    /**
-     * remove members with given user IDs from this channel
-     *
-     * @param members  list of user IDs to remove from the member list
-     * @param callback the result callback
-     */
-    public void removeMembers(@NotNull List<String> members, @NotNull ChannelCallback callback) {
-        client.removeMembers(this, members, callback);
-    }
-
-    /**
-     * Accept an invite to this channel
-     *
-     * @param message  message object allowing you to show a system message in the Channel
-     * @param callback the result callback
-     */
-    public void acceptInvite(@Nullable String message, @NotNull ChannelCallback callback) {
-        client.acceptInvite(this, message, callback);
-    }
-
-    /**
-     * Accept an invite to this channel
-     *
-     * @param callback the result callback
-     */
-    public void acceptInvite(@NotNull ChannelCallback callback) {
-        client.acceptInvite(this, null, callback);
-    }
-
-    /**
-     * Reject an invite to this channel
-     *
-     * @param callback the result callback
-     */
-    public void rejectInvite(@NotNull ChannelCallback callback) {
-        client.rejectInvite(this, callback);
-    }
-
-    public void handleChannelUpdated(Channel channel) {
-        extraData = channel.extraData;
-        updatedAt = channel.updatedAt;
-        getClient().getStorage().insertChannel(channel);
-    }
-
-    public void handleChannelDeleted(Channel channel) {
-        deletedAt = channel.deletedAt;
-        getClient().getStorage().deleteChannel(channel);
-    }
+//    public void handleChannelUpdated(Channel channel) {
+//        extraData = channel.extraData;
+//        updatedAt = channel.updatedAt;
+//        getClient().getStorage().insertChannel(channel);
+//    }
+//
+//    public void handleChannelDeleted(Channel channel) {
+//        deletedAt = channel.deletedAt;
+//        getClient().getStorage().deleteChannel(channel);
+//    }
 
     public void handleWatcherStart(Event event) {
         channelState.addWatcher(new Watcher(event.getUser(), event.getCreatedAt()));
@@ -805,35 +777,35 @@ public class Channel {
         channelState.setWatcherCount(event.getWatcherCount().intValue());
     }
 
-    public void handleNewMessage(Event event) {
-        Message message = event.getMessage();
-        Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
-        if (!message.getType().equals(ModelType.message_reply) && TextUtils.isEmpty(message.getParentId())) {
-            channelState.addMessageSorted(message);
-        }
-        if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
-            setLastMessageDate(message.getCreatedAt());
-        }
-        getClient().getStorage().insertMessageForChannel(this, message);
-    }
+//    public void handleNewMessage(Event event) {
+//        Message message = event.getMessage();
+//        Message.setStartDay(Arrays.asList(message), channelState.getLastMessage());
+//        if (!message.getType().equals(ModelType.message_reply) && TextUtils.isEmpty(message.getParentId())) {
+//            channelState.addMessageSorted(message);
+//        }
+//        if (getLastMessageDate() != null && getLastMessageDate().before(message.getCreatedAt())) {
+//            setLastMessageDate(message.getCreatedAt());
+//        }
+//        getClient().getStorage().insertMessageForChannel(this, message);
+//    }
 
-    public void handleMessageUpdatedOrDeleted(Event event) {
-        Message message = event.getMessage();
-        for (int i = 0; i < channelState.getMessages().size(); i++) {
-            if (message.getId().equals(channelState.getMessages().get(i).getId())) {
-                channelState.getMessages().set(i, message);
-                // Check updatedMessage is Last or not
-                if (i == channelState.getMessages().size() - 1)
-                    channelState.setLastMessage(message);
-
-                getClient().getStorage().insertMessageForChannel(this, message);
-                break;
-            }
-        }
-        if (event.getWatcherCount() != null) {
-            channelState.setWatcherCount(event.getWatcherCount().intValue());
-        }
-    }
+//    public void handleMessageUpdatedOrDeleted(Event event) {
+//        Message message = event.getMessage();
+//        for (int i = 0; i < channelState.getMessages().size(); i++) {
+//            if (message.getId().equals(channelState.getMessages().get(i).getId())) {
+//                channelState.getMessages().set(i, message);
+//                // Check updatedMessage is Last or not
+//                if (i == channelState.getMessages().size() - 1)
+//                    channelState.setLastMessage(message);
+//
+//                getClient().getStorage().insertMessageForChannel(this, message);
+//                break;
+//            }
+//        }
+//        if (event.getWatcherCount() != null) {
+//            channelState.setWatcherCount(event.getWatcherCount().intValue());
+//        }
+//    }
 
     public void handleReadEvent(Event event) {
         channelState.setReadDateOfChannelLastMessage(event.getUser(), event.getCreatedAt());
@@ -854,102 +826,102 @@ public class Channel {
     /**
      * Sends a start typing event if it's been more than 3 seconds since the last start typing event was sent
      */
-    public synchronized void keystroke(EventCallback callback) {
-        Date now = new Date();
-        lastKeystrokeAt = now;
-        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
-            lastStartTypingEvent = now;
-            this.sendEvent(EventType.TYPING_START, callback);
-        }
-    }
+//    public synchronized void keystroke(EventCallback callback) {
+//        Date now = new Date();
+//        lastKeystrokeAt = now;
+//        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
+//            lastStartTypingEvent = now;
+//            this.sendEvent(EventType.TYPING_START, callback);
+//        }
+//    }
+//
+//    /**
+//     * Sends the stop typing event
+//     */
+//    public synchronized void stopTyping(EventCallback callback) {
+//        lastStartTypingEvent = null;
+//        this.sendEvent(EventType.TYPING_STOP, callback);
+//    }
 
-    /**
-     * Sends the stop typing event
-     */
-    public synchronized void stopTyping(EventCallback callback) {
-        lastStartTypingEvent = null;
-        this.sendEvent(EventType.TYPING_STOP, callback);
-    }
-
-    /**
-     * sendEvent - Send an event on this channel
-     *
-     * @param eventType event for example {type: 'message.read'}
-     * @return The Server Response
-     */
+//    /**
+//     * sendEvent - Send an event on this channel
+//     *
+//     * @param eventType event for example {type: 'message.read'}
+//     * @return The Server Response
+//     */
     // TODO: check this function
-    public void sendEvent(@NotNull EventType eventType,
-                          @NotNull EventCallback callback) {
-        final Map<String, Object> event = new HashMap<>();
-        event.put("type", eventType.label);
-        SendEventRequest request = new SendEventRequest(event);
-        client.sendEvent(this, request, callback);
-    }
-
-    /**
-     * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
-     *
-     * @param callback the result callback
-     */
-    public void markRead(@NotNull EventCallback callback) {
-        client.markRead(this, new MarkReadRequest(null), callback);
-    }
-
-    /**
-     * hides the channel from queryChannels for the user until a message is added
-     *
-     * @param request the request options for the hide channel request
-     * @param callback the result callback
-     */
-    public void hide(HideChannelRequest request, @NotNull CompletableCallback callback) {
-        client.hideChannel(this, request, callback);
-    }
-
-    /**
-     * hides the channel from queryChannels for the user until a message is added
-     *
-     * @param callback the result callback
-     */
-    public void show(@NotNull CompletableCallback callback) {
-        client.showChannel(this, callback);
-    }
-
-    /**
-     * edit the channel's custom properties.
-     *
-     * @param updateMessage message allowing you to show a system message in the Channel that something changed
-     * @param callback      the result callback
-     */
-    public void update(@Nullable Message updateMessage, @NotNull ChannelCallback callback) {
-        client.updateChannel(this, updateMessage, callback);
-    }
-
-    /**
-     * edit the channel's custom properties.
-     *
-     * @param callback the result callback
-     */
-    public void update(@NotNull ChannelCallback callback) {
-        client.updateChannel(this, null, callback);
-    }
-
-    /**
-     * removes the channel. Messages are permanently removed.
-     *
-     * @param callback the result callback
-     */
-    public void delete(@NotNull ChannelCallback callback) {
-        client.deleteChannel(this, callback);
-    }
-
-    /**
-     * stops watching the channel for events.
-     *
-     * @param callback the result callback
-     */
-    public void stopWatching(@NotNull CompletableCallback callback) {
-        client.stopWatchingChannel(this, callback);
-    }
+//    public void sendEvent(@NotNull EventType eventType,
+//                          @NotNull EventCallback callback) {
+//        final Map<String, Object> event = new HashMap<>();
+//        event.put("type", eventType.label);
+//        SendEventRequest request = new SendEventRequest(event);
+//        client.sendEvent(this, request, callback);
+//    }
+//
+//    /**
+//     * markRead - marks the channel read for current user, only works if the `read_events` setting is enabled
+//     *
+//     * @param callback the result callback
+//     */
+//    public void markRead(@NotNull EventCallback callback) {
+//        client.markRead(this, new MarkReadRequest(null), callback);
+//    }
+//
+//    /**
+//     * hides the channel from queryChannels for the user until a message is added
+//     *
+//     * @param request  the request options for the hide channel request
+//     * @param callback the result callback
+//     */
+//    public void hide(HideChannelRequest request, @NotNull CompletableCallback callback) {
+//        client.hideChannel(this, request, callback);
+//    }
+//
+//    /**
+//     * hides the channel from queryChannels for the user until a message is added
+//     *
+//     * @param callback the result callback
+//     */
+//    public void show(@NotNull CompletableCallback callback) {
+//        client.showChannel(this, callback);
+//    }
+//
+//    /**
+//     * edit the channel's custom properties.
+//     *
+//     * @param updateMessage message allowing you to show a system message in the Channel that something changed
+//     * @param callback      the result callback
+//     */
+//    public void update(@Nullable Message updateMessage, @NotNull ChannelCallback callback) {
+//        client.updateChannel(this, updateMessage, callback);
+//    }
+//
+//    /**
+//     * edit the channel's custom properties.
+//     *
+//     * @param callback the result callback
+//     */
+//    public void update(@NotNull ChannelCallback callback) {
+//        client.updateChannel(this, null, callback);
+//    }
+//
+//    /**
+//     * removes the channel. Messages are permanently removed.
+//     *
+//     * @param callback the result callback
+//     */
+//    public void delete(@NotNull ChannelCallback callback) {
+//        client.deleteChannel(this, callback);
+//    }
+//
+//    /**
+//     * stops watching the channel for events.
+//     *
+//     * @param callback the result callback
+//     */
+//    public void stopWatching(@NotNull CompletableCallback callback) {
+//        client.stopWatchingChannel(this, callback);
+//    }
 
     public ChannelState getLastState() {
         return lastState;

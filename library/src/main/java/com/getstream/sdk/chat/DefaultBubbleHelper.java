@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;

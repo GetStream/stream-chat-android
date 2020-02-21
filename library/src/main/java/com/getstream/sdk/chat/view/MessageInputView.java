@@ -23,11 +23,10 @@ import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.UploadAttachment;
+import com.getstream.sdk.chat.model.AttachmentData;
 import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.*;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -226,7 +225,7 @@ public class MessageInputView extends RelativeLayout {
         // TODO: make the attachment UI into it's own view and allow you to change it.
         messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style, attachment -> {
             if (binding.ivSend.isEnabled()) return;
-            for (UploadAttachment attachment_ : messageInputController.getSelectedAttachments())
+            for (AttachmentData attachment_ : messageInputController.getSelectedAttachments())
                 if (!attachment_.isUploaded)
                     return;
 
@@ -407,7 +406,7 @@ public class MessageInputView extends RelativeLayout {
             message.setCreatedAt(new Date());
             //TODO: llc check sync
             //message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-        } else{
+        } else {
             message.getAttachments().addAll(messageInputController.getSelectedAttachments());
         }
 
@@ -577,7 +576,7 @@ public class MessageInputView extends RelativeLayout {
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachment(UploadAttachment attachment);
+        void onAddAttachment(AttachmentData attachment);
     }
 
     /**

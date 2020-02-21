@@ -4,6 +4,7 @@ import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
+import com.getstream.sdk.chat.rest.core.ClientOld;
 
 /*
  * Created by Anton Bevza on 2019-10-24.

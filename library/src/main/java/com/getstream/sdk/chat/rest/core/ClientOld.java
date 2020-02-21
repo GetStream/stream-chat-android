@@ -20,13 +20,13 @@ import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
 import com.getstream.sdk.chat.interfaces.TokenProvider;
 import com.getstream.sdk.chat.interfaces.UserEntity;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
@@ -113,10 +113,6 @@ import static java.util.UUID.randomUUID;
 
 public class ClientOld implements WSResponseHandler {
 
-    static class ApiClientOptions{
-
-    }
-
     private static final String TAG = ClientOld.class.getSimpleName();
     private String clientID;
 
@@ -149,7 +145,7 @@ public class ClientOld implements WSResponseHandler {
     private Handler delayedDisconnectWebSocketHandler = new Handler();
 
 
-    // Client params
+    // ClientOld params
     private Map<String, Channel> activeChannelMap = new HashMap<>();
     private boolean connected;
 
@@ -168,124 +164,124 @@ public class ClientOld implements WSResponseHandler {
     private Map<String, Config> channelTypeConfigs;
 
     // endregion
-    private ChatEventHandler builtinHandler =
+//    private ChatEventHandler builtinHandler =
+//
+//            new ChatEventHandler() {
+//                @Override
+//                public void onAnyEvent(Event event) {
+//                    // if an event contains the current user update it
+//                    // this also captures notification.mutes_updated
+//                    if (event.getMe() != null && !event.isAnonymous()) {
+//                        state.setCurrentUser(event.getMe());
+//                    }
+//                    if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
+//                        StreamChat.getLogger().logI(this, "Mutes updated");
+//                    }
+//
+//                    // if an event contains a user update that user
+//                    // handles user updates, presence changes etc.
+//                    if (event.getUser() != null) {
+//                        state.updateUser(event.getUser());
+//                    }
+//
+//                    // update the unread count if it is present on the event
+//                    if (event.getTotalUnreadCount() != null) {
+//                        state.setTotalUnreadCount(event.getTotalUnreadCount().intValue());
+//                    }
+//                    if (event.getUnreadChannels() != null) {
+//                        state.setUnreadChannels(event.getUnreadChannels().intValue());
+//                    }
+//
+//                    // if an event contains an updated channel write the update
+//                    if (event.getChannel() != null) {
+//                        state.updateUsersForChannel(event.getChannel().getChannelState());
+//                    }
+//                }
+//
+//                private void updateChannelMessage(Channel channel, Event event) {
+//                    channel.handleMessageUpdatedOrDeleted(event);
+//                }
+//
+//                @Override
+//                public void onUserWatchingStart(Channel channel, Event event) {
+//                    channel.handleWatcherStart(event);
+//                }
+//
+//                @Override
+//                public void onUserWatchingStop(Channel channel, Event event) {
+//                    channel.handleWatcherStop(event);
+//                }
+//
+//                @Override
+//                public void onMessageNew(Channel channel, Event event) {
+//                    channel.handleNewMessage(event);
+//                }
+//
+//                @Override
+//                public void onMessageUpdated(Channel channel, Event event) {
+//                    this.updateChannelMessage(channel, event);
+//                }
+//
+//                @Override
+//                public void onMessageDeleted(Channel channel, Event event) {
+//                    this.updateChannelMessage(channel, event);
+//                }
+//
+//                @Override
+//                public void onMessageRead(Channel channel, Event event) {
+//                    channel.handleReadEvent(event);
+//                }
+//
+//                @Override
+//                public void onReactionNew(Channel channel, Event event) {
+//                    this.updateChannelMessage(channel, event);
+//                }
+//
+//                @Override
+//                public void onReactionDeleted(Channel channel, Event event) {
+//                    this.updateChannelMessage(channel, event);
+//                }
+//
+//                @Override
+//                public void onChannelUpdated(Channel channel, Event event) {
+//                    channel.handleChannelUpdated(event.getChannel());
+//                }
+//
+//                @Override
+//                public void onChannelDeleted(Channel channel, Event event) {
+//                    channel.handleChannelDeleted(event.getChannel());
+//                }
+//
+//                @Override
+//                public void onMemberAdded(Channel channel, Event event) {
+//                    if (event.getMember() != null) {
+//                        channel.handleMemberAdded(event.getMember());
+//                    }
+//                }
+//
+//                @Override
+//                public void onMemberUpdated(Channel channel, Event event) {
+//                    if (event.getMember() != null) {
+//                        channel.handleMemberUpdated(event.getMember());
+//                    }
+//                }
+//
+//                @Override
+//                public void onMemberRemoved(Channel channel, Event event) {
+//                    if (event.getUser() != null) {
+//                        channel.handelMemberRemoved(event.getUser());
+//                    }
+//                }
+//
+//                @Override
+//                public void onConnectionChanged(Event event) {
+//                    if (!event.getOnline()) {
+//                        connected = false;
+//                    }
+//                }
+//            };
 
-            new ChatEventHandler() {
-                @Override
-                public void onAnyEvent(Event event) {
-                    // if an event contains the current user update it
-                    // this also captures notification.mutes_updated
-                    if (event.getMe() != null && !event.isAnonymous()) {
-                        state.setCurrentUser(event.getMe());
-                    }
-                    if (event.getType() == EventType.NOTIFICATION_MUTES_UPDATED) {
-                        StreamChat.getLogger().logI(this, "Mutes updated");
-                    }
-
-                    // if an event contains a user update that user
-                    // handles user updates, presence changes etc.
-                    if (event.getUser() != null) {
-                        state.updateUser(event.getUser());
-                    }
-
-                    // update the unread count if it is present on the event
-                    if (event.getTotalUnreadCount() != null) {
-                        state.setTotalUnreadCount(event.getTotalUnreadCount().intValue());
-                    }
-                    if (event.getUnreadChannels() != null) {
-                        state.setUnreadChannels(event.getUnreadChannels().intValue());
-                    }
-
-                    // if an event contains an updated channel write the update
-                    if (event.getChannel() != null) {
-                        state.updateUsersForChannel(event.getChannel().getChannelState());
-                    }
-                }
-
-                private void updateChannelMessage(Channel channel, Event event) {
-                    channel.handleMessageUpdatedOrDeleted(event);
-                }
-
-                @Override
-                public void onUserWatchingStart(Channel channel, Event event) {
-                    channel.handleWatcherStart(event);
-                }
-
-                @Override
-                public void onUserWatchingStop(Channel channel, Event event) {
-                    channel.handleWatcherStop(event);
-                }
-
-                @Override
-                public void onMessageNew(Channel channel, Event event) {
-                    channel.handleNewMessage(event);
-                }
-
-                @Override
-                public void onMessageUpdated(Channel channel, Event event) {
-                    this.updateChannelMessage(channel, event);
-                }
-
-                @Override
-                public void onMessageDeleted(Channel channel, Event event) {
-                    this.updateChannelMessage(channel, event);
-                }
-
-                @Override
-                public void onMessageRead(Channel channel, Event event) {
-                    channel.handleReadEvent(event);
-                }
-
-                @Override
-                public void onReactionNew(Channel channel, Event event) {
-                    this.updateChannelMessage(channel, event);
-                }
-
-                @Override
-                public void onReactionDeleted(Channel channel, Event event) {
-                    this.updateChannelMessage(channel, event);
-                }
-
-                @Override
-                public void onChannelUpdated(Channel channel, Event event) {
-                    channel.handleChannelUpdated(event.getChannel());
-                }
-
-                @Override
-                public void onChannelDeleted(Channel channel, Event event) {
-                    channel.handleChannelDeleted(event.getChannel());
-                }
-
-                @Override
-                public void onMemberAdded(Channel channel, Event event) {
-                    if (event.getMember() != null) {
-                        channel.handleMemberAdded(event.getMember());
-                    }
-                }
-
-                @Override
-                public void onMemberUpdated(Channel channel, Event event) {
-                    if (event.getMember() != null) {
-                        channel.handleMemberUpdated(event.getMember());
-                    }
-                }
-
-                @Override
-                public void onMemberRemoved(Channel channel, Event event) {
-                    if (event.getUser() != null) {
-                        channel.handelMemberRemoved(event.getUser());
-                    }
-                }
-
-                @Override
-                public void onConnectionChanged(Event event) {
-                    if (!event.getOnline()) {
-                        connected = false;
-                    }
-                }
-            };
-
-    public Client(String apiKey,
+    public ClientOld(String apiKey,
                   ApiClientOptions apiClientOptions,
                   ApiServiceProvider apiServiceProvider,
                   WebSocketServiceProvider webSocketServiceProvider,
@@ -321,7 +317,7 @@ public class ClientOld implements WSResponseHandler {
         }
     }
 
-    public Client(String apiKey, ApiClientOptions options) {
+    public ClientOld(String apiKey, ApiClientOptions options) {
         this(apiKey,
                 options,
                 new StreamApiServiceProvider(options),
@@ -331,7 +327,7 @@ public class ClientOld implements WSResponseHandler {
                 null);
     }
 
-    public Client(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
+    public ClientOld(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
         this(apiKey,
                 options,
                 new StreamApiServiceProvider(options),
@@ -429,7 +425,7 @@ public class ClientOld implements WSResponseHandler {
         fetchingToken = false;
         cacheUserToken = null;
 
-        builtinHandler.dispatchUserDisconnected();
+        //builtinHandler.dispatchUserDisconnected();
         for (ChatEventHandler handler : subRegistry.getSubscribers()) {
             handler.dispatchUserDisconnected();
         }
@@ -637,26 +633,26 @@ public class ClientOld implements WSResponseHandler {
         webSocketService.connect();
     }
 
-    public Channel channel(String cid) {
-        String[] parts = cid.split(":", 2);
-        return channel(parts[0], parts[1], new HashMap<>());
-    }
+//    public Channel channel(String cid) {
+//        String[] parts = cid.split(":", 2);
+//        return channel(parts[0], parts[1], new HashMap<>());
+//    }
+//
+//    public Channel channel(String type, String id) {
+//        return channel(type, id, new HashMap<>());
+//    }
 
-    public Channel channel(String type, String id) {
-        return channel(type, id, new HashMap<>());
-    }
+//    public Channel channel(String type, HashMap<String, Object> extraData, List<String> members) {
+//        return new Channel(this, type, extraData, members);
+//    }
 
-    public Channel channel(String type, HashMap<String, Object> extraData, List<String> members) {
-        return new Channel(this, type, extraData, members);
-    }
-
-    public Channel channel(String type, String id, HashMap<String, Object> extraData) {
-        Channel channel = getChannelByCid(type, id);
-        if (channel != null) {
-            return channel;
-        }
-        return new Channel(this, type, id, extraData);
-    }
+//    public Channel channel(String type, String id, HashMap<String, Object> extraData) {
+//        Channel channel = getChannelByCid(type, id);
+//        if (channel != null) {
+//            return channel;
+//        }
+//        return new Channel(this, type, id, extraData);
+//    }
 
     @Override
     public void connectionResolved(Event event) {
@@ -691,14 +687,14 @@ public class ClientOld implements WSResponseHandler {
 
     @Override
     public void onWSEvent(Event event) {
-        builtinHandler.dispatchEvent(this, event);
+        //builtinHandler.dispatchEvent(this, event);
         for (ChatEventHandler handler : subRegistry.getSubscribers()) {
             handler.dispatchEvent(this, event);
         }
 
         Channel channel = getChannelByCid(event.getCid());
         if (channel != null) {
-            channel.handleChannelEvent(event);
+            //channel.handleChannelEvent(event);
 
             //If channel was deleted remove it from active channels
             if (event.getType().equals(EventType.CHANNEL_DELETED)) {
@@ -815,21 +811,21 @@ public class ClientOld implements WSResponseHandler {
                     public void onResponse(Call<QueryChannelsResponse> call, Response<QueryChannelsResponse> response) {
 
                         for (ChannelState channelState : response.body().getChannelStates()) {
-                            if (channelState.getLastMessage() != null)
-                                channelState.getLastMessage().setSyncStatus(SYNCED);
-                            Channel channel = channelState.getChannel();
-                            addChannelConfig(channel.getType(), channel.getConfig());
-                            channel.setClient(Client.this);
-                            channel.setLastState(channelState);
-                            if (getChannelByCid(channel.getCid()) != null) {
-                                channel = getChannelByCid(channel.getCid());
-                            } else {
-                                addToActiveChannels(channel);
-                            }
-                            channel.mergeWithState(channelState);
-                            if (request.isWatch()) {
-                                channel.setInitialized(true);
-                            }
+//                            if (channelState.getLastMessage() != null)
+//                                channelState.getLastMessage().setSyncStatus(SYNCED);
+//                            Channel channel = channelState.getChannel();
+//                            addChannelConfig(channel.getType(), channel.getConfig());
+//                            channel.setClient(ClientOld.this);
+//                            channel.setLastState(channelState);
+//                            if (getChannelByCid(channel.getCid()) != null) {
+//                                channel = getChannelByCid(channel.getCid());
+//                            } else {
+//                                addToActiveChannels(channel);
+//                            }
+//                            channel.mergeWithState(channelState);
+//                            if (request.isWatch()) {
+//                                channel.setInitialized(true);
+//                            }
 
                             // update the user references
                             state.updateUsersForChannel(channelState);
@@ -987,33 +983,33 @@ public class ClientOld implements WSResponseHandler {
                     @Override
                     public void onResponse(Call<ChannelState> call, Response<ChannelState> response) {
                         StreamChat.getLogger().logI(this,"channel query: incoming watchers " + response.body().getWatchers().size());
-                        channel.mergeWithState(response.body());
-                        // channels created without ID will get it populated by the API
-                        if (channel.getId() == null) {
-                            channel.setId(response.body().getChannel().getCid().split(":")[1]);
-                            channel.setCid(response.body().getChannel().getCid());
-                        }
-                        if (channel.getConfig() == null) {
-                            channel.setConfig(response.body().getChannel().getConfig());
-                        }
-                        if (channel.getChannelState() == null) {
-                            channel.setChannelState(response.body());
-                        }
-                        if (channel.getCreatedByUser() == null) {
-                            channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
-                        }
-
-                        addChannelConfig(channel.getType(), channel.getConfig());
-
-                        if (queryRequest.isWatch()) {
-                            addToActiveChannels(channel);
-                            channel.setInitialized(true);
-                        }
+//                        channel.mergeWithState(response.body());
+//                        // channels created without ID will get it populated by the API
+//                        if (channel.getId() == null) {
+//                            channel.setId(response.body().getChannel().getCid().split(":")[1]);
+//                            channel.setCid(response.body().getChannel().getCid());
+//                        }
+//                        if (channel.getConfig() == null) {
+//                            channel.setConfig(response.body().getChannel().getConfig());
+//                        }
+//                        if (channel.getChannelState() == null) {
+//                            channel.setChannelState(response.body());
+//                        }
+//                        if (channel.getCreatedByUser() == null) {
+//                            channel.setCreatedByUser(response.body().getChannel().getCreatedByUser());
+//                        }
+//
+//                        addChannelConfig(channel.getType(), channel.getConfig());
+//
+//                        if (queryRequest.isWatch()) {
+//                            addToActiveChannels(channel);
+//                            channel.setInitialized(true);
+//                        }
 
                         // update the user references
-                        getState().updateUsersForChannel(channel.getChannelState());
+                        //getState().updateUsersForChannel(channel.getChannelState());
 
-                        StreamChat.getLogger().logI(this,"channel query: merged watchers " + channel.getChannelState().getWatchers().size());
+                        //StreamChat.getLogger().logI(this,"channel query: merged watchers " + channel.getChannelState().getWatchers().size());
                         // offline storage
 
                         getStorage().insertMessagesForChannel(channel, response.body().getMessages());
@@ -1208,18 +1204,18 @@ public class ClientOld implements WSResponseHandler {
         apiService.sendMessage(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, map).enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                message.setSyncStatus(SYNCED);
+                //message.setSyncStatus(SYNCED);
                 if (response.body() != null && response.body().getMessage() != null) {
-                    response.body().getMessage().setSyncStatus(SYNCED);
+                    //response.body().getMessage().setSyncStatus(SYNCED);
                     callback.onSuccess(response.body());
                 } else {
-                    callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
+                    //callback.onError(StreamChat.getContext().getString(R.string.stream_message_invalid_response), -1);
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setSyncStatus(LOCAL_FAILED);
+                //message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {
@@ -1248,15 +1244,15 @@ public class ClientOld implements WSResponseHandler {
 
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                message.setSyncStatus(SYNCED);
-                if (response.body() != null && response.body().getMessage() != null)
-                    response.body().getMessage().setSyncStatus(SYNCED);
+                //message.setSyncStatus(SYNCED);
+                //if (response.body() != null && response.body().getMessage() != null)
+                    //response.body().getMessage().setSyncStatus(SYNCED);
                 callback.onSuccess(response.body());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                message.setSyncStatus(LOCAL_FAILED);
+                //message.setSyncStatus(LOCAL_FAILED);
                 if (t instanceof ErrorResponse) {
                     callback.onError(t.getMessage(), ((ErrorResponse) t).getCode());
                 } else {
@@ -1700,7 +1696,7 @@ public class ClientOld implements WSResponseHandler {
                         .enqueue(new Callback<QueryUserListResponse>() {
                             @Override
                             public void onResponse(Call<QueryUserListResponse> call, Response<QueryUserListResponse> response) {
-                                state.updateUsers(response.body().getUsers());
+                                //state.updateUsers(response.body().getUsers());
                                 callback.onSuccess(response.body());
                             }
 

@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.view.MessageInputView;
 import java.util.HashMap;
 

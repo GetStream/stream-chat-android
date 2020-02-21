@@ -5,7 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 
 import java.util.List;
 

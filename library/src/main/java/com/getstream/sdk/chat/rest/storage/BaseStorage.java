@@ -1,9 +1,8 @@
 package com.getstream.sdk.chat.rest.storage;
 
 import com.bumptech.glide.load.model.GlideUrl;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.controller.APIService;
-import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.rest.core.ClientOld;
 import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
 import com.getstream.sdk.chat.rest.interfaces.UploadFileCallback;
 
@@ -11,11 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
+import io.getstream.chat.android.client.models.Channel;
+
 public abstract class BaseStorage {
-    protected Client client;
+    protected ClientOld client;
     protected APIService mCDNService;
 
-    BaseStorage(Client client) {
+    BaseStorage(ClientOld client) {
         this.client = client;
 
     }

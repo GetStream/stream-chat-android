@@ -37,7 +37,7 @@ import static com.getstream.sdk.chat.utils.Utils.removeIf;
 
 //import com.getstream.sdk.chat.enums.FilterObject;
 //import com.getstream.sdk.chat.enums.QuerySort;
-//import com.getstream.sdk.chat.model.Channel;
+//import io.getstream.chat.android.client.models.Channel;
 //import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
 
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
@@ -109,12 +109,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
 //        retryPolicy = new RetryPolicy() {
 //            @Override
-//            public boolean shouldRetry(Client client, Integer attempt, String errMsg, int errCode) {
+//            public boolean shouldRetry(ClientOld client, Integer attempt, String errMsg, int errCode) {
 //                return attempt < 100;
 //            }
 //
 //            @Override
-//            public Integer retryTimeout(Client client, Integer attempt, String errMsg, int errCode) {
+//            public Integer retryTimeout(ClientOld client, Integer attempt, String errMsg, int errCode) {
 //                return Math.min(500 * (attempt * attempt + 1), 30000);
 //            }
 //        };

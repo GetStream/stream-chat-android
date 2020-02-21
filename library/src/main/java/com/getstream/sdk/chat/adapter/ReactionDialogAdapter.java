@@ -6,20 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Map;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.MyViewHolder> {
@@ -38,7 +40,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
                                  View.OnClickListener clickListener) {
         this.channel = channel;
         this.message = message;
-        this.reactionTypes = channel.getReactionTypes();
+        this.reactionTypes = LlcMigrationUtils.getReactionTypes();
         this.style = style;
         this.clickListener = clickListener;
     }
@@ -101,7 +103,11 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             for (Reaction reaction : message.getLatestReactions()) {
                 if (reaction.getType().equals(type)) {
                     User user = reaction.getUser();
-                    if (user.getId().equals(StreamChat.getInstance(v.getContext()).getUserId())) {
+
+                    User currentUser = StreamChat.getInstance().getCurrentUser();
+                    String id = currentUser.getId();
+
+                    if (user.getId().equals(id)) {
                         isReactioned = true;
                         break;
                     }
@@ -115,29 +121,35 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         }
 
         private void sendReaction(final View view, String type) {
-            channel.sendReaction(message.getId(), type, null, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    clickListener.onClick(view);
-                }
 
+            StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(new Function1<Result<Reaction>, Unit>() {
                 @Override
-                public void onError(String errMsg, int errCode) {
-                    clickListener.onClick(view);
+                public Unit invoke(Result<Reaction> reactionResult) {
+
+                    if (reactionResult.isSuccess()) {
+                        clickListener.onClick(view);
+                    } else {
+                        clickListener.onClick(view);
+                    }
+
+                    return null;
                 }
             });
         }
 
         private void deleteReaction(final View view, String type) {
-            channel.deleteReaction(message.getId(), type, new MessageCallback() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    clickListener.onClick(view);
-                }
 
+            StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(new Function1<Result<Message>, Unit>() {
                 @Override
-                public void onError(String errMsg, int errCode) {
-                    clickListener.onClick(view);
+                public Unit invoke(Result<Message> messageResult) {
+
+                    if (messageResult.isSuccess()) {
+                        clickListener.onClick(view);
+                    } else {
+                        clickListener.onClick(view);
+                    }
+
+                    return null;
                 }
             });
         }

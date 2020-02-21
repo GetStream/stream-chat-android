@@ -3,10 +3,10 @@ package com.getstream.sdk.chat.rest.core;
 import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.Watcher;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Client state is responsible for storing:
+ * ClientOld state is responsible for storing:
  * <p>
  * - current user
  * - all users that the APIs returned
@@ -127,49 +127,49 @@ public class ClientState {
         return result;
     }
 
-    void updateUser(User newUser) {
-        List<User> newUsers = new ArrayList<>();
-        newUsers.add(newUser);
-        updateUsers(newUsers);
-    }
+//    void updateUser(User newUser) {
+//        List<User> newUsers = new ArrayList<>();
+//        newUsers.add(newUser);
+//        updateUsers(newUsers);
+//    }
 
-    public void updateUsers(List<User> newUsers) {
-        StreamChat.getLogger().logD(this,"updateUsers");
-        Map<String, Channel> channelMap = client.getActiveChannelMap();
-
-        for (User newUser : newUsers) {
-            User oldUser = users.get(newUser.getId());
-            if (oldUser != null) {
-                oldUser.shallowUpdate(newUser);
-            } else {
-                users.put(newUser.getId(), newUser.shallowCopy());
-            }
-
-            // if there are existing references, update them
-            List<String> cids = userIDToChannelsMap.get(newUser.getId());
-            if (cids != null) {
-                for (String cid : cids) {
-                    Channel channel = channelMap.get(cid);
-                    if (channel != null) {
-                        // update the members
-                        for (Member m : channel.getChannelState().getMembers()) {
-                            if (m.getUserId().equals(newUser.getId())) {
-                                m.getUser().shallowUpdate(newUser);
-                            }
-                        }
-                        // update the watchers
-                        // TODO: inefficient if you have many at the same time
-                        for (Watcher w : channel.getChannelState().getWatchers()) {
-                            if (w.getUserId().equals(newUser.getId())) {
-                                w.getUser().shallowUpdate(newUser);
-                            }
-                        }
-                    }
-
-                }
-            }
-        }
-    }
+//    public void updateUsers(List<User> newUsers) {
+//        StreamChat.getLogger().logD(this,"updateUsers");
+//        Map<String, Channel> channelMap = client.getActiveChannelMap();
+//
+//        for (User newUser : newUsers) {
+//            User oldUser = users.get(newUser.getId());
+//            if (oldUser != null) {
+//                oldUser.shallowUpdate(newUser);
+//            } else {
+//                users.put(newUser.getId(), newUser.shallowCopy());
+//            }
+//
+//            // if there are existing references, update them
+//            List<String> cids = userIDToChannelsMap.get(newUser.getId());
+//            if (cids != null) {
+//                for (String cid : cids) {
+//                    Channel channel = channelMap.get(cid);
+//                    if (channel != null) {
+//                        // update the members
+//                        for (Member m : channel.getChannelState().getMembers()) {
+//                            if (m.getUserId().equals(newUser.getId())) {
+//                                m.getUser().shallowUpdate(newUser);
+//                            }
+//                        }
+//                        // update the watchers
+//                        // TODO: inefficient if you have many at the same time
+//                        for (Watcher w : channel.getChannelState().getWatchers()) {
+//                            if (w.getUserId().equals(newUser.getId())) {
+//                                w.getUser().shallowUpdate(newUser);
+//                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
+//    }
 
     void updateUserWithReference(User newUser, String cid) {
         List<User> newUsers = new ArrayList<>();
@@ -190,7 +190,7 @@ public class ClientState {
 
     void updateUsersWithReference(List<User> newUsers, String cid) {
         // update the users first
-        updateUsers(newUsers);
+        //updateUsers(newUsers);
 
         // set the references
         for (User newUser : newUsers) {

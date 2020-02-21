@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.DataUtils;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
@@ -102,7 +102,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelState = new MutableLiveData<>(channel);
         watcherCount = Transformations.map(channelState, Channel::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
-        lastCurrentUserUnreadMessageCount = DataUtils.getUnreadMessageCount(currentUser.getUserId(), channel);
+        lastCurrentUserUnreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUser.getUserId(), channel);
         currentUserUnreadMessageCount = new MutableLiveData<>(lastCurrentUserUnreadMessageCount);
 
         initEventHandlers();
@@ -395,7 +395,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     public void markLastMessageRead() {
         // this prevents infinite loops with mark read commands
-        Message message = DataUtils.computeLastMessage(channel);
+        Message message = LlcMigrationUtils.computeLastMessage(channel);
         User currentUser = StreamChat.getInstance().getCurrentUser();
         if (message == null || !isEnableMarkRead() || message.getUserId().equals(currentUser.getUserId())) {
             return;
@@ -460,7 +460,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     User currentUser = StreamChat.getInstance().getCurrentUser();
                     String currentUserId = currentUser.getId();
 
-                    int unreadMessageCount = DataUtils.getUnreadMessageCount(currentUserId, channel);
+                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
 
                     if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
                         lastCurrentUserUnreadMessageCount = unreadMessageCount;
@@ -484,12 +484,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                     channel = event.getChannel();
                     channelState.postValue(event.getChannel());
-                    reads.postValue(DataUtils.getReadsByUser(channel));
+                    reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
 
                     User currentUser = StreamChat.getInstance().getCurrentUser();
                     String currentUserId = currentUser.getId();
 
-                    int unreadMessageCount = DataUtils.getUnreadMessageCount(currentUserId, channel);
+                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
 
                     if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
                         lastCurrentUserUnreadMessageCount = unreadMessageCount;
@@ -500,13 +500,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 } else if (event instanceof ReactionDeletedEvent) {
                     updateMessage(event.message);
                 } else if (event instanceof TypingStartEvent) {
-                    if (!DataUtils.isFromCurrentUser(event)) {
+                    if (!LlcMigrationUtils.isFromCurrentUser(event)) {
                         User user = event.getUser();
                         typingState.put(user.getId(), event);
                         typingUsers.postValue(getCleanedTypingUsers());
                     }
                 } else if (event instanceof TypingStopEvent) {
-                    if (!DataUtils.isFromCurrentUser(event)) {
+                    if (!LlcMigrationUtils.isFromCurrentUser(event)) {
                         User user = event.getUser();
                         typingState.remove(user.getId());
                         typingUsers.postValue(getCleanedTypingUsers());
@@ -894,7 +894,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 return;
             }
 
-            String oldestMessageId = DataUtils.getOldestMessageId(channel);
+            String oldestMessageId = LlcMigrationUtils.getOldestMessageId(channel);
 
             ChannelQueryRequest request = new ChannelQueryRequest().
                     withMessages(Pagination.LESS_THAN,

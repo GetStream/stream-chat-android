@@ -6,9 +6,9 @@ import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
@@ -52,7 +52,7 @@ public class ChannelActivity extends AppCompatActivity
         Intent intent = getIntent();
         String channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
         String channelID = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
-        Client client = StreamChat.getInstance(getApplication());
+        ClientOld client = StreamChat.getInstance(getApplication());
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);

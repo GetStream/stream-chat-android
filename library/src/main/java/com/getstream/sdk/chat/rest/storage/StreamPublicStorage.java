@@ -5,7 +5,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.controller.RetrofitClient;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
@@ -60,7 +60,7 @@ import retrofit2.Response;
 public class StreamPublicStorage extends BaseStorage {
 
 
-    public StreamPublicStorage(Client client, CachedTokenProvider tokenProvider, ApiClientOptions options) {
+    public StreamPublicStorage(ClientOld client, CachedTokenProvider tokenProvider, ApiClientOptions options) {
         super(client);
         mCDNService = RetrofitClient.getAuthorizedCDNClient(tokenProvider, options).create(APIService.class);
     }

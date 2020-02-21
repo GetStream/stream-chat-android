@@ -6,9 +6,10 @@ import android.text.TextUtils;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
+
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
@@ -36,18 +37,18 @@ public class AttachmentDestination extends ChatDestination {
         switch (attachment.getType()) {
             case ModelType.attach_file:
             case ModelType.attach_video:
-                url = attachment.getAssetURL();
+                url = attachment.getAssetUrl();
                 break;
             case ModelType.attach_image:
-                if (attachment.getOgURL() != null) {
-                    url = attachment.getOgURL();
+                if (attachment.getOgUrl() != null) {
+                    url = attachment.getOgUrl();
                     type = ModelType.attach_link;
                 } else {
                     //multiple images case, no single url
                 }
                 break;
             case ModelType.attach_giphy:
-                url = attachment.getThumbURL();
+                url = attachment.getThumbUrl();
                 break;
             case ModelType.attach_product:
                 url = attachment.getUrl();
@@ -72,15 +73,15 @@ public class AttachmentDestination extends ChatDestination {
                 loadFile(attachment);
                 return;
             case ModelType.attach_image:
-                if (attachment.getOgURL() != null) {
-                    url = attachment.getOgURL();
+                if (attachment.getOgUrl() != null) {
+                    url = attachment.getOgUrl();
                     type = ModelType.attach_link;
                 } else {
                     List<String> imageUrls = new ArrayList<>();
                     for (Attachment a : message.getAttachments()) {
-                        if (!a.getType().equals(ModelType.attach_image) || TextUtils.isEmpty(a.getImageURL()))
+                        if (!a.getType().equals(ModelType.attach_image) || TextUtils.isEmpty(a.getImageUrl()))
                             continue;
-                        imageUrls.add(a.getImageURL());
+                        imageUrls.add(a.getImageUrl());
                     }
                     if (imageUrls.isEmpty()) {
                         Utils.showMessage(context, "Invalid image(s)!");
@@ -96,10 +97,10 @@ public class AttachmentDestination extends ChatDestination {
                 }
                 break;
             case ModelType.attach_video:
-                url = attachment.getAssetURL();
+                url = attachment.getAssetUrl();
                 break;
             case ModelType.attach_giphy:
-                url = attachment.getThumbURL();
+                url = attachment.getAssetUrl();
                 break;
             case ModelType.attach_product:
                 url = attachment.getUrl();
@@ -119,8 +120,8 @@ public class AttachmentDestination extends ChatDestination {
 
     private void loadFile(Attachment attachment) {
 
-        String mimeType = attachment.getMime_type();
-        String url = attachment.getAssetURL();
+        String mimeType = attachment.getMimeType();
+        String url = attachment.getAssetUrl();
 
         if (mimeType == null) {
             StreamChat.getLogger().logE(this, "MimeType is null");

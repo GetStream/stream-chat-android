@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.viewmodel;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.core.ChatEventHandler;
 

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.rest.providers;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.logger.StreamLogger;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 

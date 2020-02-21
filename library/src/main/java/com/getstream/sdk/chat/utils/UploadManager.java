@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.utils;
 import android.content.Context;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.UploadAttachment;
+import com.getstream.sdk.chat.model.AttachmentData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,44 +19,47 @@ import io.getstream.chat.android.client.utils.ProgressCallback;
 public class UploadManager {
 
     private Channel channel;
-    private Context context;
-    private List<UploadAttachment> queue = new ArrayList<>();
+    private List<AttachmentData> queue = new ArrayList<>();
 
-    public UploadManager(Channel channel, Context context) {
+    public UploadManager(Channel channel) {
         this.channel = channel;
-        this.context = context;
     }
 
-    public void uploadFile(UploadAttachment attachment, ProgressCallback fileListener) {
+    public void uploadFile(AttachmentData data, ProgressCallback fileListener) {
 
-        queue.add(attachment);
+        queue.add(data);
 
         String type = channel.getType();
         String id = channel.getId();
 
-        StreamChat.getInstance().sendFile(type, id, attachment.file, attachment.mimeType, new ProgressCallback() {
+        StreamChat.getInstance().sendFile(type, id, data.file, data.mimeType, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String path) {
 
-                Attachment a = new Attachment();
+                Attachment attachment = new Attachment();
 
-                if (attachment.type.equals(ModelType.attach_image)) {
-                    //File file = new File(attachment.config.getFilePath());
-                    //attachment.setImageURL(response.getFileUrl());
-                    //attachment.setFallback(file.getName());
+                attachment.setMimeType(data.mimeType);
+                attachment.setFileSize((int) data.file.length());
+                attachment.setName(data.file.getName());
+                attachment.setType(data.type);
+                attachment.setUrl(path);
+
+                if (data.type.equals(ModelType.attach_image)) {
+                    attachment.setImageUrl(path);
+                    attachment.setFallback(data.file.getName());
                 } else {
-                    //attachment.setAssetURL(response.getFileUrl());
+                    attachment.setAssetUrl(path);
                 }
 
-                attachment.isUploaded = true;
-                attachment.uploadedUrl = path;
-                queue.remove(attachment);
+                data.uploaded = attachment;
+
+                queue.remove(data);
                 fileListener.onSuccess(path);
             }
 
             @Override
             public void onError(@NotNull ChatError error) {
-                queue.remove(attachment);
+                queue.remove(data);
                 fileListener.onError(error);
             }
 
@@ -67,44 +70,10 @@ public class UploadManager {
         });
     }
 
-    public void removeFromQueue(UploadAttachment file) {
+    public void removeFromQueue(AttachmentData file) {
         queue.remove(file);
     }
 
-    //    private void fileUploadSuccess(Attachment attachment,
-//                                   UploadFileResponse response,
-//                                   boolean isMedia,
-//                                   UploadFileListener fileListener) {
-//
-//        updateQueue(attachment, false);
-//        if (!attachment.config.isSelected())
-//            return;
-//
-//        if (isMedia && attachment.getType().equals(ModelType.attach_image)) {
-//            File file = new File(attachment.config.getFilePath());
-//            attachment.setImageURL(response.getFileUrl());
-//            attachment.setFallback(file.getName());
-//        } else {
-//            attachment.setAssetURL(response.getFileUrl());
-//        }
-//
-//        attachment.config.setUploaded(true);
-//        fileListener.onSuccess(attachment);
-//    }
-//
-//    private void fileUploadFailed(Attachment attachment, String errMsg, UploadFileListener fileListener) {
-//        Utils.showMessage(context, errMsg);
-//        fileListener.onFailed(attachment);
-//    }
-//
-//    private void fileUploading(com.getstream.sdk.chat.model.Attachment.AttachmentConfig attachment,
-//                               Integer percentage,
-//                               UploadFileListener fileListener) {
-//        attachment.progress = percentage;
-//        fileListener.onProgress(attachment);
-//    }
-//
-//
     public boolean isUploadingFile() {
         return !queue.isEmpty();
     }

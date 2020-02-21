@@ -1,5 +1,5 @@
 package com.getstream.sdk.chat.interfaces;
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 
 /**
  * Interface for Send Message

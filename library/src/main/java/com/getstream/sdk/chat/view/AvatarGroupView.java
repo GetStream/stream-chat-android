@@ -9,9 +9,10 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
@@ -77,10 +78,13 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         }
 
         removeAllViews();
+
+        String image = (String) channel.getExtraData().get("image");
+
         if (user != null) {
             configSingleAvatar(user.getImage(), user.getInitials());
-        } else if (!TextUtils.isEmpty(channel.getImage())) {
-            configSingleAvatar(channel.getImage(), channel.getInitials());
+        } else if (!TextUtils.isEmpty(image)) {
+            configSingleAvatar(image, LlcMigrationUtils.getInitials(channel));
         } else {
             configUserAvatars();
         }

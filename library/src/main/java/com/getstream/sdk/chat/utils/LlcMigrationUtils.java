@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.utils;
 
 
+import android.text.TextUtils;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
@@ -20,7 +22,51 @@ import io.getstream.chat.android.client.models.User;
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
-public class DataUtils {
+public class LlcMigrationUtils {
+
+    private static Map<String, String> reactionTypes;
+
+    public static String getInitials(Channel channel) {
+
+
+
+        String name = (String) channel.getExtraData().get("name");
+        if (name == null) {
+            return "";
+        }
+        String[] names = name.split(" ");
+        String firstName = names[0];
+        String lastName = null;
+        try {
+            lastName = names[1];
+        } catch (Exception e) {
+        }
+
+        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
+            return firstName.substring(0, 1).toUpperCase();
+        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
+            return lastName.substring(0, 1).toUpperCase();
+
+        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
+            return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+        return null;
+    }
+
+    public static Map<String, String> getReactionTypes() {
+        if (reactionTypes == null) {
+            reactionTypes = new HashMap<String, String>() {
+                {
+                    put("like", "\uD83D\uDC4D");
+                    put("love", "\u2764\uFE0F");
+                    put("haha", "\uD83D\uDE02");
+                    put("wow", "\uD83D\uDE32");
+                    put("sad", " \uD83D\uDE41");
+                    put("angry", "\uD83D\uDE21");
+                }
+            };
+        }
+        return reactionTypes;
+    }
 
     public static int getIcon(String mimeType) {
         int fileTyineRes = 0;

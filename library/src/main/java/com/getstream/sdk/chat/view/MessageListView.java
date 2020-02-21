@@ -10,6 +10,10 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
@@ -18,13 +22,9 @@ import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
@@ -122,7 +122,7 @@ public class MessageListView extends RecyclerView {
         setUserClickListener(userClickListener);
         setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
-        adapter.setChannelState(getChannel().getChannelState());
+        adapter.setChannel(getChannel());
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -328,10 +328,15 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
             adapter.setMessageClickListener((message, position) -> {
-                if (message.getSyncStatus() == Sync.LOCAL_FAILED) {
-                    viewModel.sendMessage(message);
-                } else if (message.getReplyCount() > 0) {
+                //TODO: llc check sync cache
+//                if (message.getSyncStatus() == Sync.LOCAL_FAILED) {
+//                    viewModel.sendMessage(message);
+//                } else
+
+                if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
+                }else{
+                    viewModel.sendMessage(message);
                 }
             });
         }
@@ -457,7 +462,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface GiphySendListener {
-        void onGiphySend(Message message, GiphyAction action, MessageCallback callback);
+        void onGiphySend(Message message, GiphyAction action);
     }
 
     public interface UserClickListener {

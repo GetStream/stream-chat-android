@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.UploadAttachment;
+import com.getstream.sdk.chat.model.AttachmentData;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.io.File;
@@ -27,15 +26,15 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
     private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
     private OnAttachmentCancelListener cancelListener;
     private Context context;
-    private List<UploadAttachment> attachments;
+    private List<AttachmentData> attachments;
 
-    public MediaAttachmentSelectedAdapter(Context context, List<UploadAttachment> attachments) {
+    public MediaAttachmentSelectedAdapter(Context context, List<AttachmentData> attachments) {
         this.context = context;
         this.attachments = attachments;
     }
 
     public MediaAttachmentSelectedAdapter(Context context,
-                                          List<UploadAttachment> attachments,
+                                          List<AttachmentData> attachments,
                                           OnAttachmentCancelListener listener) {
         this(context, attachments);
         this.cancelListener = listener;
@@ -62,7 +61,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
     }
 
     public interface OnAttachmentCancelListener {
-        void onCancel(UploadAttachment attachment);
+        void onCancel(AttachmentData attachment);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -73,7 +72,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
             this.binding = binding;
         }
 
-        public void bind(UploadAttachment attachment, final OnAttachmentCancelListener cancelListener) {
+        public void bind(AttachmentData attachment, final OnAttachmentCancelListener cancelListener) {
             int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
 
             binding.ivMedia.setShape(context, new DrawableBuilder()
@@ -90,9 +89,9 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                             .load(imageUri)
                             .into(binding.ivMedia);
                 }
-            } else if (attachment.uploadedUrl != null) {
+            } else if (attachment.isUploaded()) {
                 Glide.with(context)
-                        .load(attachment.uploadedUrl)
+                        .load(attachment.uploaded.getUrl())
                         //TODO: llc check signing
                         //.load(StreamChat.getInstance().getUploadStorage().signGlideUrl(attachment.getImageURL()))
                         .into(binding.ivMedia);
@@ -117,7 +116,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     cancelListener.onCancel(attachment);
             });
 
-            if (attachment.isUploaded) {
+            if (attachment.isUploaded()) {
                 binding.ivMask.setVisibility(View.INVISIBLE);
                 binding.progressBar.setVisibility(View.INVISIBLE);
             } else {

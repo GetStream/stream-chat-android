@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.view.BaseStyle;
 import com.getstream.sdk.chat.view.MessageInputStyle;

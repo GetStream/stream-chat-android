@@ -3,28 +3,24 @@ package com.getstream.sdk.chat.storage;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.room.Transaction;
-
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
+import com.getstream.sdk.chat.rest.core.ClientOld;
 import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.room.Transaction;
 
 import static com.getstream.sdk.chat.storage.Sync.LOCAL_ONLY;
 
@@ -32,7 +28,7 @@ public class StreamStorage implements Storage {
     private static volatile StreamStorage INSTANCE;
     final String TAG = StreamStorage.class.getSimpleName();
     private Boolean enabled;
-    private Client client;
+    private ClientOld client;
     private Context context;
     private ChatDatabase db;
     private MessageDao messageDao;
@@ -41,7 +37,7 @@ public class StreamStorage implements Storage {
     private ChannelsDao channelsDao;
     private QueryChannelsQDao queryChannelsQDao;
 
-    public StreamStorage(Client client, Context context, Boolean enabled) {
+    public StreamStorage(ClientOld client, Context context, Boolean enabled) {
         this.client = client;
         this.context = context;
         this.enabled = enabled;
@@ -54,7 +50,7 @@ public class StreamStorage implements Storage {
         }
     }
 
-    public static StreamStorage getStorage(Client client, final Context context, final boolean enabled) {
+    public static StreamStorage getStorage(ClientOld client, final Context context, final boolean enabled) {
         if (INSTANCE == null) {
             synchronized (StreamStorage.class) {
                 if (INSTANCE == null) {
@@ -301,7 +297,7 @@ public class StreamStorage implements Storage {
             for (String cid : selectedChannelIDs) {
                 Channel channel = channelMap.get(cid);
                 channel.setChannelState(channel.getLastState());
-                channel.setClient(StreamChat.getInstance());
+                //channel.setClient(StreamChat.getInstance());
                 if (channel == null) {
                     StreamChat.getLogger().logW(this, "Missing channel for cid " + cid);
                 } else {
@@ -368,11 +364,11 @@ public class StreamStorage implements Storage {
         }
     }
 
-    public Client getClient() {
+    public ClientOld getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(ClientOld client) {
         this.client = client;
     }
 

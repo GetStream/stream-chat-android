@@ -17,7 +17,7 @@ import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 

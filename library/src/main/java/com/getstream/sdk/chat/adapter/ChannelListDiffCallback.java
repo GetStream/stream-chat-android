@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 
-import static com.getstream.sdk.chat.utils.DataUtils.computeLastMessage;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.computeLastMessage;
 
 public class ChannelListDiffCallback extends DiffUtil.Callback {
     private List<Channel> oldList, newList;

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.storage.converter;
 
 import androidx.room.TypeConverter;
 
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
