@@ -1,23 +1,16 @@
 package io.getstream.chat.android.client.models
 
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 
-class Watcher : UserEntity {
+data class Watcher(val id: String) : UserEntity {
 
-    lateinit var user: User
-    lateinit var createdAt:Date
-
-    override fun equals(obj: Any?): Boolean {
-        if (obj == null) return false
-        if (javaClass != obj.javaClass) {
-            return false
-        }
-        val other = obj as Watcher?
-        return other!!.user.equals(user)
-    }
+    var user: User? = null
+    @SerializedName("created_at")
+    var createdAt: Date? = null
 
     override fun getUserId(): String {
-        return user.id
+        return user!!.id
     }
 }

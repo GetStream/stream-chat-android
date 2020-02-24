@@ -650,6 +650,7 @@ class ChatApiImpl(
         response.channel.read = response.read.orEmpty()
         response.channel.members = response.members.orEmpty()
         response.channel.messages = response.messages.orEmpty()
+        response.channel.watchers = response.watchers.orEmpty()
         return response.channel
     }
 

@@ -33,8 +33,11 @@ class Channel {
 
     lateinit var messages: List<Message>
     lateinit var members: List<Member>
+    lateinit var watchers: List<Watcher>
     lateinit var read: List<ChannelUserRead>
+
     var watcherCount: Int = 0
+
 
     internal lateinit var client: ChatClient
 
