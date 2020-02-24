@@ -8,7 +8,7 @@ import com.getstream.sdk.chat.adapter.BaseMessageListItemViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.model.Attachment;
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
 import java.util.List;

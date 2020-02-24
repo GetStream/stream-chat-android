@@ -4,26 +4,28 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
-
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.enums.FilterObject;
-import com.getstream.sdk.chat.enums.Filters;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
-import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
+import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.FilterObject;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.utils.AppConfig;
 import io.getstream.chat.example.utils.SingleLiveEvent;
 import io.getstream.chat.example.utils.UserConfig;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class MessageSearchVM extends AndroidViewModel {
 
@@ -33,10 +35,8 @@ public class MessageSearchVM extends AndroidViewModel {
     public MutableLiveData<Boolean> isLoading;
     public MutableLiveData<Boolean> isEmpty;
     public MutableLiveData<String> searchQuery;
-    MutableLiveData<List<MessageResponse>> searchResult;
+    MutableLiveData<List<Message>> searchResult;
     SingleLiveEvent<String> onError;
-
-    private ClientOld client;
 
     private Context context;
     private AppConfig appConfig;
@@ -49,11 +49,9 @@ public class MessageSearchVM extends AndroidViewModel {
         appConfig = ((BaseApplication) context.getApplicationContext()).getAppConfig();
 
         initLiveData();
-        initComponents();
     }
 
     void search() {
-
 
 
         UserConfig userConf = appConfig.getCurrentUser();
@@ -87,39 +85,35 @@ public class MessageSearchVM extends AndroidViewModel {
         onError = new SingleLiveEvent<>();
     }
 
-    private void initComponents() {
-        client = StreamChat.getInstance();
-    }
-
     private void loadQueryData(int offset, int limit, UserConfig userConf) {
         String query = searchQuery.getValue();
         if (query != null && !query.isEmpty()) {
             ArrayList<String> searchUsersList = new ArrayList<>();
             searchUsersList.add(userConf.getId());
             FilterObject filter;
+
             if (cid != null) {
-                filter = Filters.in("cid", cid);
+                filter = Filters.INSTANCE.in("cid", cid);
             } else {
-                filter = Filters.in("members", searchUsersList);
+                filter = Filters.INSTANCE.in("members", searchUsersList);
             }
 
-            SearchMessagesRequest searchRequest = new SearchMessagesRequest(filter, query)
-                    .withLimit(limit)
-                    .withOffset(offset);
+            SearchMessagesRequest searchRequest = new SearchMessagesRequest(query, offset, limit, filter);
 
             isLoading.setValue(true);
-            client.searchMessages(searchRequest, new SearchMessagesCallback() {
-                @Override
-                public void onSuccess(SearchMessagesResponse response) {
-                    Log.d(TAG, response.toString());
-                    onSearchMessagesLoaded(response);
-                }
 
+            StreamChat.getInstance().searchMessages(searchRequest).enqueue(new Function1<Result<List<Message>>, Unit>() {
                 @Override
-                public void onError(String errMsg, int errCode) {
-                    Log.e(TAG, errMsg);
-                    onError.setValue(errMsg);
-                    isLoading.setValue(false);
+                public Unit invoke(Result<List<Message>> result) {
+
+                    if (result.isSuccess()) {
+                        onSearchMessagesLoaded(result.data());
+                    } else {
+                        onError.setValue(result.error().getMessage());
+                        isLoading.setValue(false);
+                    }
+
+                    return null;
                 }
             });
         } else {
@@ -127,10 +121,9 @@ public class MessageSearchVM extends AndroidViewModel {
         }
     }
 
-    private void onSearchMessagesLoaded(SearchMessagesResponse response) {
-        List<MessageResponse> result = response.getResults();
-        searchResult.setValue(result);
+    private void onSearchMessagesLoaded(List<Message> messages) {
+        searchResult.setValue(messages);
         isLoading.setValue(false);
-        isEmpty.setValue(result.isEmpty());
+        isEmpty.setValue(messages.isEmpty());
     }
 }

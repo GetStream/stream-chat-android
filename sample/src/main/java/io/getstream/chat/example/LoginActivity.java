@@ -1,22 +1,21 @@
 package io.getstream.chat.example;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import androidx.appcompat.app.AppCompatActivity;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.example.adapter.UserListItemAdapter;
 import io.getstream.chat.example.navigation.HomeDestination;
 import io.getstream.chat.example.utils.AppConfig;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -67,17 +66,14 @@ public class LoginActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            StreamChat.getInstance(getApplicationContext()).addDevice(task.getResult().getToken(), new CompletableCallback() {
+                            StreamChat.getInstance().addDevice(task.getResult().getToken()).enqueue(new Function1<Result<Unit>, Unit>() {
                                 @Override
-                                public void onSuccess(CompletableResponse response) {
-                                    // device is now registered!
-                                }
-
-                                @Override
-                                public void onError(String errMsg, int errCode) {
-                                    // something went wrong registering this device, ouch!
+                                public Unit invoke(Result<Unit> unitResult) {
+                                    return null;
                                 }
                             });
+
+
                         }
                 );
     }

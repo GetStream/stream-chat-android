@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.rest.adapter;
 
-import com.getstream.sdk.chat.model.Attachment;
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.ModelType;
 import io.getstream.chat.android.client.models.Reaction;

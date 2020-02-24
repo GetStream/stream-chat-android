@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.adapter;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
+import io.getstream.chat.android.client.models.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
@@ -22,53 +22,53 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
 
         HashMap<String, Object> data = new HashMap<>();
 
-        if (attachment.getExtraData() != null && !attachment.getExtraData().isEmpty())
-            for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
-                data.put(set.getKey(), set.getValue());
-
-        if (attachment.getTitle() != null)
-            data.put("title", attachment.getTitle());
-
-        if (attachment.getAuthor() != null)
-            data.put("author_name", attachment.getAuthor());
-
-        if (attachment.getText() != null)
-            data.put("text", attachment.getText());
-
-        if (attachment.getType() != null)
-            data.put("type", attachment.getType());
-
-        if (attachment.getImage() != null)
-            data.put("image", attachment.getImage());
-
-        if (attachment.getUrl() != null)
-            data.put("url", attachment.getUrl());
-
-        if (attachment.getName() != null)
-            data.put("name", attachment.getName());
-
-        if (attachment.getTitleLink() != null)
-            data.put("title_link", attachment.getTitleLink());
-
-        if (attachment.getThumbURL() != null)
-            data.put("thumb_url", attachment.getThumbURL());
-
-        if (attachment.getFallback() != null)
-            data.put("fallback", attachment.getFallback());
-
-        if (attachment.getImageURL() != null)
-            data.put("image_url", attachment.getImageURL());
-
-        if (attachment.getAssetURL() != null)
-            data.put("asset_url", attachment.getAssetURL());
-
-        if (attachment.getOgURL() != null)
-            data.put("og_scrape_url", attachment.getOgURL());
-
-        if (attachment.getMime_type() != null)
-            data.put("mime_type", attachment.getMime_type());
-
-        data.put("file_size", attachment.getFile_size());
+//        if (attachment.getExtraData() != null && !attachment.getExtraData().isEmpty())
+//            for (Map.Entry<String, Object> set : attachment.getExtraData().entrySet())
+//                data.put(set.getKey(), set.getValue());
+//
+//        if (attachment.getTitle() != null)
+//            data.put("title", attachment.getTitle());
+//
+//        if (attachment.getAuthor() != null)
+//            data.put("author_name", attachment.getAuthor());
+//
+//        if (attachment.getText() != null)
+//            data.put("text", attachment.getText());
+//
+//        if (attachment.getType() != null)
+//            data.put("type", attachment.getType());
+//
+//        if (attachment.getImage() != null)
+//            data.put("image", attachment.getImage());
+//
+//        if (attachment.getUrl() != null)
+//            data.put("url", attachment.getUrl());
+//
+//        if (attachment.getName() != null)
+//            data.put("name", attachment.getName());
+//
+//        if (attachment.getTitleLink() != null)
+//            data.put("title_link", attachment.getTitleLink());
+//
+//        if (attachment.getThumbURL() != null)
+//            data.put("thumb_url", attachment.getThumbURL());
+//
+//        if (attachment.getFallback() != null)
+//            data.put("fallback", attachment.getFallback());
+//
+//        if (attachment.getImageURL() != null)
+//            data.put("image_url", attachment.getImageURL());
+//
+//        if (attachment.getAssetURL() != null)
+//            data.put("asset_url", attachment.getAssetURL());
+//
+//        if (attachment.getOgURL() != null)
+//            data.put("og_scrape_url", attachment.getOgURL());
+//
+//        if (attachment.getMime_type() != null)
+//            data.put("mime_type", attachment.getMime_type());
+//
+//        data.put("file_size", attachment.getFile_size());
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
@@ -89,64 +89,64 @@ public class AttachmentGsonAdapter extends TypeAdapter<Attachment> {
         Attachment attachment = new Attachment();
         HashMap<String, Object> extraData = new HashMap<>();
 
-        for (HashMap.Entry<String, Object> set : value.entrySet()) {
-            String json = gson.toJson(set.getValue());
-            // Set Reserved Data
-            switch (set.getKey()) {
-                case "title":
-                    attachment.setTitle((String) set.getValue());
-                    continue;
-                case "author_name":
-                    attachment.setAuthor((String) set.getValue());
-                    continue;
-                case "text":
-                    attachment.setText((String) set.getValue());
-                    continue;
-                case "type":
-                    attachment.setType((String) set.getValue());
-                    continue;
-                case "image":
-                    attachment.setImage((String) set.getValue());
-                    continue;
-                case "url":
-                    attachment.setUrl((String) set.getValue());
-                    continue;
-                case "name":
-                    attachment.setName((String) set.getValue());
-                    continue;
-                case "title_link":
-                    attachment.setTitleLink((String) set.getValue());
-                    continue;
-                case "thumb_url":
-                    attachment.setThumbURL((String) set.getValue());
-                    continue;
-                case "fallback":
-                    attachment.setFallback((String) set.getValue());
-                    continue;
-                case "image_url":
-                    attachment.setImageURL((String) set.getValue());
-                    continue;
-                case "asset_url":
-                    attachment.setAssetURL((String) set.getValue());
-                    continue;
-                case "og_scrape_url":
-                    attachment.setOgURL((String) set.getValue());
-                    continue;
-                case "mime_type":
-                    attachment.setMime_type((String) set.getValue());
-                    continue;
-                case "file_size":
-                    try {
-                        double fileSize = (Double) set.getValue();
-                        attachment.setFile_size((int)fileSize);
-                    }catch (Exception e){
-                        StreamChat.getLogger().logT(this, e);
-                    }
-                    continue;
-            }
-            // Set Extra Data
-            extraData.put(set.getKey(), set.getValue());
-        }
+//        for (HashMap.Entry<String, Object> set : value.entrySet()) {
+//            String json = gson.toJson(set.getValue());
+//            // Set Reserved Data
+//            switch (set.getKey()) {
+//                case "title":
+//                    attachment.setTitle((String) set.getValue());
+//                    continue;
+//                case "author_name":
+//                    attachment.setAuthor((String) set.getValue());
+//                    continue;
+//                case "text":
+//                    attachment.setText((String) set.getValue());
+//                    continue;
+//                case "type":
+//                    attachment.setType((String) set.getValue());
+//                    continue;
+//                case "image":
+//                    attachment.setImage((String) set.getValue());
+//                    continue;
+//                case "url":
+//                    attachment.setUrl((String) set.getValue());
+//                    continue;
+//                case "name":
+//                    attachment.setName((String) set.getValue());
+//                    continue;
+//                case "title_link":
+//                    attachment.setTitleLink((String) set.getValue());
+//                    continue;
+//                case "thumb_url":
+//                    attachment.setThumbURL((String) set.getValue());
+//                    continue;
+//                case "fallback":
+//                    attachment.setFallback((String) set.getValue());
+//                    continue;
+//                case "image_url":
+//                    attachment.setImageURL((String) set.getValue());
+//                    continue;
+//                case "asset_url":
+//                    attachment.setAssetURL((String) set.getValue());
+//                    continue;
+//                case "og_scrape_url":
+//                    attachment.setOgURL((String) set.getValue());
+//                    continue;
+//                case "mime_type":
+//                    attachment.setMime_type((String) set.getValue());
+//                    continue;
+//                case "file_size":
+//                    try {
+//                        double fileSize = (Double) set.getValue();
+//                        attachment.setFile_size((int)fileSize);
+//                    }catch (Exception e){
+//                        StreamChat.getLogger().logT(this, e);
+//                    }
+//                    continue;
+//            }
+//            // Set Extra Data
+//            extraData.put(set.getKey(), set.getValue());
+//        }
 
         if (attachment.getType() == null)
             attachment.setType(ModelType.attach_unknown);

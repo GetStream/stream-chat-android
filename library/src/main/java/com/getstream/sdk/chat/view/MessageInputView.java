@@ -47,6 +47,9 @@ import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 import static java.util.UUID.randomUUID;
 
@@ -347,7 +350,7 @@ public class MessageInputView extends RelativeLayout {
      * Prepare message takes the message input string and returns a message object
      * You can overwrite this method in case you want to attach more custom properties to the message
      */
-    private Call<io.getstream.chat.android.client.models.Message> onSendMessage(Message message) {
+    private Call<Message> onSendMessage(Message message) {
 
         Call<io.getstream.chat.android.client.models.Message> call;
         binding.ivSend.setEnabled(false);
@@ -360,6 +363,16 @@ public class MessageInputView extends RelativeLayout {
         return call;
     }
 
+    protected void sendMessage(Message message) {
+        onSendMessage(message).enqueue(new Function1<Result<Message>, Unit>() {
+            @Override
+            public Unit invoke(Result<Message> result) {
+                handleSentMessage(result);
+                return null;
+            }
+        });
+    }
+
     private Message getNewMessage() {
         Message message = new Message();
         message.setText(getMessageText());
@@ -369,23 +382,25 @@ public class MessageInputView extends RelativeLayout {
     protected void onSendMessage() {
         Message message = isEdit() ? getEditMessage() : getNewMessage();
         onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message)).enqueue(result -> {
-
-            if (result.isSuccess()) {
-                if (messageSendListener != null)
-                    messageSendListener.onSendMessageSuccess(message);
-                initSendMessage();
-                if (isEdit()) clearFocus();
-            } else {
-                if (messageSendListener != null)
-                    messageSendListener.onSendMessageError(result.error());
-                initSendMessage();
-                if (isEdit()) clearFocus();
-            }
-
+            handleSentMessage(result);
             return null;
         });
         if (isEdit())
             Utils.hideSoftKeyboard((Activity) getContext());
+    }
+
+    private void handleSentMessage(Result<Message> result) {
+        if (result.isSuccess()) {
+            if (messageSendListener != null)
+                messageSendListener.onSendMessageSuccess(result.data());
+            initSendMessage();
+            if (isEdit()) clearFocus();
+        } else {
+            if (messageSendListener != null)
+                messageSendListener.onSendMessageError(result.error());
+            initSendMessage();
+            if (isEdit()) clearFocus();
+        }
     }
 
     private void initSendMessage() {
@@ -466,7 +481,7 @@ public class MessageInputView extends RelativeLayout {
         setMessageText(message.getText());
         binding.etMessage.requestFocus();
 
-        List<AttachmentMetaData> attachments = LlcMigrationUtils.getAttachments(message);
+        List<AttachmentMetaData> attachments = LlcMigrationUtils.getMetaAttachments(message);
         if (!attachments.isEmpty())
             binding.ivOpenAttach.setVisibility(GONE);
         // Set Attachments to Inputbox

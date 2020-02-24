@@ -5,11 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -21,10 +16,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 import io.getstream.chat.example.navigation.SearchDestination;
-import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
@@ -52,7 +51,7 @@ public class ChannelActivity extends AppCompatActivity
         Intent intent = getIntent();
         String channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
         String channelID = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
-        ClientOld client = StreamChat.getInstance(getApplication());
+        ChatClient client = StreamChat.getInstance();
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
@@ -63,7 +62,9 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageInput.setMessageText(messageText);
         }
 
-        Channel channel = client.channel(channelType, channelID);
+        Channel channel = new Channel();
+        channel.setType(channelType);
+        channel.setId(channelID);
 
         // setup the viewmodel, remember to also set the channel
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);

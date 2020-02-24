@@ -13,6 +13,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
 import com.getstream.sdk.chat.model.ModelType;
 
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
@@ -52,25 +53,25 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
             message.setText(getMessageText());
             // if you want to set custom data, uncomment the line below.
             // setExtraData(message);
-            onSendMessage(message);
+            sendMessage(message);
         });
         // Send Image Message
         binding.btnImage.setOnClickListener(view -> {
             Message message = new Message();
             message.getAttachments().addAll(getAttachments(ModelType.attach_image));
-            onSendMessage(message);
+            sendMessage(message);
         });
         // Send Giphy Message
         binding.btnGif.setOnClickListener(view -> {
             Message message = new Message();
             message.getAttachments().addAll(getAttachments(ModelType.attach_giphy));
-            onSendMessage(message);
+            sendMessage(message);
         });
         // Send File Message
         binding.btnFile.setOnClickListener(view -> {
             Message message = new Message();
             message.getAttachments().addAll(getAttachments(ModelType.attach_file));
-            onSendMessage(message);
+            sendMessage(message);
         });
     }
 
@@ -97,9 +98,9 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
     }
 
     @Override
-    public void onSendMessageError(String errMsg) {
+    public void onSendMessageError(ChatError error) {
         binding.etMessage.setText("");
-        Log.d(TAG, "Failed send message! :" + errMsg);
+        Log.d(TAG, "Failed send message! :" + error.getMessage());
     }
 
     @Override

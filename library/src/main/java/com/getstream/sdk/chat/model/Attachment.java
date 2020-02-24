@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
@@ -17,7 +18,7 @@ import androidx.room.TypeConverters;
  */
 @JsonAdapter(AttachmentGsonAdapter.class)
 public class Attachment {
-    public AttachmentMetaData config = new AttachmentMetaData(); // Local file Attach Config
+    public AttachmentMetaData config = new AttachmentMetaData(new File("")); // Local file Attach Config
     @SerializedName("title")
     @Expose
     private String title;

@@ -4,7 +4,7 @@ import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.FilterObjectAdapter;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.getstream.sdk.chat.enums.QuerySortAdapter;
-import com.getstream.sdk.chat.model.Attachment;
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.Message;

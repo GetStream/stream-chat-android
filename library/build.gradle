@@ -86,7 +86,7 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
     implementation 'androidx.room:room-runtime:2.1.0'
-    annotationProcessor 'androidx.room:room-compiler:2.1.0'
+    //annotationProcessor 'androidx.room:room-compiler:2.1.0'
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"

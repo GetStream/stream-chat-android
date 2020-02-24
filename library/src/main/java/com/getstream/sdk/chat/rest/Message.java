@@ -12,7 +12,7 @@ import androidx.room.RoomWarnings;
 import androidx.room.TypeConverters;
 
 import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.model.Attachment;
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Reaction;
 import com.getstream.sdk.chat.rest.adapter.MessageGsonAdapter;

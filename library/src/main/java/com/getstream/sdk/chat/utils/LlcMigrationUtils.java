@@ -32,13 +32,18 @@ public class LlcMigrationUtils {
         return result;
     }
 
-    public static List<AttachmentMetaData> getAttachments(Message message) {
+    public static List<AttachmentMetaData> getMetaAttachments(Message message) {
+        return getMetaAttachments(message.getAttachments());
+    }
+
+    public static List<AttachmentMetaData> getMetaAttachments(List<Attachment> attachments) {
         List<AttachmentMetaData> result = new ArrayList<>();
-        for (Attachment attachment : message.getAttachments()) {
+        for (Attachment attachment : attachments) {
             result.add(new AttachmentMetaData(attachment));
         }
         return result;
     }
+
 
     public static String getFileSizeHumanized(Attachment attachment) {
         int size = attachment.getFileSize();
