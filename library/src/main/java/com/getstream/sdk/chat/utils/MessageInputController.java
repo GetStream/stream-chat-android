@@ -21,7 +21,7 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.AttachmentData;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -35,10 +35,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Command;
-import io.getstream.chat.android.client.models.Member;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 
 public class MessageInputController {
@@ -58,10 +55,10 @@ public class MessageInputController {
     private StreamViewMessageInputBinding binding;
 
     private MessageInputType messageInputType;
-    private List<AttachmentData> selectedAttachments = new ArrayList<>();
+    private List<AttachmentMetaData> selectedAttachments = new ArrayList<>();
     private MessageInputView.AttachmentListener attachmentListener;
 
-    private List<AttachmentData> attachmentData;
+    private List<AttachmentMetaData> attachmentData;
     private UploadManager uploadManager;
     // region Attachment
 
@@ -79,7 +76,7 @@ public class MessageInputController {
         uploadManager = new UploadManager(channel);
     }
 
-    public List<AttachmentData> getSelectedAttachments() {
+    public List<AttachmentMetaData> getSelectedAttachments() {
         return selectedAttachments;
     }
 
@@ -87,7 +84,7 @@ public class MessageInputController {
         return uploadManager.isUploadingFile();
     }
 
-    public void setSelectedAttachments(List<AttachmentData> selectedAttachments) {
+    public void setSelectedAttachments(List<AttachmentMetaData> selectedAttachments) {
         this.selectedAttachments = selectedAttachments;
     }
 
@@ -220,7 +217,7 @@ public class MessageInputController {
         }
     }
 
-    private void uploadOrCancelAttachment(AttachmentData attachment,
+    private void uploadOrCancelAttachment(AttachmentMetaData attachment,
                                           boolean isMedia) {
         if (!attachment.isSelected) {
             uploadAttachment(attachment, true, isMedia);
@@ -238,7 +235,7 @@ public class MessageInputController {
         return false;
     }
 
-    private void uploadAttachment(AttachmentData attachment, boolean fromGallery, boolean isMedia) {
+    private void uploadAttachment(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
         if (isOverMaxUploadFileSize(new File(attachment.file.getPath()), true))
             return;
         attachment.isSelected = true;
@@ -255,7 +252,7 @@ public class MessageInputController {
         configSendButtonEnableState();
     }
 
-    private void uploadFile(AttachmentData attachment, boolean fromGallery, boolean isMedia) {
+    private void uploadFile(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
 
         uploadManager.uploadFile(attachment, new ProgressCallback() {
             @Override
@@ -278,13 +275,13 @@ public class MessageInputController {
         });
     }
 
-    private void uploadedFileProgress(AttachmentData attachment) {
+    private void uploadedFileProgress(AttachmentMetaData attachment) {
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
         configSendButtonEnableState();
     }
 
-    private void cancelAttachment(AttachmentData attachment, boolean fromGallery, boolean isMedia) {
+    private void cancelAttachment(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
         attachment.isSelected = false;
         selectedAttachments.remove(attachment);
         uploadManager.removeFromQueue(attachment);
@@ -309,7 +306,7 @@ public class MessageInputController {
             binding.lvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    public void onClickOpenSelectView(@Nullable List<AttachmentData> editAttachments, boolean isMedia) {
+    public void onClickOpenSelectView(@Nullable List<AttachmentMetaData> editAttachments, boolean isMedia) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
@@ -327,7 +324,7 @@ public class MessageInputController {
         }
     }
 
-    private void totalAttachmentAdapterChanged(@Nullable AttachmentData attachment, boolean isMedia) {
+    private void totalAttachmentAdapterChanged(@Nullable AttachmentMetaData attachment, boolean isMedia) {
         if (isMedia) {
             if (attachment == null) {
                 mediaAttachmentAdapter.notifyDataSetChanged();
@@ -340,7 +337,7 @@ public class MessageInputController {
             fileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void selectedAttachmentAdapterChanged(@Nullable AttachmentData attachment,
+    private void selectedAttachmentAdapterChanged(@Nullable AttachmentMetaData attachment,
                                                   boolean fromGallery,
                                                   boolean isMedia) {
         if (isMedia) {
@@ -399,7 +396,7 @@ public class MessageInputController {
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
-        AttachmentData attachment = new AttachmentData();
+        AttachmentMetaData attachment = new AttachmentMetaData(file);
         attachment.file = file;
         if (isImage) {
             attachment.type = ModelType.attach_image;

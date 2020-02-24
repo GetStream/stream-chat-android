@@ -70,13 +70,13 @@ public class UserGsonAdapter extends TypeAdapter<User> {
                     user.setRole((String) set.getValue());
                     continue;
                 case "created_at":
-                    user.setCreatedAt(gson.fromJson(json, Date.class));
+                    //user.setCreatedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "updated_at":
-                    user.setUpdatedAt(gson.fromJson(json, Date.class));
+                    //user.setUpdatedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "last_active":
-                    user.setLastActive(gson.fromJson(json, Date.class));
+                    //user.setLastActive(gson.fromJson(json, Date.class));
                     continue;
                 case "online":
                     user.setOnline(gson.fromJson(json, Boolean.class));

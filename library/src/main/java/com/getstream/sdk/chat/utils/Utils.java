@@ -28,7 +28,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.AttachmentData;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +46,7 @@ public class Utils {
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     private static String TAG = Utils.class.getSimpleName();
-    public static List<AttachmentData> attachments = new ArrayList<>();
+    public static List<AttachmentMetaData> attachments = new ArrayList<>();
 
     public static String readInputStream(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
@@ -140,7 +140,7 @@ public class Utils {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static List<AttachmentData> getFileAttachments(File dir) {
+    public static List<AttachmentMetaData> getFileAttachments(File dir) {
         String pdfPattern = ".pdf";
         String pptPattern = ".ppt";
         String csvPattern = ".csv";
@@ -159,7 +159,7 @@ public class Utils {
                 if (file.isDirectory()) {
                     getFileAttachments(file);
                 } else {
-                    AttachmentData attachment = new AttachmentData();
+                    AttachmentMetaData attachment = new AttachmentMetaData(file);
                     String mimeType = "";
                     if (file.getName().endsWith(pdfPattern)) {
                         mimeType = ModelType.attach_mime_pdf;
@@ -194,7 +194,7 @@ public class Utils {
         return attachments;
     }
 
-    public static List<AttachmentData> getMediaAttachments(Context context) {
+    public static List<AttachmentMetaData> getMediaAttachments(Context context) {
         String[] columns = {MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,
@@ -230,10 +230,10 @@ public class Utils {
         int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
         int count = imagecursor.getCount();
 
-        ArrayList<AttachmentData> attachments = new ArrayList<>();
+        ArrayList<AttachmentMetaData> attachments = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
-            AttachmentData attachment = new AttachmentData();
+
             imagecursor.moveToPosition(i);
             int id = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
@@ -241,7 +241,7 @@ public class Utils {
             int t = imagecursor.getInt(type);
             File file = new File(imagecursor.getString(dataColumnIndex));
             if (!file.exists()) continue;
-            attachment.file = new File(imagecursor.getString(dataColumnIndex));
+            AttachmentMetaData attachment = new AttachmentMetaData(new File(imagecursor.getString(dataColumnIndex)));
             if (t == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.type = ModelType.attach_image;
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {
@@ -255,7 +255,7 @@ public class Utils {
         return attachments;
     }
 
-    public static void configFileAttachment(AttachmentData attachment,
+    public static void configFileAttachment(AttachmentMetaData attachment,
                                             File file,
                                             String type,
                                             String mimeType) {

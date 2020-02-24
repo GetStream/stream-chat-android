@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.AttachmentData;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
@@ -23,8 +23,8 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
     private final String TAG = MediaAttachmentAdapter.class.getSimpleName();
     private final OnItemClickListener listener;
     private Context context;
-    private List<AttachmentData> mediaPaths;
-    public MediaAttachmentAdapter(Context context, List<AttachmentData> mediaPaths, OnItemClickListener listener) {
+    private List<AttachmentMetaData> mediaPaths;
+    public MediaAttachmentAdapter(Context context, List<AttachmentMetaData> mediaPaths, OnItemClickListener listener) {
         this.context = context;
         this.mediaPaths = mediaPaths;
         this.listener = listener;
@@ -63,7 +63,7 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             this.binding = binding;
         }
 
-        public void bind(AttachmentData attachment, final OnItemClickListener listener) {
+        public void bind(AttachmentMetaData attachment, final OnItemClickListener listener) {
             File file = new File(attachment.file.getPath());
             Uri imageUri = Uri.fromFile(file);
             Glide.with(context)

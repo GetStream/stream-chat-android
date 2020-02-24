@@ -6,84 +6,27 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.getstream.sdk.chat.ConnectionLiveData;
 import com.getstream.sdk.chat.EventSubscriberRegistry;
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.ClientErrorCode;
 import com.getstream.sdk.chat.enums.EventType;
 import com.getstream.sdk.chat.enums.QuerySort;
-import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
-import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
-import com.getstream.sdk.chat.interfaces.TokenProvider;
-import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import io.getstream.chat.android.client.models.Channel;
+import com.getstream.sdk.chat.interfaces.*;
 import com.getstream.sdk.chat.model.Config;
 import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.model.PaginationOptions;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.controller.APIService;
 import com.getstream.sdk.chat.rest.core.providers.ApiServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.StorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamApiServiceProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamStorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamUploadStorageProvider;
-import com.getstream.sdk.chat.rest.core.providers.StreamWebSocketServiceProvider;
 import com.getstream.sdk.chat.rest.core.providers.UploadStorageProvider;
 import com.getstream.sdk.chat.rest.core.providers.WebSocketServiceProvider;
-import com.getstream.sdk.chat.rest.interfaces.ChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.interfaces.EventCallback;
-import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetDevicesCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetReactionsCallback;
-import com.getstream.sdk.chat.rest.interfaces.GetRepliesCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.interfaces.MuteUserCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
-import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
-import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
-import com.getstream.sdk.chat.rest.request.AcceptInviteRequest;
-import com.getstream.sdk.chat.rest.request.AddDeviceRequest;
-import com.getstream.sdk.chat.rest.request.AddMembersRequest;
-import com.getstream.sdk.chat.rest.request.BanUserRequest;
-import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
-import com.getstream.sdk.chat.rest.request.GuestUserRequest;
-import com.getstream.sdk.chat.rest.request.HideChannelRequest;
-import com.getstream.sdk.chat.rest.request.MarkReadRequest;
-import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
-import com.getstream.sdk.chat.rest.request.QueryUserRequest;
-import com.getstream.sdk.chat.rest.request.ReactionRequest;
-import com.getstream.sdk.chat.rest.request.RejectInviteRequest;
-import com.getstream.sdk.chat.rest.request.RemoveMembersRequest;
-import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
-import com.getstream.sdk.chat.rest.request.SendActionRequest;
-import com.getstream.sdk.chat.rest.request.SendEventRequest;
-import com.getstream.sdk.chat.rest.request.UpdateChannelRequest;
-import com.getstream.sdk.chat.rest.response.ChannelResponse;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
-import com.getstream.sdk.chat.rest.response.ErrorResponse;
-import com.getstream.sdk.chat.rest.response.EventResponse;
-import com.getstream.sdk.chat.rest.response.FlagResponse;
-import com.getstream.sdk.chat.rest.response.GetDevicesResponse;
-import com.getstream.sdk.chat.rest.response.GetReactionsResponse;
-import com.getstream.sdk.chat.rest.response.GetRepliesResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.rest.response.MuteUserResponse;
-import com.getstream.sdk.chat.rest.response.QueryChannelsResponse;
-import com.getstream.sdk.chat.rest.response.QueryUserListResponse;
-import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
-import com.getstream.sdk.chat.rest.response.TokenResponse;
-import com.getstream.sdk.chat.rest.response.WsErrorMessage;
+import com.getstream.sdk.chat.rest.interfaces.*;
+import com.getstream.sdk.chat.rest.request.*;
+import com.getstream.sdk.chat.rest.response.*;
 import com.getstream.sdk.chat.rest.storage.BaseStorage;
 import com.getstream.sdk.chat.storage.Storage;
 
@@ -94,21 +37,18 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import androidx.annotation.NonNull;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.getstream.sdk.chat.enums.Filters.and;
 import static com.getstream.sdk.chat.enums.Filters.in;
-import static com.getstream.sdk.chat.storage.Sync.LOCAL_FAILED;
-import static com.getstream.sdk.chat.storage.Sync.SYNCED;
 import static java.util.UUID.randomUUID;
 
 public class ClientOld implements WSResponseHandler {
@@ -317,25 +257,25 @@ public class ClientOld implements WSResponseHandler {
         }
     }
 
-    public ClientOld(String apiKey, ApiClientOptions options) {
-        this(apiKey,
-                options,
-                new StreamApiServiceProvider(options),
-                new StreamWebSocketServiceProvider(options, apiKey),
-                new StreamUploadStorageProvider(options),
-                new StreamStorageProvider(),
-                null);
-    }
-
-    public ClientOld(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
-        this(apiKey,
-                options,
-                new StreamApiServiceProvider(options),
-                new StreamWebSocketServiceProvider(options, apiKey),
-                new StreamUploadStorageProvider(options),
-                new StreamStorageProvider(),
-                connectionLiveData);
-    }
+//    public ClientOld(String apiKey, ApiClientOptions options) {
+//        this(apiKey,
+//                options,
+//                new StreamApiServiceProvider(options),
+//                new StreamWebSocketServiceProvider(options, apiKey),
+//                new StreamUploadStorageProvider(options),
+//                new StreamStorageProvider(),
+//                null);
+//    }
+//
+//    public ClientOld(String apiKey, ApiClientOptions options, ConnectionLiveData connectionLiveData) {
+//        this(apiKey,
+//                options,
+//                new StreamApiServiceProvider(options),
+//                new StreamWebSocketServiceProvider(options, apiKey),
+//                new StreamUploadStorageProvider(options),
+//                new StreamStorageProvider(),
+//                connectionLiveData);
+//    }
 
     public Storage getStorage() {
         if (storage == null) {

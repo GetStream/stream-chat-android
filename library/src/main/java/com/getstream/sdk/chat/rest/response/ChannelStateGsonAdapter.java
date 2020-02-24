@@ -37,7 +37,7 @@ public class ChannelStateGsonAdapter extends TypeAdapter<ChannelState> {
         }
 
         /*Set ChannelState to Channel*/
-        channelState.getChannel().setChannelState(channelState);
+        //channelState.getChannel().setChannelState(channelState);
 
         return channelState;
     }

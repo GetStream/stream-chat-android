@@ -98,7 +98,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         sort = new QuerySort().desc("last_message_at");
 
         setupConnectionRecovery();
-        setEventHandler(new EventHandlerOld(this, (event, channel) -> false));
+        initEventHandlers();
 
         new StreamLifecycleObserver(this);
         retryLooper = new Handler();
@@ -271,18 +271,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 //        });
     }
 
-    protected EventHandlerOld eventHandler;
-
-    public void setEventInterceptor(EventInterceptor interceptor) {
-        this.eventHandler = new EventHandlerOld(this, interceptor);
-        initEventHandlers();
-    }
-
-    protected void setEventHandler(EventHandlerOld eventHandler) {
-        this.eventHandler = eventHandler;
-        initEventHandlers();
-    }
-
     /*
      * EventInterceptor implementations will receive all events (and channel when applicable) to add
      * custom behavior.
@@ -299,7 +287,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     private Subscription subscription;
 
-    synchronized protected void initEventHandlers() {
+    protected void initEventHandlers() {
         subscription = StreamChat.getInstance().events().subscribe(event -> {
 
             if (event instanceof NewMessageEvent) {

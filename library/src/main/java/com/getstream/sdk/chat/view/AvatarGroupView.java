@@ -9,8 +9,6 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.getstream.sdk.chat.StreamChat;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
@@ -21,6 +19,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.User;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
@@ -138,7 +138,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                 }
             }
         } else {
-            configSingleAvatar(channel.getImage(), channel.getInitials());
+
+            String initials = LlcMigrationUtils.getInitials(channel);
+            String image = LlcMigrationUtils.getImage(channel);
+
+            configSingleAvatar(image, initials);
         }
     }
 
@@ -161,7 +165,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
-                    .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(image))
+                    .load(StreamChat.signGlideUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 

@@ -83,10 +83,10 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     channel.setUpdatedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "frozen":
-                    channel.setFrozen((boolean) set.getValue());
+                    //channel.setFrozen((boolean) set.getValue());
                     continue;
                 case "config":
-                    channel.setConfig(new Gson().fromJson(json, Config.class));
+                    //channel.setConfig(new Gson().fromJson(json, Config.class));
                     continue;
                 case "member_count":
                     continue;

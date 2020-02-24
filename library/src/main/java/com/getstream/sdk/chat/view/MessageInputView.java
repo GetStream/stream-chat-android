@@ -22,18 +22,15 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.AttachmentData;
 import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.*;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +42,6 @@ import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.models.Attachment;
@@ -215,7 +211,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private void configSendButtonEnableState() {
-        List<Attachment> attachments = messageInputController.getSelectedAttachments();
+        List<AttachmentMetaData> attachments = messageInputController.getSelectedAttachments();
         boolean hasAttachment = attachments != null && !attachments.isEmpty();
         boolean notEmptyMessage = !StringUtility.isEmptyTextMessage(getMessageText()) || (!messageInputController.isUploadingFile() && hasAttachment);
         binding.setActiveMessageSend(notEmptyMessage);
@@ -225,15 +221,15 @@ public class MessageInputView extends RelativeLayout {
         // TODO: make the attachment UI into it's own view and allow you to change it.
         messageInputController = new MessageInputController(getContext(), binding, this.viewModel, style, attachment -> {
             if (binding.ivSend.isEnabled()) return;
-            for (AttachmentData attachment_ : messageInputController.getSelectedAttachments())
-                if (!attachment_.isUploaded)
+            for (AttachmentMetaData attachment_ : messageInputController.getSelectedAttachments())
+                if (!attachment_.isUploaded())
                     return;
 
             onSendMessage();
         });
         binding.rvMedia.setLayoutManager(new GridLayoutManager(getContext(), 4, RecyclerView.VERTICAL, false));
         binding.rvMedia.hasFixedSize();
-        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
+        binding.rvComposer.setLayoutManager(new GridLayoutManager(getContext(), 1, RecyclerView.HORIZONTAL, false));
         int spanCount = 4;  // 4 columns
         int spacing = 2;    // 1 px
         boolean includeEdge = false;
@@ -352,38 +348,44 @@ public class MessageInputView extends RelativeLayout {
      * You can overwrite this method in case you want to attach more custom properties to the message
      */
     private Call<io.getstream.chat.android.client.models.Message> onSendMessage(Message message) {
+
+        Call<io.getstream.chat.android.client.models.Message> call;
+        binding.ivSend.setEnabled(false);
+
         if (isEdit())
-            return viewModel.editMessage(message);
+            call = viewModel.editMessage(message);
         else
-            return viewModel.sendMessage(message);
+            call = viewModel.sendMessage(message);
+
+        return call;
+    }
+
+    private Message getNewMessage() {
+        Message message = new Message();
+        message.setText(getMessageText());
+        return message;
     }
 
     protected void onSendMessage() {
-        Message message = isEdit() ? getEditMessage() : new Message(getMessageText());
-        onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message));
+        Message message = isEdit() ? getEditMessage() : getNewMessage();
+        onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message)).enqueue(result -> {
+
+            if (result.isSuccess()) {
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageSuccess(message);
+                initSendMessage();
+                if (isEdit()) clearFocus();
+            } else {
+                if (messageSendListener != null)
+                    messageSendListener.onSendMessageError(result.error());
+                initSendMessage();
+                if (isEdit()) clearFocus();
+            }
+
+            return null;
+        });
         if (isEdit())
             Utils.hideSoftKeyboard((Activity) getContext());
-    }
-
-    protected void onSendMessage(Message message) {
-        binding.ivSend.setEnabled(false);
-        onSendMessage(message, new MessageCallback() {
-            @Override
-            public void onSuccess(MessageResponse response) {
-                if (messageSendListener != null)
-                    messageSendListener.onSendMessageSuccess(response.getMessage());
-                initSendMessage();
-                if (isEdit()) clearFocus();
-            }
-
-            @Override
-            public void onError(String errMsg, int errCode) {
-                if (messageSendListener != null)
-                    messageSendListener.onSendMessageError(errMsg);
-                initSendMessage();
-                if (isEdit()) clearFocus();
-            }
-        });
     }
 
     private void initSendMessage() {
@@ -407,7 +409,7 @@ public class MessageInputView extends RelativeLayout {
             //TODO: llc check sync
             //message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
         } else {
-            message.getAttachments().addAll(messageInputController.getSelectedAttachments());
+            message.getAttachments().addAll(LlcMigrationUtils.getAttachments(messageInputController.getSelectedAttachments()));
         }
 
         return message;
@@ -415,8 +417,8 @@ public class MessageInputView extends RelativeLayout {
 
     protected Message prepareEditMessage(Message message) {
         message.setText(getMessageText());
-        List<Attachment> newAttachments = messageInputController.getSelectedAttachments();
-        message.setAttachments(newAttachments);
+        List<AttachmentMetaData> newAttachments = messageInputController.getSelectedAttachments();
+        message.getAttachments().addAll(LlcMigrationUtils.getAttachments(newAttachments));
         return message;
     }
 
@@ -444,7 +446,7 @@ public class MessageInputView extends RelativeLayout {
         attachment.setTitleLink(url);
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
-        messageInputController.setSelectedAttachments(Arrays.asList(attachment));
+        messageInputController.setSelectedAttachments(Arrays.asList(new AttachmentMetaData(attachment)));
         binding.etMessage.setText("");
         onSendMessage();
         return true;
@@ -455,6 +457,7 @@ public class MessageInputView extends RelativeLayout {
         return viewModel.isEditing();
     }
 
+
     // region edit message
     protected void editMessage(@Nullable Message message) {
         if (message == null) return;
@@ -463,21 +466,21 @@ public class MessageInputView extends RelativeLayout {
         setMessageText(message.getText());
         binding.etMessage.requestFocus();
 
-        List<Attachment> attachments = new ArrayList<>(message.getAttachments());
+        List<AttachmentMetaData> attachments = LlcMigrationUtils.getAttachments(message);
         if (!attachments.isEmpty())
             binding.ivOpenAttach.setVisibility(GONE);
         // Set Attachments to Inputbox
         if (attachments.isEmpty()
-                || attachments.get(0).getType().equals(ModelType.attach_giphy)
-                || attachments.get(0).getType().equals(ModelType.attach_unknown))
+                || attachments.get(0).type.equals(ModelType.attach_giphy)
+                || attachments.get(0).type.equals(ModelType.attach_unknown))
             return;
 
         //for (Attachment attachment : attachments)
         //attachment.setUploaded(true);
 
-        Attachment attachment = attachments.get(0);
-        if (attachment.getType().equals(ModelType.attach_file)) {
-            String fileType = attachment.getMimeType();
+        AttachmentMetaData attachment = attachments.get(0);
+        if (attachment.type.equals(ModelType.attach_file)) {
+            String fileType = attachment.mimeType;
             if (fileType.equals(ModelType.attach_mime_mov) || fileType.equals(ModelType.attach_mime_mp4)) {
                 messageInputController.onClickOpenSelectView(attachments, true);
             } else {
@@ -519,7 +522,8 @@ public class MessageInputView extends RelativeLayout {
     }
 
     /*Used for handling requestPermissionsResult*/
-    public void permissionResult(int requestCode, @NonNull String[] permissions,
+    public void permissionResult(int requestCode,
+                                 @NonNull String[] permissions,
                                  @NonNull int[] grantResults) {
         if (requestCode == Constant.PERMISSIONS_REQUEST) {
             boolean storageGranted = true, cameraGranted = true;
@@ -576,7 +580,7 @@ public class MessageInputView extends RelativeLayout {
      * This interface is called when you add an attachment
      */
     public interface AttachmentListener {
-        void onAddAttachment(AttachmentData attachment);
+        void onAddAttachment(AttachmentMetaData attachment);
     }
 
     /**

@@ -61,11 +61,8 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void replaceChannels(List<Channel> channelList) {
-        List<Channel> cloneChannelList = new ArrayList<>();
 
-        for (Channel channel : new ArrayList<>(channelList)) {
-            cloneChannelList.add(channel.copy());
-        }
+        List<Channel> cloneChannelList = new ArrayList<>(new ArrayList<>(channelList));
 
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new ChannelListDiffCallback(channels, cloneChannelList), true);

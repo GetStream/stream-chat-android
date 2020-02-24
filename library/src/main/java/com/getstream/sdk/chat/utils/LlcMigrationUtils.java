@@ -5,19 +5,18 @@ import android.text.TextUtils;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.models.*;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
@@ -26,8 +25,151 @@ public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
 
-    public static String getInitials(Channel channel) {
+    public static List<Attachment> getAttachments(List<AttachmentMetaData> attachments) {
+        List<Attachment> result = new ArrayList<>();
+        for (AttachmentMetaData attachment : attachments)
+            result.add(attachment.attachment);
+        return result;
+    }
 
+    public static List<AttachmentMetaData> getAttachments(Message message) {
+        List<AttachmentMetaData> result = new ArrayList<>();
+        for (Attachment attachment : message.getAttachments()) {
+            result.add(new AttachmentMetaData(attachment));
+        }
+        return result;
+    }
+
+    public static String getFileSizeHumanized(Attachment attachment) {
+        int size = attachment.getFileSize();
+        if (size <= 0) return "0";
+        final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
+    public static String getImage(Channel channel) {
+        Object image = channel.getExtraData().get("image");
+        if (image instanceof String) {
+            return (String) image;
+        }
+        return null;
+    }
+
+    public static boolean readLastMessage(Channel channel) {
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        String currentUserId = currentUser.getId();
+        Date myReadDate = getReadDateOfChannelLastMessage(currentUserId, channel);
+        Message lastMessage = computeLastMessage(channel);
+        if (myReadDate == null) {
+            return false;
+        } else if (lastMessage == null) {
+            return true;
+        } else return myReadDate.getTime() > lastMessage.getCreatedAt().getTime();
+    }
+
+    public static List<ChannelUserRead> getLastMessageReads(Channel channel) {
+        Message lastMessage = computeLastMessage(channel);
+        List<ChannelUserRead> readLastMessage = new ArrayList<>();
+        List<ChannelUserRead> reads = channel.read;
+        if (reads == null || lastMessage == null) return readLastMessage;
+
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        String currentUserId = currentUser.getId();
+
+        for (ChannelUserRead r : reads) {
+            if (r.getUserId().equals(currentUserId))
+                continue;
+            if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
+                readLastMessage.add(r);
+            }
+        }
+
+        // sort the reads
+        Collections.sort(readLastMessage, (ChannelUserRead o1, ChannelUserRead o2) -> o1.getLastRead().compareTo(o2.getLastRead()));
+        return readLastMessage;
+    }
+
+    public static Date getLastActive(Channel channel) {
+
+        //TODO: llc add logic from cache
+        return new Date();
+
+//        Date lastActive = channel.getCreatedAt();
+//        if (lastActive == null) lastActive = new Date();
+//
+//        if (getLastKnownActiveWatcher().after(lastActive)) {
+//            lastActive = getLastKnownActiveWatcher();
+//        }
+//        Message message = getLastMessageFromOtherUser();
+//        if (message != null) {
+//            if (message.getCreatedAt().after(lastActive)) {
+//                lastActive = message.getCreatedAt();
+//            }
+//        }
+////        for (Watcher watcher : getWatchers()) {
+////            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
+////                continue;
+////            if (lastActive.before(watcher.getUser().getLastActive())) {
+////                if (channel.getClient().fromCurrentUser(watcher)) continue;
+////                lastActive = watcher.getUser().getLastActive();
+////            }
+////        }
+//        return lastActive;
+    }
+
+    public static String getChannelNameOrMembers(Channel channel) {
+        String channelName;
+
+        if (!TextUtils.isEmpty(channel.getName())) {
+            channelName = channel.getName();
+        } else {
+            List<User> users = getOtherUsers(channel);
+            List<User> top3 = users.subList(0, Math.min(3, users.size()));
+            List<String> usernames = new ArrayList<>();
+            for (User u : top3) {
+                if (u == null) continue;
+                usernames.add(u.getName());
+            }
+
+            channelName = TextUtils.join(", ", usernames);
+            if (users.size() > 3) {
+                channelName += "...";
+            }
+        }
+        return channelName;
+    }
+
+    public static List<User> getOtherUsers(Channel channel) {
+
+        List<User> users = new ArrayList<>();
+
+        List<Member> members = channel.members;
+        List<Watcher> watchers = channel.watchers;
+
+        for (Member m : members) {
+            String memberId = m.getUserId();
+            boolean isFromCurrentUser = isFromCurrentUser(memberId);
+            if (!isFromCurrentUser) {
+                User user = StreamChat.cache().getUserById(m.getUser().getId());
+                users.add(user);
+            }
+        }
+
+        for (Watcher w : watchers) {
+            String watcherId = w.getUserId();
+            boolean isFromCurrentUser = isFromCurrentUser(watcherId);
+            if (!isFromCurrentUser) {
+                User user = StreamChat.cache().getUserById(w.getUser().getId());
+                if (!users.contains(user))
+                    users.add(user);
+            }
+        }
+
+        return users;
+    }
+
+    public static String getInitials(Channel channel) {
 
 
         String name = (String) channel.getExtraData().get("name");
@@ -66,6 +208,10 @@ public class LlcMigrationUtils {
             };
         }
         return reactionTypes;
+    }
+
+    public static int getIcon(Attachment attachment) {
+        return getIcon(attachment.getMimeType());
     }
 
     public static int getIcon(String mimeType) {
@@ -118,11 +264,17 @@ public class LlcMigrationUtils {
         return fileTyineRes;
     }
 
-    public static boolean isFromCurrentUser(ChatEvent event){
+    public static boolean isFromCurrentUser(ChatEvent event) {
         User user = event.getUser();
         User currentUser = StreamChat.getInstance().getCurrentUser();
-        if(user == null || currentUser == null) return false;
+        if (user == null || currentUser == null) return false;
         return user.getId().equals(currentUser.getId());
+    }
+
+    public static boolean isFromCurrentUser(String userId) {
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        if (userId == null || currentUser == null) return false;
+        return userId.equals(currentUser.getId());
     }
 
     public static Map<String, ChannelUserRead> getReadsByUser(Channel channel) {

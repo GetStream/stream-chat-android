@@ -5,8 +5,9 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -32,8 +33,9 @@ public class DefaultBubbleHelper {
                     applyStyleDefault(positions, mine, context);
                 if (mine) {
                     // set background for Failed or Error message
-                    if (message.getSyncStatus() == Sync.LOCAL_FAILED
-                            || message.getType().equals(ModelType.message_error))
+                    //if (message.getSyncStatus() == Sync.LOCAL_FAILED
+                    //TODO: llc: check cache
+                    if(message.getType().equals(ModelType.message_error))
                         bgColor = context.getResources().getColor(R.color.stream_message_failed);
                 }
                 return getBubbleDrawable();

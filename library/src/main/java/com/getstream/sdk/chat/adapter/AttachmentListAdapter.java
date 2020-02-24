@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.AttachmentData;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -23,13 +23,13 @@ public class AttachmentListAdapter extends BaseAdapter {
     private final String TAG = AttachmentListAdapter.class.getSimpleName();
 
     private LayoutInflater layoutInflater;
-    private List<AttachmentData> attachments;
+    private List<AttachmentMetaData> attachments;
     private boolean localAttach;
     private boolean isTotalFileAdapter;
     private OnAttachmentCancelListener cancelListener;
 
     public AttachmentListAdapter(Context context,
-                                 List<AttachmentData> attachments,
+                                 List<AttachmentMetaData> attachments,
                                  boolean localAttach,
                                  boolean isTotalFileAdapter) {
         this.attachments = attachments;
@@ -39,7 +39,7 @@ public class AttachmentListAdapter extends BaseAdapter {
     }
 
     public AttachmentListAdapter(Context context,
-                                 List<AttachmentData> attachments,
+                                 List<AttachmentMetaData> attachments,
                                  boolean localAttach,
                                  boolean isTotalFileAdapter,
                                  OnAttachmentCancelListener cancelListener) {
@@ -65,7 +65,7 @@ public class AttachmentListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
-        final AttachmentData attachment = attachments.get(position);
+        final AttachmentMetaData attachment = attachments.get(position);
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.stream_item_attach_file, null);
 
@@ -102,7 +102,7 @@ public class AttachmentListAdapter extends BaseAdapter {
 
     // region Configure Attachments
 
-    private void configureFileAttach(ViewHolder holder, AttachmentData attachment) {
+    private void configureFileAttach(ViewHolder holder, AttachmentMetaData attachment) {
 
         holder.iv_file_thumb.setImageResource(LlcMigrationUtils.getIcon(attachment.mimeType));
         holder.tv_file_title.setText(attachment.title);
@@ -129,7 +129,7 @@ public class AttachmentListAdapter extends BaseAdapter {
                     cancelListener.onCancel(attachment);
             });
 
-            if (!attachment.isUploaded) {
+            if (!attachment.isUploaded()) {
                 holder.progressBar.setVisibility(View.VISIBLE);
                 holder.progressBar.setProgress(attachment.progress);
             }
@@ -144,6 +144,6 @@ public class AttachmentListAdapter extends BaseAdapter {
     }
 
     public interface OnAttachmentCancelListener {
-        void onCancel(AttachmentData attachment);
+        void onCancel(AttachmentMetaData attachment);
     }
 }

@@ -8,11 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * An Activity playing attachments such as stream_ic_audio and videos.
@@ -47,7 +47,8 @@ public class AttachmentMediaActivity extends AppCompatActivity {
         else
             iv_audio.setVisibility(View.GONE);
 
-        playVideo(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
+
+        playVideo(StreamChat.signFileUrl(url));
     }
 
     /**
@@ -56,7 +57,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(StreamChat.getInstance().getUploadStorage().signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(StreamChat.signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }

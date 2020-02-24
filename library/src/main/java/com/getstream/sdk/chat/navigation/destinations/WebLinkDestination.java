@@ -12,7 +12,7 @@ public class WebLinkDestination extends ChatDestination {
 
     public WebLinkDestination(String url, Context context) {
         super(context);
-        String signedUrl = StreamChat.getInstance().getUploadStorage().signFileUrl(url);
+        String signedUrl = StreamChat.signFileUrl(url);
         this.url = signedUrl == null ? "" : signedUrl;
     }
 

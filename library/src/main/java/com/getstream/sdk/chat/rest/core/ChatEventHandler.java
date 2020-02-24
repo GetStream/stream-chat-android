@@ -225,7 +225,7 @@ public abstract class ChatEventHandler {
                 dispatchChannelEvent(client, event, this::onNotificationInviteRejected);
                 break;
             case NOTIFICATION_MESSAGE_NEW:
-                Channel channel = client.channel(event.getChannel().getCid());
+                //Channel channel = client.channel(event.getChannel().getCid());
 //                if (!channel.isInitialized()) {
 //                    channel.query(new ChannelQueryRequest(), new QueryChannelCallback() {
 //                        @Override
@@ -244,7 +244,7 @@ public abstract class ChatEventHandler {
 //                }
                 break;
             case NOTIFICATION_ADDED_TO_CHANNEL:
-                Channel newChannel = client.channel(event.getChannel().getCid());
+                //Channel newChannel = client.channel(event.getChannel().getCid());
 //                newChannel.watch(new ChannelWatchRequest().withPresence(),
 //                        new QueryWatchCallback() {
 //                            @Override

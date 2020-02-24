@@ -1,9 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
-import android.content.Context;
-
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.AttachmentData;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -19,13 +17,13 @@ import io.getstream.chat.android.client.utils.ProgressCallback;
 public class UploadManager {
 
     private Channel channel;
-    private List<AttachmentData> queue = new ArrayList<>();
+    private List<AttachmentMetaData> queue = new ArrayList<>();
 
     public UploadManager(Channel channel) {
         this.channel = channel;
     }
 
-    public void uploadFile(AttachmentData data, ProgressCallback fileListener) {
+    public void uploadFile(AttachmentMetaData data, ProgressCallback fileListener) {
 
         queue.add(data);
 
@@ -51,7 +49,7 @@ public class UploadManager {
                     attachment.setAssetUrl(path);
                 }
 
-                data.uploaded = attachment;
+                data.attachment = attachment;
 
                 queue.remove(data);
                 fileListener.onSuccess(path);
@@ -70,7 +68,7 @@ public class UploadManager {
         });
     }
 
-    public void removeFromQueue(AttachmentData file) {
+    public void removeFromQueue(AttachmentMetaData file) {
         queue.remove(file);
     }
 

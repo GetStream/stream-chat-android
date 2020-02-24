@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.StreamChatNavigator;
 import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
+import com.getstream.sdk.chat.storage.InMemoryCache;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
@@ -26,8 +27,6 @@ import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.android.client.socket.SocketListener;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 public class StreamChat {
 
@@ -41,7 +40,7 @@ public class StreamChat {
     private static FontsManager fontsManager;
     private static StreamLogger logger;
     private static StreamChatNavigator navigator = new StreamChatNavigatorImpl();
-    private static ChatClient client;
+    private static ClientInterceptor client;
 
     public static StreamChatNavigator getNavigator() {
         return navigator;
@@ -76,13 +75,22 @@ public class StreamChat {
         return ChatClient.Companion.instance();
     }
 
-//    public static boolean isConnected() {
-//        return INSTANCE != null && INSTANCE.isConnected();
-//    }
-
-
     public static StringsProvider getStrings() {
         return stringsProvider;
+    }
+
+    public static InMemoryCache cache() {
+        return client;
+    }
+
+    public static String signFileUrl(String url) {
+        //TODO: llc add sign url
+        return url;
+    }
+
+    public static String signGlideUrl(String url) {
+        //TODO: llc add sign url
+        return url;
     }
 
     /**
@@ -107,13 +115,13 @@ public class StreamChat {
         totalUnreadMessages = new MutableLiveData<>();
         unreadChannels = new MutableLiveData<>();
 
-        client = new ChatClient.Builder(
+        client = new ClientInterceptor(new ChatClient.Builder(
                 config.apiKey,
                 config.token,
                 config.appContext
         ).logLevel(config.logLevel)
                 .notifications(config.notificationConfig)
-                .build();
+                .build());
 
         setupLifecycleObserver();
 

@@ -79,11 +79,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        if (StreamChat.isConnected()) {
-            webView.loadUrl(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
-        } else {
-            finish();
-        }
+        webView.loadUrl(StreamChat.signFileUrl(url));
     }
 
 
@@ -101,7 +97,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .load(StreamChat.getInstance().getUploadStorage().signGlideUrl(url))
+                .load(StreamChat.signGlideUrl(url))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
@@ -109,22 +105,22 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.getInstance().getUploadStorage().signFileUrl(url));
+            view.loadUrl(StreamChat.signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, StreamChat.getInstance().getUploadStorage().signFileUrl(url));
+            super.onPageFinished(view, StreamChat.signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
 
         @Override
-        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
-          
-            StreamChat.getLogger().logE(this,"The load failed due to an unknown error: " + error);
-          
-            if (error == null){
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+
+            StreamChat.getLogger().logE(this, "The load failed due to an unknown error: " + error);
+
+            if (error == null) {
                 return;
             }
             Utils.showMessage(AttachmentActivity.this, error.toString());

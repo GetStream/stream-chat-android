@@ -12,8 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.Attachment;
+
+import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
+
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -78,9 +81,9 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     }
 
     private void configAttachment() {
-        tv_file_size.setText(attachment.getFileSizeHumanized());
+        tv_file_size.setText(LlcMigrationUtils.getFileSizeHumanized(attachment));
         // update the icon nicely
-        iv_file_thumb.setImageResource(attachment.getIcon());
+        iv_file_thumb.setImageResource(LlcMigrationUtils.getIcon(attachment));
         tv_file_title.setText(attachment.getTitle());
 
         Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(),

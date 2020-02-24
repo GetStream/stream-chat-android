@@ -17,7 +17,7 @@ import androidx.room.TypeConverters;
  */
 @JsonAdapter(AttachmentGsonAdapter.class)
 public class Attachment {
-    public AttachmentData config = new AttachmentData(); // Local file Attach Config
+    public AttachmentMetaData config = new AttachmentMetaData(); // Local file Attach Config
     @SerializedName("title")
     @Expose
     private String title;

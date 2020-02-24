@@ -10,12 +10,14 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
+import io.getstream.chat.android.client.models.Channel;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
@@ -79,13 +81,13 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setOnlineStatus(status == CONNECTED);
     }
 
-    protected void setHeaderTitle(ChannelState channelState) {
-        String channelName = channelState.getChannelNameOrMembers();
+    protected void setHeaderTitle(Channel channel) {
+        String channelName = LlcMigrationUtils.getChannelNameOrMembers(channel);
         binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText());
     }
 
-    protected void setHeaderLastActive(ChannelState channelState) {
-        Date lastActive = channelState.getLastActive();
+    protected void setHeaderLastActive(Channel channel) {
+        Date lastActive = LlcMigrationUtils.getLastActive(channel);
         Date now = new Date();
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
 
@@ -96,9 +98,9 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setChannelLastActive(String.format(getContext().getString(R.string.stream_channel_header_active), timeAgo));
     }
 
-    protected void configHeaderAvatar(ChannelState channelState) {
+    protected void configHeaderAvatar(Channel channel) {
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
-        avatarGroupView.setChannelAndLastActiveUsers(channelState.getChannel(), channelState.getOtherUsers(), style);
+        avatarGroupView.setChannelAndLastActiveUsers(channel, LlcMigrationUtils.getOtherUsers(channel), style);
     }
 
     private StreamViewChannelHeaderBinding initBinding(Context context) {
