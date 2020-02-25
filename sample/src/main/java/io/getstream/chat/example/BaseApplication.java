@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
@@ -29,7 +28,6 @@ import io.getstream.chat.example.utils.AppConfig;
 
 public class BaseApplication extends Application {
 
-    private StreamLogger logger;
     private StreamChatStyle style;
     private AppConfig appConfig;
 

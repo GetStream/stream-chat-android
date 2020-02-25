@@ -3,7 +3,6 @@ package com.getstream.sdk.chat;
 import android.content.Context;
 
 import com.getstream.sdk.chat.enums.OnlineStatus;
-import com.getstream.sdk.chat.logger.StreamLogger;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.StreamChatNavigator;
 import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
@@ -24,6 +23,7 @@ import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
+import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.android.client.socket.SocketListener;
@@ -38,7 +38,6 @@ public class StreamChat {
     private static StringsProvider stringsProvider;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
-    private static StreamLogger logger;
     private static StreamChatNavigator navigator = new StreamChatNavigatorImpl();
     private static ClientInterceptor client;
 
@@ -100,10 +99,6 @@ public class StreamChat {
         StreamChat.stringsProvider = stringsProvider;
     }
 
-    public static void setLogger(StreamLogger logger) {
-        StreamChat.logger = logger;
-    }
-
     public static void init(Config config) {
 
         chatStyle = config.style;
@@ -119,7 +114,7 @@ public class StreamChat {
                 config.apiKey,
                 config.token,
                 config.appContext
-        ).logLevel(config.logLevel)
+        ).logLevel(config.logLevel == null ? ChatLogLevel.NOTHING : ChatLogLevel.NOTHING)
                 .notifications(config.notificationConfig)
                 .build());
 
@@ -187,8 +182,8 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static StreamLogger getLogger() {
-        return logger;
+    public static ChatLogger getLogger() {
+        return ChatLogger.Companion.getInstance();
     }
 
 
