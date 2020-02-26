@@ -147,7 +147,7 @@ public class LlcMigrationUtils {
 
     public static List<User> getOtherUsers(Channel channel) {
 
-        List<User> users = new ArrayList<>();
+        List<User> result = new ArrayList<>();
 
         List<Member> members = channel.members;
         List<Watcher> watchers = channel.watchers;
@@ -157,7 +157,7 @@ public class LlcMigrationUtils {
             boolean isFromCurrentUser = isFromCurrentUser(memberId);
             if (!isFromCurrentUser) {
                 User user = StreamChat.cache().getUserById(m.getUser().getId());
-                users.add(user);
+                if (user != null) result.add(user);
             }
         }
 
@@ -166,12 +166,12 @@ public class LlcMigrationUtils {
             boolean isFromCurrentUser = isFromCurrentUser(watcherId);
             if (!isFromCurrentUser) {
                 User user = StreamChat.cache().getUserById(w.getUser().getId());
-                if (!users.contains(user))
-                    users.add(user);
+                if (user != null && !result.contains(user))
+                    result.add(user);
             }
         }
 
-        return users;
+        return result;
     }
 
     public static String getInitials(Channel channel) {
