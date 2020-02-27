@@ -822,7 +822,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
 
-        channel.watch(request).enqueue(new Function1<Result<Channel>, Unit>() {
+        String type = channel.getType();
+        String id = channel.getId();
+
+        StreamChat.getInstance().queryChannel(type, id, request).enqueue(new Function1<Result<Channel>, Unit>() {
             @Override
             public Unit invoke(Result<Channel> channelResult) {
 
@@ -913,8 +916,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                         Channel channel = result.data();
 
 
-                        reachedEndOfPagination = channel.messages.isEmpty();
-                        List<Message> newMessages = new ArrayList<>(channel.messages);
+                        reachedEndOfPagination = channel.getMessages().isEmpty();
+                        List<Message> newMessages = new ArrayList<>(channel.getMessages());
                         // used to modify the scroll behaviour...
                         entities.setIsLoadingMore(true);
                         addMessages(newMessages);

@@ -518,7 +518,7 @@ public class MessageInputController {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
 
-        List<Member> members = channel.members;
+        List<Member> members = channel.getMembers();
         for (int i = 0; i < members.size(); i++) {
             Member member = members.get(i);
             User user = member.getUser();

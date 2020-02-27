@@ -51,7 +51,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected FilterObject filter;
     protected QuerySort sort;
 
-    protected boolean reachedEndOfPagination;
+    private boolean reachedEndOfPagination;
     protected AtomicBoolean initialized;
     protected AtomicBoolean isLoading;
     protected AtomicBoolean isLoadingMore;
@@ -478,15 +478,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (!StreamChat.getInstance().isSocketConnected()) return;
 
         if (isLoading.get()) {
-            StreamChat.getLogger().logI(this, "already loading, skip loading more");
             return;
         }
         if (reachedEndOfPagination) {
-            StreamChat.getLogger().logI(this, "already reached end of pagination, skip loading more");
             return;
         }
         if (!setLoadingMore()) {
-            StreamChat.getLogger().logI(this, "already loading next page, skip loading more");
             return;
         }
 

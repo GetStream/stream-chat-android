@@ -111,7 +111,7 @@ public class LlcMigrationUtils {
     public static List<ChannelUserRead> getLastMessageReads(Channel channel) {
         Message lastMessage = computeLastMessage(channel);
         List<ChannelUserRead> readLastMessage = new ArrayList<>();
-        List<ChannelUserRead> reads = channel.read;
+        List<ChannelUserRead> reads = channel.getRead();
         if (reads == null || lastMessage == null) return readLastMessage;
 
         User currentUser = StreamChat.getInstance().getCurrentUser();
@@ -186,14 +186,14 @@ public class LlcMigrationUtils {
 
         List<User> result = new ArrayList<>();
 
-        List<Member> members = channel.members;
-        List<Watcher> watchers = channel.watchers;
+        List<Member> members = channel.getMembers();
+        List<Watcher> watchers = channel.getWatchers();
 
         for (Member m : members) {
             String memberId = m.getUserId();
             boolean isFromCurrentUser = isFromCurrentUser(memberId);
             if (!isFromCurrentUser) {
-                User user = StreamChat.cache().getUserById(m.getUser().getId());
+                User user = m.getUser();
                 if (user != null) result.add(user);
             }
         }
@@ -202,7 +202,7 @@ public class LlcMigrationUtils {
             String watcherId = w.getUserId();
             boolean isFromCurrentUser = isFromCurrentUser(watcherId);
             if (!isFromCurrentUser) {
-                User user = StreamChat.cache().getUserById(w.getUser().getId());
+                User user = w.getUser();
                 if (user != null && !result.contains(user))
                     result.add(user);
             }
@@ -321,7 +321,7 @@ public class LlcMigrationUtils {
 
     public static Map<String, ChannelUserRead> getReadsByUser(Channel channel) {
         Map<String, ChannelUserRead> result = new HashMap<>();
-        for (ChannelUserRead r : channel.read) result.put(r.getUserId(), r);
+        for (ChannelUserRead r : channel.getRead()) result.put(r.getUserId(), r);
         return result;
     }
 
@@ -353,13 +353,13 @@ public class LlcMigrationUtils {
 
     public static int getUnreadMessageCount(String userId, Channel channel) {
         int unreadMessageCount = 0;
-        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.read;
+        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.getRead();
         if (read == null || read.isEmpty()) return unreadMessageCount;
 
         Date lastReadDate = getReadDateOfChannelLastMessage(userId, channel);
         if (lastReadDate == null) return unreadMessageCount;
 
-        List<io.getstream.chat.android.client.models.Message> messages = channel.messages;
+        List<io.getstream.chat.android.client.models.Message> messages = channel.getMessages();
 
         for (int i = messages.size() - 1; i >= 0; i--) {
             Message message = messages.get(i);
@@ -372,7 +372,7 @@ public class LlcMigrationUtils {
     }
 
     public static Date getReadDateOfChannelLastMessage(String userId, Channel channel) {
-        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.read;
+        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.getRead();
         if (read == null || read.isEmpty()) return null;
         Date lastReadDate = null;
         try {
