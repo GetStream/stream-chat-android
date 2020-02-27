@@ -68,7 +68,8 @@ class RetrofitCallMapper(private val chatParser: ChatParser) {
 
     private fun <T> getResult(retroCall: retrofit2.Call<T>): Result<T> {
         return try {
-            getResult(retroCall.execute())
+            val retrofitResponse = retroCall.execute()
+            getResult(retrofitResponse)
         } catch (t: Throwable) {
             failedResult(t)
         }

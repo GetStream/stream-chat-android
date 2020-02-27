@@ -3,53 +3,49 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.CustomObject
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.utils.UndefinedDate
+import io.getstream.chat.android.client.parser.IgnoreDeserialisation
+import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.util.*
 
 
-class Channel {
+class Channel : CustomObject {
+
     var cid: String = ""
     var id: String = ""
     var type: String = ""
+    var watcherCount: Int = 0
+    val frozen = false
 
     @SerializedName("last_message_at")
-    var lastMessageDate: Date = UndefinedDate
+    var lastMessageAt: Date? = null
     @SerializedName("created_at")
-    var createdAt: Date = UndefinedDate
+    var createdAt: Date? = null
     @SerializedName("deleted_at")
-    var deletedAt: Date = UndefinedDate
+    var deletedAt: Date? = null
     @SerializedName("updated_at")
-    var updatedAt: Date = UndefinedDate
+    var updatedAt: Date? = null
     @SerializedName("created_by")
-    lateinit var createdByUser: User
+    lateinit var createdBy: User
     @SerializedName("member_count")
     val memberCount: Int = 0
-
-    val frozen = false
     lateinit var config: Config
-
-    var extraData = mutableMapOf<String, Any>()
-
     lateinit var messages: List<Message>
     lateinit var members: List<Member>
     lateinit var watchers: List<Watcher>
     lateinit var read: List<ChannelUserRead>
 
-    var watcherCount: Int = 0
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    override var extraData = mutableMapOf<String, Any>()
 
-
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     internal lateinit var client: ChatClient
 
     fun watch(request: ChannelWatchRequest): Call<Channel> {
         return client.queryChannel(type, id, request)
-    }
-
-    fun getName(): String? {
-        val name = extraData["name"]
-        return if (name is String) {
-            name
-        } else null
     }
 
     override fun toString(): String {

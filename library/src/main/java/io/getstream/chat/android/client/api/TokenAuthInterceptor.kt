@@ -53,7 +53,7 @@ class TokenAuthInterceptor internal constructor(
                     response.close()
                     response = chain.proceed(request)
                 } else {
-                    throw IOException(err.message, err.cause)
+                    throw IOException(err.description, err.cause)
                 }
             }
             return response

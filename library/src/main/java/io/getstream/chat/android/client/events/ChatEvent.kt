@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -24,5 +23,9 @@ open class ChatEvent(val type: String = "") {
     lateinit var message: Message
     var receivedAt: Date = Date()
 
-    var channel:Channel? = null
+    var channel: Channel? = null
+
+    override fun toString(): String {
+        return "ChatEvent(type='$type')"
+    }
 }

@@ -16,9 +16,8 @@ data class QueryChannelsRequest(
     val sort = querySort.data
     val filter_conditions: Map<String, Any> = filter.getMap()
 
-    fun withMessageLimit(limit: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        return clone
+    fun withMessages(limit: Int): QueryChannelsRequest {
+        return cloneOpts().apply { message_limit = limit }
     }
 
     fun withLimit(limit: Int): QueryChannelsRequest {
@@ -28,9 +27,7 @@ data class QueryChannelsRequest(
     }
 
     fun withOffset(offset: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        clone.offset = offset
-        return clone
+        return cloneOpts().apply { this.offset = offset }
     }
 
     init {
@@ -40,16 +37,16 @@ data class QueryChannelsRequest(
     }
 
     override fun cloneOpts(): QueryChannelsRequest {
-        val _this = QueryChannelsRequest(
+        val clone = QueryChannelsRequest(
             filter,
             offset,
             limit,
             querySort
         )
-        _this.state = this.state
-        _this.watch = this.watch
-        _this.presence = this.presence
-        _this.message_limit = message_limit
-        return _this
+        clone.state = this.state
+        clone.watch = this.watch
+        clone.presence = this.presence
+        clone.message_limit = message_limit
+        return clone
     }
 }

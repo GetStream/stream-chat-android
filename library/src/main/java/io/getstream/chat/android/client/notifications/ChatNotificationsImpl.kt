@@ -130,7 +130,8 @@ class ChatNotificationsImpl(
         val channelId: String = message.channel.id
 
         notificationsMap[message.id]?.let { notificationItem ->
-            notificationItem.channelName = message.channel.getName()
+            notificationItem.channelName =
+                message.channel.extraData.getOrDefault("name", "").toString()
             notificationItem.messageText = message.text
             notificationItem.pendingReplyIntent = preparePendingIntent(
                 context = context,

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.api
+package io.getstream.chat.android.client.parser.adapters
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
@@ -48,13 +48,13 @@ class UserGsonAdapter(val gson: Gson) : TypeAdapter<User>() {
                     user.role = set.value as String
                 }
                 "created_at" -> {
-                    user.created_at = Date(set.value as Long)
+                    user.createdAt = Date(set.value as Long)
                 }
                 "updated_at" -> {
-                    user.updated_at = Date(set.value as Long)
+                    user.updatedAt = Date(set.value as Long)
                 }
                 "last_active" -> {
-                    user.last_active = Date(set.value as Long)
+                    user.lastActive = Date(set.value as Long)
                 }
                 "online" -> {
                     user.online = set.value as Boolean

@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -24,6 +25,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val channelId = "general"
     val channelType = "team"
     var chatSub: Subscription? = null
+    var watchingChannel: Channel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,18 +75,16 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         Thread {
 
             val withLimit =
-                QueryChannelsRequest(
-                    FilterObject("type", "messaging"),
-                    0,
-                    100
-                )
+                QueryChannelsRequest(FilterObject("type", "messaging"), 0, 100).withMessages(100)
 
             val channelsResult = client.queryChannels(withLimit).execute()
 
             echoResult(channelsResult)
 
             if (channelsResult.isSuccess) {
-                val watchResult = channelsResult.data()[0].watch(ChannelWatchRequest()).execute()
+                val channels = channelsResult.data()
+                val channel = channels[0]
+                val watchResult = channel.watch(ChannelWatchRequest().withMessages(100)).execute()
                 echoResult(watchResult)
             }
         }.start()
@@ -142,9 +142,11 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun stopWatching() {
-
-        client.stopWatching("messaging", "new-ch").enqueue {
-            echoResult(it)
+        val channel = watchingChannel
+        if (channel != null) {
+            client.stopWatching(channel.type, channel.id).enqueue {
+                echoResult(it)
+            }
         }
     }
 
@@ -158,9 +160,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
             } else {
                 result.error().printStackTrace()
+
                 val message = result.error().message
-                Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }

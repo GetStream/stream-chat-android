@@ -14,6 +14,7 @@ class FilterObjectAdapter(val gson: Gson) : TypeAdapter<FilterObject>() {
         adapter.write(out, value.getMap())
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun read(reader: JsonReader): FilterObject {
         val adapter = gson.getAdapter(HashMap::class.java)
         val data = adapter.read(reader) as HashMap<String, Any>
