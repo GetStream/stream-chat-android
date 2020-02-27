@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.rest.User;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.annotation.NonNull;

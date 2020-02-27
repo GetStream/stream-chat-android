@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,9 @@ public class SearchMessageRecyclerAdapter extends RecyclerView.Adapter<SearchMes
                     .load(item.getUser().getImage())
                     .into(itemSearchIv);
 
-            itemSearchTitleTv.setText(item.getChannel().getName());
+            String name = LlcMigrationUtils.getName(item.getChannel());
+
+            itemSearchTitleTv.setText(name);
             itemSearchMessageTv.setText(item.getText());
             itemView.setOnClickListener(v -> onItemListener.onItemClicked(item.getChannel().getType(), item.getChannel().getId(), item.getId()));
         }

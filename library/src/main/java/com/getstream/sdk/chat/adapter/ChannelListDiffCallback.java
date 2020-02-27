@@ -48,11 +48,11 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             return false;
         }
 
-        if (oldChannel.getLastMessageDate() == null && newChannel.getLastMessageDate() != null) {
+        if (oldChannel.getLastMessageAt() == null && newChannel.getLastMessageAt() != null) {
             return false;
         }
 
-        if (newChannel.getLastMessageDate() != null && oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
+        if (newChannel.getLastMessageAt() != null && oldChannel.getLastMessageAt().getTime() < newChannel.getLastMessageAt().getTime()) {
             return false;
         }
 

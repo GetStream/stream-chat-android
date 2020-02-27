@@ -128,7 +128,7 @@ public class StreamStorage implements Storage {
             //c.preStorage();
             //c.getLastState().preStorage();
             // gather the users from members, read, last message and created by
-            users.add(c.getCreatedByUser());
+            users.add(c.getCreatedBy());
 //            for (Member m : c.getLastState().getMembers()) {
 //                users.add(m.getUser());
 //            }

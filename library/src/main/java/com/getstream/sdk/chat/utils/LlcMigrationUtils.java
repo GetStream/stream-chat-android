@@ -25,6 +25,41 @@ public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
 
+    public static String getInitials(User user) {
+
+        String name = (String) user.getExtraData().get("name");
+
+        if (name == null) {
+            name = "";
+        }
+
+        String[] names = name.split(" ");
+        String firstName = names[0];
+        String lastName = null;
+        try {
+            lastName = names[1];
+        } catch (Exception e) {
+        }
+
+        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
+            return firstName.substring(0, 1).toUpperCase();
+        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
+            return lastName.substring(0, 1).toUpperCase();
+
+        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
+            return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
+        return null;
+    }
+
+    @Nullable
+    public static String getName(Channel channel) {
+        if (channel.getExtraData().containsKey("name")) {
+            return (String) channel.getExtraData().get("name");
+        } else {
+            return null;
+        }
+    }
+
     public static List<Attachment> getAttachments(List<AttachmentMetaData> attachments) {
         List<Attachment> result = new ArrayList<>();
         for (AttachmentMetaData attachment : attachments)
@@ -126,8 +161,10 @@ public class LlcMigrationUtils {
     public static String getChannelNameOrMembers(Channel channel) {
         String channelName;
 
-        if (!TextUtils.isEmpty(channel.getName())) {
-            channelName = channel.getName();
+        String name = getName(channel);
+
+        if (!TextUtils.isEmpty(name)) {
+            channelName = name;
         } else {
             List<User> users = getOtherUsers(channel);
             List<User> top3 = users.subList(0, Math.min(3, users.size()));

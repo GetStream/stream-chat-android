@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
@@ -140,8 +141,11 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onHeaderAvatarGroupClick(Channel channel) {
+
+        String name = LlcMigrationUtils.getName(channel);
+
         new AlertDialog.Builder(this)
-                .setTitle("Avatar group click for channel " + channel.getName())
+                .setTitle("Avatar group click for channel " + name)
                 .setMessage("You pressed on the avatar group, well done")
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(R.drawable.stream_ic_settings)

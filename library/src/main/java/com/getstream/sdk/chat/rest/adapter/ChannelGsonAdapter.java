@@ -68,10 +68,10 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     channel.setType((String) set.getValue());
                     continue;
                 case "created_by":
-                    channel.setCreatedByUser(gson.fromJson(json, User.class));
+                    //channel.setCreatedByUser(gson.fromJson(json, User.class));
                     continue;
                 case "last_message_at":
-                    channel.setLastMessageDate(gson.fromJson(json, Date.class));
+                    //channel.setLastMessageDate(gson.fromJson(json, Date.class));
                     continue;
                 case "created_at":
                     channel.setCreatedAt(gson.fromJson(json, Date.class));

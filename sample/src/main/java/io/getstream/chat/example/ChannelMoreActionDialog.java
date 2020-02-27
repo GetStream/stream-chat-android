@@ -75,7 +75,7 @@ public class ChannelMoreActionDialog extends Dialog {
     }
 
     private boolean canEditOrDeleteChannel() {
-        User createdByUser = channel.getCreatedByUser();
+        User createdByUser = channel.getCreatedBy();
         User currentUser = StreamChat.getCurrentUser().getValue();
 
         if (createdByUser != null && currentUser != null) {

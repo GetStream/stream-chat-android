@@ -28,6 +28,9 @@ public class AppConfig {
         preferences = context.getSharedPreferences(APP_PREFERENCE, Activity.MODE_PRIVATE);
         String json = BuildConfig.USERS_CONFIG;
         appConfig = new Gson().fromJson(json, Config.class);
+
+        UserConfig userConfig = appConfig.userConfigs.get(0);
+        setCurrentUser(userConfig.getId());
     }
 
     public UserConfig getCurrentUser() {

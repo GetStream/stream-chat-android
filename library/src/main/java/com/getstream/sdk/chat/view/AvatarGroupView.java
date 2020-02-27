@@ -82,7 +82,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         String image = (String) channel.getExtraData().get("image");
 
         if (user != null) {
-            configSingleAvatar(user.getImage(), user.getInitials());
+            configSingleAvatar(user.getImage(), LlcMigrationUtils.getInitials(user));
         } else if (!TextUtils.isEmpty(image)) {
             configSingleAvatar(image, LlcMigrationUtils.getInitials(channel));
         } else {
@@ -96,10 +96,10 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
             for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
-                    configSingleAvatar(user_.getImage(), user_.getInitials());
+                    configSingleAvatar(user_.getImage(), LlcMigrationUtils.getInitials(user_));
                 } else {
                     CircularImageView imageView = new CircularImageView(context);
-                    configAvatarView(imageView, user_.getImage(), user_.getInitials(), factor);
+                    configAvatarView(imageView, user_.getImage(), LlcMigrationUtils.getInitials(user_), factor);
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
                             style.getAvatarBorderWidth());
 
