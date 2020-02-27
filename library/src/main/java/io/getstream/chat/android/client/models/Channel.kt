@@ -31,10 +31,10 @@ class Channel : CustomObject {
     @SerializedName("member_count")
     val memberCount: Int = 0
     lateinit var config: Config
-    lateinit var messages: List<Message>
-    lateinit var members: List<Member>
-    lateinit var watchers: List<Watcher>
-    lateinit var read: List<ChannelUserRead>
+    var messages: List<Message> = emptyList()
+    var members: List<Member> = emptyList()
+    var watchers: List<Watcher> = emptyList()
+    var read: List<ChannelUserRead> = emptyList()
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
