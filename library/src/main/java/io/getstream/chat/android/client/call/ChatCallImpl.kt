@@ -32,7 +32,11 @@ abstract class ChatCallImpl<T> : Call<T> {
         return this
     }
 
-    companion object {
+    override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
+        return ZipCall.zip(this, call)
+    }
+
+    internal companion object {
         private fun <A, B> callMapper(
             callA: Call<A>,
             mapper: (A) -> B

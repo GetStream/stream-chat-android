@@ -10,4 +10,5 @@ interface Call<T> {
     fun <K> map(mapper: (T) -> K): Call<K>
     fun onError(handler: (ChatError) -> Unit): Call<T>
     fun onNext(handler: (T) -> Unit): Call<T>
+    fun <K> zipWith(call: Call<K>): Call<Pair<T, K>>
 }
