@@ -76,8 +76,16 @@ open class ChatNotificationConfig(val context: Context) {
         return 1220999987
     }
 
-    open fun getFirebaseMessageKey(): String {
+    open fun getFirebaseMessageIdKey(): String {
         return "stream-chat-message-id"
+    }
+
+    open fun getFirebaseChannelIdKey(): String {
+        return "stream-chat-channel-id"
+    }
+
+    open fun getFirebaseChannelTypeKey(): String {
+        return "stream-chat-channel-type"
     }
 
     private fun getDefaultContentIntent(): PendingIntent {

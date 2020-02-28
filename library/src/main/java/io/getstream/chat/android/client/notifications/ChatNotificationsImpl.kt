@@ -17,13 +17,17 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChatNotification
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
+import io.getstream.chat.android.client.utils.containsKeys
+import io.getstream.chat.android.client.utils.isNullOrEmpty
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -55,34 +59,61 @@ class ChatNotificationsImpl(
         }
     }
 
-    override fun onReceiveFirebaseMessage(remoteMessage: RemoteMessage) {
-        val payload: Map<String, String> = remoteMessage.data
-        logger?.logI(TAG, "onLoadMessageFail: $remoteMessage data: $payload")
-
-        handleRemoteMessage(remoteMessage)
+    override fun onReceiveFirebaseMessage(message: RemoteMessage) {
+        val payload: Map<String, String> = message.data
+        logger?.logI(TAG, "onReceiveFirebaseMessage: $message data: $payload")
+        handleRemoteMessage(message)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent) {
         logger?.logI(TAG, "onReceiveWebSocketEvent: $event")
-
         handleEvent(event)
     }
 
-    private fun handleRemoteMessage(remoteMessage: RemoteMessage) {
-        val messageId = remoteMessage.data[config.getFirebaseMessageKey()]
+    private fun handleRemoteMessage(message: RemoteMessage) {
+
+        if (!verifyPayload(message)) {
+            return
+        }
+
+        val messageIdKey = config.getFirebaseMessageIdKey()
+        val channelIdKey = config.getFirebaseChannelIdKey()
+        val channelTypeKey = config.getFirebaseChannelIdKey()
+
+        val messageId = message.data[messageIdKey]!!
+        val channelId = message.data[channelIdKey]!!
+        val channelType = message.data[channelTypeKey]!!
 
         if (checkSentNotificationWithId(messageId)) {
-            if (messageId != null && messageId.isNotEmpty()) {
-                val notificationModel = ChatNotification(
-                    System.currentTimeMillis().toInt(),
-                    remoteMessage,
-                    null
-                )
-                notificationsMap[messageId] = notificationModel
-                loadMessage(context, messageId)
-            } else {
-                logger?.logE(TAG, "RemoteMessage: messageId = $messageId")
-            }
+            val notificationModel =
+                ChatNotification(System.currentTimeMillis().toInt(), message, null)
+            notificationsMap[messageId] = notificationModel
+            loadChannelAndMessage(channelType, channelId, messageId, context)
+        }
+    }
+
+    private fun verifyPayload(message: RemoteMessage): Boolean {
+
+        val messageIdKey = config.getFirebaseMessageIdKey()
+        val channelTypeKey = config.getFirebaseChannelIdKey()
+        val channelIdKey = config.getFirebaseChannelIdKey()
+
+        val messageId = message.data[messageIdKey]
+        val channelId = message.data[channelIdKey]
+        val channelType = message.data[channelTypeKey]
+
+        return if (message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey) ||
+            isNullOrEmpty(messageId, channelId, channelType)
+        ) {
+            logger?.logE(
+                TAG,
+                "Push payload is not configured correctly. Required $messageIdKey = $messageId " +
+                        "required $channelIdKey = $channelId, " +
+                        "required $channelTypeKey = $channelType"
+            )
+            false
+        } else {
+            true
         }
     }
 
@@ -90,11 +121,14 @@ class ChatNotificationsImpl(
 
         if (event is NewMessageEvent) {
 
+            val channelType = event.cid.split(":")[0]
+            val channelId = event.cid.split(":")[1]
+
             if (checkSentNotificationWithId(event.message.id)) {
                 val currentTime = System.currentTimeMillis().toInt()
                 val notificationModel = ChatNotification(currentTime, null, event)
                 notificationsMap[event.message.id] = notificationModel
-                loadMessage(context, event.message.id)
+                loadChannelAndMessage(channelType, channelId, event.message.id, context)
             } else {
                 logger?.logI(TAG, "Notification with id:${event.message.id} already showed")
             }
@@ -104,14 +138,23 @@ class ChatNotificationsImpl(
     private fun checkSentNotificationWithId(messageId: String?) =
         notificationsMap[messageId] == null
 
-    private fun loadMessage(
-        context: Context,
-        messageId: String
+    private fun loadChannelAndMessage(
+        channelType: String,
+        channelId: String,
+        messageId: String,
+        context: Context
     ) {
-        client.getMessage(messageId).enqueue { result ->
+        val getMessage = client.getMessage(messageId)
+        val getChannel = client.queryChannel(channelType, channelId, ChannelQueryRequest())
+
+        getChannel.zipWith(getMessage).enqueue { result ->
             if (result.isSuccess) {
-                config.getFailMessageListener()?.onLoadMessageSuccess(result.data())
-                onMessageLoaded(context, result.data())
+
+                val channel = result.data().first
+                val message = result.data().second
+
+                config.getFailMessageListener()?.onLoadMessageSuccess(message)
+                onChannelAndMessageLoaded(channel, message, context)
             } else {
                 logger?.logE(TAG, "Can\'t load message. Error: ${result.error().message}")
                 showDefaultNotification(context, messageId)
@@ -120,18 +163,19 @@ class ChatNotificationsImpl(
         }
     }
 
-    private fun onMessageLoaded(
-        context: Context,
-        message: Message
+    private fun onChannelAndMessageLoaded(
+        channel: Channel,
+        message: Message,
+        context: Context
     ) {
-        val type: String = message.channel.type
+        val type: String = channel.type
 
         val messageId: String = message.id
-        val channelId: String = message.channel.id
+        val channelId: String = channel.id
 
         notificationsMap[message.id]?.let { notificationItem ->
             notificationItem.channelName =
-                message.channel.extraData.getOrDefault("name", "").toString()
+                channel.extraData.getOrDefault("name", "").toString()
             notificationItem.messageText = message.text
             notificationItem.pendingReplyIntent = preparePendingIntent(
                 context = context,
