@@ -41,9 +41,10 @@ class Message : UserEntity {
     var deletedAt: Date? = null
     @SerializedName("mentioned_users")
     val mentionedUsers = emptyList<User>()
-
     @SerializedName("parent_id")
     var parentId: String? = null
+    @SerializedName("reaction_counts")
+    val reactionCounts = mutableMapOf<String, Integer>()
 
     val command: String? = null
 
