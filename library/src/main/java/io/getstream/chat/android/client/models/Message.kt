@@ -15,8 +15,7 @@ class Message : UserEntity {
     val html: String = ""
 
     lateinit var user: User
-    lateinit var channel: Channel
-    val userID: String = ""
+
     val attachments = emptyList<Attachment>()
 
     @IgnoreSerialisation
@@ -42,8 +41,6 @@ class Message : UserEntity {
     var deletedAt: Date? = null
     @SerializedName("mentioned_users")
     val mentionedUsers = emptyList<User>()
-    val mentionedUsersId: List<String>? = null
-    val reactionCounts: Map<String, Int>? = null
 
     @SerializedName("parent_id")
     var parentId: String? = null
@@ -51,7 +48,6 @@ class Message : UserEntity {
     val command: String? = null
 
     val commandInfo: Map<String, String>? = null
-
 
     val extraData = mutableMapOf<String, Any>()
 
@@ -130,8 +126,6 @@ class Message : UserEntity {
         if (text != other.text) return false
         if (html != other.html) return false
         if (user != other.user) return false
-        if (channel != other.channel) return false
-        if (userID != other.userID) return false
         if (attachments != other.attachments) return false
         if (type != other.type) return false
         if (latestReactions != other.latestReactions) return false
@@ -141,8 +135,6 @@ class Message : UserEntity {
         if (updatedAt != other.updatedAt) return false
         if (deletedAt != other.deletedAt) return false
         if (mentionedUsers != other.mentionedUsers) return false
-        if (mentionedUsersId != other.mentionedUsersId) return false
-        if (reactionCounts != other.reactionCounts) return false
         if (parentId != other.parentId) return false
         if (command != other.command) return false
         if (commandInfo != other.commandInfo) return false
@@ -162,8 +154,6 @@ class Message : UserEntity {
         result = 31 * result + text.hashCode()
         result = 31 * result + html.hashCode()
         result = 31 * result + user.hashCode()
-        result = 31 * result + channel.hashCode()
-        result = 31 * result + userID.hashCode()
         result = 31 * result + attachments.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + latestReactions.hashCode()
@@ -173,8 +163,6 @@ class Message : UserEntity {
         result = 31 * result + updatedAt.hashCode()
         result = 31 * result + deletedAt.hashCode()
         result = 31 * result + mentionedUsers.hashCode()
-        result = 31 * result + (mentionedUsersId?.hashCode() ?: 0)
-        result = 31 * result + (reactionCounts?.hashCode() ?: 0)
         result = 31 * result + (parentId?.hashCode() ?: 0)
         result = 31 * result + (command?.hashCode() ?: 0)
         result = 31 * result + (commandInfo?.hashCode() ?: 0)
