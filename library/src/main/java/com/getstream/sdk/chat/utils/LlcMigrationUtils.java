@@ -89,11 +89,17 @@ public class LlcMigrationUtils {
     }
 
     public static String getImage(Channel channel) {
-        Object image = channel.getExtraData().get("image");
-        if (image instanceof String) {
-            return (String) image;
+
+        if (!channel.getExtraData().containsKey("image")) {
+            return null;
+        } else {
+            Object image = channel.getExtraData().get("image");
+            if (image instanceof String) {
+                return (String) image;
+            }
+            return null;
         }
-        return null;
+
     }
 
     public static boolean readLastMessage(Channel channel) {

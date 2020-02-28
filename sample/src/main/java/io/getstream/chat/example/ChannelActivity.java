@@ -3,6 +3,7 @@ package io.getstream.chat.example;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
@@ -18,14 +19,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 import io.getstream.chat.example.navigation.SearchDestination;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * Show the messages for a channel
@@ -63,10 +68,24 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageInput.setMessageText(messageText);
         }
 
-        Channel channel = new Channel();
-        channel.setType(channelType);
-        channel.setId(channelID);
+        StreamChat.getInstance().queryChannel(channelType, channelID, new ChannelQueryRequest()).enqueue(new Function1<Result<Channel>, Unit>() {
+            @Override
+            public Unit invoke(Result<Channel> result) {
 
+                if (result.isSuccess()) {
+                    init(result.data());
+                } else {
+                    result.error().printStackTrace();
+                    Toast.makeText(ChannelActivity.this, "Error channel loading", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                return null;
+            }
+        });
+    }
+
+    private void init(Channel channel) {
         // setup the viewmodel, remember to also set the channel
         viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
         viewModel.setChannel(channel);

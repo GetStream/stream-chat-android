@@ -79,11 +79,10 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         removeAllViews();
 
-        String image = (String) channel.getExtraData().get("image");
-
         if (user != null) {
             configSingleAvatar(user.getImage(), LlcMigrationUtils.getInitials(user));
-        } else if (!TextUtils.isEmpty(image)) {
+        } else if (channel != null && !TextUtils.isEmpty(LlcMigrationUtils.getImage(channel))) {
+            String image = LlcMigrationUtils.getImage(channel);
             configSingleAvatar(image, LlcMigrationUtils.getInitials(channel));
         } else {
             configUserAvatars();

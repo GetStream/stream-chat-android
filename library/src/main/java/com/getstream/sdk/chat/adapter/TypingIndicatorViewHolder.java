@@ -35,7 +35,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
 
     @Override
     public void bind(@NonNull Context context,
-                     @NonNull Channel channelState,
+                     @NonNull Channel channel,
                      @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,

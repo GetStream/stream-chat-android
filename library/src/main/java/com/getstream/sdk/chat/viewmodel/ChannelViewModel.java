@@ -353,7 +353,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void initThread() {
         threadParentMessage.postValue(null);
         threadMessages.postValue(null);
-        messages.postValue(channel.getMessages());
+        messages.postValue(new ArrayList<>(channel.getMessages()));
         reachedEndOfPaginationThread = false;
     }
     // endregion
@@ -833,7 +833,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                 if (channelResult.isSuccess()) {
                     reachedEndOfPagination = channel.getMessages().size() < 10;
-                    addMessages(channel.getMessages());
+                    addMessages(new ArrayList<>(channel.getMessages()));
                 }
 
                 channelLoadingDone();

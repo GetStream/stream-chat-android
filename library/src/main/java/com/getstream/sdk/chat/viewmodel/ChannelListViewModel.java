@@ -290,7 +290,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
             if (event instanceof NewMessageEvent) {
                 NewMessageEvent e = (NewMessageEvent) event;
-                String cid = e.cid;
+                String cid = e.getCid();
                 Message message = e.message;
 
             }
