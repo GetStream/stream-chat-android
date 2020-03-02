@@ -988,6 +988,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 //            addMessage(message);
 //        }
 
+        message.setCreatedAt(new Date());
+        message.setUser(StreamChat.getInstance().getCurrentUser());
+
+        addMessage(message);
+
         String type = channel.getType();
         String id = channel.getType();
 
