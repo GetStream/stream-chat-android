@@ -16,16 +16,16 @@ class Message : UserEntity {
 
     lateinit var user: User
 
-    val attachments = emptyList<Attachment>()
+    val attachments = mutableListOf<Attachment>()
 
     @IgnoreSerialisation
     val type: String = ""
     @IgnoreSerialisation
     @SerializedName("latest_reactions")
-    val latestReactions = emptyList<Reaction>()
+    val latestReactions = mutableListOf<Reaction>()
     @IgnoreSerialisation
     @SerializedName("own_reactions")
-    val ownReactions = emptyList<Reaction>()
+    val ownReactions = mutableListOf<Reaction>()
     @IgnoreSerialisation
     @SerializedName("reply_count")
     val replyCount = 0
@@ -40,7 +40,7 @@ class Message : UserEntity {
     @SerializedName("deleted_at")
     var deletedAt: Date? = null
     @SerializedName("mentioned_users")
-    val mentionedUsers = emptyList<User>()
+    val mentionedUsers = mutableListOf<User>()
     @SerializedName("parent_id")
     var parentId: String? = null
     @SerializedName("reaction_counts")
