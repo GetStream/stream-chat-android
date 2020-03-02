@@ -54,8 +54,8 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getAttachments() != null)
             data.put("attachments", message.getAttachments());
 
-        if (message.getMentionedUsersId() != null)
-            data.put("mentioned_users", message.getMentionedUsersId());
+        if (message.getMentionedUsers() != null)
+            data.put("mentioned_users", message.getMentionedUsers());
 
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());

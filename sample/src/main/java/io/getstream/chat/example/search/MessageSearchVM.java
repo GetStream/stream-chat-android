@@ -5,9 +5,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.rest.response.SearchMessagesResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,9 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
+import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.FilterObject;
@@ -35,7 +34,8 @@ public class MessageSearchVM extends AndroidViewModel {
     public MutableLiveData<Boolean> isLoading;
     public MutableLiveData<Boolean> isEmpty;
     public MutableLiveData<String> searchQuery;
-    MutableLiveData<List<Message>> searchResult;
+    MutableLiveData<List<Message>> searchResult = new MutableLiveData<>();
+    MutableLiveData<Channel> channelResult = new MutableLiveData<>();
     SingleLiveEvent<String> onError;
 
     private Context context;
@@ -66,6 +66,19 @@ public class MessageSearchVM extends AndroidViewModel {
         this.cid = cid;
     }
 
+    void loadChannel() {
+        String type = cid.split(":")[0];
+        String id = cid.split(":")[1];
+        StreamChat.getInstance().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
+            if (result.isSuccess()) {
+                channelResult.setValue(result.data());
+            } else {
+                onError.setValue(result.error().getMessage());
+            }
+            return null;
+        });
+    }
+
     //TODO Implement this
     // We can't load more, because we have no metadata in search result
     void loadMore(int offset) {
@@ -81,7 +94,6 @@ public class MessageSearchVM extends AndroidViewModel {
         isLoading = new MutableLiveData<>(false);
         isEmpty = new MutableLiveData<>(false);
         searchQuery = new MutableLiveData<>();
-        searchResult = new MutableLiveData<>();
         onError = new SingleLiveEvent<>();
     }
 

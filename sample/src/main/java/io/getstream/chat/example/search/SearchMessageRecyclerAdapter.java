@@ -7,23 +7,29 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
-import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.example.R;
 
 public class SearchMessageRecyclerAdapter extends RecyclerView.Adapter<SearchMessageRecyclerAdapter.SearchItemHolder> {
 
+    private final Channel channel;
     private ArrayList<MessageResponse> items = new ArrayList<>();
     private OnSearchItemClickListener onItemListener;
+
+    public SearchMessageRecyclerAdapter(Channel channel) {
+
+        this.channel = channel;
+    }
 
     @NonNull
     @Override
@@ -79,11 +85,11 @@ public class SearchMessageRecyclerAdapter extends RecyclerView.Adapter<SearchMes
                     .load(item.getUser().getImage())
                     .into(itemSearchIv);
 
-            String name = LlcMigrationUtils.getName(item.getChannel());
+            String name = LlcMigrationUtils.getName(channel);
 
             itemSearchTitleTv.setText(name);
             itemSearchMessageTv.setText(item.getText());
-            itemView.setOnClickListener(v -> onItemListener.onItemClicked(item.getChannel().getType(), item.getChannel().getId(), item.getId()));
+            itemView.setOnClickListener(v -> onItemListener.onItemClicked(channel.getType(), channel.getId(), item.getId()));
         }
     }
 

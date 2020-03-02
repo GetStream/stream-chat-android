@@ -7,6 +7,8 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.getstream.sdk.chat.StreamChat;
+
+import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.example.navigation.ChannelDestination;
 import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
@@ -58,6 +60,8 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
         initViews();
         observeData();
         observeErrors();
+
+        viewModel.loadChannel();
     }
 
     @Override
@@ -82,7 +86,6 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
     private void initViews() {
         initToolbar();
         addListeners();
-        initRecyclerView();
     }
 
     private void initToolbar() {
@@ -102,8 +105,8 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
         });
     }
 
-    private void initRecyclerView() {
-        adapter = new SearchMessageRecyclerAdapter();
+    private void initRecyclerView(Channel channel) {
+        adapter = new SearchMessageRecyclerAdapter(channel);
         adapter.setOnItemClickListener(this);
         binding.searchMessagesMessagesRv.setAdapter(adapter);
         binding.searchMessagesMessagesRv.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -117,6 +120,13 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
                     }
                 }
         );
+
+        viewModel.channelResult.observe(this, new Observer<Channel>() {
+            @Override
+            public void onChanged(Channel channel) {
+                initRecyclerView(channel);
+            }
+        });
     }
 
     private void observeErrors() {

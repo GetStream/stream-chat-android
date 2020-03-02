@@ -450,12 +450,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             @Override
             public Unit invoke(ChatEvent event) {
 
+                Channel channel = event.getChannel();
+
                 if (event instanceof NewMessageEvent) {
 
                     upsertMessage(event.getMessage());
 
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
+
 
                     User currentUser = StreamChat.getInstance().getCurrentUser();
                     String currentUserId = currentUser.getId();
@@ -468,22 +470,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     }
 
                 } else if (event instanceof UserStartWatchingEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                 } else if (event instanceof UserStopWatchingEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                 } else if (event instanceof ChannelUpdatedEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                 } else if (event instanceof MessageUpdatedEvent) {
                     updateMessage(event.message);
                 } else if (event instanceof MessageDeletedEvent) {
                     deleteMessage(event.message);
                 } else if (event instanceof MessageReadEvent) {
 
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                     reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
 
                     User currentUser = StreamChat.getInstance().getCurrentUser();
@@ -512,14 +510,16 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                         typingUsers.postValue(getCleanedTypingUsers());
                     }
                 } else if (event instanceof MemberAddedEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                 } else if (event instanceof MemberRemovedEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
                 } else if (event instanceof MemberUpdatedEvent) {
-                    channel = event.getChannel();
-                    channelState.postValue(event.getChannel());
+
+                }
+
+                if(channel != null) {
+                    ChannelViewModel.this.channel = channel;
+                    channelState.postValue(channel);
                 }
 
                 return null;
