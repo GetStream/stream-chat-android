@@ -43,8 +43,10 @@ class Message : UserEntity {
     val mentionedUsers = mutableListOf<User>()
     @SerializedName("parent_id")
     var parentId: String? = null
+
     @SerializedName("reaction_counts")
-    val reactionCounts = mutableMapOf<String, Integer>()
+    @IgnoreSerialisation
+    val reactionCounts = mutableMapOf<String, Int>()
 
     val command: String? = null
 

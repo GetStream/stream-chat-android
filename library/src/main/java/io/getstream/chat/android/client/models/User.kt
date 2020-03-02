@@ -12,7 +12,10 @@ class User(var id: String = "") : UserEntity, CustomObject {
     var name: String = ""
     var image: String = ""
     var role: String = ""
+
+    @IgnoreSerialisation
     var online: Boolean = false
+
     var invisible: Boolean = false
     var banned: Boolean = false
     var totalUnreadCount: Int = 0
