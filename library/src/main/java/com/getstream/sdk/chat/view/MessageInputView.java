@@ -439,7 +439,11 @@ public class MessageInputView extends RelativeLayout {
         attachment.setTitleLink(url);
         attachment.setTitle(inputContentInfo.getDescription().getLabel().toString());
         attachment.setType(ModelType.attach_giphy);
-        messageInputController.setSelectedAttachments(Arrays.asList(attachment));
+
+        List<Attachment> selectedAttachments = new ArrayList<>();
+        selectedAttachments.add(attachment);
+
+        messageInputController.setSelectedAttachments(selectedAttachments);
         binding.etMessage.setText("");
         onSendMessage();
         return true;

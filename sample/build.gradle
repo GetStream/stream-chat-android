@@ -17,7 +17,7 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-def appVersion = "22.0"
+def appVersion = "23.0"
 
 android {
     compileSdkVersion 28
@@ -25,7 +25,7 @@ android {
         applicationId "io.getstream.chat.sdk"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 22
+        versionCode 23
         versionName appVersion
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
