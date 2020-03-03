@@ -78,7 +78,7 @@ class ChatNotificationsImpl(
 
         val messageIdKey = config.getFirebaseMessageIdKey()
         val channelIdKey = config.getFirebaseChannelIdKey()
-        val channelTypeKey = config.getFirebaseChannelIdKey()
+        val channelTypeKey = config.getFirebaseChannelTypeKey()
 
         val messageId = message.data[messageIdKey]!!
         val channelId = message.data[channelIdKey]!!
