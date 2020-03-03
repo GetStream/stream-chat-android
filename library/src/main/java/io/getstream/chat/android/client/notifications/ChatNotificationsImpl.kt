@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
@@ -18,6 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.ChannelQueryRequest
+import io.getstream.chat.android.client.bitmaps.BitmapsLoader
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -28,22 +28,18 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.client.utils.containsKeys
 import io.getstream.chat.android.client.utils.isNullOrEmpty
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 class ChatNotificationsImpl(
     private val config: ChatNotificationConfig,
     private val client: ChatApi,
+    private val bitmapsLoader: BitmapsLoader,
     private val context: Context
 ) : ChatNotifications {
 
     private val TAG = ChatNotifications::class.java.simpleName
     private val notificationsMap = mutableMapOf<String, ChatNotification>()
     private val logger: ChatLogger? = ChatLogger.instance
-
 
     override fun setFirebaseToken(firebaseToken: String) {
         logger?.logI(TAG, "setFirebaseToken: $firebaseToken")
@@ -275,22 +271,26 @@ class ChatNotificationsImpl(
     private fun loadUserImage(
         context: Context,
         messageId: String,
-        photoUrl: String?
+        photoUrl: String
     ) {
         val notificationItem = notificationsMap[messageId]
         if (notificationItem != null) {
-            val notification = prepareNotification(
-                context,
-                messageId,
-                getBitmapFromURL(photoUrl),
-                false
-            )
-            showNotification(
-                notificationItem.notificationId,
-                notification,
-                context
-            )
-            removeNotificationItem(messageId)
+
+            bitmapsLoader.load(photoUrl) {
+                val notification = prepareNotification(
+                    context,
+                    messageId,
+                    null,
+                    //getBitmapFromUrl(photoUrl),
+                    false
+                )
+                showNotification(
+                    notificationItem.notificationId,
+                    notification,
+                    context
+                )
+                removeNotificationItem(messageId)
+            }
         }
     }
 
@@ -306,7 +306,7 @@ class ChatNotificationsImpl(
         if (notificationItem != null) {
             val contentIntent = getContentIntent(context, notificationItem, defaultNotification)
 
-            notificationBuilder?.setContentTitle(notificationItem.channelName)
+            notificationBuilder.setContentTitle(notificationItem.channelName)
                 ?.setContentText(notificationItem.messageText)
                 ?.setPriority(NotificationCompat.PRIORITY_HIGH)
                 ?.setCategory(NotificationCompat.CATEGORY_MESSAGE)
@@ -388,16 +388,5 @@ class ChatNotificationsImpl(
             .isAtLeast(Lifecycle.State.STARTED)
     }
 
-    fun getBitmapFromURL(src: String?): Bitmap? {
-        return try {
-            val url = URL(src)
-            val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-            connection.doInput = true
-            connection.connect()
-            val input: InputStream = connection.inputStream
-            BitmapFactory.decodeStream(input)
-        } catch (e: IOException) { // Log exception
-            null
-        }
-    }
+
 }

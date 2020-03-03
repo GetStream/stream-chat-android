@@ -8,9 +8,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.logger.ChatLoggerImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.cache.AppDatabase

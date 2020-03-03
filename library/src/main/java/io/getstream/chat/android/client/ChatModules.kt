@@ -4,6 +4,7 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.*
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
@@ -29,6 +30,7 @@ open class ChatModules(val config: ChatClientConfig) {
     }
     private val defaultApi by lazy { buildApi(config, parser(), logger()) }
     private val defaultSocket by lazy { buildSocket(config, parser(), logger()) }
+    private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsConfig.context)
 
     //region Modules
 
@@ -58,7 +60,7 @@ open class ChatModules(val config: ChatClientConfig) {
         config: ChatNotificationConfig,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotificationsImpl(config, api, config.context)
+        return ChatNotificationsImpl(config, api, bitmapsLoader, config.context)
     }
 
     private fun buildRetrofit(
