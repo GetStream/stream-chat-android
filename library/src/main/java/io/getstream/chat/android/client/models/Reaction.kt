@@ -19,6 +19,8 @@ data class Reaction(
     @SerializedName("created_at")
     val createdAt: Date? = null
 
+    var score = 0
+
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData = mutableMapOf<String, Any>()
