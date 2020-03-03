@@ -359,7 +359,7 @@ public class LlcMigrationUtils {
 
     public static int getUnreadMessageCount(String userId, Channel channel) {
         int unreadMessageCount = 0;
-        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.getRead();
+        List<ChannelUserRead> read = channel.getRead();
         if (read == null || read.isEmpty()) return unreadMessageCount;
 
         Date lastReadDate = getReadDateOfChannelLastMessage(userId, channel);
@@ -378,12 +378,12 @@ public class LlcMigrationUtils {
     }
 
     public static Date getReadDateOfChannelLastMessage(String userId, Channel channel) {
-        List<io.getstream.chat.android.client.models.ChannelUserRead> read = channel.getRead();
+        List<ChannelUserRead> read = channel.getRead();
         if (read == null || read.isEmpty()) return null;
         Date lastReadDate = null;
         try {
             for (int i = read.size() - 1; i >= 0; i--) {
-                io.getstream.chat.android.client.models.ChannelUserRead channelUserRead = read.get(i);
+                ChannelUserRead channelUserRead = read.get(i);
                 if (channelUserRead.getUser().getId().equals(userId)) {
                     lastReadDate = channelUserRead.getLastRead();
                     break;

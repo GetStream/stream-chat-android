@@ -49,7 +49,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     /**
      * The A livedata object for the list of messages
      */
-    protected LazyQueryChannelLiveData<List<Message>> messages;
+    protected LazyQueryChannelLiveData<List<Message>> messages = new LazyQueryChannelLiveData<>();
     /**
      * The numbers of users currently watching this channel
      */
@@ -167,7 +167,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         inputType = new MutableLiveData<>(InputType.DEFAULT);
         hasNewMessages = new MutableLiveData<>(false);
 
-        messages = new LazyQueryChannelLiveData<>();
         messages.viewModel = this;
 
         threadMessages = new LazyQueryChannelLiveData<>();
@@ -457,18 +456,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     upsertMessage(event.getMessage());
 
 
-
-
-                    User currentUser = StreamChat.getInstance().getCurrentUser();
-                    String currentUserId = currentUser.getId();
-
-                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
-
-                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
-                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
-                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                    }
-
                 } else if (event instanceof UserStartWatchingEvent) {
 
                 } else if (event instanceof UserStopWatchingEvent) {
@@ -517,9 +504,19 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                 }
 
-                if(channel != null) {
+                User currentUser = StreamChat.getInstance().getCurrentUser();
+                String currentUserId = currentUser.getId();
+
+                if (channel != null) {
                     ChannelViewModel.this.channel = channel;
                     channelState.postValue(channel);
+
+                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
+
+                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
+                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                    }
                 }
 
                 return null;
@@ -530,14 +527,19 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected void replaceMessage(Message oldMessage, Message newMessage) {
         List<Message> messagesCopy = getMessages().getValue();
+        String oldMessageId = oldMessage.getId();
         for (int i = messagesCopy.size() - 1; i >= 0; i--) {
-            if (oldMessage.getId().equals(messagesCopy.get(i).getId())) {
+            String messageId = messagesCopy.get(i).getId();
+            if (oldMessageId.equals(messageId)) {
                 //TODO: llc test offline case
 //                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
 //                    messagesCopy.remove(oldMessage);
 //                } else {
 //                    messagesCopy.set(i, newMessage);
 //                }
+
+                messagesCopy.set(i, newMessage);
+
                 if (isThread())
                     threadMessages.postValue(messagesCopy);
                 else
@@ -570,12 +572,20 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             threadMessages.postValue(messagesCopy);
         } else {
             List<Message> messagesCopy = messages.getValue();
-            int index = messagesCopy.indexOf(message);
-            if (index != -1) {
-                messagesCopy.set(index, message);
-            } else {
+            boolean updated = false;
+            for (int i = 0; i < messagesCopy.size(); i++) {
+                Message m = messagesCopy.get(i);
+                if (m.getId().equals(message.getId())) {
+                    updated = true;
+                    messagesCopy.set(i, message);
+                    break;
+                }
+            }
+
+            if (!updated) {
                 messagesCopy.add(message);
             }
+
             messages.postValue(messagesCopy);
             markLastMessageRead();
         }
@@ -994,12 +1004,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         addMessage(message);
 
         String type = channel.getType();
-        String id = channel.getType();
+        String id = channel.getId();
 
         return StreamChat.getInstance()
                 .sendMessage(type, id, message)
                 .onNext(m -> {
-                    replaceMessage(m, m);
+                    replaceMessage(message, m);
                     return Unit.INSTANCE;
                 }).onError(chatError -> {
                     updateFailedMessage(message);

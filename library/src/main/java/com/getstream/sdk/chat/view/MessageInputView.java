@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -352,7 +353,7 @@ public class MessageInputView extends RelativeLayout {
      */
     private Call<Message> onSendMessage(Message message) {
 
-        Call<io.getstream.chat.android.client.models.Message> call;
+        Call<Message> call;
         binding.ivSend.setEnabled(false);
 
         if (isEdit())
@@ -375,6 +376,7 @@ public class MessageInputView extends RelativeLayout {
 
     private Message getNewMessage() {
         Message message = new Message();
+        message.setId(UUID.randomUUID().toString());
         message.setText(getMessageText());
         return message;
     }
