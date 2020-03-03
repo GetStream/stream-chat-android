@@ -469,17 +469,21 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 } else if (event instanceof MessageReadEvent) {
 
 
-                    reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
+                    if (channel != null) {
+                        reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
 
-                    User currentUser = StreamChat.getInstance().getCurrentUser();
-                    String currentUserId = currentUser.getId();
+                        User currentUser = StreamChat.getInstance().getCurrentUser();
+                        String currentUserId = currentUser.getId();
 
-                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
+                        int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
 
-                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
-                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
-                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                        if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                            lastCurrentUserUnreadMessageCount = unreadMessageCount;
+                            currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                        }
                     }
+
+
                 } else if (event instanceof ReactionNewEvent) {
                     updateMessage(event.message);
                 } else if (event instanceof ReactionDeletedEvent) {
