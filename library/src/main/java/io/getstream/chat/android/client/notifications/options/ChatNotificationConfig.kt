@@ -6,7 +6,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -15,6 +17,7 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
+
 
 open class ChatNotificationConfig(val context: Context) {
 
@@ -69,7 +72,8 @@ open class ChatNotificationConfig(val context: Context) {
     }
 
     open fun getLargeIcon(): Bitmap {
-        return BitmapFactory.decodeResource(context.resources, R.drawable.stream_ic_notification)
+        val drawable = context.resources.getDrawable(R.drawable.stream_ic_notification, context.theme)
+        return drawableToBitmap(drawable)
     }
 
     open fun getRequestCode(): Int {
@@ -96,5 +100,18 @@ open class ChatNotificationConfig(val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
+
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+        val bitmap =
+            Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
 
 }
