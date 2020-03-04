@@ -19,7 +19,9 @@ import java.io.File
 
 interface ChatClient {
 
-    fun setUser(user: User)
+    fun setUser(user: User, token:String)
+
+    fun setUser(user: User, token:TokenProvider)
 
     fun setAnonymousUser()
 
@@ -168,19 +170,11 @@ interface ChatClient {
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
-        private var tokenProviderInstance: TokenProvider
         private var logLevel = ChatLogLevel.NOTHING
         private lateinit var notificationsConfig: ChatNotificationConfig
 
-        constructor(apiKey: String, token: String, appContext: Context) {
+        constructor(apiKey: String, appContext: Context) {
             this.apiKey = apiKey
-            this.tokenProviderInstance = ImmediateTokenProvider(token)
-            this.appContext = appContext
-        }
-
-        constructor(apiKey: String, tokenProvider: TokenProvider, appContext: Context) {
-            this.apiKey = apiKey
-            this.tokenProviderInstance = tokenProvider
             this.appContext = appContext
         }
 
@@ -254,8 +248,6 @@ interface ChatClient {
                 logLevel,
                 notificationsConfig
             )
-
-            config.tokenProvider.setTokenProvider(tokenProviderInstance)
 
             val modules = ChatModules(config)
             val result = ChatClientImpl(

@@ -49,7 +49,7 @@ class App : Application() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        client = ChatClient.Builder(apiKey, token, this)
+        client = ChatClient.Builder(apiKey, this)
             .notifications(provideNotificationConfig())
             .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()

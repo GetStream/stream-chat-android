@@ -13,6 +13,8 @@ import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -46,8 +48,15 @@ internal class ChatClientImpl(
 
     //region Set user
 
-    override fun setUser(user: User) {
+    override fun setUser(user: User, token: String) {
         config.isAnonymous = false
+        config.tokenProvider.setTokenProvider(ImmediateTokenProvider(token))
+        socket.connect(user)
+    }
+
+    override fun setUser(user: User, tokenProvider: TokenProvider) {
+        config.isAnonymous = false
+        config.tokenProvider.setTokenProvider(tokenProvider)
         socket.connect(user)
     }
 
