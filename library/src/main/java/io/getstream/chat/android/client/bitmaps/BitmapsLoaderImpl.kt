@@ -2,21 +2,45 @@ package io.getstream.chat.android.client.bitmaps
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import android.graphics.BitmapFactory
+import android.os.Handler
+import android.os.Looper
+import io.getstream.chat.android.client.logger.ChatLogger
+import okhttp3.*
+import java.io.IOException
+import java.io.InputStream
+
 
 internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
 
+    val TAG = BitmapsLoader::class.java.simpleName
+
+    val cacheSize = 10 * 1024 * 1024 // 10 MiB
+    val client = OkHttpClient.Builder()
+        .build()
+    val uiHandler = Handler(Looper.getMainLooper())
+
+
     override fun load(url: String, listener: (Bitmap) -> Unit) {
-        Glide.with(context).asBitmap().load(url).into(object : CustomTarget<Bitmap>() {
-            override fun onLoadCleared(p0: Drawable?) {
+
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
 
             }
 
-            override fun onResourceReady(p0: Bitmap, p1: Transition<in Bitmap>?) {
-                listener(p0)
+            override fun onResponse(call: Call, response: Response) {
+
+                try {
+                    val inputStream: InputStream = response.body!!.byteStream()
+                    val bitmap = BitmapFactory.decodeStream(inputStream)
+                    uiHandler.post {
+                        listener(bitmap)
+                    }
+                } catch (t: Throwable) {
+                    ChatLogger.instance?.logT(TAG, t)
+                }
             }
         })
     }
