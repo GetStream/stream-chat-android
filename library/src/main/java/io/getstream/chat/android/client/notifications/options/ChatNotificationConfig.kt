@@ -16,7 +16,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
-import io.getstream.chat.android.client.notifications.NotificationMessageLoadListener
+import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 
 
 open class ChatNotificationConfig(val context: Context) {
@@ -25,7 +25,7 @@ open class ChatNotificationConfig(val context: Context) {
         return null
     }
 
-    open fun getFailMessageListener(): NotificationMessageLoadListener? {
+    open fun getDataLoadListener(): NotificationLoadDataListener? {
         return null
     }
 

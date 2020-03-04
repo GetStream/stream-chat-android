@@ -56,12 +56,14 @@ class ChatNotificationsImpl(
     }
 
     override fun onReceiveFirebaseMessage(message: RemoteMessage) {
+        if (isForeground()) return
         val payload: Map<String, String> = message.data
         logger?.logI(TAG, "onReceiveFirebaseMessage: $message data: $payload")
         handleRemoteMessage(message)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent) {
+        if (isForeground()) return
         logger?.logI(TAG, "onReceiveWebSocketEvent: $event")
         handleEvent(event)
     }
@@ -85,6 +87,22 @@ class ChatNotificationsImpl(
                 ChatNotification(System.currentTimeMillis().toInt(), message, null)
             notificationsMap[messageId] = notificationModel
             loadChannelAndMessage(channelType, channelId, messageId, context)
+        }
+    }
+
+    private fun handleEvent(event: ChatEvent) {
+
+        if (event is NewMessageEvent) {
+
+            val channelType = event.cid.split(":")[0]
+            val channelId = event.cid.split(":")[1]
+
+            if (checkSentNotificationWithId(event.message.id)) {
+                val currentTime = System.currentTimeMillis().toInt()
+                val notificationModel = ChatNotification(currentTime, null, event)
+                notificationsMap[event.message.id] = notificationModel
+                loadChannelAndMessage(channelType, channelId, event.message.id, context)
+            }
         }
     }
 
@@ -113,24 +131,6 @@ class ChatNotificationsImpl(
         }
     }
 
-    private fun handleEvent(event: ChatEvent) {
-
-        if (event is NewMessageEvent) {
-
-            val channelType = event.cid.split(":")[0]
-            val channelId = event.cid.split(":")[1]
-
-            if (checkSentNotificationWithId(event.message.id)) {
-                val currentTime = System.currentTimeMillis().toInt()
-                val notificationModel = ChatNotification(currentTime, null, event)
-                notificationsMap[event.message.id] = notificationModel
-                loadChannelAndMessage(channelType, channelId, event.message.id, context)
-            } else {
-                logger?.logI(TAG, "Notification with id:${event.message.id} already showed")
-            }
-        }
-    }
-
     private fun checkSentNotificationWithId(messageId: String?) =
         notificationsMap[messageId] == null
 
@@ -149,12 +149,12 @@ class ChatNotificationsImpl(
                 val channel = result.data().first
                 val message = result.data().second
 
-                config.getFailMessageListener()?.onLoadMessageSuccess(message)
+                config.getDataLoadListener()?.onLoadSuccess(channel, message)
                 onChannelAndMessageLoaded(channel, message, context)
             } else {
                 logger?.logE(TAG, "Can\'t load message. Error: ${result.error().message}")
                 showDefaultNotification(context, messageId)
-                config.getFailMessageListener()?.onLoadMessageFail(messageId)
+                config.getDataLoadListener()?.onLoadFail(messageId, result.error())
             }
         }
     }
