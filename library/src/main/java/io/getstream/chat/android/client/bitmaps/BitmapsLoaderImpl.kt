@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import okhttp3.*
 import java.io.IOException
@@ -23,11 +24,16 @@ internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
 
     override fun load(url: String, listener: (Bitmap) -> Unit) {
 
-        val request = Request.Builder().url(url).build()
+        val request = try {
+            Request.Builder().url(url).build()
+        } catch (e: Exception) {
+            ChatLogger.instance?.logT(TAG, ChatError("Invalid url: $url", e))
+            return
+        }
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-
+                ChatLogger.instance?.logT(TAG, ChatError("Error image loading ($url)", e))
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -39,7 +45,7 @@ internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
                         listener(bitmap)
                     }
                 } catch (t: Throwable) {
-                    ChatLogger.instance?.logT(TAG, t)
+                    ChatLogger.instance?.logT(TAG, ChatError("Image ($url) decoding error", t))
                 }
             }
         })
