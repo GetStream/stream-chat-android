@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.ChatApi
@@ -39,10 +40,21 @@ class ChatNotificationsImpl(
 
     private val TAG = ChatNotifications::class.java.simpleName
     private val notificationsMap = mutableMapOf<String, ChatNotification>()
-    private val logger: ChatLogger? = ChatLogger.instance
+    private val logger: ChatLogger = ChatLogger.instance
+
+    override fun onSetUser() {
+        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+            if (it.isSuccessful) {
+                logger.logI(TAG, "FirebaseInstanceId returned token successfully")
+                setFirebaseToken(it.result!!.token)
+            } else {
+                logger.logI(TAG, "Error: FirebaseInstanceId doesn't returned token")
+            }
+        }
+    }
 
     override fun setFirebaseToken(firebaseToken: String) {
-        logger?.logI(TAG, "setFirebaseToken: $firebaseToken")
+        logger.logI(TAG, "setFirebaseToken: $firebaseToken")
 
         client.addDevice(firebaseToken).enqueue { result ->
             if (result.isSuccess) {

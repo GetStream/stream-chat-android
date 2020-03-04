@@ -21,7 +21,7 @@ interface ChatClient {
 
     fun setUser(user: User, token:String)
 
-    fun setUser(user: User, token:TokenProvider)
+    fun setUser(user: User, tokenProvider:TokenProvider)
 
     fun setAnonymousUser()
 

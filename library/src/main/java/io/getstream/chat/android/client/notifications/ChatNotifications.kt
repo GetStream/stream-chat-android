@@ -5,6 +5,8 @@ import io.getstream.chat.android.client.events.ChatEvent
 
 interface ChatNotifications {
 
+    fun onSetUser()
+
     fun setFirebaseToken(firebaseToken: String)
 
     fun onReceiveFirebaseMessage(message: RemoteMessage)

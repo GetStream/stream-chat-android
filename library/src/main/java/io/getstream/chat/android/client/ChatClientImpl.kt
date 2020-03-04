@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -25,23 +24,23 @@ internal class ChatClientImpl(
     private val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notificationsManager: ChatNotifications
+    private val notifications: ChatNotifications
 ) : ChatClient {
 
     private val state = ClientState()
 
     init {
         val events = socket.events()
-        events.subscribe {
+        events.subscribe { event ->
 
-            notificationsManager.onReceiveWebSocketEvent(it)
+            notifications.onReceiveWebSocketEvent(event)
 
-            if (it is ConnectedEvent) {
-                state.user = it.me
-                state.connectionId = it.connectionId
+            if (event is ConnectedEvent) {
+                state.user = event.me
+                state.connectionId = event.connectionId
                 state.socketConnected = true
-                api.setConnection(it.me.id, it.connectionId)
-            } else if (it is DisconnectedEvent) {
+                api.setConnection(event.me.id, event.connectionId)
+            } else if (event is DisconnectedEvent) {
                 state.socketConnected = false
             }
         }
@@ -52,17 +51,20 @@ internal class ChatClientImpl(
     override fun setUser(user: User, token: String) {
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(ImmediateTokenProvider(token))
+        notifications.onSetUser()
         socket.connect(user)
     }
 
     override fun setUser(user: User, tokenProvider: TokenProvider) {
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(tokenProvider)
+        notifications.onSetUser()
         socket.connect(user)
     }
 
     override fun setAnonymousUser() {
         config.isAnonymous = true
+        notifications.onSetUser()
         socket.connectAnonymously()
     }
 
@@ -345,11 +347,11 @@ internal class ChatClientImpl(
     //endregion
 
     override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
-        notificationsManager.onReceiveFirebaseMessage(remoteMessage)
+        notifications.onReceiveFirebaseMessage(remoteMessage)
     }
 
     override fun onNewTokenReceived(token: String, context: Context) {
-        notificationsManager.setFirebaseToken(token)
+        notifications.setFirebaseToken(token)
     }
 
     private fun attachClient(channels: List<Channel>): List<Channel> {
