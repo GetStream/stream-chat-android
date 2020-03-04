@@ -56,6 +56,7 @@ class ChatNotificationsImpl(
     }
 
     override fun onReceiveFirebaseMessage(message: RemoteMessage) {
+        ChatLogger.instance.logI(TAG, "onReceiveFirebaseMessage: {$message.data}")
         if (isForeground()) return
         val payload: Map<String, String> = message.data
         logger?.logI(TAG, "onReceiveFirebaseMessage: $message data: $payload")
@@ -63,6 +64,7 @@ class ChatNotificationsImpl(
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent) {
+        ChatLogger.instance.logI(TAG, "onReceiveWebSocketEvent: {$event.type}")
         if (isForeground()) return
         logger?.logI(TAG, "onReceiveWebSocketEvent: $event")
         handleEvent(event)

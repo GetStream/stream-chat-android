@@ -36,6 +36,6 @@ interface ChatLogger {
     }
 
     companion object {
-        var instance: ChatLogger? = null
+        var instance: ChatLogger = ChatSilentLogger()
     }
 }
