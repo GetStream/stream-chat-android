@@ -42,8 +42,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     protected final String TAG = ChannelListViewModel.class.getSimpleName();
 
-    protected MutableLiveData<List<Channel>> channels;
-
+    protected MutableLiveData<List<Channel>> channels = new ChannelsLiveData<>();
 
     protected MutableLiveData<Boolean> loading;
     protected MutableLiveData<Boolean> loadingMore;
@@ -114,11 +113,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     }
 
     public LiveData<List<Channel>> getChannels() {
-
-        if (channels == null) {
-            channels = new ChannelsLiveData<>();
-        }
-
         return channels;
     }
 

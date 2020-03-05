@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.socket.SocketListener;
+import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.client.utils.observable.ChatObservable;
 import kotlin.Unit;
@@ -309,11 +310,6 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
         client.setAnonymousUser();
     }
 
-    @Override
-    public void setUser(@NotNull User user) {
-        client.setUser(user);
-    }
-
     @NotNull
     @Override
     public Call<Unit> showChannel(@NotNull String s, @NotNull String s1) {
@@ -348,5 +344,15 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
     @Override
     public Call<Message> updateMessage(@NotNull Message message) {
         return client.updateMessage(message);
+    }
+
+    @Override
+    public void setUser(@NotNull User user, @NotNull TokenProvider tokenProvider) {
+        client.setUser(user, tokenProvider);
+    }
+
+    @Override
+    public void setUser(@NotNull User user, @NotNull String s) {
+        client.setUser(user, s);
     }
 }

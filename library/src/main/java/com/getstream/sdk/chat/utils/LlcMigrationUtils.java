@@ -349,7 +349,7 @@ public class LlcMigrationUtils {
     }
 
     @Nullable
-    private static Message getOldestMessage(List<Message> messages) {
+    public static Message getOldestMessage(List<Message> messages) {
         if (messages == null || messages.isEmpty()) {
             return null;
         }

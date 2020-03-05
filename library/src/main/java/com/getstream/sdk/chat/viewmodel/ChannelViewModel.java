@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.client.utils.observable.Subscription;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -146,6 +147,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected MutableLiveData<InputType> inputType;
     protected MessageListItemLiveData entities;
     protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
+
+    private List<Subscription> subscriptions = new ArrayList<>();
 
 
     public ChannelViewModel(@NonNull Application application) {
@@ -445,7 +448,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected void initEventHandlers() {
 
-        StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
+        subscriptions.add(StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
             @Override
             public Unit invoke(ChatEvent event) {
 
@@ -525,7 +528,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                 return null;
             }
-        });
+        }));
 
     }
 
@@ -789,6 +792,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         StreamChat.getLogger().logD(this, "onCleared");
 
+        for (Subscription sub : subscriptions) sub.unsubscribe();
+        subscriptions.clear();
+
+
         if (looper != null) {
             looper.interrupt();
         }
@@ -802,7 +809,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected void setupConnectionRecovery() {
 
         //TODO: llc unsubscrube
-        StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
+        subscriptions.add(StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
             @Override
             public Unit invoke(ChatEvent chatEvent) {
                 if (chatEvent instanceof ConnectedEvent) {
@@ -824,7 +831,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
                 return null;
             }
-        });
+        }));
     }
 
     /**
@@ -911,7 +918,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 return;
             }
 
-            String oldestMessageId = LlcMigrationUtils.getOldestMessageId(channel);
+            Message oldestMessage = messages.getValue().get(0);
+            String oldestMessageId = oldestMessage.getId();
 
             ChannelQueryRequest request = new ChannelQueryRequest().
                     withMessages(Pagination.LESS_THAN,
@@ -921,27 +929,23 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             String type = channel.getType();
             String id = channel.getId();
 
-            StreamChat.getInstance().queryChannel(id, type, request).enqueue(new Function1<Result<Channel>, Unit>() {
-                @Override
-                public Unit invoke(Result<Channel> result) {
+            StreamChat.getInstance().queryChannel(type, id, request).enqueue(result -> {
 
-                    if (result.isSuccess()) {
+                if (result.isSuccess()) {
 
-                        Channel channel = result.data();
+                    Channel channel = result.data();
 
-
-                        reachedEndOfPagination = channel.getMessages().isEmpty();
-                        List<Message> newMessages = new ArrayList<>(channel.getMessages());
-                        // used to modify the scroll behaviour...
-                        entities.setIsLoadingMore(true);
-                        addMessages(newMessages);
-                        setLoadingMoreDone();
-                    } else {
-                        setLoadingMoreDone();
-                    }
-
-                    return null;
+                    reachedEndOfPagination = channel.getMessages().isEmpty();
+                    List<Message> newMessages = new ArrayList<>(channel.getMessages());
+                    // used to modify the scroll behaviour...
+                    entities.setIsLoadingMore(true);
+                    addMessages(newMessages);
+                    setLoadingMoreDone();
+                } else {
+                    setLoadingMoreDone();
                 }
+
+                return null;
             });
         }
     }

@@ -15,8 +15,16 @@
         <activity android:name=".view.activity.AttachmentDocumentActivity" />
         <activity android:name=".view.activity.AttachmentActivity" />
 
+        <service
+            android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <receiver
-            android:name=".receiver.NotificationMessageReceiver"
+            android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

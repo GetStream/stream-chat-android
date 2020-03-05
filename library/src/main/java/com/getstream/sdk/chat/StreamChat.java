@@ -110,13 +110,11 @@ public class StreamChat {
         totalUnreadMessages = new MutableLiveData<>();
         unreadChannels = new MutableLiveData<>();
 
-        client = new ClientInterceptor(new ChatClient.Builder(
-                config.apiKey,
-                config.token,
-                config.appContext
-        ).logLevel(config.logLevel == null ? ChatLogLevel.NOTHING : ChatLogLevel.NOTHING)
+        ChatClient c = new ChatClient.Builder(config.apiKey, config.appContext)
+                .logLevel(config.logLevel)
                 .notifications(config.notificationConfig)
-                .build());
+                .build();
+        client = new ClientInterceptor(c);
 
         setupLifecycleObserver();
 
@@ -190,9 +188,8 @@ public class StreamChat {
     public static class Config {
 
         private final String apiKey;
-        private final String token;
         private final Context appContext;
-        private ChatLogLevel logLevel;
+        private ChatLogLevel logLevel = ChatLogLevel.NOTHING;
         private ChatNotificationConfig notificationConfig;
         private String cdnEndpoint;
         private String apiEndpoint;
@@ -201,10 +198,9 @@ public class StreamChat {
         private ChatNavigationHandler navigationHandler;
         private StreamChatStyle style;
 
-        public Config(String apiKey, String token, Context appContext) {
+        public Config(String apiKey, Context appContext) {
 
             this.apiKey = apiKey;
-            this.token = token;
             this.appContext = appContext;
         }
 

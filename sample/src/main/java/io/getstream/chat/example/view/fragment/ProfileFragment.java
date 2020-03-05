@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.User;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.annotation.NonNull;
@@ -139,6 +138,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void onSuccess() {
+        logOutAndGoToLoginScreen();
+    }
+
+    private void logOutAndGoToLoginScreen() {
         hideProgress();
         StreamChat.getInstance().disconnect();
         StreamChat.getNavigator().navigate(new LoginDestination(getContext()));
@@ -150,7 +153,10 @@ public class ProfileFragment extends Fragment {
         hideProgress();
         errorDialog = new AlertDialog.Builder(getContext())
                 .setMessage(message)
-                .setPositiveButton(R.string.ok, (dialog, which) -> errorDialog.dismiss()).create();
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    errorDialog.dismiss();
+                    logOutAndGoToLoginScreen();
+                }).create();
         errorDialog.show();
     }
 

@@ -77,8 +77,10 @@ public class ChannelListFragment extends Fragment {
         extraData.put("name", USER_NAME);
         extraData.put("image", USER_IMAGE);
 
-        //User user = new User(USER_ID, extraData);
-        client.setUser(new io.getstream.chat.android.client.models.User(USER_ID));
+        User user = new User(USER_ID);
+        user.setExtraData(extraData);
+
+        client.setUser(user, USER_TOKEN);
 
         // Set custom delay in 5 min
         //client.setWebSocketDisconnectDelay(1000 * 60 * 5);
@@ -214,9 +216,9 @@ public class ChannelListFragment extends Fragment {
         alertDialog.show();
     }
 
-    private void createNewChannel(String channelName) {
+    private void createNewChannel(String name) {
         HashMap<String, Object> extraData = new HashMap<>();
-        extraData.put("name", channelName);
+        extraData.put("name", name);
 
         List<String> members = new ArrayList<>();
 
@@ -225,11 +227,13 @@ public class ChannelListFragment extends Fragment {
         members.add(currentUser.getId());
         extraData.put("members", members);
 
-        String channelId = channelName.replaceAll(" ", "-").toLowerCase();
+        String channelId = name.replaceAll(" ", "-").toLowerCase();
 
         viewModel.setLoading();
 
-        client.queryChannel(ModelType.channel_messaging, channelId, new ChannelQueryRequest()).enqueue(new Function1<Result<io.getstream.chat.android.client.models.Channel>, Unit>() {
+        ChannelQueryRequest request = new ChannelQueryRequest().withData(extraData);
+
+        client.queryChannel(ModelType.channel_messaging, channelId, request).enqueue(new Function1<Result<io.getstream.chat.android.client.models.Channel>, Unit>() {
             @Override
             public Unit invoke(Result<io.getstream.chat.android.client.models.Channel> channelResult) {
 

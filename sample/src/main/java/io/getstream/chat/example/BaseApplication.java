@@ -17,11 +17,17 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 import io.fabric.sdk.android.Fabric;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
+import io.getstream.chat.android.client.logger.ChatLogLevel;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.notifications.NotificationLoadDataListener;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.example.utils.AppConfig;
 
@@ -91,16 +97,37 @@ public class BaseApplication extends Application {
             //intent.putExtra(EXTRA_CHANNEL_ID, StringUtility.getChannelIdFromCid(event.getCid()));
             return PendingIntent.getActivity(context, getRequestCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
+
+        @Nullable
+        @Override
+        public NotificationLoadDataListener getDataLoadListener() {
+            return new NotificationLoadDataListener() {
+                @Override
+                public void onLoadSuccess(@NotNull Channel channel, @NotNull Message message) {
+                    if (channel == null) {
+
+                    }
+                }
+
+                @Override
+                public void onLoadFail(@NotNull String s, @NotNull ChatError chatError) {
+                    if (s == null) {
+
+                    }
+                }
+            };
+        }
     }
 
     private void initChat() {
 
         final Context context = this;
 
-        StreamChat.Config config = new StreamChat.Config(appConfig.getApiKey(), appConfig.getCurrentUser().getToken(), context)
+        StreamChat.Config config = new StreamChat.Config(appConfig.getApiKey(), context)
                 .apiEndpoint(appConfig.getApiEndPoint())
                 .apiTimout(appConfig.getApiTimeout())
                 .cdnTimout(appConfig.getCdnTimeout())
+                .logLevel(ChatLogLevel.ALL)
                 .style(style)
                 .navigationHandler(new ChatNavigationHandler() {
                     @Override
