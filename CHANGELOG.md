@@ -1,8 +1,15 @@
 ## Upcoming
 
+## March 3rd, 2020 - 3.6.5
+
+- Fix crash on sending Google gif
+
+## March 3rd, 2020 - 3.6.4
+
 - Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
 - update target api level to 29
 - Fixed media playback error on api 29 devices
+- Added score field to reaction model
 
 ## January 28th, 2020 - 3.6.3
 
