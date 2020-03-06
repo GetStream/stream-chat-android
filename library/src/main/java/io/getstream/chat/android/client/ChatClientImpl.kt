@@ -33,7 +33,7 @@ internal class ChatClientImpl(
         val events = socket.events()
         events.subscribe { event ->
 
-            notifications.onReceiveWebSocketEvent(event)
+            notifications.onChatEvent(event)
 
             if (event is ConnectedEvent) {
                 state.user = event.me
@@ -347,7 +347,7 @@ internal class ChatClientImpl(
     //endregion
 
     override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
-        notifications.onReceiveFirebaseMessage(remoteMessage)
+        notifications.onFirebaseMessage(remoteMessage)
     }
 
     override fun onNewTokenReceived(token: String, context: Context) {

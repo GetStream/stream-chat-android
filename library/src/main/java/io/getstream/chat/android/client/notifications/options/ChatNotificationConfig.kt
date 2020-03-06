@@ -21,6 +21,14 @@ import io.getstream.chat.android.client.notifications.NotificationLoadDataListen
 
 open class ChatNotificationConfig(val context: Context) {
 
+    open fun onChatEvent(event: ChatEvent) {
+
+    }
+
+    open fun onFirebaseMessage(message: RemoteMessage) {
+
+    }
+
     open fun getDeviceRegisteredListener(): DeviceRegisteredListener? {
         return null
     }

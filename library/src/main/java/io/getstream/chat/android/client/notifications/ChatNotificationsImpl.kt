@@ -54,6 +54,7 @@ class ChatNotificationsImpl(
     }
 
     override fun setFirebaseToken(firebaseToken: String) {
+
         logger.logI(TAG, "setFirebaseToken: $firebaseToken")
 
         client.addDevice(firebaseToken).enqueue { result ->
@@ -67,7 +68,8 @@ class ChatNotificationsImpl(
         }
     }
 
-    override fun onReceiveFirebaseMessage(message: RemoteMessage) {
+    override fun onFirebaseMessage(message: RemoteMessage) {
+        config.onFirebaseMessage(message)
         ChatLogger.instance.logI(TAG, "onReceiveFirebaseMessage: {$message.data}")
         if (isForeground()) return
         val payload: Map<String, String> = message.data
@@ -75,7 +77,8 @@ class ChatNotificationsImpl(
         handleRemoteMessage(message)
     }
 
-    override fun onReceiveWebSocketEvent(event: ChatEvent) {
+    override fun onChatEvent(event: ChatEvent) {
+        config.onChatEvent(event)
         ChatLogger.instance.logI(TAG, "onReceiveWebSocketEvent: {$event.type}")
         if (isForeground()) return
         logger.logI(TAG, "onReceiveWebSocketEvent: $event")

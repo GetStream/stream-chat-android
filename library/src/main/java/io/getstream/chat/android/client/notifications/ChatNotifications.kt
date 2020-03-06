@@ -9,7 +9,7 @@ interface ChatNotifications {
 
     fun setFirebaseToken(firebaseToken: String)
 
-    fun onReceiveFirebaseMessage(message: RemoteMessage)
+    fun onFirebaseMessage(message: RemoteMessage)
 
-    fun onReceiveWebSocketEvent(event: ChatEvent)
+    fun onChatEvent(event: ChatEvent)
 }
