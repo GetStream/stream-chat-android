@@ -72,7 +72,7 @@ class ClientConnectionTests {
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(config, api, socket, notificationsManager)
-        client.setUser(user)
+        client.setUser(user, token)
 
         verify(socket, times(1)).connect(user)
     }
@@ -82,7 +82,7 @@ class ClientConnectionTests {
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(config, api, socket, notificationsManager)
-        client.setUser(user)
+        client.setUser(user, token)
 
         client.disconnect()
 

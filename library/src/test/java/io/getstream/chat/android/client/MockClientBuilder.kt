@@ -73,7 +73,7 @@ class MockClientBuilder {
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(config, api, socket, notificationsManager)
-        client.setUser(user)
+        client.setUser(user, token)
 
         return client
     }

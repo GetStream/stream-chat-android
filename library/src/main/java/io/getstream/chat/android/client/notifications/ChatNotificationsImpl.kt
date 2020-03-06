@@ -71,14 +71,14 @@ class ChatNotificationsImpl(
         ChatLogger.instance.logI(TAG, "onReceiveFirebaseMessage: {$message.data}")
         if (isForeground()) return
         val payload: Map<String, String> = message.data
-        logger?.logI(TAG, "onReceiveFirebaseMessage: $message data: $payload")
+        logger.logI(TAG, "onReceiveFirebaseMessage: payload: $payload")
         handleRemoteMessage(message)
     }
 
     override fun onReceiveWebSocketEvent(event: ChatEvent) {
         ChatLogger.instance.logI(TAG, "onReceiveWebSocketEvent: {$event.type}")
         if (isForeground()) return
-        logger?.logI(TAG, "onReceiveWebSocketEvent: $event")
+        logger.logI(TAG, "onReceiveWebSocketEvent: $event")
         handleEvent(event)
     }
 
@@ -131,9 +131,9 @@ class ChatNotificationsImpl(
         val channelType = message.data[channelTypeKey]
 
         return if (message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey) ||
-            isNullOrEmpty(messageId, channelId, channelType)
+            !isNullOrEmpty(messageId, channelId, channelType)
         ) {
-            logger?.logE(
+            logger.logE(
                 TAG,
                 "Push payload is not configured correctly. Required $messageIdKey = $messageId " +
                         "required $channelIdKey = $channelId, " +
