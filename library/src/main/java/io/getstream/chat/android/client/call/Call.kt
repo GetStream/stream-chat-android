@@ -11,4 +11,5 @@ interface Call<T> {
     fun onError(handler: (ChatError) -> Unit): Call<T>
     fun onNext(handler: (T) -> Unit): Call<T>
     fun <K> zipWith(call: Call<K>): Call<Pair<T, K>>
+    fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>>
 }

@@ -1,27 +1,28 @@
 package io.getstream.chat.android.client.logger
 
 class ChatSilentLogger : ChatLogger {
-    override fun logT(throwable: Throwable) {
-        // unused
+
+    override fun logE(tag: Any, throwable: Throwable) {
+        // silent
     }
 
-    override fun logT(tag: Any, throwable: Throwable) {
-        // unused
+    override fun logE(tag: Any, message: String, throwable: Throwable) {
+        // silent
     }
 
     override fun logI(tag: Any, message: String) {
-        // unused
+        // silent
     }
 
     override fun logD(tag: Any, message: String) {
-        // unused
+        // silent
     }
 
     override fun logW(tag: Any, message: String) {
-        // unused
+        // silent
     }
 
     override fun logE(tag: Any, message: String) {
-        // unused
+        // silent
     }
 }

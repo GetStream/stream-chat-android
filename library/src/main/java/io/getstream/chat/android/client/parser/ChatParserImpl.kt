@@ -79,7 +79,7 @@ class ChatParserImpl : ChatParser {
             val error = toError(body)
             ChatNetworkError(error.message, streamCode = error.code, statusCode = statusCode)
         } catch (t: Throwable) {
-            ChatLogger.instance?.logT(TAG, t)
+            ChatLogger.instance?.logE(TAG, t)
             ChatNetworkError(t.message.toString(), t, okHttpResponse.code, statusCode)
         }
     }
@@ -97,7 +97,7 @@ class ChatParserImpl : ChatParser {
         return try {
             fromJson(body, ErrorResponse::class.java)
         } catch (t: Throwable) {
-            ChatLogger.instance?.logT(TAG, t)
+            ChatLogger.instance?.logE(TAG, t)
             ErrorResponse().apply {
                 message = t.message.toString() + " from body: " + body
             }

@@ -1,13 +1,10 @@
 package io.getstream.chat.android.client.sample
 
 import android.app.Application
-import android.app.PendingIntent
 import android.content.Intent
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.cache.AppDatabase
@@ -34,6 +31,7 @@ class App : Application() {
 
         private const val EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE"
         private const val EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID"
+        private const val EXTRA_MESSAGE_ID = "io.getstream.chat.example.MESSAGE_ID"
     }
 
     override fun onCreate() {
@@ -65,39 +63,16 @@ class App : Application() {
     @UseExperimental(ExperimentalTime::class)
     private fun provideNotificationConfig() = object : ChatNotificationConfig(this) {
 
-        override fun getIntentForFirebaseMessage(
-            remoteMessage: RemoteMessage
-        ): PendingIntent {
-            val payload = remoteMessage.data
-            val intent = Intent(context, HomeActivity::class.java)
-            intent.apply {
-                putExtra(
-                    EXTRA_CHANNEL_TYPE,
-                    payload[CHANNEL_TYPE_KEY]
-                )
-                putExtra(
-                    EXTRA_CHANNEL_ID,
-                    payload[CHANNEL_ID_KEY]
-                )
-            }
-            return PendingIntent.getActivity(
-                context, getRequestCode(),
-                intent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
+        override fun getNewMessageIntent(messageId: String, channelType: String, channelId: String): Intent {
 
-        override fun getIntentForSocketEvent(
-            event: ChatEvent
-        ): PendingIntent {
             val intent = Intent(context, HomeActivity::class.java)
             intent.apply {
-                putExtra(EXTRA_CHANNEL_TYPE, event.message.type)
-                putExtra(EXTRA_CHANNEL_ID, event.message.id)
+                putExtra(EXTRA_CHANNEL_TYPE, channelType)
+                putExtra(EXTRA_CHANNEL_ID, channelId)
+                putExtra(EXTRA_MESSAGE_ID, messageId)
             }
-            return PendingIntent.getActivity(
-                context, getRequestCode(),
-                intent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
+
+            return intent
         }
 
     }

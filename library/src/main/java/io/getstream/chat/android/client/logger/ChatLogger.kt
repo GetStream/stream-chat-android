@@ -1,9 +1,6 @@
 package io.getstream.chat.android.client.logger
 
 interface ChatLogger {
-    fun logT(throwable: Throwable)
-
-    fun logT(tag: Any, throwable: Throwable)
 
     fun logI(tag: Any, message: String)
 
@@ -12,6 +9,10 @@ interface ChatLogger {
     fun logW(tag: Any, message: String)
 
     fun logE(tag: Any, message: String)
+
+    fun logE(tag: Any, throwable: Throwable)
+
+    fun logE(tag: Any, message: String, throwable: Throwable)
 
     class Builder {
 
@@ -37,5 +38,9 @@ interface ChatLogger {
 
     companion object {
         var instance: ChatLogger = ChatSilentLogger()
+
+        fun get(tag: Any): TaggedLogger {
+            return TaggedLoggerImpl(tag, instance)
+        }
     }
 }

@@ -7,14 +7,15 @@ class ChatLoggerImpl constructor(
     private val loggingHandler: ChatLoggerHandler? = null
 ) : ChatLogger {
 
-    override fun logT(throwable: Throwable) {
+    override fun logE(tag: Any, message: String, throwable: Throwable) {
         if (loggingLevel.isMoreOrEqualsThan(ChatLogLevel.ERROR)) {
             throwable.printStackTrace()
+            Log.e(getTag(tag), message)
         }
-        loggingHandler?.logT(throwable)
+        loggingHandler?.logE(tag, message, throwable)
     }
 
-    override fun logT(tag: Any, throwable: Throwable) {
+    override fun logE(tag: Any, throwable: Throwable) {
         if (loggingLevel.isMoreOrEqualsThan(ChatLogLevel.ERROR)) {
             throwable.printStackTrace()
         }

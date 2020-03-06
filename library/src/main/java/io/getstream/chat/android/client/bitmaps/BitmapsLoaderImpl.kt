@@ -5,11 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
+import io.getstream.chat.android.client.call.ChatCallImpl
+import io.getstream.chat.android.client.call.OkHttpCall
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
-import okhttp3.*
-import java.io.IOException
-import java.io.InputStream
+import io.getstream.chat.android.client.utils.Result
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
 
 internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
@@ -17,37 +18,29 @@ internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
     val TAG = BitmapsLoader::class.java.simpleName
 
     val cacheSize = 10 * 1024 * 1024 // 10 MiB
-    val client = OkHttpClient.Builder()
-        .build()
+    val client = OkHttpClient.Builder().build()
     val uiHandler = Handler(Looper.getMainLooper())
 
+    override fun load(url: String): io.getstream.chat.android.client.call.Call<Bitmap> {
 
-    override fun load(url: String, listener: (Bitmap) -> Unit) {
+        return try {
+            val request = Request.Builder().url(url).build()
+            OkHttpCall(client.newCall(request)) {
+                BitmapFactory.decodeStream(it)
+            }
+        } catch (t: Throwable) {
+            ErrorCall(ChatError("Error parsing request url: $url", t))
+        }
+    }
 
-        val request = try {
-            Request.Builder().url(url).build()
-        } catch (e: Exception) {
-            ChatLogger.instance?.logT(TAG, ChatError("Invalid url: $url", e))
-            return
+    class ErrorCall<T>(val e: ChatError) : ChatCallImpl<T>() {
+        override fun execute(): Result<T> {
+            return Result(null, e)
         }
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                ChatLogger.instance?.logT(TAG, ChatError("Error image loading ($url)", e))
-            }
+        override fun enqueue(callback: (Result<T>) -> Unit) {
+            callback(Result(null, e))
+        }
 
-            override fun onResponse(call: Call, response: Response) {
-
-                try {
-                    val inputStream: InputStream = response.body!!.byteStream()
-                    val bitmap = BitmapFactory.decodeStream(inputStream)
-                    uiHandler.post {
-                        listener(bitmap)
-                    }
-                } catch (t: Throwable) {
-                    ChatLogger.instance?.logT(TAG, ChatError("Image ($url) decoding error", t))
-                }
-            }
-        })
     }
 }

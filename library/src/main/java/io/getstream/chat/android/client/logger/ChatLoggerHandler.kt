@@ -12,4 +12,6 @@ interface ChatLoggerHandler {
     fun logW(className: String, message: String)
 
     fun logE(className: String, message: String)
+
+    fun logE(tag: Any, message: String, throwable: Throwable)
 }

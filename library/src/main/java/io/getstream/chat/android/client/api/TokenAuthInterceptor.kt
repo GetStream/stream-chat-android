@@ -38,7 +38,7 @@ class TokenAuthInterceptor internal constructor(
             try {
                 latch.await()
             } catch (e: InterruptedException) {
-                ChatLogger.instance?.logT(TAG, e)
+                ChatLogger.instance?.logE(TAG, e)
             }
             val request: Request = addTokenHeader(chain.request())
             var response: Response = chain.proceed(request)

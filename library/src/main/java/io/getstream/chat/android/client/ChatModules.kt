@@ -60,7 +60,7 @@ open class ChatModules(val config: ChatClientConfig) {
         config: ChatNotificationConfig,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotificationsImpl(config, api, bitmapsLoader, config.context)
+        return ChatNotificationsImpl(config, api, config.context)
     }
 
     private fun buildRetrofit(
