@@ -31,19 +31,45 @@ Open the project in Android Studio. Setup your emulator (we're using Pixel 3, AP
 
 ## Docs
 
-### UI Components / Chat Views
+This library provides:
 
-We provide 4 reusable chat views:
+* A low level client for making API calls and receiving chat events
+* Livedata objects + Offline support (using Room)
+* 4 reusable chat views
 
-* [Channel List](./docs/ChannelList.md)
-* [Message List](./docs/MessageList.md)
-* [Message Input](./docs/MessageInput.md)
-* [Channel Header](./docs/ChannelHeader.md)
+** [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
+** [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
+** [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
+** [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
+
+The documentation for livedata and the custom views is available here:
+[https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
 
 ### Chat API
 
 The low level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
-You typically start out by using our UI components, and afterwards build your own as needed using the low level API.
+
+## Supported features
+
+- Channels list UI
+- Channel UI
+- Message Reactions
+- Link preview
+- Images, Videos and Files attachments
+- Edit and Delete message
+- Typing Inditicators
+- Read Inditicators
+- Push Notifications
+- Image gallery
+- GIF support
+- Light/Dark themes
+- Style customization
+- UI customization
+- Threads
+- Slash commands
+- Offline support
+- Markdown messages formatting
+
 
 ## Installing the Java Chat SDK
 
@@ -143,114 +169,7 @@ Make sure that your `AndroidManifest.xml` file include INTERNET and ACCESS_NETWO
 </manifest>    
 ```
 
-### Initialize Chat for a user
 
-1. Retrieve the chat client:
-
-```java
-Client client = StreamChat.getInstance(this.getApplication());
-```
-
-2. Setup a user, you can use as many custom fields as you want. Both `name` and `image` are used automatically by UI components:
-
-```java
-HashMap<String, Object> extraData = new HashMap<>();
-extraData.put("name", "Happy Android");
-extraData.put("image", "https://bit.ly/2TIt8NR");
-User user = new User(USER_ID, extraData);
-```
-
-3. Setup chat for current user:
-
-```java
-client.setUser(user, USER_TOKEN);
-```
-
-The `USER_TOKEN` variable is the unique token for the user with ID `USER_ID` in this case is hard-coded but in real-life it will be something that comes from your auth backend.
-
-Once you called `setUser` you will be able to use Stream Chat APIs; all calls will automatically wait for the `setUser` call to complete. No need to add callbacks or complex syncronization code from your end.
-
-If needed you can add callbacks to `setUser` via `Client.onSetUserCompleted(ClientConnectionCallback)`
-
-```java
-client.onSetUserCompleted(new ClientConnectionCallback() {
-    @Override
-    public void onSuccess(User user) {
-    	Log.i(TAG, "user connected!");
-	// do some more initialization
-    }
-
-    @Override
-    public void onError(String errMsg, int errCode) {
-    }
-});
-```
-
-### Retrieve tokens server-side / Handle tokens with expiration
-
-If you generate user tokens with an expiration (`exp` field) you can configure the SDK to request a new token upon expiration.
-
-Here's an example where we make an HTTP call to retrieve a token for current user. 
-
-```java
-client.setUser(user, listener -> {
-            OkHttpClient httpClient = new OkHttpClient()
-                    .newBuilder()
-                    .build();
-
-            // request the token for this user
-            Request request = new Request.Builder()
-                    .url("https://path/to/my/backend/")
-                    .header("Authorization", "user-session-id")
-                    .build();
-
-            httpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    // the request to get the token failed
-                }
-
-                @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.w(TAG, "getting the token worked!");
-                    listener.onSuccess(response.body.string());
-                }
-            });
-        }
-);
-```
-
-The listener will be called to fetch the user token and once the token is expired; the SDK will retry failed API calls and re-sync history so that no messages are lost during the renewal process.
-
-### Switch users
-
-You can switch from a user to another by calling `disconnect` and `setUser` again. When doing so you are responsible of reloading/re-render the UI. 
-
-This example switches to a different user and calls the `reload` method on the `ChannelListViewModel` when `setUser` is completed.
-
-```java
-void switchUser(String userId, String token) {
-    Client client = StreamChat.getInstance(getApplication());
-    client.disconnect();
-
-    User user = new User(userId);
-    client.setUser(user, token);
-
-    viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
-
-    client.onSetUserCompleted(new ClientConnectionCallback() {
-        @Override
-        public void onSuccess(User user) {
-            viewModel.reload();
-        }
-
-        @Override
-        public void onError(String errMsg, int errCode) {
-
-        }
-    });
-}
-```
 
 ## Online status
 
@@ -261,28 +180,6 @@ Connection status to Chat is available via `StreamChat.getOnlineStatus()` which 
 StreamChat.getOnlineStatus().observe(...);
 ```
 
-
-
-## Supported features
-
-- Channels list UI
-- Channel UI
-- Message Reactions
-- Link preview
-- Images, Videos and Files attachments
-- Edit and Delete message
-- Typing Inditicators
-- Read Inditicators
-- Push Notifications
-- Image gallery
-- GIF support
-- Light/Dark themes
-- Style customization
-- UI customization
-- Threads
-- Slash commands
-- Offline support
-- Markdown messages formatting
 
 ## Markdown support
 
@@ -300,82 +197,7 @@ MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
 });
 ```
 
-## Setup custom font
 
-You can set custom fonts for the entire library or for specific UI components.
-
-1. First of all you must put your own font file(s) (.ttf, .otf,…) in your `assets` or `res` folder.
-
-2. Setup for whole library
-
-You can register your custom fonts by `StreamChat.initStyle(StreamChatStyle)`
-```java
-StreamChat.initStyle(
-        new StreamChatStyle.Builder()
-                .setDefaultFont(R.font.your_custom_font)
-               //.setDefaultFont("fonts/your_custom_font.ttf")
-                .build()
-```
-
-3. Setup for specific UI components
-
-You can set custom fonts for specific UI components with or without settings for the entire library.  
-See font attributes in [UI Components Docs](https://github.com/GetStream/stream-chat-android#ui-components)
-
-## Navigation customisation
-
-SDK has few builtin activties, webview and system browser Intents. Navigation between these components handled internally by `StreamChatNavigator`. It has similar concept and principles as [Google Navigation component](https://developer.android.com/jetpack/androidx/releases/navigation):
-
-- `ChatDestination` represents a destination like camera app or system web browser.
-- SDK allows to intercept destinations and handle them in a custom way.
-- destination object carries required information like `WebLinkDestination` has `url` field which will be passed to system web browser.
-
-For example if you need to open your custom webview when user clicks on a link you can override `WebLinkDestination` and `AttachmentDestination`.
-```java
-StreamChat.Config config = new StreamChat.Config(this, "apiKey");
-
-config.navigationHandler(destination -> {
-
-    String url = "";
-    boolean handled = false;
-
-    if (destination instanceof WebLinkDestination) {
-        url = ((WebLinkDestination) destination).url;
-    } else if (destination instanceof AttachmentDestination) {
-        url = ((AttachmentDestination) destination).url;
-    }
-
-    if (url.startsWith("https://your.domain.com")) {
-        // handle/change/update url
-        // open your webview, system browser or your own activity
-        // and return true to override default behaviour
-        handled = true;
-    }
-
-    return handled;
-});
-StreamChat.init(config);
-
-```  
-
-Another example is opening custom camera:
-
-```java
-config.navigationHandler(destination -> {
-    if (destination instanceof CameraDestination) {
-        //open custom camera activity
-        return true;
-    } else {
-        return false;
-    }
-});
-```
-
-Full list of destinations:
-- `AppSettingsDestination` opens app setting when required  permissions are not granted
-- `AttachmentDestination` opens attachment activity when user click on attachment
-- `CameraDestination` opens camera when user makes photo or video to send it in channel
-- `WebLinkDestination` opens system web browser when user clicks on link
 
 ## Debug and development
 
@@ -478,6 +300,9 @@ Not setting the lifecycle owner on a data binding can cause the channel list loa
 mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
 mBinding.setLifecycleOwner(this);
 ```
+
+It's also possible that the permissions for your app are cached. Try uninstalling the app from your emulator and reinstalling to ensure you have the permissions required by this library.
+
 ### Images are not loaded
 In most cases you can try to see the reason in logcat with tag `Glide`. One of the reasons is that app tries to load image from http url, but not https. To fix it you need to define [network security config](https://developer.android.com/training/articles/security-config).
 ```xml
@@ -494,7 +319,7 @@ And update your `Manifest`:
 ```
 ### Localize the UI with Translations
 You can translate all [strings](https://github.com/GetStream/stream-chat-android/blob/master/library/src/main/res/values/strings.xml) of SDK by overriding string keys.<br/>
-Example app has this feature.
+The example app has a few examples:
 - [German](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-de/strings.xml)
 - [Spanish](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-es/strings.xml)
 - ...
