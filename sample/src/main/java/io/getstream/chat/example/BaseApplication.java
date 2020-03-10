@@ -117,6 +117,21 @@ public class BaseApplication extends Application {
                 }
             };
         }
+
+        @Override
+        public void onFirebaseMessage(@NotNull RemoteMessage message) {
+            String messageId = message.getMessageId();
+            Map<String, String> data = message.getData();
+
+            RemoteMessage.Notification notification = message.getNotification();
+
+            if (notification != null) {
+                String body = notification.getBody();
+                String icon = notification.getIcon();
+            }
+
+            super.onFirebaseMessage(message);
+        }
     }
 
     private void initChat() {

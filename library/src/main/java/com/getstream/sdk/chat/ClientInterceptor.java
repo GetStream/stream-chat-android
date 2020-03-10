@@ -351,6 +351,7 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
         client.setUser(user, tokenProvider);
     }
 
+
     @Override
     public void setUser(@NotNull User user, @NotNull String s) {
         client.setUser(user, s);

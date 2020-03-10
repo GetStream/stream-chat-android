@@ -96,7 +96,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.23.0"
     testImplementation "org.json:json:20190722"
 
-    api 'com.github.GetStream:stream-chat-android-client:0.9.48'
+    api 'com.github.GetStream:stream-chat-android-client:0.9.49'
 }
 
 task javadoc(type: Javadoc) {
