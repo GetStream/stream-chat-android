@@ -258,7 +258,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
         try {
             httpClient.dispatcher().cancelAll();
         } catch (Exception e) {
-            StreamChat.getLogger().logT(this, e);
+            StreamChat.getLogger().logE(this, e);
         }
     }
 
@@ -320,7 +320,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
                 event.setReceivedAt(now);
                 setLastEvent(now);
             } catch (JsonSyntaxException e) {
-                StreamChat.getLogger().logT(this, e);
+                StreamChat.getLogger().logE(this, e);
                 return;
             }
 
@@ -359,7 +359,7 @@ public class StreamWebSocketService extends WebSocketListener implements WebSock
             try {
                 StreamChat.getLogger().logI(this, "WebSocket # " + wsId + " Error: " + t.getMessage());
             } catch (Exception e) {
-                StreamChat.getLogger().logT(this, e);
+                StreamChat.getLogger().logE(this, e);
             }
             consecutiveFailures++;
             setConnecting(false);

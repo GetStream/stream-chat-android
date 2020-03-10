@@ -42,7 +42,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     protected final String TAG = ChannelListViewModel.class.getSimpleName();
 
-    protected MutableLiveData<List<Channel>> channels = new ChannelsLiveData<>();
+    protected final MutableLiveData<List<Channel>> channels = new ChannelsLiveData<>();
 
     protected MutableLiveData<Boolean> loading;
     protected MutableLiveData<Boolean> loadingMore;
@@ -124,7 +124,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         for (Channel chan : channels) {
             newChannels.add(chan);
         }
-        this.channels.postValue(newChannels);
+        updateChannelsLiveData(newChannels);
     }
 
     public LiveData<Boolean> getLoading() {
@@ -287,28 +287,67 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 String cid = e.getCid();
                 Message message = e.message;
 
+                Channel ch = getChannelByCid(cid);
+                Channel newChannel = copy(ch);
+                message.setChannel(newChannel);
+                newChannel.setUpdatedAt(message.getCreatedAt());
+                newChannel.getMessages().add(message);
+                newChannel.setLastMessageAt(message.getCreatedAt());
+
+                updateChannel(ch, newChannel);
             }
 
             return null;
         });
     }
 
-    protected boolean updateChannel(Channel channel, boolean moveToTop) {
+    private Channel getChannelByCid(String cid) {
+        List<Channel> list = channels.getValue();
+        for (Channel ch : list)
+            if (cid.equals(ch.getCid()))
+                return ch;
+
+        return null;
+    }
+
+    private int lastIndexOf(String cid) {
+        List<Channel> list = channels.getValue();
+        for (int i = 0; i < list.size(); i++)
+            if (cid.equals(list.get(i).getCid()))
+                return i;
+
+        return -1;
+    }
+
+    private void updateChannel(Channel oldChannel, Channel newChannel) {
         List<Channel> channelCopy = channels.getValue();
 
-        if (channelCopy == null) {
-            channelCopy = new ArrayList<>();
-        }
-
-        int idx = channelCopy.lastIndexOf(channel);
+        int idx = lastIndexOf(oldChannel.getCid());
 
         if (idx != -1) {
-            channelCopy.remove(channel);
-            channelCopy.add(moveToTop ? 0 : idx, channel);
-            channels.postValue(channelCopy);
+            channelCopy.remove(idx);
+            channelCopy.add(0, newChannel);
+            updateChannelsLiveData(channelCopy);
         }
+    }
 
-        return idx != -1;
+    private Channel copy(Channel channel) {
+        Channel copy = new Channel();
+        copy.setCid(channel.getCid());
+        copy.getMessages().addAll(channel.getMessages());
+        copy.setUpdatedAt(channel.getUpdatedAt());
+        copy.getRead().addAll(channel.getRead());
+        copy.getExtraData().putAll(channel.getExtraData());
+        copy.setLastMessageAt(channel.getLastMessageAt());
+        copy.setId(channel.getId());
+        copy.setType(channel.getType());
+        copy.setCreatedAt(channel.getCreatedAt());
+        copy.setDeletedAt(channel.getDeletedAt());
+        copy.setMembers(channel.getMembers());
+        copy.setWatcherCount(channel.getWatcherCount());
+        copy.setCreatedBy(channel.getCreatedBy());
+
+        return copy;
     }
 
     protected void upsertChannel(Channel channel) {
@@ -317,7 +356,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             channelCopy = new ArrayList<>();
         }
         channelCopy.add(0, channel);
-        channels.postValue(channelCopy);
+        updateChannelsLiveData(channelCopy);
     }
 
     public boolean deleteChannel(String cid) {
@@ -328,7 +367,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         boolean removed = removeIf(channelCopy, value -> cid.equals(value.getCid()));
 
-        channels.postValue(channelCopy);
+        updateChannelsLiveData(channelCopy);
         return removed;
     }
 
@@ -347,6 +386,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             newChannels.add(chan);
         }
         channelCopy.addAll(newChannels);
+        updateChannelsLiveData(channelCopy);
+    }
+
+    private void updateChannelsLiveData(List<Channel> channelCopy) {
         channels.postValue(channelCopy);
     }
 
@@ -526,7 +569,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected void clean() {
         retryLooper.removeCallbacksAndMessages(null);
         initialized.set(true);
-        channels.postValue(new ArrayList<>());
+        updateChannelsLiveData(new ArrayList<>());
         setLoadingDone();
         setLoadingMoreDone();
         reachedEndOfPagination = false;
@@ -552,6 +595,23 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     class ChannelsLiveData<T> extends MutableLiveData<T> {
 
         private Subscription subscribe;
+
+        @Override
+        public void postValue(T value) {
+            if (value == null) {
+
+            }
+            super.postValue(value);
+        }
+
+        @Override
+        public void setValue(T value) {
+            if (value == null) {
+
+            }
+            super.setValue(value);
+        }
+
 
         @Override
         protected void onActive() {

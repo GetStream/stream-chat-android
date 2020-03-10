@@ -56,7 +56,7 @@ public class LlcMigrationUtils {
         if (channel.getExtraData().containsKey("name")) {
             return (String) channel.getExtraData().get("name");
         } else {
-            return null;
+            return "";
         }
     }
 
@@ -185,7 +185,109 @@ public class LlcMigrationUtils {
                 channelName += "...";
             }
         }
-        return channelName;
+
+        if (channelName == null) return "";
+        else return channelName;
+    }
+
+    public static boolean equalsName(Channel a, Channel b) {
+        String nameA = getName(a);
+        String nameB = getName(b);
+
+        return nameA.equals(nameB);
+    }
+
+    public static boolean equalsLastMessageDate(Channel a, Channel b) {
+        Date lastA = a.getLastMessageAt();
+        Date lastB = b.getLastMessageAt();
+        if (lastA == null && lastB != null) return false;
+        if (lastA != null && lastB == null) return false;
+        if (lastA == null && lastB == null) return true;
+
+        return lastA.equals(lastB);
+    }
+
+    public static boolean equalsUserReads(Channel chA, Channel chB) {
+
+        List<ChannelUserRead> a = LlcMigrationUtils.getLastMessageReads(chA);
+        List<ChannelUserRead> b = LlcMigrationUtils.getLastMessageReads(chB);
+
+        if (a.size() != b.size()) return false;
+        if (a.size() == 0 && b.size() == 0) return true;
+
+        for (int i = 0; i < a.size(); i++) {
+            ChannelUserRead readA = a.get(i);
+            ChannelUserRead readB = b.get(i);
+
+            boolean dates = readA.getLastRead().equals(readB.getLastRead());
+            if (!dates) return false;
+            boolean users = readA.user.getId().equals(readB.getUser().getId());
+            if (!users) return false;
+
+        }
+        return true;
+    }
+
+    public static boolean lastMessagesAreTheSame(Channel a, Channel b) {
+        Message oldLastMessage = computeLastMessage(a);
+        Message newLastMessage = computeLastMessage(b);
+        if (oldLastMessage != null &&
+                newLastMessage != null &&
+                newLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt() != null &&
+                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static boolean equalsLastReaders(Channel a, Channel b) {
+        User oldLastReader = getLastReader(a);
+        User newLastReader = getLastReader(b);
+
+        if (oldLastReader == null && newLastReader == null) return true;
+        if (oldLastReader == null) return false;
+        if (newLastReader == null) return false;
+        return oldLastReader.getId().equals(newLastReader.getId());
+    }
+
+    public static User getLastReader(Channel channel) {
+        List<ChannelUserRead> read = channel.getRead();
+        if (read == null || read.isEmpty()) return null;
+        User lastReadUser = null;
+        for (int i = read.size() - 1; i >= 0; i--) {
+
+            User currentUser = StreamChat.getInstance().getCurrentUser();
+
+            ChannelUserRead channelUserRead = read.get(i);
+
+            if (currentUser != null) {
+                String id = currentUser.getId();
+                String readUserId = channelUserRead.user.getId();
+
+                if (!id.equals(readUserId)) {
+                    lastReadUser = channelUserRead.getUser();
+                    break;
+                }
+            }
+        }
+        return lastReadUser;
+    }
+
+    public static boolean equalsUserLists(List<User> a, List<User> b) {
+        if (a.size() != b.size()) return false;
+        if (a.size() == 0 && b.size() == 0) return true;
+
+        for (int i = 0; i < a.size(); i++) {
+            User userA = a.get(i);
+            User userB = b.get(i);
+
+            if (!userA.getId().equals(userB.getId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static List<User> getOtherUsers(Channel channel) {

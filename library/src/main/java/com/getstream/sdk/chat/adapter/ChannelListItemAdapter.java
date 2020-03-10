@@ -3,15 +3,16 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.android.client.models.Channel;
-
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = ChannelListItemAdapter.class.getSimpleName();
@@ -93,9 +94,23 @@ public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Channel channelState = channels.get(position);
-        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position);
+        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, null);
+    }
+
+    private ChannelItemPayloadDiff noDiff =  new ChannelItemPayloadDiff();
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        Channel channelState = channels.get(position);
+        ChannelItemPayloadDiff diff;
+        if (payloads.isEmpty()) {
+            diff = noDiff;
+        } else {
+            diff = (ChannelItemPayloadDiff) payloads.get(0);
+        }
+        ((BaseChannelListItemViewHolder) holder).bind(this.context, channelState, position, diff);
     }
 
     @Override

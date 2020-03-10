@@ -80,7 +80,7 @@ public class ChannelListFragment extends Fragment {
         User user = new User(USER_ID);
         user.setExtraData(extraData);
 
-        client.setUser(user, USER_TOKEN);
+        client.setUser(user, USER_TOKEN, null);
 
         // Set custom delay in 5 min
         //client.setWebSocketDisconnectDelay(1000 * 60 * 5);
@@ -100,9 +100,8 @@ public class ChannelListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        viewModel = ViewModelProviders.of(this).get(randomUUID().toString(), ChannelListViewModel.class);
-        FilterObject filter = Filters.INSTANCE.eq("type", "messaging");
-        viewModel.setChannelFilter(filter);
+        //FilterObject filter = Filters.INSTANCE.eq("type", "messaging");
+        //viewModel.setChannelFilter(filter);
     }
 
     @Override

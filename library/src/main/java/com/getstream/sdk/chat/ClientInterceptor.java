@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.api.models.*;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ProgressCallback;
@@ -305,10 +306,7 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
         return client.sendReaction(s, s1);
     }
 
-    @Override
-    public void setAnonymousUser() {
-        client.setAnonymousUser();
-    }
+
 
     @NotNull
     @Override
@@ -347,13 +345,17 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
     }
 
     @Override
-    public void setUser(@NotNull User user, @NotNull TokenProvider tokenProvider) {
-        client.setUser(user, tokenProvider);
+    public void setAnonymousUser(@Nullable InitConnectionListener initConnectionListener) {
+        client.setAnonymousUser(initConnectionListener);
     }
 
+    @Override
+    public void setUser(@NotNull User user, @NotNull TokenProvider tokenProvider, @Nullable InitConnectionListener initConnectionListener) {
+        client.setUser(user, tokenProvider, initConnectionListener);
+    }
 
     @Override
-    public void setUser(@NotNull User user, @NotNull String s) {
-        client.setUser(user, s);
+    public void setUser(@NotNull User user, @NotNull String s, @Nullable InitConnectionListener initConnectionListener) {
+        client.setUser(user, s, initConnectionListener);
     }
 }

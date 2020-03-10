@@ -24,6 +24,7 @@ import java.util.List;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import io.getstream.chat.android.client.models.*;
 
@@ -83,7 +84,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     @Override
-    public void bind(Context context, @NonNull Channel channel, int position) {
+    public void bind(Context context, @NonNull Channel channel, int position, @Nullable ChannelItemPayloadDiff diff) {
 
         // setup the click listeners and the markdown builder
         this.context = context;
@@ -93,16 +94,12 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         // - unread count
         // - read state for this channel
 
-        // set the channel name
-        configChannelName(channel);
-        // set the data for the avatar
-        configAvatarView(channel);
-        // set the lastMessage
-        configLastMessage(channel);
-        // set last message date
-        configLastMessageDate(channel);
-        // read indicators
-        configReadState(channel);
+        if (diff.name) configChannelName(channel);
+        if (diff.avatarView) configAvatarView(channel);
+        if (diff.lastMessage) configLastMessage(channel);
+        if (diff.lastMessageDate) configLastMessageDate(channel);
+        if (diff.readState) configReadState(channel);
+
         // set Click listeners
         configClickListeners(channel);
         // apply style

@@ -81,21 +81,11 @@ public class BaseApplication extends Application {
 
         @NotNull
         @Override
-        public PendingIntent getIntentForFirebaseMessage(@NotNull RemoteMessage remoteMessage) {
-            Map<String, String> payload = remoteMessage.getData();
+        public Intent getNewMessageIntent(@NotNull String messageId, @NotNull String channelType, @NotNull String channelId) {
             Intent intent = new Intent(context, ChannelActivity.class);
-            intent.putExtra(EXTRA_CHANNEL_TYPE, payload.get(CHANNEL_TYPE_KEY));
-            intent.putExtra(EXTRA_CHANNEL_ID, payload.get(CHANNEL_ID_KEY));
-            return PendingIntent.getActivity(context, getRequestCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
-
-        @NotNull
-        @Override
-        public PendingIntent getIntentForSocketEvent(@NotNull ChatEvent event) {
-            Intent intent = new Intent(context, ChannelActivity.class);
-            //intent.putExtra(EXTRA_CHANNEL_TYPE, StringUtility.getChannelTypeFromCid(event.getCid()));
-            //intent.putExtra(EXTRA_CHANNEL_ID, StringUtility.getChannelIdFromCid(event.getCid()));
-            return PendingIntent.getActivity(context, getRequestCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            intent.putExtra(EXTRA_CHANNEL_TYPE, channelType);
+            intent.putExtra(EXTRA_CHANNEL_ID, channelId);
+            return intent;
         }
 
         @Nullable
@@ -116,21 +106,6 @@ public class BaseApplication extends Application {
                     }
                 }
             };
-        }
-
-        @Override
-        public void onFirebaseMessage(@NotNull RemoteMessage message) {
-            String messageId = message.getMessageId();
-            Map<String, String> data = message.getData();
-
-            RemoteMessage.Notification notification = message.getNotification();
-
-            if (notification != null) {
-                String body = notification.getBody();
-                String icon = notification.getIcon();
-            }
-
-            super.onFirebaseMessage(message);
         }
     }
 

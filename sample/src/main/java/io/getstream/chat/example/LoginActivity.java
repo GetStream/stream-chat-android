@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                                         if (result.isSuccess()) {
                                             Toast.makeText(LoginActivity.this, "Device is added successfully", Toast.LENGTH_SHORT).show();
                                         } else {
-                                            ChatLogger.Companion.getInstance().logT(TAG, result.error());
+                                            ChatLogger.Companion.getInstance().logE(TAG, result.error());
                                             Toast.makeText(LoginActivity.this, "Device is not added. Error: " + result.error().getMessage(), Toast.LENGTH_SHORT).show();
                                         }
 

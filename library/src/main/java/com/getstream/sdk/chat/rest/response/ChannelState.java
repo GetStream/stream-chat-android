@@ -397,7 +397,7 @@ public class ChannelState {
             }
             //Message.setStartDay(Collections.singletonList(lastMessage), null);
         } catch (Exception e) {
-            StreamChat.getLogger().logT(this, e);
+            StreamChat.getLogger().logE(this, e);
         }
         return lastMessage;
     }
@@ -507,7 +507,7 @@ public class ChannelState {
                 }
             }
         } catch (Exception e) {
-            StreamChat.getLogger().logT(this, e);
+            StreamChat.getLogger().logE(this, e);
         }
 
         return lastReadDate;

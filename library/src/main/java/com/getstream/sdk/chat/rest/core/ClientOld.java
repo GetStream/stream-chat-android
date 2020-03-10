@@ -496,7 +496,7 @@ public class ClientOld implements WSResponseHandler {
         try {
             payloadJson.put("user_id", userId);
         } catch (JSONException e) {
-            StreamChat.getLogger().logT(this, e);
+            StreamChat.getLogger().logE(this, e);
         }
 
         String payload = payloadJson.toString();
