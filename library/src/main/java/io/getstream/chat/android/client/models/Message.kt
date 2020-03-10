@@ -2,8 +2,6 @@ package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -15,6 +13,8 @@ class Message : UserEntity {
     val html: String = ""
 
     lateinit var user: User
+
+    lateinit var channel: Channel
 
     val attachments = mutableListOf<Attachment>()
 
@@ -59,60 +59,6 @@ class Message : UserEntity {
     var isToday = false
     var date: String = ""
     var time: String = ""
-
-    companion object {
-
-        val locale = Locale("en", "US", "POSIX")
-        val messageDateFormat: DateFormat =
-            SimpleDateFormat(
-                "yyyy-MM-dd'T'HH:mm:ss.SSS",
-                locale
-            )
-
-        fun setStartDay(messages: List<Message>?, preMessage0: Message?) {
-            if (messages == null) return
-            if (messages.size == 0) return
-            var preMessage =
-                preMessage0 ?: messages[0]
-            setFormattedDate(
-                preMessage
-            )
-            val startIndex = if (preMessage0 != null) 0 else 1
-            for (i in startIndex until messages.size) {
-                if (i != startIndex) {
-                    preMessage = messages[i - 1]
-                }
-                val message = messages[i]
-                setFormattedDate(
-                    message
-                )
-                message.isStartDay = !message.date.equals(preMessage.date)
-            }
-        }
-
-        private fun setFormattedDate(message: Message?) {
-            if (message == null || message.date != null) return
-            messageDateFormat.timeZone = TimeZone.getTimeZone("GMT")
-            val smsTime = Calendar.getInstance()
-            smsTime.timeInMillis = message.createdAt!!.time!!
-            val now = Calendar.getInstance()
-            if (now[Calendar.DATE] === smsTime[Calendar.DATE]) {
-                message.isToday = true
-                message.date = "today"
-            } else if (now[Calendar.DATE] - smsTime[Calendar.DATE] === 1) {
-                message.isYesterday = true
-                message.date = "yesterday"
-            } else if (now[Calendar.WEEK_OF_YEAR] === smsTime[Calendar.WEEK_OF_YEAR]) {
-                val dayName: DateFormat = SimpleDateFormat("EEEE")
-                message.date = dayName.format(message.createdAt)
-            } else {
-                val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG)
-                message.date = dateFormat.format(message.createdAt)
-            }
-            val timeFormat: DateFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT)
-            message.time = timeFormat.format(message.createdAt)
-        }
-    }
 
     override fun getUserId(): String {
         return user!!.id

@@ -1,30 +1,28 @@
 package io.getstream.chat.android.client.socket
 
-import io.getstream.chat.android.client.token.CachedTokenProvider
-import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.token.CachedTokenProvider
+import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 class ChatSocketImpl(
-    val apiKey: String,
-    val wssUrl: String,
-    val cachedTokenProvider: CachedTokenProvider,
-    val chatParser: ChatParser,
-    logger: ChatLogger?
+    private val apiKey: String,
+    private val wssUrl: String,
+    private val cachedTokenProvider: CachedTokenProvider,
+    private val chatParser: ChatParser
 ) : ChatSocket {
 
     private val service = ChatSocketServiceImpl(chatParser)
 
-    override fun connectAnonymously() {
-        connect(null, null)
+    override fun connectAnonymously(listener: InitConnectionListener?) {
+        connect(null, null, listener)
     }
 
-    override fun connect(user: User) {
+    override fun connect(user: User, listener: InitConnectionListener?) {
         cachedTokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
-                connect(user, token)
+                connect(user, token, listener)
             }
         })
     }
@@ -47,8 +45,8 @@ class ChatSocketImpl(
         service.removeListener(listener)
     }
 
-    private fun connect(user: User?, userToken: String?) {
-        service.connect(wssUrl, apiKey, user, userToken)
+    private fun connect(user: User?, userToken: String?, listener: InitConnectionListener?) {
+        service.connect(wssUrl, apiKey, user, userToken, listener)
     }
 
 }

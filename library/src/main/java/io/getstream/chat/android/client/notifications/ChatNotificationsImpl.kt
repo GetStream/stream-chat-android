@@ -25,7 +25,7 @@ class ChatNotificationsImpl(
 ) : ChatNotifications {
 
     private val showedNotifications = mutableSetOf<String>()
-    private val logger = ChatLogger.get(ChatNotifications::class.java)
+    private val logger = ChatLogger.get("Notifications")
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -73,12 +73,14 @@ class ChatNotificationsImpl(
 
     override fun onChatEvent(event: ChatEvent) {
 
-        logger.logI("onReceiveWebSocketEvent: {$event.type}")
+        if (event is NewMessageEvent) {
+            logger.logI("onReceiveWebSocketEvent: {$event.type}")
 
-        if (!config.onChatEvent(event)) {
-            if (isForeground()) return
-            logger.logI("onReceiveWebSocketEvent: $event")
-            handleEvent(event)
+            if (!config.onChatEvent(event)) {
+                if (isForeground()) return
+                logger.logI("onReceiveWebSocketEvent: $event")
+                handleEvent(event)
+            }
         }
 
     }
@@ -98,18 +100,15 @@ class ChatNotificationsImpl(
         }
     }
 
-    private fun handleEvent(event: ChatEvent) {
+    private fun handleEvent(event: NewMessageEvent) {
 
-        if (event is NewMessageEvent) {
+        val channelType = event.cid.split(":")[0]
+        val channelId = event.cid.split(":")[1]
+        val messageId = event.message.id
 
-            val channelType = event.cid.split(":")[0]
-            val channelId = event.cid.split(":")[1]
-            val messageId = event.message.id
-
-            if (checkIfNotificationShowed(messageId)) {
-                showedNotifications.add(messageId)
-                loadRequiredData(channelType, channelId, messageId)
-            }
+        if (checkIfNotificationShowed(messageId)) {
+            showedNotifications.add(messageId)
+            loadRequiredData(channelType, channelId, messageId)
         }
     }
 

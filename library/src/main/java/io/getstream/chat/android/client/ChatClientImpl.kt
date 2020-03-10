@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
@@ -48,24 +49,24 @@ internal class ChatClientImpl(
 
     //region Set user
 
-    override fun setUser(user: User, token: String) {
+    override fun setUser(user: User, token: String, listener: InitConnectionListener?) {
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(ImmediateTokenProvider(token))
         notifications.onSetUser()
-        socket.connect(user)
+        socket.connect(user, listener)
     }
 
-    override fun setUser(user: User, tokenProvider: TokenProvider) {
+    override fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener?) {
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(tokenProvider)
         notifications.onSetUser()
-        socket.connect(user)
+        socket.connect(user, listener)
     }
 
-    override fun setAnonymousUser() {
+    override fun setAnonymousUser(listener: InitConnectionListener?) {
         config.isAnonymous = true
         notifications.onSetUser()
-        socket.connectAnonymously()
+        socket.connectAnonymously(listener)
     }
 
     override fun getGuestToken(userId: String, userName: String): Call<TokenResponse> {
@@ -107,7 +108,7 @@ internal class ChatClientImpl(
 
     override fun reconnectSocket() {
         val user = state.user
-        if (user != null) socket.connect(user)
+        if (user != null) socket.connect(user, null)
     }
 
     override fun addSocketListener(listener: SocketListener) {
@@ -204,7 +205,12 @@ internal class ChatClientImpl(
         channelId: String,
         request: ChannelQueryRequest
     ): Call<Channel> {
-        return api.queryChannel(channelType, channelId, request).map { attachClient(it) }
+        return api.queryChannel(channelType, channelId, request)
+            .map { channel ->
+                channel.messages.forEach { message -> message.channel = channel }
+                channel
+            }
+            .map { attachClient(it) }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {

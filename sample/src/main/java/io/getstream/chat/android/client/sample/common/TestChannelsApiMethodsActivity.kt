@@ -6,14 +6,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Subscription
@@ -47,7 +51,16 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        client.setUser(User("bender"), token)
+        client.setUser(User("bender"), token, object : InitConnectionListener() {
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                val connectionId = data.connectionId
+            }
+
+            override fun onError(error: ChatError) {
+                val message = error.message
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -71,6 +84,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnShowChannel.setOnClickListener { showChannel() }
         btnMarkReadMessage.setOnClickListener { markReadMessage() }
         btnWatchChannel.setOnClickListener { watchChannel() }
+        btnGetMessage.setOnClickListener { getMessage() }
     }
 
     private fun watchChannel() {
@@ -142,6 +156,38 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         ).enqueue {
             echoResult(it)
         }
+    }
+
+    private fun getMessage() {
+        Thread {
+
+            val request = QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1).withMessages(1)
+
+            val channelsResult = client.queryChannels(request).execute()
+
+            if (channelsResult.isSuccess) {
+
+                val channels = channelsResult.data()
+                val channel = channels[0]
+                val message = channel.messages[0]
+                val messageResult = client.getMessage(message.id).execute()
+
+                if (messageResult.isSuccess) {
+                    val returnedMessage = messageResult.data()
+
+                    if (returnedMessage.id == message.id) {
+
+                    }
+                }
+            }
+        }.start()
+    }
+
+    fun getChannels() {
+        client.addSocketListener(object: SocketListener() {
+            //override required methods
+
+        })
     }
 
     private fun stopWatching() {

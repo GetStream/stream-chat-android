@@ -10,20 +10,20 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 interface ChatClient {
 
-    fun setUser(user: User, token:String)
+    fun setUser(user: User, token: String, listener: InitConnectionListener? = null)
 
-    fun setUser(user: User, tokenProvider:TokenProvider)
+    fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener? = null)
 
-    fun setAnonymousUser()
+    fun setAnonymousUser(listener: InitConnectionListener? = null)
 
     fun getGuestToken(userId: String, userName: String): Call<TokenResponse>
 
@@ -116,7 +116,7 @@ interface ChatClient {
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
-    fun sendReaction(messageId: String, reactionType:String): Call<Reaction>
+    fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun sendAction(request: SendActionRequest): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>
@@ -160,7 +160,12 @@ interface ChatClient {
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
-    fun sendEvent(eventType:String, channelType: String, channelId: String, extraData: Map<Any, Any> = emptyMap()): Call<ChatEvent>
+    fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any> = emptyMap()
+    ): Call<ChatEvent>
 
     class Builder {
         private val apiKey: String
@@ -250,6 +255,7 @@ interface ChatClient {
             )
 
             val modules = ChatModules(config)
+
             val result = ChatClientImpl(
                 config,
                 modules.api(),

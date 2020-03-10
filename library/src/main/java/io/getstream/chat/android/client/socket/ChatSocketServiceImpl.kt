@@ -2,10 +2,11 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Message
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,13 +19,16 @@ import java.util.*
 
 class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
+    private val logger = ChatLogger.get("SocketService")
+
     private var wsEndpoint: String = ""
     private var apiKey: String = ""
     private var userToken: String? = ""
     private var user: User? = null
-    private val eventsParser: EventsParser = EventsParser(this, chatParser)
+    private val eventsParser = EventsParser(this, chatParser)
     private var httpClient = OkHttpClient()
-    private var webSocket: WebSocket? = null
+    private var socket: WebSocket? = null
+    private var initConnectionListener: InitConnectionListener? = null
     private val listeners = mutableListOf<SocketListener>()
 
     private var wsId = 0
@@ -42,7 +46,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         if (state is State.Connected || state is State.Connecting) {
             updateState(State.Error(error))
             updateState(State.Disconnected)
-            clearWebSocket()
+            clearState()
             healthMonitor.onError()
         }
     }
@@ -59,16 +63,15 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         listeners.add(listener)
     }
 
-    internal fun sendEvent(event: ChatEvent) {
-        webSocket?.send(chatParser.toJson(event))
-    }
-
     override fun connect(
         wsEndpoint: String,
         apiKey: String,
         user: User?,
-        userToken: String?
+        userToken: String?,
+        listener: InitConnectionListener?
     ) {
+        logger.logI("connect")
+
         if (state is State.Connecting || state is State.Connected) {
             disconnect()
         }
@@ -77,26 +80,16 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         this.apiKey = apiKey
         this.user = user
         this.userToken = userToken
+        this.initConnectionListener = listener
         wsId = 0
         healthMonitor.reset()
 
-        setupWS()
+        setupWs()
     }
 
     override fun disconnect() {
         updateState(State.Disconnected)
-        clearWebSocket()
-    }
-
-    private fun clearWebSocket() {
-        healthMonitor.reset()
-        webSocket?.cancel()
-        webSocket?.close(1000, "bye")
-        webSocket = null
-    }
-
-    private fun startMonitor() {
-        healthMonitor.start()
+        clearState()
     }
 
     fun onConnectionResolved(event: ConnectedEvent) {
@@ -104,35 +97,57 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         startMonitor()
     }
 
-
     fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
         eventHandler.sendMessage(eventMsg)
     }
 
-    internal fun setupWS() {
+    internal fun sendEvent(event: ChatEvent) {
+        socket?.send(chatParser.toJson(event))
+    }
+
+    internal fun setupWs() {
+
+        logger.logI("setupWs")
 
         updateState(State.Connecting)
 
         wsId++
         val url = getWsUrl()
-        val request: Request = Request.Builder().url(url).build()
+        val request = Request.Builder().url(url).build()
 
         httpClient = OkHttpClient.Builder()
             .addNetworkInterceptor(StethoInterceptor())
             .build()
 
-        webSocket = httpClient.newWebSocket(request, eventsParser)
-        //webSocket = StethoWebSocketsFactory(httpClient).newWebSocket(request, eventsParser)
+        socket = httpClient.newWebSocket(request, eventsParser)
+    }
+
+    private fun clearState() {
+        initConnectionListener = null
+        healthMonitor.reset()
+        socket?.cancel()
+        socket?.close(1000, "bye")
+        socket = null
+    }
+
+    private fun startMonitor() {
+        healthMonitor.start()
     }
 
     private fun updateState(state: State) {
+
+        logger.logI("updateState: {${state.javaClass.simpleName}}")
 
         this.state = state
 
         when (state) {
             is State.Error -> {
+
+                initConnectionListener?.onError(state.error)
+                initConnectionListener = null
+
                 eventHandler.post {
                     listeners.forEach { it.onError(state.error) }
                 }
@@ -143,6 +158,15 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
                 }
             }
             is State.Connected -> {
+
+                initConnectionListener?.onSuccess(
+                    InitConnectionListener.ConnectionData(
+                        state.event.me,
+                        state.event.connectionId
+                    )
+                )
+                initConnectionListener = null
+
                 eventHandler.post {
                     listeners.forEach { it.onConnected(state.event) }
                 }

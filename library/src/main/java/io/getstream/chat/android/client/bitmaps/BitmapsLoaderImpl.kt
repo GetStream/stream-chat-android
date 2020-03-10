@@ -5,10 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
-import io.getstream.chat.android.client.call.ChatCallImpl
+import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.call.OkHttpCall
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -29,18 +28,13 @@ internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
                 BitmapFactory.decodeStream(it)
             }
         } catch (t: Throwable) {
-            ErrorCall(ChatError("Error parsing request url: $url", t))
+            ErrorCall(
+                ChatError(
+                    "Error parsing request url: $url",
+                    t
+                )
+            )
         }
     }
 
-    class ErrorCall<T>(val e: ChatError) : ChatCallImpl<T>() {
-        override fun execute(): Result<T> {
-            return Result(null, e)
-        }
-
-        override fun enqueue(callback: (Result<T>) -> Unit) {
-            callback(Result(null, e))
-        }
-
-    }
 }

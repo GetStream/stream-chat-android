@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.socket
 
-import android.util.Log
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
@@ -16,15 +16,16 @@ class EventsParser(
 ) : okhttp3.WebSocketListener() {
 
     private var firstReceivedMessage = false
-    private val TAG = javaClass.simpleName
+    private val logger = ChatLogger.get("Events")
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
+        logger.logI("onOpen")
         firstReceivedMessage = true
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
 
-        Log.d(TAG, "onMessage: $text")
+        logger.logI("onMessage: $text")
 
         val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
         val errorData = errorMessage.data()
@@ -46,6 +47,7 @@ class EventsParser(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        logger.logE("onFailure", t)
         // Called when socket is disconnected by client also (client.disconnect())
         // See issue here https://stream-io.atlassian.net/browse/CAS-88
         service.onSocketError(ChatNetworkError("listener.onFailure error. reconnecting", t))
@@ -82,7 +84,7 @@ class EventsParser(
     private fun handleErrorEvent(error: ErrorResponse) {
         service.onSocketError(
             ChatNetworkError(
-                "$TAG error. Error code: ${error.code}. Message: ${error.message}",
+                "Error code: ${error.code}. Message: ${error.message}",
                 streamCode = error.code
             )
         )

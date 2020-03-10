@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
@@ -304,19 +305,6 @@ class ChatApiImpl(
     }
 
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        return callMapper.map(
-            retrofitApi.queryChannels(
-                config.apiKey,
-                userId,
-                connectionId,
-                query
-            )
-        ).map {
-            flattenChannels(it.channels)
-        }
-    }
-
     override fun stopWatching(
         channelType: String,
         channelId: String
@@ -334,11 +322,31 @@ class ChatApiImpl(
         }
     }
 
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
+
+        if (connectionId.isEmpty()) return noConnectionIdError()
+
+        return callMapper.map(
+            retrofitApi.queryChannels(
+                config.apiKey,
+                userId,
+                connectionId,
+                query
+            )
+        ).map {
+            flattenChannels(it.channels)
+        }
+    }
+
     override fun queryChannel(
         channelType: String,
         channelId: String,
         query: ChannelQueryRequest
     ): Call<Channel> {
+
+        if (connectionId.isEmpty()) {
+            return noConnectionIdError()
+        }
 
         if (channelId.isEmpty()) {
             return callMapper.map(
@@ -637,6 +645,10 @@ class ChatApiImpl(
         ).map {
             it.event
         }
+    }
+
+    private fun <T> noConnectionIdError(): ErrorCall<T> {
+        return ErrorCall(ChatError("setUser is either not called or not finished"))
     }
 
     private fun flattenChannels(responses: List<ChannelResponse>): List<Channel> {

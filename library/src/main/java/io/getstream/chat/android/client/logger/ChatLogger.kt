@@ -14,23 +14,25 @@ interface ChatLogger {
 
     fun logE(tag: Any, message: String, throwable: Throwable)
 
+    fun getLevel(): ChatLogLevel
+
     class Builder {
 
-        private var loggingLevel = ChatLogLevel.NOTHING
-        private var loggingHandler: ChatLoggerHandler? = null
+        private var level = ChatLogLevel.NOTHING
+        private var handler: ChatLoggerHandler? = null
 
         fun level(level: ChatLogLevel): Builder {
-            loggingLevel = level
+            this.level = level
             return this
         }
 
         fun handler(handler: ChatLoggerHandler): Builder {
-            loggingHandler = handler
+            this.handler = handler
             return this
         }
 
         fun build(): ChatLogger {
-            val result = ChatLoggerImpl(loggingLevel, loggingHandler)
+            val result = ChatLoggerImpl(level, handler)
             instance = result
             return result
         }

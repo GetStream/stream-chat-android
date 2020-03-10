@@ -2,6 +2,10 @@ package io.getstream.chat.android.client.logger
 
 class ChatSilentLogger : ChatLogger {
 
+    override fun getLevel(): ChatLogLevel {
+        return ChatLogLevel.NOTHING
+    }
+
     override fun logE(tag: Any, throwable: Throwable) {
         // silent
     }

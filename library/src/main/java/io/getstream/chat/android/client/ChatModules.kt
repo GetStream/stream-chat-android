@@ -14,22 +14,22 @@ import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 open class ChatModules(val config: ChatClientConfig) {
 
+    private val defaultLogger = ChatLogger.Builder().level(config.logLevel).build()
+
     private val defaultParser by lazy { ChatParserImpl() }
-    private val defaultLogger by lazy { ChatLogger.Builder().level(config.logLevel).build() }
     private val defaultNotifications by lazy {
         buildNotification(
             config.notificationsConfig,
             api()
         )
     }
-    private val defaultApi by lazy { buildApi(config, parser(), logger()) }
-    private val defaultSocket by lazy { buildSocket(config, parser(), logger()) }
+    private val defaultApi by lazy { buildApi(config, parser()) }
+    private val defaultSocket by lazy { buildSocket(config, parser()) }
     private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsConfig.context)
 
     //region Modules
@@ -75,14 +75,13 @@ open class ChatModules(val config: ChatClientConfig) {
         val clientBuilder = OkHttpClient.Builder()
             .followRedirects(false)
             // timeouts
+            .callTimeout(connectTimeout, TimeUnit.MILLISECONDS)
             .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
             .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             // interceptors
             .addInterceptor(HeadersInterceptor(config))
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+            .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(TokenAuthInterceptor(config, parser))
             .addNetworkInterceptor(StethoInterceptor())
 
@@ -95,22 +94,19 @@ open class ChatModules(val config: ChatClientConfig) {
 
     private fun buildSocket(
         chatConfig: ChatClientConfig,
-        parser: ChatParser,
-        logger: ChatLogger
+        parser: ChatParser
     ): ChatSocket {
         return ChatSocketImpl(
             chatConfig.apiKey,
             chatConfig.wssUrl,
             chatConfig.tokenProvider,
-            parser,
-            logger
+            parser
         )
     }
 
     private fun buildApi(
         chatConfig: ChatClientConfig,
-        parser: ChatParser,
-        logger: ChatLogger
+        parser: ChatParser
     ): ChatApi {
         return ChatApiImpl(
             buildRetrofitApi(),

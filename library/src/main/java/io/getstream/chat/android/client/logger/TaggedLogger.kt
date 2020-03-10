@@ -12,4 +12,6 @@ interface TaggedLogger {
     fun logE(throwable: Throwable)
 
     fun logE(message: String, throwable: Throwable)
+
+    fun getLevel(): ChatLogLevel
 }
