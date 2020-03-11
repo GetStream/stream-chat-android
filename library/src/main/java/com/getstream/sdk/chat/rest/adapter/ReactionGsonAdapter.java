@@ -84,7 +84,8 @@ public class ReactionGsonAdapter extends TypeAdapter<Reaction> {
                     reaction.setCreatedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "score":
-                    reaction.setScore((Integer) set.getValue());
+                    int score = ((Number) set.getValue()).intValue();
+                    reaction.setScore(score);
                     continue;
             }
             // Set Extra Data
