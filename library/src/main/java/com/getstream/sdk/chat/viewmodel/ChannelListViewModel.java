@@ -10,9 +10,11 @@ import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.storage.OnQueryListener;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,9 +29,11 @@ import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
+import io.getstream.chat.android.client.events.MessageReadEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
@@ -277,7 +281,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         boolean shouldDiscard(Event event, @Nullable Channel channel);
     }
 
-    private Subscription subscription;
+    private Subscription subscription;//notification.mark_read //message.read
 
     protected void initEventHandlers() {
         subscription = StreamChat.getInstance().events().subscribe(event -> {
@@ -288,13 +292,33 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
                 Message message = e.message;
 
                 Channel ch = getChannelByCid(cid);
-                Channel newChannel = copy(ch);
-                message.setChannel(newChannel);
-                newChannel.setUpdatedAt(message.getCreatedAt());
-                newChannel.getMessages().add(message);
-                newChannel.setLastMessageAt(message.getCreatedAt());
 
-                updateChannel(ch, newChannel);
+                if (ch != null) {
+                    Channel newChannel = copy(ch);
+                    message.setChannel(newChannel);
+                    newChannel.setUpdatedAt(message.getCreatedAt());
+                    newChannel.getMessages().add(message);
+                    newChannel.setLastMessageAt(message.getCreatedAt());
+
+                    updateChannel(ch, newChannel, true);
+                }
+
+
+            } else if (event instanceof MessageReadEvent) {
+                MessageReadEvent e = (MessageReadEvent) event;
+                String cid = e.getCid();
+
+                Channel ch = getChannelByCid(cid);
+
+                if (ch != null) {
+                    Channel newChannel = copy(ch);
+                    User user = e.getUser();
+                    Date date = e.getReceivedAt();
+
+                    LlcMigrationUtils.updateReadState(newChannel, user, date);
+
+                    updateChannel(ch, newChannel, false);
+                }
             }
 
             return null;
@@ -319,15 +343,19 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         return -1;
     }
 
-    private void updateChannel(Channel oldChannel, Channel newChannel) {
-        List<Channel> channelCopy = channels.getValue();
+    private void updateChannel(Channel oldChannel, Channel newChannel, boolean moveToTop) {
+        List<Channel> channelsValue = channels.getValue();
 
         int idx = lastIndexOf(oldChannel.getCid());
 
         if (idx != -1) {
-            channelCopy.remove(idx);
-            channelCopy.add(0, newChannel);
-            updateChannelsLiveData(channelCopy);
+            if (moveToTop) {
+                channelsValue.remove(idx);
+                channelsValue.add(0, newChannel);
+            } else {
+                channelsValue.set(idx, newChannel);
+            }
+            updateChannelsLiveData(channelsValue);
         }
     }
 

@@ -202,9 +202,35 @@ public class LlcMigrationUtils {
         Date lastB = b.getLastMessageAt();
         if (lastA == null && lastB != null) return false;
         if (lastA != null && lastB == null) return false;
-        if (lastA == null && lastB == null) return true;
+        if (lastA == null) return true;
 
         return lastA.equals(lastB);
+    }
+
+    public static boolean currentUserRead(Channel oldCh, Channel newCh) {
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        String id = currentUser.getId();
+
+        ChannelUserRead oldRead = getRead(oldCh, id);
+        ChannelUserRead newRead = getRead(newCh, id);
+
+        if (oldRead == null && newRead == null) {
+            return false;
+        } else if (oldRead == null) {
+            return false;
+        } else if (newRead == null) {
+            return false;
+        } else {
+            Date newDate = newRead.getLastRead();
+            Date oldDate = oldRead.getLastRead();
+            return newDate.after(oldDate);
+        }
+    }
+
+    public static ChannelUserRead getRead(Channel channel, String userId) {
+        int idx = indexOfRead(channel, userId);
+        if (idx == -1) return null;
+        else return channel.getRead().get(idx);
     }
 
     public static boolean equalsUserReads(Channel chA, Channel chB) {
@@ -273,6 +299,28 @@ public class LlcMigrationUtils {
             }
         }
         return lastReadUser;
+    }
+
+    public static void updateReadState(Channel channel, User user, Date date) {
+
+        int indexOfRead = indexOfRead(channel, user.getId());
+        ChannelUserRead read = new ChannelUserRead();
+        read.setUser(user);
+        read.setLastRead(date);
+
+        if (indexOfRead == -1) {
+            channel.getRead().add(read);
+        } else {
+            channel.getRead().set(indexOfRead, read);
+        }
+    }
+
+    public static int indexOfRead(Channel channel, String userId) {
+        for (int i = 0; i < channel.getRead().size(); i++)
+            if (channel.getRead().get(i).user.getId().equals(userId))
+                return i;
+
+        return -1;
     }
 
     public static boolean equalsUserLists(List<User> a, List<User> b) {

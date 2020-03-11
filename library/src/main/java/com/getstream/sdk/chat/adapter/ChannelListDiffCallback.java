@@ -8,11 +8,11 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
 
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.computeLastMessage;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.currentUserRead;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastMessageDate;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastReaders;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsName;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsUserLists;
-import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsUserReads;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.getOtherUsers;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.lastMessagesAreTheSame;
 
@@ -62,7 +62,7 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             contentTheSame = false;
         } else if (!lastMessagesAreTheSame(oldChannel, newChannel)) {
             contentTheSame = false;
-        } else if (!equalsLastReaders(oldChannel, newChannel)) {
+        } else if (currentUserRead(oldChannel, newChannel)) {
             contentTheSame = false;
         }
 
@@ -87,7 +87,7 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
 
         diff.name = !equalsName(newChannel, oldChannel);
         diff.avatarView = !equalsUserLists(getOtherUsers(oldChannel), getOtherUsers(newChannel));
-        diff.readState = !equalsUserReads(oldChannel, newChannel);
+        diff.readState = currentUserRead(oldChannel, newChannel);
         diff.lastMessageDate = !equalsLastMessageDate(oldChannel, newChannel);
 
         return diff;
