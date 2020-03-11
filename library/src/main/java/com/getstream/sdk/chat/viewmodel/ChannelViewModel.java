@@ -455,14 +455,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 Channel channel = event.getChannel();
 
                 if (event instanceof NewMessageEvent) {
-
                     upsertMessage(event.getMessage());
-
-
                 } else if (event instanceof UserStartWatchingEvent) {
+                    if (event == null) {
 
+                    }
                 } else if (event instanceof UserStopWatchingEvent) {
+                    if (event == null) {
 
+                    }
                 } else if (event instanceof ChannelUpdatedEvent) {
 
                 } else if (event instanceof MessageUpdatedEvent) {
