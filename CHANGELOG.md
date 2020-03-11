@@ -1,5 +1,9 @@
 ## Upcoming
 
+## March 11th, 2020 - 3.6.5
+
+- Fix reaction score parser casting exception
+
 ## March 3rd, 2020 - 3.6.5
 
 - Fix crash on sending Google gif
