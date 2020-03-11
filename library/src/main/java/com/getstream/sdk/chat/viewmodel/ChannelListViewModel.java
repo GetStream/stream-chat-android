@@ -401,19 +401,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     public void addChannels(List<Channel> newChannelsState) {
         List<Channel> channelCopy = channels.getValue();
-        if (channelCopy == null) {
+        if (channelCopy == null)
             channelCopy = new ArrayList<>();
-        }
 
-        // - offline loads first
-        // - after that we query the API and load more channels
-        // - it's possible that the offline results no longer match the query (so we should remove them)
-
-        List<Channel> newChannels = new ArrayList<>();
-        for (Channel chan : newChannelsState) {
-            newChannels.add(chan);
-        }
-        channelCopy.addAll(newChannels);
+        channelCopy.addAll(newChannelsState);
         updateChannelsLiveData(channelCopy);
     }
 
