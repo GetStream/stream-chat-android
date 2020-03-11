@@ -162,8 +162,13 @@ class EventsParser(
             //region Notifications
 
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> {
-                parser.fromJson(data, AddedToChannelEvent::class.java)
+                parser.fromJson(data, NotificationAddedToChannelEvent::class.java)
             }
+
+            EventType.NOTIFICATION_MARK_READ -> {
+                parser.fromJson(data, NotificationMarkReadEvent::class.java)
+            }
+
             else -> {
                 parser.fromJson(data, ChatEvent::class.java)
             }
