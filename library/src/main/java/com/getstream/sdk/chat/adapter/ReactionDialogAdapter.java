@@ -11,13 +11,13 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.List;
 import java.util.Map;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
-import io.getstream.chat.android.client.models.User;
 
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
@@ -97,23 +97,21 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         @Override
         public void onClick(View v) {
+
             String type = (String) reactionTypes.keySet().toArray()[getLayoutPosition()];
+            List<Reaction> ownReactions = message.getOwnReactions();
+            boolean isReacted = false;
 
-            boolean isReactioned = false;
-            for (Reaction reaction : message.getLatestReactions()) {
-                if (reaction.getType().equals(type)) {
-                    User user = reaction.getUser();
+            for (Reaction ownReaction : ownReactions) {
+                String reactionType = ownReaction.getType();
 
-                    User currentUser = StreamChat.getInstance().getCurrentUser();
-                    String id = currentUser.getId();
-
-                    if (user.getId().equals(id)) {
-                        isReactioned = true;
-                        break;
-                    }
+                if (type.equals(reactionType)) {
+                    isReacted = true;
+                    break;
                 }
             }
-            if (isReactioned)
+
+            if (isReacted)
                 deleteReaction(v, type);
             else
                 sendReaction(v, type);
@@ -124,7 +122,6 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
             StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(reactionResult -> {
 
-                clickListener.onClick(view);
 
                 if (reactionResult.isSuccess()) {
 

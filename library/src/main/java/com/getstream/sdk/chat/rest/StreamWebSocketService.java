@@ -14,11 +14,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.Date;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
+import okhttp3.*;
 
 public class StreamWebSocketService extends WebSocketListener implements WebSocketService {
     private static final int NORMAL_CLOSURE_STATUS = 1000;
