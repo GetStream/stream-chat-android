@@ -156,7 +156,7 @@ public class MessageMoreActionDialog extends Dialog {
             RecyclerView.LayoutManager mLayoutManager;
             mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             rv_reaction.setLayoutManager(mLayoutManager);
-            ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
+            ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(
                     message,
                     style,
                     (View v) -> dismiss());

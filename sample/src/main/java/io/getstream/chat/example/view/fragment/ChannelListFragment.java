@@ -15,6 +15,8 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,9 +29,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.example.BaseApplication;
@@ -80,7 +84,18 @@ public class ChannelListFragment extends Fragment {
         User user = new User(USER_ID);
         user.setExtraData(extraData);
 
-        client.setUser(user, USER_TOKEN, null);
+        client.setUser(user, USER_TOKEN, new InitConnectionListener(){
+            @Override
+            public void onError(@NotNull ChatError error) {
+                super.onError(error);
+            }
+
+            @Override
+            public void onSuccess(@NotNull ConnectionData data) {
+                super.onSuccess(data);
+            }
+        });
+
 
         // Set custom delay in 5 min
         //client.setWebSocketDisconnectDelay(1000 * 60 * 5);

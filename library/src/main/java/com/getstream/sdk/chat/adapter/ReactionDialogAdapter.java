@@ -15,30 +15,23 @@ import java.util.Map;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 
-public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.MyViewHolder> {
+public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
 
     private static final String TAG = ReactionDialogAdapter.class.getSimpleName();
 
-    private Channel channel;
     private Message message;
     private View.OnClickListener clickListener;
     private Map<String, String> reactionTypes;
     private MessageListViewStyle style;
 
-    public ReactionDialogAdapter(Channel channel,
-                                 Message message,
+    public ReactionDialogAdapter(Message message,
                                  MessageListViewStyle style,
                                  View.OnClickListener clickListener) {
-        this.channel = channel;
         this.message = message;
         this.reactionTypes = LlcMigrationUtils.getReactionTypes();
         this.style = style;
@@ -46,31 +39,23 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
+    public ReactionViewHolder onCreateViewHolder(ViewGroup parent,
+                                                 int viewType) {
         // create a new view
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.stream_item_dialog_reaction, parent, false);
 
-        MyViewHolder vh = new MyViewHolder(itemView);
-        return vh;
+        return new ReactionViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
+    public void onBindViewHolder(final ReactionViewHolder holder, int position) {
         applyStyle(holder);
         String key = (String) reactionTypes.keySet().toArray()[position];
-        String value = reactionTypes.get(key);
-        holder.tv_emoji.setText(value);
-
-        if (message.getReactionCounts() == null) return;
-        if (message.getReactionCounts().containsKey(key)) {
-            holder.tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
-        } else
-            holder.tv_count.setText("");
+        holder.bind(key, position);
     }
 
-    private void applyStyle(final MyViewHolder holder) {
+    private void applyStyle(final ReactionViewHolder holder) {
         holder.tv_emoji.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.getReactionInputEmojiSize());
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) holder.tv_emoji.getLayoutParams();
         params.leftMargin = style.getReactionInputEmojiMargin();
@@ -85,14 +70,29 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         return reactionTypes.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView tv_emoji, tv_count;
+    public class ReactionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public MyViewHolder(View view) {
+        private TextView tv_emoji, tv_count;
+        private String reactionKey;
+        private int position;
+
+        private ReactionViewHolder(View view) {
             super(view);
             tv_emoji = view.findViewById(R.id.tv_emoji);
             tv_count = view.findViewById(R.id.tv_count);
             view.setOnClickListener(this);
+        }
+
+        void bind(String key, int position) {
+            this.reactionKey = key;
+            this.position = position;
+            String value = reactionTypes.get(key);
+            tv_emoji.setText(value);
+
+            if (message.getReactionCounts().containsKey(key)) {
+                tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
+            } else
+                tv_count.setText("");
         }
 
         @Override
@@ -122,35 +122,47 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private void sendReaction(final View view, String type) {
 
-            StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(new Function1<Result<Reaction>, Unit>() {
-                @Override
-                public Unit invoke(Result<Reaction> reactionResult) {
+            StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(reactionResult -> {
 
-                    if (reactionResult.isSuccess()) {
-                        clickListener.onClick(view);
+                clickListener.onClick(view);
+
+                if (reactionResult.isSuccess()) {
+
+                    Map<String, Integer> reactionCounts = message.getReactionCounts();
+
+                    message.getLatestReactions().add(reactionResult.data());
+                    message.getOwnReactions().add(reactionResult.data());
+
+                    if (reactionCounts.containsKey(reactionKey)) {
+                        reactionCounts.put(reactionKey, reactionCounts.get(reactionKey) + 1);
                     } else {
-                        clickListener.onClick(view);
+                        reactionCounts.put(reactionKey, 1);
                     }
 
-                    return null;
+
+                    notifyItemChanged(position);
+                } else {
+
                 }
+
+
+                return null;
             });
         }
 
         private void deleteReaction(final View view, String type) {
 
-            StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(new Function1<Result<Message>, Unit>() {
-                @Override
-                public Unit invoke(Result<Message> messageResult) {
+            StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(messageResult -> {
 
-                    if (messageResult.isSuccess()) {
-                        clickListener.onClick(view);
-                    } else {
-                        clickListener.onClick(view);
-                    }
+                if (messageResult.isSuccess()) {
+                    int count = message.getReactionCounts().get(reactionKey);
+                    message.getReactionCounts().put(reactionKey, count - 1);
+                    notifyItemChanged(position);
+                } else {
 
-                    return null;
                 }
+
+                return null;
             });
         }
     }
