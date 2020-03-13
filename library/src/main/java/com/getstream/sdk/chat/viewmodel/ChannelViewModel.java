@@ -154,7 +154,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public ChannelViewModel(@NonNull Application application) {
         super(application);
 
-        StreamChat.getLogger().logD(this, "instance created");
+        StreamChat.getLogger().logI(this, "instance created");
 
         initialized = new AtomicBoolean(false);
         isLoading = new AtomicBoolean(false);
@@ -203,7 +203,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 public Unit invoke(Result<Unit> result) {
 
                     if (result.isSuccess()) {
-                        StreamChat.getLogger().logD(this, "Marked read message");
+                        StreamChat.getLogger().logI(this, "Marked read message");
                     } else {
                         StreamChat.getLogger().logE(this, result.error().getMessage());
                     }
@@ -618,7 +618,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 }
             }
         } else {
-            int index = messagesCopy.indexOf(message);
+            int index = LlcMigrationUtils.indexOf(messagesCopy, message);
             updated = index != -1;
             if (updated) {
                 messagesCopy.set(index, message);
@@ -631,7 +631,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 threadMessages.postValue(messagesCopy_);
                 updated = true;
             }
-            StreamChat.getLogger().logD(this, "updateMessage:" + updated);
+            StreamChat.getLogger().logI(this, "updateMessage:" + updated);
         }
         return updated;
     }
@@ -639,7 +639,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected void updateFailedMessage(Message message) {
         // doesn't touch the message order, since message.created_at can't change
         List<Message> messagesCopy = messages.getValue();
-        int index = messagesCopy.indexOf(message);
+        int index = LlcMigrationUtils.indexOf(messagesCopy, message);
         boolean updated = index != -1;
         if (updated) {
             User currentUser = StreamChat.getInstance().getCurrentUser();
@@ -652,7 +652,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected void shuffleGiphy(Message oldMessage, Message message) {
         List<Message> messagesCopy = getMessages().getValue();
-        int index = messagesCopy.indexOf(oldMessage);
+        int index = LlcMigrationUtils.indexOf(messagesCopy, oldMessage);
         if (index != -1) {
             messagesCopy.set(index, message);
             if (isThread())
@@ -735,7 +735,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
         for (int i = newMessages.size() - 1; i >= 0; i--) {
             Message message = newMessages.get(i);
-            int index = messagesCopy.indexOf(message);
+
+            int index = LlcMigrationUtils.indexOf(messagesCopy, message);
 
             if (index == -1) {
                 messagesCopy.add(0, message);
@@ -779,19 +780,19 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
-        StreamChat.getLogger().logD(this, "resume");
+        StreamChat.getLogger().logI(this, "resume");
     }
 
     @Override
     public void stopped() {
-        StreamChat.getLogger().logD(this, "stopped");
+        StreamChat.getLogger().logI(this, "stopped");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
 
-        StreamChat.getLogger().logD(this, "onCleared");
+        StreamChat.getLogger().logI(this, "onCleared");
 
         for (Subscription sub : subscriptions) sub.unsubscribe();
         subscriptions.clear();
@@ -810,12 +811,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected void setupConnectionRecovery() {
 
         //TODO: llc unsubscrube
-        subscriptions.add(StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
-            @Override
-            public Unit invoke(ChatEvent chatEvent) {
-                if (chatEvent instanceof ConnectedEvent) {
+        subscriptions.add(StreamChat.getInstance().events().subscribe(chatEvent -> {
+            if (chatEvent instanceof ConnectedEvent) {
 
-                    //TODO: llc refresh on connected
+                //TODO: llc refresh on connected
 
 //                    String type = channel.getType();
 //                    String id = channel.getId();
@@ -829,9 +828,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 //                                }
 //                            }
 //                    );
-                }
-                return null;
             }
+            return null;
         }));
     }
 
@@ -1061,7 +1059,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 break;
             case CANCEL:
                 List<Message> messagesCopy = getMessages().getValue();
-                int index = messagesCopy.indexOf(message);
+                int index = LlcMigrationUtils.indexOf(messagesCopy, message);
                 if (index != -1) {
                     messagesCopy.remove(message);
                     if (isThread())

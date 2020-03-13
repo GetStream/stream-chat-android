@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -124,19 +125,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
 
                 if (reactionResult.isSuccess()) {
-
-                    Map<String, Integer> reactionCounts = message.getReactionCounts();
-
-                    message.getLatestReactions().add(reactionResult.data());
-                    message.getOwnReactions().add(reactionResult.data());
-
-                    if (reactionCounts.containsKey(reactionKey)) {
-                        reactionCounts.put(reactionKey, reactionCounts.get(reactionKey) + 1);
-                    } else {
-                        reactionCounts.put(reactionKey, 1);
-                    }
-
-
+                    addReaction(reactionResult.data());
                     notifyItemChanged(position);
                 } else {
 
@@ -152,8 +141,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(messageResult -> {
 
                 if (messageResult.isSuccess()) {
-                    int count = message.getReactionCounts().get(reactionKey);
-                    message.getReactionCounts().put(reactionKey, count - 1);
+                    removeReaction(type);
                     notifyItemChanged(position);
                 } else {
 
@@ -161,6 +149,42 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
                 return null;
             });
+        }
+
+        private void addReaction(Reaction reaction) {
+            Map<String, Integer> reactionCounts = message.getReactionCounts();
+
+            message.getOwnReactions().add(reaction);
+
+            if (reactionCounts.containsKey(reactionKey)) {
+                reactionCounts.put(reactionKey, reactionCounts.get(reactionKey) + 1);
+            } else {
+                reactionCounts.put(reactionKey, 1);
+            }
+        }
+
+        private void removeReaction(String type) {
+            List<Reaction> ownReactions = message.getOwnReactions();
+            Iterator<Reaction> iterator = ownReactions.iterator();
+
+            while (iterator.hasNext()) {
+                Reaction reaction = iterator.next();
+                if (reaction.getType().equals(type)) {
+                    iterator.remove();
+                    break;
+                }
+            }
+
+            Map<String, Integer> reactionCounts = message.getReactionCounts();
+
+            if (reactionCounts.containsKey(reactionKey)) {
+                int count = reactionCounts.get(reactionKey);
+                if (count == 1) {
+                    reactionCounts.remove(reactionKey);
+                } else {
+                    reactionCounts.put(reactionKey, count - 1);
+                }
+            }
         }
     }
 

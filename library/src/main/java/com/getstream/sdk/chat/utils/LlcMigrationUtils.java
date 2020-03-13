@@ -580,6 +580,13 @@ public class LlcMigrationUtils {
         }
     }
 
+    public static int indexOf(List<Message> messages, Message message) {
+        String id = message.getId();
+        for (int i = 0; i < messages.size(); i++)
+            if (id.equals(messages.get(i).getId())) return i;
+        return -1;
+    }
+
     private static void setFormattedDate(Message message) {
         if (message == null || message.getDate() != null) return;
         Utils.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
