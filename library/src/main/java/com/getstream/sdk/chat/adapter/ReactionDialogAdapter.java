@@ -121,14 +121,15 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private void sendReaction(final View view, String type) {
 
+            clickListener.onClick(view);
+
             StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(reactionResult -> {
 
 
                 if (reactionResult.isSuccess()) {
-                    addReaction(reactionResult.data());
                     notifyItemChanged(position);
                 } else {
-
+                    //TODO: add error message
                 }
 
 
@@ -138,13 +139,14 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private void deleteReaction(final View view, String type) {
 
+            clickListener.onClick(view);
+
             StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(messageResult -> {
 
                 if (messageResult.isSuccess()) {
-                    removeReaction(type);
                     notifyItemChanged(position);
                 } else {
-
+                    //TODO: add error message
                 }
 
                 return null;
