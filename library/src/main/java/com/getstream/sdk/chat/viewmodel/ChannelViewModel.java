@@ -355,7 +355,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void initThread() {
         threadParentMessage.postValue(null);
         threadMessages.postValue(null);
-        messages.postValue(new ArrayList<>(channel.getMessages()));
+        updateMessageLiveData(new ArrayList<>(channel.getMessages()));
         reachedEndOfPaginationThread = false;
     }
     // endregion
@@ -457,13 +457,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 if (event instanceof NewMessageEvent) {
                     upsertMessage(event.getMessage());
                 } else if (event instanceof UserStartWatchingEvent) {
-                    if (event == null) {
 
-                    }
                 } else if (event instanceof UserStopWatchingEvent) {
-                    if (event == null) {
 
-                    }
                 } else if (event instanceof ChannelUpdatedEvent) {
 
                 } else if (event instanceof MessageUpdatedEvent) {
@@ -551,7 +547,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 if (isThread())
                     threadMessages.postValue(messagesCopy);
                 else
-                    messages.postValue(messagesCopy);
+                    updateMessageLiveData(messagesCopy);
 
                 break;
             }
@@ -594,9 +590,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messagesCopy.add(message);
             }
 
-            messages.postValue(messagesCopy);
+            updateMessageLiveData(messagesCopy);
             markLastMessageRead();
         }
+    }
+
+    private void updateMessageLiveData(List<Message> messagesCopy) {
+        messages.postValue(messagesCopy);
     }
 
     protected boolean updateMessage(Message message) {
@@ -622,7 +622,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             updated = index != -1;
             if (updated) {
                 messagesCopy.set(index, message);
-                messages.postValue(messagesCopy);
+                updateMessageLiveData(messagesCopy);
             }
             // Check if message is Thread Parent Message
             if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
@@ -646,7 +646,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             String clientSideID = currentUser.getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             messagesCopy.set(index, message);
-            messages.postValue(messagesCopy);
+            updateMessageLiveData(messagesCopy);
         }
     }
 
@@ -658,7 +658,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             if (isThread())
                 threadMessages.postValue(messagesCopy);
             else
-                messages.postValue(messagesCopy);
+                updateMessageLiveData(messagesCopy);
         }
     }
 
@@ -674,7 +674,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     else
                         threadMessages.postValue(messagesCopy);
                 } else
-                    messages.postValue(messagesCopy);
+                    updateMessageLiveData(messagesCopy);
 
                 return true;
             }
@@ -697,7 +697,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (isThread()) {
             threadMessages.postValue(messagesCopy);
         } else
-            messages.postValue(messagesCopy);
+            updateMessageLiveData(messagesCopy);
     }
 
     protected void checkFailedMessage(Message message) {
@@ -709,7 +709,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 if (isThread())
                     threadMessages.postValue(messagesCopy);
                 else
-                    messages.postValue(messagesCopy);
+                    updateMessageLiveData(messagesCopy);
                 break;
             }
         }
@@ -721,7 +721,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (isThread())
             threadMessages.postValue(messagesCopy);
         else
-            messages.postValue(messagesCopy);
+            updateMessageLiveData(messagesCopy);
 
     }
 
@@ -744,7 +744,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 messagesCopy.set(index, message);
             }
         }
-        messages.postValue(messagesCopy);
+        updateMessageLiveData(messagesCopy);
     }
 
     protected void channelLoadingDone() {
@@ -1065,7 +1065,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     if (isThread())
                         threadMessages.postValue(messagesCopy);
                     else
-                        messages.postValue(messagesCopy);
+                        updateMessageLiveData(messagesCopy);
                 }
                 return;
         }

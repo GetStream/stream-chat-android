@@ -336,7 +336,7 @@ public class MessageListView extends RecyclerView {
                 if (message.getReplyCount() > 0) {
                     viewModel.setThreadParentMessage(message);
                 }else{
-                    viewModel.sendMessage(message);
+                    //viewModel.sendMessage(message);
                 }
             });
         }
