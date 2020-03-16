@@ -33,6 +33,10 @@ public class Reaction {
     @TypeConverters({DateConverter.class})
     private Date createdAt;
 
+    @SerializedName("score")
+    @Expose
+    private Integer score;
+
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }
@@ -104,6 +108,14 @@ public class Reaction {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
 }
