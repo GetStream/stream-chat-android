@@ -8,3 +8,4 @@ sample/release/*
 /captures
 .externalNativeBuild
 /sample/app-config-custom.json
+/attachments/*

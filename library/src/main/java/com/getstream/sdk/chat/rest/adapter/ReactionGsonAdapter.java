@@ -42,9 +42,9 @@ public class ReactionGsonAdapter extends TypeAdapter<Reaction> {
 //            data.put("user_id", reaction.getUserID());
 //        }
 
-        if (reaction.getScore() != null) {
-            data.put("score", reaction.getScore());
-        }
+//        if (reaction.getScore() != null) {
+//            data.put("score", reaction.getScore());
+//        }
 
         TypeAdapter adapter = GsonConverter.Gson().getAdapter(HashMap.class);
         adapter.write(writer, data);
@@ -83,10 +83,10 @@ public class ReactionGsonAdapter extends TypeAdapter<Reaction> {
                 case "created_at":
                     //reaction.setCreatedAt(gson.fromJson(json, Date.class));
                     continue;
-                case "score":
-                    int score = ((Number) set.getValue()).intValue();
-                    reaction.setScore(score);
-                    continue;
+//                case "score":
+                    //int score = ((Number) set.getValue()).intValue();
+//                    reaction.setScore(score);
+//                    continue;
             }
             // Set Extra Data
             extraData.put(set.getKey(), set.getValue());
