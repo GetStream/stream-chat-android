@@ -1,5 +1,10 @@
 ## Upcoming
 
+## March 16th, 2020 - 3.6.7
+
+- build jar generation
+- update gradle plugin: 3.5.2 > 3.5.3
+
 ## March 11th, 2020 - 3.6.5
 
 - Fix reaction score parser casting exception
