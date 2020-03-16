@@ -110,3 +110,24 @@ task javadoc(type: Javadoc) {
     exclude '**/ModelType.java'
     failOnError false
 }
+
+task copyJar(type: Copy) {
+    description = 'Copying the jar'
+    from "$buildDir/intermediates/full_jar/release/createFullJarRelease"
+    into file('../attachments')
+    include 'full.jar'
+}
+
+task copyAar(type: Copy) {
+    description = 'Copying the aar'
+    from "$buildDir/outputs/aar"
+    into file('../attachments')
+    include 'library-release.aar'
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn copyAar
+}
+
+clean.dependsOn copyAar
+clean.mustRunAfter copyAar
