@@ -3,6 +3,10 @@
 
 ![](https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png) 
 
+🚨 SDK is in transition period between: 
+- Stable version: [3.x.x](https://github.com/GetStream/stream-chat-android/tree/ver/3.x.x)
+- Beta version: [4.x.x](https://github.com/GetStream/stream-chat-android)
+
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low level chat SDK and a set of reusable UI components. Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
 
 **Quick Links**
