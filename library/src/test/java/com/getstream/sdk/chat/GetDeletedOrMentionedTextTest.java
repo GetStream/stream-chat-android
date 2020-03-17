@@ -28,7 +28,7 @@ public class GetDeletedOrMentionedTextTest {
 
         mentionedUsers.add(user1);
         mentionedUsers.add(user2);
-        message.setMentionedUsers(mentionedUsers);
+        message.getMentionedUsers().addAll(mentionedUsers);
 
         String expectedMessage = "**@Steep moon** **@Broken waterfall** hi, there?";
         assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
@@ -44,7 +44,7 @@ public class GetDeletedOrMentionedTextTest {
         User user = new User("steep-moon-9");
         user.setName("Steep moon");
         mentionedUsers.add(user);
-        message.setMentionedUsers(mentionedUsers);
+        message.getMentionedUsers().addAll(mentionedUsers);
 
         String expectedMessage = "HI **@Steep moon**There";
         assertEquals(expectedMessage, StringUtility.getDeletedOrMentionedText(message));
