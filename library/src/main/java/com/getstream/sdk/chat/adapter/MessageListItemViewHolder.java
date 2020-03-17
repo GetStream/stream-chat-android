@@ -407,7 +407,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         } else if (isDeletedMessage() || StringUtility.isEmoji(message.getText())) {
             background = null;
         } else {
-            if (message.getAttachments() != null && !message.getAttachments().isEmpty())
+            if (!message.getAttachments().isEmpty() && !message.getAttachments().isEmpty())
                 background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), Arrays.asList(MessageViewHolderFactory.Position.MIDDLE));
             else
                 background = bubbleHelper.getDrawableForMessage(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions());
@@ -454,7 +454,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected void configAttachmentView() {
         if (isDeletedMessage()
                 || isFailedMessage()
-                || this.message.getAttachments() == null
                 || this.message.getAttachments().isEmpty()) {
             attachmentview.setVisibility(View.GONE);
             return;
@@ -590,10 +589,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         set.applyTo((ConstraintLayout) itemView);
 
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) space_reaction_tail.getLayoutParams();
+        int activeContentViewResId = getActiveContentViewResId();
+
         if (messageListItem.isMine())
-            params.endToStart = getActiveContentViewResId();
+            params.endToStart = activeContentViewResId;
         else
-            params.startToEnd = getActiveContentViewResId();
+            params.startToEnd = activeContentViewResId;
 
         space_reaction_tail.setLayoutParams(params);
         rv_reaction.post(() -> {
@@ -634,7 +635,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             set.applyTo((ConstraintLayout) itemView);
 
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();
-            if (message.getAttachments() != null) {
+            if (!message.getAttachments().isEmpty()) {
                 if (messageListItem.isMine())
                     params.startToStart = R.id.space_reaction_tail;
                 else
@@ -732,7 +733,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     @IdRes
     protected int getActiveContentViewResId() {
-        if (message.getAttachments() != null)
+        if (!message.getAttachments().isEmpty())
             return attachmentview.getId();
         else
             return tv_text.getId();
