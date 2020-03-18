@@ -16,7 +16,7 @@ import java.util.*
  * and back:
  * messageEntity.toMessage()
  */
-@Entity(tableName = "stream_chat_reaction")
+@Entity(tableName = "stream_chat_message")
 data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
     /** the message text */
@@ -48,19 +48,19 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     var ownReactions: List<Reaction>? = null
 
     /** the users mentioned in this message */
-    val mentionedUsersId: List<String>? = null
+    var mentionedUsersId: List<String>? = null
 
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
-    val reactionCounts: Map<String, Int>? = null
+    var reactionCounts: Map<String, Int>? = null
 
     /** parent id, used for threads */
-    val parentId: String? = null
+    var parentId: String? = null
 
     /** slash command like /giphy etc */
-    val command: String? = null
+    var command: String? = null
 
     /** command info */
-    val commandInfo: Map<String, String>? = null
+    var commandInfo: Map<String, String>? = null
 
     /** all the custom data provided for this message */
     var extraData = mutableMapOf<String, Any>()

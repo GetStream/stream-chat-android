@@ -28,7 +28,7 @@ class ExampleUnitTest {
     @Before
     fun setup() {
         database = ChatDatabase.getDatabase(ApplicationProvider.getApplicationContext())
-        repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao())
+        repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao(), database.messageDao())
     }
 
     @Test
@@ -55,6 +55,7 @@ class ExampleUnitTest {
     @Test
     fun insertMessage() {
         val m = Message()
+        m.user = User("jack")
         m.text = "hello world"
         repo.insertMessage(m)
     }

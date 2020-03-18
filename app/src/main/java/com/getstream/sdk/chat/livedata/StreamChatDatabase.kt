@@ -11,11 +11,12 @@ import com.getstream.sdk.chat.livedata.dao.MessageDao
 import com.getstream.sdk.chat.livedata.dao.ReactionDao
 import com.getstream.sdk.chat.livedata.dao.UserDao
 import com.getstream.sdk.chat.livedata.entity.ChannelQuery
+import com.getstream.sdk.chat.livedata.entity.MessageEntity
 import com.getstream.sdk.chat.livedata.entity.ReactionEntity
 import com.getstream.sdk.chat.livedata.entity.UserEntity
 
 @Database(
-    entities = [ChannelQuery::class, UserEntity::class, ReactionEntity::class],
+    entities = [ChannelQuery::class, MessageEntity::class, UserEntity::class, ReactionEntity::class],
     version = 1,
     exportSchema = false
 )
