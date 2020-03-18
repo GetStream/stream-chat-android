@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.*;
 import io.getstream.chat.android.client.call.Call;
+import io.getstream.chat.android.client.controllers.ChannelController;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
@@ -59,7 +60,7 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
 
     @NotNull
     @Override
-    public Call<ChannelResponse> addMembers(@NotNull String s, @NotNull String s1, @NotNull List<String> list) {
+    public Call<Channel> addMembers(@NotNull String s, @NotNull String s1, @NotNull List<String> list) {
         return client.addMembers(s, s1, list);
     }
 
@@ -70,7 +71,7 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
 
     @NotNull
     @Override
-    public Call<CompletableResponse> banUser(@NotNull String s, @NotNull String s1, @NotNull String s2, @NotNull String s3, int i) {
+    public Call<Unit> banUser(@NotNull String s, @NotNull String s1, @NotNull String s2, @NotNull String s3, int i) {
         return client.banUser(s, s1, s2, s3, i);
     }
 
@@ -211,12 +212,6 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
 
     @NotNull
     @Override
-    public Call<Unit> markRead(@NotNull String s, @NotNull String s1, @NotNull String s2) {
-        return client.markRead(s, s1, s2);
-    }
-
-    @NotNull
-    @Override
     public Call<MuteUserResponse> muteUser(@NotNull String s) {
         return client.muteUser(s);
     }
@@ -322,7 +317,7 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
 
     @NotNull
     @Override
-    public Call<CompletableResponse> unBanUser(@NotNull String s, @NotNull String s1, @NotNull String s2) {
+    public Call<Unit> unBanUser(@NotNull String s, @NotNull String s1, @NotNull String s2) {
         return client.unBanUser(s, s1, s2);
     }
 
@@ -357,5 +352,17 @@ public class ClientInterceptor implements ChatClient, InMemoryCache {
     @Override
     public void setUser(@NotNull User user, @NotNull String s, @Nullable InitConnectionListener initConnectionListener) {
         client.setUser(user, s, initConnectionListener);
+    }
+
+    @NotNull
+    @Override
+    public ChannelController channel(@NotNull String s, @NotNull String s1) {
+        return client.channel(s, s1);
+    }
+
+    @NotNull
+    @Override
+    public Call<Unit> markMessageRead(@NotNull String s, @NotNull String s1, @NotNull String s2) {
+        return null;
     }
 }

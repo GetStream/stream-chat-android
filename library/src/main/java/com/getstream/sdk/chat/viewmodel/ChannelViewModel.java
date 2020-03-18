@@ -27,7 +27,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import io.getstream.chat.android.client.api.models.*;
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
+import io.getstream.chat.android.client.api.models.ChannelWatchRequest;
+import io.getstream.chat.android.client.api.models.Pagination;
+import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.models.*;
@@ -198,7 +201,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             String id = channel.getId();
 
             //TODO: llc unsub from all enqueue
-            StreamChat.getInstance().markRead(type, id, "").enqueue(new Function1<Result<Unit>, Unit>() {
+            StreamChat.getInstance().markMessageRead(type, id, "").enqueue(new Function1<Result<Unit>, Unit>() {
                 @Override
                 public Unit invoke(Result<Unit> result) {
 
@@ -423,8 +426,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param reason       the reason the ban was created.
      * @param timeout      the timeout in minutes until the ban is automatically expired
      */
-    public Call<CompletableResponse> banUser(@NotNull String targetUserId, @Nullable String reason,
-                                             @Nullable Integer timeout) {
+    public Call<Unit> banUser(@NotNull String targetUserId, @Nullable String reason,
+                              @Nullable Integer timeout) {
 
         String type = channel.getType();
         String id = channel.getId();
@@ -438,7 +441,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param targetUserId the ID of the user to remove the ban
      * @param callback     the result callback
      */
-    public Call<CompletableResponse> unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
+    public Call<Unit> unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
 
         String type = channel.getType();
         String id = channel.getId();
