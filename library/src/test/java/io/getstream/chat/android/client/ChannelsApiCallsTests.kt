@@ -364,7 +364,7 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroSuccess(EventResponse(event)))
 
         val result =
-            client.markRead(mock.channelType, mock.channelId, messageId).execute()
+            client.markMessageRead(mock.channelType, mock.channelId, messageId).execute()
 
         verifySuccess(result, Unit)
     }
@@ -386,7 +386,7 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.markRead(mock.channelType, mock.channelId, messageId).execute()
+            client.markMessageRead(mock.channelType, mock.channelId, messageId).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

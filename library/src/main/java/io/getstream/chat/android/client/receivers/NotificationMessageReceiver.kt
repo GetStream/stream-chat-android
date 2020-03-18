@@ -51,7 +51,7 @@ class NotificationMessageReceiver : BroadcastReceiver() {
             return
         }
 
-        ChatClient.instance().markRead(channelType, channelId, messageId).enqueue { result ->
+        ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue { result ->
             if (result.isSuccess) {
                 //Log.i(TAG, "Channel marked as read")
             } else {

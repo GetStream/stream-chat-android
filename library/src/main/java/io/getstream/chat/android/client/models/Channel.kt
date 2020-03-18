@@ -1,10 +1,7 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.CustomObject
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.util.*
@@ -39,14 +36,6 @@ class Channel : CustomObject {
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData = mutableMapOf<String, Any>()
-
-    @IgnoreSerialisation
-    @IgnoreDeserialisation
-    internal lateinit var client: ChatClient
-
-    fun watch(request: ChannelWatchRequest): Call<Channel> {
-        return client.queryChannel(type, id, request)
-    }
 
     override fun toString(): String {
         return "Channel(cid='$cid')"

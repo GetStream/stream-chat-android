@@ -27,7 +27,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
             logger.logI("Ok")
             consecutiveFailures = 0
             socket.sendEvent(ChatEvent(EventType.HEALTH_CHECK))
-            delayHandler.postDelayed(monitor, 1000)
+            delayHandler.postDelayed(monitor, healthCheckInterval)
         }
     }
 

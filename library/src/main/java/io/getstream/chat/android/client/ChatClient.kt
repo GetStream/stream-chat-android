@@ -5,6 +5,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -38,6 +39,8 @@ interface ChatClient {
     fun getConnectionId(): String?
 
     fun getCurrentUser(): User?
+
+    fun channel(channelType: String, channelId: String): ChannelController
 
     //region CDN
 
@@ -80,7 +83,7 @@ interface ChatClient {
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
     fun removeMembers(
         channelType: String,
@@ -97,13 +100,13 @@ interface ChatClient {
         channelId: String,
         reason: String,
         timeout: Int
-    ): Call<CompletableResponse>
+    ): Call<Unit>
 
     fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
-    ): Call<CompletableResponse>
+    ): Call<Unit>
 
     //endregion
 
@@ -130,7 +133,7 @@ interface ChatClient {
         request: ChannelQueryRequest
     ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>
     fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,

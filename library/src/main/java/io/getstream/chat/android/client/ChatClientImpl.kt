@@ -6,6 +6,8 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.controllers.ChannelController
+import io.getstream.chat.android.client.controllers.ChannelControllerImpl
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -210,14 +212,13 @@ internal class ChatClientImpl(
                 channel.messages.forEach { message -> message.channel = channel }
                 channel
             }
-            .map { attachClient(it) }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
     }
 
-    override fun markRead(
+    override fun markMessageRead(
         channelType: String,
         channelId: String,
         messageId: String
@@ -241,11 +242,8 @@ internal class ChatClientImpl(
         return api.stopWatching(channelType, channelId)
     }
 
-    override fun queryChannels(
-        request: QueryChannelsRequest
-    ): Call<List<Channel>> {
+    override fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         return api.queryChannels(request)
-            .map { attachClient(it) }
     }
 
     override fun updateChannel(
@@ -260,11 +258,10 @@ internal class ChatClientImpl(
 
         val request = UpdateChannelRequest(channelExtraData, updateMessage)
         return api.updateChannel(channelType, channelId, request)
-            .map { attachClient(it) }
     }
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
-        return api.rejectInvite(channelType, channelId).map { attachClient(it) }
+        return api.rejectInvite(channelType, channelId)
     }
 
     override fun sendEvent(
@@ -281,7 +278,7 @@ internal class ChatClientImpl(
         channelId: String,
         message: String
     ): Call<Channel> {
-        return api.acceptInvite(channelType, channelId, message).map { attachClient(it) }
+        return api.acceptInvite(channelType, channelId, message)
     }
 
     override fun markAllRead(): Call<ChatEvent> {
@@ -298,12 +295,14 @@ internal class ChatClientImpl(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse> {
+    ): Call<Channel> {
         return api.addMembers(
-            channelType = channelType,
-            channelId = channelId,
-            members = members
-        )
+            channelType,
+            channelId,
+            members
+        ).map {
+            it.channel
+        }
     }
 
     override fun removeMembers(
@@ -318,17 +317,11 @@ internal class ChatClientImpl(
         it.channel
     }
 
-    override fun muteUser(targetId: String) = api.muteUser(
-        targetId = targetId
-    )
+    override fun muteUser(targetId: String) = api.muteUser(targetId)
 
-    override fun unMuteUser(targetId: String) = api.unMuteUser(
-        targetId = targetId
-    )
+    override fun unMuteUser(targetId: String) = api.unMuteUser(targetId)
 
-    override fun flag(targetId: String) = api.flag(
-        targetId = targetId
-    )
+    override fun flag(targetId: String) = api.flag(targetId)
 
     override fun banUser(
         targetId: String,
@@ -336,19 +329,23 @@ internal class ChatClientImpl(
         channelId: String,
         reason: String,
         timeout: Int
-    ): Call<CompletableResponse> = api.banUser(
+    ): Call<Unit> = api.banUser(
         targetId, timeout, reason, channelType, channelId
-    )
+    ).map {
+        Unit
+    }
 
     override fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
     ) = api.unBanUser(
-        targetId = targetId,
-        channelType = channelType,
-        channelId = channelId
-    )
+        targetId,
+        channelType,
+        channelId
+    ).map {
+        Unit
+    }
 
     //endregion
 
@@ -358,16 +355,6 @@ internal class ChatClientImpl(
 
     override fun onNewTokenReceived(token: String, context: Context) {
         notifications.setFirebaseToken(token)
-    }
-
-    private fun attachClient(channels: List<Channel>): List<Channel> {
-        channels.forEach { attachClient(it) }
-        return channels
-    }
-
-    private fun attachClient(channel: Channel): Channel {
-        channel.client = this
-        return channel
     }
 
     override fun getConnectionId(): String? {
@@ -380,5 +367,9 @@ internal class ChatClientImpl(
 
     override fun isSocketConnected(): Boolean {
         return state.socketConnected
+    }
+
+    override fun channel(channelType: String, channelId: String): ChannelController {
+        return ChannelControllerImpl(channelType, channelId, this)
     }
 }

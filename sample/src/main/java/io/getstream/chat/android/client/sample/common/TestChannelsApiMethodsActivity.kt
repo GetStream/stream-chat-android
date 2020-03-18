@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
@@ -35,6 +34,8 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_api)
 
+        val ctx = this
+
         buttonsContainer.children.iterator().forEach {
             it.isEnabled = false
         }
@@ -59,6 +60,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
             override fun onError(error: ChatError) {
                 val message = error.message
+                Toast.makeText(ctx, "error setting user: $message", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -101,7 +103,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             if (channelsResult.isSuccess) {
                 val channels = channelsResult.data()
                 val channel = channels[0]
-                val watchResult = channel.watch(ChannelWatchRequest().withMessages(100)).execute()
+
+                val watchResult =
+                    client.channel(channelType, channelId).watch((ChannelWatchRequest().withMessages(100))).execute()
                 echoResult(watchResult)
             }
         }.start()
@@ -109,7 +113,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun markReadMessage() {
-        client.markRead(channelType, channelId, "zed").enqueue {
+        client.markMessageRead(channelType, channelId, "zed").enqueue {
             echoResult(it)
         }
     }
@@ -154,6 +158,19 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 1
             )
         ).enqueue {
+
+            val channels = it.data()
+            val channel = channels[0]
+            val type = channel.type
+            val id = channel.id
+
+            val controller = client.channel(type, id)
+            controller.watch().enqueue {
+                if (it.isSuccess) {
+
+                }
+            }
+
             echoResult(it)
         }
     }
@@ -184,7 +201,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     fun getChannels() {
-        client.addSocketListener(object: SocketListener() {
+        client.addSocketListener(object : SocketListener() {
             //override required methods
 
         })
