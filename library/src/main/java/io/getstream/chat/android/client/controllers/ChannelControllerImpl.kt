@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.controllers
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
@@ -14,6 +15,10 @@ internal class ChannelControllerImpl(
     val channelId: String,
     val client: ChatClient
 ) : ChannelController {
+
+    override fun query(request: ChannelQueryRequest): Call<Channel> {
+        return client.queryChannel(channelType, channelId, request)
+    }
 
     override fun watch(request: ChannelWatchRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)

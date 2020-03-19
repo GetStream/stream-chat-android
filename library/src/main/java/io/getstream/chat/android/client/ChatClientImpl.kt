@@ -288,7 +288,7 @@ internal class ChatClientImpl(
     }
 
     override fun getUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.getUsers(query).map { it.users }
+        return api.getUsers(query)
     }
 
     override fun addMembers(
@@ -300,9 +300,7 @@ internal class ChatClientImpl(
             channelType,
             channelId,
             members
-        ).map {
-            it.channel
-        }
+        )
     }
 
     override fun removeMembers(
@@ -313,9 +311,7 @@ internal class ChatClientImpl(
         channelType,
         channelId,
         members
-    ).map {
-        it.channel
-    }
+    )
 
     override fun muteUser(targetId: String) = api.muteUser(targetId)
 

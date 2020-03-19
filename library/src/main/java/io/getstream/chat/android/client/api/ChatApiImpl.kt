@@ -439,7 +439,7 @@ class ChatApiImpl(
                 channelType, channelId, config.apiKey, connectionId, RejectInviteRequest()
             )
         ).map {
-            it.channel
+            flattenChannel(it)
         }
     }
 
@@ -460,7 +460,7 @@ class ChatApiImpl(
                 )
             )
         ).map {
-            it.channel
+            flattenChannel(it)
         }
     }
 
@@ -496,14 +496,14 @@ class ChatApiImpl(
 
     override fun getUsers(
         queryUsers: QueryUsersRequest
-    ): Call<QueryUserListResponse> {
+    ): Call<List<User>> {
         return callMapper.map(
             retrofitApi.queryUsers(
                 config.apiKey,
                 connectionId,
                 queryUsers
             )
-        )
+        ).map { it.users }
     }
 
     override fun addMembers(
@@ -520,7 +520,7 @@ class ChatApiImpl(
                 members = members
             )
         )
-    )
+    ).map { flattenChannel(it) }
 
     override fun removeMembers(
         channelType: String,
@@ -536,7 +536,7 @@ class ChatApiImpl(
                 members = members
             )
         )
-    )
+    ).map { flattenChannel(it) }
 
     override fun muteUser(
         targetId: String

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.controllers
 
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
@@ -9,6 +10,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
 interface ChannelController {
+    fun query(request: ChannelQueryRequest): Call<Channel>
     fun watch(request: ChannelWatchRequest): Call<Channel>
     fun watch(): Call<Channel>
     fun stopWatching(): Call<Unit>

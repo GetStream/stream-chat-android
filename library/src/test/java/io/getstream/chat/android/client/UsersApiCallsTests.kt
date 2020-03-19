@@ -48,7 +48,7 @@ class UsersApiCallsTests {
 
         verifySuccess(
             result,
-            CompletableResponse()
+            Unit
         )
     }
 
@@ -72,7 +72,7 @@ class UsersApiCallsTests {
 
         verifySuccess(
             result,
-            CompletableResponse()
+            Unit
         )
     }
 

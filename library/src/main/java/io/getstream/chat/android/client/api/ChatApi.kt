@@ -3,10 +3,7 @@ package io.getstream.chat.android.client.api
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
@@ -97,19 +94,19 @@ interface ChatApi {
 
     fun setGuestUser(userId: String, userName: String): Call<TokenResponse>
 
-    fun getUsers(queryUsers: QueryUsersRequest): Call<QueryUserListResponse>
+    fun getUsers(queryUsers: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
     fun muteUser(
         targetId: String
