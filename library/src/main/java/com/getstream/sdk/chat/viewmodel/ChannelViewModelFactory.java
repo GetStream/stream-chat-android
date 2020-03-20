@@ -5,20 +5,21 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelViewModelFactory implements ViewModelProvider.Factory {
 
-    private Application mApplication;
-    private Channel mChannel;
+    private Application app;
+    private final String channelType;
+    private final String channelId;
 
-    public ChannelViewModelFactory(Application application, Channel channel) {
-        mApplication = application;
-        mChannel = channel;
+    public ChannelViewModelFactory(Application application, String channelType, String channelId) {
+        this.app = application;
+        this.channelType = channelType;
+        this.channelId = channelId;
     }
 
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new ChannelViewModel(mApplication, mChannel);
+        return (T) new ChannelViewModel(app, channelType, channelId);
     }
 }
