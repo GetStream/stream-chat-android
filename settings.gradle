@@ -1,2 +1,6 @@
 include ':app'
 rootProject.name='StreamChatAndroidLivedata'
+
+include ':chat'
+
+project(":chat").projectDir=new File("/Users/thierry/workspace/stream-chat-android-client/library")

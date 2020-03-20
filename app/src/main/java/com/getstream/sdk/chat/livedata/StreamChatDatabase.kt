@@ -6,17 +6,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.getstream.sdk.chat.livedata.converter.*
-import com.getstream.sdk.chat.livedata.dao.ChannelQueryDao
-import com.getstream.sdk.chat.livedata.dao.MessageDao
-import com.getstream.sdk.chat.livedata.dao.ReactionDao
-import com.getstream.sdk.chat.livedata.dao.UserDao
-import com.getstream.sdk.chat.livedata.entity.ChannelQuery
-import com.getstream.sdk.chat.livedata.entity.MessageEntity
-import com.getstream.sdk.chat.livedata.entity.ReactionEntity
-import com.getstream.sdk.chat.livedata.entity.UserEntity
+import com.getstream.sdk.chat.livedata.dao.*
+import com.getstream.sdk.chat.livedata.entity.*
 
 @Database(
-    entities = [ChannelQuery::class, MessageEntity::class, UserEntity::class, ReactionEntity::class],
+    entities = [
+        ChannelQuery::class,
+        MessageEntity::class,
+        UserEntity::class,
+        ReactionEntity::class,
+        ChannelStateEntity::class
+    ],
     version = 1,
     exportSchema = false
 )
@@ -32,6 +32,7 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun reactionDao(): ReactionDao
     abstract fun messageDao(): MessageDao
+    abstract fun channelStateDao(): ChannelStateDao
 
     companion object {
         @Volatile

@@ -1,19 +1,26 @@
 package com.getstream.sdk.chat.livedata
 
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.getstream.sdk.chat.livedata.entity.ChannelQuery
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
+import org.bouncycastle.crypto.tls.ConnectionEnd.client
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 
 @RunWith(AndroidJUnit4::class)
@@ -27,14 +34,57 @@ class ExampleUnitTest {
 
     @Before
     fun setup() {
+        val client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext()).build()
+
+        val user = User("broad-lake-3")
+        val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
+
+        client.setUser(user, token, object : InitConnectionListener() {
+
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                val connectionId = data.connectionId
+                System.out.println("user connected")
+            }
+
+            override fun onError(error: ChatError) {
+                error.printStackTrace()
+            }
+        })
+
         database = ChatDatabase.getDatabase(ApplicationProvider.getApplicationContext())
-        repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao(), database.messageDao())
+        sleep(2000)
+        repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao(), database.messageDao(), database.channelStateDao(), client)
+        repo.errorEvents.observeForever( EventObserver {
+            System.out.println("error event$it")
+        })
+        sleep(2000)
     }
+
+    @Test
+    fun getMessages() {
+        /**
+         * TODO:
+         * - actually insert the data when you run .watch
+         * - test that new message events update the livedata
+         */
+        val channelRepo = repo.channel("messaging", "test123")
+        channelRepo.watch()
+
+        // new messages, reactions, message changes etc are automatically handled
+        channelRepo.messages.observeForever {
+
+        }
+        sleep(1000)
+
+    }
+
 
     @Test
     fun runInsertUser() {
         val u = User("mr-tester")
         repo.insertUser(u)
+        // TODO: test reads as well as inserts
     }
 
     @Test
@@ -58,6 +108,19 @@ class ExampleUnitTest {
         m.user = User("jack")
         m.text = "hello world"
         repo.insertMessage(m)
+    }
+
+    @Test
+    fun insertChannel() {
+        val m = Message()
+        m.user = User("jack")
+        m.text = "hello world"
+        val c = Channel()
+        c.id = "123"
+        c.type = "messaging"
+        c.messages = listOf<Message>(m)
+
+        repo.insertChannel(c)
     }
 
 
