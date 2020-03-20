@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.livedata.entity.*
 
 @Database(
     entities = [
-        ChannelQuery::class,
+        QueryChannelsEntity::class,
         MessageEntity::class,
         UserEntity::class,
         ReactionEntity::class,

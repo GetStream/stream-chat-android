@@ -93,6 +93,57 @@ class StreamChatRepository(
 
     }
 
+    /**
+     * queryChannels
+     * - first read the current results from Room
+     * - if we are online make the API call to update results
+     */
+    fun queryChannels(
+        queryChannelsEntity: QueryChannelsEntity,
+        request: QueryChannelsRequest
+    ): LiveData<List<ChannelStateEntity?>?> {
+        // return a livedata object with the channels
+        var channelsLiveData = liveData(Dispatchers.IO) {
+            // start by getting the query results from offline storage
+            val query = channelQueryDao.select(queryChannelsEntity.id)
+            if (query != null) {
+                val channels = channelStateDao.select(query.channelCIDs)
+                // TODO: fetch the usersIds for these channels..
+                val userIds = mutableListOf<String>()
+                val users = userDao.select(userIds)
+                // TODO: this should be an emitsource with a transform step...
+                emit(channels)
+            }
+            // next run the actual query
+            client.queryChannels(request).enqueue {
+                // TODO: This storage logic can be merged with the StreamChatChannelRepo
+                // check for an error
+                if (!it.isSuccess) {
+                    addError(it.error())
+                }
+                // store the results in the database
+                val channelsResponse = it.data()
+                val users = mutableListOf<User>()
+                for (channel in channelsResponse) {
+                    users.add(channel.createdBy)
+                    // TODO member loop, watcher loop etc...
+                }
+                // store the users
+                insertUsers(users)
+                // store the channel info
+                insertChannels(channelsResponse)
+
+
+
+            }
+
+        }
+
+        return channelsLiveData
+
+
+    }
+
 
 
     fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>> {
@@ -147,6 +198,16 @@ class StreamChatRepository(
             channelStateDao.insert(ChannelStateEntity(channel))
         }
     }
+    fun insertChannels(channels: List<Channel>) {
+        var entities = mutableListOf<ChannelStateEntity>()
+        for (channel in channels) {
+            entities.add(ChannelStateEntity(channel))
+        }
+
+        GlobalScope.launch {
+            channelStateDao.insertMany(entities)
+        }
+    }
 
 
     fun insertReaction(reaction: Reaction) {
@@ -155,9 +216,9 @@ class StreamChatRepository(
         }
     }
 
-    fun insertQuery(query: ChannelQuery) {
+    fun insertQuery(queryChannelsEntity: QueryChannelsEntity) {
         GlobalScope.launch {
-            channelQueryDao.insert(query)
+            channelQueryDao.insert(queryChannelsEntity)
         }
     }
 
@@ -197,25 +258,5 @@ class StreamChatRepository(
     }
 
 
-    /**
-     * queryChannels
-     * - first read the current results from Room
-     * - if we are online make the API call to update results
-     */
-    fun queryChannels(
-        query: ChannelQuery,
-        request: QueryChannelsRequest
-    ): LiveData<List<String>> {
-        // return a livedata object with the channels
 
-        val channels = MutableLiveData<List<String>>()
-        GlobalScope.launch {
-            val newchannels = channelQueryDao.select(query.id)
-            channels.value = listOf("123", "345")
-        }
-
-        return channels
-
-
-    }
 }

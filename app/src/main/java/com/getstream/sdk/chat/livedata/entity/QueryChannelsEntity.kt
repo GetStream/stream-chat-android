@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import java.util.*
 
 @Entity(tableName = "stream_channel_query")
-data class ChannelQuery(val filter: FilterObject) {
+data class QueryChannelsEntity(val filter: FilterObject) {
 
     @PrimaryKey
     var id: String
@@ -19,5 +19,9 @@ data class ChannelQuery(val filter: FilterObject) {
         id = (Objects.hash(filter) + Objects.hash(sort)).toString()
     }
 
+    var channelCIDs: List<String>? = null
 
+    /** we track when the query was created and updated so we can clear out old results */
+    var createdAt: Date? = null
+    var updatedAt: Date? = null
 }

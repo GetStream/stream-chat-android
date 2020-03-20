@@ -1,10 +1,9 @@
 package com.getstream.sdk.chat.livedata
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.getstream.sdk.chat.livedata.entity.ChannelQuery
+import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -15,7 +14,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
-import org.bouncycastle.crypto.tls.ConnectionEnd.client
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -79,6 +77,29 @@ class ExampleUnitTest {
 
     }
 
+    @Test
+    fun getChannels() {
+        val query = QueryChannelsEntity(
+            FilterObject(
+                "type",
+                "messaging"
+            )
+        )
+        query.sort = QuerySort()
+        val request = QueryChannelsRequest(query.filter, 0, 100, QuerySort()).withMessages(100)
+
+        // runs the query and returns a queryRepo helper object
+        val channels = repo.queryChannels(query, request)
+        // queryRepo exposes the channels livedata object
+        channels.observeForever {
+
+        }
+
+        sleep(1000)
+
+    }
+
+
 
     @Test
     fun runInsertUser() {
@@ -95,7 +116,7 @@ class ExampleUnitTest {
 
     @Test
     fun insertQuery() {
-        val q = ChannelQuery(FilterObject(
+        val q = QueryChannelsEntity(FilterObject(
             "type",
             "messaging"
         ))
@@ -128,7 +149,7 @@ class ExampleUnitTest {
     fun runQueryChannelsWhileOffline() {
 
         repo.setOffline()
-        val query = ChannelQuery(
+        val query = QueryChannelsEntity(
             FilterObject(
                 "type",
                 "messaging"

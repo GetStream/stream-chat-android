@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.getstream.sdk.chat.livedata.entity.ChannelQuery
+import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
 
 @Dao
 interface ChannelQueryDao {
@@ -14,11 +14,11 @@ interface ChannelQueryDao {
     - offline read flow -> query id based lookup, read a list of channels
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(query: ChannelQuery)
+    suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
 
     @Query(
         "SELECT * FROM stream_channel_query " +
                 "WHERE stream_channel_query.id=:id"
     )
-    suspend fun select(id: String): ChannelQuery?
+    suspend fun select(id: String): QueryChannelsEntity?
 }
