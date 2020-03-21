@@ -52,6 +52,8 @@ class StreamChatRepository(
 
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
 
+
+    // TODO: implement retry policy
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
      * The following example shows how to observe these errors
@@ -65,6 +67,14 @@ class StreamChatRepository(
 
     fun addError(error: ChatError) {
         _errorEvent.value = Event(error)
+    }
+
+    fun generateMessageId(): String {
+        return "user-id"
+    }
+
+    suspend fun selectMessageEntity(messageId: String): MessageEntity? {
+        return messageDao.select(messageId)
     }
 
     fun channel(channelType: String, channelId: String): StreamChatChannelRepository {
@@ -81,6 +91,13 @@ class StreamChatRepository(
     }
     fun setOnline() {
         online = true
+    }
+
+    fun isOnline(): Boolean {
+        return online
+    }
+    fun isOffline(): Boolean {
+        return !online
     }
 
     fun recover() {
@@ -231,9 +248,10 @@ class StreamChatRepository(
     }
 
 
-    fun insertReaction(reaction: Reaction) {
+
+    fun insertReactionEntity(reactionEntity: ReactionEntity) {
         GlobalScope.launch {
-            reactionDao.insert(ReactionEntity(reaction))
+            reactionDao.insert(reactionEntity)
         }
     }
 
@@ -268,6 +286,13 @@ class StreamChatRepository(
         // TODO: Assign a message id here somewhere...
         GlobalScope.launch {
             messageDao.insert(MessageEntity(message))
+        }
+    }
+
+    fun insertMessageEntity(messageEntity: MessageEntity) {
+        // TODO: Assign a message id here somewhere...
+        GlobalScope.launch {
+            messageDao.insert(messageEntity)
         }
     }
 

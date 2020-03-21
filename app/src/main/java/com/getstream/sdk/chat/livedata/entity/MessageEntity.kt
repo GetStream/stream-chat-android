@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.livedata.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -19,17 +20,19 @@ import java.util.*
 @Entity(tableName = "stream_chat_message")
 data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
+
+
     /** the message text */
     var text: String? = null
 
     /** the list of attachments */
-    var attachments: List<Attachment>? = null
+    var attachments: MutableList<Attachment>? = null
 
     /** message type can be system, regular or ephemeral */
     var type: String? = null
 
     /** if the message has been synced to the servers */
-    var syncStatus: Int? = null
+    var syncStatus: SyncStatus? = null
 
     /** the number of replies */
     var replyCount = 0
@@ -42,16 +45,16 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     var deletedAt: Date? = null
 
     /** the last 5 reactions on this message */
-    var latestReactions: List<Reaction>? = null
+    var latestReactions: MutableList<ReactionEntity> = mutableListOf()
 
     /** the reactions from the current user */
-    var ownReactions: List<Reaction>? = null
+    var ownReactions: MutableList<ReactionEntity> = mutableListOf()
 
     /** the users mentioned in this message */
-    var mentionedUsersId: List<String>? = null
+    var mentionedUsersId: MutableList<String> = mutableListOf()
 
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
-    var reactionCounts: Map<String, Int>? = null
+    var reactionCounts: MutableMap<String, Int> = mutableMapOf()
 
     /** parent id, used for threads */
     var parentId: String? = null
@@ -64,6 +67,22 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
     /** all the custom data provided for this message */
     var extraData = mutableMapOf<String, Any>()
+
+
+
+    fun addReaction(reaction: Reaction) {
+        val reactionEntity = ReactionEntity(reaction)
+
+        // add to own reactions
+        ownReactions.add(reactionEntity)
+
+        // add to latest reactions
+        latestReactions.add(reactionEntity)
+
+        // update the count
+        val currentCount = reactionCounts.getOrDefault(reaction.type, 0)
+        reactionCounts.set(reaction.type, currentCount + 1)
+    }
 
     /** create a messageEntity from a message object */
     constructor(m: Message): this(m.id, m.cid, m.getUserId()) {

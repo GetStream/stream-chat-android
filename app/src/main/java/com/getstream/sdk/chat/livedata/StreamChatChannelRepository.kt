@@ -3,10 +3,13 @@ package com.getstream.sdk.chat.livedata
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.getstream.sdk.chat.livedata.entity.MessageEntity
+import com.getstream.sdk.chat.livedata.entity.ReactionEntity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -37,6 +40,55 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
     val cid = "%s:%s".format(channelType, channelId)
     // TODO: this needs a transform... perhaps..
     lateinit var messages: LiveData<List<MessageEntity>>
+
+    /**
+     * - Generate an ID
+     * - Insert the message into offline storage with sync status set to Sync Needed
+     * - If we're online do the send message request
+     * - If the request fails we retry according to the retry policy set on the repo
+     */
+    fun sendMessage(message: Message) {
+        message.id = repo.generateMessageId()
+        val messageEntity = MessageEntity(message)
+
+        messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
+        repo.insertMessage(message)
+
+        // TODO: how to update the channel last_message?
+
+        if (repo.isOnline()) {
+            channel.sendMessage(message)
+        }
+    }
+
+    /**
+     * sendReaction posts the reaction on local storage
+     * message reaction count should increase, latest reactions and own_reactions should be updated
+     *
+     * If you're online we make the API call to sync to the server
+     * If the request fails we retry according to the retry policy set on the repo
+     */
+    fun sendReaction(reaction: Reaction) {
+        GlobalScope.launch {
+            // insert the message into local storage
+            val reactionEntity = ReactionEntity(reaction)
+            reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
+            repo.insertReactionEntity(reactionEntity)
+            // update the message in the local storage
+            val messageEntity = repo.selectMessageEntity(reaction.messageId)
+            messageEntity?.let {
+                it.addReaction(reaction)
+                repo.insertMessageEntity(it)
+            }
+        }
+
+
+        if (repo.isOnline()) {
+            // TODO: fix this as soon as the low level clietn allows sending the reaction entity
+            client.sendReaction(reaction.messageId, reaction.type)
+        }
+
+    }
 
     fun watch() {
         messages = repo.messagesForChannel(cid)

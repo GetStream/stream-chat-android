@@ -71,6 +71,9 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         // TODO: implement me
         val channel = Channel()
         channel.createdBy = userMap.get(createdByUserId)!!
+        
+
+        return channel
     }
 
 
