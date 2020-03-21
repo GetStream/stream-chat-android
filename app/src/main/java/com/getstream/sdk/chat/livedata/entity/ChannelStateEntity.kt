@@ -33,13 +33,11 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
     // TODO: channel configs should be stored at the channel type level
 
-    // TODO: perhaps create a member entity?
     /** list of the channel members, can be regular members, moderators or admins */
-    var members: List<Member>? = null
+    var members: List<MemberEntity>? = null
 
     /** list of how far each user has read */
-    // TODO: this should perhaps be an entity for easier storage optimization
-    var reads: List<ChannelUserRead>? = null
+    var reads: List<ChannelUserReadEntity>? = null
 
     /** denormalized copy of the last message */
     @Embedded(prefix = "last_message_")
