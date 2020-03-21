@@ -12,14 +12,17 @@ data class QueryChannelsEntity(val filter: FilterObject) {
     @PrimaryKey
     var id: String
 
+    var channelCIDs: List<String>
+
+
     var sort: QuerySort? = null
 
     init {
         // TODO: generate a real id
         id = (Objects.hash(filter) + Objects.hash(sort)).toString()
+        channelCIDs = emptyList()
     }
 
-    var channelCIDs: List<String>? = null
 
     /** we track when the query was created and updated so we can clear out old results */
     var createdAt: Date? = null

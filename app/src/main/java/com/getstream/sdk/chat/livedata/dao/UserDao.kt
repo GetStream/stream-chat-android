@@ -21,7 +21,7 @@ interface UserDao {
         "SELECT * FROM stream_chat_user " +
                 "WHERE stream_chat_user.id IN (:ids)"
     )
-    suspend fun select(ids: List<String>?): List<UserEntity?>?
+    suspend fun select(ids: List<String>): List<UserEntity>
 
     @Query(
         "SELECT * FROM stream_chat_user " +

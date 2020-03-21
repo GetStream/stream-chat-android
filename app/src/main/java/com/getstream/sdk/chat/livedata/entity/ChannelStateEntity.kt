@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
 import java.util.*
 
 
@@ -66,6 +67,12 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
 
         // TODO: Implement me
+    }
+
+    fun toChannel(userMap: Map<String, User>): Channel {
+        // TODO: implement me
+        val channel = Channel()
+        channel.createdBy = userMap.get(createdByUserId)!!
     }
 
 

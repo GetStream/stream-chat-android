@@ -106,12 +106,33 @@ class StreamChatRepository(
         var channelsLiveData = liveData(Dispatchers.IO) {
             // start by getting the query results from offline storage
             val query = channelQueryDao.select(queryChannelsEntity.id)
+            // TODO: we should use a transform so it's based on the livedata perhaps?
             if (query != null) {
-                val channels = channelStateDao.select(query.channelCIDs)
-                // TODO: fetch the usersIds for these channels..
+                val channelEntities = channelStateDao.select(query.channelCIDs)
+
+                // gather all the user ids
                 val userIds = mutableListOf<String>()
-                val users = userDao.select(userIds)
-                // TODO: this should be an emitsource with a transform step...
+                for (channelEntity in channelEntities) {
+                    channelEntity.createdByUserId?.let { userIds.add(it) }
+                    channelEntity.members?.let {
+                        for (member in it) {
+                            userIds.add(member.getUserId())
+                        }
+                    }
+                    userIds.add(channelEntity.lastMessage.userId)
+                }
+                val userEntities = userDao.select(userIds)
+                val userMap = mutableMapOf<String, User>()
+                for (userEntity in userEntities) {
+                    userMap[userEntity.id] = userEntity.toUser()
+                }
+
+                val channels = mutableListOf<Channel>()
+                for (channelEntity in channelEntities) {
+                    val channel = channelEntity.toChannel(userMap)
+                    channels.add(channel)
+                }
+
                 emit(channels)
             }
             // next run the actual query
