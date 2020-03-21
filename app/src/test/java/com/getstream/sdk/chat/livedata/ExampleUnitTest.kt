@@ -50,7 +50,7 @@ class ExampleUnitTest {
             }
         })
 
-        database = ChatDatabase.getDatabase(ApplicationProvider.getApplicationContext())
+        database = ChatDatabase.getDatabase(ApplicationProvider.getApplicationContext(), user.id)
         sleep(2000)
         repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao(), database.messageDao(), database.channelStateDao(), client)
         repo.errorEvents.observeForever( EventObserver {

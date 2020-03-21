@@ -26,6 +26,7 @@ import com.getstream.sdk.chat.livedata.entity.*
     QuerySortConverter::class,
     ExtraDataConverter::class,
     AttachmentListConverter::class,
+    ListConverter::class,
     DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): ChannelQueryDao
@@ -36,22 +37,22 @@ abstract class ChatDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var INSTANCE: ChatDatabase? = null
+        private var INSTANCES: MutableMap<String, ChatDatabase?> = mutableMapOf()
 
-        fun getDatabase(context: Context): ChatDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
+        fun getDatabase(context: Context, userId: String): ChatDatabase {
+            if (!INSTANCES.containsKey(userId)) {
+                synchronized(this) {
+                    val db = Room.databaseBuilder(
+                        context.applicationContext,
+                        ChatDatabase::class.java,
+                        "stream_chat_database_$userId"
+                    ).build()
+                    INSTANCES[userId] = db
+
+                }
             }
-            synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    ChatDatabase::class.java,
-                    "word_database"
-                ).build()
-                INSTANCE = instance
-                return instance
-            }
+            return INSTANCES[userId] ?: error("DB not created")
+
         }
     }
 }

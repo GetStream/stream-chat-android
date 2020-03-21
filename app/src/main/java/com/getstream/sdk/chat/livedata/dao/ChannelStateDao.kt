@@ -16,13 +16,13 @@ interface ChannelStateDao {
 
 
     @Query(
-        "SELECT * FROM stream_channel " +
+        "SELECT * FROM stream_chat_channel_state " +
                 "WHERE stream_chat_channel_state.cid IN (:cids)"
     )
     suspend fun select(cids: List<String>?): List<ChannelStateEntity?>?
 
     @Query(
-        "SELECT * FROM stream_channel " +
+        "SELECT * FROM stream_chat_channel_state " +
                 "WHERE stream_chat_channel_state.cid IN (:cid)"
     )
     suspend fun select(cid: String?): ChannelStateEntity?
