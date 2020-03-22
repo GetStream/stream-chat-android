@@ -7,6 +7,7 @@ import androidx.lifecycle.liveData
 import androidx.test.core.app.ApplicationProvider
 import com.getstream.sdk.chat.livedata.dao.*
 import com.getstream.sdk.chat.livedata.entity.*
+import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
@@ -19,6 +20,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 /**
@@ -86,7 +88,8 @@ class StreamChatRepository(
     }
 
     fun generateMessageId(): String {
-        return "user-id"
+        // TODO: fix this once low level client exposes the user id
+        return "client.user.id" + "-" + UUID.randomUUID().toString()
     }
 
     suspend fun selectMessageEntity(messageId: String): MessageEntity? {
@@ -297,7 +300,6 @@ class StreamChatRepository(
     }
 
     fun insertMessages(messages: List<Message>) {
-        // TODO: Assign a message id here somewhere...
         GlobalScope.launch {
             val messageEntities = mutableListOf<MessageEntity>()
             for (message in messages) {
@@ -308,14 +310,12 @@ class StreamChatRepository(
     }
 
     fun insertMessage(message: Message) {
-        // TODO: Assign a message id here somewhere...
         GlobalScope.launch {
             messageDao.insert(MessageEntity(message))
         }
     }
 
     fun insertMessageEntity(messageEntity: MessageEntity) {
-        // TODO: Assign a message id here somewhere...
         GlobalScope.launch {
             messageDao.insert(messageEntity)
         }
@@ -334,3 +334,5 @@ class StreamChatRepository(
 
 
 }
+
+var gson = Gson()

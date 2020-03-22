@@ -6,21 +6,16 @@ import com.getstream.sdk.chat.livedata.SyncStatus
 import com.getstream.sdk.chat.livedata.entity.ChannelUserReadEntity
 import com.getstream.sdk.chat.livedata.entity.MemberEntity
 import com.getstream.sdk.chat.livedata.entity.ReactionEntity
-import com.google.gson.Gson
+import com.getstream.sdk.chat.livedata.gson
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
 
 class Converter {
-    var gson = Gson()
-
-    // TODO find a nicer way to handle these conversions
-
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
         if (data == null) {
-            return emptyList<String>()
+            return emptyList()
         }
         val listType = object :
             TypeToken<List<String?>?>() {}.type
@@ -100,11 +95,11 @@ class Converter {
     @TypeConverter
     fun stringToSomeObjectList(data: String?): List<Attachment> {
         if (data == null) {
-            return emptyList<Attachment>()
+            return emptyList()
         }
         val listType = object :
             TypeToken<List<Attachment?>?>() {}.type
-        return gson.fromJson<List<Attachment>>(
+        return gson.fromJson(
             data,
             listType
         )

@@ -9,6 +9,10 @@ import java.util.*
 @Entity(tableName = "stream_channel_query")
 data class QueryChannelsEntity(val filter: FilterObject) {
 
+    constructor(filter: FilterObject, sort: QuerySort): this(filter) {
+        this.sort = sort
+    }
+
     @PrimaryKey
     var id: String
 

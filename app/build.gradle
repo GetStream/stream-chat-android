@@ -71,6 +71,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha01"
     testImplementation 'android.arch.core:core-testing:1.1.1'
 
+    testImplementation "com.google.truth:truth:1.0.1"
 
     testImplementation 'androidx.test.ext:junit:1.1.1'
     testImplementation "androidx.test.ext:junit-ktx:1.1.1"

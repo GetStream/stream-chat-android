@@ -4,13 +4,13 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
+import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
@@ -19,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.lang.Thread.sleep
+import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
@@ -161,6 +162,12 @@ class ExampleUnitTest {
 
         repo.insertChannel(c)
     }
+    @Test
+    fun messageIdGeneration() {
+        val messageId = repo.generateMessageId()
+        assertThat(messageId).isNotNull()
+        assertThat(messageId).isNotEmpty()
+    }
 
     @Test
     fun queryId() {
@@ -168,10 +175,31 @@ class ExampleUnitTest {
             FilterObject(
                 "type",
                 "messaging"
-            )
+            ), QuerySort()
         )
-        query.sort = QuerySort()
-        System.out.println(query.id)
+        val query2 = QueryChannelsEntity(
+            FilterObject(
+                "type",
+                "messaging"
+            ), QuerySort()
+        )
+        val query3 = QueryChannelsEntity(
+            FilterObject(
+                "type",
+                "commerce"
+            ), QuerySort()
+        )
+        val query4 = QueryChannelsEntity(
+            FilterObject(
+                "type",
+                "messaging"
+            ), QuerySort().asc("name")
+        )
+        // verify that 1 and 2 are equal
+        assertThat(query2.id).isEqualTo(query.id)
+        // verify that 3 and 4 are not equal to 2
+        assertThat(query2.id).isNotEqualTo(query3.id)
+        assertThat(query2.id).isNotEqualTo(query4.id)
     }
 
 
