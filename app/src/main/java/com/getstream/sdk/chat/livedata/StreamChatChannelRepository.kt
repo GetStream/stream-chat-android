@@ -49,16 +49,27 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
      */
     fun sendMessage(message: Message) {
         message.id = repo.generateMessageId()
-        val messageEntity = MessageEntity(message)
 
-        messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.insertMessage(message)
+        // TODO: we should probably not use global scope, but a custom scope for chat
+        GlobalScope.launch {
+            val messageEntity = MessageEntity(message)
 
-        // TODO: how to update the channel last_message?
+            messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
+            repo.insertMessage(message)
 
-        if (repo.isOnline()) {
-            channel.sendMessage(message)
+            val channelStateEntity = repo.selectChannelEntity(message.channel.cid)
+            channelStateEntity?.let {
+                // update channel lastMessage at and lastMessageAt
+                it.addMessage(messageEntity)
+                repo.insertChannelStateEntity(it)
+            }
+
+
+            if (repo.isOnline()) {
+                channel.sendMessage(message)
+            }
         }
+
     }
 
     /**

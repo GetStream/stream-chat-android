@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Reaction
 
-class AttachmentListConverter {
+class Converter {
     var gson = Gson()
 
     // TODO find a nicer way to handle these conversions

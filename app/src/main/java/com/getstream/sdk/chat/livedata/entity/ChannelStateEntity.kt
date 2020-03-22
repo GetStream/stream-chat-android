@@ -71,9 +71,17 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         // TODO: implement me
         val channel = Channel()
         channel.createdBy = userMap.get(createdByUserId)!!
-        
+
 
         return channel
+    }
+
+    fun addMessage(messageEntity: MessageEntity) {
+        // TODO: check conditions
+        if (lastMessageDate == null || messageEntity.createdAt!! < lastMessageDate) {
+            lastMessageDate = messageEntity.createdAt
+            lastMessage = messageEntity
+        }
     }
 
 

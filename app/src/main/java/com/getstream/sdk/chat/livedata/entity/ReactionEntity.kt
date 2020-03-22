@@ -2,8 +2,8 @@ package com.getstream.sdk.chat.livedata.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import java.util.*
 
 /**
@@ -32,7 +32,7 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
     var extraData = mutableMapOf<String, Any>()
 
     /** if the reaction has been synced to the servers */
-    var syncStatus: Int? = null
+    var syncStatus: SyncStatus? = null
 
     /** create a reactionEntity from a reaction object */
     constructor(r: Reaction): this(r.messageId, r.userId, r.type) {

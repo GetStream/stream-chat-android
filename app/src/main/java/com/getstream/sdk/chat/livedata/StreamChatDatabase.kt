@@ -15,7 +15,8 @@ import com.getstream.sdk.chat.livedata.entity.*
         MessageEntity::class,
         UserEntity::class,
         ReactionEntity::class,
-        ChannelStateEntity::class
+        ChannelStateEntity::class,
+        ChannelConfigEntity::class
     ],
     version = 1,
     exportSchema = false
@@ -25,8 +26,7 @@ import com.getstream.sdk.chat.livedata.entity.*
     FilterObjectConverter::class,
     QuerySortConverter::class,
     ExtraDataConverter::class,
-    AttachmentListConverter::class,
-    ListConverter::class,
+    Converter::class,
     DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): ChannelQueryDao
@@ -34,6 +34,8 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun reactionDao(): ReactionDao
     abstract fun messageDao(): MessageDao
     abstract fun channelStateDao(): ChannelStateDao
+    abstract fun channelConfigDao(): ChannelConfigDao
+
 
     companion object {
         @Volatile

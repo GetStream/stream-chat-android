@@ -27,18 +27,26 @@ data class MemberEntity(var userId: String) {
     var inviteRejectedAt: Date? = null
 
 
+    /** creates a memberEntity from the member */
     constructor(r: Member): this(r.getUserId()) {
-        // TODO: finish this
         role = r.role
         createdAt = r.createdAt
-
+        updatedAt = r.updatedAt
+        isInvited = r.isInvited
+        inviteAcceptedAt = r.inviteAcceptedAt
+        inviteRejectedAt = r.inviteRejectedAt
     }
 
     /** converts a member entity into a member */
     fun toMember(userMap: Map<String, User>): Member {
         val r = Member()
-        r.user = userMap.get(userId)!!
-        // TODO: finish me
+        r.user = userMap[userId] ?: error("userMap is missing the user for this member")
+        r.role = role
+        r.createdAt = createdAt
+        r.updatedAt = updatedAt
+        r.isInvited = isInvited
+        r.inviteAcceptedAt = inviteAcceptedAt
+        r.inviteRejectedAt = inviteRejectedAt
 
         return r
 

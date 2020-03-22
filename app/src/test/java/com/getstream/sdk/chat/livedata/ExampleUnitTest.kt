@@ -50,9 +50,9 @@ class ExampleUnitTest {
             }
         })
 
-        database = ChatDatabase.getDatabase(ApplicationProvider.getApplicationContext(), user.id)
+
         sleep(2000)
-        repo = StreamChatRepository(database.queryChannelsQDao(), database.userDao(), database.reactionDao(), database.messageDao(), database.channelStateDao(), client)
+        repo = StreamChatRepository(ApplicationProvider.getApplicationContext(),user.id, client)
         repo.errorEvents.observeForever( EventObserver {
             System.out.println("error event$it")
         })
@@ -130,12 +130,6 @@ class ExampleUnitTest {
         val u = User("mr-tester")
         repo.insertUser(u)
         // TODO: test reads as well as inserts
-    }
-
-    @Test
-    fun insertReaction() {
-        val r = Reaction("message-123")
-        repo.insertReaction(r)
     }
 
     @Test

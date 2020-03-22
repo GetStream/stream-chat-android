@@ -1,8 +1,10 @@
 package com.getstream.sdk.chat.livedata
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import androidx.test.core.app.ApplicationProvider
 import com.getstream.sdk.chat.livedata.dao.*
 import com.getstream.sdk.chat.livedata.entity.*
 import io.getstream.chat.android.client.ChatClient
@@ -36,17 +38,31 @@ import kotlinx.coroutines.launch
  *
  */
 class StreamChatRepository(
-    private val channelQueryDao: ChannelQueryDao,
-    private val userDao: UserDao,
-    private val reactionDao: ReactionDao,
-    private val messageDao: MessageDao,
-    private val channelStateDao: ChannelStateDao,
-    private val client: ChatClient
+    var client: ChatClient
 ) {
+
+    lateinit var channelQueryDao: ChannelQueryDao
+    lateinit var userDao: UserDao
+    lateinit var reactionDao: ReactionDao
+    lateinit var messageDao: MessageDao
+    lateinit var channelStateDao: ChannelStateDao
+    lateinit var channelConfigDao: ChannelConfigDao
+
+    constructor(context: Context, userId: String, client: ChatClient): this(client) {
+        val database = ChatDatabase.getDatabase(context, userId)
+        channelQueryDao = database.queryChannelsQDao()
+        userDao = database.userDao()
+        reactionDao = database.reactionDao()
+        messageDao = database.messageDao()
+        channelStateDao = database.channelStateDao()
+        channelConfigDao = database.channelConfigDao()
+    }
     var online = false
-    var roomOfflineStorageEnabled = true
-    lateinit var eventSubscription: Subscription
-    /** stores the mapping from cid to channelRespository */
+    /** if we should enable offline storage or not */
+    var offlineEnabled = true
+
+    private lateinit var eventSubscription: Subscription
+    /** stores the mapping from cid to channelRepository */
     private var activeChannelMap: MutableMap<String, StreamChatChannelRepository> = mutableMapOf()
 
 
@@ -118,7 +134,7 @@ class StreamChatRepository(
     fun queryChannels(
         queryChannelsEntity: QueryChannelsEntity,
         request: QueryChannelsRequest
-    ): LiveData<List<ChannelStateEntity?>?> {
+    ): LiveData<MutableList<Channel>> {
         // return a livedata object with the channels
         var channelsLiveData = liveData(Dispatchers.IO) {
             // start by getting the query results from offline storage
@@ -133,7 +149,7 @@ class StreamChatRepository(
                     channelEntity.createdByUserId?.let { userIds.add(it) }
                     channelEntity.members?.let {
                         for (member in it) {
-                            userIds.add(member.getUserId())
+                            userIds.add(member.userId)
                         }
                     }
                     userIds.add(channelEntity.lastMessage.userId)
@@ -176,6 +192,7 @@ class StreamChatRepository(
             }
 
         }
+
 
         return channelsLiveData
 
@@ -234,6 +251,12 @@ class StreamChatRepository(
 
         GlobalScope.launch {
             channelStateDao.insert(ChannelStateEntity(channel))
+        }
+    }
+    fun insertChannelStateEntity(channelStateEntity: ChannelStateEntity) {
+
+        GlobalScope.launch {
+            channelStateDao.insert(channelStateEntity)
         }
     }
     fun insertChannels(channels: List<Channel>) {
@@ -303,6 +326,9 @@ class StreamChatRepository(
         // update the data for all channels that are being show right now...
     }
 
+    suspend fun selectChannelEntity(cid: String): ChannelStateEntity? {
+        return channelStateDao.select(cid)
+    }
 
 
 }
