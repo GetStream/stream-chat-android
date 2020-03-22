@@ -2,12 +2,15 @@ package com.getstream.sdk.chat.livedata.converter
 
 import android.util.ArrayMap
 import androidx.room.TypeConverter
+import com.getstream.sdk.chat.livedata.SyncStatus
+import com.getstream.sdk.chat.livedata.entity.ChannelUserReadEntity
+import com.getstream.sdk.chat.livedata.entity.MemberEntity
+import com.getstream.sdk.chat.livedata.entity.ReactionEntity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.Config
 
 class Converter {
     var gson = Gson()
@@ -28,17 +31,17 @@ class Converter {
     }
 
     @TypeConverter
-    fun memberListToString(someObjects: List<Member>?): String? {
+    fun memberListToString(someObjects: List<MemberEntity>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToMemberList(data: String?): List<Member>? {
+    fun stringToMemberList(data: String?): List<MemberEntity>? {
         if (data == null) {
-            return emptyList<Member>()
+            return emptyList()
         }
         val listType = object :
-            TypeToken<List<Member?>?>() {}.type
+            TypeToken<List<MemberEntity>?>() {}.type
         return gson.fromJson(
             data,
             listType
@@ -46,18 +49,44 @@ class Converter {
     }
 
     @TypeConverter
-    fun readListToString(someObjects: List<ChannelUserRead>?): String? {
+    fun readListToString(someObjects: List<ChannelUserReadEntity>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToReadList(data: String?): List<ChannelUserRead>? {
+    fun stringToSyncStatus(data: String): SyncStatus {
+        return SyncStatus.valueOf(data)
+    }
+
+    @TypeConverter
+    fun syncStatusToString(syncStatus: SyncStatus): String? {
+        return syncStatus.toString()
+    }
+
+
+    @TypeConverter
+    fun stringToReadList(data: String?): List<ChannelUserReadEntity>? {
         if (data == null) {
-            return emptyList<ChannelUserRead>()
+            return emptyList()
         }
         val listType = object :
-            TypeToken<List<ChannelUserRead?>?>() {}.type
+            TypeToken<List<ChannelUserReadEntity>?>() {}.type
         return gson.fromJson(
+            data,
+            listType
+        )
+    }
+
+    @TypeConverter
+    fun channelConfigToString(channelConfig: Config): String? {
+        return gson.toJson(channelConfig)
+    }
+
+    @TypeConverter
+    fun stringToChannelConfig(data: String?): Config? {
+        val listType = object :
+            TypeToken<Config>() {}.type
+        return gson.fromJson<Config>(
             data,
             listType
         )
@@ -127,12 +156,12 @@ class Converter {
     }
 
     @TypeConverter
-    fun reactionListFromString(data: String?): List<Reaction?>? {
+    fun reactionListFromString(data: String?): List<ReactionEntity>? {
         if (data == null) {
-            return emptyList<Reaction>()
+            return emptyList()
         }
         val listType = object :
-            TypeToken<List<Reaction?>?>() {}.type
+            TypeToken<List<ReactionEntity>?>() {}.type
         return gson.fromJson(
             data,
             listType
@@ -140,7 +169,7 @@ class Converter {
     }
 
     @TypeConverter
-    fun reactionListToString(someObjects: List<Reaction>?): String? {
+    fun reactionListToString(someObjects: List<ReactionEntity>?): String? {
         return gson.toJson(
             someObjects
         )

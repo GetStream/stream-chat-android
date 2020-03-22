@@ -162,6 +162,18 @@ class ExampleUnitTest {
         repo.insertChannel(c)
     }
 
+    @Test
+    fun queryId() {
+        val query = QueryChannelsEntity(
+            FilterObject(
+                "type",
+                "messaging"
+            )
+        )
+        query.sort = QuerySort()
+        System.out.println(query.id)
+    }
+
 
     @Test
     fun runQueryChannelsWhileOffline() {

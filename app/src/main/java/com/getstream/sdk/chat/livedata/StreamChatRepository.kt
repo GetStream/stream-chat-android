@@ -152,7 +152,9 @@ class StreamChatRepository(
                             userIds.add(member.userId)
                         }
                     }
-                    userIds.add(channelEntity.lastMessage.userId)
+                    channelEntity.lastMessage?.let {
+                        userIds.add(it.userId)
+                    }
                 }
                 val userEntities = userDao.select(userIds)
                 val userMap = mutableMapOf<String, User>()
