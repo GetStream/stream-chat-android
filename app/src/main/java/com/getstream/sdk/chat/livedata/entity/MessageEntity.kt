@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import java.util.*
 
 
@@ -20,16 +21,14 @@ import java.util.*
 @Entity(tableName = "stream_chat_message")
 data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
-
-
     /** the message text */
-    var text: String? = null
+    var text: String = ""
 
     /** the list of attachments */
-    var attachments: MutableList<Attachment>? = null
+    var attachments: MutableList<Attachment> = mutableListOf()
 
     /** message type can be system, regular or ephemeral */
-    var type: String? = null
+    var type: String = ""
 
     /** if the message has been synced to the servers */
     var syncStatus: SyncStatus? = null
@@ -68,8 +67,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     /** all the custom data provided for this message */
     var extraData = mutableMapOf<String, Any>()
 
-
-
+    /** add a reaction to this message. updated the own reactions, latestReactions, reaction Count */
     fun addReaction(reaction: Reaction) {
         val reactionEntity = ReactionEntity(reaction)
 
@@ -86,15 +84,49 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
     /** create a messageEntity from a message object */
     constructor(m: Message): this(m.id, m.cid, m.getUserId()) {
-        // TODO: Implement this
+        text = m.text
+        attachments = m.attachments
+        // TODO: sync status should also be visible on the Message, not just the entity
+        type = m.type
+        replyCount = m.replyCount
+        createdAt = m.createdAt
+        updatedAt = m.updatedAt
+        deletedAt = m.deletedAt
+        parentId = m.parentId
+        command = m.command
+        commandInfo = m.commandInfo
+        extraData = m.extraData
+        reactionCounts = m.reactionCounts
+
+        // for these we need a little map
+        latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
+        ownReactions = (m.ownReactions.map { ReactionEntity(it) }).toMutableList()
+        mentionedUsersId = (m.mentionedUsers.map { it.getUserId() }).toMutableList()
+
     }
 
     /** converts a message entity into a message object */
-    fun toMessage(): Message {
+    fun toMessage(userMap: Map<String, User>): Message {
         val m = Message()
         m.id = id
         m.cid = cid
-        // TODO: implement me
+        m.user = userMap[userId] ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
+        m.text = text
+        m.attachments = attachments
+        m.type = type
+        m.replyCount = replyCount
+        m.createdAt = createdAt
+        m.updatedAt = updatedAt
+        m.deletedAt = deletedAt
+        m.parentId = parentId
+        m.command = command
+        m.commandInfo = commandInfo
+        m.extraData = extraData
+        m.reactionCounts = reactionCounts
+
+        m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
+        m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
+        m.mentionedUsers = mentionedUsersId.map { userMap[it] } as MutableList<User>
 
         return m
 

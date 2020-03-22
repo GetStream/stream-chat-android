@@ -17,11 +17,11 @@ import java.util.*
 @Entity(tableName = "stream_chat_user")
 data class UserEntity(@PrimaryKey val id: String) {
     /** the name of the user. this field is used by our UI libraries. */
-    var name: String? = null
+    var name: String = ""
     /** the image of the user. this field is used by our UI libraries. */
-    var image: String? = null
+    var image: String = ""
     /** the user's role */
-    var role: String? = null
+    var role: String = ""
     /** when the user was created */
     var createdAt: Date? = null
     /** when the user was updated */
@@ -30,19 +30,33 @@ data class UserEntity(@PrimaryKey val id: String) {
     var lastActive: Date? = null
 
     /** only provided for the current user, invisible marks the user as offline for other users */
-    var invisible: Boolean? = null
+    var invisible: Boolean = false
     /** all the custom data provided for this user */
     var extraData = mutableMapOf<String, Any>()
 
     /** create a userEntity from a user object */
     constructor(user: User): this(user.id) {
-        // TODO: Finish this
         name = user.name
+        image = user.image
+        role = user.role
+        createdAt = user.createdAt
+        updatedAt = user.updatedAt
+        lastActive = user.lastActive
+        invisible = user.invisible
+        extraData = user.extraData
     }
 
     /** converts a user entity into a user */
     fun toUser(): User {
-        // TODO: finish this
-        return User(id=this.id)
+        val u = User(id=this.id)
+        u.name = name
+        u.image = image
+        u.role = role
+        u.createdAt = createdAt
+        u.updatedAt = updatedAt
+        u.lastActive = lastActive
+        u.invisible = invisible
+        u.extraData = extraData
+        return u
     }
 }

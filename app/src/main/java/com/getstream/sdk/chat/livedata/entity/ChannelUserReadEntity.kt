@@ -19,8 +19,7 @@ data class ChannelUserReadEntity(var userId: String) {
     /** converts the entity into channel user read */
     fun toChannelUserRead(userMap: Map<String, User>): ChannelUserRead {
         val r = ChannelUserRead()
-        // TODO: get rid of the ugly !!
-        r.user = userMap.get(userId)!!
+        r.user = userMap[userId] ?: error("userMap doesnt contain the user $userId for the channel read")
         r.lastRead = lastRead
 
         return r

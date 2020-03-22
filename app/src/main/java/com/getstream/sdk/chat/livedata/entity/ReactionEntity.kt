@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import java.util.*
 
 /**
@@ -39,18 +40,17 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         score = r.score
         createdAt = r.createdAt
         extraData = r.extraData
-        // TODO: do we not have updated at?
     }
 
-    /** converts a user entity into a user */
-    fun toReaction(): Reaction {
+    /** converts a reaction entity into a Reaction */
+    fun toReaction(userMap: Map<String, User>): Reaction {
         val r = Reaction(messageId)
         r.userId = userId
+        r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
         r.type = type
-        // TODO: have a look at score and created at
-        //r.score = score
+        r.score = score
         r.extraData = extraData
-        //r.createdAt = createdAt
+        r.createdAt = createdAt
 
         return r
 
