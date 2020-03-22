@@ -34,10 +34,10 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     // TODO: channel configs should be stored at the channel type level
 
     /** list of the channel members, can be regular members, moderators or admins */
-    var members: List<MemberEntity>? = null
+    var members: List<MemberEntity> = mutableListOf()
 
     /** list of how far each user has read */
-    var reads: List<ChannelUserReadEntity>? = null
+    var reads: List<ChannelUserReadEntity> = mutableListOf()
 
     /** denormalized copy of the last message */
     @Embedded(prefix = "last_message_")
@@ -59,26 +59,47 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
     /** create a ChannelStateEntity from a Channel object */
     constructor(c: Channel): this(c.type, c.id) {
+        frozen = c.frozen
+        createdAt = c.createdAt
+        updatedAt = c.updatedAt
+        deletedAt = c.deletedAt
+        extraData = c.extraData
+
+        members = c.members.map { MemberEntity(it) }
+        reads = c.read.map { ChannelUserReadEntity(it) }
+
         if (c.messages.isNotEmpty()) {
             lastMessage = MessageEntity(c.messages.last())
+            lastMessage?.let { lastMessageDate = it.createdAt }
         }
-
-
-        // TODO: Implement me
+        createdByUserId = c.createdBy.getUserId()
     }
 
+    /** convert a channelEntity into a channel object */
     fun toChannel(userMap: Map<String, User>): Channel {
-        // TODO: implement me
-        val channel = Channel()
-        channel.createdBy = userMap.get(createdByUserId)!!
+        val c = Channel()
+        c.type = type
+        c.id = channelId
+        c.cid = cid
+        c.frozen = frozen
+        c.createdAt = createdAt
+        c.updatedAt = updatedAt
+        c.deletedAt = deletedAt
+        c.extraData = extraData
 
+        c.members = members.map { it.toMember(userMap) }
+        c.read = reads.map { it.toChannelUserRead(userMap) }
 
-        return channel
+        c.createdBy = userMap[createdByUserId] ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
+
+        return c
     }
 
+    /** updates last message and lastmessagedate on this channel entity */
     fun addMessage(messageEntity: MessageEntity) {
-        // TODO: check conditions
-        if (lastMessageDate == null || messageEntity.createdAt!! < lastMessageDate) {
+        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt"}
+
+        if (lastMessageDate == null || messageEntity.createdAt!!.after(lastMessageDate)) {
             lastMessageDate = messageEntity.createdAt
             lastMessage = messageEntity
         }
