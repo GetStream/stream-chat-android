@@ -394,10 +394,11 @@ class MessagesApiCallsTests {
     fun getReactionsSuccess() {
 
         val messageId = "message-id"
+        val reactionType = "reaction-type"
+        val score = 10
         val offset = 0
         val limit = 1
-        val reaction =
-            Reaction(messageId)
+        val reaction = Reaction(messageId, reactionType, score)
 
         Mockito.`when`(
             mock.retrofitApi

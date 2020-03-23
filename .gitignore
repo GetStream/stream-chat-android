@@ -7,3 +7,4 @@
 /captures
 .externalNativeBuild
 .cxx
+/sample/app-config-custom.json

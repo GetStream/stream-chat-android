@@ -8,9 +8,11 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.controllers.ChannelControllerImpl
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -31,6 +33,7 @@ internal class ChatClientImpl(
 ) : ChatClient {
 
     private val state = ClientState()
+    private var connectionListener: InitConnectionListener? = null
 
     init {
         val events = socket.events()
@@ -38,13 +41,24 @@ internal class ChatClientImpl(
 
             notifications.onChatEvent(event)
 
-            if (event is ConnectedEvent) {
-                state.user = event.me
-                state.connectionId = event.connectionId
-                state.socketConnected = true
-                api.setConnection(event.me.id, event.connectionId)
-            } else if (event is DisconnectedEvent) {
-                state.socketConnected = false
+            when (event) {
+                is ConnectedEvent -> {
+
+                    val user = event.me
+                    val connectionId = event.connectionId
+
+                    state.user = user
+                    state.connectionId = connectionId
+                    state.socketConnected = true
+                    api.setConnection(user.id, connectionId)
+                    callConnectionListener(event, null)
+                }
+                is ErrorEvent -> {
+                    callConnectionListener(null, event.error)
+                }
+                is DisconnectedEvent -> {
+                    state.socketConnected = false
+                }
             }
         }
     }
@@ -52,23 +66,26 @@ internal class ChatClientImpl(
     //region Set user
 
     override fun setUser(user: User, token: String, listener: InitConnectionListener?) {
+        connectionListener = listener
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(ImmediateTokenProvider(token))
         notifications.onSetUser()
-        socket.connect(user, listener)
+        socket.connect(user)
     }
 
     override fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener?) {
+        connectionListener = listener
         config.isAnonymous = false
         config.tokenProvider.setTokenProvider(tokenProvider)
         notifications.onSetUser()
-        socket.connect(user, listener)
+        socket.connect(user)
     }
 
     override fun setAnonymousUser(listener: InitConnectionListener?) {
+        connectionListener = listener
         config.isAnonymous = true
         notifications.onSetUser()
-        socket.connectAnonymously(listener)
+        socket.connectAnonymously()
     }
 
     override fun getGuestToken(userId: String, userName: String): Call<TokenResponse> {
@@ -102,6 +119,29 @@ internal class ChatClientImpl(
         return api.deleteImage(channelType, channelId, url)
     }
 
+    //region Reactions
+    override fun getReactions(
+        messageId: String,
+        offset: Int,
+        limit: Int
+    ): Call<List<Reaction>> {
+        return api.getReactions(messageId, offset, limit)
+    }
+
+    override fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
+        return api.sendReaction(messageId, reactionType)
+    }
+
+    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
+        return api.deleteReaction(messageId, reactionType)
+    }
+
+
+    override fun sendReaction(reaction: Reaction): Call<Reaction> {
+        return api.sendReaction(reaction)
+    }
+    //endregion
+
     //endregion
 
     override fun disconnectSocket() {
@@ -110,7 +150,7 @@ internal class ChatClientImpl(
 
     override fun reconnectSocket() {
         val user = state.user
-        if (user != null) socket.connect(user, null)
+        if (user != null) socket.connect(user)
     }
 
     override fun addSocketListener(listener: SocketListener) {
@@ -158,22 +198,6 @@ internal class ChatClientImpl(
         limit: Int
     ): Call<List<Message>> {
         return api.getRepliesMore(messageId, firstId, limit)
-    }
-
-    override fun getReactions(
-        messageId: String,
-        offset: Int,
-        limit: Int
-    ): Call<List<Reaction>> {
-        return api.getReactions(messageId, offset, limit)
-    }
-
-    override fun sendReaction(messageId: String, reactionType: String): Call<Reaction> {
-        return api.sendReaction(messageId, reactionType)
-    }
-
-    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return api.deleteReaction(messageId, reactionType)
     }
 
     override fun sendAction(request: SendActionRequest): Call<Message> {
@@ -367,5 +391,17 @@ internal class ChatClientImpl(
 
     override fun channel(channelType: String, channelId: String): ChannelController {
         return ChannelControllerImpl(channelType, channelId, this)
+    }
+
+    private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
+        if (connectedEvent != null) {
+            val user = connectedEvent.me
+            val connectionId = connectedEvent.connectionId
+            connectionListener?.onSuccess(InitConnectionListener.ConnectionData(user, connectionId))
+        } else if (error != null) {
+            connectionListener?.onError(error)
+        }
+
+        connectionListener = null
     }
 }

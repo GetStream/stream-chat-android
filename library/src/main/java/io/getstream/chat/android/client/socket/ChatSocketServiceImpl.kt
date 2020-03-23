@@ -28,7 +28,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     private val eventsParser = EventsParser(this, chatParser)
     private var httpClient = OkHttpClient()
     private var socket: WebSocket? = null
-    private var initConnectionListener: InitConnectionListener? = null
     private val listeners = mutableListOf<SocketListener>()
 
     private var wsId = 0
@@ -67,8 +66,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         wsEndpoint: String,
         apiKey: String,
         user: User?,
-        userToken: String?,
-        listener: InitConnectionListener?
+        userToken: String?
     ) {
         logger.logI("connect")
 
@@ -80,7 +78,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         this.apiKey = apiKey
         this.user = user
         this.userToken = userToken
-        this.initConnectionListener = listener
         wsId = 0
         healthMonitor.reset()
 
@@ -125,7 +122,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     }
 
     private fun clearState() {
-        initConnectionListener = null
         healthMonitor.reset()
         socket?.cancel()
         socket?.close(1000, "bye")
@@ -145,9 +141,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         when (state) {
             is State.Error -> {
 
-                initConnectionListener?.onError(state.error)
-                initConnectionListener = null
-
                 eventHandler.post {
                     listeners.forEach { it.onError(state.error) }
                 }
@@ -158,14 +151,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
                 }
             }
             is State.Connected -> {
-
-                initConnectionListener?.onSuccess(
-                    InitConnectionListener.ConnectionData(
-                        state.event.me,
-                        state.event.connectionId
-                    )
-                )
-                initConnectionListener = null
 
                 eventHandler.post {
                     listeners.forEach { it.onConnected(state.event) }
