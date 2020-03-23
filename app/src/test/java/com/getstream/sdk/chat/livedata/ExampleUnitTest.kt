@@ -38,26 +38,12 @@ class ExampleUnitTest {
         val user = User("broad-lake-3")
         val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
-        client.setUser(user, token, object : InitConnectionListener() {
 
-            override fun onSuccess(data: ConnectionData) {
-                val user = data.user
-                val connectionId = data.connectionId
-                System.out.println("user connected")
-            }
-
-            override fun onError(error: ChatError) {
-                error.printStackTrace()
-            }
-        })
-
-
-        sleep(2000)
+        waitForSetUser(client, user, token)
         repo = StreamChatRepository(ApplicationProvider.getApplicationContext(),user.id, client)
         repo.errorEvents.observeForever( EventObserver {
             System.out.println("error event$it")
         })
-        sleep(2000)
     }
 
     @Test

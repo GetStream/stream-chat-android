@@ -88,8 +88,7 @@ class StreamChatRepository(
     }
 
     fun generateMessageId(): String {
-        // TODO: fix this once low level client exposes the user id
-        return "client.user.id" + "-" + UUID.randomUUID().toString()
+        return client.getCurrentUser().getUserId() + "-" + UUID.randomUUID().toString()
     }
 
     suspend fun selectMessageEntity(messageId: String): MessageEntity? {

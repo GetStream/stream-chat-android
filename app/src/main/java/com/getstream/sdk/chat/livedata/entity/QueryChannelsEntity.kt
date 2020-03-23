@@ -16,15 +16,13 @@ data class QueryChannelsEntity(val filter: FilterObject) {
     @PrimaryKey
     var id: String
 
-    var channelCIDs: List<String>
+    var channelCIDs: List<String> = mutableListOf()
 
 
     var sort: QuerySort? = null
 
     init {
-        // TODO: generate a real id
         id = (Objects.hash(filter) + Objects.hash(sort)).toString()
-        channelCIDs = emptyList()
     }
 
 

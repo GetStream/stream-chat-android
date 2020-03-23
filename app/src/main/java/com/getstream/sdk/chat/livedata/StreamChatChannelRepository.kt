@@ -95,8 +95,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
 
         if (repo.isOnline()) {
-            // TODO: fix this as soon as the low level clietn allows sending the reaction entity
-            client.sendReaction(reaction.messageId, reaction.type)
+            client.sendReaction(reaction)
         }
 
     }
