@@ -46,6 +46,7 @@ interface ChatApi {
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun sendReaction(reaction: Reaction): Call<Reaction>
     fun sendReaction(messageId: String, reactionType:String): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>

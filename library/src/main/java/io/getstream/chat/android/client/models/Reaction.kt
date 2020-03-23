@@ -9,17 +9,17 @@ import java.util.*
 
 data class Reaction(
     @SerializedName("message_id")
-    val messageId: String
+    val messageId: String,
+    val type: String,
+    val score: Int
 ) : CustomObject {
+
     var user: User? = null
-    var type: String = ""
 
     @SerializedName("user_id")
     var userId: String = ""
     @SerializedName("created_at")
     val createdAt: Date? = null
-
-    var score = 0
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

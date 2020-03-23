@@ -55,6 +55,9 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     }
 
     fun reset() {
+        delayHandler.removeCallbacks(monitor)
+        delayHandler.removeCallbacks(reconnect)
+        delayHandler.removeCallbacks(healthCheck)
         lastEventDate = null
     }
 
@@ -66,7 +69,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
 
     private fun reconnect() {
         val retryInterval = getRetryInterval()
-        logger.logI("Next connection attempt in {$retryInterval}ms")
+        logger.logI("Next connection attempt in $retryInterval ms")
         delayHandler.postDelayed(
             reconnect,
             retryInterval

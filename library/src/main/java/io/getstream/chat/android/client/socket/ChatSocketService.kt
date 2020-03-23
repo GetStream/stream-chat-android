@@ -7,8 +7,7 @@ interface ChatSocketService {
         wsEndpoint: String,
         apiKey: String,
         user: User?,
-        userToken: String?,
-        listener: InitConnectionListener?
+        userToken: String?
     )
 
     fun disconnect()

@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
@@ -109,10 +110,11 @@ open class ChatModules(val config: ChatClientConfig) {
         parser: ChatParser
     ): ChatApi {
         return ChatApiImpl(
+            chatConfig.apiKey,
             buildRetrofitApi(),
             buildRetrofitCdnApi(),
-            chatConfig,
-            parser
+            parser,
+            UuidGeneratorImpl()
         )
     }
 

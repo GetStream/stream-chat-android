@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
 import org.junit.Test
@@ -59,10 +60,11 @@ class ClientConnectionTests {
         logger = mock(ChatLogger::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
         api = ChatApiImpl(
+            config.apiKey,
             retrofitApi,
             retrofitCdnApi,
-            config,
-            ChatParserImpl()
+            ChatParserImpl(),
+            UuidGeneratorImpl()
         )
     }
 

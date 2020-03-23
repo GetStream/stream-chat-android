@@ -10,6 +10,9 @@ data class Result<T>(
     val isSuccess: Boolean
         get() = data != null
 
+    val isError: Boolean
+        get() = error != null
+
     fun data(): T {
         return data!!
     }

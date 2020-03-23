@@ -15,14 +15,14 @@ class ChatSocketImpl(
 
     private val service = ChatSocketServiceImpl(chatParser)
 
-    override fun connectAnonymously(listener: InitConnectionListener?) {
-        connect(null, null, listener)
+    override fun connectAnonymously() {
+        connect(null, null)
     }
 
-    override fun connect(user: User, listener: InitConnectionListener?) {
+    override fun connect(user: User) {
         cachedTokenProvider.getToken(object : TokenProvider.TokenProviderListener {
             override fun onSuccess(token: String) {
-                connect(user, token, listener)
+                connect(user, token)
             }
         })
     }
@@ -45,8 +45,8 @@ class ChatSocketImpl(
         service.removeListener(listener)
     }
 
-    private fun connect(user: User?, userToken: String?, listener: InitConnectionListener?) {
-        service.connect(wssUrl, apiKey, user, userToken, listener)
+    private fun connect(user: User?, userToken: String?) {
+        service.connect(wssUrl, apiKey, user, userToken)
     }
 
 }
