@@ -16,19 +16,19 @@ class Message : UserEntity {
 
     lateinit var channel: Channel
 
-    val attachments = mutableListOf<Attachment>()
+    var attachments = mutableListOf<Attachment>()
 
     @IgnoreSerialisation
-    val type: String = ""
+    var type: String = ""
     @IgnoreSerialisation
     @SerializedName("latest_reactions")
-    val latestReactions = mutableListOf<Reaction>()
+    var latestReactions = mutableListOf<Reaction>()
     @IgnoreSerialisation
     @SerializedName("own_reactions")
-    val ownReactions = mutableListOf<Reaction>()
+    var ownReactions = mutableListOf<Reaction>()
     @IgnoreSerialisation
     @SerializedName("reply_count")
-    val replyCount = 0
+    var replyCount = 0
 
     @IgnoreSerialisation
     @SerializedName("created_at")
@@ -40,19 +40,19 @@ class Message : UserEntity {
     @SerializedName("deleted_at")
     var deletedAt: Date? = null
     @SerializedName("mentioned_users")
-    val mentionedUsers = mutableListOf<User>()
+    var mentionedUsers = mutableListOf<User>()
     @SerializedName("parent_id")
     var parentId: String? = null
 
     @SerializedName("reaction_counts")
     @IgnoreSerialisation
-    val reactionCounts = mutableMapOf<String, Int>()
+    var reactionCounts = mutableMapOf<String, Int>()
 
-    val command: String? = null
+    var command: String? = null
 
-    val commandInfo: Map<String, String>? = null
+    var commandInfo: Map<String, String>? = null
 
-    val extraData = mutableMapOf<String, Any>()
+    var extraData = mutableMapOf<String, Any>()
 
     var isStartDay = false
     var isYesterday = false

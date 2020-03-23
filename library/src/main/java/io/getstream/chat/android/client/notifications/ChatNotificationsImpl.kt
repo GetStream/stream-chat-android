@@ -36,14 +36,19 @@ class ChatNotificationsImpl(
     }
 
     override fun onSetUser() {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if (it.isSuccessful) {
-                logger.logI("FirebaseInstanceId returned token successfully")
-                setFirebaseToken(it.result!!.token)
-            } else {
-                logger.logI("Error: FirebaseInstanceId doesn't returned token")
+
+        try {
+            FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    logger.logI("FirebaseInstanceId returned token successfully")
+                    setFirebaseToken(it.result!!.token)
+                } else {
+                    logger.logI("Error: FirebaseInstanceId doesn't returned token")
+                }
             }
-        }
+        } catch (e: IllegalStateException) {}
+
+
     }
 
     override fun setFirebaseToken(firebaseToken: String) {

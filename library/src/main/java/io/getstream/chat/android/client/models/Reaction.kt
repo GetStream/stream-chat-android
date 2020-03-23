@@ -17,9 +17,9 @@ data class Reaction(
     @SerializedName("user_id")
     var userId: String = ""
     @SerializedName("created_at")
-    val createdAt: Date? = null
+    var createdAt: Date? = null
 
-    var score = 0
+    var score: Int? = null
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

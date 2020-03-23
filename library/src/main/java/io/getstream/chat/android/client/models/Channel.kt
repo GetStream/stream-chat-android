@@ -13,7 +13,7 @@ class Channel : CustomObject {
     var id: String = ""
     var type: String = ""
     var watcherCount: Int = 0
-    val frozen = false
+    var frozen = false
 
     @SerializedName("last_message_at")
     var lastMessageAt: Date? = null
