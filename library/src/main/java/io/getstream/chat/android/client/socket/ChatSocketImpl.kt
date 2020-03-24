@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.CachedTokenProvider
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 class ChatSocketImpl(
@@ -27,7 +28,7 @@ class ChatSocketImpl(
         })
     }
 
-    override fun events(): ChatObservableImpl {
+    override fun events(): ChatObservable {
         return ChatObservableImpl(
             service
         )

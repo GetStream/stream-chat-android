@@ -35,7 +35,7 @@ class ClientConnectionTests {
         "socket.url",
         1000,
         1000,
-        ChatLogLevel.NOTHING,
+        ChatLogger.Config(ChatLogLevel.NOTHING, null),
         ChatNotificationConfig(context)
     )
 
