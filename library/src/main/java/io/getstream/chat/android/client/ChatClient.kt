@@ -9,6 +9,8 @@ import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -183,6 +185,7 @@ interface ChatClient {
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
         private var logLevel = ChatLogLevel.NOTHING
+        private var loggerHandler: ChatLoggerHandler? = null
         private lateinit var notificationsConfig: ChatNotificationConfig
 
         constructor(apiKey: String, appContext: Context) {
@@ -192,6 +195,11 @@ interface ChatClient {
 
         fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
+            return this
+        }
+
+        fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
+            this.loggerHandler = loggerHandler
             return this
         }
 
@@ -257,7 +265,7 @@ interface ChatClient {
                 "wss://$baseUrl/",
                 baseTimeout,
                 cdnTimeout,
-                logLevel,
+                ChatLogger.Config(logLevel, loggerHandler),
                 notificationsConfig
             )
 

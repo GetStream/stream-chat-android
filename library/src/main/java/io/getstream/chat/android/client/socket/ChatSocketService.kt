@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.models.User
 
 interface ChatSocketService {
     fun connect(
-        wsEndpoint: String,
+        endpoint: String,
         apiKey: String,
         user: User?,
         userToken: String?

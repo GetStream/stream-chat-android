@@ -16,10 +16,17 @@ interface ChatLogger {
 
     fun getLevel(): ChatLogLevel
 
+    data class Config(val level: ChatLogLevel, val handler: ChatLoggerHandler?)
+
     class Builder {
 
         private var level = ChatLogLevel.NOTHING
         private var handler: ChatLoggerHandler? = null
+
+        constructor(config: Config) {
+            this.level = config.level
+            this.handler = config.handler
+        }
 
         fun level(level: ChatLogLevel): Builder {
             this.level = level
