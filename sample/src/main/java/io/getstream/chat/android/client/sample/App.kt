@@ -6,6 +6,7 @@ import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.cache.AppDatabase
 import io.getstream.chat.android.client.sample.common.HomeActivity
@@ -49,6 +50,36 @@ class App : Application() {
 
         client = ChatClient.Builder(apiKey, this)
             .notifications(provideNotificationConfig())
+            .loggerHandler(object : ChatLoggerHandler {
+                override fun logT(throwable: Throwable) {
+
+                }
+
+                override fun logT(tag: Any, throwable: Throwable) {
+
+                }
+
+                override fun logI(tag: Any, message: String) {
+
+                }
+
+                override fun logD(tag: Any, message: String) {
+
+                }
+
+                override fun logW(tag: Any, message: String) {
+
+                }
+
+                override fun logE(tag: Any, message: String) {
+
+                }
+
+                override fun logE(tag: Any, message: String, throwable: Throwable) {
+
+                }
+
+            })
             .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()
 
