@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.ChatLoggerHandler;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.android.client.socket.SocketListener;
@@ -112,6 +113,7 @@ public class StreamChat {
 
         ChatClient c = new ChatClient.Builder(config.apiKey, config.appContext)
                 .logLevel(config.logLevel)
+                .loggerHandler(config.loggerHandler)
                 .notifications(config.notificationConfig)
                 .build();
         client = new ClientInterceptor(c);
@@ -190,6 +192,7 @@ public class StreamChat {
         private final String apiKey;
         private final Context appContext;
         private ChatLogLevel logLevel = ChatLogLevel.NOTHING;
+        private ChatLoggerHandler loggerHandler;
         private ChatNotificationConfig notificationConfig;
         private String cdnEndpoint;
         private String apiEndpoint;
@@ -226,6 +229,11 @@ public class StreamChat {
 
         public Config logLevel(ChatLogLevel logLevel) {
             this.logLevel = logLevel;
+            return this;
+        }
+
+        public Config logHandler(ChatLoggerHandler loggerHandler){
+            this.loggerHandler = loggerHandler;
             return this;
         }
 
