@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -56,7 +57,7 @@ class MockClientBuilder {
             "socket.url",
             1000,
             1000,
-            ChatLogLevel.NOTHING,
+            ChatLogger.Config(ChatLogLevel.NOTHING, null),
             ChatNotificationConfig(context)
         )
 

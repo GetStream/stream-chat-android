@@ -1,11 +1,12 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 
 class ConnectedEvent : ChatEvent() {
 
-    val cid: String = ""
     lateinit var me: User
     val member: Member? = null
     val reaction: Reaction? = null

@@ -6,7 +6,7 @@ import java.io.StringWriter
 
 private const val TAG_PREFIX = "Chat:"
 
-class ChatLoggerImpl constructor(
+internal class ChatLoggerImpl constructor(
     private val level: ChatLogLevel = ChatLogLevel.NOTHING,
     private val handler: ChatLoggerHandler? = null
 ) : ChatLogger {

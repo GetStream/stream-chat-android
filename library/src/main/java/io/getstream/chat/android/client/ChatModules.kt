@@ -20,15 +20,9 @@ import java.util.concurrent.TimeUnit
 
 open class ChatModules(val config: ChatClientConfig) {
 
-    private val defaultLogger = ChatLogger.Builder().level(config.logLevel).build()
-
+    private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }
-    private val defaultNotifications by lazy {
-        buildNotification(
-            config.notificationsConfig,
-            api()
-        )
-    }
+    private val defaultNotifications by lazy { buildNotification(config.notificationsConfig, api()) }
     private val defaultApi by lazy { buildApi(config, parser()) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
     private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsConfig.context)

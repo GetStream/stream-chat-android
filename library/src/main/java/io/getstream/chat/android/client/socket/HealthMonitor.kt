@@ -19,7 +19,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     private val logger = ChatLogger.get("SocketMonitor")
 
     private val reconnect = Runnable {
-        socket.setupWs()
+        socket.setupSocket()
     }
 
     private val healthCheck: Runnable = Runnable {

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.socket
 
 import android.os.Message
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -22,7 +21,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
     private val logger = ChatLogger.get("SocketService")
 
-    private var wsEndpoint: String = ""
+    private var endpoint: String = ""
     private var apiKey: String = ""
     private var userToken: String? = ""
     private var user: User? = null
@@ -31,7 +30,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     private var socket: WebSocket? = null
     private val listeners = mutableListOf<SocketListener>()
 
-    private var wsId = 0
+    private var connectionId = 0
     private val eventHandler = EventHandler(this)
     private val healthMonitor = HealthMonitor(this)
 
@@ -66,7 +65,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     }
 
     override fun connect(
-        wsEndpoint: String,
+        endpoint: String,
         apiKey: String,
         user: User?,
         userToken: String?
@@ -77,14 +76,14 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
             disconnect()
         }
 
-        this.wsEndpoint = wsEndpoint
+        this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
         this.userToken = userToken
-        wsId = 0
-        healthMonitor.reset()
+        this.connectionId = 0
+        this.healthMonitor.reset()
 
-        setupWs()
+        setupSocket()
     }
 
     override fun disconnect() {
@@ -107,19 +106,17 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         socket?.send(chatParser.toJson(event))
     }
 
-    internal fun setupWs() {
+    internal fun setupSocket() {
 
-        logger.logI("setupWs")
+        logger.logI("setupSocket")
 
         updateState(State.Connecting)
 
-        wsId++
-        val url = getWsUrl()
+        connectionId++
+        val url = buildUrl()
         val request = Request.Builder().url(url).build()
 
-        httpClient = OkHttpClient.Builder()
-            .addNetworkInterceptor(StethoInterceptor())
-            .build()
+        logger.logI("httpClient.newWebSocket: $url")
 
 
         socket = httpClient.newWebSocket(request, eventsParser)
@@ -138,7 +135,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
     private fun updateState(state: State) {
 
-        logger.logI("updateState: {${state.javaClass.simpleName}}")
+        logger.logI("updateState: ${state.javaClass.simpleName}")
 
         this.state = state
 
@@ -168,12 +165,12 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         }
     }
 
-    private fun getWsUrl(): String {
+    private fun buildUrl(): String {
         var json = buildUserDetailJson(user)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
             val baseWsUrl: String =
-                wsEndpoint + "connect?json=" + json + "&api_key=" + apiKey
+                endpoint + "connect?json=" + json + "&api_key=" + apiKey
             if (user == null) {
                 "$baseWsUrl&stream-auth-type=anonymous"
             } else {

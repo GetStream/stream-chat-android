@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 internal class ChannelControllerImpl(
@@ -15,6 +16,14 @@ internal class ChannelControllerImpl(
     val channelId: String,
     val client: ChatClient
 ) : ChannelController {
+
+    private val cid = "$channelType:$channelId"
+
+    fun events(): ChatObservable {
+        return client.events().filter { event ->
+            event.isFrom(cid)
+        }
+    }
 
     override fun query(request: ChannelQueryRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
