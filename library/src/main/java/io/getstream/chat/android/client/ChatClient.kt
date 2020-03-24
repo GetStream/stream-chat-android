@@ -112,6 +112,7 @@ interface ChatClient {
 
     //region Reactions
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+
     fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
     fun sendReaction(reaction: Reaction): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
@@ -175,6 +176,8 @@ interface ChatClient {
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
+
+    fun getVersion(): String
 
     class Builder {
         private val apiKey: String
@@ -278,6 +281,7 @@ interface ChatClient {
                 modules.notifications()
             )
             instance = result
+
             return result
         }
     }

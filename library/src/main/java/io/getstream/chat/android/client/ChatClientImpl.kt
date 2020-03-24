@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -34,6 +35,7 @@ internal class ChatClientImpl(
 
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
+    private val logger = ChatLogger.get("Client")
 
     init {
         val events = socket.events()
@@ -61,6 +63,8 @@ internal class ChatClientImpl(
                 }
             }
         }
+
+        logger.logI("Initialised: " + getVersion())
     }
 
     //region Set user
@@ -295,6 +299,10 @@ internal class ChatClientImpl(
         extraData: Map<Any, Any>
     ): Call<ChatEvent> {
         return api.sendEvent(eventType, channelType, channelId, extraData)
+    }
+
+    override fun getVersion(): String {
+        return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
     }
 
     override fun acceptInvite(
