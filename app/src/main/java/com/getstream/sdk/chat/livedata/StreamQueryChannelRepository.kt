@@ -11,8 +11,9 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 
+
 /**
- * The QueryChannels repository exposes the following livedata objects
+ * The StreamQueryChannelRepository is a small helper to show a list of channels
  *
  * - queryChannelRepo.channels a livedata object with the list of channels. this list
  * updates whenever a new message is added to one of the channels, the read state changes for members of these channels,
@@ -25,6 +26,7 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
     lateinit var channels: LiveData<List<Channel>>
     private val logger = ChatLogger.get("ChatQueryRepo")
 
+    // TODO: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {
             query.channelCIDs.add(0, it.cid)
@@ -40,34 +42,8 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
             val query = repo.selectQuery(query.id)
             // TODO: we should use a transform so it's based on the livedata perhaps?
             if (query != null) {
-                val channelEntities = repo.selectChannelEntities(query.channelCIDs)
+                val channels = repo.selectAndEnrichChannels(query.channelCIDs)
 
-
-
-                // gather the user ids from channels, members and the last message
-                val userIds = mutableSetOf<String>()
-                for (channelEntity in channelEntities) {
-                    channelEntity.createdByUserId?.let { userIds.add(it) }
-                    channelEntity.members?.let {
-                        for (member in it) {
-                            userIds.add(member.userId)
-                        }
-                    }
-                    channelEntity.lastMessage?.let {
-                        userIds.add(it.userId)
-                    }
-                }
-                val userEntities = repo.selectUsers(userIds.toList())
-                val userMap = mutableMapOf<String, User>()
-                for (userEntity in userEntities) {
-                    userMap[userEntity.id] = userEntity.toUser()
-                }
-
-                val channels = mutableListOf<Channel>()
-                for (channelEntity in channelEntities) {
-                    val channel = channelEntity.toChannel(userMap)
-                    channels.add(channel)
-                }
 
                 emit(channels.toList())
             }

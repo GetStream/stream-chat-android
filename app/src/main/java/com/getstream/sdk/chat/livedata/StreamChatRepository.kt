@@ -434,6 +434,17 @@ class StreamChatRepository(
         return storeStateForChannels(listOf(channel))
     }
 
+
+
+    suspend fun selectUserMap(userIds: List<String>): MutableMap<String, User> {
+        val userEntities = selectUsers(userIds.toList())
+        val userMap = mutableMapOf<String, User>()
+        for (userEntity in userEntities) {
+            userMap[userEntity.id] = userEntity.toUser()
+        }
+        return userMap
+    }
+
     fun storeStateForChannels(channelsResponse: List<Channel>) {
         val users = mutableSetOf<User>()
         val configs :MutableMap<String, Config> = mutableMapOf()
@@ -444,6 +455,9 @@ class StreamChatRepository(
             configs[channel.type] = channel.config
             for (member in channel.members) {
                 users.add(member.user)
+            }
+            for (read in channel.read) {
+                users.add(read.user)
             }
             messages.addAll(channel.messages)
 
@@ -464,6 +478,46 @@ class StreamChatRepository(
         insertChannels(channelsResponse)
         // store the messages
         insertMessages(messages)
+    }
+
+    suspend fun selectAndEnrichChannels(channelId: String): List<Channel> {
+        return selectAndEnrichChannels(listOf(channelId))
+    }
+
+    suspend fun selectAndEnrichChannels(channelIds: List<String>): List<Channel> {
+
+        // fetch the channel entities from room
+        val channelEntities = selectChannelEntities(channelIds)
+
+        // gather the user ids from channels, members and the last message
+        val userIds = mutableSetOf<String>()
+        for (channelEntity in channelEntities) {
+            channelEntity.createdByUserId?.let { userIds.add(it) }
+            channelEntity.members?.let {
+                for (member in it) {
+                    userIds.add(member.userId)
+                }
+            }
+            channelEntity.reads?.let {
+                for (read in it) {
+                    userIds.add(read.userId)
+                }
+            }
+            channelEntity.lastMessage?.let {
+                userIds.add(it.userId)
+            }
+        }
+
+        // get a map with user id to User
+        val userMap = selectUserMap(userIds.toList())
+
+        // convert the channels
+        val channels = mutableListOf<Channel>()
+        for (channelEntity in channelEntities) {
+            val channel = channelEntity.toChannel(userMap)
+            channels.add(channel)
+        }
+        return channels.toList()
     }
 
 

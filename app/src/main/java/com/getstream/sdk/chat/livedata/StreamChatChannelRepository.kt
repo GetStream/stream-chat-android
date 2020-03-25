@@ -40,8 +40,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
     private val logger = ChatLogger.get("ChatChannelRepo")
 
-    // TODO: this needs a transform... perhaps..
-    lateinit var messages: LiveData<List<MessageEntity>>
+    lateinit var messages: LiveData<List<Message>>
 
     private val _watcherCount = MutableLiveData<Int>()
     val watcherCount : LiveData<Int> = _watcherCount
@@ -111,6 +110,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
     fun watch() {
         messages = repo.messagesForChannel(cid)
+        // TODO: do the whole read and store better here
 
         // store the users...
         // store the messages (and all the user references in it) getUserIds(), getUsers(), enrichUsers(user objects)
