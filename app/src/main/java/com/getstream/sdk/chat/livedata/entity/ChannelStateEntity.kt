@@ -105,5 +105,12 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         }
     }
 
+    /** updates last message and lastmessagedate on this channel entity */
+    fun updateReads(read: ChannelUserRead) {
+        val readEntity = ChannelUserReadEntity(read)
+
+
+    }
+
 
 }

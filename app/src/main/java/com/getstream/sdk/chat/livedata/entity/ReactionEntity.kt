@@ -24,7 +24,7 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
 
 
     /** the score, used if you want to allow users to clap/like etc multiple times */
-    var score: Int? = null
+    var score: Int = 1
     /** when the reaction was created */
     var createdAt: Date? = null
     /** when the reaction was updated */
@@ -44,11 +44,9 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
 
     /** converts a reaction entity into a Reaction */
     fun toReaction(userMap: Map<String, User>): Reaction {
-        val r = Reaction(messageId)
+        val r = Reaction(messageId, type, score)
         r.userId = userId
         r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
-        r.type = type
-        r.score = score
         r.extraData = extraData
         r.createdAt = createdAt
 

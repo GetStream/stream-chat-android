@@ -1,19 +1,24 @@
 package com.getstream.sdk.chat.livedata
 
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
 import com.google.common.truth.Truth.assertThat
+import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,17 +28,20 @@ import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
-class ExampleUnitTest {
+class ChatRepoIntegrationTest {
 
     lateinit var database: ChatDatabase
     lateinit var repo: StreamChatRepository
+    lateinit var client: ChatClient
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
     @Before
     fun setup() {
-        val client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext()).build()
+        Log.i("Hello", "world")
+        client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext()).logLevel(
+            ChatLogLevel.ALL).loggerHandler(TestLoggerHandler()).build()
 
         val user = User("broad-lake-3")
         val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
@@ -46,21 +54,16 @@ class ExampleUnitTest {
         })
     }
 
+    @After
+    fun teardown() {
+        //client.disconnect()
+    }
+
     @Test
     fun getMessages() {
-        /**
-         * TODO:
-         * - actually insert the data when you run .watch
-         * - test that new message events update the livedata
-         */
         val channelRepo = repo.channel("messaging", "test123")
         channelRepo.watch()
 
-        // new messages, reactions, message changes etc are automatically handled
-        channelRepo.messages.observeForever {
-
-        }
-        sleep(1000)
 
     }
 

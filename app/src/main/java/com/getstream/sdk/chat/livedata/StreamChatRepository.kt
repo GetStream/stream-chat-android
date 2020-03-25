@@ -7,15 +7,14 @@ import androidx.lifecycle.liveData
 import androidx.test.core.app.ApplicationProvider
 import com.getstream.sdk.chat.livedata.dao.*
 import com.getstream.sdk.chat.livedata.entity.*
+import com.getstream.sdk.chat.livedata.entity.UserEntity
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -49,6 +48,9 @@ class StreamChatRepository(
     lateinit var messageDao: MessageDao
     lateinit var channelStateDao: ChannelStateDao
     lateinit var channelConfigDao: ChannelConfigDao
+    private val logger = ChatLogger.get("ChatRepo")
+
+    // TODO: use the same logger structure as our chat client
 
     constructor(context: Context, userId: String, client: ChatClient): this(client) {
         val database = ChatDatabase.getDatabase(context, userId)
@@ -67,11 +69,32 @@ class StreamChatRepository(
     /** stores the mapping from cid to channelRepository */
     private var activeChannelMap: MutableMap<String, StreamChatChannelRepository> = mutableMapOf()
 
+    /** stores the mapping from cid to channelRepository */
+    private var activeQueryMap: MutableMap<QueryChannelsEntity, StreamQueryChannelRepository> = mutableMapOf()
 
-    private val _errorEvent = MutableLiveData<Event<ChatError>>()
+
+
+
+
+    private val _totalUnreadCount = MutableLiveData<Int>()
+
+    /**
+     * The total unread message count for the current user.
+     * Depending on your app you'll want to show this or the channelUnreadCount
+     */
+    val totalUnreadCount : LiveData<Int> = _totalUnreadCount
+
+    private val _channelUnreadCount = MutableLiveData<Int>()
+
+    /**
+     * the number of unread channels for the current user
+     */
+    val channelUnreadCount : LiveData<Int> = _channelUnreadCount
 
 
     // TODO: implement retry policy
+
+    private val _errorEvent = MutableLiveData<Event<ChatError>>()
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
      * The following example shows how to observe these errors
@@ -88,7 +111,8 @@ class StreamChatRepository(
     }
 
     fun generateMessageId(): String {
-        return client.getCurrentUser().getUserId() + "-" + UUID.randomUUID().toString()
+        checkNotNull(client.getCurrentUser()) {"client.getCurrentUser() must be available to generate a message id"}
+        return client.getCurrentUser()!!.getUserId() + "-" + UUID.randomUUID().toString()
     }
 
     suspend fun selectMessageEntity(messageId: String): MessageEntity? {
@@ -137,6 +161,8 @@ class StreamChatRepository(
         queryChannelsEntity: QueryChannelsEntity,
         request: QueryChannelsRequest
     ): LiveData<MutableList<Channel>> {
+        // mark this query as active
+        activeQueryMap[queryChannelsEntity] = StreamQueryChannelRepository()
         // return a livedata object with the channels
         var channelsLiveData = liveData(Dispatchers.IO) {
             // start by getting the query results from offline storage
@@ -217,27 +243,72 @@ class StreamChatRepository(
     fun startListening() {
         eventSubscription = client.events().subscribe {
             // keep the data in Room updated based on the various events..
-            when (it) {
-                is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent  -> {
-                    insertMessage(it.message)
-                }
-                is MessageReadEvent -> {
+            // TODO: cache messages and channels to reduce number of Room queries
+            GlobalScope.launch(Dispatchers.IO) {
 
+                // any event can have channel and unread count information
+                if (it.unreadChannels != null) {
+                    _channelUnreadCount.value = it.unreadChannels
                 }
-                is ReactionNewEvent -> {
-
+                if (it.totalUnreadCount != null) {
+                    // TODO: we should deduplicate livedata updates in case the values didn't change
+                    _totalUnreadCount.value = it.totalUnreadCount
                 }
-                is ReactionDeletedEvent -> {
 
+                // the watchers and watcher count are only stored in memory (as they go stale when you go offline)
+                if (!it.cid.isNullOrEmpty() && activeChannelMap.containsKey(it.cid)) {
+                    val channel = activeChannelMap.get(it.cid)!!
+                    it.channel?.watchers?.let {
+                        channel.setWatchers(it)
+                    }
+                    it.channel?.watcherCount?.let {
+                        channel.setWatcherCount(it)
+                    }
                 }
-                is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
 
-                }
-                is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
 
-                }
-                is NotificationAddedToChannelEvent, is NotificationMarkReadEvent -> {
-
+                when (it) {
+                    is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent  -> {
+                        insertMessage(it.message)
+                    }
+                    is MessageReadEvent -> {
+                        // get the channel, update reads, write the channel
+                        val channel = channelStateDao.select(it.cid)
+                        val read = ChannelUserRead()
+                        // TODO: cleanup the !!
+                        read.user = it.user!!
+                        read.lastRead = it.createdAt
+                        channel?.let {
+                            it.updateReads(read)
+                            insertChannelStateEntity(channel)
+                        }
+                    }
+                    is ReactionNewEvent -> {
+                        // get the message, update the reaction data, update the message
+                        insertMessage(it.message)
+                    }
+                    is ReactionDeletedEvent -> {
+                        // get the message, update the reaction data, update the message
+                        insertMessage(it.message)
+                    }
+                    is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
+                        // get the channel, update members, write the channel
+                        it.channel?.let {
+                            insertChannel(it)
+                        }
+                    }
+                    is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
+                        // get the channel, update members, write the channel
+                        it.channel?.let {
+                            insertChannel(it)
+                        }
+                    }
+                    is NotificationAddedToChannelEvent, is NotificationMarkReadEvent -> {
+                        // this one is trickier. we need to insert the message
+                        // we also need to add the channel to the query which is tricker...
+                        // TODO: deal with adding the channel to the queries
+                        insertMessage(it.message)
+                    }
                 }
             }
         }
@@ -322,9 +393,40 @@ class StreamChatRepository(
 
     fun connectionRecovered() {
         // update the results for queries that are actively being shown right now
-        // TODO: how do we know this?
-
+        for (query in activeQueryMap) {
+            // TODO: talk about this with tommaso
+        }
         // update the data for all channels that are being show right now...
+        for (channel in activeChannelMap) {
+            // TODO: talk about this with tommaso
+        }
+        // retry any failed requests
+        retryFailedEntities()
+    }
+
+    fun retryFailedEntities() {
+        GlobalScope.launch {
+            // fake the user map for enriching objects
+            val user = client.getCurrentUser()!!
+            val userMap : Map<String, User> = mutableMapOf(user.id to user)
+
+            val reactionEntities = reactionDao.selectSyncNeeded()
+            for (reactionEntity in reactionEntities) {
+                client.sendReaction(reactionEntity.toReaction(userMap))
+            }
+
+            val messageEntities = messageDao.selectSyncNeeded()
+            for (messageEntity in messageEntities) {
+                // TODO: remove this as soon as the low level client has a better solution
+                val parts = messageEntity.cid.split(":")
+                val channel = client.channel(parts[0], parts[1])
+                channel.sendMessage(messageEntity.toMessage(userMap))
+            }
+
+            // TODO: support channels in version 1.1
+
+
+        }
     }
 
     suspend fun selectChannelEntity(cid: String): ChannelStateEntity? {

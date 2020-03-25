@@ -33,5 +33,11 @@ interface MessageDao {
     )
     suspend fun select(id: String?): MessageEntity?
 
+    @Query(
+        "SELECT * FROM stream_chat_message " +
+                "WHERE stream_chat_message.syncStatus IN [-1, 2]"
+    )
+    suspend fun selectSyncNeeded(): List<MessageEntity>
+
 
 }

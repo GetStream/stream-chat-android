@@ -2,15 +2,14 @@ package com.getstream.sdk.chat.livedata
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.livedata.entity.MessageEntity
 import com.getstream.sdk.chat.livedata.entity.ReactionEntity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,8 +37,18 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
     val channel = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
+
+    private val logger = ChatLogger.get("ChatChannelRepo")
+
     // TODO: this needs a transform... perhaps..
     lateinit var messages: LiveData<List<MessageEntity>>
+
+    private val _watcherCount = MutableLiveData<Int>()
+    val watcherCount : LiveData<Int> = _watcherCount
+
+    private val _watchers = MutableLiveData<List<Watcher>>()
+    val watchers : LiveData<List<Watcher>> = _watchers
+
 
     /**
      * - Generate an ID
@@ -145,5 +154,13 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
         }
 
 
+    }
+
+    fun setWatchers(watchers: List<Watcher>) {
+        _watchers.value = watchers
+    }
+
+    fun setWatcherCount(watcherCount: Int) {
+        _watcherCount.value = watcherCount
     }
 }
