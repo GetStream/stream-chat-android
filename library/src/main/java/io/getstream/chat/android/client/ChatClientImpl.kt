@@ -92,8 +92,8 @@ internal class ChatClientImpl(
         socket.connectAnonymously()
     }
 
-    override fun getGuestToken(userId: String, userName: String): Call<TokenResponse> {
-        return api.setGuestUser(userId, userName)
+    override fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
+        return api.getGuestUser(userId, userName)
     }
 
     override fun sendFile(
@@ -180,12 +180,12 @@ internal class ChatClientImpl(
         return api.getDevices()
     }
 
-    override fun deleteDevice(firebaseToken: String): Call<Unit> {
-        return api.deleteDevice(firebaseToken)
+    override fun deleteDevice(deviceId: String): Call<Unit> {
+        return api.deleteDevice(deviceId)
     }
 
-    override fun addDevice(firebaseToken: String): Call<Unit> {
-        return api.addDevice(firebaseToken)
+    override fun addDevice(deviceId: String): Call<Unit> {
+        return api.addDevice(deviceId)
     }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {

@@ -485,21 +485,15 @@ class ChatApiImpl(
         )
     }
 
-    override fun setGuestUser(userId: String, userName: String): Call<TokenResponse> {
+    override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return callMapper.map(
-            retrofitApi.setGuestUser(
-                apiKey,
-                GuestUserRequest(
-                    userId,
-                    userName
-                )
-            )
-        )
+            retrofitApi.getGuestUser(apiKey, GuestUserRequest(userId, userName))
+        ).map {
+            GuestUser(it.user, it.accessToken)
+        }
     }
 
-    override fun getUsers(
-        queryUsers: QueryUsersRequest
-    ): Call<List<User>> {
+    override fun getUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
         return callMapper.map(
             retrofitApi.queryUsers(
                 apiKey,
@@ -515,13 +509,11 @@ class ChatApiImpl(
         members: List<String>
     ) = callMapper.map(
         retrofitApi.addMembers(
-            apiKey = apiKey,
-            connectionId = connectionId,
-            channelType = channelType,
-            channelId = channelId,
-            body = AddMembersRequest(
-                members = members
-            )
+            apiKey,
+            connectionId,
+            channelType,
+            channelId,
+            AddMembersRequest(members)
         )
     ).map { flattenChannel(it) }
 
@@ -531,19 +523,17 @@ class ChatApiImpl(
         members: List<String>
     ) = callMapper.map(
         retrofitApi.removeMembers(
-            apiKey = apiKey,
-            connectionId = connectionId,
-            channelType = channelType,
-            channelId = channelId,
-            body = RemoveMembersRequest(
-                members = members
-            )
+            channelType,
+            channelId,
+            apiKey,
+            connectionId,
+            RemoveMembersRequest(members)
         )
     ).map { flattenChannel(it) }
 
     override fun muteUser(
         targetId: String
-    ): Call<MuteUserResponse> {
+    ): Call<Mute> {
         return callMapper.map(
             retrofitApi.muteUser(
                 apiKey,
@@ -551,12 +541,12 @@ class ChatApiImpl(
                 connectionId,
                 MuteUserRequest(targetId, userId)
             )
-        )
+        ).map { it.mute }
     }
 
     override fun unMuteUser(
         targetId: String
-    ): Call<MuteUserResponse> {
+    ): Call<Mute> {
 
         return callMapper.map(
             retrofitApi.unMuteUser(
@@ -565,12 +555,12 @@ class ChatApiImpl(
                 connectionId,
                 MuteUserRequest(targetId, userId)
             )
-        )
+        ).map { it.mute }
     }
 
     override fun flag(
         targetId: String
-    ): Call<FlagResponse> {
+    ): Call<Flag> {
 
         val body: MutableMap<String, String> = HashMap()
         body["target_user_id"] = targetId
@@ -582,7 +572,7 @@ class ChatApiImpl(
                 connectionId,
                 body
             )
-        )
+        ).map { it.flag }
     }
 
     override fun banUser(

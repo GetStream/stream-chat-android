@@ -28,7 +28,7 @@ interface ChatClient {
 
     fun setAnonymousUser(listener: InitConnectionListener? = null)
 
-    fun getGuestToken(userId: String, userName: String): Call<TokenResponse>
+    fun getGuestToken(userId: String, userName: String): Call<GuestUser>
 
     fun disconnect()
 
@@ -93,9 +93,9 @@ interface ChatClient {
         members: List<String>
     ): Call<Channel>
 
-    fun muteUser(targetId: String): Call<MuteUserResponse>
-    fun unMuteUser(targetId: String): Call<MuteUserResponse>
-    fun flag(targetId: String): Call<FlagResponse>
+    fun muteUser(targetId: String): Call<Mute>
+    fun unMuteUser(targetId: String): Call<Mute>
+    fun flag(targetId: String): Call<Flag>
     fun banUser(
         targetId: String,
         channelType: String,
@@ -124,7 +124,7 @@ interface ChatClient {
 
     fun getDevices(): Call<List<Device>>
     fun deleteDevice(deviceId: String): Call<Unit>
-    fun addDevice(firebaseToken: String): Call<Unit>
+    fun addDevice(deviceId: String): Call<Unit>
     fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
