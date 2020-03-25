@@ -169,6 +169,10 @@ class EventsParser(
                 parser.fromJson(data, NotificationMarkReadEvent::class.java)
             }
 
+            EventType.HEALTH_CHECK -> {
+                parser.fromJson(data, HealthEvent::class.java)
+            }
+
             else -> {
                 parser.fromJson(data, ChatEvent::class.java)
             }
