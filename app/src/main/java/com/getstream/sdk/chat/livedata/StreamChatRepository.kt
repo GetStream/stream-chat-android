@@ -142,14 +142,9 @@ class StreamChatRepository(
         return !online
     }
 
-    fun recover() {
-        // run query channels for queries that we are showing
-
-        // what else?
-    }
 
     fun stopListening() {
-
+        eventSubscription.unsubscribe()
     }
 
     /**
@@ -171,6 +166,8 @@ class StreamChatRepository(
             if (query != null) {
                 val channelEntities = channelStateDao.select(query.channelCIDs)
 
+
+                // TODO: I should use sets for many of these
                 // gather all the user ids
                 val userIds = mutableListOf<String>()
                 for (channelEntity in channelEntities) {
@@ -201,6 +198,10 @@ class StreamChatRepository(
             // next run the actual query
             client.queryChannels(request).enqueue {
                 // TODO: This storage logic can be merged with the StreamChatChannelRepo
+                // TODO store the channel configs
+
+
+
                 // check for an error
                 if (!it.isSuccess) {
                     addError(it.error())
@@ -208,10 +209,16 @@ class StreamChatRepository(
                 // store the results in the database
                 val channelsResponse = it.data()
                 val users = mutableListOf<User>()
+                val configs :MutableMap<String, Config> = mutableMapOf()
                 for (channel in channelsResponse) {
                     users.add(channel.createdBy)
-                    // TODO member loop, watcher loop etc...
+                    configs[channel.type] = channel.config
+                    // TODO member loop
                 }
+
+                // store the channel configs
+                insertConfigs(configs)
+
                 // store the users
                 insertUsers(users)
                 // store the channel info
@@ -229,6 +236,16 @@ class StreamChatRepository(
 
     }
 
+    private fun insertConfigs(configs: MutableMap<String, Config>) {
+        val configEntities = mutableListOf<ChannelConfigEntity>()
+        for ((channelType, config) in configs) {
+            val entity = ChannelConfigEntity(channelType)
+            entity.config = config
+        }
+        GlobalScope.launch {
+            channelConfigDao.insertMany(configEntities)
+        }
+    }
 
 
     fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>> {
