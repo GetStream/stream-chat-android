@@ -15,7 +15,7 @@ interface ReactionDao {
 
     @Query(
         "SELECT * FROM stream_chat_reaction " +
-                "WHERE stream_chat_reaction.syncStatus IN [-1, 2]"
+                "WHERE stream_chat_reaction.syncStatus IN (-1, 2)"
     )
     suspend fun selectSyncNeeded(): List<ReactionEntity>
 

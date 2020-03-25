@@ -54,12 +54,12 @@ fun waitForSetUser(
         timeUnit: TimeUnit = TimeUnit.SECONDS
 ) {
     val latch = CountDownLatch(1)
-//    client.events().subscribe {
-//        System.out.println("event received " + it.toString())
-//        if (it is ConnectedEvent) {
-//            latch.countDown()
-//        }
-//    }
+    client.events().subscribe {
+        System.out.println("event received " + it.toString())
+        if (it is ConnectedEvent) {
+            latch.countDown()
+        }
+    }
     client.setUser(user, token, object: InitConnectionListener() {
         override fun onSuccess(data: ConnectionData) {
             System.out.println("setUser onSuccess")

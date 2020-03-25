@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 
@@ -20,12 +19,11 @@ import kotlinx.coroutines.Dispatchers
  * messages are edited or updated, or the channel is updated.
  */
 class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: ChatClient, var repo: StreamChatRepository) {
+    /**
+     * A livedata object with the channels matching this query.
+     */
     lateinit var channels: LiveData<List<Channel>>
     private val logger = ChatLogger.get("ChatQueryRepo")
-
-    fun refresh() {
-
-    }
 
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {
@@ -33,6 +31,9 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
         }
     }
 
+    /**
+     * Run the given queryChannels request and update the channels livedata object
+     */
     fun query(request: QueryChannelsRequest) {
         channels = liveData(Dispatchers.IO) {
             // start by getting the query results from offline storage
@@ -42,9 +43,9 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
                 val channelEntities = repo.selectChannelEntities(query.channelCIDs)
 
 
-                // TODO: I should use sets for many of these
-                // gather all the user ids
-                val userIds = mutableListOf<String>()
+
+                // gather the user ids from channels, members and the last message
+                val userIds = mutableSetOf<String>()
                 for (channelEntity in channelEntities) {
                     channelEntity.createdByUserId?.let { userIds.add(it) }
                     channelEntity.members?.let {
@@ -56,7 +57,7 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
                         userIds.add(it.userId)
                     }
                 }
-                val userEntities = repo.selectUsers(userIds)
+                val userEntities = repo.selectUsers(userIds.toList())
                 val userMap = mutableMapOf<String, User>()
                 for (userEntity in userEntities) {
                     userMap[userEntity.id] = userEntity.toUser()
@@ -68,37 +69,20 @@ class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: C
                     channels.add(channel)
                 }
 
-                emit(channels)
+                emit(channels.toList())
             }
             // next run the actual query
             client.queryChannels(request).enqueue {
-                // TODO: This storage logic can be merged with the StreamChatChannelRepo
-                // TODO store the channel configs
-
-
-
                 // check for an error
                 if (!it.isSuccess) {
                     repo.addError(it.error())
                 }
                 // store the results in the database
                 val channelsResponse = it.data()
-                val users = mutableListOf<User>()
-                val configs :MutableMap<String, Config> = mutableMapOf()
-                for (channel in channelsResponse) {
-                    users.add(channel.createdBy)
-                    configs[channel.type] = channel.config
-                    // TODO member loop
-                }
 
-                // store the channel configs
-                repo.insertConfigs(configs)
+                repo.storeStateForChannels(channelsResponse)
 
-                // store the users
-                repo.insertUsers(users)
-                // store the channel info
-                repo.insertChannels(channelsResponse)
-
+                //TODO: either emit or rely on livedata at the storage level to make this work
 
 
             }

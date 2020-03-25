@@ -9,7 +9,6 @@ import com.getstream.sdk.chat.livedata.entity.*
 import com.getstream.sdk.chat.livedata.entity.UserEntity
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -42,12 +41,12 @@ class StreamChatRepository(
     var client: ChatClient
 ) {
 
-    lateinit var channelQueryDao: ChannelQueryDao
-    lateinit var userDao: UserDao
-    lateinit var reactionDao: ReactionDao
-    lateinit var messageDao: MessageDao
-    lateinit var channelStateDao: ChannelStateDao
-    lateinit var channelConfigDao: ChannelConfigDao
+    private lateinit var channelQueryDao: ChannelQueryDao
+    private lateinit var userDao: UserDao
+    private lateinit var reactionDao: ReactionDao
+    private lateinit var messageDao: MessageDao
+    private lateinit var channelStateDao: ChannelStateDao
+    private lateinit var channelConfigDao: ChannelConfigDao
     private val logger = ChatLogger.get("ChatRepo")
 
     constructor(context: Context, userId: String, client: ChatClient): this(client) {
@@ -129,24 +128,27 @@ class StreamChatRepository(
             GlobalScope.launch(Dispatchers.IO) {
 
                 // any event can have channel and unread count information
-                if (it.unreadChannels != null) {
+                if (it.unreadChannels != null && _channelUnreadCount.value != it.unreadChannels) {
                     _channelUnreadCount.value = it.unreadChannels
                 }
-                if (it.totalUnreadCount != null) {
-                    // TODO: we should deduplicate livedata updates in case the values didn't change
+                if (it.totalUnreadCount != null && _totalUnreadCount.value != it.totalUnreadCount) {
                     _totalUnreadCount.value = it.totalUnreadCount
                 }
 
                 // the watchers and watcher count are only stored in memory (as they go stale when you go offline)
-                if (!it.cid.isNullOrEmpty() && activeChannelMap.containsKey(it.cid)) {
-                    val channel = activeChannelMap.get(it.cid)!!
-                    it.channel?.watchers?.let {
-                        channel.setWatchers(it)
-                    }
-                    it.channel?.watcherCount?.let {
-                        channel.setWatcherCount(it)
+                if (it.cid != null && it.cid != "") {
+                    val cid = it.cid!!
+                    if (!it.cid.isNullOrEmpty() && activeChannelMap.containsKey(cid)) {
+                        val channel = activeChannelMap.get(cid)!!
+                        it.channel?.watchers?.let {
+                            channel.setWatchers(it)
+                        }
+                        it.channel?.watcherCount?.let {
+                            channel.setWatcherCount(it)
+                        }
                     }
                 }
+
 
                 // connection events
                 when (it) {
@@ -217,7 +219,7 @@ class StreamChatRepository(
      * Stop listening to chat events
      */
     fun stopListening() {
-        eventSubscription.unsubscribe()
+        eventSubscription?.let { it.unsubscribe() }
     }
 
     /**
@@ -260,96 +262,18 @@ class StreamChatRepository(
         return _online.value!!
     }
 
-
-
-
     /**
      * queryChannels
      * - first read the current results from Room
      * - if we are online make the API call to update results
      */
     fun queryChannels(
-        queryChannelsEntity: QueryChannelsEntity,
-        request: QueryChannelsRequest
-    ): LiveData<MutableList<Channel>> {
+        queryChannelsEntity: QueryChannelsEntity
+    ): StreamQueryChannelRepository {
         // mark this query as active
-        activeQueryMap[queryChannelsEntity] = StreamQueryChannelRepository()
-        // return a livedata object with the channels
-        var channelsLiveData = liveData(Dispatchers.IO) {
-            // start by getting the query results from offline storage
-            val query = channelQueryDao.select(queryChannelsEntity.id)
-            // TODO: we should use a transform so it's based on the livedata perhaps?
-            if (query != null) {
-                val channelEntities = channelStateDao.select(query.channelCIDs)
-
-
-                // TODO: I should use sets for many of these
-                // gather all the user ids
-                val userIds = mutableListOf<String>()
-                for (channelEntity in channelEntities) {
-                    channelEntity.createdByUserId?.let { userIds.add(it) }
-                    channelEntity.members?.let {
-                        for (member in it) {
-                            userIds.add(member.userId)
-                        }
-                    }
-                    channelEntity.lastMessage?.let {
-                        userIds.add(it.userId)
-                    }
-                }
-                val userEntities = userDao.select(userIds)
-                val userMap = mutableMapOf<String, User>()
-                for (userEntity in userEntities) {
-                    userMap[userEntity.id] = userEntity.toUser()
-                }
-
-                val channels = mutableListOf<Channel>()
-                for (channelEntity in channelEntities) {
-                    val channel = channelEntity.toChannel(userMap)
-                    channels.add(channel)
-                }
-
-                emit(channels)
-            }
-            // next run the actual query
-            client.queryChannels(request).enqueue {
-                // TODO: This storage logic can be merged with the StreamChatChannelRepo
-                // TODO store the channel configs
-
-
-
-                // check for an error
-                if (!it.isSuccess) {
-                    addError(it.error())
-                }
-                // store the results in the database
-                val channelsResponse = it.data()
-                val users = mutableListOf<User>()
-                val configs :MutableMap<String, Config> = mutableMapOf()
-                for (channel in channelsResponse) {
-                    users.add(channel.createdBy)
-                    configs[channel.type] = channel.config
-                    // TODO member loop
-                }
-
-                // store the channel configs
-                insertConfigs(configs)
-
-                // store the users
-                insertUsers(users)
-                // store the channel info
-                insertChannels(channelsResponse)
-
-
-
-            }
-
-        }
-
-
-        return channelsLiveData
-
-
+        val queryRepo = StreamQueryChannelRepository(queryChannelsEntity,  client, this)
+        activeQueryMap[queryChannelsEntity] = queryRepo
+        return queryRepo
     }
 
     fun insertConfigs(configs: MutableMap<String, Config>) {
@@ -502,8 +426,44 @@ class StreamChatRepository(
         return channelStateDao.select(channelCIDs)
     }
 
-    suspend fun selectUsers(userIds: MutableList<String>): List<UserEntity> {
+    suspend fun selectUsers(userIds: List<String>): List<UserEntity> {
         return userDao.select(userIds)
+    }
+
+    fun storeStateForChannel(channel: Channel) {
+        return storeStateForChannels(listOf(channel))
+    }
+
+    fun storeStateForChannels(channelsResponse: List<Channel>) {
+        val users = mutableSetOf<User>()
+        val configs :MutableMap<String, Config> = mutableMapOf()
+        // start by gathering all the users
+        val messages = mutableListOf<Message>()
+        for (channel in channelsResponse) {
+            users.add(channel.createdBy)
+            configs[channel.type] = channel.config
+            for (member in channel.members) {
+                users.add(member.user)
+            }
+            messages.addAll(channel.messages)
+
+            for (message in channel.messages) {
+                users.add(message.user)
+                for (reaction in message.latestReactions) {
+                    reaction.user?.let { users.add(it) }
+                }
+            }
+
+        }
+
+        // store the channel configs
+        insertConfigs(configs)
+        // store the users
+        insertUsers(users.toList())
+        // store the channel data
+        insertChannels(channelsResponse)
+        // store the messages
+        insertMessages(messages)
     }
 
 

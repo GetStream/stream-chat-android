@@ -46,7 +46,6 @@ class ChatRepoIntegrationTest {
         val user = User("broad-lake-3")
         val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
-
         waitForSetUser(client, user, token)
         repo = StreamChatRepository(ApplicationProvider.getApplicationContext(),user.id, client)
         repo.errorEvents.observeForever( EventObserver {
@@ -103,9 +102,10 @@ class ChatRepoIntegrationTest {
         val request = QueryChannelsRequest(query.filter, 0, 100, QuerySort()).withMessages(100)
 
         // runs the query and returns a queryRepo helper object
-        val channels = repo.queryChannels(query, request)
+        val queryRepo = repo.queryChannels(query)
+        queryRepo.query(request)
         // queryRepo exposes the channels livedata object
-        channels.observeForever {
+        queryRepo.channels.observeForever {
 
         }
 
@@ -192,22 +192,5 @@ class ChatRepoIntegrationTest {
     }
 
 
-    @Test
-    fun runQueryChannelsWhileOffline() {
-
-        repo.setOffline()
-        val query = QueryChannelsEntity(
-            FilterObject(
-                "type",
-                "messaging"
-            )
-        )
-        query.sort = QuerySort()
-        System.out.println("Start Test")
-        val request = QueryChannelsRequest(query.filter, 0, 100, QuerySort()).withMessages(100)
-        val channels = repo.queryChannels(query, request)
-
-        System.out.println("Got a value2, yee" + channels.getOrAwaitValue().toString())
-    }
 
 }

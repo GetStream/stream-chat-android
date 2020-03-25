@@ -115,52 +115,28 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
         // store the users...
         // store the messages (and all the user references in it) getUserIds(), getUsers(), enrichUsers(user objects)
         GlobalScope.launch(Dispatchers.IO) {
-            // TODO: handle errors
             val response = channel.watch(ChannelWatchRequest()).execute()
 
             if (!response.isSuccess) {
                 repo.addError(response.error())
             } else {
                 val channelResponse = response.data()
-                // get all the users mentioned here
-                val users = mutableListOf<User>()
-                users.add(channelResponse.createdBy)
-                for (member in channelResponse.members) {
-                    users.add(member.user)
-                }
-                // TODO think we should actually not store watchers (since you can have millions and it changes, should just keep this data in memory only)
-                for (watcher in channelResponse.watchers) {
-                    watcher.user?.let { users.add(it) }
-                }
-                for (message in channelResponse.messages) {
-                    users.add(message.user)
-                    for (reaction in message.latestReactions) {
-                        reaction.user?.let { users.add(it) }
-                    }
-                }
-                // insert users
-                repo.insertUsers(users)
-
-                // store the messages
-                repo.insertMessages(channelResponse.messages)
-
-                // store the channel
-                repo.insertChannel(channelResponse)
+                repo.storeStateForChannel(channelResponse)
             }
-
-
-
-
         }
 
 
     }
 
     fun setWatchers(watchers: List<Watcher>) {
-        _watchers.value = watchers
+        if (watchers != _watchers.value) {
+            _watchers.value = watchers
+        }
     }
 
     fun setWatcherCount(watcherCount: Int) {
-        _watcherCount.value = watcherCount
+        if (watcherCount != _watcherCount.value) {
+            _watcherCount.value = watcherCount
+        }
     }
 }
