@@ -19,6 +19,7 @@ interface ChannelConfigDao {
     @Query(
         "SELECT * FROM stream_chat_channel_config "
     )
+    // TODO verify we use livedata where needed (like here for instance)
     suspend fun selectAll(): List<ChannelConfigEntity>
 
 }

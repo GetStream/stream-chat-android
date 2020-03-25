@@ -16,7 +16,7 @@ data class QueryChannelsEntity(val filter: FilterObject) {
     @PrimaryKey
     var id: String
 
-    var channelCIDs: List<String> = mutableListOf()
+    var channelCIDs: MutableList<String> = mutableListOf()
 
 
     var sort: QuerySort? = null
@@ -24,7 +24,6 @@ data class QueryChannelsEntity(val filter: FilterObject) {
     init {
         id = (Objects.hash(filter) + Objects.hash(sort)).toString()
     }
-
 
     /** we track when the query was created and updated so we can clear out old results */
     var createdAt: Date? = null
