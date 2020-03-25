@@ -73,9 +73,9 @@ class EventsParser(
                     )
                 }
 
-            } else {
-                service.onEvent(parseEvent(event.type, text))
             }
+            service.onEvent(parseEvent(event.type, text))
+
         } else {
             service.onSocketError(
                 ChatNetworkError("Unable to parse message: $text")
@@ -94,6 +94,11 @@ class EventsParser(
 
     private fun parseEvent(type: String, data: String): ChatEvent {
         val result = when (type) {
+
+            // health check
+            EventType.HEALTH_CHECK -> {
+                parser.fromJson(data, ConnectedEvent::class.java)
+            }
 
             //region Messages
 
