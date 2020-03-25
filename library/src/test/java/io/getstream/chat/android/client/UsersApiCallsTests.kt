@@ -80,9 +80,21 @@ class UsersApiCallsTests {
     fun flagSuccess() {
 
         val targetUserId = "target-id"
-        val flag = Flag().apply {
-            user = User().apply { id = targetUserId }
-        }
+        val user = User("user-id")
+        val targetUser = User(targetUserId)
+        val date = Date()
+        val flag = Flag(
+            user,
+            targetUser,
+            "",
+            "",
+            false,
+            date,
+            date,
+            date,
+            date,
+            date
+        )
 
         Mockito.`when`(
             mock.retrofitApi.flag(
@@ -95,7 +107,7 @@ class UsersApiCallsTests {
             targetUserId
         ).execute()
 
-        verifySuccess(result, FlagResponse(flag))
+        verifySuccess(result, flag)
     }
 
     @Test
@@ -112,7 +124,7 @@ class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))))
 
-        val result = client.getUsers(
+        val result = client.queryUsers(
             request
         ).execute()
 
@@ -158,7 +170,7 @@ class UsersApiCallsTests {
 
         val result = client.muteUser(targetUser.id).execute()
 
-        verifySuccess(result, MuteUserResponse(mute, mock.user))
+        verifySuccess(result, mute)
     }
 
     @Test
@@ -181,6 +193,6 @@ class UsersApiCallsTests {
 
         val result = client.unMuteUser(targetUser.id).execute()
 
-        verifySuccess(result, MuteUserResponse(mute, mock.user))
+        verifySuccess(result, mute)
     }
 }

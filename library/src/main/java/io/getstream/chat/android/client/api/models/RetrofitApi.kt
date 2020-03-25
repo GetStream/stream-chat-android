@@ -132,7 +132,7 @@ interface RetrofitApi {
     //region users
 
     @POST("/guest")
-    fun setGuestUser(
+    fun getGuestUser(
         @Query("api_key") apiKey: String,
         @Body body: GuestUserRequest
     ): Call<TokenResponse>
