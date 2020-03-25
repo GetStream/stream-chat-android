@@ -31,8 +31,6 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     /** if the channel is frozen or not (new messages wont be allowed) */
     var frozen: Boolean = false
 
-    // TODO: channel configs should be stored at the channel type level
-
     /** list of the channel members, can be regular members, moderators or admins */
     var members: List<MemberEntity> = mutableListOf()
 

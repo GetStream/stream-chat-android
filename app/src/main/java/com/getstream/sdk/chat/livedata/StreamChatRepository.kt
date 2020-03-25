@@ -60,7 +60,12 @@ class StreamChatRepository(
     }
 
     init {
+
+        // TODO: load channel configs from Room into memory
+
         startListening()
+
+
     }
 
     private val _online = MutableLiveData<Boolean>()
@@ -124,7 +129,7 @@ class StreamChatRepository(
         }
         eventSubscription = client.events().subscribe {
             // keep the data in Room updated based on the various events..
-            // TODO: cache messages and channels to reduce number of Room queries
+            // TODO: cache users, messages and channels to reduce number of Room queries
             GlobalScope.launch(Dispatchers.IO) {
 
                 // any event can have channel and unread count information
@@ -180,7 +185,6 @@ class StreamChatRepository(
                             // get the channel, update reads, write the channel
                             val channel = channelStateDao.select(it.cid)
                             val read = ChannelUserRead()
-                            // TODO: cleanup the !!
                             read.user = it.user!!
                             read.lastRead = it.createdAt
                             channel?.let {

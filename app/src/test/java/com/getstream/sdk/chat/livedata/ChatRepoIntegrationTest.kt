@@ -119,7 +119,6 @@ class ChatRepoIntegrationTest {
     fun runInsertUser() {
         val u = User("mr-tester")
         repo.insertUser(u)
-        // TODO: test reads as well as inserts
     }
 
     @Test

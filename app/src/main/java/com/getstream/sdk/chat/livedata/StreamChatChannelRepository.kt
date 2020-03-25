@@ -91,7 +91,6 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
     fun sendMessage(message: Message) {
         message.id = repo.generateMessageId()
 
-        // TODO: we should probably not use global scope, but a custom scope for chat
         GlobalScope.launch {
             val messageEntity = MessageEntity(message)
 
