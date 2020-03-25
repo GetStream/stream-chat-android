@@ -15,6 +15,8 @@ interface ChannelController {
     fun watch(): Call<Channel>
     fun stopWatching(): Call<Unit>
     fun sendMessage(message: Message): Call<Message>
+    fun updateMessage(message: Message): Call<Message>
+    fun getMessage(messageId: String): Call<Message>
     fun addMembers(members: List<String>): Call<Channel>
     fun removeMembers(members: List<String>): Call<Channel>
     fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>

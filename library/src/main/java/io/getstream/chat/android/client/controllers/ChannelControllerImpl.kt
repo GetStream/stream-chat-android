@@ -41,6 +41,14 @@ internal class ChannelControllerImpl(
         return client.stopWatching(channelType, channelId)
     }
 
+    override fun getMessage(messageId: String): Call<Message> {
+        return client.getMessage(messageId)
+    }
+
+    override fun updateMessage(message: Message): Call<Message> {
+        return client.updateMessage(message)
+    }
+
     override fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
     }
