@@ -19,7 +19,11 @@ interface MessageDao {
     suspend fun insert(messageEntity: MessageEntity)
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
-    fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>>
+    fun messagesForChannelLive(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>>
+
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
+    fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): List<MessageEntity>
+
 
     @Query(
         "SELECT * FROM stream_chat_message " +

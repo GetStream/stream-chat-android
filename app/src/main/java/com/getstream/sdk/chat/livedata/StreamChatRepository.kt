@@ -290,12 +290,16 @@ class StreamChatRepository(
 
     fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>> {
         var messagesLiveData = liveData(Dispatchers.IO) {
-            val messages = messageDao.messagesForChannel(cid, limit, offset)
+            val messages = messageDao.messagesForChannelLive(cid, limit, offset)
             emitSource(messages)
         }
         return messagesLiveData
     }
 
+    suspend fun selectMessagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): List<MessageEntity> {
+
+        return messageDao.messagesForChannel(cid, limit, offset)
+    }
 
 
 
@@ -442,6 +446,10 @@ class StreamChatRepository(
         for (userEntity in userEntities) {
             userMap[userEntity.id] = userEntity.toUser()
         }
+        client.getCurrentUser()?.let {
+            userMap[it.id] = it
+        }
+
         return userMap
     }
 
@@ -451,6 +459,12 @@ class StreamChatRepository(
         // start by gathering all the users
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
+
+            activeChannelMap.get(channel.cid)?.let {
+                it.setWatchers(channel.watchers)
+                it.setWatcherCount(channel.watcherCount)
+            }
+
             users.add(channel.createdBy)
             configs[channel.type] = channel.config
             for (member in channel.members) {
@@ -480,17 +494,18 @@ class StreamChatRepository(
         insertMessages(messages)
     }
 
-    suspend fun selectAndEnrichChannels(channelId: String): List<Channel> {
-        return selectAndEnrichChannels(listOf(channelId))
+    suspend fun selectAndEnrichChannel(channelId: String, messageLimit: Int = 0): Channel {
+        return selectAndEnrichChannels(listOf(channelId), messageLimit)[0]
     }
 
-    suspend fun selectAndEnrichChannels(channelIds: List<String>): List<Channel> {
+    suspend fun selectAndEnrichChannels(channelIds: List<String>, messageLimit: Int = 0): List<Channel> {
 
         // fetch the channel entities from room
         val channelEntities = selectChannelEntities(channelIds)
 
         // gather the user ids from channels, members and the last message
         val userIds = mutableSetOf<String>()
+        val channelMessagesMap = mutableMapOf<String, List<MessageEntity>>()
         for (channelEntity in channelEntities) {
             channelEntity.createdByUserId?.let { userIds.add(it) }
             channelEntity.members?.let {
@@ -506,6 +521,16 @@ class StreamChatRepository(
             channelEntity.lastMessage?.let {
                 userIds.add(it.userId)
             }
+            if (messageLimit> 0) {
+                val messages = selectMessagesForChannel(channelEntity.cid, messageLimit)
+                for (message in messages) {
+                    userIds.add(message.userId)
+                    for (reaction in message.latestReactions) {
+                        userIds.add(reaction.userId)
+                    }
+                }
+                channelMessagesMap[channelEntity.cid] = messages
+            }
         }
 
         // get a map with user id to User
@@ -515,6 +540,13 @@ class StreamChatRepository(
         val channels = mutableListOf<Channel>()
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
+
+            if (messageLimit > 0) {
+                val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
+                val messages = messageEntities.map { it.toMessage(userMap) }
+                channel.messages = messages
+            }
+
             channels.add(channel)
         }
         return channels.toList()

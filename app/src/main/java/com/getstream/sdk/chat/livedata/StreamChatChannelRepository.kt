@@ -1,13 +1,11 @@
 package com.getstream.sdk.chat.livedata
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.livedata.entity.MessageEntity
 import com.getstream.sdk.chat.livedata.entity.ReactionEntity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +21,7 @@ import kotlinx.coroutines.launch
  * The most commonly used livedata objects are
  *
  * - channelRepo.messages (the livedata for the list of messages)
- * - channelRepo.name (livedata object with the channel name etc.)
+ * - channelRepo.channel (livedata object with the channel name, image, members etc.)
  * - channelRepo.members (livedata object with the members of this channel)
  * - channelRepo.watchers (the people currently watching this channel)
  * - channelRepo.messageAndReads (interleaved list of messages and how far users have read)
@@ -35,18 +33,53 @@ import kotlinx.coroutines.launch
  */
 class StreamChatChannelRepository(var channelType: String, var channelId: String, var client: ChatClient, var repo: StreamChatRepository) {
 
-    val channel = client.channel(channelType, channelId)
+    val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
 
     private val logger = ChatLogger.get("ChatChannelRepo")
 
-    lateinit var messages: LiveData<List<Message>>
+    private val _messages = MutableLiveData<List<Message>>()
+    /** LiveData object with the messages */
+    val messages : LiveData<List<Message>> = _messages
+
+    // TODO: should we expose a loading and loading more object?
+
+    private val _channel = MutableLiveData<Channel>()
+    /** LiveData object with the channel information (members, data etc.) */
+    val channel : LiveData<Channel> = _channel
 
     private val _watcherCount = MutableLiveData<Int>()
     val watcherCount : LiveData<Int> = _watcherCount
 
     private val _watchers = MutableLiveData<List<Watcher>>()
     val watchers : LiveData<List<Watcher>> = _watchers
+
+
+    fun watch() {
+        GlobalScope.launch(Dispatchers.IO) {
+            // first we load the data from room and update the messages and channel livedata
+            val channel = repo.selectAndEnrichChannel(cid, 100)
+            _messages.value = channel.messages
+            // for pagination we cant use channel.messages, so discourage that
+            // TODO: this isn't right, they need to be live data objects coming from room to pick up on changes from events
+            channel.messages = emptyList()
+            _channel.value = channel
+
+            // next we run the actual API call
+            val response = channelController.watch(ChannelWatchRequest()).execute()
+
+            if (!response.isSuccess) {
+                repo.addError(response.error())
+            } else {
+                val channelResponse = response.data()
+
+
+                repo.storeStateForChannel(channelResponse)
+            }
+        }
+
+
+    }
 
 
     /**
@@ -74,7 +107,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
 
             if (repo.isOnline()) {
-                channel.sendMessage(message)
+                channelController.sendMessage(message)
             }
         }
 
@@ -108,25 +141,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
     }
 
-    fun watch() {
-        messages = repo.messagesForChannel(cid)
-        // TODO: do the whole read and store better here
 
-        // store the users...
-        // store the messages (and all the user references in it) getUserIds(), getUsers(), enrichUsers(user objects)
-        GlobalScope.launch(Dispatchers.IO) {
-            val response = channel.watch(ChannelWatchRequest()).execute()
-
-            if (!response.isSuccess) {
-                repo.addError(response.error())
-            } else {
-                val channelResponse = response.data()
-                repo.storeStateForChannel(channelResponse)
-            }
-        }
-
-
-    }
 
     fun setWatchers(watchers: List<Watcher>) {
         if (watchers != _watchers.value) {
