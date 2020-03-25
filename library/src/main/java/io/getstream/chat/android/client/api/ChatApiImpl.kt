@@ -493,7 +493,7 @@ class ChatApiImpl(
         }
     }
 
-    override fun getUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
+    override fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>> {
         return callMapper.map(
             retrofitApi.queryUsers(
                 apiKey,

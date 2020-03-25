@@ -124,7 +124,7 @@ class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))))
 
-        val result = client.getUsers(
+        val result = client.queryUsers(
             request
         ).execute()
 

@@ -95,7 +95,7 @@ interface ChatApi {
 
     fun getGuestUser(userId: String, userName: String): Call<GuestUser>
 
-    fun getUsers(queryUsers: QueryUsersRequest): Call<List<User>>
+    fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,

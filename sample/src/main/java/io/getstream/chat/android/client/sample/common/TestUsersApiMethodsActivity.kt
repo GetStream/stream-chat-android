@@ -123,7 +123,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun getUsers() {
-        client.getUsers(getQueryUserRequest()).enqueue { result ->
+        client.queryUsers(getQueryUserRequest()).enqueue { result ->
 
             if (result.isSuccess) {
                 Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()

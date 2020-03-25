@@ -79,7 +79,7 @@ interface ChatClient {
 
     //region Users
 
-    fun getUsers(query: QueryUsersRequest): Call<List<User>>
+    fun queryUsers(query: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,

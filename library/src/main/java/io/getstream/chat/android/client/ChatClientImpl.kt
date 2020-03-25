@@ -319,8 +319,8 @@ internal class ChatClientImpl(
         }
     }
 
-    override fun getUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.getUsers(query)
+    override fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
+        return api.queryUsers(query)
     }
 
     override fun addMembers(
