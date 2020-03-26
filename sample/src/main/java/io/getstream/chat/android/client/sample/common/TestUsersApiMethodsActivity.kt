@@ -157,17 +157,13 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun muteUser() {
-        client.muteUser(
-            targetId = "stream-eugene"
-        ).enqueue { result ->
+        client.muteUser("stream-eugene").enqueue { result ->
             //echoResult(result, "Member muted successful")
         }
     }
 
     private fun unMuteUser() {
-        client.unmuteUser(
-            targetId = "stream-eugene"
-        ).enqueue { result ->
+        client.unmuteUser("stream-eugene").enqueue { result ->
             //echoResult(result, "Member unmuted successful")
         }
     }
