@@ -26,6 +26,23 @@ internal class ChannelControllerImpl(
         }
     }
 
+    override fun create(channelType: String, extraData: Map<String, Any>): Call<Channel> {
+        return create(channelType, "", extraData)
+    }
+
+    override fun create(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> {
+        val request = ChannelQueryRequest().withData(extraData)
+        return client.queryChannel(channelType, channelId, request)
+    }
+
+    override fun create(channelType: String, channelId: String, members: List<String>): Call<Channel> {
+        return create(channelType, channelId, mapOf(Pair("members", members)))
+    }
+
+    override fun create(channelType: String, members: List<String>): Call<Channel> {
+        return create(channelType, "", members)
+    }
+
     override fun query(request: ChannelQueryRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }

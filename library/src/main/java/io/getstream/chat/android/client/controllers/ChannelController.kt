@@ -39,4 +39,8 @@ interface ChannelController {
     fun update(message: Message, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>
+    fun create(channelType: String, channelId: String, members: List<String>): Call<Channel>
+    fun create(channelType: String, members: List<String>): Call<Channel>
+    fun create(channelType: String, extraData: Map<String, Any>): Call<Channel>
+    fun create(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
 }
