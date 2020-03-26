@@ -49,6 +49,7 @@ class StreamChatRepository(
     private lateinit var channelConfigDao: ChannelConfigDao
     private val logger = ChatLogger.get("ChatRepo")
 
+
     constructor(context: Context, userId: String, client: ChatClient): this(client) {
         val database = ChatDatabase.getDatabase(context, userId)
         channelQueryDao = database.queryChannelsQDao()
@@ -61,11 +62,16 @@ class StreamChatRepository(
 
     init {
 
-        // TODO: load channel configs from Room into memory
+        // load channel configs from Room into memory
+        GlobalScope.launch {
+            val configEntities = channelConfigDao.selectAll()
+            for (configEntity in configEntities) {
+                channelConfigs[configEntity.channelType] = configEntity.config
+            }
+        }
 
+        // start listening for events
         startListening()
-
-
     }
 
     private val _online = MutableLiveData<Boolean>()
@@ -119,6 +125,8 @@ class StreamChatRepository(
 
     /** stores the mapping from cid to channelRepository */
     var activeQueryMap: MutableMap<QueryChannelsEntity, StreamQueryChannelRepository> = mutableMapOf()
+
+    var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
     /**
      * Start listening to chat events and keep the room database in sync
@@ -237,9 +245,6 @@ class StreamChatRepository(
         }
         return activeChannelMap.getValue(cid)
     }
-
-
-
 
     fun generateMessageId(): String {
         checkNotNull(client.getCurrentUser()) {"client.getCurrentUser() must be available to generate a message id"}
@@ -489,6 +494,7 @@ class StreamChatRepository(
         }
 
         // store the channel configs
+        // TODO: only store if the data changed
         insertConfigs(configs)
         // store the users
         insertUsers(users.toList())
@@ -544,6 +550,10 @@ class StreamChatRepository(
         val channels = mutableListOf<Channel>()
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
+            // get the config we have stored offline
+            channelConfigs.get(channel.type)?.let {
+                channel.config = it
+            }
 
             if (messageLimit > 0) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
