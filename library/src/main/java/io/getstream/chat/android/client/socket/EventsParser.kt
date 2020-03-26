@@ -26,7 +26,6 @@ class EventsParser(
     override fun onMessage(webSocket: WebSocket, text: String) {
 
         logger.logI("onMessage: $text")
-        System.out.println("onMessage $text")
 
         val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
         val errorData = errorMessage.data()
@@ -49,7 +48,6 @@ class EventsParser(
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         logger.logE("onFailure", t)
-        System.out.println("onFailure $t $response")
         // Called when socket is disconnected by client also (client.disconnect())
         // See issue here https://stream-io.atlassian.net/browse/CAS-88
         service.onSocketError(ChatNetworkError("listener.onFailure error. reconnecting", t))

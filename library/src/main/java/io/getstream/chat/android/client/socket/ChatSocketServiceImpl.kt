@@ -11,7 +11,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import java.io.UnsupportedEncodingException
-import java.lang.Thread.sleep
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -41,8 +40,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     }
 
     fun onSocketError(error: ChatError) {
-        System.out.println("onSocketError $error")
-        sleep(1000)
 
         if (state is State.Connected || state is State.Connecting) {
             updateState(State.Error(error))
