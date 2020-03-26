@@ -34,26 +34,57 @@ class ChatApiImpl(
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
         callback: ProgressCallback
     ) {
         val body = ProgressRequestBody(
             file,
-            mimeType,
+            null,
             callback
         )
         val part = createFormData("file", file.name, body)
 
-        if (mimeType.contains("image")) {
-            retrofitCdnApi.sendImage(
-                channelType,
-                channelId,
-                part,
-                apiKey,
-                userId,
-                connectionId
-            ).enqueue(RetroProgressCallback(callback))
-        } else {
+        retrofitCdnApi.sendFile(
+            channelType,
+            channelId,
+            part,
+            apiKey,
+            userId,
+            connectionId
+        ).enqueue(RetroProgressCallback(callback))
+    }
+
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback
+    ) {
+        val body = ProgressRequestBody(
+            file,
+            null,
+            callback
+        )
+        val part = createFormData("file", file.name, body)
+
+        retrofitCdnApi.sendImage(
+            channelType,
+            channelId,
+            part,
+            apiKey,
+            userId,
+            connectionId
+        ).enqueue(RetroProgressCallback(callback))
+    }
+
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        file: File
+    ): Call<String> {
+
+        val part = createFormData("file", file.name, file.asRequestBody())
+
+        return callMapper.map(
             retrofitCdnApi.sendFile(
                 channelType,
                 channelId,
@@ -61,46 +92,28 @@ class ChatApiImpl(
                 apiKey,
                 userId,
                 connectionId
-            ).enqueue(RetroProgressCallback(callback))
-        }
+            )
+        ).map { it.file }
     }
 
-    override fun sendFile(
+    override fun sendImage(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
     ): Call<String> {
 
         val part = createFormData("file", file.name, file.asRequestBody())
 
-        if (mimeType.contains("image")) {
-            return callMapper.map(
-                retrofitCdnApi.sendImage(
-                    channelType,
-                    channelId,
-                    part,
-                    apiKey,
-                    userId,
-                    connectionId
-                )
-            ).map {
-                it.file
-            }
-        } else {
-            return callMapper.map(
-                retrofitCdnApi.sendFile(
-                    channelType,
-                    channelId,
-                    part,
-                    apiKey,
-                    userId,
-                    connectionId
-                )
-            ).map {
-                it.file
-            }
-        }
+        return callMapper.map(
+            retrofitCdnApi.sendImage(
+                channelType,
+                channelId,
+                part,
+                apiKey,
+                userId,
+                connectionId
+            )
+        ).map { it.file }
     }
 
     override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {

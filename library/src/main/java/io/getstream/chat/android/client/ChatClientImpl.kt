@@ -100,19 +100,34 @@ internal class ChatClientImpl(
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
         callback: ProgressCallback
     ) {
-        api.sendFile(channelType, channelId, file, mimeType, callback)
+        api.sendFile(channelType, channelId, file, callback)
+    }
+
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
+        callback: ProgressCallback
+    ) {
+        api.sendImage(channelType, channelId, file, callback)
     }
 
     override fun sendFile(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
     ): Call<String> {
-        return api.sendFile(channelType, channelId, file, mimeType)
+        return api.sendFile(channelType, channelId, file)
+    }
+
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File
+    ): Call<String> {
+        return api.sendImage(channelType, channelId, file)
     }
 
     override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {

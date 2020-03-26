@@ -50,15 +50,26 @@ interface ChatClient {
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
         callback: ProgressCallback
     )
 
     fun sendFile(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
+    ): Call<String>
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File
     ): Call<String>
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
