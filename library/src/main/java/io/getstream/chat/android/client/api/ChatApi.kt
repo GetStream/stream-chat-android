@@ -17,15 +17,26 @@ interface ChatApi {
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
         callback: ProgressCallback
     )
 
     fun sendFile(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
+    ): Call<String>
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File
     ): Call<String>
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -47,7 +58,7 @@ interface ChatApi {
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
     fun sendReaction(reaction: Reaction): Call<Reaction>
-    fun sendReaction(messageId: String, reactionType:String): Call<Reaction>
+    fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>
     fun sendAction(request: SendActionRequest): Call<Message>

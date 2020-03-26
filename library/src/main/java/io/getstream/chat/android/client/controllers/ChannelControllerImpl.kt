@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -19,7 +20,7 @@ internal class ChannelControllerImpl(
 
     private val cid = "$channelType:$channelId"
 
-    fun events(): ChatObservable {
+    override fun events(): ChatObservable {
         return client.events().filter { event ->
             event.isFrom(cid)
         }
@@ -49,16 +50,12 @@ internal class ChannelControllerImpl(
         return client.updateMessage(message)
     }
 
+    override fun deleteMessage(messageId: String): Call<Message> {
+        return client.deleteMessage(messageId)
+    }
+
     override fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
-    }
-
-    override fun addMembers(members: List<String>): Call<Channel> {
-        return client.addMembers(channelType, channelId, members)
-    }
-
-    override fun removeMembers(members: List<String>): Call<Channel> {
-        return client.removeMembers(channelType, channelId, members)
     }
 
     override fun banUser(targetId: String, reason: String, timout: Int): Call<Unit> {
@@ -67,14 +64,6 @@ internal class ChannelControllerImpl(
 
     override fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit> {
         return client.unBanUser(targetId, channelType, channelId)
-    }
-
-    override fun sendFile(file: File, mimeType: String, callback: ProgressCallback) {
-        client.sendFile(channelType, channelId, file, mimeType, callback)
-    }
-
-    override fun sendFile(file: File, mimeType: String): Call<String> {
-        return client.sendFile(channelType, channelId, file, mimeType)
     }
 
     override fun markMessageRead(messageId: String): Call<Unit> {
@@ -95,5 +84,49 @@ internal class ChannelControllerImpl(
 
     override fun hide(clearHistory: Boolean): Call<Unit> {
         return client.hideChannel(channelType, channelId, clearHistory)
+    }
+
+    override fun sendFile(file: File): Call<String> {
+        return client.sendFile(channelType, channelId, file)
+    }
+
+    override fun sendImage(file: File): Call<String> {
+        return client.sendImage(channelType, channelId, file)
+    }
+
+    override fun sendFile(file: File, callback: ProgressCallback): Call<String> {
+        return client.sendFile(channelType, channelId, file)
+    }
+
+    override fun sendImage(file: File, callback: ProgressCallback): Call<String> {
+        return client.sendImage(channelType, channelId, file)
+    }
+
+    override fun sendReaction(reaction: Reaction): Call<Reaction> {
+        return client.sendReaction(reaction)
+    }
+
+    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
+        return client.deleteReaction(messageId, reactionType)
+    }
+
+    override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
+        return client.getReactions(messageId, offset, limit)
+    }
+
+    override fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>> {
+        return client.getRepliesMore(messageId, firstReactionId, limit)
+    }
+
+    override fun update(message: Message, extraData: Map<String, Any>): Call<Channel> {
+        return client.updateChannel(channelType, channelId, message, extraData)
+    }
+
+    override fun addMembers(vararg userIds: String): Call<Channel> {
+        return client.addMembers(channelType, channelId, userIds.toList())
+    }
+
+    override fun removeMembers(vararg userIds: String): Call<Channel> {
+        return client.removeMembers(channelType, channelId, userIds.toList())
     }
 }

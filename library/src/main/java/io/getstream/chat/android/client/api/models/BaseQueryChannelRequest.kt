@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 abstract class BaseQueryChannelRequest<T : BaseQueryChannelRequest<T>> {
 
     @SerializedName("state")
-    protected var state = false
+    var state = false
     @SerializedName("watch")
     var watch = false
     @SerializedName("presence")

@@ -4,7 +4,6 @@ import android.os.Handler
 import android.os.Looper
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File
@@ -13,12 +12,12 @@ import java.io.FileInputStream
 
 class ProgressRequestBody(
     private val file: File,
-    private val contentType: String,
+    private val contentType: String?,
     private val callback: ProgressCallback
 ) : RequestBody() {
 
     override fun contentType(): MediaType? {
-        return contentType.toMediaTypeOrNull()
+        return null
     }
 
     override fun contentLength(): Long {
