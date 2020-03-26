@@ -104,6 +104,8 @@ interface ChatApi {
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     fun markAllRead(): Call<EventResponse>
 
+    fun updateUsers(users: List<User>): Call<List<User>>
+
     fun getGuestUser(userId: String, userName: String): Call<GuestUser>
 
     fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>>

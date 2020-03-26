@@ -334,6 +334,14 @@ internal class ChatClientImpl(
         }
     }
 
+    override fun updateUsers(users: List<User>): Call<List<User>> {
+        return api.updateUsers(users)
+    }
+
+    override fun updateUser(user: User): Call<User> {
+        return updateUsers(listOf(user)).map { it.first() }
+    }
+
     override fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
     }
@@ -364,7 +372,7 @@ internal class ChatClientImpl(
 
     override fun unmuteUser(targetUserId: String) = api.unmuteUser(targetUserId)
 
-    override fun unmuteCurrentUser(): Call<Mute>  = api.unmuteCurrentUser()
+    override fun unmuteCurrentUser(): Call<Mute> = api.unmuteCurrentUser()
 
     override fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 

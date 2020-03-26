@@ -354,6 +354,22 @@ class ChatApiImpl(
         }
     }
 
+    override fun updateUsers(users: List<User>): Call<List<User>> {
+
+        val map = users.associateBy({ it.id }, { user -> user })
+
+        return callMapper.map(
+            retrofitApi.updateUsers(
+                connectionId,
+                UpdateUsersRequest(map)
+            )
+        ).map { response ->
+            response.users.flatMap {
+                listOf(it.value)
+            }
+        }
+    }
+
     override fun queryChannel(
         channelType: String,
         channelId: String,
