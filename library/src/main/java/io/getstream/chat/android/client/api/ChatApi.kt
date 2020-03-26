@@ -120,13 +120,13 @@ interface ChatApi {
         members: List<String>
     ): Call<Channel>
 
-    fun muteUser(
-        targetId: String
-    ): Call<Mute>
+    fun muteCurrentUser(): Call<Mute>
 
-    fun unMuteUser(
-        targetId: String
-    ): Call<Mute>
+    fun muteUser(userId: String): Call<Mute>
+
+    fun unmuteUser(userId: String): Call<Mute>
+
+    fun unmuteCurrentUser(): Call<Mute>
 
     fun flag(
         targetId: String

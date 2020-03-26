@@ -191,7 +191,7 @@ class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)))
 
-        val result = client.unMuteUser(targetUser.id).execute()
+        val result = client.unmuteUser(targetUser.id).execute()
 
         verifySuccess(result, mute)
     }

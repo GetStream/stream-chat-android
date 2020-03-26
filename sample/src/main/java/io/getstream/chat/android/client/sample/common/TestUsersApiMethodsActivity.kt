@@ -165,7 +165,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun unMuteUser() {
-        client.unMuteUser(
+        client.unmuteUser(
             targetId = "stream-eugene"
         ).enqueue { result ->
             //echoResult(result, "Member unmuted successful")

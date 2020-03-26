@@ -459,6 +459,14 @@ class ChatApiImpl(
         }
     }
 
+    override fun muteCurrentUser(): Call<Mute> {
+        return muteUser(userId)
+    }
+
+    override fun unmuteCurrentUser(): Call<Mute> {
+        return unmuteUser(userId)
+    }
+
     override fun acceptInvite(
         channelType: String,
         channelId: String,
@@ -545,28 +553,28 @@ class ChatApiImpl(
     ).map { flattenChannel(it) }
 
     override fun muteUser(
-        targetId: String
+        userId: String
     ): Call<Mute> {
         return callMapper.map(
             retrofitApi.muteUser(
                 apiKey,
-                userId,
+                this.userId,
                 connectionId,
-                MuteUserRequest(targetId, userId)
+                MuteUserRequest(userId, this.userId)
             )
         ).map { it.mute }
     }
 
-    override fun unMuteUser(
-        targetId: String
+    override fun unmuteUser(
+        userId: String
     ): Call<Mute> {
 
         return callMapper.map(
             retrofitApi.unMuteUser(
                 apiKey,
-                userId,
+                this.userId,
                 connectionId,
-                MuteUserRequest(targetId, userId)
+                MuteUserRequest(userId, this.userId)
             )
         ).map { it.mute }
     }

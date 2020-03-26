@@ -44,6 +44,14 @@ interface ChatClient {
 
     fun channel(channelType: String, channelId: String): ChannelController
 
+    fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
+
+    fun createChannel(channelType: String, members: List<String>): Call<Channel>
+
+    fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
+
+    fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
+
     //region CDN
 
     fun sendFile(
@@ -104,8 +112,10 @@ interface ChatClient {
         members: List<String>
     ): Call<Channel>
 
-    fun muteUser(targetId: String): Call<Mute>
-    fun unMuteUser(targetId: String): Call<Mute>
+    fun muteUser(userId: String): Call<Mute>
+    fun muteCurrentUser(): Call<Mute>
+    fun unmuteUser(userId: String): Call<Mute>
+    fun unmuteCurrentUser(): Call<Mute>
     fun flag(targetId: String): Call<Flag>
     fun banUser(
         targetId: String,
