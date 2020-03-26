@@ -14,6 +14,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.shadows.ShadowLooper
+import java.lang.Thread.sleep
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -41,6 +44,7 @@ class ChatClientIntegrationTest {
         val latch = CountDownLatch(1)
         val user = User("broad-lake-3")
         val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
+        logger.logI("Waiting for setUser to trigger callback...")
         client.setUser(user, token, object: InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 logger.logI("setUser onSuccess")
@@ -51,6 +55,8 @@ class ChatClientIntegrationTest {
                 logger.logE("setUser onError", error)
             }
         })
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         if (!latch.await(2, TimeUnit.SECONDS)) {
             throw TimeoutException("setUser onSuccess wasn't called")
         }
@@ -68,7 +74,12 @@ class ChatClientIntegrationTest {
                 latch.countDown()
             }
         }
+        logger.logI("Waiting for setUser to trigger ConnectedEvent...")
         client.setUser(user, token)
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+
+        // stay alive so we don't reset the debugger while debugging this
         if (!latch.await(2, TimeUnit.SECONDS)) {
             throw TimeoutException("ConnectedEvent wasnt received")
         }

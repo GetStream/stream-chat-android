@@ -72,7 +72,8 @@ class EventsParser(
                 }
 
             }
-            service.onEvent(parseEvent(event.type, text))
+            val parsedEvent = parseEvent(event.type, text)
+            service.onEvent(parsedEvent)
 
         } else {
             service.onSocketError(

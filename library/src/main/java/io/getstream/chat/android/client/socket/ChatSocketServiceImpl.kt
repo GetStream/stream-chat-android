@@ -96,7 +96,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
-        eventHandler.sendMessage(eventMsg)
+        val success = eventHandler.sendMessage(eventMsg)
     }
 
     internal fun sendEvent(event: ChatEvent) {
