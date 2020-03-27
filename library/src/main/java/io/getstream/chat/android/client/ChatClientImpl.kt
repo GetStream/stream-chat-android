@@ -370,7 +370,7 @@ internal class ChatClientImpl(
 
     override fun muteUser(userId: String) = api.muteUser(userId)
 
-    override fun unmuteUser(targetUserId: String) = api.unmuteUser(targetUserId)
+    override fun unmuteUser(userId: String) = api.unmuteUser(userId)
 
     override fun unmuteCurrentUser(): Call<Mute> = api.unmuteCurrentUser()
 
