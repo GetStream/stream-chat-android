@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.EventConsumer
 import io.getstream.chat.android.client.utils.TestInitListener
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
 import org.awaitility.Awaitility.await
@@ -26,12 +28,14 @@ class ClientInstrumentationTests {
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
     val userId = "bender"
     lateinit var context: Context
-    lateinit var listener: TestInitListener
+    lateinit var setUserListener: TestInitListener
+    lateinit var eventConsumer: EventConsumer
 
     @Before
     fun before() {
         context = getInstrumentation().targetContext
-        listener = TestInitListener()
+        setUserListener = TestInitListener()
+        eventConsumer = EventConsumer(ConnectedEvent::class.java)
     }
 
     @Test
@@ -39,9 +43,12 @@ class ClientInstrumentationTests {
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), token, listener)
+            client.setUser(User(userId), token, setUserListener)
+            client.events().subscribe { event -> eventConsumer.onEvent(event) }
+
         }.andThen {
-            await().atMost(5, SECONDS).until { listener.onSuccessIsCalled() }
+            await().atMost(5, SECONDS).until { setUserListener.onSuccessIsCalled() }
+            await().atMost(5, SECONDS).until { eventConsumer.isReceived() }
         }
 
     }
@@ -53,9 +60,9 @@ class ClientInstrumentationTests {
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
-            client.setUser(User(userId), invalidToken, listener)
+            client.setUser(User(userId), invalidToken, setUserListener)
         }.andThen {
-            await().atMost(5, SECONDS).until { listener.onErrorIsCalled() }
+            await().atMost(5, SECONDS).until { setUserListener.onErrorIsCalled() }
         }
     }
 

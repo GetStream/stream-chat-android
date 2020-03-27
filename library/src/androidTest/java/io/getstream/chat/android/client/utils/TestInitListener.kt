@@ -5,8 +5,8 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 
 class TestInitListener : InitConnectionListener() {
 
-    var data: ConnectionData? = null
-    var error: ChatError? = null
+    private var data: ConnectionData? = null
+    private var error: ChatError? = null
 
     fun onSuccessIsCalled(): Boolean {
         return data != null
