@@ -1,11 +1,21 @@
 package io.getstream.chat.android.client.call
 
+import androidx.annotation.UiThread
+import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
 interface Call<T> {
+
+    @WorkerThread
     fun execute(): Result<T>
+
+    @UiThread
     fun enqueue(callback: (Result<T>) -> Unit)
+
+    @UiThread
+    fun enqueue()
+
     fun cancel()
     fun <K> map(mapper: (T) -> K): Call<K>
     fun onError(handler: (ChatError) -> Unit): Call<T>
