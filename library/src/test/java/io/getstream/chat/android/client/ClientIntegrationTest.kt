@@ -55,7 +55,7 @@ class ChatClientIntegrationTest {
                 logger.logE("setUser onError", error)
             }
         })
-        sleep(1000)
+        sleep(2000)
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         if (!latch.await(2, TimeUnit.SECONDS)) {
             throw TimeoutException("setUser onSuccess wasn't called")
@@ -69,14 +69,14 @@ class ChatClientIntegrationTest {
         val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
         client.events().subscribe {
-            logger.logI("event received $it")
+            System.out.println("event received $it")
             if (it is ConnectedEvent) {
                 latch.countDown()
             }
         }
         logger.logI("Waiting for setUser to trigger ConnectedEvent...")
         client.setUser(user, token)
-        sleep(1000)
+        sleep(2000)
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
 
         // stay alive so we don't reset the debugger while debugging this

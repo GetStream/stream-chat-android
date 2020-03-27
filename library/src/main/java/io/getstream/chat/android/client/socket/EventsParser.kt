@@ -71,9 +71,11 @@ class EventsParser(
                     )
                 }
 
+            } else {
+                val parsedEvent = parseEvent(event.type, text)
+                service.onEvent(parsedEvent)
             }
-            val parsedEvent = parseEvent(event.type, text)
-            service.onEvent(parsedEvent)
+
 
         } else {
             service.onSocketError(
@@ -93,11 +95,6 @@ class EventsParser(
 
     private fun parseEvent(type: String, data: String): ChatEvent {
         val result = when (type) {
-
-            // health check
-            EventType.HEALTH_CHECK -> {
-                parser.fromJson(data, ConnectedEvent::class.java)
-            }
 
             //region Messages
 
