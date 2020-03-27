@@ -2,11 +2,11 @@ package com.getstream.sdk.chat.livedata.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 
@@ -86,7 +86,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     constructor(m: Message): this(m.id, m.cid, m.getUserId()) {
         text = m.text
         attachments = m.attachments
-        // TODO: sync status should also be visible on the Message, not just the entity
+        syncStatus = m.syncStatus
         type = m.type
         replyCount = m.replyCount
         createdAt = m.createdAt
@@ -123,6 +123,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.commandInfo = commandInfo
         m.extraData = extraData
         m.reactionCounts = reactionCounts
+        m.syncStatus = syncStatus
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()

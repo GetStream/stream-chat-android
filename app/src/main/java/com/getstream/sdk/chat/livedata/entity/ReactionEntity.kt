@@ -2,9 +2,9 @@ package com.getstream.sdk.chat.livedata.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.getstream.sdk.chat.livedata.SyncStatus
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 /**

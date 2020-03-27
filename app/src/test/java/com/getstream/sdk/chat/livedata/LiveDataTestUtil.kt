@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -60,17 +61,9 @@ fun waitForSetUser(
             latch.countDown()
         }
     }
-    client.setUser(user, token, object: InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            System.out.println("setUser onSuccess")
-            //latch.countDown()
-        }
-
-        override fun onError(error: ChatError) {
-            System.out.println("setUser failed")
-            throw TimeoutException("setUser failed")
-        }
-    })
+    client.setUser(user, token)
+    Thread.sleep(1000)
+    ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
     if (!latch.await(time, timeUnit)) {
         throw TimeoutException("setUser never completed")
     }

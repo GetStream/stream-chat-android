@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.livedata.converter
 
 import android.util.ArrayMap
 import androidx.room.TypeConverter
-import com.getstream.sdk.chat.livedata.SyncStatus
 import com.getstream.sdk.chat.livedata.entity.ChannelUserReadEntity
 import com.getstream.sdk.chat.livedata.entity.MemberEntity
 import com.getstream.sdk.chat.livedata.entity.ReactionEntity
@@ -10,6 +9,7 @@ import com.getstream.sdk.chat.livedata.gson
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.utils.SyncStatus
 
 class Converter {
     @TypeConverter

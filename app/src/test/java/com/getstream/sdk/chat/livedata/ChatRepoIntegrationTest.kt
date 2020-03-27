@@ -16,13 +16,18 @@ import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 import java.util.*
 
@@ -59,10 +64,120 @@ class ChatRepoIntegrationTest {
     }
 
     @Test
-    fun getMessages() {
+    fun watchSetsMessagesAndChannel() {
         val channelRepo = repo.channel("messaging", "test123")
         channelRepo.watch()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        val messages = channelRepo.messages.getOrAwaitValue()
+        val channel = channelRepo.channel.getOrAwaitValue()
+        sleep(1000)
 
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        assertThat(messages).isNotNull()
+        assertThat(channel).isNotNull()
+
+        // TODO:
+
+    }
+
+    /**
+     * test that a message added only to the local storage is picked up
+     */
+    @Test
+    fun watchSetsMessagesAndChannelOffline() {
+        repo.setOffline()
+        val channelRepo = repo.channel("messaging", "test123")
+        // setup an offline message
+        val message = Message()
+        message.user = User("thierry")
+        message.cid = channelRepo.cid
+        message.syncStatus = SyncStatus.SYNC_NEEDED
+        val c = Channel()
+        c.type = "messaging"
+        c.id = "test123"
+        c.cid = "${c.type}:${c.id}"
+        c.createdBy = User("john")
+        repo.insertUser(c.createdBy)
+        repo.insertUser(message.user)
+        repo.insertChannel(c)
+
+        repo.insertMessage(message)
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        channelRepo.watch()
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        val messages = channelRepo.messages.getOrAwaitValue()
+        val channel = channelRepo.channel.getOrAwaitValue()
+
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        assertThat(messages).isNotEmpty()
+        assertThat(channel).isNotNull()
+    }
+
+    /**
+     * test that a message added only to the local storage is picked up
+     */
+    @Test
+    fun watchSetsMessagesAndChannelOnline() {
+        repo.setOnline()
+        val channelRepo = repo.channel("messaging", "testabc")
+        // setup an online message
+        val message = Message()
+        message.cid = channelRepo.cid
+        message.syncStatus = SyncStatus.SYNC_NEEDED
+        // create the channel
+        channelRepo.channelController.watch().execute()
+        // write a message
+        val result = channelRepo.channelController.sendMessage(message).execute()
+
+        channelRepo.watch()
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+
+        val messages = channelRepo.messages.getOrAwaitValue()
+        val channel = channelRepo.channel.getOrAwaitValue()
+
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        assertThat(messages.size).isGreaterThan(0)
+        assertThat(channel).isNotNull()
+    }
+
+    @Test
+    fun watchSetsMessagesAndChannelEvent() {
+        // start out empty, no offline storage and no query
+        val channelRepo = repo.channel("messaging", "watchSetsMessagesAndChannelEvent")
+        channelRepo.channelController.watch().execute()
+        // a new message event is triggered
+        // TODO: how to mock the events...
+        val socket = Mockito.mock(ChatSocket::class.java)
+        Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+
+
+        // verify that the livedata is updated
+
+    }
+
+
+
+    @Test
+    fun getMessages() {
+        // watch sets the channel data
+        // watch sets the messages
+
+        val channelRepo = repo.channel("messaging", "test123")
+        channelRepo.watch()
+        val message = Message()
+        message.text = "hello world"
+        message.user = User("thierry")
+        sleep(1000)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        channelRepo.sendMessage(message)
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        val newMessages = channelRepo.messages.getOrAwaitValue()
+        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        System.out.println("newMessages $newMessages")
 
     }
 

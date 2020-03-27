@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
 import java.util.*
 
 
@@ -58,20 +59,21 @@ class StreamChatRepository(
         messageDao = database.messageDao()
         channelStateDao = database.channelStateDao()
         channelConfigDao = database.channelConfigDao()
-    }
-
-    init {
 
         // load channel configs from Room into memory
         GlobalScope.launch {
-            val configEntities = channelConfigDao.selectAll()
-            for (configEntity in configEntities) {
-                channelConfigs[configEntity.channelType] = configEntity.config
-            }
+            loadConfigs()
         }
 
         // start listening for events
         startListening()
+    }
+
+    private suspend fun loadConfigs() {
+        val configEntities = channelConfigDao.selectAll()
+        for (configEntity in configEntities) {
+            channelConfigs[configEntity.channelType] = configEntity.config
+        }
     }
 
     private val _online = MutableLiveData<Boolean>()
@@ -140,6 +142,10 @@ class StreamChatRepository(
             // TODO: cache users, messages and channels to reduce number of Room queries
             GlobalScope.launch(Dispatchers.IO) {
 
+                var channelRepo: StreamChatChannelRepository? = null
+
+
+
                 // any event can have channel and unread count information
                 if (it.unreadChannels != null && _channelUnreadCount.value != it.unreadChannels) {
                     _channelUnreadCount.value = it.unreadChannels
@@ -152,12 +158,12 @@ class StreamChatRepository(
                 if (it.cid != null && it.cid != "") {
                     val cid = it.cid!!
                     if (!it.cid.isNullOrEmpty() && activeChannelMap.containsKey(cid)) {
-                        val channel = activeChannelMap.get(cid)!!
+                        channelRepo = activeChannelMap.get(cid)!!
                         it.channel?.watchers?.let {
-                            channel.setWatchers(it)
+                            channelRepo.setWatchers(it)
                         }
                         it.channel?.watcherCount?.let {
-                            channel.setWatcherCount(it)
+                            channelRepo.setWatcherCount(it)
                         }
                     }
                 }
@@ -183,11 +189,13 @@ class StreamChatRepository(
                     }
                 }
 
+                // TODO; this if statement isn't right
                 if (offlineEnabled) {
 
                     when (it) {
                         is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
                             insertMessage(it.message)
+                            channelRepo.upsertMessage(it.message)
                         }
                         is MessageReadEvent -> {
                             // get the channel, update reads, write the channel
@@ -265,10 +273,12 @@ class StreamChatRepository(
     }
 
     fun isOnline(): Boolean {
-        return _online.value!!
+        val online = _online.value!!
+        sleep(100000)
+        return online
     }
     fun isOffline(): Boolean {
-        return _online.value!!
+        return !_online.value!!
     }
 
     /**
@@ -504,8 +514,9 @@ class StreamChatRepository(
         insertMessages(messages)
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, messageLimit: Int = 0): Channel {
-        return selectAndEnrichChannels(listOf(channelId), messageLimit)[0]
+    suspend fun selectAndEnrichChannel(channelId: String, messageLimit: Int = 0): Channel? {
+        val channelStates = selectAndEnrichChannels(listOf(channelId), messageLimit)
+        return channelStates.getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannels(channelIds: List<String>, messageLimit: Int = 0): List<Channel> {

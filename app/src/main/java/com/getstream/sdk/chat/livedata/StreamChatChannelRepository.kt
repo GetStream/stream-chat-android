@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.SyncStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -56,26 +57,42 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
 
 
     fun watch() {
+        // TODO: messages need to update whenever the messages in room change. the transform is kinda tricky
+        // because of the user enrichment though...
+
         GlobalScope.launch(Dispatchers.IO) {
             // first we load the data from room and update the messages and channel livedata
             val channel = repo.selectAndEnrichChannel(cid, 100)
-            _messages.value = channel.messages
+
+            channel?.let {
+                if (it.messages.isNotEmpty()) {
+                    _messages.postValue(it.messages)
+                }
+
+            }
+
             // for pagination we cant use channel.messages, so discourage that
-            // TODO: this isn't right, they need to be live data objects coming from room to pick up on changes from events
-            channel.messages = emptyList()
-            _channel.value = channel
+            if (channel != null) {
+                channel.messages = emptyList()
+                _channel.postValue(channel)
+            }
+
 
             // next we run the actual API call
+            // TODO: figure out why repo.isOnline returns the wrong value
             val response = channelController.watch(ChannelWatchRequest()).execute()
 
             if (!response.isSuccess) {
                 repo.addError(response.error())
             } else {
                 val channelResponse = response.data()
-
+                _messages.postValue(channelResponse.messages)
+                channelResponse.messages = emptyList()
+                _channel.postValue(channelResponse)
 
                 repo.storeStateForChannel(channelResponse)
             }
+
         }
 
 
@@ -90,6 +107,7 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
      */
     fun sendMessage(message: Message) {
         message.id = repo.generateMessageId()
+        message.channel = _channel.value!!
 
         GlobalScope.launch {
             val messageEntity = MessageEntity(message)
@@ -152,5 +170,13 @@ class StreamChatChannelRepository(var channelType: String, var channelId: String
         if (watcherCount != _watcherCount.value) {
             _watcherCount.value = watcherCount
         }
+    }
+
+    fun upsertMessage(message: Message) {
+        // TODO: is there a cleaner way?
+        val copy = _messages.value ?: mutableListOf()
+        val mutableCopy = copy.toMutableList()
+        mutableCopy.add(message)
+        _messages.value = mutableCopy.toList()
     }
 }

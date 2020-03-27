@@ -39,6 +39,7 @@ Here are the most common ways to use the library
 
 * Each user has it's own Room DB. Some of our API responses are user specific. One example is own_reactions on a message. so if you switch users we need to use a different database/storage for the results
 * Suspend functions are only used on private methods. Public ones expose livedata objects.
+* Room automatically updates the livedata objects it exposes. This library should also work if offline storage is disabled though. So we shouldn't rely on that behaviour from Room.
 
 
 
