@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.StreamChatNavigator;
 import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
-import com.getstream.sdk.chat.storage.InMemoryCache;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
@@ -40,7 +39,7 @@ public class StreamChat {
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
     private static StreamChatNavigator navigator = new StreamChatNavigatorImpl();
-    private static ClientInterceptor client;
+    private static ChatClient client;
 
     public static StreamChatNavigator getNavigator() {
         return navigator;
@@ -79,10 +78,6 @@ public class StreamChat {
         return stringsProvider;
     }
 
-    public static InMemoryCache cache() {
-        return client;
-    }
-
     public static String signFileUrl(String url) {
         //TODO: llc add sign url
         return url;
@@ -111,12 +106,11 @@ public class StreamChat {
         totalUnreadMessages = new MutableLiveData<>();
         unreadChannels = new MutableLiveData<>();
 
-        ChatClient c = new ChatClient.Builder(config.apiKey, config.appContext)
+        client = new ChatClient.Builder(config.apiKey, config.appContext)
                 .logLevel(config.logLevel)
                 .loggerHandler(config.loggerHandler)
                 .notifications(config.notificationConfig)
                 .build();
-        client = new ClientInterceptor(c);
 
         setupLifecycleObserver();
 

@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.Flag;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.Result;
@@ -92,9 +93,9 @@ public class MessageMoreActionDialog extends Dialog {
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
 
-                StreamChat.getInstance().flag(message.getCid()).enqueue(new Function1<Result<io.getstream.chat.android.client.api.models.FlagResponse>, Unit>() {
+                StreamChat.getInstance().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
                     @Override
-                    public Unit invoke(Result<io.getstream.chat.android.client.api.models.FlagResponse> flagResponseResult) {
+                    public Unit invoke(Result<Flag> flagResponseResult) {
 
                         if (flagResponseResult.isSuccess()) {
                             Utils.showMessage(context, "Message has been succesfully flagged");

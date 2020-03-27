@@ -974,7 +974,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         return StreamChat.getInstance()
                 .sendMessage(channelType, channelId, message)
-                .onNext(m -> {
+                .onSuccess(m -> {
                     replaceMessage(message, m);
                     return Unit.INSTANCE;
                 }).onError(chatError -> {

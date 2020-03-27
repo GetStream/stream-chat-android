@@ -95,7 +95,7 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void configUIs() {
-        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         binding.rvSelectedUsers.setLayoutManager(mLayoutManager);
         binding.clGroup.setVisibility(View.GONE);
     }
@@ -223,7 +223,7 @@ public class UsersActivity extends AppCompatActivity {
         isCalling = true;
 
 
-        StreamChat.getInstance().getUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
+        StreamChat.getInstance().queryUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
             @Override
             public Unit invoke(Result<List<User>> listResult) {
 

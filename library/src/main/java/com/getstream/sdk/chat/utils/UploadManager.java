@@ -30,7 +30,7 @@ public class UploadManager {
         String type = channel.getType();
         String id = channel.getId();
 
-        StreamChat.getInstance().sendFile(type, id, data.file, data.mimeType, new ProgressCallback() {
+        ProgressCallback progressCallback = new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String path) {
 
@@ -65,7 +65,15 @@ public class UploadManager {
             public void onProgress(long progress) {
                 fileListener.onProgress(progress);
             }
-        });
+        };
+
+        if (data.mimeType.contains("image")) {
+            StreamChat.getInstance().sendImage(type, id, data.file, progressCallback);
+        } else {
+            StreamChat.getInstance().sendFile(type, id, data.file, progressCallback);
+        }
+
+
     }
 
     public void removeFromQueue(AttachmentMetaData file) {
