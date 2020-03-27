@@ -15,12 +15,12 @@ class EventsParser(
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
-    private var firstReceivedMessage = false
+    private var firstMessageReceived = false
     private val logger = ChatLogger.get("Events")
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         logger.logI("onOpen")
-        firstReceivedMessage = true
+        firstMessageReceived = false
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
@@ -59,8 +59,8 @@ class EventsParser(
         if (eventMessage.isSuccess) {
             val event = eventMessage.data()
 
-            if (firstReceivedMessage) {
-                firstReceivedMessage = false
+            if (!firstMessageReceived) {
+                firstMessageReceived = true
                 val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
 
                 if (connection.isSuccess) {
