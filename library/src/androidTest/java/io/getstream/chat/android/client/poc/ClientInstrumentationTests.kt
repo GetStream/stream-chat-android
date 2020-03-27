@@ -5,8 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.EventConsumer
+import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitListener
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
 import org.awaitility.Awaitility.await
@@ -29,13 +30,13 @@ class ClientInstrumentationTests {
     val userId = "bender"
     lateinit var context: Context
     lateinit var setUserListener: TestInitListener
-    lateinit var eventConsumer: EventConsumer
+    lateinit var connectedEventConsumer: EventsConsumer
 
     @Before
     fun before() {
         context = getInstrumentation().targetContext
         setUserListener = TestInitListener()
-        eventConsumer = EventConsumer(ConnectedEvent::class.java)
+        connectedEventConsumer = EventsConsumer(listOf(ConnectedEvent::class.java))
     }
 
     @Test
@@ -44,11 +45,11 @@ class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token, setUserListener)
-            client.events().subscribe { event -> eventConsumer.onEvent(event) }
+            client.events().subscribe { event -> connectedEventConsumer.onEvent(event) }
 
         }.andThen {
             await().atMost(5, SECONDS).until { setUserListener.onSuccessIsCalled() }
-            await().atMost(5, SECONDS).until { eventConsumer.isReceived() }
+            await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
         }
 
     }
@@ -63,6 +64,43 @@ class ClientInstrumentationTests {
             client.setUser(User(userId), invalidToken, setUserListener)
         }.andThen {
             await().atMost(5, SECONDS).until { setUserListener.onErrorIsCalled() }
+        }
+    }
+
+    @Test
+    fun connectedEventDelivery() {
+        runOnUi {
+            val client = ChatClient.Builder(apiKey, context).build()
+            client.setUser(User(userId), token)
+            client.events()
+                .filter(ConnectedEvent::class.java)
+                .first()
+                .subscribe {
+                    client.events().subscribe { event ->
+                        connectedEventConsumer.onEvent(event)
+                    }
+                }
+        }.andThen {
+            await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
+        }
+    }
+
+    @Test
+    fun firstHealth() {
+
+        val consumer = EventsConsumer(listOf(HealthEvent::class.java))
+
+        runOnUi {
+            val client = ChatClient.Builder(apiKey, context).build()
+            client.setUser(User(userId), token)
+            client.events()
+                .filter(HealthEvent::class.java)
+                .first()
+                .subscribe { consumer.onEvent(it) }
+        }.andThen {
+            await()
+                .atMost(10, SECONDS)
+                .until { consumer.isReceivedExactly(listOf(HealthEvent::class.java)) }
         }
     }
 

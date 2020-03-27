@@ -8,8 +8,10 @@ import io.getstream.chat.android.client.socket.SocketListener
 internal class ChatObservableImpl(private val service: ChatSocketService) : ChatObservable {
 
     private val subscriptions = mutableListOf<Subscription>()
-    private var eventsMapper: SocketListener = EventsMapper(this)
+    private var eventsMapper = EventsMapper(this)
     private val filters = mutableListOf<(event: ChatEvent) -> Boolean>()
+    private var first = false
+    private var ignoreInitState = false
 
     fun onNext(event: ChatEvent) {
         subscriptions.forEach { it.onNext(event) }
@@ -32,8 +34,18 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         }
     }
 
+    override fun first(): ChatObservable {
+        first = true
+        return this
+    }
+
+    override fun ignoreInitState(): ChatObservable {
+        this.ignoreInitState = true
+        return this
+    }
+
     override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
-        val result = Subscription(this, listener, filters)
+        val result = Subscription(this, listener, filters, first)
 
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
@@ -41,6 +53,9 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         }
 
         subscriptions.add(result)
+
+        if (!ignoreInitState) deliverInitState(result)
+
         return result
     }
 
@@ -52,22 +67,40 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         }
     }
 
-    private class EventsMapper(val observable: ChatObservableImpl) : SocketListener() {
+    private fun deliverInitState(subscription: Subscription) {
 
-        override fun onConnecting() {
-            observable.onNext(ConnectingEvent())
+        var firstEvent: ChatEvent? = null
+
+        when (val state = service.state) {
+            is ChatSocketService.State.Connected -> firstEvent = state.event
+            is ChatSocketService.State.Connecting -> firstEvent = ConnectingEvent()
+            is ChatSocketService.State.Disconnected -> firstEvent = DisconnectedEvent()
         }
 
-        override fun onEvent(event: ChatEvent) {
-            observable.onNext(event)
+        if (firstEvent != null) subscription.onNext(firstEvent)
+    }
+
+    private class EventsMapper(val observable: ChatObservableImpl) : SocketListener() {
+
+        val connectingEvent = ConnectingEvent()
+        val disconnectedEvent = DisconnectedEvent()
+        var connectedEvent: ConnectedEvent? = null
+
+        override fun onConnecting() {
+            observable.onNext(connectingEvent)
         }
 
         override fun onConnected(event: ConnectedEvent) {
+            connectedEvent = event
             observable.onNext(event)
         }
 
         override fun onDisconnected() {
-            observable.onNext(DisconnectedEvent())
+            observable.onNext(disconnectedEvent)
+        }
+
+        override fun onEvent(event: ChatEvent) {
+            observable.onNext(event)
         }
 
         override fun onError(error: ChatError) {

@@ -24,7 +24,7 @@ abstract class ChatCallImpl<T> : Call<T> {
         return callMapper(this, mapper)
     }
 
-    override fun onNext(handler: (T) -> Unit): Call<T> {
+    override fun onSuccess(handler: (T) -> Unit): Call<T> {
         nextHandler = handler
         return this
     }
