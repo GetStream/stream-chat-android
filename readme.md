@@ -115,6 +115,25 @@ val client = ChatClient.Builder(apiKey, context)
     .build()
 ```
 
+To intercept log messages add set handler:
+
+```kotlin
+val client = ChatClient.Builder(apiKey, context)
+    .loggerHandler(object : ChatLoggerHandler {
+        override fun logT(throwable: Throwable) {
+            throwable.printStackTrace()
+        }
+    }
+    .build()
+```
+
+To intercept socket errors:
+```kotlin
+client.events()
+  .filter(ErrorEvent::class.java)
+  .subscribe { println(it) }
+```
+
 All SDK log tags have prefix `Chat:`, so to filter out only SDK logs grep the prefix:
 
 ```bash
