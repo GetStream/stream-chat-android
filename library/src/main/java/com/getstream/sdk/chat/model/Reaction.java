@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.model;
 import androidx.room.ColumnInfo;
 import androidx.room.TypeConverters;
 
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;

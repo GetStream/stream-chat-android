@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
@@ -23,8 +23,8 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
     private final String TAG = MediaAttachmentAdapter.class.getSimpleName();
     private final OnItemClickListener listener;
     private Context context;
-    private List<Attachment> mediaPaths;
-    public MediaAttachmentAdapter(Context context, List<Attachment> mediaPaths, OnItemClickListener listener) {
+    private List<AttachmentMetaData> mediaPaths;
+    public MediaAttachmentAdapter(Context context, List<AttachmentMetaData> mediaPaths, OnItemClickListener listener) {
         this.context = context;
         this.mediaPaths = mediaPaths;
         this.listener = listener;
@@ -63,22 +63,22 @@ public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachment
             this.binding = binding;
         }
 
-        public void bind(Attachment attachment, final OnItemClickListener listener) {
-            File file = new File(attachment.config.getFilePath());
+        public void bind(AttachmentMetaData attachment, final OnItemClickListener listener) {
+            File file = new File(attachment.file.getPath());
             Uri imageUri = Uri.fromFile(file);
             Glide.with(context)
                     .load(imageUri)
                     .into(binding.ivMedia);
 
-            if (attachment.config.isSelected())
+            if (attachment.isSelected)
                 binding.ivSelectMark.setVisibility(View.VISIBLE);
             else
                 binding.ivSelectMark.setVisibility(View.GONE);
 
             binding.ivLargeFileMark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
 
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.config.getVideoLengh()));
+            if (attachment.type.equals(ModelType.attach_file)) {
+                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
             } else {
                 binding.tvLength.setText("");
             }

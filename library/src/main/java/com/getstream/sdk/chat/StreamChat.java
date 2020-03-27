@@ -2,55 +2,45 @@ package com.getstream.sdk.chat;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.getstream.sdk.chat.enums.OnlineStatus;
-import com.getstream.sdk.chat.interfaces.ClientConnectionCallback;
-import com.getstream.sdk.chat.logger.StreamChatSilentLogger;
-import com.getstream.sdk.chat.logger.StreamLogger;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Event;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.StreamChatNavigator;
 import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
-import com.getstream.sdk.chat.notifications.NotificationsManager;
-import com.getstream.sdk.chat.notifications.StreamNotificationsManager;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.ApiClientOptions;
-import com.getstream.sdk.chat.rest.core.ChatEventHandler;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.core.ClientState;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
+import com.getstream.sdk.chat.utils.EmptyLoggerHandler;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.events.ChatEvent;
+import io.getstream.chat.android.client.events.ConnectedEvent;
+import io.getstream.chat.android.client.logger.ChatLogLevel;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.ChatLoggerHandler;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
+import io.getstream.chat.android.client.socket.SocketListener;
 
 public class StreamChat {
-    private static Client INSTANCE;
 
     private static MutableLiveData<OnlineStatus> onlineStatus;
     private static MutableLiveData<Number> totalUnreadMessages;
     private static MutableLiveData<Number> unreadChannels;
 
     private static MutableLiveData<User> currentUser;
-    private static Integer lastTotalUnreadMessages;
-    private static Integer lastUnreadChannels;
-    private static boolean lifecycleStopped;
-    private static boolean userWasInitialized;
-    private static Context context;
     private static StringsProvider stringsProvider;
-    private static NotificationsManager notificationsManager;
     private static StreamChatStyle chatStyle = new StreamChatStyle.Builder().build();
     private static FontsManager fontsManager;
-    private static StreamLogger logger;
     private static StreamChatNavigator navigator = new StreamChatNavigatorImpl();
+    private static ChatClient client;
 
     public static StreamChatNavigator getNavigator() {
         return navigator;
@@ -81,24 +71,22 @@ public class StreamChat {
         return currentUser;
     }
 
-    public static synchronized Client getInstance(final Context context) {
-        if (INSTANCE == null) {
-            throw new RuntimeException("You must initialize the API client first, make sure to call StreamChat.initialize");
-        } else {
-            return INSTANCE;
-        }
-    }
-
-    public static boolean isConnected() {
-        return INSTANCE != null && INSTANCE.isConnected();
-    }
-
-    public static Context getContext() {
-        return context;
+    public static ChatClient getInstance() {
+        return ChatClient.Companion.instance();
     }
 
     public static StringsProvider getStrings() {
         return stringsProvider;
+    }
+
+    public static String signFileUrl(String url) {
+        //TODO: llc add sign url
+        return url;
+    }
+
+    public static String signGlideUrl(String url) {
+        //TODO: llc add sign url
+        return url;
     }
 
     /**
@@ -108,106 +96,54 @@ public class StreamChat {
         StreamChat.stringsProvider = stringsProvider;
     }
 
-    public static void setLogger(StreamLogger logger) {
-        StreamChat.logger = logger;
-    }
+    public static void init(Config config) {
 
-    private static void initComponents(String apiKey, ApiClientOptions apiClientOptions) {
-        stringsProvider = new StringsProviderImpl(context);
-        fontsManager = new FontsManagerImpl(context);
-
-        INSTANCE = new Client(apiKey, apiClientOptions, new ConnectionLiveData(StreamChat.context));
+        chatStyle = config.style;
+        stringsProvider = new StringsProviderImpl(config.appContext);
+        fontsManager = new FontsManagerImpl(config.appContext);
 
         onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
         currentUser = new MutableLiveData<>();
         totalUnreadMessages = new MutableLiveData<>();
         unreadChannels = new MutableLiveData<>();
 
+        client = new ChatClient.Builder(config.apiKey, config.appContext)
+                .logLevel(config.logLevel)
+                .loggerHandler(config.loggerHandler)
+                .notifications(config.notificationConfig)
+                .build();
 
-        INSTANCE.setContext(StreamChat.context);
-    }
+        setupLifecycleObserver();
 
-    private static void handleConnectedUser() {
-        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
+        client.addSocketListener(new SocketListener() {
             @Override
-            public void onSuccess(User user) {
-                userWasInitialized = true;
+            public void onConnected(@NotNull ConnectedEvent event) {
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
+                currentUser.postValue(event.me);
             }
 
             @Override
-            public void onError(String errMsg, int errCode) {
-                StreamChat.getLogger().logD(this, "handleConnectedUser: error: " + errMsg + ":" + errCode);
-            }
-        });
-    }
-
-    private static void observeSetUserCompleted() {
-        INSTANCE.onSetUserCompleted(new ClientConnectionCallback() {
-            @Override
-            public void onSuccess(User user) {
-                logger.logI(this, "set user worked out well");
-                setupEventListeners();
-                currentUser.postValue(user);
-
-                setupLifecycleObserver();
+            public void onConnecting() {
+                onlineStatus.postValue(OnlineStatus.CONNECTING);
             }
 
             @Override
-            public void onError(String errMsg, int errCode) {
+            public void onError(@NotNull ChatError error) {
                 onlineStatus.postValue(OnlineStatus.FAILED);
             }
-        });
-    }
-
-    private static synchronized void setupEventListeners() {
-        logger.logI(StreamChat.class, "setupEventListeners");
-
-        INSTANCE.addEventHandler(new ChatEventHandler() {
-            @Override
-            public void onConnectionChanged(Event event) {
-                StreamChat.getLogger().logW(this, "connection status changed to " + (event.getOnline() ? "online" : "offline"));
-
-                if (event.getOnline()) {
-                    onlineStatus.postValue(OnlineStatus.CONNECTING);
-                } else {
-                    onlineStatus.postValue(OnlineStatus.FAILED);
-                }
-                handleConnectedUser();
-            }
 
             @Override
-            public void onConnectionRecovered(Event event) {
-                StreamChat.getLogger().logW(this, "connection recovered!");
-                List<Channel> channels = INSTANCE.getActiveChannels();
-                if (channels == null) {
-                    StreamChat.getLogger().logW(this, "nothing to recover");
-                } else {
-                    StreamChat.getLogger().logW(this, channels.size() + " channels to recover!");
-                }
-                onlineStatus.postValue(OnlineStatus.CONNECTED);
-            }
+            public void onEvent(@NotNull ChatEvent event) {
 
-            @Override
-            public void onAnyEvent(Event event) {
-                ClientState state = INSTANCE.getState();
-                if (state.getTotalUnreadCount() != null) {
-                    // post the value if it changed since last time
-                    if (!state.getTotalUnreadCount().equals(lastTotalUnreadMessages)) {
-                        lastTotalUnreadMessages = state.getTotalUnreadCount();
-                        totalUnreadMessages.postValue(lastTotalUnreadMessages);
-                    }
-                    if (!state.getUnreadChannels().equals(lastUnreadChannels)) {
-                        lastUnreadChannels = state.getUnreadChannels();
-                        unreadChannels.postValue(lastUnreadChannels);
-                    }
-                    if (event.getMe() != null) {
-                        currentUser.postValue(state.getCurrentUser());
-                    }
+                Integer totalUnreadCount = event.getTotalUnreadCount();
+                Integer unreadChannels = event.getUnreadChannels();
+
+                if (totalUnreadCount != null) {
+                    StreamChat.totalUnreadMessages.postValue(totalUnreadCount);
                 }
 
-                if (lifecycleStopped) {
-                    notificationsManager.onReceiveWebSocketEvent(event, context);
+                if (unreadChannels != null) {
+                    StreamChat.unreadChannels.postValue(unreadChannels);
                 }
             }
         });
@@ -217,34 +153,18 @@ public class StreamChat {
         new StreamLifecycleObserver(new LifecycleHandler() {
             @Override
             public void resume() {
-                logger.logI(this, "detected resume");
-                if (lifecycleStopped && userWasInitialized) {
-                    lifecycleStopped = false;
-                    INSTANCE.reconnectWebSocket();
-                }
+                client.reconnectSocket();
             }
 
             @Override
             public void stopped() {
-                logger.logI(this, "detected stop");
-                lifecycleStopped = true;
-                if (INSTANCE != null) {
-                    INSTANCE.disconnectWebSocket();
-                }
+                client.disconnectSocket();
             }
         });
     }
 
     public static void initStyle(StreamChatStyle style) {
         chatStyle = style;
-    }
-
-    public static void setNotificationsManager(@NotNull NotificationsManager notificationsManager) {
-        StreamChat.notificationsManager = notificationsManager;
-    }
-
-    public static NotificationsManager getNotificationsManager() {
-        return notificationsManager;
     }
 
     @NotNull
@@ -257,126 +177,74 @@ public class StreamChat {
         return fontsManager;
     }
 
-    public static StreamLogger getLogger() {
-        return logger;
-    }
-
-    public static synchronized boolean init(@NonNull Config config) {
-        ApiClientOptions options = config.getApiClientOptions() != null ? config.getApiClientOptions() : new ApiClientOptions();
-        StreamLogger logger = config.getLogger() != null ? config.getLogger() : new StreamChatSilentLogger();
-        NotificationsManager notificationsManager = config.getNotificationsManager() != null ? config.getNotificationsManager() : new StreamNotificationsManager();
-        navigator.setHandler(config.getNavigationHandler());
-        return init(config.getApiKey(), options, context, logger, notificationsManager);
-    }
-
-    public static synchronized boolean init(String apiKey, Context context) {
-        return init(apiKey, new ApiClientOptions(), context, new StreamChatSilentLogger(), new StreamNotificationsManager());
-    }
-
-    public static synchronized boolean init(String apiKey,
-                                            ApiClientOptions apiClientOptions,
-                                            @NonNull Context context) {
-        return init(apiKey, apiClientOptions, context, new StreamChatSilentLogger(), new StreamNotificationsManager());
-    }
-
-    public static synchronized boolean init(String apiKey,
-                                            ApiClientOptions apiClientOptions,
-                                            @NonNull Context context,
-                                            StreamLogger logger,
-                                            @NonNull NotificationsManager notificationsManager) {
-        StreamChat.context = context;
-        StreamChat.notificationsManager = notificationsManager;
-
-        if (INSTANCE != null) {
-            return true;
-        }
-        StreamChat.logger = logger;
-        StreamChat.logger.logI(StreamChat.class, "calling init");
-        synchronized (Client.class) {
-            if (INSTANCE == null) {
-                StreamChat.context = context;
-
-                initComponents(apiKey, apiClientOptions);
-
-                handleConnectedUser();
-                observeSetUserCompleted();
-            }
-            return true;
-        }
+    public static ChatLogger getLogger() {
+        return ChatLogger.Companion.getInstance();
     }
 
 
     public static class Config {
 
-        private String apiKey;
-        private ApiClientOptions apiClientOptions;
-        private StreamLogger logger;
+        private final String apiKey;
+        private final Context appContext;
+        private ChatLogLevel logLevel = ChatLogLevel.NOTHING;
+        private ChatLoggerHandler loggerHandler = new EmptyLoggerHandler();
+        private ChatNotificationConfig notificationConfig;
+        private String cdnEndpoint;
+        private String apiEndpoint;
+        private long cdnTimeout;
+        private long apiTimeout;
         private ChatNavigationHandler navigationHandler;
-        private NotificationsManager notificationsManager;
+        private StreamChatStyle style;
 
-        public Config(@NonNull Context context, @NonNull String apiKey) {
-            StreamChat.context = context;
+        public Config(String apiKey, Context appContext) {
+
             this.apiKey = apiKey;
+            this.appContext = appContext;
         }
 
-        public void navigationHandler(ChatNavigationHandler navigationHandler) {
+        public Config apiEndpoint(String apiEndpoint) {
+            this.apiEndpoint = apiEndpoint;
+            return this;
+        }
+
+        public Config cdnEndpoint(String cdnEndpoint) {
+            this.cdnEndpoint = cdnEndpoint;
+            return this;
+        }
+
+        public Config cdnTimout(long cdnTimeout) {
+            this.cdnTimeout = cdnTimeout;
+            return this;
+        }
+
+        public Config apiTimout(long apiTimeout) {
+            this.apiTimeout = apiTimeout;
+            return this;
+        }
+
+        public Config logLevel(ChatLogLevel logLevel) {
+            this.logLevel = logLevel;
+            return this;
+        }
+
+        public Config logHandler(ChatLoggerHandler loggerHandler){
+            this.loggerHandler = loggerHandler;
+            return this;
+        }
+
+        public Config notifications(ChatNotificationConfig notificationConfig) {
+            this.notificationConfig = notificationConfig;
+            return this;
+        }
+
+        public Config navigationHandler(ChatNavigationHandler navigationHandler) {
             this.navigationHandler = navigationHandler;
+            return this;
         }
 
-        /**
-         * Set custom api client options.
-         *
-         * @param apiClientOptions - {@link ApiClientOptions}
-         */
-        public void setApiClientOptions(@NonNull ApiClientOptions apiClientOptions) {
-            this.apiClientOptions = apiClientOptions;
-        }
-
-        /**
-         * Set custom chat style.
-         *
-         * @param style - {@link StreamChatStyle}
-         */
-        public void setStyle(@NonNull StreamChatStyle style) {
-            StreamChat.chatStyle = style;
-        }
-
-        /**
-         * Set custom logger.
-         *
-         * @param logger - {@link StreamLogger}
-         */
-        public void setLogger(StreamLogger logger) {
-            this.logger = logger;
-        }
-
-        /**
-         * Set custom notification manager.
-         *
-         * @param notificationsManager - {@link NotificationsManager}
-         */
-        public void setNotificationsManager(NotificationsManager notificationsManager) {
-            this.notificationsManager = notificationsManager;
-        }
-
-        private String getApiKey() {
-            return apiKey;
-        }
-
-        private ApiClientOptions getApiClientOptions() {
-            return apiClientOptions;
-        }
-
-        private StreamLogger getLogger() {
-            return logger;
-        }
-
-        private ChatNavigationHandler getNavigationHandler() {
-            return navigationHandler;
-        }
-
-        private NotificationsManager getNotificationsManager() {
-            return notificationsManager;
+        public Config style(@NonNull StreamChatStyle style) {
+            this.style = style;
+            return this;
         }
     }
 }

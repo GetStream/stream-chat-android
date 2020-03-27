@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import java.text.DecimalFormat;
 

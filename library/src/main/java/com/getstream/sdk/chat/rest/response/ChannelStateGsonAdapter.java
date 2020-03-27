@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.rest.response;
 
 import android.text.TextUtils;
 
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -37,7 +37,7 @@ public class ChannelStateGsonAdapter extends TypeAdapter<ChannelState> {
         }
 
         /*Set ChannelState to Channel*/
-        channelState.getChannel().setChannelState(channelState);
+        //channelState.getChannel().setChannelState(channelState);
 
         return channelState;
     }

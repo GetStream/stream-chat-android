@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.rest.Message;
+
+import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.view.MessageInputView;
 import java.util.HashMap;
 
@@ -25,7 +27,7 @@ public class CustomMessageInputView2 extends MessageInputView implements Message
         // note that you typically want to use custom fields on attachments instead of messages
         HashMap<String, Object> extraData = new HashMap<>();
         extraData.put("mycustomfield", "123");
-        preparedMessage.setExtraData(extraData);
+        preparedMessage.getExtraData().put("mycustomfield", "123");
         return preparedMessage;
     }
 
@@ -35,7 +37,7 @@ public class CustomMessageInputView2 extends MessageInputView implements Message
     }
 
     @Override
-    public void onSendMessageError(String errMsg) {
-        Log.d(TAG, "Failed send message! :" + errMsg);
+    public void onSendMessageError(ChatError error) {
+        Log.d(TAG, "Failed send message! :" + error.getMessage());
     }
 }

@@ -8,12 +8,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
@@ -24,19 +20,23 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.model.Member;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.User;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.utils.ProgressCallback;
 
 public class MessageInputController {
 
@@ -55,10 +55,10 @@ public class MessageInputController {
     private StreamViewMessageInputBinding binding;
 
     private MessageInputType messageInputType;
-    private List<Attachment> selectedAttachments = new ArrayList<>();
+    private List<AttachmentMetaData> selectedAttachments = new ArrayList<>();
     private MessageInputView.AttachmentListener attachmentListener;
 
-    private List<Attachment> localAttachments;
+    private List<AttachmentMetaData> attachmentData;
     private UploadManager uploadManager;
     // region Attachment
 
@@ -73,18 +73,18 @@ public class MessageInputController {
         this.channel = viewModel.getChannel();
         this.style = style;
         this.attachmentListener = attachmentListener;
-        uploadManager = new UploadManager(channel, context);
+        uploadManager = new UploadManager(channel);
     }
 
-    public List<Attachment> getSelectedAttachments() {
+    public List<AttachmentMetaData> getSelectedAttachments() {
         return selectedAttachments;
     }
 
-    public boolean isUploadingFile(){
+    public boolean isUploadingFile() {
         return uploadManager.isUploadingFile();
     }
 
-    public void setSelectedAttachments(List<Attachment> selectedAttachments) {
+    public void setSelectedAttachments(List<AttachmentMetaData> selectedAttachments) {
         this.selectedAttachments = selectedAttachments;
     }
 
@@ -98,7 +98,7 @@ public class MessageInputController {
         binding.clCommand.setVisibility(View.GONE);
         binding.clSelectPhoto.setVisibility(View.GONE);
 
-        switch (type){
+        switch (type) {
             case EDIT_MESSAGE:
                 break;
             case ADD_FILE:
@@ -116,7 +116,8 @@ public class MessageInputController {
                 binding.clCommand.setVisibility(View.VISIBLE);
                 break;
         }
-        binding.tvTitle.setText(type.getLabel());
+
+        binding.tvTitle.setText(type.getLabel(context));
         messageInputType = type;
         configPermissions();
     }
@@ -162,16 +163,16 @@ public class MessageInputController {
     private void configSelectAttachView(boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
         getAttachmentsFromLocal(isMedia);
-        
+
         ((Activity) context).runOnUiThread(() -> {
-            if (selectedAttachments.isEmpty()){
+            if (selectedAttachments.isEmpty()) {
                 setAttachmentAdapters(isMedia);
-                if (localAttachments.isEmpty()){
+                if (attachmentData.isEmpty()) {
                     Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                     onClickCloseBackGroundView();
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
-            }else{
+            } else {
                 showHideComposerAttachmentGalleryView(true, isMedia);
                 setSelectedAttachmentAdapter(false, isMedia);
             }
@@ -179,27 +180,27 @@ public class MessageInputController {
     }
 
     private void getAttachmentsFromLocal(boolean isMedia) {
-        if (isMedia){
-            localAttachments = Utils.getMediaAttachments(context);
+        if (isMedia) {
+            attachmentData = Utils.getMediaAttachments(context);
             return;
         }
 
         Utils.attachments = new ArrayList<>();
-        localAttachments = Utils.getFileAttachments(Environment.getExternalStorageDirectory());
+        attachmentData = Utils.getFileAttachments(Environment.getExternalStorageDirectory());
     }
-    
-    private void setAttachmentAdapters(boolean isMedia){
-        if (isMedia){
-            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, localAttachments, position ->
-                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+
+    private void setAttachmentAdapters(boolean isMedia) {
+        if (isMedia) {
+            mediaAttachmentAdapter = new MediaAttachmentAdapter(context, attachmentData, position ->
+                    uploadOrCancelAttachment(attachmentData.get(position), isMedia)
             );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
-        }else {
-            fileAttachmentAdapter = new AttachmentListAdapter(context, localAttachments, true, true);
+        } else {
+            fileAttachmentAdapter = new AttachmentListAdapter(context, attachmentData, true, true);
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) ->
-                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+                    uploadOrCancelAttachment(attachmentData.get(position), isMedia)
             );
         }
     }
@@ -216,65 +217,74 @@ public class MessageInputController {
         }
     }
 
-    private void uploadOrCancelAttachment(Attachment attachment,
-                                          boolean isMedia){
-        if (!attachment.config.isSelected()) {
+    private void uploadOrCancelAttachment(AttachmentMetaData attachment,
+                                          boolean isMedia) {
+        if (!attachment.isSelected) {
             uploadAttachment(attachment, true, isMedia);
-        } else{
+        } else {
             cancelAttachment(attachment, true, isMedia);
         }
     }
 
-    private void uploadAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
-        if (UploadManager.isOverMaxUploadFileSize(new File(attachment.config.getFilePath()), true))
+    public boolean isOverMaxUploadFileSize(File file, boolean showErrorToast) {
+        if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
+            if (showErrorToast)
+                Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
+            return true;
+        }
+        return false;
+    }
+
+    private void uploadAttachment(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
+        if (isOverMaxUploadFileSize(new File(attachment.file.getPath()), true))
             return;
-        attachment.config.setSelected(true);
+        attachment.isSelected = true;
         selectedAttachments.add(attachment);
 
-        if (attachment.config.isUploaded())
+        if (attachment.isUploaded())
             uploadedFileProgress(attachment);
         else
             uploadFile(attachment, fromGallery, isMedia);
 
         showHideComposerAttachmentGalleryView(true, isMedia);
-        if (fromGallery)
-            totalAttachmentAdapterChanged(attachment, isMedia);
+        if (fromGallery) totalAttachmentAdapterChanged(attachment, isMedia);
         selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
         configSendButtonEnableState();
     }
 
-    private void uploadFile(Attachment attachment, boolean fromGallery, boolean isMedia){
-        uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
+    private void uploadFile(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
+
+        uploadManager.uploadFile(attachment, new ProgressCallback() {
             @Override
-            public void onSuccess(Attachment attachment) {
+            public void onSuccess(@NotNull String s) {
                 selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
                 uploadedFileProgress(attachment);
             }
 
             @Override
-            public void onFailed(Attachment attachment) {
+            public void onError(@NotNull ChatError chatError) {
                 cancelAttachment(attachment, fromGallery, isMedia);
             }
 
             @Override
-            public void onProgress(Attachment attachment) {
-                if (!attachment.config.isSelected()) return;
+            public void onProgress(long l) {
+                if (!attachment.isSelected) return;
                 selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
                 configSendButtonEnableState();
             }
         });
     }
 
-    private void uploadedFileProgress(Attachment attachment){
+    private void uploadedFileProgress(AttachmentMetaData attachment) {
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
         configSendButtonEnableState();
     }
 
-    private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
-        attachment.config.setSelected(false);
+    private void cancelAttachment(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
+        attachment.isSelected = false;
         selectedAttachments.remove(attachment);
-        uploadManager.updateQueue(attachment, false);
+        uploadManager.removeFromQueue(attachment);
         if (fromGallery)
             totalAttachmentAdapterChanged(null, isMedia);
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
@@ -289,14 +299,14 @@ public class MessageInputController {
         binding.ivOpenAttach.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){
+    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia) {
         if (isMedia)
             binding.rvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
         else
             binding.lvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    public void onClickOpenSelectView(@Nullable List<Attachment> editAttachments, boolean isMedia) {
+    public void onClickOpenSelectView(@Nullable List<AttachmentMetaData> editAttachments, boolean isMedia) {
         if (!PermissionChecker.isGrantedStoragePermissions(context)) {
             PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message));
             return;
@@ -308,32 +318,32 @@ public class MessageInputController {
 
 
         AsyncTask.execute(() -> configSelectAttachView(isMedia));
-        if (selectedAttachments.isEmpty()){
+        if (selectedAttachments.isEmpty()) {
             binding.progressBarFileLoader.setVisibility(View.VISIBLE);
             onClickOpenBackGroundView(isMedia ? MessageInputType.UPLOAD_MEDIA : MessageInputType.UPLOAD_FILE);
-        }            
+        }
     }
 
-    private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
+    private void totalAttachmentAdapterChanged(@Nullable AttachmentMetaData attachment, boolean isMedia) {
         if (isMedia) {
-            if (attachment == null){
+            if (attachment == null) {
                 mediaAttachmentAdapter.notifyDataSetChanged();
                 return;
             }
-            int index = localAttachments.indexOf(attachment);
+            int index = attachmentData.indexOf(attachment);
             if (index != -1)
                 mediaAttachmentAdapter.notifyItemChanged(index);
         } else
             fileAttachmentAdapter.notifyDataSetChanged();
     }
 
-    private void selectedAttachmentAdapterChanged(@Nullable Attachment attachment,
+    private void selectedAttachmentAdapterChanged(@Nullable AttachmentMetaData attachment,
                                                   boolean fromGallery,
                                                   boolean isMedia) {
         if (isMedia) {
             if (selectedMediaAttachmentAdapter == null)
                 setSelectedAttachmentAdapter(fromGallery, isMedia);
-            if (attachment == null){
+            if (attachment == null) {
                 selectedMediaAttachmentAdapter.notifyDataSetChanged();
                 return;
             }
@@ -347,14 +357,14 @@ public class MessageInputController {
         }
     }
 
-    private void configSendButtonEnableState(){
-        if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())){
+    private void configSendButtonEnableState() {
+        if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())) {
             binding.setActiveMessageSend(true);
-        }else{
-            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()){
+        } else {
+            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()) {
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
-            }else{
+            } else {
                 binding.setActiveMessageSend(true);
             }
         }
@@ -366,7 +376,7 @@ public class MessageInputController {
         onClickCloseBackGroundView();
     }
 
-    private void initAdapter(){
+    private void initAdapter() {
         selectedAttachments.clear();
         uploadManager.resetQueue();
 
@@ -386,17 +396,16 @@ public class MessageInputController {
     // region Camera
 
     public void progressCapturedMedia(File file, boolean isImage) {
-        Attachment attachment = new Attachment();
-        attachment.config.setFilePath(file.getPath());
-        attachment.setFile_size((int) file.length());
+        AttachmentMetaData attachment = new AttachmentMetaData(file);
+        attachment.file = file;
         if (isImage) {
-            attachment.setType(ModelType.attach_image);
+            attachment.type = ModelType.attach_image;
         } else {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(context, Uri.fromFile(file));
             String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             long videolengh = Long.parseLong(time);
-            attachment.config.setVideoLengh((int) (videolengh / 1000));
+            attachment.videoLength = (int) (videolengh / 1000);
             Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
             retriever.release();
         }
@@ -415,7 +424,7 @@ public class MessageInputController {
         commands = null;
     }
 
-    private boolean isCommandOrMention(){
+    private boolean isCommandOrMention() {
         return messageInputType != null && ((messageInputType == MessageInputType.COMMAND)
                 || (messageInputType == MessageInputType.MENTION));
     }
@@ -424,7 +433,7 @@ public class MessageInputController {
         if (TextUtils.isEmpty(text)
                 || (!text.startsWith("/") && !text.contains("@"))) {
             closeCommandView();
-        }else if (text.length() == 1) {
+        } else if (text.length() == 1) {
             onClickCommandViewOpen(text.startsWith("/"));
         } else if (text.endsWith("@")) {
             onClickCommandViewOpen(false);
@@ -466,21 +475,23 @@ public class MessageInputController {
             closeCommandView();
         });
     }
-    private void setCommandMentionListItemAdapter(boolean isCommand){
-        if (commandMentionListItemAdapter  == null) {
+
+    private void setCommandMentionListItemAdapter(boolean isCommand) {
+        if (commandMentionListItemAdapter == null) {
             commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
             binding.lvCommand.setAdapter(commandMentionListItemAdapter);
-        }else{
+        } else {
             commandMentionListItemAdapter.setCommand(isCommand);
             commandMentionListItemAdapter.setCommands(commands);
             commandMentionListItemAdapter.notifyDataSetChanged();
         }
     }
+
     private void setCommandsMentionUsers(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
-            List<Command>commands = channel.getConfig().getCommands();
+            List<Command> commands = channel.getConfig().getCommands();
             if (commands == null || commands.isEmpty()) return;
 
             String commandStr = string.replace("/", "");
@@ -498,16 +509,16 @@ public class MessageInputController {
         commands.clear();
         for (int i = 0; i < channel.getConfig().getCommands().size(); i++) {
             Command command = channel.getConfig().getCommands().get(i);
-            if (command.getName().contains(string))
-                commands.add(command);
+            if (command.getName().contains(string)) commands.add(command);
         }
     }
 
     private void setMentionUsers(String string) {
-        StreamChat.getLogger().logD(this,"Mention UserName: " + string);
+        StreamChat.getLogger().logD(this, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
-        List<Member> members = channel.getChannelState().getMembers();
+
+        List<Member> members = channel.getMembers();
         for (int i = 0; i < members.size(); i++) {
             Member member = members.get(i);
             User user = member.getUser();

@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.rest.adapter;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.Config;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -68,10 +68,10 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     channel.setType((String) set.getValue());
                     continue;
                 case "created_by":
-                    channel.setCreatedByUser(gson.fromJson(json, User.class));
+                    //channel.setCreatedByUser(gson.fromJson(json, User.class));
                     continue;
                 case "last_message_at":
-                    channel.setLastMessageDate(gson.fromJson(json, Date.class));
+                    //channel.setLastMessageDate(gson.fromJson(json, Date.class));
                     continue;
                 case "created_at":
                     channel.setCreatedAt(gson.fromJson(json, Date.class));
@@ -83,10 +83,10 @@ public class ChannelGsonAdapter extends TypeAdapter<Channel> {
                     channel.setUpdatedAt(gson.fromJson(json, Date.class));
                     continue;
                 case "frozen":
-                    channel.setFrozen((boolean) set.getValue());
+                    //channel.setFrozen((boolean) set.getValue());
                     continue;
                 case "config":
-                    channel.setConfig(new Gson().fromJson(json, Config.class));
+                    //channel.setConfig(new Gson().fromJson(json, Config.class));
                     continue;
                 case "member_count":
                     continue;

@@ -36,14 +36,6 @@
             android:parentActivityName=".HomeActivity"
             android:launchMode="singleInstance"/>
 
-        <service
-            android:name="com.getstream.sdk.chat.notifications.StreamFirebaseMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="2ae916eaa00e73d398864ff4e5f3e331e8d31d12" />

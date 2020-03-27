@@ -5,9 +5,10 @@ import android.view.ViewGroup;
 
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
+
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 
 import java.util.List;
 

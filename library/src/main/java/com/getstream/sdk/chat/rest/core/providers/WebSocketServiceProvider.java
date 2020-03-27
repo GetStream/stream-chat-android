@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.core.providers;
 
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.WebSocketService;
 
 import java.io.UnsupportedEncodingException;

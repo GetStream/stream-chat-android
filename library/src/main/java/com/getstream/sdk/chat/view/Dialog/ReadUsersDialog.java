@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.R;
 
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 

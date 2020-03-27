@@ -9,9 +9,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.core.Client;
-import com.getstream.sdk.chat.rest.interfaces.CompletableCallback;
-import com.getstream.sdk.chat.rest.response.CompletableResponse;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.annotation.NonNull;
@@ -20,11 +17,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingAdapter;
 import androidx.fragment.app.Fragment;
+import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.example.BaseApplication;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
 import io.getstream.chat.example.navigation.LoginDestination;
 import io.getstream.chat.example.utils.AppConfig;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class ProfileFragment extends Fragment {
 
@@ -36,9 +36,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
-        Client client = StreamChat.getInstance(getContext());
         appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
-        binding.setUser(client.getUser());
+        binding.setUser(StreamChat.getInstance().getCurrentUser());
         binding.setAppConfig(appConfig);
         binding.btnLogOut.setOnClickListener(view -> logOut());
 
@@ -109,21 +108,23 @@ public class ProfileFragment extends Fragment {
     }
 
     private void removeDevice(String deviceId) {
-        Client client = StreamChat.getInstance(getContext());
-        client.removeDevice(deviceId, new CompletableCallback() {
 
+        StreamChat.getInstance().deleteDevice(deviceId).enqueue(new Function1<Result<Unit>, Unit>() {
             @Override
-            public void onSuccess(CompletableResponse response) {
-                ProfileFragment.this.onSuccess();
-            }
+            public Unit invoke(Result<Unit> unitResult) {
 
-            @Override
-            public void onError(String errMsg, int errCode) {
-                ProfileFragment.this.onError(
-                        getString(R.string.error_removing_device, errMsg, errCode)
-                );
+                if (unitResult.isSuccess()) {
+                    ProfileFragment.this.onSuccess();
+                } else {
+                    ProfileFragment.this.onError(
+                            unitResult.error().getMessage()
+                    );
+                }
+
+                return null;
             }
         });
+
     }
 
     private void showProgress() {
@@ -137,9 +138,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private void onSuccess() {
+        logOutAndGoToLoginScreen();
+    }
+
+    private void logOutAndGoToLoginScreen() {
         hideProgress();
-        Client client = StreamChat.getInstance(getContext());
-        client.disconnect();
+        StreamChat.getInstance().disconnect();
         StreamChat.getNavigator().navigate(new LoginDestination(getContext()));
         getActivity().finish();
         ((BaseApplication) getContext().getApplicationContext()).getAppConfig().setCurrentUser(null);
@@ -149,7 +153,10 @@ public class ProfileFragment extends Fragment {
         hideProgress();
         errorDialog = new AlertDialog.Builder(getContext())
                 .setMessage(message)
-                .setPositiveButton(R.string.ok, (dialog, which) -> errorDialog.dismiss()).create();
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    errorDialog.dismiss();
+                    logOutAndGoToLoginScreen();
+                }).create();
         errorDialog.show();
     }
 

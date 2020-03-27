@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
 
 public class WebLinkDestination extends ChatDestination {
 
@@ -13,7 +12,7 @@ public class WebLinkDestination extends ChatDestination {
 
     public WebLinkDestination(String url, Context context) {
         super(context);
-        String signedUrl = StreamChat.getInstance(context).getUploadStorage().signFileUrl(url);
+        String signedUrl = StreamChat.signFileUrl(url);
         this.url = signedUrl == null ? "" : signedUrl;
     }
 

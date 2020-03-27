@@ -10,7 +10,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.storage.converter;
 
 import androidx.room.TypeConverter;
 
-import com.getstream.sdk.chat.model.Reaction;
+import io.getstream.chat.android.client.models.Reaction;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,7 +31,8 @@ public class ReactionListConverter {
         if (someObjects != null) {
             for (Reaction r : someObjects) {
                 if (r.getUser() != null) {
-                    r.setUserID(r.getUser().getId());
+                    //TODO: llc add setting user id
+                    //r.setUserID(r.getUser().getId());
                     // dont serialize the full user object
                     r.setUser(null);
                 }

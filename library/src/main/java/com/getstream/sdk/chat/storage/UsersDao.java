@@ -5,7 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public interface UsersDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUsers(List<User> users);
 
-    @Query("SELECT * FROM stream_user " +
-            "WHERE stream_user.id IN (:ids)")
+    @Query("SELECT * FROM User " +
+            "WHERE User.id IN (:ids)")
     List<User> getUsers(final List<String> ids);
 
 }

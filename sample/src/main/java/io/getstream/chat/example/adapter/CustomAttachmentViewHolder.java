@@ -4,19 +4,18 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.rest.Message;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.example.R;
 
 public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
@@ -60,16 +59,16 @@ public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
         configClickListeners();
     }
 
-    private void configAttachment(){
+    private void configAttachment() {
         Drawable background = bubbleHelper.getDrawableForAttachment(messageListItem.getMessage(), messageListItem.isMine(), messageListItem.getPositions(), attachment);
         iv_media_thumb.setShape(context, background);
 
         Glide.with(context)
-                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachment.getThumbURL()))
+                .load(StreamChat.signGlideUrl(attachment.getThumbUrl()))
                 .into(iv_media_thumb);
     }
 
-    private void configClickListeners(){
+    private void configClickListeners() {
         iv_media_thumb.setOnClickListener(view -> {
             if (clickListener != null)
                 clickListener.onAttachmentClick(message, attachment);

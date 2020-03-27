@@ -5,26 +5,27 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModelFactory;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.example.adapter.CustomMessageViewHolderFactory;
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
 import io.getstream.chat.example.navigation.SearchDestination;
-import io.getstream.chat.example.search.MessageSearchActivity;
 import io.getstream.chat.example.view.fragment.ChannelListFragment;
 
 /**
@@ -43,6 +44,9 @@ public class ChannelActivity extends AppCompatActivity
 
     private ChannelViewModel viewModel;
     private ActivityChannelBinding binding;
+    private String channelType;
+    private String channelId;
+    private String cid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +54,10 @@ public class ChannelActivity extends AppCompatActivity
 
         // receive the intent and create a channel object
         Intent intent = getIntent();
-        String channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
-        String channelID = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
-        Client client = StreamChat.getInstance(getApplication());
+        channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
+        channelId = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
+        cid = channelType + ":" + channelId;
+        ChatClient client = StreamChat.getInstance();
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
@@ -63,31 +68,39 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageInput.setMessageText(messageText);
         }
 
-        Channel channel = client.channel(channelType, channelID);
+        initViewModel();
+    }
 
+    private void initViewModel() {
         // setup the viewmodel, remember to also set the channel
-        viewModel = ViewModelProviders.of(this).get(ChannelViewModel.class);
-        viewModel.setChannel(channel);
-        viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
-            Log.i(TAG, String.format("The current user unread count is now %d", count));
+        ChannelViewModelFactory factory = new ChannelViewModelFactory(getApplication(), channelType, channelId);
+        viewModel = new ViewModelProvider(this, factory).get(ChannelViewModel.class);
+
+        ChannelActivity activity = this;
+
+        viewModel.getInitializedState().observe(this, initialized -> {
+            this.viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
+                Log.i(TAG, String.format("The current user unread count is now %d", count));
+            });
+
+            // set listeners
+            binding.messageList.setMessageLongClickListener(activity);
+            binding.messageList.setUserClickListener(activity);
+            binding.messageList.setAttachmentClickListener(activity);
+            // If you are using own MessageInputView please comment this line.
+            binding.messageInput.setPermissionRequestListener(activity);
+            binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
+
+            // connect the view model
+            Log.d(TAG, "Set View Model = " + viewModel);
+            binding.setViewModel(viewModel);
+            binding.channelHeader.setViewModel(viewModel, activity);
+            binding.channelHeader.setHeaderOptionsClickListener(activity);
+            binding.channelHeader.setHeaderAvatarGroupClickListener(activity);
+            binding.messageList.setViewModel(viewModel, activity);
+            binding.messageInput.setViewModel(viewModel, activity);
         });
 
-        // set listeners
-        binding.messageList.setMessageLongClickListener(this);
-        binding.messageList.setUserClickListener(this);
-        binding.messageList.setAttachmentClickListener(this);
-        // If you are using own MessageInputView please comment this line.
-        binding.messageInput.setPermissionRequestListener(this);
-        binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
-
-        // connect the view model
-        Log.d(TAG, "Set View Model = " + viewModel);
-        binding.setViewModel(viewModel);
-        binding.channelHeader.setViewModel(viewModel, this);
-        binding.channelHeader.setHeaderOptionsClickListener(this);
-        binding.channelHeader.setHeaderAvatarGroupClickListener(this);
-        binding.messageList.setViewModel(viewModel, this);
-        binding.messageInput.setViewModel(viewModel, this);
     }
 
     @Override
@@ -139,8 +152,11 @@ public class ChannelActivity extends AppCompatActivity
 
     @Override
     public void onHeaderAvatarGroupClick(Channel channel) {
+
+        String name = LlcMigrationUtils.getName(channel);
+
         new AlertDialog.Builder(this)
-                .setTitle("Avatar group click for channel " + channel.getName())
+                .setTitle("Avatar group click for channel " + name)
                 .setMessage("You pressed on the avatar group, well done")
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(R.drawable.stream_ic_settings)
@@ -153,6 +169,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     private void openSearchActivity() {
-        StreamChat.getNavigator().navigate(new SearchDestination(viewModel.getChannel().getCid(), this));
+        StreamChat.getNavigator().navigate(new SearchDestination(cid, this));
     }
 }

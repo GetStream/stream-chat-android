@@ -5,7 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 
 import java.util.List;
 

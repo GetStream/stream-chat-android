@@ -1,11 +1,20 @@
 package com.getstream.sdk.chat.adapter;
 
-import androidx.recyclerview.widget.DiffUtil;
-
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.Message;
-
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Message;
+
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.computeLastMessage;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.currentUserRead;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastMessageDate;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastReaders;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsName;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsUserLists;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.getOtherUsers;
+import static com.getstream.sdk.chat.utils.LlcMigrationUtils.lastMessagesAreTheSame;
 
 public class ChannelListDiffCallback extends DiffUtil.Callback {
     private List<Channel> oldList, newList;
@@ -27,7 +36,9 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+        Channel oldItem = oldList.get(oldItemPosition);
+        Channel newItem = newList.get(newItemPosition);
+        return oldItem.getCid().equals(newItem.getCid());
     }
 
     @Override
@@ -35,40 +46,52 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         Channel oldChannel = oldList.get(oldItemPosition);
         Channel newChannel = newList.get(newItemPosition);
 
-        if (oldChannel.getUpdatedAt() == null && newChannel.getUpdatedAt() != null) {
-            return false;
+        boolean contentTheSame = true;
+
+        if (!oldChannel.getCid().equals(newChannel.getCid())) {
+            contentTheSame = false;
+        } else if (oldChannel.getUpdatedAt() == null && newChannel.getUpdatedAt() != null) {
+            contentTheSame = false;
+        } else if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
+            contentTheSame = false;
+        } else if (oldChannel.getLastMessageAt() == null && newChannel.getLastMessageAt() != null) {
+            contentTheSame = false;
+        } else if (newChannel.getLastMessageAt() != null && oldChannel.getLastMessageAt().getTime() < newChannel.getLastMessageAt().getTime()) {
+            contentTheSame = false;
+        } else if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
+            contentTheSame = false;
+        } else if (!lastMessagesAreTheSame(oldChannel, newChannel)) {
+            contentTheSame = false;
+        } else if (currentUserRead(oldChannel, newChannel)) {
+            contentTheSame = false;
         }
 
-        if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
-            return false;
-        }
-
-        if (oldChannel.getLastMessageDate() == null && newChannel.getLastMessageDate() != null) {
-            return false;
-        }
-
-        if (newChannel.getLastMessageDate() != null && oldChannel.getLastMessageDate().getTime() < newChannel.getLastMessageDate().getTime()) {
-            return false;
-        }
-
-        if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
-            return false;
-        }
-        // Check Message Update
-        Message oldLastMessage = oldChannel.getChannelState().getLastMessage();
-        Message newLastMessage = newChannel.getChannelState().getLastMessage();
-        if (oldLastMessage != null &&
-                newLastMessage != null &&
-                newLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
-            return false;
-        }
-        // Check Message Delete
-        if (oldLastMessage != null && !oldLastMessage.equals(newLastMessage)) {
-            return false;
-        }
-
-        return oldChannel.getChannelState().getLastReader() == newChannel.getChannelState().getLastReader();
+        return contentTheSame;
     }
+
+    @Nullable
+    @Override
+    public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+
+        ChannelItemPayloadDiff diff = new ChannelItemPayloadDiff();
+
+        Channel oldChannel = oldList.get(oldItemPosition);
+        Channel newChannel = newList.get(newItemPosition);
+
+        Message oldLastMessage = computeLastMessage(oldChannel);
+        Message newLastMessage = computeLastMessage(newChannel);
+
+        if (oldLastMessage != null || newLastMessage != null) {
+            diff.lastMessage = !oldLastMessage.getId().equals(newLastMessage.getId());
+        }
+
+        diff.name = !equalsName(newChannel, oldChannel);
+        diff.avatarView = !equalsUserLists(getOtherUsers(oldChannel), getOtherUsers(newChannel));
+        diff.readState = currentUserRead(oldChannel, newChannel);
+        diff.lastMessageDate = !equalsLastMessageDate(oldChannel, newChannel);
+
+        return diff;
+    }
+
+
 }

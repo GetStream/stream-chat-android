@@ -3,29 +3,29 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
@@ -113,14 +113,14 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                 cl_attachment_media.setVisibility(View.VISIBLE);
                 tv_media_title.setVisibility(View.VISIBLE);
                 tv_media_title.setText(attachment.getTitle());
-            }else
+            } else
                 tv_media_title.setVisibility(View.GONE);
 
             if (!TextUtils.isEmpty(attachment.getText())) {
                 cl_attachment_media.setVisibility(View.VISIBLE);
                 tv_media_des.setVisibility(View.VISIBLE);
                 tv_media_des.setText(attachment.getText());
-            }else
+            } else
                 tv_media_des.setVisibility(View.GONE);
         }
     }
@@ -149,12 +149,12 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
                 attachments.add(attachment);
             }
         }
-        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, attachments, false, false);
+        AttachmentListAdapter attachAdapter = new AttachmentListAdapter(context, LlcMigrationUtils.getMetaAttachments(attachments), false, false);
 
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
-            StreamChat.getLogger().logD(this,"Attach onMessageClick: " + position);
+            StreamChat.getLogger().logD(this, "Attach onMessageClick: " + position);
             if (clickListener != null)
                 clickListener.onAttachmentClick(message, attachment);
         });
@@ -182,13 +182,13 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
         final String type = attachments.get(0).getType();
 
-        String attachUrl = attachments.get(0).getImageURL();
+        String attachUrl = attachments.get(0).getImageUrl();
         if (attachments.get(0).getType().equals(ModelType.attach_image)) {
-            attachUrl = attachments.get(0).getImageURL();
+            attachUrl = attachments.get(0).getImageUrl();
         } else if (attachments.get(0).getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachments.get(0).getThumbURL();
+            attachUrl = attachments.get(0).getThumbUrl();
         } else if (attachments.get(0).getType().equals(ModelType.attach_video)) {
-            attachUrl = attachments.get(0).getThumbURL();
+            attachUrl = attachments.get(0).getThumbUrl();
         } else {
             if (attachUrl == null) attachUrl = attachments.get(0).getImage();
         }
@@ -204,7 +204,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
-                .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(attachUrl))
+                .load(StreamChat.signGlideUrl(attachUrl))
                 .into(iv_media_thumb);
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());
@@ -227,7 +227,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void applyStyle() {
-        if(messageListItem.isMine()) {
+        if (messageListItem.isMine()) {
             style.attachmentTitleTextMine.apply(tv_media_title);
             style.attachmentDescriptionTextMine.apply(tv_media_des);
         } else {
@@ -236,7 +236,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         }
     }
 
-    private void configClickListeners(){
+    private void configClickListeners() {
         cl_attachment_media.setOnClickListener(view -> {
             if (clickListener != null)
                 clickListener.onAttachmentClick(message, attachment);

@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.rest.adapter;
 
-import com.getstream.sdk.chat.model.Attachment;
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.model.Reaction;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.storage.Sync;
 import com.google.gson.Gson;
@@ -54,8 +54,8 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getAttachments() != null)
             data.put("attachments", message.getAttachments());
 
-        if (message.getMentionedUsersId() != null)
-            data.put("mentioned_users", message.getMentionedUsersId());
+        if (message.getMentionedUsers() != null)
+            data.put("mentioned_users", message.getMentionedUsers());
 
         if (message.getParentId() != null)
             data.put("parent_id", message.getParentId());
@@ -63,10 +63,10 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         if (message.getAttachments() != null
                 && !message.getAttachments().isEmpty()) {
             boolean isGiphy = false;
-            for (Attachment attachment : message.getAttachments()) {
-                if (!isGiphy && attachment.getType().equals(ModelType.attach_giphy))
-                    isGiphy = true;
-            }
+//            for (Attachment attachment : message.getAttachments()) {
+//                if (!isGiphy && attachment.getType().equals(ModelType.attach_giphy))
+//                    isGiphy = true;
+//            }
             if (isGiphy){
                 data.put("command", ModelType.attach_giphy);
                 Map<String, String> commandInfo = new HashMap<>();
@@ -89,73 +89,73 @@ public class MessageGsonAdapter extends TypeAdapter<Message> {
         }
 
         Message message = new Message();
-        message.setSyncStatus(Sync.SYNCED);
+        //message.setSyncStatus(Sync.SYNCED);
         HashMap<String, Object> extraData = new HashMap<>();
 
         // TODO: is approach (like Java) is super dumb, we decode data twice
-        for (HashMap.Entry<String, Object> set : value.entrySet()) {
-            String json = gson.toJson(set.getValue());
-            // Set Reserved Data
-            switch (set.getKey()) {
-                case "id":
-                    message.setId((String) set.getValue());
-                    continue;
-                case "text":
-                    message.setText((String) set.getValue());
-                    continue;
-                case "html":
-                    message.setHtml((String) set.getValue());
-                    continue;
-                case "type":
-                    message.setType((String) set.getValue());
-                    continue;
-                case "user":
-                    message.setUser(gson.fromJson(json, User.class));
-                    continue;
-                case "channel":
-                    message.setChannel(gson.fromJson(json, Channel.class));
-                    continue;
-                case "attachments":
-                    message.setAttachments(gson.fromJson(json, new TypeToken<List<Attachment>>(){}.getType()));
-                    continue;
-                case "latest_reactions":
-                    message.setLatestReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
-                    continue;
-                case "own_reactions":
-                    message.setOwnReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
-                    continue;
-                case "reply_count":
-                    message.setReplyCount(gson.fromJson(json, Integer.class));
-                    continue;
-                case "created_at":
-                    message.setCreatedAt(gson.fromJson(json, Date.class));
-                    continue;
-                case "updated_at":
-                    message.setUpdatedAt(gson.fromJson(json, Date.class));
-                    continue;
-                case "deleted_at":
-                    message.setDeletedAt(gson.fromJson(json, Date.class));
-                    continue;
-                case "mentioned_users":
-                    message.setMentionedUsers(gson.fromJson(json, new TypeToken<List<User>>(){}.getType()));
-                    continue;
-                case "reaction_counts":
-                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map<String, Integer>>(){}.getType()));
-                    continue;
-                case "parent_id":
-                    message.setParentId((String) set.getValue());
-                    continue;
-                case "command":
-                    message.setCommand((String) set.getValue());
-                    continue;
-                case "command_info":
-                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map<String, String>>(){}.getType()));
-                    continue;
-            }
-            // Set Extra Data
-            extraData.put(set.getKey(), set.getValue());
-        }
-        message.setExtraData(extraData);
+//        for (HashMap.Entry<String, Object> set : value.entrySet()) {
+//            String json = gson.toJson(set.getValue());
+//            // Set Reserved Data
+//            switch (set.getKey()) {
+//                case "id":
+//                    message.setId((String) set.getValue());
+//                    continue;
+//                case "text":
+//                    message.setText((String) set.getValue());
+//                    continue;
+//                case "html":
+//                    message.setHtml((String) set.getValue());
+//                    continue;
+//                case "type":
+//                    message.setType((String) set.getValue());
+//                    continue;
+//                case "user":
+//                    message.setUser(gson.fromJson(json, User.class));
+//                    continue;
+//                case "channel":
+//                    message.setChannel(gson.fromJson(json, Channel.class));
+//                    continue;
+//                case "attachments":
+//                    message.setAttachments(gson.fromJson(json, new TypeToken<List<Attachment>>(){}.getType()));
+//                    continue;
+//                case "latest_reactions":
+//                    message.setLatestReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
+//                    continue;
+//                case "own_reactions":
+//                    message.setOwnReactions(gson.fromJson(json, new TypeToken<List<Reaction>>(){}.getType()));
+//                    continue;
+//                case "reply_count":
+//                    message.setReplyCount(gson.fromJson(json, Integer.class));
+//                    continue;
+//                case "created_at":
+//                    message.setCreatedAt(gson.fromJson(json, Date.class));
+//                    continue;
+//                case "updated_at":
+//                    message.setUpdatedAt(gson.fromJson(json, Date.class));
+//                    continue;
+//                case "deleted_at":
+//                    message.setDeletedAt(gson.fromJson(json, Date.class));
+//                    continue;
+//                case "mentioned_users":
+//                    message.setMentionedUsers(gson.fromJson(json, new TypeToken<List<User>>(){}.getType()));
+//                    continue;
+//                case "reaction_counts":
+//                    message.setReactionCounts(gson.fromJson(json, new TypeToken<Map<String, Integer>>(){}.getType()));
+//                    continue;
+//                case "parent_id":
+//                    message.setParentId((String) set.getValue());
+//                    continue;
+//                case "command":
+//                    message.setCommand((String) set.getValue());
+//                    continue;
+//                case "command_info":
+//                    message.setCommandInfo(gson.fromJson(json, new TypeToken<Map<String, String>>(){}.getType()));
+//                    continue;
+//            }
+//            // Set Extra Data
+//            extraData.put(set.getKey(), set.getValue());
+//        }
+//        message.setExtraData(extraData);
         return message;
     }
 }

@@ -12,24 +12,24 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.interfaces.FlagCallback;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.FlagResponse;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.models.Flag;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.utils.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
@@ -86,21 +86,27 @@ public class MessageMoreActionDialog extends Dialog {
 
         ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
-        if (!message.getUserId().equals(StreamChat.getInstance(context).getUserId())) {
+        User currentUser = StreamChat.getInstance().getCurrentUser();
+        String id = currentUser.getId();
+        if (!message.getUserId().equals(id)) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
-                viewModel.getChannel().flagMessage(message.getId(), new FlagCallback() {
-                    @Override
-                    public void onSuccess(FlagResponse response) {
-                        Utils.showMessage(context, "Message has been succesfully flagged");
-                        dismiss();
-                    }
 
+                StreamChat.getInstance().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
                     @Override
-                    public void onError(String errMsg, int errCode) {
-                        Utils.showMessage(context, errMsg);
+                    public Unit invoke(Result<Flag> flagResponseResult) {
+
+                        if (flagResponseResult.isSuccess()) {
+                            Utils.showMessage(context, "Message has been succesfully flagged");
+                        } else {
+                            ChatError error = flagResponseResult.error();
+                            Utils.showMessage(context, error.getMessage());
+                        }
+
                         dismiss();
+
+                        return null;
                     }
                 });
 
@@ -114,22 +120,26 @@ public class MessageMoreActionDialog extends Dialog {
             });
 
             ll_delete.setOnClickListener(view -> {
-                viewModel.getChannel().deleteMessage(message,
-                        new MessageCallback() {
-                            @Override
-                            public void onSuccess(MessageResponse response) {
-                                Utils.showMessage(context, "Deleted Successfully");
-                                dismiss();
-                                if (TextUtils.isEmpty(message.getParentId()))
-                                    viewModel.initThread();
-                            }
 
-                            @Override
-                            public void onError(String errMsg, int errCode) {
-                                Utils.showMessage(context, errMsg);
-                                dismiss();
-                            }
-                        });
+
+                StreamChat.getInstance().deleteMessage(message.getId()).enqueue(new Function1<Result<Message>, Unit>() {
+                    @Override
+                    public Unit invoke(Result<Message> messageResult) {
+
+                        if (messageResult.isSuccess()) {
+                            Utils.showMessage(context, "Deleted Successfully");
+                            if (TextUtils.isEmpty(message.getParentId()))
+                                viewModel.initThread();
+                        } else {
+                            ChatError error = messageResult.error();
+                            Utils.showMessage(context, error.getMessage());
+                        }
+
+                        dismiss();
+
+                        return null;
+                    }
+                });
             });
         }
 
@@ -147,7 +157,7 @@ public class MessageMoreActionDialog extends Dialog {
             RecyclerView.LayoutManager mLayoutManager;
             mLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             rv_reaction.setLayoutManager(mLayoutManager);
-            ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(viewModel.getChannel(),
+            ReactionDialogAdapter reactionAdapter = new ReactionDialogAdapter(
                     message,
                     style,
                     (View v) -> dismiss());
@@ -170,7 +180,8 @@ public class MessageMoreActionDialog extends Dialog {
 
     private boolean canCopyonMessage() {
         return !(message.getDeletedAt() != null
-                || message.getSyncStatus() == Sync.LOCAL_FAILED
+                //TODO: llc cache
+                //|| message.getSyncStatus() == Sync.LOCAL_FAILED
                 || message.getType().equals(ModelType.message_error)
                 || message.getType().equals(ModelType.message_ephemeral)
                 || TextUtils.isEmpty(message.getText()));

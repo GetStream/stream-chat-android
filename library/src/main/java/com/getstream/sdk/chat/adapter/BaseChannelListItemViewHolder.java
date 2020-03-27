@@ -4,10 +4,11 @@ import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
 
 import com.getstream.sdk.chat.MarkdownImpl;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
@@ -18,7 +19,7 @@ public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHol
         super(itemView);
     }
 
-    public abstract void bind(Context context, ChannelState channelState, int position);
+    public abstract void bind(Context context, Channel channelState, int position, @Nullable ChannelItemPayloadDiff payloads);
 
     public abstract void setStyle(ChannelListViewStyle style);
 

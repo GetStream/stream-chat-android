@@ -14,12 +14,8 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.enums.GiphyAction;
-import com.getstream.sdk.chat.model.Attachment;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import com.getstream.sdk.chat.rest.response.MessageResponse;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -28,6 +24,8 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
@@ -52,19 +50,18 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private MessageListView.MessageLongClickListener longClickListener;
     private MessageListView.GiphySendListener giphySendListener;
 
-    private Client client;
-    private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
-        @Override
-        public void onSuccess(MessageResponse response) {
-            enableSendGiphyButtons(true);
-        }
-
-        @Override
-        public void onError(String errMsg, int errCode) {
-            enableSendGiphyButtons(true);
-            Utils.showMessage(context, errMsg);
-        }
-    };
+//    private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
+//        @Override
+//        public void onSuccess(MessageResponse response) {
+//            enableSendGiphyButtons(true);
+//        }
+//
+//        @Override
+//        public void onError(String errMsg, int errCode) {
+//            enableSendGiphyButtons(true);
+//            Utils.showMessage(context, errMsg);
+//        }
+//    };
 
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
@@ -82,7 +79,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_action_send = itemView.findViewById(R.id.tv_action_send);
         tv_action_shuffle = itemView.findViewById(R.id.tv_action_shuffle);
         tv_action_cancel = itemView.findViewById(R.id.tv_action_cancel);
-        client = StreamChat.getInstance(context);
     }
 
     @Override
@@ -152,19 +148,19 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             tv_action_send.setOnClickListener(view -> {
                 if (giphySendListener != null){
                     enableSendGiphyButtons(false);
-                    giphySendListener.onGiphySend(message, GiphyAction.SEND, sendGiphyMessageCallback);
+                    giphySendListener.onGiphySend(message, GiphyAction.SEND);
                 }
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
                 if (giphySendListener != null){
                     enableSendGiphyButtons(false);
-                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE, sendGiphyMessageCallback);
+                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
                 }
             });
             tv_action_cancel.setOnClickListener((View v) -> {
                 if (giphySendListener != null){
-                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL, sendGiphyMessageCallback);
+                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
                 }
             });
         } else {
@@ -177,7 +173,8 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         configImageThumbBackground();
 
         Glide.with(context)
-                .load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
+                //.load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
+                .load(attachment.getAssetUrl())
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 

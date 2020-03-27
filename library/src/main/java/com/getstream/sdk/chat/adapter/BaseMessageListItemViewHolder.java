@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
 
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -18,7 +19,7 @@ public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHol
     }
 
     public abstract void bind(@NonNull Context context,
-                              @NonNull ChannelState channelState,
+                              @NonNull Channel channel,
                               @NonNull MessageListItem messageListItem,
                               @NonNull MessageListViewStyle style,
                               @NonNull MessageListView.BubbleHelper bubbleHelper,

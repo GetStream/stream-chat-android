@@ -6,7 +6,7 @@
 
         <variable
             name="user"
-            type="com.getstream.sdk.chat.rest.User"/>
+            type="io.getstream.chat.android.client.models.User"/>
 
         <variable
             name="appConfig"

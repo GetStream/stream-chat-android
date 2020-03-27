@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.rest.User;
+
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -33,7 +35,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
 
     @Override
     public void bind(@NonNull Context context,
-                     @NonNull ChannelState channelState,
+                     @NonNull Channel channel,
                      @NonNull MessageListItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,

@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.rest.response;
 
 import com.getstream.sdk.chat.interfaces.UserEntity;
-import com.getstream.sdk.chat.rest.User;
+import io.getstream.chat.android.client.models.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

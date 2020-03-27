@@ -9,13 +9,13 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.rest.Message;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

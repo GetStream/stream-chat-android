@@ -2,9 +2,9 @@ package com.getstream.sdk.chat.storage;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.getstream.sdk.chat.model.Channel;
+import io.getstream.chat.android.client.models.Channel;
 import com.getstream.sdk.chat.model.QueryChannelsQ;
-import com.getstream.sdk.chat.rest.Message;
+import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import org.jetbrains.annotations.NotNull;

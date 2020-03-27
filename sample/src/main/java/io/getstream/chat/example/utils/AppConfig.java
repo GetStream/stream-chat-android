@@ -30,7 +30,6 @@ public class AppConfig {
         appConfig = new Gson().fromJson(json, Config.class);
     }
 
-    @Nullable
     public UserConfig getCurrentUser() {
         String currentUserId = preferences.getString(CURRENT_USER_ID, null);
 

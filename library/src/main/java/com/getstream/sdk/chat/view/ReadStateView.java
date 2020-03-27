@@ -12,9 +12,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.User;
-import com.getstream.sdk.chat.rest.response.ChannelUserRead;
+import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.models.ChannelUserRead;
 import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
@@ -56,7 +57,9 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         // Avatar
         CircularImageView imageView = new CircularImageView(getContext());
 
-        imageView.setPlaceholder(user.getInitials(),
+        String initials = LlcMigrationUtils.getInitials(user);
+
+        imageView.setPlaceholder(initials,
                 style.getAvatarBackGroundColor(),
                 style.readStateText.color);
 
@@ -72,7 +75,9 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
-                    .load(StreamChat.getInstance(getContext()).getUploadStorage().signGlideUrl(image))
+                    .load(image)
+                    //TODO: llc check glide
+                    //.load(StreamChat.getInstance().getUploadStorage().signGlideUrl(image))
                     .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(

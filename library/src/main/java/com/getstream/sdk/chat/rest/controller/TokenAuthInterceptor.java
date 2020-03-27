@@ -41,7 +41,7 @@ public class TokenAuthInterceptor implements Interceptor {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            StreamChat.getLogger().logT(this, e);
+            StreamChat.getLogger().logE(this, e);
         }
 
         Request request = chain.request();

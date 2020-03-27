@@ -9,9 +9,8 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Channel;
-import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
@@ -20,6 +19,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.User;
 
 public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
@@ -77,10 +78,12 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         }
 
         removeAllViews();
+
         if (user != null) {
-            configSingleAvatar(user.getImage(), user.getInitials());
-        } else if (!TextUtils.isEmpty(channel.getImage())) {
-            configSingleAvatar(channel.getImage(), channel.getInitials());
+            configSingleAvatar(user.getImage(), LlcMigrationUtils.getInitials(user));
+        } else if (channel != null && !TextUtils.isEmpty(LlcMigrationUtils.getImage(channel))) {
+            String image = LlcMigrationUtils.getImage(channel);
+            configSingleAvatar(image, LlcMigrationUtils.getInitials(channel));
         } else {
             configUserAvatars();
         }
@@ -92,10 +95,10 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
             for (int i = 0; i < Math.min(lastActiveUsers.size(), 3); i++) {
                 User user_ = lastActiveUsers.get(i);
                 if (lastActiveUsers.size() == 1) {
-                    configSingleAvatar(user_.getImage(), user_.getInitials());
+                    configSingleAvatar(user_.getImage(), LlcMigrationUtils.getInitials(user_));
                 } else {
                     CircularImageView imageView = new CircularImageView(context);
-                    configAvatarView(imageView, user_.getImage(), user_.getInitials(), factor);
+                    configAvatarView(imageView, user_.getImage(), LlcMigrationUtils.getInitials(user_), factor);
                     imageView.setBorderWidth(TypedValue.COMPLEX_UNIT_PX,
                             style.getAvatarBorderWidth());
 
@@ -134,7 +137,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                 }
             }
         } else {
-            configSingleAvatar(channel.getImage(), channel.getInitials());
+
+            String initials = LlcMigrationUtils.getInitials(channel);
+            String image = LlcMigrationUtils.getImage(channel);
+
+            configSingleAvatar(image, initials);
         }
     }
 
@@ -157,7 +164,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
-                    .load(StreamChat.getInstance(context).getUploadStorage().signGlideUrl(image))
+                    .load(StreamChat.signGlideUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 

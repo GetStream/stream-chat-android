@@ -86,7 +86,7 @@ dependencies {
     api 'com.google.android.exoplayer:exoplayer-hls:2.9.6'
     api 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.9.6'
     implementation 'androidx.room:room-runtime:2.1.0'
-    annotationProcessor 'androidx.room:room-compiler:2.1.0'
+    //annotationProcessor 'androidx.room:room-compiler:2.1.0'
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
@@ -95,6 +95,8 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:4.2.1"
     testImplementation "org.mockito:mockito-core:2.23.0"
     testImplementation "org.json:json:20190722"
+
+    api 'com.github.GetStream:stream-chat-android-client:1.0.1'
 }
 
 task javadoc(type: Javadoc) {

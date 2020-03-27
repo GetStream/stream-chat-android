@@ -2,14 +2,12 @@ package com.getstream.sdk.chat.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.*;
 import android.widget.ProgressBar;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.rest.core.Client;
 import com.getstream.sdk.chat.utils.Utils;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,9 +58,9 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (StreamChat.isConnected()) {
-            Client client = StreamChat.getInstance(this);
-            webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + client.getUploadStorage().signFileUrl(url));
+        if (StreamChat.getInstance().isSocketConnected()) {
+            //TODO: llc: add signing
+            webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
         } else {
             finish();
         }
@@ -71,7 +69,8 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.getInstance(AttachmentDocumentActivity.this).getUploadStorage().signFileUrl(url));
+            //TODO: llc: add signing
+            view.loadUrl(url);
             return true;
         }
 
@@ -92,9 +91,9 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){
-          StreamChat.getLogger().logE(this,"The load failed due to an unknown error: " + error);
-            if (error == null){
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            StreamChat.getLogger().logE(this, "The load failed due to an unknown error: " + error);
+            if (error == null) {
                 return;
             }
 

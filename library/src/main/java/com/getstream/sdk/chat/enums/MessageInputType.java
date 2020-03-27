@@ -1,9 +1,10 @@
 package com.getstream.sdk.chat.enums;
 
-import androidx.annotation.StringRes;
+import android.content.Context;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
+
+import androidx.annotation.StringRes;
 
 public enum MessageInputType {
     EDIT_MESSAGE(R.string.stream_input_type_edit_message),
@@ -16,8 +17,8 @@ public enum MessageInputType {
     @StringRes
     private final int labelId;
 
-    public String getLabel() {
-        return StreamChat.getContext().getString(labelId);
+    public String getLabel(Context context) {
+        return context.getString(labelId);
     }
 
     MessageInputType(@StringRes int labelId) {
