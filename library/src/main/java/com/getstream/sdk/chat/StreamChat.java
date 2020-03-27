@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.navigation.StreamChatNavigatorImpl;
 import com.getstream.sdk.chat.style.FontsManager;
 import com.getstream.sdk.chat.style.FontsManagerImpl;
 import com.getstream.sdk.chat.style.StreamChatStyle;
+import com.getstream.sdk.chat.utils.EmptyLoggerHandler;
 import com.getstream.sdk.chat.utils.strings.StringsProvider;
 import com.getstream.sdk.chat.utils.strings.StringsProviderImpl;
 
@@ -186,7 +187,7 @@ public class StreamChat {
         private final String apiKey;
         private final Context appContext;
         private ChatLogLevel logLevel = ChatLogLevel.NOTHING;
-        private ChatLoggerHandler loggerHandler;
+        private ChatLoggerHandler loggerHandler = new EmptyLoggerHandler();
         private ChatNotificationConfig notificationConfig;
         private String cdnEndpoint;
         private String apiEndpoint;

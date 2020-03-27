@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.call.Call;
-import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.MessageReadEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
@@ -613,60 +612,31 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     class ChannelsLiveData<T> extends MutableLiveData<T> {
 
-        private Subscription subscribe;
-
-        @Override
-        public void postValue(T value) {
-            if (value == null) {
-
-            }
-            super.postValue(value);
-        }
-
-        @Override
-        public void setValue(T value) {
-            if (value == null) {
-
-            }
-            super.setValue(value);
-        }
-
+        private Subscription subscription;
 
         @Override
         protected void onActive() {
             ChatClient client = StreamChat.getInstance();
-            if (client.isSocketConnected()) {
-                queryChannels();
-            } else {
-                subscribe = client.events().subscribe(new Function1<ChatEvent, Unit>() {
-                    @Override
-                    public Unit invoke(ChatEvent event) {
 
-                        //TODO: llc ignore next ConnectedEvent
-
-                        if (event instanceof ConnectedEvent) {
+            if (subscription == null) {
+                subscription = client.events()
+                        .first()
+                        .filter(ConnectedEvent.class)
+                        .subscribe(event -> {
                             queryChannels();
-                        }
-
-                        return null;
-                    }
-                });
+                            return Unit.INSTANCE;
+                        });
             }
         }
 
         @Override
         protected void onInactive() {
-            if (subscribe != null) subscribe.unsubscribe();
+            if (subscription != null) {
+                subscription.unsubscribe();
+                subscription = null;
+            }
         }
 
-        //        protected ChannelListViewModel viewModel;
-//
-//        @Override
-//        protected void onActive() {
-//            super.onActive();
-//            if (viewModel.initialized.compareAndSet(false, true)) {
-//                viewModel.queryChannels();
-//            }
-//        }
+
     }
 }
