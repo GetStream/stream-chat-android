@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.utils.getOr
 
 
 class ChatNotificationsImpl(
@@ -142,9 +143,10 @@ class ChatNotificationsImpl(
 
         val notificationId = System.currentTimeMillis().toInt()
 
+
         val notification = config.buildNotification(
             notificationId,
-            channel.extraData.getOrDefault("name", "").toString(),
+            channel.extraData.getOr("name", "").toString(),
             message.text,
             messageId,
             channel.type,
