@@ -48,6 +48,12 @@ internal object ZipCall {
                     }
                 }
             }
+
+            override fun enqueue() {
+                enqueue {
+                    // ignore result
+                }
+            }
         }
     }
 
@@ -81,6 +87,12 @@ internal object ZipCall {
                             }
                         }
                     }
+                }
+            }
+
+            override fun enqueue() {
+                enqueue {
+                    // ignore result
                 }
             }
         }

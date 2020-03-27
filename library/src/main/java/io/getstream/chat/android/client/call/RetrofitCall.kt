@@ -23,6 +23,12 @@ class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : Cha
         }
     }
 
+    override fun enqueue() {
+        enqueue {
+            // ignore result
+        }
+    }
+
     override fun cancel() {
         super.cancel()
         call.cancel()

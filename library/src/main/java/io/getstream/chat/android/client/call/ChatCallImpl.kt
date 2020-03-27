@@ -14,6 +14,8 @@ abstract class ChatCallImpl<T> : Call<T> {
 
     abstract override fun enqueue(callback: (Result<T>) -> Unit)
 
+    abstract override fun enqueue()
+
     override fun cancel() {
         canceled = true
     }
@@ -77,6 +79,12 @@ abstract class ChatCallImpl<T> : Call<T> {
                                 callback(Result(null, error))
                             }
                         }
+                    }
+                }
+
+                override fun enqueue() {
+                    this.enqueue {
+                        // ignore result
                     }
                 }
             }
