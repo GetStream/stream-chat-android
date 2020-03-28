@@ -2,9 +2,15 @@
 
 # Stream Chat Client
 
-`Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications.
+`Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications. This library supports both Kotlin and Java usage. If you can choose we recommend using Kotlin.
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android which comes with a collection of re-usable and customizable UI components.
+
+# Related links
+
+* [Chat Tutorial Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) (Uses the low level client as well as custom Views for chat)
+* [Stream Kotlin Docs](https://getstream.io/chat/docs/?language=kotlin)
+* [Github repo for UX/Views and Sample app](https://github.com/GetStream/stream-chat-android)
 
 ## Setup
 ```groovy
