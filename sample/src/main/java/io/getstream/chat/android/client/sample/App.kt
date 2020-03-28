@@ -6,6 +6,7 @@ import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -85,7 +86,7 @@ class App : Application() {
             .build()
 
         client.events()
-            .filter(ConnectedEvent::class.java)
+            .filter(ErrorEvent::class.java)
             .subscribe {
                 println(it)
             }

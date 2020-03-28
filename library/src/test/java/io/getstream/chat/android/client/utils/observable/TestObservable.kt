@@ -15,7 +15,7 @@ class TestObservable {
     @Before
     fun before() {
         socketService = FakeSocketService()
-        observable = ChatObservableImpl(socketService)
+        observable = ChatObservableImpl(socketService).ignoreInitState()
         result = mutableListOf()
     }
 
@@ -124,6 +124,41 @@ class TestObservable {
         socketService.sendEvent(eventC)
 
         assertThat(result).containsSequence(eventA, eventB)
+    }
+
+    @Test
+    fun first() {
+
+        val eventA = ChatEvent("a")
+        val eventB = ChatEvent("b")
+        val eventC = ChatEvent("c")
+
+        observable.first().subscribe { result.add(it) }
+
+        socketService.sendEvent(eventA)
+        socketService.sendEvent(eventB)
+        socketService.sendEvent(eventC)
+
+        assertThat(result).containsSequence(eventA)
+    }
+
+    @Test
+    fun firstAndFilter() {
+
+        val eventA = ChatEvent("a")
+        val eventB = ChatEvent("b")
+        val eventC = ChatEvent("c")
+
+        observable
+            .first()
+            .filter { it.type == "b" }
+            .subscribe { result.add(it) }
+
+        socketService.sendEvent(eventA)
+        socketService.sendEvent(eventB)
+        socketService.sendEvent(eventC)
+
+        assertThat(result).containsSequence(eventB)
     }
 
 

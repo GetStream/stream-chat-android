@@ -1,15 +1,10 @@
 package io.getstream.chat.android.client.api.models
 
-import com.google.gson.annotations.SerializedName
-
 
 abstract class BaseQueryChannelRequest<T : BaseQueryChannelRequest<T>> {
 
-    @SerializedName("state")
     var state = false
-    @SerializedName("watch")
     var watch = false
-    @SerializedName("presence")
     var presence = false
 
     protected abstract fun cloneOpts(): T

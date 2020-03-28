@@ -1,11 +1,13 @@
 package io.getstream.chat.android.client.utils
 
+
 data class FilterObject(val data: HashMap<String, Any> = HashMap()) {
 
     constructor(key: String, v: Any) : this() {
         data[key] = v
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun getMap(): HashMap<String, Any> {
         val data: HashMap<String, Any> = HashMap()
 

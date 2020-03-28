@@ -334,6 +334,14 @@ internal class ChatClientImpl(
         }
     }
 
+    override fun updateUsers(users: List<User>): Call<List<User>> {
+        return api.updateUsers(users)
+    }
+
+    override fun updateUser(user: User): Call<User> {
+        return updateUsers(listOf(user)).map { it.first() }
+    }
+
     override fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
     }
@@ -360,9 +368,13 @@ internal class ChatClientImpl(
         members
     )
 
-    override fun muteUser(targetId: String) = api.muteUser(targetId)
+    override fun muteUser(userId: String) = api.muteUser(userId)
 
-    override fun unMuteUser(targetId: String) = api.unMuteUser(targetId)
+    override fun unmuteUser(userId: String) = api.unmuteUser(userId)
+
+    override fun unmuteCurrentUser(): Call<Mute> = api.unmuteCurrentUser()
+
+    override fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     override fun flag(targetId: String) = api.flag(targetId)
 
@@ -414,6 +426,23 @@ internal class ChatClientImpl(
 
     override fun channel(channelType: String, channelId: String): ChannelController {
         return ChannelControllerImpl(channelType, channelId, this)
+    }
+
+    override fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel> {
+        return createChannel(channelType, "", extraData)
+    }
+
+    override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> {
+        val request = ChannelQueryRequest().withData(extraData)
+        return queryChannel(channelType, channelId, request)
+    }
+
+    override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> {
+        return createChannel(channelType, channelId, mapOf(Pair("members", members)))
+    }
+
+    override fun createChannel(channelType: String, members: List<String>): Call<Channel> {
+        return createChannel(channelType, "", members)
     }
 
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {

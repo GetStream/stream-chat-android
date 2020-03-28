@@ -16,13 +16,20 @@ class JustObservable(private val event: ChatEvent) : ChatObservable {
         return this
     }
 
+    override fun first(): ChatObservable {
+        return this
+    }
 
     override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
         listener(event)
-        return Subscription(this, listener)
+        return Subscription(this, listener, mutableListOf(), false)
     }
 
     override fun unsubscribe(subscription: Subscription) {
 
+    }
+
+    override fun ignoreInitState(): ChatObservable {
+        return this
     }
 }

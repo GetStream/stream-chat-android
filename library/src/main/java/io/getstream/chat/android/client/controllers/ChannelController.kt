@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
@@ -39,4 +40,13 @@ interface ChannelController {
     fun update(message: Message, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>
+    fun acceptInvite(message: String): Call<Channel>
+    fun rejectInvite(): Call<Channel>
+    fun muteCurrentUser(): Call<Mute>
+    fun muteUser(userId: String): Call<Mute>
+    fun unmuteUser(userId: String): Call<Mute>
+    fun unmuteCurrentUser(): Call<Mute>
+    fun watch(data: Map<String, Any>): Call<Channel>
+    fun stopTyping(): Call<ChatEvent>
+    fun keystroke(): Call<ChatEvent>
 }

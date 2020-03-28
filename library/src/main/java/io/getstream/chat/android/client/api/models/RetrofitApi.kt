@@ -131,6 +131,12 @@ interface RetrofitApi {
 
     //region users
 
+    @POST("/users")
+    fun updateUsers(
+        @Query("connection_id") connectionId: String,
+        @Body body: UpdateUsersRequest
+    ): Call<UpdateUsersResponse>
+
     @POST("/guest")
     fun getGuestUser(
         @Query("api_key") apiKey: String,

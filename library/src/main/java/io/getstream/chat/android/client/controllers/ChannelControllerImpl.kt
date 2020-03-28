@@ -5,9 +5,7 @@ import io.getstream.chat.android.client.api.models.ChannelQueryRequest
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -26,12 +24,19 @@ internal class ChannelControllerImpl(
         }
     }
 
+
     override fun query(request: ChannelQueryRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }
 
     override fun watch(request: ChannelWatchRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
+    }
+
+    override fun watch(data: Map<String, Any>): Call<Channel> {
+        val request = ChannelWatchRequest()
+        request.data.putAll(data)
+        return watch(request)
     }
 
     override fun watch(): Call<Channel> {
@@ -128,5 +133,37 @@ internal class ChannelControllerImpl(
 
     override fun removeMembers(vararg userIds: String): Call<Channel> {
         return client.removeMembers(channelType, channelId, userIds.toList())
+    }
+
+    override fun acceptInvite(message: String): Call<Channel> {
+        return client.acceptInvite(channelType, channelId, message)
+    }
+
+    override fun rejectInvite(): Call<Channel> {
+        return client.rejectInvite(channelType, channelId)
+    }
+
+    override fun muteCurrentUser(): Call<Mute> {
+        return client.muteCurrentUser()
+    }
+
+    override fun muteUser(userId: String): Call<Mute> {
+        return client.muteUser(userId)
+    }
+
+    override fun unmuteUser(userId: String): Call<Mute> {
+        return client.unmuteUser(userId)
+    }
+
+    override fun unmuteCurrentUser(): Call<Mute> {
+        return client.unmuteCurrentUser()
+    }
+
+    override fun keystroke(): Call<ChatEvent> {
+        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
+    }
+
+    override fun stopTyping(): Call<ChatEvent> {
+        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
     }
 }

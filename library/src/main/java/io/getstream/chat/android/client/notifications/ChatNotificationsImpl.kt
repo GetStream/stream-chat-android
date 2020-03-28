@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
+import com.google.firebase.FirebaseApp
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.utils.getOr
 
 
 class ChatNotificationsImpl(
@@ -37,7 +39,7 @@ class ChatNotificationsImpl(
 
     override fun onSetUser() {
 
-        try {
+        if (FirebaseApp.getApps(context).isNotEmpty()) {
             FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
                 if (it.isSuccessful) {
                     logger.logI("FirebaseInstanceId returned token successfully")
@@ -46,7 +48,7 @@ class ChatNotificationsImpl(
                     logger.logI("Error: FirebaseInstanceId doesn't returned token")
                 }
             }
-        } catch (e: IllegalStateException) {}
+        }
 
 
     }
@@ -147,9 +149,10 @@ class ChatNotificationsImpl(
 
         val notificationId = System.currentTimeMillis().toInt()
 
+
         val notification = config.buildNotification(
             notificationId,
-            channel.extraData.getOrDefault("name", "").toString(),
+            channel.extraData.getOr("name", "").toString(),
             message.text,
             messageId,
             channel.type,

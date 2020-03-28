@@ -1,11 +1,14 @@
 package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 
-class FakeSocketService : ChatSocketService {
+class FakeSocketService() : ChatSocketService {
+
+    override var state: ChatSocketService.State = ChatSocketService.State.Disconnected
 
     private val listeners = mutableListOf<SocketListener>()
 

@@ -2,19 +2,9 @@
 
 # Stream Chat Client
 
-Note: This is an updated version of the Stream low level chat client. It's a preview and not yet suitable for production usage. Right now we recommend using the regular Java based SDK.
-
 `Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications.
 
-This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android-core which comes with a collection of re-usable and customizable UI components.
-
-
-## Improvements
-
-- Use `StreamChatClient` instead of `Client` to avoid polluting the namespace and avoid auto-import to get confused
-- Let the developer choose between sync and async for API calls (right now sync is not even possible)
-- Minimal list of external dependencies
-- Async style API calls are simplified, only 1 function which receives `Result<T>`. Errors are now of type `ClientError` which is a throwable (more useful and common to work with)
+This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android which comes with a collection of re-usable and customizable UI components.
 
 ## Setup
 ```groovy
@@ -50,7 +40,9 @@ android {
 
 	```kotlin
     val token = "chat-token"
-    client.setUser(User("user-name"), token, object : InitConnectionListener() {
+    val user = User("user-name")
+    
+    client.setUser(user, token, object : InitConnectionListener() {
         override fun onSuccess(data: ConnectionData) {
             val user = data.user
             val connectionId = data.connectionId
@@ -60,6 +52,15 @@ android {
             val message = error.message
         }
     })
+    
+    //or
+    
+    client.setUser(user, token)
+    client
+	  .events()
+	  .filter(ConnectedEvent::class.java)
+	  .filter(ErrorEvent::class.java)
+	  .subscribe {}
 	```
 
 3. Get channels
@@ -92,9 +93,10 @@ android {
 	client.addSocketListener(object: SocketListener() {
 	    //override required methods
 	})
-	// or with observable instance
-    client.events().subscribe {
-       if(it is NewMessageEvent) doSomething()
+	// or with observable
+	// first event of observable delivers socket state: DisconnectedEvent, ConnectingEvent or ConnectedEvent
+    client.events().subscribe { event ->
+       if(event is NewMessageEvent) doSomething()
     }
 	```
 6. Keep using instance
@@ -113,6 +115,25 @@ val client = ChatClient.Builder(apiKey, context)
     .build()
 ```
 
+To intercept log messages add set handler:
+
+```kotlin
+val client = ChatClient.Builder(apiKey, context)
+    .loggerHandler(object : ChatLoggerHandler {
+        override fun logT(throwable: Throwable) {
+            throwable.printStackTrace()
+        }
+    }
+    .build()
+```
+
+To intercept socket errors:
+```kotlin
+client.events()
+  .filter(ErrorEvent::class.java)
+  .subscribe { println(it) }
+```
+
 All SDK log tags have prefix `Chat:`, so to filter out only SDK logs grep the prefix:
 
 ```bash
@@ -125,25 +146,33 @@ Set of useful for debugging tags:
 - `Chat:Events`
 
 ## Sync / Async
-All methods of the library return `ChatCall` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
+All methods of the library return `Call` object which allows to either `execute` request immediately in the same thread or `enqueue` listener and get result in UI thread:
 
 ```kotlin
 interface Call<T> {
+
+    @WorkerThread
     fun execute(): Result<T>
+
+    @UiThread
     fun enqueue(callback: (Result<T>) -> Unit)
+
+    @UiThread
+    fun enqueue()
+
     fun cancel()
     fun <K> map(mapper: (T) -> K): Call<K>
     fun onError(handler: (ChatError) -> Unit): Call<T>
-    fun onNext(handler: (T) -> Unit): Call<T>
+    fun onSuccess(handler: (T) -> Unit): Call<T>
     fun <K> zipWith(call: Call<K>): Call<Pair<T, K>>
     fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>>
 }
 ```
 ```kotlin
 //sync
-val result = client.queryChannels().execute()
+val result = client.getMessage("message-id").execute()
 //async
-client.getChannels { result -> showChannels(result) }
+client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
 ```
 
 ## More

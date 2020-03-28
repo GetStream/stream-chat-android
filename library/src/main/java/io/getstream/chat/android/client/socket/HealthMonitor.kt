@@ -23,7 +23,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     }
 
     private val healthCheck: Runnable = Runnable {
-        if (socket.state is ChatSocketServiceImpl.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
             logger.logI("Ok")
             consecutiveFailures = 0
             socket.sendEvent(ChatEvent(EventType.HEALTH_CHECK))
@@ -32,7 +32,7 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     }
 
     private val monitor = Runnable {
-        if (socket.state is ChatSocketServiceImpl.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
             val millisNow = Date().time
             val monitorInterval = 1000L
 

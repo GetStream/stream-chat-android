@@ -104,6 +104,8 @@ interface ChatApi {
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     fun markAllRead(): Call<EventResponse>
 
+    fun updateUsers(users: List<User>): Call<List<User>>
+
     fun getGuestUser(userId: String, userName: String): Call<GuestUser>
 
     fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>>
@@ -120,13 +122,13 @@ interface ChatApi {
         members: List<String>
     ): Call<Channel>
 
-    fun muteUser(
-        targetId: String
-    ): Call<Mute>
+    fun muteCurrentUser(): Call<Mute>
 
-    fun unMuteUser(
-        targetId: String
-    ): Call<Mute>
+    fun muteUser(userId: String): Call<Mute>
+
+    fun unmuteUser(userId: String): Call<Mute>
+
+    fun unmuteCurrentUser(): Call<Mute>
 
     fun flag(
         targetId: String

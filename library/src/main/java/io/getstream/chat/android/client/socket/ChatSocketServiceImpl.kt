@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.socket.ChatSocketService.State
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -33,7 +34,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     private val eventHandler = EventHandler(this)
     private val healthMonitor = HealthMonitor(this)
 
-    internal var state: State = State.Disconnected
+    override var state: State = State.Disconnected
 
     fun setLastEventDate(date: Date) {
         healthMonitor.lastEventDate = date
@@ -186,13 +187,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         }
         data["server_determines_connection_id"] = true
         return chatParser.toJson(data)
-    }
-
-    sealed class State {
-        object Disconnected : State()
-        object Connecting : State()
-        class Connected(val event: ConnectedEvent) : State()
-        class Error(val error: ChatError) : State()
     }
 
 }
