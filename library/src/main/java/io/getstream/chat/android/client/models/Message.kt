@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 
@@ -13,6 +14,9 @@ class Message : UserEntity {
     val html: String = ""
 
     lateinit var user: User
+
+    /** if the message has been synced to the servers */
+    var syncStatus: SyncStatus? = null
 
     lateinit var channel: Channel
 
