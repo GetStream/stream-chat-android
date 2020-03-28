@@ -124,6 +124,19 @@
 
 ##---------------End: Fresco specific  ----------
 
+
+##---------------Begin: Glide specific  ----------
+
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public class * extends com.bumptech.glide.module.AppGlideModule
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+##---------------End: Glide specific  ----------
+
+
 ##---------------Begin: Stream specific  ----------
 
 -keepclassmembers class com.getstream.sdk.chat.** extends java.lang.Enum {

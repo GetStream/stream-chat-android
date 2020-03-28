@@ -67,7 +67,10 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.aminography:redirectglide:1.0.3'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
     implementation 'com.github.duanhong169:drawabletoolbox:1.0.7'
     implementation "io.noties.markwon:core:$markdown_version"
     implementation "io.noties.markwon:linkify:$markdown_version"
@@ -96,7 +99,8 @@ dependencies {
     testImplementation "org.mockito:mockito-core:2.23.0"
     testImplementation "org.json:json:20190722"
 
-    api 'com.github.GetStream:stream-chat-android-client:1.0.1'
+
+    api 'com.github.GetStream:stream-chat-android-client:1.0.2'
 }
 
 task javadoc(type: Javadoc) {
