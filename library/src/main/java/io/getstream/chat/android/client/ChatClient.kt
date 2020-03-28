@@ -315,7 +315,8 @@ interface ChatClient {
 
         private lateinit var instance: ChatClient
 
-        @JvmStatic fun instance(): ChatClient {
+        @JvmStatic
+        fun instance(): ChatClient {
             return instance
         }
 
