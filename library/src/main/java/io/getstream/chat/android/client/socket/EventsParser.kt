@@ -72,8 +72,11 @@ class EventsParser(
                 }
 
             } else {
-                service.onEvent(parseEvent(event.type, text))
+                val parsedEvent = parseEvent(event.type, text)
+                service.onEvent(parsedEvent)
             }
+
+
         } else {
             service.onSocketError(
                 ChatNetworkError("Unable to parse message: $text")

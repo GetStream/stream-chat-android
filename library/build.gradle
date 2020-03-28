@@ -10,11 +10,12 @@ group = 'com.github.getstream'
 //}
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 28
     buildToolsVersion "29.0.3"
     defaultConfig {
+
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -33,6 +34,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+
     kotlinOptions {
         jvmTarget = '1.8'
         noStdlib = true
@@ -49,6 +51,11 @@ dependencies {
     testImplementation('junit:junit:4.13')
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.assertj:assertj-core:3.15.0'
+    testImplementation "org.robolectric:robolectric:4.3.1"
+    testImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation "androidx.test.ext:junit-ktx:1.1.1"
+    testImplementation "androidx.test:core-ktx:1.2.0"
+
     androidTestImplementation 'org.assertj:assertj-core:3.15.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

@@ -49,6 +49,8 @@ class ChatNotificationsImpl(
                 }
             }
         }
+
+
     }
 
     override fun setFirebaseToken(firebaseToken: String) {

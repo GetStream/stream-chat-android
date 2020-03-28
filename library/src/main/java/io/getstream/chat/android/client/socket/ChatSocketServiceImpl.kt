@@ -97,7 +97,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
-        eventHandler.sendMessage(eventMsg)
+        val success = eventHandler.sendMessage(eventMsg)
     }
 
     internal fun sendEvent(event: ChatEvent) {
@@ -115,6 +115,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         val request = Request.Builder().url(url).build()
 
         logger.logI("httpClient.newWebSocket: $url")
+
 
         socket = httpClient.newWebSocket(request, eventsParser)
     }
