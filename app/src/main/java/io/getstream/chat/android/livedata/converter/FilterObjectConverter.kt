@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.converter
 
 import androidx.room.TypeConverter
-import com.getstream.sdk.chat.livedata.gson
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.livedata.gson
 import java.lang.reflect.Type
 
 

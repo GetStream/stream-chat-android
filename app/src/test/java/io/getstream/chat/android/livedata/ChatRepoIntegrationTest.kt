@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
 import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -16,7 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.observable.JustObservable
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -147,7 +146,7 @@ class ChatRepoIntegrationTest {
         // a new message event is triggered
         // TODO: how to mock the events...
         val socket = Mockito.mock(ChatSocket::class.java)
-        Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+        //Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
 
         // verify that the livedata is updated
@@ -163,7 +162,7 @@ class ChatRepoIntegrationTest {
         // a new message event is triggered
         // TODO: how to mock the events...
         val socket = Mockito.mock(ChatSocket::class.java)
-        Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+        //Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
 
         // verify that the livedata is updated

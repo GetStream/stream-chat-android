@@ -18,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
  * updates whenever a new message is added to one of the channels, the read state changes for members of these channels,
  * messages are edited or updated, or the channel is updated.
  */
-class StreamQueryChannelRepository(var query: QueryChannelsEntity, var client: ChatClient, var repo: StreamChatRepository) {
+class ChatQueryChannelRepo(var query: QueryChannelsEntity, var client: ChatClient, var repo: StreamChatRepository) {
     /**
      * A livedata object with the channels matching this query.
      */

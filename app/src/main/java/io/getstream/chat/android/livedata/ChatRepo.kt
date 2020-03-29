@@ -123,11 +123,11 @@ class StreamChatRepository(
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
     /** stores the mapping from cid to channelRepository */
-    var activeChannelMap: MutableMap<String, io.getstream.chat.android.livedata.StreamChatChannelRepository> =
+    var activeChannelMap: MutableMap<String, io.getstream.chat.android.livedata.ChatChannelRepo> =
         mutableMapOf()
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMap: MutableMap<QueryChannelsEntity, StreamQueryChannelRepository> =
+    var activeQueryMap: MutableMap<QueryChannelsEntity, ChatQueryChannelRepo> =
         mutableMapOf()
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
@@ -144,7 +144,7 @@ class StreamChatRepository(
             // TODO: cache users, messages and channels to reduce number of Room queries
             GlobalScope.launch(Dispatchers.IO) {
 
-                var channelRepo: io.getstream.chat.android.livedata.StreamChatChannelRepository? =
+                var channelRepo: io.getstream.chat.android.livedata.ChatChannelRepo? =
                     null
 
 
@@ -254,11 +254,11 @@ class StreamChatRepository(
     fun channel(
         channelType: String,
         channelId: String
-    ): io.getstream.chat.android.livedata.StreamChatChannelRepository {
+    ): io.getstream.chat.android.livedata.ChatChannelRepo {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMap.containsKey(cid)) {
             val channelRepo =
-                io.getstream.chat.android.livedata.StreamChatChannelRepository(
+                io.getstream.chat.android.livedata.ChatChannelRepo(
                     channelType,
                     channelId,
                     client,
@@ -304,9 +304,9 @@ class StreamChatRepository(
      */
     fun queryChannels(
         queryChannelsEntity: QueryChannelsEntity
-    ): StreamQueryChannelRepository {
+    ): ChatQueryChannelRepo {
         // mark this query as active
-        val queryRepo = StreamQueryChannelRepository(queryChannelsEntity, client, this)
+        val queryRepo = ChatQueryChannelRepo(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
     }

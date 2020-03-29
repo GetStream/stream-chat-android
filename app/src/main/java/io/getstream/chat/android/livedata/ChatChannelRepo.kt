@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
  * - channelRepo.sendReaction stores the reaction locally and sends it when network is available
  *
  */
-class StreamChatChannelRepository(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.StreamChatRepository) {
+class ChatChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.StreamChatRepository) {
 
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
