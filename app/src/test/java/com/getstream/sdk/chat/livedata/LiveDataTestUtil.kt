@@ -4,11 +4,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit

@@ -4,8 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.getstream.sdk.chat.livedata.entity.ChannelStateEntity
-import com.getstream.sdk.chat.livedata.entity.MessageEntity
 import com.getstream.sdk.chat.livedata.entity.UserEntity
 
 @Dao

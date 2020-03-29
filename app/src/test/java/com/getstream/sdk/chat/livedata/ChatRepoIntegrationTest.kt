@@ -6,18 +6,14 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.getstream.sdk.chat.livedata.entity.QueryChannelsEntity
 import com.google.common.truth.Truth.assertThat
-import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.JustObservable
@@ -29,7 +25,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
-import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
@@ -146,6 +141,22 @@ class ChatRepoIntegrationTest {
 
     @Test
     fun watchSetsMessagesAndChannelEvent() {
+        // start out empty, no offline storage and no query
+        val channelRepo = repo.channel("messaging", "watchSetsMessagesAndChannelEvent")
+        channelRepo.channelController.watch().execute()
+        // a new message event is triggered
+        // TODO: how to mock the events...
+        val socket = Mockito.mock(ChatSocket::class.java)
+        Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+
+
+        // verify that the livedata is updated
+
+    }
+
+    @Test
+    fun watchSetsMessagesAndChannelEvent2() {
+        // TODO: test that a user event is also propagated on members, messages, reaction etc.
         // start out empty, no offline storage and no query
         val channelRepo = repo.channel("messaging", "watchSetsMessagesAndChannelEvent")
         channelRepo.channelController.watch().execute()

@@ -6,8 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.getstream.sdk.chat.livedata.entity.MessageEntity
-import com.getstream.sdk.chat.livedata.entity.ReactionEntity
-import com.getstream.sdk.chat.livedata.entity.UserEntity
 
 @Dao
 interface MessageDao {
