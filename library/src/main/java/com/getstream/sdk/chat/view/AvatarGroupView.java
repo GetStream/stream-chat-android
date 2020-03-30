@@ -168,7 +168,7 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 
-        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
         chatFonts.setFont(style.avatarInitialText, imageView, factor);
     }
 }

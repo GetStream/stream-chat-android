@@ -78,7 +78,6 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         binding.setCommand(command);
         if (style instanceof MessageInputStyle){
             MessageInputStyle style_ = (MessageInputStyle)style;
-            ChatFonts chatFonts = Chat.getInstance().getChatFonts();
 
             style_.inputBackgroundText.apply(binding.tvCommand);
             style_.inputBackgroundText.apply(binding.tvDes);

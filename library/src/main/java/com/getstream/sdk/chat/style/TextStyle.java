@@ -20,12 +20,12 @@ public class TextStyle {
 
     @Nullable
     public Typeface getFont() {
-        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
         return chatFonts.getFont(this);
     }
 
     public void apply(TextView textView) {
-        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
 
         if (size != -1)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);

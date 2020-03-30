@@ -51,7 +51,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
-        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
 
         User user = reads.get(0).getUser();
         String image = user.getImage();

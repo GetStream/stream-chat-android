@@ -33,6 +33,8 @@ public interface Chat {
 
     UrlSigner urlSigner();
 
+    ChatFonts getFonts();
+
     LiveData<OnlineStatus> getOnlineStatus();
 
     LiveData<Number> getUnreadMessages();
@@ -41,7 +43,7 @@ public interface Chat {
 
     LiveData<User> getCurrentUser();
 
-    ChatFonts getChatFonts();
+    String getVersion();
 
     class Builder {
 

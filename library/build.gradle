@@ -22,6 +22,8 @@ android {
 
     defaultConfig {
 
+        versionName "4.0.8"
+
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
         buildConfigField "int", "DEFAULT_CDN_TIMEOUT", "$DEFAULT_CDN_TIMEOUT"

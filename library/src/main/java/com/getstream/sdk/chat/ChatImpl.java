@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
+import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.SocketListener;
 
@@ -33,10 +34,10 @@ class ChatImpl implements Chat {
     private final UrlSigner urlSigner;
 
     ChatImpl(ChatClient client,
-                     ChatFonts chatFonts,
-                     ChatStrings chatStrings,
-                     ChatNavigationHandler navigationHandler,
-                     UrlSigner urlSigner) {
+             ChatFonts chatFonts,
+             ChatStrings chatStrings,
+             ChatNavigationHandler navigationHandler,
+             UrlSigner urlSigner) {
 
         this.client = client;
         this.chatStrings = chatStrings;
@@ -44,6 +45,8 @@ class ChatImpl implements Chat {
         this.urlSigner = urlSigner;
 
         navigator.setHandler(navigationHandler);
+
+        ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
     @Override
@@ -88,8 +91,13 @@ class ChatImpl implements Chat {
 
     @Override
     @NotNull
-    public ChatFonts getChatFonts() {
+    public ChatFonts getFonts() {
         return chatFonts;
+    }
+
+    @Override
+    public String getVersion() {
+        return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
     }
 
     void init() {

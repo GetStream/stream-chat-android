@@ -53,10 +53,6 @@ buildscript {
 
 allprojects {
 
-    ext {
-        releaseSdkVersion = '4.0.6'
-    }
-
     repositories {
         google()
         jcenter()
