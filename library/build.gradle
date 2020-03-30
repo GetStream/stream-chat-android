@@ -37,6 +37,10 @@ android {
         jvmTarget = '1.8'
         noStdlib = true
     }
+
+    lintOptions {
+        xmlReport false
+    }
 }
 
 dependencies {

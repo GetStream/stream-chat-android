@@ -100,7 +100,7 @@ interface ChatClient {
 
     fun updateUser(user: User): Call<User>
 
-    fun updateUsers(users:List<User>): Call<List<User>>
+    fun updateUsers(users: List<User>): Call<List<User>>
 
     fun queryUsers(query: QueryUsersRequest): Call<List<User>>
 
@@ -315,6 +315,7 @@ interface ChatClient {
 
         private lateinit var instance: ChatClient
 
+        @JvmStatic
         fun instance(): ChatClient {
             return instance
         }
@@ -323,3 +324,5 @@ interface ChatClient {
     }
 
 }
+
+

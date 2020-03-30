@@ -10,6 +10,8 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters.`in`
+import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -27,6 +29,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val client = App.client
     val channelId = "general"
     val channelType = "team"
+    val userId = "bender"
     var chatSub: Subscription? = null
     var watchingChannel: Channel? = null
 
@@ -52,7 +55,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        client.setUser(User("bender"), token, object : InitConnectionListener() {
+        client.setUser(User(userId), token, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val user = data.user
                 val connectionId = data.connectionId
@@ -151,12 +154,11 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun queryChannels() {
+
+        val filter = and(eq("type", "messaging"), `in`("members", userId))
+
         client.queryChannels(
-            QueryChannelsRequest(
-                eq("type", "messaging"),
-                0,
-                1
-            )
+            QueryChannelsRequest(filter, 0, 1)
         ).enqueue {
 
             val channels = it.data()

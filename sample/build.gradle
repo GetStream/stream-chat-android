@@ -32,11 +32,20 @@ android {
         targetCompatibility = 1.8
     }
 
+    lintOptions {
+        showAll false
+        quiet true
+        abortOnError false
+        ignoreWarnings true
+        xmlReport false
+        htmlReport false
+    }
+
 }
 
 dependencies {
 
-    debugImplementation project(':library')
+    implementation project(':library')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
