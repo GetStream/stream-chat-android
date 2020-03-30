@@ -132,6 +132,103 @@ class StreamChatRepository(
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
+    fun handleEvent(event : ChatEvent) {
+        // keep the data in Room updated based on the various events..
+        // TODO: cache users, messages and channels to reduce number of Room queries
+        GlobalScope.launch(Dispatchers.IO) {
+
+            var channelRepo: io.getstream.chat.android.livedata.ChatChannelRepo? =
+                null
+
+
+            // any event can have channel and unread count information
+            // TODO: hide this logic in a setUnreadChannels function
+            if (event.unreadChannels != null && _channelUnreadCount.value != event.unreadChannels) {
+                _channelUnreadCount.value = event.unreadChannels
+            }
+            if (event.totalUnreadCount != null && _totalUnreadCount.value != event.totalUnreadCount) {
+                _totalUnreadCount.value = event.totalUnreadCount
+            }
+
+            // the watchers and watcher count are only stored in memory (as they go stale when you go offline)
+            if (event.cid != null && event.cid != "") {
+                val cid = event.cid!!
+                if (!event.cid.isNullOrEmpty() && activeChannelMap.containsKey(cid)) {
+                    channelRepo = activeChannelMap.get(cid)!!
+                    channelRepo.handleEvent(event)
+                }
+            }
+
+
+            // connection events
+            when (event) {
+                is DisconnectedEvent -> {
+                    _online.value = false
+                }
+                is ConnectedEvent -> {
+                    _online.value = true
+                }
+            }
+
+            // notifications of messages on channels you're a member of but not watching
+            if (event is NotificationAddedToChannelEvent) {
+                // this one is trickier. we need to insert the message
+                // we also need to add the channel to the query which is tricker...
+                if (offlineEnabled) insertMessage(event.message)
+                for ((_, queryRepo) in activeQueryMap) {
+                    queryRepo.handleMessageNotification(event)
+                }
+            }
+
+            // TODO; this if statement isn't right
+            if (offlineEnabled) {
+
+                when (event) {
+                    is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
+                        insertMessage(event.message)
+                        channelRepo?.upsertMessage(event.message)
+                    }
+                    is MessageReadEvent -> {
+                        // get the channel, update reads, write the channel
+                        val channel = channelStateDao.select(event.cid)
+                        val read = ChannelUserRead()
+                        read.user = event.user!!
+                        read.lastRead = event.createdAt
+                        if (channel != null) {
+                            channel.updateReads(read)
+                            insertChannelStateEntity(channel)
+                        }
+                        channel?.let {
+                            it.updateReads(read)
+
+                        }
+                    }
+                    is ReactionNewEvent -> {
+                        // get the message, update the reaction data, update the message
+                        insertMessage(event.message)
+                    }
+                    is ReactionDeletedEvent -> {
+                        // get the message, update the reaction data, update the message
+                        insertMessage(event.message)
+                    }
+                    is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
+                        // get the channel, update members, write the channel
+                        event.channel?.let {
+                            insertChannel(it)
+                        }
+                    }
+                    is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
+                        // get the channel, update members, write the channel
+                        event.channel?.let {
+                            insertChannel(it)
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     /**
      * Start listening to chat events and keep the room database in sync
      */
@@ -139,106 +236,7 @@ class StreamChatRepository(
         if (eventSubscription != null) {
             return
         }
-        eventSubscription = client.events().subscribe {
-            // keep the data in Room updated based on the various events..
-            // TODO: cache users, messages and channels to reduce number of Room queries
-            GlobalScope.launch(Dispatchers.IO) {
-
-                var channelRepo: io.getstream.chat.android.livedata.ChatChannelRepo? =
-                    null
-
-
-                // any event can have channel and unread count information
-                if (it.unreadChannels != null && _channelUnreadCount.value != it.unreadChannels) {
-                    _channelUnreadCount.value = it.unreadChannels
-                }
-                if (it.totalUnreadCount != null && _totalUnreadCount.value != it.totalUnreadCount) {
-                    _totalUnreadCount.value = it.totalUnreadCount
-                }
-
-                // the watchers and watcher count are only stored in memory (as they go stale when you go offline)
-                if (it.cid != null && it.cid != "") {
-                    val cid = it.cid!!
-                    if (!it.cid.isNullOrEmpty() && activeChannelMap.containsKey(cid)) {
-                        channelRepo = activeChannelMap.get(cid)!!
-                        it.channel?.watchers?.let {
-                            channelRepo.setWatchers(it)
-                        }
-                        it.channel?.watcherCount?.let {
-                            channelRepo.setWatcherCount(it)
-                        }
-                    }
-                }
-
-
-                // connection events
-                when (it) {
-                    is DisconnectedEvent -> {
-                        _online.value = false
-                    }
-                    is ConnectedEvent -> {
-                        _online.value = true
-                    }
-                }
-
-                // notifications of messages on channels you're a member of but not watching
-                if (it is NotificationAddedToChannelEvent) {
-                    // this one is trickier. we need to insert the message
-                    // we also need to add the channel to the query which is tricker...
-                    if (offlineEnabled) insertMessage(it.message)
-                    for ((_, queryRepo) in activeQueryMap) {
-                        queryRepo.handleMessageNotification(it)
-                    }
-                }
-
-                // TODO; this if statement isn't right
-                if (offlineEnabled) {
-
-                    when (it) {
-                        is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
-                            insertMessage(it.message)
-                            channelRepo?.upsertMessage(it.message)
-                        }
-                        is MessageReadEvent -> {
-                            // get the channel, update reads, write the channel
-                            val channel = channelStateDao.select(it.cid)
-                            val read = ChannelUserRead()
-                            read.user = it.user!!
-                            read.lastRead = it.createdAt
-                            if (channel != null) {
-                                channel.updateReads(read)
-                                insertChannelStateEntity(channel)
-                            }
-                            channel?.let {
-                                it.updateReads(read)
-
-                            }
-                        }
-                        is ReactionNewEvent -> {
-                            // get the message, update the reaction data, update the message
-                            insertMessage(it.message)
-                        }
-                        is ReactionDeletedEvent -> {
-                            // get the message, update the reaction data, update the message
-                            insertMessage(it.message)
-                        }
-                        is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
-                            // get the channel, update members, write the channel
-                            it.channel?.let {
-                                insertChannel(it)
-                            }
-                        }
-                        is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
-                            // get the channel, update members, write the channel
-                            it.channel?.let {
-                                insertChannel(it)
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
+        eventSubscription = client.events().subscribe(this::handleEvent)
     }
 
     /**

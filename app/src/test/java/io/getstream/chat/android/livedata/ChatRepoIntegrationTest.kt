@@ -8,10 +8,13 @@ import com.google.common.truth.Truth.assertThat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -54,7 +57,7 @@ class ChatRepoIntegrationTest {
 
     @After
     fun teardown() {
-        //client.disconnect()
+        client.disconnect()
     }
 
     @Test
@@ -73,6 +76,10 @@ class ChatRepoIntegrationTest {
         // TODO:
 
     }
+
+
+
+
 
     /**
      * test that a message added only to the local storage is picked up
@@ -138,14 +145,21 @@ class ChatRepoIntegrationTest {
         assertThat(channel).isNotNull()
     }
 
+
+
     @Test
     fun watchSetsMessagesAndChannelEvent() {
         // start out empty, no offline storage and no query
         val channelRepo = repo.channel("messaging", "watchSetsMessagesAndChannelEvent")
+
         channelRepo.channelController.watch().execute()
         // a new message event is triggered
         // TODO: how to mock the events...
         val socket = Mockito.mock(ChatSocket::class.java)
+        val connectedEvent = ConnectedEvent().apply {
+            me = User("123")
+            connectionId = "connection-id"
+        }
         //Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
 

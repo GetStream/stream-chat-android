@@ -2,8 +2,10 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -15,6 +17,7 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 /**
@@ -42,9 +45,13 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
 
     private val logger = ChatLogger.get("ChatChannelRepo")
 
-    private val _messages = MutableLiveData<List<Message>>()
+    private val _messages = MutableLiveData<MutableMap<String, Message>>()
     /** LiveData object with the messages */
-    val messages : LiveData<List<Message>> = _messages
+
+    // TODO, we could make this more efficient by using a data structure that keeps the sort
+    val messages : LiveData<List<Message>> = Transformations.map(_messages) {
+        it.values.sortedBy { it.createdAt }
+    }
 
     // TODO: should we expose a loading and loading more object?
 
@@ -59,6 +66,8 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
     val watchers : LiveData<List<Watcher>> = _watchers
 
 
+
+
     fun watch() {
         // TODO: messages need to update whenever the messages in room change. the transform is kinda tricky
         // because of the user enrichment though...
@@ -69,7 +78,7 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
 
             channel?.let {
                 if (it.messages.isNotEmpty()) {
-                    _messages.postValue(it.messages)
+                    upsertMessages(it.messages)
                 }
 
             }
@@ -89,7 +98,7 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
                 repo.addError(response.error())
             } else {
                 val channelResponse = response.data()
-                _messages.postValue(channelResponse.messages)
+                upsertMessages(channelResponse.messages)
                 channelResponse.messages = emptyList()
                 _channel.postValue(channelResponse)
 
@@ -100,6 +109,7 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
 
 
     }
+
 
 
     /**
@@ -176,11 +186,31 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
         }
     }
 
+
+
     fun upsertMessage(message: Message) {
-        // TODO: is there a cleaner way?
-        val copy = _messages.value ?: mutableListOf()
-        val mutableCopy = copy.toMutableList()
-        mutableCopy.add(message)
-        _messages.value = mutableCopy.toList()
+        upsertMessages(listOf<Message>(message))
+    }
+
+    fun upsertMessages(messages: List<Message>) {
+        val copy = _messages.value ?: mutableMapOf()
+        for (message in messages) {
+            copy.put(message.id, message)
+        }
+        _messages.value = copy
+    }
+
+    fun handleEvent(event: ChatEvent) {
+        event.channel?.watchers?.let {
+            setWatchers(it)
+        }
+        event.channel?.watcherCount?.let {
+            setWatcherCount(it)
+        }
+        when (event) {
+            is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
+                upsertMessage(event.message)
+            }
+        }
     }
 }
