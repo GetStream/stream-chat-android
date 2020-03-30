@@ -1,13 +1,11 @@
 package com.getstream.sdk.chat.navigation.destinations;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
 import com.getstream.sdk.chat.utils.CaptureController;
 import com.getstream.sdk.chat.utils.Constant;
-
-import android.app.Activity;
 
 public class CameraDestination extends ChatDestination {
 

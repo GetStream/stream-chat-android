@@ -1,11 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
 import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 

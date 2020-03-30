@@ -3,8 +3,8 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.text.TextUtils;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
@@ -32,6 +32,8 @@ import io.getstream.chat.android.client.api.models.Pagination;
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.*;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
@@ -105,6 +107,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
     private List<Subscription> subscriptions = new ArrayList<>();
+    private TaggedLogger logger = ChatLogger.Companion.get("ChannelViewModel");
 
 
     public ChannelViewModel(Application application, String channelType, String channelId) {
@@ -113,12 +116,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.channelType = channelType;
         this.channelId = channelId;
 
-        StreamChat.getLogger().logI(this, "instance created");
+        logger.logI("instance created");
 
         threadMessages.setValue(null);
         typingUsers.setValue(new ArrayList<>());
 
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
 
         entities = new MessageListItemLiveData(currentUser, messages, threadMessages, typingUsers, reads);
 
@@ -130,14 +133,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         Callable<Void> markRead = () -> {
 
             //TODO: llc unsub from all enqueue
-            StreamChat.getInstance().markMessageRead(channelType, channelId, "").enqueue(new Function1<Result<Unit>, Unit>() {
+            Chat.getInstance().getClient().markMessageRead(channelType, channelId, "").enqueue(new Function1<Result<Unit>, Unit>() {
                 @Override
                 public Unit invoke(Result<Unit> result) {
 
                     if (result.isSuccess()) {
-                        StreamChat.getLogger().logI(this, "Marked read message");
+                        logger.logI("Marked read message");
                     } else {
-                        StreamChat.getLogger().logE(this, result.error().getMessage());
+                        logger.logE(result.error().getMessage());
                     }
 
                     return null;
@@ -277,7 +280,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             });
         } else {
 
-            StreamChat.getInstance().getReplies(message.getId(), 30).enqueue(new Function1<Result<List<Message>>, Unit>() {
+            Chat.getInstance().getClient().getReplies(message.getId(), 30).enqueue(new Function1<Result<List<Message>>, Unit>() {
                 @Override
                 public Unit invoke(Result<List<Message>> result) {
 
@@ -342,7 +345,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // this prevents infinite loops with mark read commands
         Channel channel = channelState.getValue();
         Message message = LlcMigrationUtils.computeLastMessage(channel);
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
         if (message == null || !isEnableMarkRead() || message.getUserId().equals(currentUser.getUserId())) {
             return;
         }
@@ -370,7 +373,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public Call<Unit> banUser(@NotNull String targetUserId, @Nullable String reason,
                               @Nullable Integer timeout) {
 
-        return StreamChat.getInstance().banUser(targetUserId, channelType, channelId, reason, timeout);
+        return Chat.getInstance().getClient().banUser(targetUserId, channelType, channelId, reason, timeout);
     }
 
     /**
@@ -381,12 +384,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public Call<Unit> unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
 
-        return StreamChat.getInstance().unBanUser(targetUserId, channelType, channelId);
+        return Chat.getInstance().getClient().unBanUser(targetUserId, channelType, channelId);
     }
 
     protected void initEventHandlers() {
 
-        subscriptions.add(StreamChat.getInstance().events().subscribe(new Function1<ChatEvent, Unit>() {
+        subscriptions.add(Chat.getInstance().getClient().events().subscribe(new Function1<ChatEvent, Unit>() {
             @Override
             public Unit invoke(ChatEvent event) {
 
@@ -410,7 +413,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     if (channel != null) {
                         reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
 
-                        User currentUser = StreamChat.getInstance().getCurrentUser();
+                        User currentUser = Chat.getInstance().getClient().getCurrentUser();
                         String currentUserId = currentUser.getId();
 
                         int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
@@ -446,7 +449,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
                 }
 
-                User currentUser = StreamChat.getInstance().getCurrentUser();
+                User currentUser = Chat.getInstance().getClient().getCurrentUser();
                 String currentUserId = currentUser.getId();
 
                 if (channel != null) {
@@ -568,7 +571,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 threadMessages.postValue(messagesCopy_);
                 updated = true;
             }
-            StreamChat.getLogger().logI(this, "updateMessage:" + updated);
+            logger.logI("updateMessage:" + updated);
         }
         return updated;
     }
@@ -579,7 +582,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         int index = LlcMigrationUtils.indexOf(messagesCopy, message);
         boolean updated = index != -1;
         if (updated) {
-            User currentUser = StreamChat.getInstance().getCurrentUser();
+            User currentUser = Chat.getInstance().getClient().getCurrentUser();
             String clientSideID = currentUser.getUserId() + "-" + randomUUID().toString();
             message.setId(clientSideID);
             messagesCopy.set(index, message);
@@ -693,7 +696,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 //        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
 //            @Override
 //            public void onSuccess(ChannelState channelState) {
-//                StreamChat.getLogger().logI(this,"Read messages from local cache...");
+//                StreamChat.getLogger().logI("Read messages from local cache...");
 //                if (channelState != null) {
 //                    messages.setValue(channelState.getMessages());
 //                }
@@ -705,7 +708,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 //            }
 //        });
 
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
 
         watcherCount = Transformations.map(channelState, Channel::getWatcherCount);
         anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
@@ -748,19 +751,19 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     @Override
     public void resume() {
-        StreamChat.getLogger().logI(this, "resume");
+        logger.logI("resume");
     }
 
     @Override
     public void stopped() {
-        StreamChat.getLogger().logI(this, "stopped");
+        logger.logI("stopped");
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
 
-        StreamChat.getLogger().logI(this, "onCleared");
+        logger.logI("onCleared");
 
         for (Subscription sub : subscriptions) sub.unsubscribe();
         subscriptions.clear();
@@ -779,7 +782,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected void setupConnectionRecovery() {
 
         //TODO: llc unsubscrube
-        subscriptions.add(StreamChat.getInstance().events().subscribe(chatEvent -> {
+        subscriptions.add(Chat.getInstance().getClient().events().subscribe(chatEvent -> {
             if (chatEvent instanceof ConnectedEvent) {
 
                 //TODO: llc refresh on connected
@@ -810,7 +813,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
 
-        StreamChat.getInstance().queryChannel(channelType, channelId, request).enqueue(new Function1<Result<Channel>, Unit>() {
+        Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(new Function1<Result<Channel>, Unit>() {
             @Override
             public Unit invoke(Result<Channel> channelResult) {
 
@@ -832,31 +835,31 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * loads more messages, use this to load a previous page
      */
     public void loadMore() {
-        if (!StreamChat.getInstance().isSocketConnected()) {
-            StreamChat.getLogger().logI(this, "connection failed.");
+        if (!Chat.getInstance().getClient().isSocketConnected()) {
+            logger.logI("connection failed.");
             return;
         }
 
         if (isLoading.get()) {
-            StreamChat.getLogger().logI(this, "already loading, skip loading more");
+            logger.logI("already loading, skip loading more");
             return;
         }
 
         if (!setLoadingMore()) {
-            StreamChat.getLogger().logI(this, "already loading next page, skip loading more");
+            logger.logI("already loading next page, skip loading more");
             return;
         }
 
         if (isThread()) {
             if (reachedEndOfPaginationThread) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this, "already reached end of pagination, skip loading more");
+                logger.logI("already reached end of pagination, skip loading more");
                 return;
             }
 
             if (threadParentMessage.getValue() == null) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this, "Can't find thread parent message.");
+                logger.logI("Can't find thread parent message.");
                 return;
             }
 
@@ -864,12 +867,12 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             String oldestMessageId = getThreadOldestMessageId();
 
             if (oldestMessageId.isEmpty()) {
-                StreamChat.getInstance().getReplies(id, Constant.DEFAULT_LIMIT).enqueue(result -> {
+                Chat.getInstance().getClient().getReplies(id, Constant.DEFAULT_LIMIT).enqueue(result -> {
                     onReactionsLoaded(result);
                     return null;
                 });
             } else {
-                StreamChat.getInstance().getRepliesMore(id, oldestMessageId, Constant.DEFAULT_LIMIT).enqueue(result -> {
+                Chat.getInstance().getClient().getRepliesMore(id, oldestMessageId, Constant.DEFAULT_LIMIT).enqueue(result -> {
                     onReactionsLoaded(result);
                     return null;
                 });
@@ -878,7 +881,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             if (reachedEndOfPagination) {
                 setLoadingMoreDone();
-                StreamChat.getLogger().logI(this, "already reached end of pagination, skip loading more");
+                logger.logI("already reached end of pagination, skip loading more");
                 return;
             }
 
@@ -890,7 +893,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                             oldestMessageId,
                             Constant.DEFAULT_LIMIT);
 
-            StreamChat.getInstance().queryChannel(channelType, channelId, request).enqueue(result -> {
+            Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(result -> {
 
                 if (result.isSuccess()) {
 
@@ -968,11 +971,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 //        }
 
         message.setCreatedAt(new Date());
-        message.setUser(StreamChat.getInstance().getCurrentUser());
+        message.setUser(Chat.getInstance().getClient().getCurrentUser());
 
         addMessage(message);
 
-        return StreamChat.getInstance()
+        return Chat.getInstance().getClient()
                 .sendMessage(channelType, channelId, message)
                 .onSuccess(m -> {
                     replaceMessage(message, m);
@@ -998,7 +1001,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // Check Error or Pending Messages
         checkErrorOrPendingMessage();
 
-        return StreamChat.getInstance().updateMessage(message);
+        return Chat.getInstance().getClient().updateMessage(message);
     }
 
     /**
@@ -1035,7 +1038,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 ModelType.channel_messaging,
                 map);
 
-        StreamChat.getInstance().sendAction(request).enqueue(result -> {
+        Chat.getInstance().getClient().sendAction(request).enqueue(result -> {
 
             if (result.isSuccess())
                 if (action == GiphyAction.SHUFFLE) shuffleGiphy(message, result.data());
@@ -1057,7 +1060,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
             lastStartTypingEvent = now;
 
-            StreamChat.getInstance()
+            Chat.getInstance().getClient()
                     .sendEvent(EventType.INSTANCE.getTYPING_START(), channelType, channelId, new HashMap<>())
                     .enqueue(
                             chatEventResult -> null
@@ -1072,7 +1075,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void stopTyping() {
         if (isThread()) return;
 
-        StreamChat.getInstance()
+        Chat.getInstance().getClient()
                 .sendEvent(EventType.INSTANCE.getTYPING_STOP(), channelType, channelId, new HashMap<>())
                 .enqueue(
                         chatEventResult -> null
@@ -1140,7 +1143,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
             try {
                 markReadFn.call();
             } catch (Exception e) {
-                StreamChat.getLogger().logE(this, e.getLocalizedMessage());
+                logger.logE(e);
             }
             pendingMarkReadRequests.compareAndSet(pendingCalls, 0);
         }

@@ -8,10 +8,6 @@ import android.widget.BaseAdapter;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.getstream.sdk.chat.StreamChat;
-
 import java.util.List;
 
 import io.getstream.chat.example.R;

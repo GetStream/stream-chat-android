@@ -6,26 +6,14 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.rest.interfaces.MessageCallback;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
@@ -33,6 +21,14 @@ import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
+import io.getstream.chat.android.client.models.*;
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -62,6 +58,9 @@ public class MessageListView extends RecyclerView {
     private BubbleHelper bubbleHelper;
     /** If you are allowed to scroll up or not */
     boolean lockScrollUp = true;
+    
+    private TaggedLogger logger = ChatLogger.Companion.get("MessageListView");
+    
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -188,7 +187,7 @@ public class MessageListView extends RecyclerView {
         // use livedata and observe
         viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
             List<MessageListItem> entities = messageListItemWrapper.getListEntities();
-            StreamChat.getLogger().logI(this,"Observe found this many entities: " + entities.size());
+            logger.logI("Observe found this many entities: " + entities.size());
 
             // Adapter initialization for channel and thread swapping
             boolean backFromThread = false;
@@ -219,7 +218,7 @@ public class MessageListView extends RecyclerView {
                         && scrolledBottom()
                         && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
-                    StreamChat.getLogger().logI(this, String.format("just update last message"));
+                    logger.logI( String.format("just update last message"));
 
                     postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
 
@@ -236,14 +235,14 @@ public class MessageListView extends RecyclerView {
                 // read
                 // typing
                 // message updates
-                StreamChat.getLogger().logI(this, String.format("no Scroll no new message"));
+                logger.logI( String.format("no Scroll no new message"));
                 return;
             }
 
             if (oldSize == 0 && newSize != 0) {
                 int newPosition = adapter.getItemCount() - 1;
                 layoutManager.scrollToPosition(newPosition);
-                StreamChat.getLogger().logI(this, String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+                logger.logI( String.format("Scroll: First load scrolling down to bottom %d", newPosition));
             } else if (messageListItemWrapper.getLoadingMore()) {
                 // the load more behaviour is different, scroll positions starts out at 0
                 // to stay at the relative 0 we should go to 0 + size of new messages...
@@ -258,7 +257,7 @@ public class MessageListView extends RecyclerView {
                 // if you've scrolled up we set a variable on the viewmodel that there are new messages
                 int newPosition = adapter.getItemCount() - 1;
                 int layoutSize = layoutManager.getItemCount();
-                StreamChat.getLogger().logI(this, String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
+                logger.logI( String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
                 if (hasScrolledUp) {
                     // always scroll to bottom when current user posts a message
@@ -372,7 +371,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public void showAttachment(Message message, Attachment attachment) {
-        StreamChat.getNavigator().navigate(new AttachmentDestination(message, attachment, getContext()));
+        Chat.getInstance().getNavigator().navigate(new AttachmentDestination(message, attachment, getContext()));
     }
 
     public void setReactionViewClickListener(ReactionViewClickListener l) {

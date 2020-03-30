@@ -2,11 +2,11 @@ package com.getstream.sdk.chat.utils.strings;
 
 import android.content.Context;
 
-public class StringsProviderImpl implements StringsProvider {
+public class ChatStringsImpl implements ChatStrings {
 
     private final Context appContext;
 
-    public StringsProviderImpl(Context appContext) {
+    public ChatStringsImpl(Context appContext) {
 
         this.appContext = appContext;
     }

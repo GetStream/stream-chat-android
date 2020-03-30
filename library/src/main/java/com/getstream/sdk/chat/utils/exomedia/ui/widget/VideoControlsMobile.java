@@ -24,9 +24,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.BottomViewHideShowAnimation;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.TopViewHideShowAnimation;
@@ -34,6 +31,9 @@ import com.getstream.sdk.chat.utils.exomedia.util.TimeFormatUtil;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 
 /**
  * Provides playback controls for the {@link VideoView} on Mobile

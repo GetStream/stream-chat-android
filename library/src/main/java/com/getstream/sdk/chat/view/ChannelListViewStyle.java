@@ -7,11 +7,11 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.LayoutRes;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.TextStyle;
+
+import androidx.annotation.ColorRes;
+import androidx.annotation.LayoutRes;
 
 public class ChannelListViewStyle extends BaseStyle {
 

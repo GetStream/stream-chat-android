@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.utils.strings;
 
 import com.getstream.sdk.chat.R;
 
-public class StubStringsProvider implements StringsProvider {
+public class StubChatStrings implements ChatStrings {
 
     @Override
     public String get(int resId) {

@@ -11,8 +11,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter;
@@ -20,8 +20,8 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
@@ -35,7 +35,10 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Command;
+import io.getstream.chat.android.client.models.Member;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 
 public class MessageInputController {
@@ -229,7 +232,7 @@ public class MessageInputController {
     public boolean isOverMaxUploadFileSize(File file, boolean showErrorToast) {
         if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
             if (showErrorToast)
-                Utils.showMessage(context, StreamChat.getStrings().get(R.string.stream_large_size_file_error));
+                Utils.showMessage(context, Chat.getInstance().getStrings().get(R.string.stream_large_size_file_error));
             return true;
         }
         return false;
@@ -514,7 +517,6 @@ public class MessageInputController {
     }
 
     private void setMentionUsers(String string) {
-        StreamChat.getLogger().logD(this, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
 

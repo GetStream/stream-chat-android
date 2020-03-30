@@ -1,20 +1,13 @@
 package com.getstream.sdk.chat.utils.roundedImageView;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
-
-import com.getstream.sdk.chat.StreamChat;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -33,6 +26,8 @@ public abstract class PorterImageView extends AppCompatImageView {
 
     private boolean invalidated = true;
     private boolean square = false;
+
+    private TaggedLogger logger = ChatLogger.Companion.get("PorterImageView");
 
     public PorterImageView(Context context) {
         super(context);
@@ -129,7 +124,7 @@ public abstract class PorterImageView extends AppCompatImageView {
                     canvas.drawBitmap(drawableBitmap, 0.0f, 0.0f, drawablePaint);
                 }
             } catch (Exception e) {
-                StreamChat.getLogger().logE(this, "Exception occured while drawing " + getId() + ", Error:" + e);
+                logger.logE( "Exception occured while drawing " + getId(), e);
             } finally {
                 canvas.restoreToCount(saveCount);
             }

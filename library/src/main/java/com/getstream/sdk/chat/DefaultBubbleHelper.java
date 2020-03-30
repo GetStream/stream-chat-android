@@ -6,15 +6,13 @@ import android.text.TextUtils;
 
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.model.ModelType;
-
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Message;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class DefaultBubbleHelper {

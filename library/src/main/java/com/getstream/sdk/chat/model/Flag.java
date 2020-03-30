@@ -1,8 +1,9 @@
 package com.getstream.sdk.chat.model;
 
-import io.getstream.chat.android.client.models.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import io.getstream.chat.android.client.models.User;
 
 public class Flag {
     @SerializedName("user")

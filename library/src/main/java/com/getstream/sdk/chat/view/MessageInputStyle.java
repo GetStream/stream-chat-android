@@ -10,12 +10,12 @@ import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.core.graphics.drawable.DrawableCompat;
-
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.style.TextStyle;
 
 /**
  * Style for MessageInputStyle customization by xml attributes

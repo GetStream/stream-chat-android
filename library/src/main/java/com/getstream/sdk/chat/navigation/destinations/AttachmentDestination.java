@@ -5,11 +5,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
-
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.frescoimageviewer.ImageViewer;
 import com.getstream.sdk.chat.view.activity.AttachmentActivity;
@@ -18,6 +14,10 @@ import com.getstream.sdk.chat.view.activity.AttachmentMediaActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 
 public class AttachmentDestination extends ChatDestination {
 
@@ -124,7 +124,7 @@ public class AttachmentDestination extends ChatDestination {
         String url = attachment.getAssetUrl();
 
         if (mimeType == null) {
-            StreamChat.getLogger().logE(this, "MimeType is null");
+            ChatLogger.Companion.getInstance().logE("AttachmentDestination", "MimeType is null for url" + url);
             Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_mime_type, attachment.getName()));
         } else {
             // Media

@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class MessageSearchVM extends AndroidViewModel {
     void loadChannel() {
         String type = cid.split(":")[0];
         String id = cid.split(":")[1];
-        StreamChat.getInstance().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
+        Chat.getInstance().getClient().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
             if (result.isSuccess()) {
                 channelResult.setValue(result.data());
             } else {
@@ -114,7 +114,7 @@ public class MessageSearchVM extends AndroidViewModel {
 
             isLoading.setValue(true);
 
-            StreamChat.getInstance().searchMessages(searchRequest).enqueue(new Function1<Result<List<Message>>, Unit>() {
+            Chat.getInstance().getClient().searchMessages(searchRequest).enqueue(new Function1<Result<List<Message>>, Unit>() {
                 @Override
                 public Unit invoke(Result<List<Message>> result) {
 

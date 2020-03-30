@@ -24,11 +24,6 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Surface;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.VideoViewApi;
@@ -41,6 +36,11 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 
 import java.util.Map;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * A {@link VideoViewApi} implementation that uses the ExoPlayer

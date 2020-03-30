@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.annotation.NonNull;
@@ -37,7 +37,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
         appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
-        binding.setUser(StreamChat.getInstance().getCurrentUser());
+        binding.setUser(Chat.getInstance().getClient().getCurrentUser());
         binding.setAppConfig(appConfig);
         binding.btnLogOut.setOnClickListener(view -> logOut());
 
@@ -92,11 +92,6 @@ public class ProfileFragment extends Fragment {
                 .addOnCompleteListener(task -> {
 
                             if (task.isSuccessful()) {
-                                if (task.getResult() == null) {
-                                    StreamChat.getLogger().logE(this, "Filed to get firebase result. Result:" + task.getResult());
-                                    return;
-                                }
-
                                 String token = task.getResult().getToken();
                                 removeDevice(token);
                             } else {
@@ -109,7 +104,7 @@ public class ProfileFragment extends Fragment {
 
     private void removeDevice(String deviceId) {
 
-        StreamChat.getInstance().deleteDevice(deviceId).enqueue(new Function1<Result<Unit>, Unit>() {
+        Chat.getInstance().getClient().deleteDevice(deviceId).enqueue(new Function1<Result<Unit>, Unit>() {
             @Override
             public Unit invoke(Result<Unit> unitResult) {
 
@@ -143,8 +138,8 @@ public class ProfileFragment extends Fragment {
 
     private void logOutAndGoToLoginScreen() {
         hideProgress();
-        StreamChat.getInstance().disconnect();
-        StreamChat.getNavigator().navigate(new LoginDestination(getContext()));
+        Chat.getInstance().getClient().disconnect();
+        Chat.getInstance().getNavigator().navigate(new LoginDestination(getContext()));
         getActivity().finish();
         ((BaseApplication) getContext().getApplicationContext()).getAppConfig().setCurrentUser(null);
     }

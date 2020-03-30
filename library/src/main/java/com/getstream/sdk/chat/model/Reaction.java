@@ -1,9 +1,5 @@
 package com.getstream.sdk.chat.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.TypeConverters;
-
-import io.getstream.chat.android.client.models.User;
 import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.getstream.sdk.chat.storage.converter.ExtraDataConverter;
@@ -12,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.Map;
+
+import androidx.room.ColumnInfo;
+import androidx.room.TypeConverters;
+import io.getstream.chat.android.client.models.User;
 
 public class Reaction {
 

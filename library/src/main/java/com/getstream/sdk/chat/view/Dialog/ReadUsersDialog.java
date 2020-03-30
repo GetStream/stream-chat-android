@@ -7,17 +7,17 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
 
-import androidx.annotation.NonNull;
 import com.getstream.sdk.chat.R;
-
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.models.ChannelUserRead;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.User;
 
 
 public class ReadUsersDialog extends Dialog {

@@ -12,7 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -76,7 +76,7 @@ public class ChannelMoreActionDialog extends Dialog {
 
     private boolean canEditOrDeleteChannel() {
         User createdByUser = channel.getCreatedBy();
-        User currentUser = StreamChat.getCurrentUser().getValue();
+        User currentUser = Chat.getInstance().getCurrentUser().getValue();
 
         if (createdByUser != null && currentUser != null) {
             return createdByUser.getId().equals(currentUser.getId());
@@ -175,7 +175,7 @@ public class ChannelMoreActionDialog extends Dialog {
         data.put("image", image);
         data.put("name", channelName);
 
-        StreamChat.getInstance().updateChannel(type, id, message, data).enqueue(
+        Chat.getInstance().getClient().updateChannel(type, id, message, data).enqueue(
                 channelResult -> {
 
                     if (channelResult.isSuccess()) {

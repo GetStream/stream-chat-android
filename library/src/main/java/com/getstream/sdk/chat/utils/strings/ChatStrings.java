@@ -2,6 +2,6 @@ package com.getstream.sdk.chat.utils.strings;
 
 import androidx.annotation.StringRes;
 
-public interface StringsProvider {
+public interface ChatStrings {
     String get(@StringRes int resId);
 }

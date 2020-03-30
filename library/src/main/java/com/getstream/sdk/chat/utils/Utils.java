@@ -25,11 +25,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.model.Member;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
-import com.getstream.sdk.chat.rest.response.ChannelState;
+import com.getstream.sdk.chat.model.ModelType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,13 +37,15 @@ import java.util.*;
 
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    private static String TAG = Utils.class.getSimpleName();
     public static List<AttachmentMetaData> attachments = new ArrayList<>();
+    private static final TaggedLogger logger = ChatLogger.Companion.get(Utils.class.getSimpleName());
 
     public static String readInputStream(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
@@ -223,7 +222,7 @@ public class Utils {
         );
 
         if (imagecursor == null) {
-            StreamChat.getLogger().logE(Utils.class, "ContentResolver query return null");
+            logger.logE("ContentResolver query return null");
             return new ArrayList<>();
         }
 
@@ -263,21 +262,6 @@ public class Utils {
         attachment.mimeType = mimeType;
         attachment.title = file.getName();
         attachment.file = file;
-    }
-
-    public static List<String> getMentionedUserIDs(ChannelState channelState, String text) {
-        if (TextUtils.isEmpty(text)) return null;
-
-        List<String> mentionedUserIDs = new ArrayList<>();
-        if (channelState.getMembers() != null && !channelState.getMembers().isEmpty()) {
-            for (Member member : channelState.getMembers()) {
-                String userName = member.getUser().getName();
-                if (text.contains("@" + userName)) {
-                    mentionedUserIDs.add(member.getUser().getId());
-                }
-            }
-        }
-        return mentionedUserIDs;
     }
 
     public static abstract class TextViewLinkHandler extends LinkMovementMethod {

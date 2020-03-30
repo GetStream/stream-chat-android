@@ -7,16 +7,16 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Button;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.navigation.destinations.AppSettingsDestination;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PermissionChecker {
 
@@ -87,7 +87,7 @@ public class PermissionChecker {
         alertDialog.setOnShowListener(dialog -> {
             Button button = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(v -> {
-                StreamChat.getNavigator().navigate(new AppSettingsDestination(context));
+                Chat.getInstance().getNavigator().navigate(new AppSettingsDestination(context));
                 alertDialog.dismiss();
             });
         });

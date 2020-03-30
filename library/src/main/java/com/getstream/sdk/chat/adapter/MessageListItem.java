@@ -1,18 +1,17 @@
 package com.getstream.sdk.chat.adapter;
 
 
-import androidx.annotation.Nullable;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_DATE_SEPARATOR;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;

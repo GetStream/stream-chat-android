@@ -2,18 +2,7 @@ package com.getstream.sdk.chat.utils;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 
@@ -23,13 +12,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
+
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
 
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
-    private static final String TAG = MessageListItemLiveData.class.getSimpleName();
+    private TaggedLogger logger = ChatLogger.Companion.get("MessageListItemLiveData");
 
     private MutableLiveData<List<Message>> messages;
     private MutableLiveData<List<Message>> threadMessages;
@@ -148,7 +148,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 reads = new HashMap<>();
             }
             readsByUser = reads;
-            StreamChat.getLogger().logI(this,"broadcast because reads changed");
+            logger.logI("broadcast because reads changed");
             broadcastValue();
         });
 
@@ -169,7 +169,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
-            StreamChat.getLogger().logI(this,"broadcast because typing changed");
+            logger.logI("broadcast because typing changed");
             broadcastValue();
         });
     }
@@ -228,14 +228,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (isThread() && i == 0) {
                 entities.add(new MessageListItem(MESSAGEITEM_THREAD_SEPARATOR));
                 previousMessage = null;
-            }else{
+            } else {
                 // set the previous message for the next iteration
                 previousMessage = message;
             }
         }
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
-        StreamChat.getLogger().logI(this,"broadcast because messages changed");
+        logger.logI("broadcast because messages changed");
         broadcastValue();
     }
 

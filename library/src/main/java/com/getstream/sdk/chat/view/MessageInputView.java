@@ -16,8 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.enums.MessageInputType;
@@ -260,7 +260,7 @@ public class MessageInputView extends RelativeLayout {
             StrictMode.setVmPolicy(builder.build());
             Utils.hideSoftKeyboard((Activity) getContext());
 
-            StreamChat.getNavigator().navigate(new CameraDestination((Activity) getContext()));
+            Chat.getInstance().getNavigator().navigate(new CameraDestination((Activity) getContext()));
         });
         binding.llFile.setOnClickListener(v -> messageInputController.onClickOpenSelectView(null, false));
     }
@@ -419,7 +419,7 @@ public class MessageInputView extends RelativeLayout {
     protected Message prepareNewMessage(Message message) {
         // Check file uploading
         if (messageInputController.isUploadingFile()) {
-            message.user = StreamChat.getInstance().getCurrentUser();
+            message.user = Chat.getInstance().getClient().getCurrentUser();
             String clientSideID = generateMessageID();
             message.setId(clientSideID);
             message.setCreatedAt(new Date());
@@ -588,7 +588,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private String generateMessageID() {
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
         String id = currentUser.getId();
         return id + "-" + randomUUID().toString();
     }

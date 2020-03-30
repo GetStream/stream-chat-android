@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.databinding.StreamItemGroupUserBinding;
-import io.getstream.chat.android.client.models.User;
 
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.User;
 
 public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdapter.MyViewHolder> {
 

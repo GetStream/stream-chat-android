@@ -22,9 +22,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.BuildConfig;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.source.builder.DefaultMediaSourceBuilder;
@@ -32,6 +29,9 @@ import com.getstream.sdk.chat.utils.exomedia.core.source.builder.MediaSourceBuil
 import com.getstream.sdk.chat.utils.exomedia.util.MediaSourceUtil;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Provides the functionality to determine which {@link MediaSource} should be used

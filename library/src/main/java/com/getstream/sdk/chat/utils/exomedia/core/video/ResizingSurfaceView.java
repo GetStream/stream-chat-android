@@ -23,26 +23,21 @@ import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.MatrixManager;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
+import javax.microedition.khronos.egl.*;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.logger.ChatLogger;
 
 /**
  * A SurfaceView that reSizes itself according to the requested layout type
@@ -235,7 +230,7 @@ public class ResizingSurfaceView extends SurfaceView implements ClearableSurface
 
             gl10.eglTerminate(display);
         } catch (Exception e) {
-            StreamChat.getLogger().logE(this,"Error clearing surface. Error:" + e);
+            ChatLogger.Companion.getInstance().logE("ResizingSurfaceView", "Error clearing surface", e);
         }
     }
 

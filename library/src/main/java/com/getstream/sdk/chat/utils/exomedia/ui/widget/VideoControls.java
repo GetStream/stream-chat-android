@@ -30,12 +30,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.IntRange;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.listener.VideoControlsButtonListener;
 import com.getstream.sdk.chat.utils.exomedia.listener.VideoControlsSeekListener;
@@ -46,6 +40,8 @@ import com.getstream.sdk.chat.utils.exomedia.util.TimeFormatUtil;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import androidx.annotation.*;
 
 /**
  * This is a simple abstraction for the {@link VideoView} to have a single "View" to add

@@ -27,20 +27,9 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewStub;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntRange;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
@@ -53,12 +42,7 @@ import com.getstream.sdk.chat.utils.exomedia.core.listener.MetadataListener;
 import com.getstream.sdk.chat.utils.exomedia.core.video.exo.ExoTextureVideoView;
 import com.getstream.sdk.chat.utils.exomedia.core.video.mp.NativeTextureVideoView;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnBufferUpdateListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnCompletionListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnErrorListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnPreparedListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnSeekCompletionListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnVideoSizeChangedListener;
+import com.getstream.sdk.chat.utils.exomedia.listener.*;
 import com.getstream.sdk.chat.utils.exomedia.util.DeviceUtil;
 import com.getstream.sdk.chat.utils.exomedia.util.StopWatch;
 import com.google.android.exoplayer2.Player;
@@ -68,6 +52,8 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 
 import java.util.Map;
+
+import androidx.annotation.*;
 
 /**
  * This is a support VideoView that will use the standard VideoView on devices below

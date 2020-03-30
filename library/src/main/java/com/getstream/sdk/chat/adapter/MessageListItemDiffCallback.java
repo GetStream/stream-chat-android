@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.adapter;
 
 
-import androidx.recyclerview.widget.DiffUtil;
-
 import java.util.List;
+
+import androidx.recyclerview.widget.DiffUtil;
 
 public class MessageListItemDiffCallback extends DiffUtil.Callback {
 

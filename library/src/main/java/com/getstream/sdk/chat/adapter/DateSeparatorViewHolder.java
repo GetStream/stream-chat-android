@@ -6,17 +6,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import io.getstream.chat.android.client.models.Channel;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.Dates;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Date;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import io.getstream.chat.android.client.models.Channel;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 

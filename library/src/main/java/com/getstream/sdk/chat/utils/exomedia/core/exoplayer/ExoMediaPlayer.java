@@ -24,16 +24,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.Surface;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.Size;
-import androidx.collection.ArrayMap;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia.RendererType;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.CaptionListener;
@@ -43,30 +35,13 @@ import com.getstream.sdk.chat.utils.exomedia.core.listener.MetadataListener;
 import com.getstream.sdk.chat.utils.exomedia.core.renderer.RendererProvider;
 import com.getstream.sdk.chat.utils.exomedia.listener.OnBufferUpdateListener;
 import com.getstream.sdk.chat.utils.exomedia.util.Repeater;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.PlayerMessage;
-import com.google.android.exoplayer2.Renderer;
-import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.analytics.AnalyticsCollector;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionEventListener;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.ExoMediaDrm;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
-import com.google.android.exoplayer2.drm.MediaDrmCallback;
+import com.google.android.exoplayer2.drm.*;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -83,19 +58,25 @@ import com.google.android.exoplayer2.util.Clock;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.Size;
+import androidx.collection.ArrayMap;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ExoMediaPlayer extends Player.DefaultEventListener {
     private static final String TAG = "ExoMediaPlayer";
     private static final int BUFFER_REPEAT_DELAY = 1_000;
     private static final int WAKE_LOCK_TIMEOUT = 1_000;
+
+    private TaggedLogger logger = ChatLogger.Companion.get(TAG);
 
     @NonNull
     private final Context context;
@@ -567,7 +548,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
             cumulativePositionMs += windowDurationMs;
         }
 
-        StreamChat.getLogger().logE(this, "Unable to seek across windows, falling back to in-window seeking");
+        logger.logE("Unable to seek across windows, falling back to in-window seeking");
         player.seekTo(positionMs);
         stateStore.setMostRecentState(stateStore.isLastReportedPlayWhenReady(), StateStore.STATE_SEEKING);
     }
@@ -726,10 +707,10 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
                 wakeLock = pm.newWakeLock(mode | PowerManager.ON_AFTER_RELEASE, ExoMediaPlayer.class.getName());
                 wakeLock.setReferenceCounted(false);
             } else {
-                StreamChat.getLogger().logE(this, "Unable to acquire WAKE_LOCK due to a null power manager");
+                logger.logE("Unable to acquire WAKE_LOCK due to a null power manager");
             }
         } else {
-            StreamChat.getLogger().logW(this,"Unable to acquire WAKE_LOCK due to missing manifest permission");
+            logger.logW("Unable to acquire WAKE_LOCK due to missing manifest permission");
         }
 
         stayAwake(wasHeld);
@@ -889,7 +870,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
             return sessionManager;
         } catch (Exception e) {
-            StreamChat.getLogger().logD(this,"Unable to create a DrmSessionManager due to an exception. Error: " + e);
+            logger.logE(e);
             return null;
         }
     }

@@ -10,8 +10,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
@@ -154,7 +154,6 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         lv_attachment_file.setAdapter(attachAdapter);
         lv_attachment_file.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) -> {
-            StreamChat.getLogger().logD(this, "Attach onMessageClick: " + position);
             if (clickListener != null)
                 clickListener.onAttachmentClick(message, attachment);
         });
@@ -204,7 +203,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         if (!attachUrl.contains("https:"))
             attachUrl = "https:" + attachUrl;
         Glide.with(context)
-                .load(StreamChat.signGlideUrl(attachUrl))
+                .load(Chat.getInstance().urlSigner().signImageUrl(attachUrl))
                 .into(iv_media_thumb);
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachments.get(0).getTitle());

@@ -26,10 +26,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.widget.MediaController;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.VideoViewApi;
@@ -42,6 +38,10 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 
 import java.util.Map;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * A "Native" VideoView implementation using the {@link android.view.SurfaceView}.

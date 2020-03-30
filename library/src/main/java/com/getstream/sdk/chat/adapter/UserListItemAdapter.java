@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import androidx.databinding.DataBindingUtil;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
-import io.getstream.chat.android.client.models.User;
 
 import java.util.List;
+
+import androidx.databinding.DataBindingUtil;
+import io.getstream.chat.android.client.models.User;
 
 public class UserListItemAdapter extends BaseAdapter {
 

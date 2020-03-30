@@ -3,13 +3,9 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.os.Handler;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
-import com.getstream.sdk.chat.model.Event;
-import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.storage.OnQueryListener;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.RetryPolicy;
 
@@ -19,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -30,6 +25,8 @@ import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.MessageReadEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
@@ -43,7 +40,7 @@ import static com.getstream.sdk.chat.utils.Utils.removeIf;
 
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
 
-    protected final String TAG = ChannelListViewModel.class.getSimpleName();
+    private TaggedLogger logger = ChatLogger.Companion.get("ChannelListViewModel");
 
     protected final MutableLiveData<List<Channel>> channels = new ChannelsLiveData<>();
 
@@ -61,8 +58,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected int pageSize;
     protected Handler retryLooper;
 
-    protected QueryChannelListCallback queryChannelListCallback;
-
     public RetryPolicy getRetryPolicy() {
         return retryPolicy;
     }
@@ -76,7 +71,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public ChannelListViewModel(@NonNull Application application) {
         super(application);
 
-        StreamChat.getLogger().logD(this, "instance created");
+        logger.logI("instance created");
 
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
@@ -146,7 +141,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected void onCleared() {
         super.onCleared();
 
-        StreamChat.getLogger().logD(this, "onCleared");
+        logger.logI("onCleared");
 
         if (subscription != null) subscription.unsubscribe();
     }
@@ -186,7 +181,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public void setChannelFilter(FilterObject filter) {
         this.filter = filter;
         if (initialized.get()) {
-            StreamChat.getLogger().logE(this, "setChannelFilter on an already initialized channel will reload the view model");
+            logger.logI("setChannelFilter on an already initialized channel will reload the view model");
             reload();
         }
     }
@@ -196,7 +191,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      */
     public Call<Unit> hideChannel(@NonNull String channelType, @NonNull String channelId, boolean clearHistory) {
 
-        return StreamChat.getInstance().hideChannel(channelType, channelId, clearHistory).map(unit -> {
+        return Chat.getInstance().getClient().hideChannel(channelType, channelId, clearHistory).map(unit -> {
             deleteChannel(channelType + ":" + channelId);
             return null;
         });
@@ -210,7 +205,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      */
     public Call<Unit> showChannel(@NonNull String channelType, @NonNull String channelId) {
 
-        return StreamChat.getInstance().showChannel(channelType, channelId).map(unit -> {
+        return Chat.getInstance().getClient().showChannel(channelType, channelId).map(unit -> {
             deleteChannel(channelType + ":" + channelId);
             return null;
         });
@@ -228,14 +223,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     @Override
     public void resume() {
-        StreamChat.getLogger().logD(this, "resume");
-        if (!initialized.get() || !StreamChat.getInstance().isSocketConnected())
+        logger.logI("resume");
+        if (!initialized.get() || !Chat.getInstance().getClient().isSocketConnected())
             setLoading();
     }
 
     @Override
     public void stopped() {
-        StreamChat.getLogger().logD(this, "stopped");
+        logger.logI("stopped");
     }
 
     protected void setupConnectionRecovery() {
@@ -266,24 +261,10 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 //        });
     }
 
-    /*
-     * EventInterceptor implementations will receive all events (and channel when applicable) to add
-     * custom behavior.
-     *
-     * shouldDiscard informs the view model what to do next: continue with event handling or
-     * ignore the event.
-     *
-     * This allows the developer to disable some built-in mechanism like automatically add a new
-     * channel to the list.
-     */
-    public interface EventInterceptor {
-        boolean shouldDiscard(Event event, @Nullable Channel channel);
-    }
-
     private Subscription subscription;//notification.mark_read //message.read
 
     protected void initEventHandlers() {
-        subscription = StreamChat.getInstance().events().subscribe(event -> {
+        subscription = Chat.getInstance().getClient().events().subscribe(event -> {
 
             if (event instanceof NewMessageEvent) {
                 NewMessageEvent e = (NewMessageEvent) event;
@@ -448,7 +429,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 //                    return;
 //                }
 //                int sleep = retryPolicy.retryTimeout(client(), attempt, errMsg, errCode);
-//                StreamChat.getLogger().logD(this, "retrying in " + sleep);
+//                StreamChat.getLogger(). logI(this, "retrying in " + sleep);
 //                retryLooper.postDelayed(() -> {
 //                    queryChannelsInner(attempt + 1);
 //                }, sleep);
@@ -459,7 +440,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 //            }
 //        };
 
-        StreamChat.getInstance().queryChannels(request).enqueue(result -> {
+        Chat.getInstance().getClient().queryChannels(request).enqueue(result -> {
 
             if (result.isSuccess()) {
                 queryChannelDone = true;
@@ -483,11 +464,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     /**
      * query channels
-     *
-     * @param callback the result callback
      */
-    public void queryChannels(OnQueryListener<List<ChannelState>> callback) {
-        StreamChat.getLogger().logI(this, "queryChannels for loading the channels");
+    public void queryChannels() {
+        logger.logI("queryChannels for loading the channels");
 //        if (!setLoading()) {
 //            StreamChat.getLogger().logI(this, "already loading, skip queryChannels");
 //            return;
@@ -512,25 +491,11 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         queryChannelsInner(0);
     }
 
-    public void queryChannels() {
-        queryChannels(new OnQueryListener<List<ChannelState>>() {
-            @Override
-            public void onSuccess(List<ChannelState> channelStates) {
-                StreamChat.getLogger().logI(this, "Read from local cache...");
-            }
-
-            @Override
-            public void onFailure(Exception e) {
-                StreamChat.getLogger().logE(this, e.getLocalizedMessage());
-            }
-        });
-    }
-
     /**
      * loads more channels, use this to load a previous page
      */
     public void loadMore() {
-        if (!StreamChat.getInstance().isSocketConnected()) return;
+        if (!Chat.getInstance().getClient().isSocketConnected()) return;
 
         if (isLoading.get()) {
             return;
@@ -547,7 +512,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (channels.getValue() != null)
             request = request.withOffset(channels.getValue().size());
 
-        StreamChat.getInstance().queryChannels(request).enqueue(new Function1<Result<List<Channel>>, Unit>() {
+        Chat.getInstance().getClient().queryChannels(request).enqueue(new Function1<Result<List<Channel>>, Unit>() {
             @Override
             public Unit invoke(Result<List<Channel>> result) {
 
@@ -602,21 +567,13 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
     }
 
-    public QueryChannelListCallback getQueryChannelListCallback() {
-        return queryChannelListCallback;
-    }
-
-    public void setQueryChannelListCallback(QueryChannelListCallback queryChannelListCallback) {
-        this.queryChannelListCallback = queryChannelListCallback;
-    }
-
     class ChannelsLiveData<T> extends MutableLiveData<T> {
 
         private Subscription subscription;
 
         @Override
         protected void onActive() {
-            ChatClient client = StreamChat.getInstance();
+            ChatClient client = Chat.getInstance().getClient();
 
             if (subscription == null) {
                 subscription = client.events()

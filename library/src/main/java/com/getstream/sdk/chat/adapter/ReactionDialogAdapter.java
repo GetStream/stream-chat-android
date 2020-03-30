@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -123,7 +123,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
             clickListener.onClick(view);
 
-            StreamChat.getInstance().sendReaction(message.getId(), type).enqueue(reactionResult -> {
+            Chat.getInstance().getClient().sendReaction(message.getId(), type).enqueue(reactionResult -> {
 
 
                 if (reactionResult.isSuccess()) {
@@ -141,7 +141,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
             clickListener.onClick(view);
 
-            StreamChat.getInstance().deleteReaction(message.getId(), type).enqueue(messageResult -> {
+            Chat.getInstance().getClient().deleteReaction(message.getId(), type).enqueue(messageResult -> {
 
                 if (messageResult.isSuccess()) {
                     notifyItemChanged(position);

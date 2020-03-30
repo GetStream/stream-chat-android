@@ -5,20 +5,18 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
+
+import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
+import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
+import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Channel;
-
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
-import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 import io.getstream.chat.android.client.models.User;
-import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 
 public class ChannelListView extends RecyclerView {
@@ -86,7 +84,6 @@ public class ChannelListView extends RecyclerView {
         adapter.setUserClickListener(this.userClickListener);
 
         viewModel.getChannels().observe(lifecycleOwner, channels -> {
-            StreamChat.getLogger().logI(this,"Observe found this many channels: " + channels.size());
             adapter.replaceChannels(channels);
             if (canScrollUpForChannelEvent())
                 layoutManager.scrollToPosition(0);

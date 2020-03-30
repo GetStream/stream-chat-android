@@ -18,9 +18,6 @@ package com.getstream.sdk.chat.utils.exomedia;
 
 import android.content.Context;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.core.source.MediaSourceProvider;
 import com.getstream.sdk.chat.utils.exomedia.core.source.builder.DashMediaSourceBuilder;
 import com.getstream.sdk.chat.utils.exomedia.core.source.builder.HlsMediaSourceBuilder;
@@ -31,11 +28,10 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * A standard entry point for registering additional {@link com.google.android.exoplayer2.Renderer}s and

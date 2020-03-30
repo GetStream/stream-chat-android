@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
@@ -18,7 +18,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
-import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
@@ -57,7 +56,6 @@ public class ChannelActivity extends AppCompatActivity
         channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
         channelId = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
         cid = channelType + ":" + channelId;
-        ChatClient client = StreamChat.getInstance();
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
@@ -169,6 +167,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     private void openSearchActivity() {
-        StreamChat.getNavigator().navigate(new SearchDestination(cid, this));
+        Chat.getInstance().getNavigator().navigate(new SearchDestination(cid, this));
     }
 }

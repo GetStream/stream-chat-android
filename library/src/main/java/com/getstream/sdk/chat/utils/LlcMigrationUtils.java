@@ -3,8 +3,8 @@ package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
@@ -103,7 +103,7 @@ public class LlcMigrationUtils {
     }
 
     public static boolean readLastMessage(Channel channel) {
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         String currentUserId = currentUser.getId();
         Date myReadDate = getReadDateOfChannelLastMessage(currentUserId, channel);
         Message lastMessage = computeLastMessage(channel);
@@ -120,7 +120,7 @@ public class LlcMigrationUtils {
         List<ChannelUserRead> reads = channel.getRead();
         if (reads == null || lastMessage == null) return readLastMessage;
 
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         String currentUserId = currentUser.getId();
 
         for (ChannelUserRead r : reads) {
@@ -208,7 +208,7 @@ public class LlcMigrationUtils {
     }
 
     public static boolean currentUserRead(Channel oldCh, Channel newCh) {
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         String id = currentUser.getId();
 
         ChannelUserRead oldRead = getRead(oldCh, id);
@@ -284,7 +284,7 @@ public class LlcMigrationUtils {
         User lastReadUser = null;
         for (int i = read.size() - 1; i >= 0; i--) {
 
-            User currentUser = StreamChat.getInstance().getCurrentUser();
+            User currentUser = getCurrentUser();
 
             ChannelUserRead channelUserRead = read.get(i);
 
@@ -464,13 +464,13 @@ public class LlcMigrationUtils {
 
     public static boolean isFromCurrentUser(ChatEvent event) {
         User user = event.getUser();
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         if (user == null || currentUser == null) return false;
         return user.getId().equals(currentUser.getId());
     }
 
     public static boolean isFromCurrentUser(String userId) {
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = getCurrentUser();
         if (userId == null || currentUser == null) return false;
         return userId.equals(currentUser.getId());
     }
@@ -611,5 +611,9 @@ public class LlcMigrationUtils {
         }
         DateFormat timeFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
         message.setTime(timeFormat.format(message.getCreatedAt()));
+    }
+    
+    public static User getCurrentUser(){
+        return Chat.getInstance().getClient().getCurrentUser();
     }
 }

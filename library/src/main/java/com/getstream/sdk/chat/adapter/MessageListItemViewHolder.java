@@ -18,12 +18,11 @@ import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
@@ -422,10 +421,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     protected void configMessageTextClickListener() {
         tv_text.setOnClickListener(view -> {
-            StreamChat.getLogger().logI(this, "onMessageClick: " + position);
 
-
-            if (isFailedMessage() && !StreamChat.getInstance().isSocketConnected()) return;
+            if (isFailedMessage() && !Chat.getInstance().getClient().isSocketConnected())
+                return;
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
         });
@@ -446,7 +444,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
                     isLongClick = false;
                     return;
                 }
-                StreamChat.getNavigator().navigate(new WebLinkDestination(url, context));
+                Chat.getInstance().getNavigator().navigate(new WebLinkDestination(url, context));
             }
         });
     }

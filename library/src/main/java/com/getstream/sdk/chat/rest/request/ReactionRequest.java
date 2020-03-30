@@ -1,11 +1,12 @@
 package com.getstream.sdk.chat.rest.request;
 
-import io.getstream.chat.android.client.models.Reaction;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import io.getstream.chat.android.client.models.Reaction;
 
 public class ReactionRequest {
 

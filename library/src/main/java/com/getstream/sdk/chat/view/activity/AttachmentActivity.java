@@ -10,12 +10,14 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
 
 import androidx.appcompat.app.AppCompatActivity;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 /**
  * An Activity showing attachments such as websites, youtube and giphy.
@@ -27,6 +29,8 @@ public class AttachmentActivity extends AppCompatActivity {
 
     ImageView iv_image;
     ProgressBar progressBar;
+
+    private TaggedLogger logger = ChatLogger.Companion.get("AttachmentActivity");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +83,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        webView.loadUrl(StreamChat.signFileUrl(url));
+        webView.loadUrl(Chat.getInstance().urlSigner().signFileUrl(url));
     }
 
 
@@ -97,7 +101,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .load(StreamChat.signGlideUrl(url))
+                .load(Chat.getInstance().urlSigner().signImageUrl(url))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
@@ -105,20 +109,20 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(StreamChat.signFileUrl(url));
+            view.loadUrl(Chat.getInstance().urlSigner().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, StreamChat.signFileUrl(url));
+            super.onPageFinished(view, Chat.getInstance().urlSigner().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
 
-            StreamChat.getLogger().logE(this, "The load failed due to an unknown error: " + error);
+            logger.logE("The load failed due to an unknown error: " + error);
 
             if (error == null) {
                 return;

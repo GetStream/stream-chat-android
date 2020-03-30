@@ -20,10 +20,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.net.Uri;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.AudioPlayerApi;
 import com.getstream.sdk.chat.utils.exomedia.core.audio.ExoAudioPlayer;
@@ -31,11 +27,7 @@ import com.getstream.sdk.chat.utils.exomedia.core.audio.NativeAudioPlayer;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.ExoMediaPlayer;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.WindowInfo;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.MetadataListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnBufferUpdateListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnCompletionListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnErrorListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnPreparedListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnSeekCompletionListener;
+import com.getstream.sdk.chat.utils.exomedia.listener.*;
 import com.getstream.sdk.chat.utils.exomedia.util.DeviceUtil;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
@@ -44,6 +36,10 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 
 import java.util.Map;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * An AudioPlayer that uses the ExoPlayer as the backing architecture.  If the current device

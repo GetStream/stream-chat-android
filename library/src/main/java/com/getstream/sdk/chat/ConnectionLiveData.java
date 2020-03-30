@@ -8,8 +8,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import androidx.lifecycle.LiveData;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 public class ConnectionLiveData extends LiveData<ConnectionLiveData.ConnectionModel> {
+
+    private TaggedLogger logger = ChatLogger.Companion.get("ConnectionLiveData");
     private Context context;
 
     private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
@@ -18,7 +22,7 @@ public class ConnectionLiveData extends LiveData<ConnectionLiveData.ConnectionMo
             if (intent.getExtras() != null) {
                 ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 if (connectivityManager == null) {
-                    StreamChat.getLogger().logE(this, "Can\'t get access to ConnectivityManager");
+                    logger.logE("Can\'t get access to ConnectivityManager");
                     return;
                 }
                 NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();

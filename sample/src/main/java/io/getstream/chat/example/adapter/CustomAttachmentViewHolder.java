@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.adapter.BaseAttachmentViewHolder;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
@@ -64,7 +64,7 @@ public class CustomAttachmentViewHolder extends BaseAttachmentViewHolder {
         iv_media_thumb.setShape(context, background);
 
         Glide.with(context)
-                .load(StreamChat.signGlideUrl(attachment.getThumbUrl()))
+                .load(Chat.getInstance().urlSigner().signImageUrl(attachment.getThumbUrl()))
                 .into(iv_media_thumb);
     }
 

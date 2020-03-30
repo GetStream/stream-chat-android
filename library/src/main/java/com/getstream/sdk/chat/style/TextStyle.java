@@ -5,7 +5,7 @@ import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 
 import androidx.annotation.Nullable;
 
@@ -20,12 +20,12 @@ public class TextStyle {
 
     @Nullable
     public Typeface getFont() {
-        FontsManager fontsManager = StreamChat.getFontsManager();
-        return fontsManager.getFont(this);
+        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
+        return chatFonts.getFont(this);
     }
 
     public void apply(TextView textView) {
-        FontsManager fontsManager = StreamChat.getFontsManager();
+        ChatFonts chatFonts = Chat.getInstance().getChatFonts();
 
         if (size != -1)
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
@@ -36,7 +36,7 @@ public class TextStyle {
         if (hintColor != 0)
             textView.setHintTextColor(hintColor);
 
-        fontsManager.setFont(this, textView);
+        chatFonts.setFont(this, textView);
     }
 
     public boolean hasFont() {

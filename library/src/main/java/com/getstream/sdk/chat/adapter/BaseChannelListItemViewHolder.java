@@ -3,14 +3,14 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.View;
 
+import com.getstream.sdk.chat.MarkdownImpl;
+import com.getstream.sdk.chat.view.ChannelListView;
+import com.getstream.sdk.chat.view.ChannelListViewStyle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Channel;
-
-import com.getstream.sdk.chat.MarkdownImpl;
-import com.getstream.sdk.chat.view.ChannelListView;
-import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
 public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHolder {
 

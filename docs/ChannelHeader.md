@@ -38,7 +38,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import io.getstream.chat.example.databinding.ActivityChannelBinding;
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.ChatImpl;
 import io.getstream.chat.android.client.models.Attachment;
 import com.getstream.sdk.chat.model.Channel;
 import com.getstream.sdk.chat.rest.Message;
