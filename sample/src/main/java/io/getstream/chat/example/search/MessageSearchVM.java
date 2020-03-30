@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.App;
 import io.getstream.chat.example.utils.AppConfig;
 import io.getstream.chat.example.utils.SingleLiveEvent;
 import io.getstream.chat.example.utils.UserConfig;
@@ -46,7 +46,7 @@ public class MessageSearchVM extends AndroidViewModel {
         super(application);
 
         context = application;
-        appConfig = ((BaseApplication) context.getApplicationContext()).getAppConfig();
+        appConfig = ((App) context.getApplicationContext()).getAppConfig();
 
         initLiveData();
     }

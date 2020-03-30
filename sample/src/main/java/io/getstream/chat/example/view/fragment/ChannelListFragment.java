@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.App;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
@@ -61,7 +61,7 @@ public class ChannelListFragment extends Fragment {
     private void configureStreamClient() {
         client = Chat.getInstance().getClient();
 
-        AppConfig appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
+        AppConfig appConfig = ((App) getContext().getApplicationContext()).getAppConfig();
 
         String USER_ID = appConfig.getCurrentUser().getId();
         String USER_TOKEN = appConfig.getCurrentUser().getToken();

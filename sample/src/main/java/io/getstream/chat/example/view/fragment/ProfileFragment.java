@@ -18,7 +18,7 @@ import androidx.databinding.BindingAdapter;
 import androidx.databinding.InverseBindingAdapter;
 import androidx.fragment.app.Fragment;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.App;
 import io.getstream.chat.example.R;
 import io.getstream.chat.example.databinding.FragmentProfileBinding;
 import io.getstream.chat.example.navigation.LoginDestination;
@@ -36,7 +36,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentProfileBinding binding = FragmentProfileBinding.inflate(inflater, container, false);
-        appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
+        appConfig = ((App) getContext().getApplicationContext()).getAppConfig();
         binding.setUser(Chat.getInstance().getClient().getCurrentUser());
         binding.setAppConfig(appConfig);
         binding.btnLogOut.setOnClickListener(view -> logOut());
@@ -141,7 +141,7 @@ public class ProfileFragment extends Fragment {
         Chat.getInstance().getClient().disconnect();
         Chat.getInstance().getNavigator().navigate(new LoginDestination(getContext()));
         getActivity().finish();
-        ((BaseApplication) getContext().getApplicationContext()).getAppConfig().setCurrentUser(null);
+        ((App) getContext().getApplicationContext()).getAppConfig().setCurrentUser(null);
     }
 
     private void onError(String message) {

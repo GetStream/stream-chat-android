@@ -7,9 +7,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.google.firebase.FirebaseApp;
@@ -27,12 +25,12 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.example.utils.AppConfig;
 
 
-public class BaseApplication extends Application {
+public class App extends Application {
 
     private StreamChatStyle style;
     private AppConfig appConfig;
 
-    private static final String TAG = BaseApplication.class.getSimpleName();
+    private static final String TAG = App.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
 
@@ -45,7 +43,7 @@ public class BaseApplication extends Application {
         appConfig = new AppConfig(this);
 
         setupChatStyle();
-        initChat();
+        initDefaultChat();
 
         Crashlytics.setString("apiKey", appConfig.getApiKey());
     }
@@ -104,11 +102,19 @@ public class BaseApplication extends Application {
         }
     }
 
-    private void initChat() {
+    private void initDefaultChat() {
 
-        final Context context = this;
+        String apiKey = appConfig.getApiKey();
 
-        Chat chat = new Chat.Builder(appConfig.getApiKey(), context)
+        Chat chat = new Chat.Builder(apiKey, this).build();
+    }
+
+    private void initCustomChat(){
+
+        String apiKey = appConfig.getApiKey();
+        Context context = this;
+
+        Chat chat = new Chat.Builder(apiKey, this)
                 .apiEndpoint(appConfig.getApiEndPoint())
                 .apiTimeout(appConfig.getApiTimeout())
                 .cdnTimeout(appConfig.getCdnTimeout())
@@ -133,7 +139,7 @@ public class BaseApplication extends Application {
                         return false;
                     }
                 })
-                //.notifications(new NotificationConfig(context))
+                .notifications(new NotificationConfig(context))
                 .build();
     }
 }

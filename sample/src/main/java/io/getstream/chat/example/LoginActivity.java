@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        appConfig = ((BaseApplication) getApplicationContext()).getAppConfig();
+        appConfig = ((App) getApplicationContext()).getAppConfig();
 
         lv_users = findViewById(R.id.lv_users);
 
