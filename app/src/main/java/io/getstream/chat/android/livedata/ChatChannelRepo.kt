@@ -7,10 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.Watcher
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -62,9 +59,35 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
     private val _watcherCount = MutableLiveData<Int>()
     val watcherCount : LiveData<Int> = _watcherCount
 
+    private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
+    val typing : LiveData<List<User>> = Transformations.map(_typing) {
+        it.values.sortedBy { it.receivedAt }.map { it.user!! }
+    }
+
+    private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
+    val reads : LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
+        it.values.sortedBy { it.lastRead }
+    }
+
     private val _watchers = MutableLiveData<List<Watcher>>()
     val watchers : LiveData<List<Watcher>> = _watchers
 
+    // TODO: this is not great, individual livedata objects would be better
+    val threads = Transformations.map(_messages) {
+        val sorted = it.values.sortedBy { it.createdAt }
+        val threads = mutableMapOf<String, MutableList<Message>>()
+        for (message in sorted) {
+            var parentId: String = message.parentId ?: ""
+            if (message.parentId.isNullOrBlank()) {
+                parentId = message.id
+            }
+            if (threads[parentId] == null) {
+                threads[parentId] = mutableListOf()
+            }
+            threads[parentId]?.add(message)
+        }
+        threads
+    }
 
 
 
@@ -186,8 +209,6 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
         }
     }
 
-
-
     fun upsertMessage(message: Message) {
         upsertMessages(listOf<Message>(message))
     }
@@ -198,6 +219,20 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
             copy.put(message.id, message)
         }
         _messages.value = copy
+    }
+
+    fun clean() {
+        // Cleanup typing events that are older than 15 seconds
+    }
+
+    fun setTyping(userId: String, event: ChatEvent?) {
+        val copy = _typing.value ?: mutableMapOf()
+        if (event == null) {
+            copy.remove(userId)
+        } else {
+            copy[userId] = event
+        }
+        _typing.value = copy
     }
 
     fun handleEvent(event: ChatEvent) {
@@ -211,6 +246,39 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
             is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
                 upsertMessage(event.message)
             }
+            is ReactionNewEvent, is ReactionDeletedEvent -> {
+                upsertMessage(event.message)
+            }
+            is MemberAddedEvent, is MemberRemovedEvent, is MemberAddedEvent, is NotificationAddedToChannelEvent -> {
+                // add /remove the members etc
+            }
+            is ChannelUpdatedEvent -> {
+                // TODO: this shouldn't update members and watchers since we can have more than 100 of those and they won't be in the return object
+                event.channel?.let { updateChannel(it) }
+            }
+            is TypingStopEvent -> {
+                setTyping(event.user?.id!!, null)
+            }
+            is TypingStartEvent -> {
+                setTyping(event.user?.id!!, event)
+            }
+            is MessageReadEvent, is NotificationMarkReadEvent -> {
+                // TODO: the current event system leads to a lot of !! in the codebase
+                updateRead(event.user!!, event.createdAt!!)
+            }
         }
+    }
+
+    private fun updateRead(
+        user1: User,
+        createdAt: Date
+    ) {
+        val copy = _reads.value ?: mutableMapOf()
+        copy[user1.id] = ChannelUserRead().apply {user = user1; lastRead = createdAt}
+        _reads.value = copy
+    }
+
+    private fun updateChannel(channel: Channel) {
+        _channel.value = channel
     }
 }
