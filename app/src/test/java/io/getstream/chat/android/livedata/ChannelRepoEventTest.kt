@@ -42,7 +42,7 @@ class ChatChannelRepoEventTest {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
-        waitForSetUser(client, user, token)
+        //waitForSetUser(client, user, token)
         repo = StreamChatRepository(ApplicationProvider.getApplicationContext(), user.id, client)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
@@ -61,7 +61,8 @@ class ChatChannelRepoEventTest {
         val event = data.userStartWatchingEvent
         channelRepo.handleEvent(event)
         Truth.assertThat(channelRepo.watcherCount.getOrAwaitValue()).isEqualTo(100)
-        Truth.assertThat(channelRepo.watchers.getOrAwaitValue()).isEqualTo(event.channel?.watchers)
+        val users = event.channel?.watchers!!.map { it.user }
+        Truth.assertThat(channelRepo.watchers.getOrAwaitValue()).isEqualTo(users)
     }
 
     @Test
@@ -82,13 +83,23 @@ class ChatChannelRepoEventTest {
         Truth.assertThat(messages).isEqualTo(listOf(event.message))
     }
 
-    @Test
-    fun userUpdatedEvent() {
-        channelRepo.handleEvent(data.newMessageEvent)
-        // TODO this event is missing in LLC
-    }
+//    @Test
+//    fun userUpdatedEvent() {
+//        channelRepo.handleEvent(data.newMessageEvent)
+//        // TODO this event is missing in LLC
+//    }
 
-    // TODO: Member updates
+    @Test
+    fun memberAddedEvent() {
+        // ensure the channel data is initialized:
+        channelRepo.upsertMember(data.channel1.members[0])
+        var members = channelRepo.members.getOrAwaitValue()
+        Truth.assertThat(members.size).isEqualTo(1)
+        // add a member, we should go from list size 1 to 2
+        channelRepo.handleEvent(data.memberAddedToChannelEvent)
+        members = channelRepo.members.getOrAwaitValue()
+        Truth.assertThat(members.size).isEqualTo(2)
+    }
 
     @Test
     fun typingEvents() {

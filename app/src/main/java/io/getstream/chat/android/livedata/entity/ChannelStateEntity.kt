@@ -38,9 +38,10 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
     /** denormalized copy of the last message */
     @Embedded(prefix = "last_message_")
+    // TODO: remove this denormalization, think it's not needed and makes code more complex
     var lastMessage: MessageEntity? = null
     /** denormalize the last message date so we can sort on it */
-    var lastMessageDate: Date? = null
+    var lastMessageAt: Date? = null
 
     /** when the channel was created */
     var createdAt: Date? = null
@@ -67,7 +68,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
         if (c.messages.isNotEmpty()) {
             lastMessage = MessageEntity(c.messages.last())
-            lastMessage?.let { lastMessageDate = it.createdAt }
+            lastMessage?.let { lastMessageAt = it.createdAt }
         }
         createdByUserId = c.createdBy.getUserId()
     }
@@ -96,8 +97,8 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     fun addMessage(messageEntity: MessageEntity) {
         checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt"}
 
-        if (lastMessageDate == null || messageEntity.createdAt!!.after(lastMessageDate)) {
-            lastMessageDate = messageEntity.createdAt
+        if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
+            lastMessageAt = messageEntity.createdAt
             lastMessage = messageEntity
         }
     }

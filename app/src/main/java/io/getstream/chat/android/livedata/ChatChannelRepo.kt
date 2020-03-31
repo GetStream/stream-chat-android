@@ -69,8 +69,15 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
         it.values.sortedBy { it.lastRead }
     }
 
-    private val _watchers = MutableLiveData<List<Watcher>>()
-    val watchers : LiveData<List<Watcher>> = _watchers
+    private val _watchers = MutableLiveData<MutableMap<String, User>>()
+    val watchers : LiveData<List<User>> = Transformations.map(_watchers) {
+        it.values.sortedBy { it.name + it.id }
+    }
+
+    private val _members = MutableLiveData<MutableMap<String, Member>>()
+    val members : LiveData<List<Member>> = Transformations.map(_members) {
+        it.values.sortedBy { it.user.name + it.user.id }
+    }
 
     // TODO: this is not great, individual livedata objects would be better
     val threads = Transformations.map(_messages) {
@@ -143,12 +150,18 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
      */
     fun sendMessage(message: Message) {
         message.id = repo.generateMessageId()
-        message.channel = _channel.value!!
+        message.cid = cid
+        message.createdAt = message.createdAt ?: Date()
+        message.syncStatus = SyncStatus.SYNC_NEEDED
 
         GlobalScope.launch {
             val messageEntity = MessageEntity(message)
 
-            messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
+            // Update livedata
+            upsertMessage(message)
+            setLastMessage(message)
+
+            // Update Room State
             repo.insertMessage(message)
 
             val channelStateEntity = repo.selectChannelEntity(message.channel.cid)
@@ -158,12 +171,17 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
                 repo.insertChannelStateEntity(it)
             }
 
-
             if (repo.isOnline()) {
                 channelController.sendMessage(message)
             }
         }
 
+    }
+
+    private fun setLastMessage(message: Message) {
+        val copy = _channel.value!!
+        copy.lastMessageAt = message.createdAt
+        _channel.value = copy
     }
 
     /**
@@ -193,14 +211,6 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
             client.sendReaction(reaction)
         }
 
-    }
-
-
-
-    fun setWatchers(watchers: List<Watcher>) {
-        if (watchers != _watchers.value) {
-            _watchers.value = watchers
-        }
     }
 
     fun setWatcherCount(watcherCount: Int) {
@@ -236,12 +246,10 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
     }
 
     fun handleEvent(event: ChatEvent) {
-        event.channel?.watchers?.let {
-            setWatchers(it)
-        }
         event.channel?.watcherCount?.let {
             setWatcherCount(it)
         }
+        // TODO: the current event system leads to a lot of !! in the codebase
         when (event) {
             is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
                 upsertMessage(event.message)
@@ -249,8 +257,19 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
             is ReactionNewEvent, is ReactionDeletedEvent -> {
                 upsertMessage(event.message)
             }
-            is MemberAddedEvent, is MemberRemovedEvent, is MemberAddedEvent, is NotificationAddedToChannelEvent -> {
+            is MemberRemovedEvent -> {
+                deleteMember(event.member!!)
+            }
+            is MemberAddedEvent, is MemberUpdatedEvent, is NotificationAddedToChannelEvent -> {
                 // add /remove the members etc
+                // TODO: what are members sorted on?
+                upsertMember(event.member!!)
+            }
+            is UserStartWatchingEvent -> {
+                upsertWatcher(event.user!!)
+            }
+            is UserStopWatchingEvent -> {
+                deleteWatcher(event.user!!)
             }
             is ChannelUpdatedEvent -> {
                 // TODO: this shouldn't update members and watchers since we can have more than 100 of those and they won't be in the return object
@@ -263,10 +282,33 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
                 setTyping(event.user?.id!!, event)
             }
             is MessageReadEvent, is NotificationMarkReadEvent -> {
-                // TODO: the current event system leads to a lot of !! in the codebase
                 updateRead(event.user!!, event.createdAt!!)
             }
         }
+    }
+
+    private fun deleteWatcher(user: User) {
+        val copy = _watchers.value ?: mutableMapOf()
+        copy.remove(user.id)
+        _watchers.value = copy
+    }
+
+    private fun upsertWatcher(user: User) {
+        val copy = _watchers.value ?: mutableMapOf()
+        copy[user.id] = user
+        _watchers.value = copy
+    }
+
+    private fun deleteMember(member: Member) {
+        val copy = _members.value ?: mutableMapOf()
+        copy.remove(member.user.id)
+        _members.value = copy
+    }
+
+    fun upsertMember(member: Member) {
+        val copy = _members.value ?: mutableMapOf()
+        copy[member.user.id] = member
+        _members.value = copy
     }
 
     private fun updateRead(
@@ -278,7 +320,18 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
         _reads.value = copy
     }
 
-    private fun updateChannel(channel: Channel) {
+    fun updateChannel(channel: Channel) {
         _channel.value = channel
+    }
+
+    fun setWatchers(watchers: List<Watcher>) {
+        val copy = _watchers.value ?: mutableMapOf()
+        for (watcher in watchers) {
+            watcher.user?.let {
+                copy[it.id] = it
+            }
+        }
+        _watchers.value = copy
+
     }
 }

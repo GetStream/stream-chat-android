@@ -50,6 +50,24 @@ class StreamChatRepository(
     private lateinit var channelConfigDao: ChannelConfigDao
     private val logger = ChatLogger.get("ChatRepo")
 
+    constructor(client: ChatClient, database: ChatDatabase) : this(client) {
+        channelQueryDao = database.queryChannelsQDao()
+        userDao = database.userDao()
+        reactionDao = database.reactionDao()
+        messageDao = database.messageDao()
+        channelStateDao = database.channelStateDao()
+        channelConfigDao = database.channelConfigDao()
+
+        // load channel configs from Room into memory
+        GlobalScope.launch {
+            loadConfigs()
+        }
+
+        // start listening for events
+        startListening()
+    }
+
+    // TODO: make this more dry
 
     constructor(context: Context, userId: String, client: ChatClient) : this(client) {
         val database = ChatDatabase.getDatabase(context, userId)
@@ -67,6 +85,7 @@ class StreamChatRepository(
 
         // start listening for events
         startListening()
+
     }
 
     private suspend fun loadConfigs() {
@@ -411,7 +430,8 @@ class StreamChatRepository(
 
     fun insertMessage(message: Message) {
         GlobalScope.launch {
-            messageDao.insert(MessageEntity(message))
+            val messageEntity = MessageEntity(message)
+            messageDao.insert(messageEntity)
         }
     }
 
@@ -434,6 +454,22 @@ class StreamChatRepository(
         retryFailedEntities()
     }
 
+    suspend fun retryMessages(): List<MessageEntity> {
+
+        val user = client.getCurrentUser()!!
+        val userMap: Map<String, User> = mutableMapOf(user.id to user)
+        val messageEntities = messageDao.selectSyncNeeded()
+        if (isOnline()) {
+            for (messageEntity in messageEntities) {
+                // TODO: remove this as soon as the low level client has a better solution
+                val parts = messageEntity.cid.split(":")
+                val channel = client.channel(parts[0], parts[1])
+                channel.sendMessage(messageEntity.toMessage(userMap))
+            }
+        }
+        return messageEntities
+    }
+
     fun retryFailedEntities() {
         GlobalScope.launch {
             // fake the user map for enriching objects
@@ -445,19 +481,14 @@ class StreamChatRepository(
                 client.sendReaction(reactionEntity.toReaction(userMap))
             }
 
-            val messageEntities = messageDao.selectSyncNeeded()
-            for (messageEntity in messageEntities) {
-                // TODO: remove this as soon as the low level client has a better solution
-                val parts = messageEntity.cid.split(":")
-                val channel = client.channel(parts[0], parts[1])
-                channel.sendMessage(messageEntity.toMessage(userMap))
-            }
 
+            retryMessages()
             // TODO: support channels in version 1.1
 
 
         }
     }
+
 
     suspend fun selectChannelEntity(cid: String): ChannelStateEntity? {
         return channelStateDao.select(cid)

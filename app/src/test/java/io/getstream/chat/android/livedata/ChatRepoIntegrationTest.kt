@@ -205,29 +205,7 @@ class ChatRepoIntegrationTest {
 
     }
 
-    @Test
-    fun sendMessage() {
-        /**
-         * TODO:
-         * - actually insert the data when you run .watch
-         * - test that new message events update the livedata
-         */
-        val channelRepo = repo.channel("messaging", "test123")
-        channelRepo.watch()
-        val message = Message()
-        message.text = "Hello world"
-        message.user = User("Jack")
 
-
-        // new messages, reactions, message changes etc are automatically handled
-        channelRepo.messages.observeForever {
-
-        }
-
-        channelRepo.sendMessage(message)
-        sleep(1000)
-
-    }
 
     @Test
     fun getChannels() {
