@@ -19,7 +19,7 @@ class QuerySort {
         v["field"] = fieldName
         v["direction"] = direction
         val _this = clone()
-        _this.mSort!!.add(v)
+        _this.mSort.add(v)
         return _this
     }
 

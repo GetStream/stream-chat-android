@@ -10,6 +10,7 @@ data class QueryChannelsRequest(
     val filter: FilterObject,
     var offset: Int,
     var limit: Int,
+    @IgnoreSerialisation
     val querySort: QuerySort = QuerySort(),
     @SerializedName("message_limit")
     var messageLimit: Int = 0
