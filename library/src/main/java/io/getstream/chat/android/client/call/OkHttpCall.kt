@@ -26,12 +26,6 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
         }
     }
 
-    override fun enqueue() {
-        enqueue {
-            // ignore result
-        }
-    }
-
     override fun cancel() {
         super.cancel()
         call.cancel()
