@@ -369,7 +369,7 @@ public class DocumentationSamplesJava {
 
                 QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit, sort, false);
 
-                client.queryChannel(request).enqueue(channelResult -> Unit.INSTANCE);
+                client.queryUsers(request).enqueue(channelResult -> Unit.INSTANCE);
             }
 
             {
@@ -382,7 +382,7 @@ public class DocumentationSamplesJava {
 
                 QueryUsersRequest request = new QueryUsersRequest(filter, offset, limit, sort, false);
 
-                client.queryChannel(request).enqueue(channelResult -> Unit.INSTANCE);
+                client.queryUsers(request).enqueue(channelResult -> Unit.INSTANCE);
             }
         }
     }
@@ -442,7 +442,7 @@ public class DocumentationSamplesJava {
                 Message message = new Message();
                 message.setText("Check this bear out https://imgur.com/r/bears/4zmGbMN");
 
-                channelController.sendMessage(message).enqueue();
+                channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -636,9 +636,9 @@ public class DocumentationSamplesJava {
         static class TypingEvents {
             {
                 // sends a typing.start event if it's been more than 3000 ms since the last event
-                channelController.keystroke().enqueue();
+                channelController.keystroke().enqueue(result -> Unit.INSTANCE);
                 // sends an event typing.stop to all channel participants
-                channelController.stopTyping().enqueue();
+                channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -821,11 +821,11 @@ public class DocumentationSamplesJava {
             }
 
             static void acceptingAndInvite() {
-                channelController.acceptInvite("Nick joined this channel!").enqueue();
+                channelController.acceptInvite("Nick joined this channel!").enqueue(result -> Unit.INSTANCE);
             }
 
             static void rejectingInvite() {
-                channelController.rejectInvite().enqueue();
+                channelController.rejectInvite().enqueue(result -> Unit.INSTANCE);
             }
 
             static void queryForAcceptedInvites() {
@@ -837,8 +837,8 @@ public class DocumentationSamplesJava {
 
                 QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
 
-                channelController.query(request).enqueue(result -> {
-                    Channel channels = result.data();
+                client.queryChannels(request).enqueue(result -> {
+                    List<Channel> channels = result.data();
                     return Unit.INSTANCE;
                 });
             }
@@ -852,8 +852,8 @@ public class DocumentationSamplesJava {
 
                 QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
 
-                channelController.query(request).enqueue(result -> {
-                    Channel channels = result.data();
+                client.queryChannels(request).enqueue(result -> {
+                    List<Channel> channels = result.data();
                     return Unit.INSTANCE;
                 });
             }
