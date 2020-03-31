@@ -42,6 +42,8 @@ interface ChatClient {
 
     fun getCurrentUser(): User?
 
+    fun channel(cid: String): ChannelController
+
     fun channel(channelType: String, channelId: String): ChannelController
 
     fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>

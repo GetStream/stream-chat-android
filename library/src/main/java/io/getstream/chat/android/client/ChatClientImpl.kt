@@ -428,6 +428,12 @@ internal class ChatClientImpl(
         return ChannelControllerImpl(channelType, channelId, this)
     }
 
+    override fun channel(cid: String): ChannelController {
+        val type = cid.split(":")[0]
+        val id = cid.split(":")[1]
+        return channel(type, id)
+    }
+
     override fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel> {
         return createChannel(channelType, "", extraData)
     }
