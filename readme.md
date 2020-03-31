@@ -161,10 +161,7 @@ interface Call<T> {
     fun execute(): Result<T>
 
     @UiThread
-    fun enqueue(callback: (Result<T>) -> Unit)
-
-    @UiThread
-    fun enqueue()
+    fun enqueue(callback: (Result<T>) -> Unit = {})
 
     fun cancel()
     fun <K> map(mapper: (T) -> K): Call<K>

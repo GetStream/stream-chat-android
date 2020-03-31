@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
-import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
@@ -39,6 +38,13 @@ public class DocumentationSamplesJava {
     static ChannelController channelController = client.channel(channelType, channelId);
     static Context context;
     static User user;
+
+    static Function1<Result<Object>, Unit> callback = new Function1<Result<Object>, Unit>() {
+        @Override
+        public Unit invoke(Result<Object> result) {
+            return Unit.INSTANCE;
+        }
+    };
 
     static Context getApplicationContext() {
         return null;
@@ -226,7 +232,8 @@ public class DocumentationSamplesJava {
     static class ClientAndUsers {
 
         static class InitialisationAndUsers {
-            static void client() {
+
+            {
                 // Typically done in your Application class
                 ChatClient client = new ChatClient.Builder("{{ api_key }}", context).build();
 
@@ -280,12 +287,9 @@ public class DocumentationSamplesJava {
             }
 
             static void tokenExpiration() {
-                client.setUser(user, new TokenProvider() {
-                    @Override
-                    public void getToken(@NotNull TokenProviderListener listener) {
-                        String newToken = "fetch a new token from your backend";
-                        listener.onSuccess(newToken);
-                    }
+                client.setUser(user, listener -> {
+                    String newToken = "fetch a new token from your backend";
+                    listener.onSuccess(newToken);
                 }, null);
             }
 
@@ -402,27 +406,15 @@ public class DocumentationSamplesJava {
 
             message.getMentionedUsers().add(new User(userId));
 
-            channelController.sendMessage(message).enqueue();
+            channelController.sendMessage(message).enqueue(result -> null);
         }
 
         static class MessagesOverview {
-            static void getMessage() {
+            {
                 channelController.getMessage(messageId).enqueue(result -> {
                     Message message = result.data();
                     return Unit.INSTANCE;
                 });
-            }
-
-            static void updateMessage() {
-                message.setText("my updated text");
-                channelController.updateMessage(message).enqueue(result -> {
-                    Message updatedMessage = result.data();
-                    return Unit.INSTANCE;
-                });
-            }
-
-            static void deleteMessage() {
-                channelController.deleteMessage(messageId).enqueue();
             }
         }
 
@@ -498,30 +490,30 @@ public class DocumentationSamplesJava {
         static class Reactions {
             {
                 Reaction reaction = new Reaction(messageId, "like", 1);
-                channelController.sendReaction(reaction).enqueue();
+                channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
             }
 
             static void removingReaction() {
-                channelController.deleteReaction(messageId, "like").enqueue();
+                channelController.deleteReaction(messageId, "like").enqueue(result -> Unit.INSTANCE);
             }
 
             static void paginatingReactions() {
                 // get the first 10 reactions
-                channelController.getReactions(messageId, 0, 10).enqueue();
+                channelController.getReactions(messageId, 0, 10).enqueue(result -> Unit.INSTANCE);
 
                 // get the second 10 reactions
-                channelController.getReactions(messageId, 10, 10).enqueue();
+                channelController.getReactions(messageId, 10, 10).enqueue(result -> Unit.INSTANCE);
 
                 // get 10 reactions after particular reaction
                 String reactionId = "reaction-id";
-                channelController.getReactions(messageId, reactionId, 10).enqueue();
+                channelController.getReactions(messageId, reactionId, 10).enqueue(result -> Unit.INSTANCE);
             }
 
             static void cumulativeReactions() {
                 int score = 5;
                 Reaction reaction = new Reaction(messageId, "like", score);
 
-                channelController.sendReaction(reaction).enqueue();
+                channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -534,16 +526,16 @@ public class DocumentationSamplesJava {
                 message.setText("hello world");
                 message.setParentId(parentMessage.getId());
 
-                channelController.sendMessage(message).enqueue();
+                channelController.sendMessage(message).enqueue(result -> Unit.INSTANCE);
             }
 
             static void threadPagination() {
                 int limit = 20;
                 // retrieve the first 20 messages inside the thread
-                client.getReplies(parentMessageId, limit).enqueue();
+                client.getReplies(parentMessageId, limit).enqueue(result -> Unit.INSTANCE);
 
                 // retrieve the 20 more messages before the message with id "42"
-                client.getRepliesMore(parentMessageId, "42", limit).enqueue();
+                client.getRepliesMore(parentMessageId, "42", limit).enqueue(result -> Unit.INSTANCE);
             }
         }
 
