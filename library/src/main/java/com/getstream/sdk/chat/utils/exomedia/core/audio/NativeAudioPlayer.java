@@ -21,14 +21,7 @@ import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.api.AudioPlayerApi;
@@ -39,6 +32,13 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 
 import java.util.Map;
+
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 /**
  * A simple MediaPlayer implementation that extends the
@@ -71,6 +71,8 @@ public class NativeAudioPlayer implements AudioPlayerApi {
     @FloatRange(from = 0.0, to = 1.0)
     protected float volumeRight = 1.0f;
 
+    private TaggedLogger logger = ChatLogger.Companion.get("NativeAudioPlayer");
+
     public NativeAudioPlayer(@NonNull Context context) {
         this.context = context;
 
@@ -89,7 +91,7 @@ public class NativeAudioPlayer implements AudioPlayerApi {
             requestedSeek = 0;
             mediaPlayer.setDataSource(context, uri);
         } catch (Exception e) {
-            StreamChat.getLogger().logD(this,"MediaPlayer: error setting data source. Error+" + e);
+            logger.logE("Eerror setting data source", e);
         }
     }
 

@@ -20,15 +20,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.TransferListener;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public abstract class MediaSourceBuilder {
 

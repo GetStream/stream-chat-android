@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,9 +68,9 @@ public class UploadManager {
         };
 
         if (data.mimeType.contains("image")) {
-            StreamChat.getInstance().sendImage(type, id, data.file, progressCallback);
+            Chat.getInstance().getClient().sendImage(type, id, data.file, progressCallback);
         } else {
-            StreamChat.getInstance().sendFile(type, id, data.file, progressCallback);
+            Chat.getInstance().getClient().sendFile(type, id, data.file, progressCallback);
         }
 
 

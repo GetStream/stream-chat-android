@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;

@@ -3,15 +3,15 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Message;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Message;
 
 
 public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -1,8 +1,6 @@
 package com.getstream.sdk.chat.view.activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -12,13 +10,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
 import com.getstream.sdk.chat.databinding.StreamActivityUsersBinding;
-import com.getstream.sdk.chat.rest.request.QueryUserRequest;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.Utils;
 
@@ -33,6 +29,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
@@ -44,7 +42,7 @@ import kotlin.jvm.functions.Function1;
  */
 public class UsersActivity extends AppCompatActivity {
 
-    private static final String TAG = UsersActivity.class.getSimpleName();
+    private TaggedLogger logger = ChatLogger.Companion.get("UsersActivity");
     boolean isLastPage = false;
     RecyclerView.LayoutManager mLayoutManager;
     boolean isCalling;
@@ -215,15 +213,15 @@ public class UsersActivity extends AppCompatActivity {
     }
 
     private void getUsers() {
-        StreamChat.getLogger().logD(this, "queryUsers");
-        StreamChat.getLogger().logD(this, "isLastPage: " + isLastPage);
-        StreamChat.getLogger().logD(this, "isCalling: " + isCalling);
+        logger.logI("queryUsers");
+        logger.logI("isLastPage: " + isLastPage);
+        logger.logI("isCalling: " + isCalling);
         if (isLastPage || isCalling) return;
         binding.setShowMainProgressbar(true);
         isCalling = true;
 
 
-        StreamChat.getInstance().queryUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
+        Chat.getInstance().getClient().queryUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
             @Override
             public Unit invoke(Result<List<User>> listResult) {
 
@@ -249,7 +247,7 @@ public class UsersActivity extends AppCompatActivity {
                     binding.setShowMainProgressbar(false);
                     isCalling = false;
                     Utils.showMessage(UsersActivity.this, listResult.error().getMessage());
-                    StreamChat.getLogger().logD(this, "Failed Get Channels : " + listResult.error().getMessage());
+                    logger.logI("Failed Get Channels : " + listResult.error().getMessage());
                 }
 
                 return null;
@@ -278,7 +276,7 @@ public class UsersActivity extends AppCompatActivity {
 //                binding.setShowMainProgressbar(false);
 //                isCalling = false;
 //                Utils.showMessage(UsersActivity.this, errMsg);
-//                StreamChat.getLogger().logD(this,"Failed Get Channels : " + errMsg);
+//                StreamChat.getLogger(). logI(this,"Failed Get Channels : " + errMsg);
 //            }
 //        });
     }
@@ -286,7 +284,7 @@ public class UsersActivity extends AppCompatActivity {
     private QueryUsersRequest getQueryUserRequest() {
         FilterObject filter = new FilterObject();
         QuerySort sort = new QuerySort().asc("last_active");
-        return new QueryUsersRequest(filter,  0, 10, sort, false);
+        return new QueryUsersRequest(filter, 0, 10, sort, false);
     }
 
     private void getChannel(List<User> users) {
@@ -309,11 +307,4 @@ public class UsersActivity extends AppCompatActivity {
     }
     // endregion
 
-    private void navigateChatActivity(ChannelState response) {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("result", true);
-        returnIntent.putExtra(Constant.TAG_CHANNEL_RESPONSE_ID, response.getChannel().getId());
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
-    }
 }

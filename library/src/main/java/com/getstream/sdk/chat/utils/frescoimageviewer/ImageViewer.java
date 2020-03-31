@@ -4,9 +4,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
@@ -14,14 +20,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
-
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.getstream.sdk.chat.StreamChat;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import io.getstream.chat.android.client.logger.ChatLogger;
 
 public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyListener {
 
@@ -50,7 +49,7 @@ public class ImageViewer implements OnDismissListener, DialogInterface.OnKeyList
         if (!builder.dataSet.data.isEmpty()) {
             dialog.show();
         } else {
-            StreamChat.getLogger().logW(this,"Images list cannot be empty! Viewer ignored.");
+            ChatLogger.Companion.getInstance().logE("ImageView", "Images list cannot be empty! Viewer ignored.");
         }
     }
 

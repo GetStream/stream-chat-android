@@ -16,9 +16,9 @@
 
 package com.getstream.sdk.chat.utils.exomedia.core.exoplayer;
 
-import androidx.annotation.NonNull;
-
 import com.google.android.exoplayer2.Timeline;
+
+import androidx.annotation.NonNull;
 
 public class WindowInfo {
     public final int previousWindowIndex;

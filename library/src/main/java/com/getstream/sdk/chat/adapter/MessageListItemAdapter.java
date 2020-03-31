@@ -3,12 +3,6 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.android.client.models.Channel;
-
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -16,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.models.Channel;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

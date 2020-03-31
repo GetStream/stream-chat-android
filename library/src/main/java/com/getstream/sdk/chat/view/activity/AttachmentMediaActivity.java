@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,7 +48,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             iv_audio.setVisibility(View.GONE);
 
 
-        playVideo(StreamChat.signFileUrl(url));
+        playVideo(Chat.getInstance().urlSigner().signFileUrl(url));
     }
 
     /**
@@ -57,7 +57,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(StreamChat.signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(Chat.getInstance().urlSigner().signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }

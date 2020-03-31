@@ -6,11 +6,10 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import androidx.annotation.NonNull;
-
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import androidx.annotation.NonNull;
 import me.relex.photodraweeview.IAttacher;
 import me.relex.photodraweeview.OnPhotoTapListener;
 import me.relex.photodraweeview.OnScaleChangeListener;

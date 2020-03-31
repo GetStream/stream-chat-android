@@ -30,12 +30,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import androidx.annotation.IntRange;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ui.animation.BottomViewHideShowAnimation;
 import com.getstream.sdk.chat.utils.exomedia.util.ResourceUtil;
 import com.getstream.sdk.chat.utils.exomedia.util.TimeFormatUtil;
+
+import androidx.annotation.IntRange;
 
 /**
  * Provides playback controls for the {@link VideoView} on TV devices.

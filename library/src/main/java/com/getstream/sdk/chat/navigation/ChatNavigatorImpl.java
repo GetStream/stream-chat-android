@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.navigation;
 
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
 
-public class StreamChatNavigatorImpl implements StreamChatNavigator {
+public class ChatNavigatorImpl implements ChatNavigator {
 
     private ChatNavigationHandler handler;
 

@@ -3,15 +3,15 @@ package com.getstream.sdk.chat.utils;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
 
 import java.text.DecimalFormat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 
 public class StringUtility {
 
@@ -49,7 +49,7 @@ public class StringUtility {
         String text = message.getText().replaceAll("^[\r\n]+|[\r\n]+$", "");
 
         if (message.getDeletedAt() != null) {
-            text = "_" + StreamChat.getStrings().get(R.string.stream_delete_message) + "_";
+            text = "_" + Chat.getInstance().getStrings().get(R.string.stream_delete_message) + "_";
             return text;
         }
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {

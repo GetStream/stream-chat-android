@@ -24,26 +24,22 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.MatrixManager;
 import com.getstream.sdk.chat.utils.exomedia.core.video.scale.ScaleType;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.microedition.khronos.egl.EGL10;
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.egl.EGLContext;
-import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLSurface;
+import javax.microedition.khronos.egl.*;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 /**
  * A TextureView that reSizes itself according to the requested layout type
@@ -108,6 +104,8 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
     @IntRange(from = 0, to = 359)
     protected int requestedConfigurationRotation = 0;
     protected boolean measureBasedOnAspectRatio;
+
+    private TaggedLogger logger = ChatLogger.Companion.get(this);
 
     public ResizingTextureView(Context context) {
         super(context);
@@ -238,7 +236,7 @@ public class ResizingTextureView extends TextureView implements ClearableSurface
 
             gl10.eglTerminate(display);
         } catch (Exception e) {
-            StreamChat.getLogger().logE(this,"Error clearing surface. Error:" + e);
+            logger.logE("Error clearing surface", e);
         }
     }
 

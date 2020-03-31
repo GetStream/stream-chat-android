@@ -6,11 +6,13 @@ import android.view.View;
 import android.webkit.*;
 import android.widget.ProgressBar;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.Utils;
 
 import androidx.appcompat.app.AppCompatActivity;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 /**
  * An Activity showing attachments such as PDF and Office documents.
@@ -23,6 +25,8 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
     int reloadCount = 0;
     final int maxReloadCount = 5;
+
+    private TaggedLogger logger = ChatLogger.Companion.get("AttachmentDocumentActivity");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (StreamChat.getInstance().isSocketConnected()) {
+        if (Chat.getInstance().getClient().isSocketConnected()) {
             //TODO: llc: add signing
             webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
         } else {
@@ -92,7 +96,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-            StreamChat.getLogger().logE(this, "The load failed due to an unknown error: " + error);
+            logger.logE("The load failed due to an unknown error: " + error);
             if (error == null) {
                 return;
             }

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.example.navigation.ChannelDestination;
@@ -74,7 +74,7 @@ public class MessageSearchActivity extends AppCompatActivity implements SearchMe
     public void onItemClicked(String channelType, String channelId, String messageId) {
 
         if (getIntent().getBooleanExtra(OPEN_CHANNEL, false)) {
-            StreamChat.getNavigator().navigate(new ChannelDestination(channelType, channelId, this));
+            Chat.getInstance().getNavigator().navigate(new ChannelDestination(channelType, channelId, this));
         }
 
     }

@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
@@ -222,7 +222,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
 
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
         String currentUserId = currentUser.getId();
 
         Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);

@@ -1,13 +1,13 @@
 package com.getstream.sdk.chat.model;
 
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.interfaces.UserEntity;
-import io.getstream.chat.android.client.models.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
+
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.models.User;
 
 /**
  * A member

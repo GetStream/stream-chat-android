@@ -6,17 +6,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
-
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.User;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
+
+import androidx.annotation.NonNull;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.User;
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     // Tying

@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
@@ -36,7 +36,7 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.App;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
 import io.getstream.chat.example.R;
@@ -46,8 +46,6 @@ import io.getstream.chat.example.navigation.SearchDestination;
 import io.getstream.chat.example.utils.AppConfig;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-
-import static java.util.UUID.randomUUID;
 
 public class ChannelListFragment extends Fragment {
 
@@ -61,14 +59,9 @@ public class ChannelListFragment extends Fragment {
 
     // establish a websocket connection to stream
     private void configureStreamClient() {
-        client = StreamChat.getInstance();
+        client = Chat.getInstance().getClient();
 
-        AppConfig appConfig = ((BaseApplication) getContext().getApplicationContext()).getAppConfig();
-
-        if (appConfig.getCurrentUser() == null) {
-            StreamChat.getLogger().logE(this, "Current user is null");
-            return;
-        }
+        AppConfig appConfig = ((App) getContext().getApplicationContext()).getAppConfig();
 
         String USER_ID = appConfig.getCurrentUser().getId();
         String USER_TOKEN = appConfig.getCurrentUser().getToken();
@@ -125,10 +118,10 @@ public class ChannelListFragment extends Fragment {
         // setup the client
         configureStreamClient();
         // example for how to observe the unread counts
-        StreamChat.getTotalUnreadMessages().observe(this, (Number count) -> {
+        Chat.getInstance().getUnreadMessages().observe(this, (Number count) -> {
             Log.i(TAG, String.format("Total unread message count is now %d", count));
         });
-        StreamChat.getUnreadChannels().observe(this, (Number count) -> {
+        Chat.getInstance().getUnreadChannels().observe(this, (Number count) -> {
             Log.i(TAG, String.format("There are %d channels with unread messages", count));
         });
 
@@ -170,7 +163,7 @@ public class ChannelListFragment extends Fragment {
 
         binding.channelList.setOnChannelClickListener(channel -> {
             // open the channel activity
-            StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
+            Chat.getInstance().getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
         });
 
         binding.channelList.setOnLongClickListener(this::showMoreActionDialog);
@@ -255,7 +248,7 @@ public class ChannelListFragment extends Fragment {
 
                     io.getstream.chat.android.client.models.Channel channel = channelResult.data();
 
-                    StreamChat.getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
+                    Chat.getInstance().getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
                     viewModel.addChannels(Arrays.asList(channel));
                     viewModel.setLoadingDone();
                 } else {
@@ -298,13 +291,13 @@ public class ChannelListFragment extends Fragment {
     // endregion
 
     private void showHiddenChannels() {
-        Utils.showMessage(getContext(), StreamChat.getStrings().get(R.string.show_hidden_channel));
+        Utils.showMessage(getContext(), Chat.getInstance().getStrings().get(R.string.show_hidden_channel));
         FilterObject filter = Filters.INSTANCE.eq("type", "messaging").put("hidden", true);
         viewModel.setChannelFilter(filter);
         viewModel.queryChannels();
     }
 
     private void openSearchActivity() {
-        StreamChat.getNavigator().navigate(new SearchDestination(null, getContext()));
+        Chat.getInstance().getNavigator().navigate(new SearchDestination(null, getContext()));
     }
 }

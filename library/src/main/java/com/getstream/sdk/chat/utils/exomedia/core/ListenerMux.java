@@ -20,20 +20,12 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.view.Surface;
 
-import androidx.annotation.IntRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.core.exception.NativeMediaPlaybackException;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.ExoMediaPlayer;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.ExoPlayerListener;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.MetadataListener;
 import com.getstream.sdk.chat.utils.exomedia.core.video.ClearableSurface;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnBufferUpdateListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnCompletionListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnErrorListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnPreparedListener;
-import com.getstream.sdk.chat.utils.exomedia.listener.OnSeekCompletionListener;
+import com.getstream.sdk.chat.utils.exomedia.listener.*;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -48,6 +40,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * An internal Listener that implements the listeners for the {@link ExoMediaPlayer},

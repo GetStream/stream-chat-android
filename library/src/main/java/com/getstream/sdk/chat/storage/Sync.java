@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.storage;
 
-import androidx.annotation.IntDef;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import androidx.annotation.IntDef;
 
 public class Sync {
 

@@ -10,16 +10,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
-import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
+
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.User;
 
 public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
     STYLE style;
@@ -50,7 +51,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
-        FontsManager fontsManager = StreamChat.getFontsManager();
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
 
         User user = reads.get(0).getUser();
         String image = user.getImage();
@@ -63,7 +64,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 style.getAvatarBackGroundColor(),
                 style.readStateText.color);
 
-        Typeface typeface = fontsManager.getFont(style.readStateText);
+        Typeface typeface = chatFonts.getFont(style.readStateText);
 
         if (typeface != null) {
             imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -101,7 +102,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         textView.setTextColor(style.readStateText.color);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.readStateText.size);
-        fontsManager.setFont(style.readStateText, textView);
+        chatFonts.setFont(style.readStateText, textView);
         textView.setGravity(Gravity.CENTER);
         textView.setId(2);
 

@@ -17,16 +17,14 @@
 package com.getstream.sdk.chat.utils.exomedia.core.video.scale;
 
 import android.graphics.Point;
-import android.util.Log;
 import android.view.View;
+
+import java.lang.ref.WeakReference;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.getstream.sdk.chat.StreamChat;
-
-import java.lang.ref.WeakReference;
+import io.getstream.chat.android.client.logger.ChatLogger;
 
 @SuppressWarnings("WeakerAccess")
 public class MatrixManager {
@@ -114,7 +112,7 @@ public class MatrixManager {
         }
 
         if (view.getHeight() == 0 || view.getWidth() == 0) {
-            StreamChat.getLogger().logD(this,"Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
+            ChatLogger.Companion.getInstance().logE("MatrixManager", "Unable to apply scale with a view size of (" + view.getWidth() + ", " + view.getHeight() + ")");
             return false;
         }
 

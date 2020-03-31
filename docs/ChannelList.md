@@ -27,7 +27,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import io.getstream.chat.example.databinding.ActivityMainBinding;
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.ChatImpl;
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.rest.User;
 import com.getstream.sdk.chat.rest.core.Client;

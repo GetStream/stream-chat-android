@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
@@ -57,7 +57,6 @@ public class ChannelActivity extends AppCompatActivity
         channelType = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_TYPE);
         channelId = intent.getStringExtra(ChannelListFragment.EXTRA_CHANNEL_ID);
         cid = channelType + ":" + channelId;
-        ChatClient client = StreamChat.getInstance();
 
         // we're using data binding in this example
         binding = DataBindingUtil.setContentView(this, R.layout.activity_channel);
@@ -78,7 +77,7 @@ public class ChannelActivity extends AppCompatActivity
 
         ChannelActivity activity = this;
 
-        viewModel.getInitializedState().observe(this, initialized -> {
+        viewModel.getInitialized().observe(this, channel -> {
             this.viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
                 Log.i(TAG, String.format("The current user unread count is now %d", count));
             });
@@ -169,6 +168,6 @@ public class ChannelActivity extends AppCompatActivity
     }
 
     private void openSearchActivity() {
-        StreamChat.getNavigator().navigate(new SearchDestination(cid, this));
+        Chat.getInstance().getNavigator().navigate(new SearchDestination(cid, this));
     }
 }

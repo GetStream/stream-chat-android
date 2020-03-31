@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.rest.request;
 
 import com.getstream.sdk.chat.enums.Pagination;
+
 import java.util.HashMap;
 import java.util.Map;
 

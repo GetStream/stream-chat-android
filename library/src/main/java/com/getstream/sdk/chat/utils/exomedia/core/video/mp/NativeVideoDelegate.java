@@ -22,14 +22,8 @@ import android.media.MediaPlayer;
 import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
-import android.util.Log;
 import android.view.Surface;
 
-import androidx.annotation.FloatRange;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.exomedia.core.ListenerMux;
 import com.getstream.sdk.chat.utils.exomedia.core.exoplayer.WindowInfo;
 import com.getstream.sdk.chat.utils.exomedia.core.video.ClearableSurface;
@@ -37,7 +31,11 @@ import com.getstream.sdk.chat.utils.exomedia.core.video.ClearableSurface;
 import java.io.IOException;
 import java.util.Map;
 
-import static android.content.ContentValues.TAG;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
 /**
  * A delegated object used to handle the majority of the
@@ -47,6 +45,7 @@ import static android.content.ContentValues.TAG;
  */
 @SuppressWarnings("WeakerAccess")
 public class NativeVideoDelegate {
+
     protected Map<String, String> headers;
     protected State currentState = State.IDLE;
     protected Context context;
@@ -73,6 +72,8 @@ public class NativeVideoDelegate {
     protected MediaPlayer.OnErrorListener onErrorListener;
     @Nullable
     protected MediaPlayer.OnInfoListener onInfoListener;
+
+    private TaggedLogger logger = ChatLogger.Companion.get("NativeVideoDelegate");
 
     public NativeVideoDelegate(@NonNull Context context, @NonNull Callback callback, @NonNull ClearableSurface clearableSurface) {
         this.context = context;
@@ -189,7 +190,7 @@ public class NativeVideoDelegate {
             try {
                 mediaPlayer.stop();
             } catch (Exception e) {
-                StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.stop(), Error:" + e);
+                logger.logE("stopPlayback: error calling mediaPlayer.stop()", e);
             }
         }
 
@@ -210,7 +211,7 @@ public class NativeVideoDelegate {
             mediaPlayer.reset();
             mediaPlayer.release();
         } catch (Exception e) {
-            StreamChat.getLogger().logD(this,"stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release(). Error:" + e);
+            logger.logE("stopPlayback: error calling mediaPlayer.reset() or mediaPlayer.release().", e);
         }
 
         playRequested = false;
@@ -375,7 +376,7 @@ public class NativeVideoDelegate {
 
             currentState = State.PREPARING;
         } catch (IOException | IllegalArgumentException ex) {
-            StreamChat.getLogger().logW(this, "Unable to open content: " + uri + ", " + ex);
+            logger.logE( "Unable to open content: " + uri, ex);
             currentState = State.ERROR;
 
             internalListeners.onError(mediaPlayer, MediaPlayer.MEDIA_ERROR_UNKNOWN, 0);
@@ -423,7 +424,7 @@ public class NativeVideoDelegate {
 
         @Override
         public boolean onError(MediaPlayer mp, int what, int extra) {
-            StreamChat.getLogger().logD(this,"Error: " + what + "," + extra);
+            logger.logE( "Error: " + what + "," + extra);
             currentState = State.ERROR;
 
             return onErrorListener == null || onErrorListener.onError(mediaPlayer, what, extra);

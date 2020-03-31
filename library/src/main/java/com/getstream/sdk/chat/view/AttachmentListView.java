@@ -3,13 +3,13 @@ package com.getstream.sdk.chat.view;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();

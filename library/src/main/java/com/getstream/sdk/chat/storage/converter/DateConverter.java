@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.storage.converter;
 
-import androidx.room.TypeConverter;
-
 import java.util.Date;
+
+import androidx.room.TypeConverter;
 
 
 public class DateConverter {

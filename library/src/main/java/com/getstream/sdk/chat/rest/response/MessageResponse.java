@@ -1,8 +1,9 @@
 package com.getstream.sdk.chat.rest.response;
 
-import io.getstream.chat.android.client.models.Message;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import io.getstream.chat.android.client.models.Message;
 
 public class MessageResponse {
     @SerializedName("message")

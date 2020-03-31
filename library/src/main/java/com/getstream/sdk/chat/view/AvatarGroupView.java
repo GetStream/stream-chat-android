@@ -8,8 +8,8 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.style.FontsManager;
+import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
@@ -164,11 +164,11 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
 
         if (!Utils.isSVGImage(image))
             Glide.with(context)
-                    .load(StreamChat.signGlideUrl(image))
+                    .load(Chat.getInstance().urlSigner().signImageUrl(image))
                     .apply(RequestOptions.circleCropTransform())
                     .into(imageView);
 
-        FontsManager fontsManager = StreamChat.getFontsManager();
-        fontsManager.setFont(style.avatarInitialText, imageView, factor);
+        ChatFonts chatFonts = Chat.getInstance().getFonts();
+        chatFonts.setFont(style.avatarInitialText, imageView, factor);
     }
 }

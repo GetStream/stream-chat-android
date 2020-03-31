@@ -3,12 +3,10 @@ package com.getstream.sdk.chat.style;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.HashMap;
@@ -16,17 +14,20 @@ import java.util.Map;
 
 import androidx.annotation.FontRes;
 import androidx.core.content.res.ResourcesCompat;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 
-public class FontsManagerImpl implements FontsManager {
+public class ChatFontsImpl implements ChatFonts {
 
-    private static final String TAG = FontsManager.class.getSimpleName();
-
-    private final Context appContext;
+    private final StreamChatStyle style;
+    private final Context context;
     private SparseArray<Typeface> resourceMap = new SparseArray<>();
     private Map<String, Typeface> pathMap = new HashMap<>();
+    private final TaggedLogger logger = ChatLogger.Companion.get(ChatFonts.class.getSimpleName());
 
-    public FontsManagerImpl(Context appContext) {
-        this.appContext = appContext;
+    public ChatFontsImpl(StreamChatStyle style, Context context) {
+        this.style = style;
+        this.context = context;
     }
 
     @SuppressLint("WrongConstant")
@@ -50,10 +51,8 @@ public class FontsManagerImpl implements FontsManager {
             imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (textStyle.size / factor), font);
         } else {
 
-            StreamChatStyle chatStyle = StreamChat.getChatStyle();
-
-            if (chatStyle.hasDefaultFont()) {
-                TextStyle defaultTextStyle = chatStyle.getDefaultTextStyle();
+            if (style.hasDefaultFont()) {
+                TextStyle defaultTextStyle = style.getDefaultTextStyle();
                 imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (textStyle.size / factor), getFont(defaultTextStyle));
             } else {
                 imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
@@ -102,29 +101,28 @@ public class FontsManagerImpl implements FontsManager {
     }
 
     private void setDefaultFont(TextView textView, int textStyle) {
-        StreamChatStyle chatStyle = StreamChat.getChatStyle();
 
-        if (chatStyle.hasDefaultFont()) {
-            textView.setTypeface(getFont(chatStyle.getDefaultTextStyle()), textStyle);
-        }else{
+        if (style.hasDefaultFont()) {
+            textView.setTypeface(getFont(style.getDefaultTextStyle()), textStyle);
+        } else {
             textView.setTypeface(Typeface.DEFAULT, textStyle);
         }
     }
 
     private Typeface safeLoadTypeface(int fontRes) {
         try {
-            return ResourcesCompat.getFont(appContext, fontRes);
+            return ResourcesCompat.getFont(context, fontRes);
         } catch (Throwable t) {
-            StreamChat.getLogger().logE(this, t);
+            logger.logE(t);
             return null;
         }
     }
 
     private Typeface safeLoadTypeface(String fontPath) {
         try {
-            return Typeface.createFromAsset(appContext.getAssets(), fontPath);
+            return Typeface.createFromAsset(context.getAssets(), fontPath);
         } catch (Throwable t) {
-            StreamChat.getLogger().logE(this, t);
+            logger.logE(t);
             return null;
         }
     }

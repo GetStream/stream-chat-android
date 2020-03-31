@@ -1,11 +1,11 @@
 package com.getstream.sdk.chat.rest.request;
 
-import androidx.annotation.Nullable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.Nullable;
 
 public class GuestUserRequest {
 

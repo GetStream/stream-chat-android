@@ -6,10 +6,10 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.viewpager.widget.PagerAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 public abstract class RecyclingPagerAdapter<VH extends ViewHolder> extends PagerAdapter {
 

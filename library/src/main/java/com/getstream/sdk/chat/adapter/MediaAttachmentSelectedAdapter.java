@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
@@ -19,6 +18,7 @@ import java.io.File;
 import java.util.List;
 
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.logger.ChatLogger;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
@@ -102,7 +102,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                         binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
-                    StreamChat.getLogger().logE(this, e);
+                    ChatLogger.Companion.getInstance().logE(TAG, e);
                 }
             }
 

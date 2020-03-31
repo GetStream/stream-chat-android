@@ -2,19 +2,15 @@ package com.getstream.sdk.chat.utils.frescoimageviewer;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.RelativeLayout;
-
-import androidx.core.view.GestureDetectorCompat;
-import androidx.viewpager.widget.ViewPager;
 
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.getstream.sdk.chat.R;
+
+import androidx.core.view.GestureDetectorCompat;
+import androidx.viewpager.widget.ViewPager;
 
 class ImageViewerView extends RelativeLayout
         implements OnDismissListener, SwipeToDismissListener.OnViewMoveListener {

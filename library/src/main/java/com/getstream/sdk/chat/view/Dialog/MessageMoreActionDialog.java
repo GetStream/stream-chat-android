@@ -12,8 +12,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
@@ -86,14 +86,14 @@ public class MessageMoreActionDialog extends Dialog {
 
         ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
-        User currentUser = StreamChat.getInstance().getCurrentUser();
+        User currentUser = Chat.getInstance().getClient().getCurrentUser();
         String id = currentUser.getId();
         if (!message.getUserId().equals(id)) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
 
-                StreamChat.getInstance().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
+                Chat.getInstance().getClient().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
                     @Override
                     public Unit invoke(Result<Flag> flagResponseResult) {
 
@@ -122,7 +122,7 @@ public class MessageMoreActionDialog extends Dialog {
             ll_delete.setOnClickListener(view -> {
 
 
-                StreamChat.getInstance().deleteMessage(message.getId()).enqueue(new Function1<Result<Message>, Unit>() {
+                Chat.getInstance().getClient().deleteMessage(message.getId()).enqueue(new Function1<Result<Message>, Unit>() {
                     @Override
                     public Unit invoke(Result<Message> messageResult) {
 

@@ -4,23 +4,21 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import io.getstream.chat.android.client.models.Channel;
-
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
 import com.getstream.sdk.chat.enums.OnlineStatus;
-import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
+
+import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
+import io.getstream.chat.android.client.models.Channel;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 import static com.getstream.sdk.chat.enums.OnlineStatus.CONNECTED;
@@ -73,8 +71,8 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
 
-        StreamChat.getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
-        binding.setOnlineStatus(StreamChat.getOnlineStatus().getValue() == CONNECTED);
+        Chat.getInstance().getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
+        binding.setOnlineStatus(Chat.getInstance().getOnlineStatus().getValue() == CONNECTED);
     }
 
     protected void onlineStatus(OnlineStatus status) {

@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.model;
 
-import androidx.room.TypeConverters;
-
 import com.getstream.sdk.chat.storage.converter.CommandListConverter;
 import com.getstream.sdk.chat.storage.converter.DateConverter;
 import com.google.gson.annotations.Expose;
@@ -10,6 +8,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
+import androidx.room.TypeConverters;
 
 /**
  * A config

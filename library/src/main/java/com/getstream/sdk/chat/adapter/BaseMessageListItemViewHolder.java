@@ -4,13 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Channel;
-
-import com.getstream.sdk.chat.rest.response.ChannelState;
-import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 public abstract class BaseMessageListItemViewHolder extends RecyclerView.ViewHolder {
 

@@ -51,8 +51,6 @@ android {
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField "String", "SDK_VERSION", "\"${releaseSdkVersion}\""
-
             def usersConfig = loadJson(true)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
         }
@@ -60,8 +58,6 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
-
-            buildConfigField "String", "SDK_VERSION", '"master"'
 
             def usersConfig = loadJson(false)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
@@ -72,11 +68,7 @@ android {
                 def buildType = variant.name
                 def version = variant.versionName
 
-                if (buildType == 'debug') {
-                    outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}]-[sdk-master].apk"
-                } else {
-                    outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}]-[sdk-${releaseSdkVersion}].apk"
-                }
+                outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}].apk"
 
             }
         }
@@ -101,9 +93,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     implementation "androidx.legacy:legacy-support-v4:$rootProject.legacySupportVersion"
 
-    releaseImplementation "com.github.getstream:stream-chat-android:$releaseSdkVersion"
-    debugImplementation project(':library')
-
+    implementation project(':library')
 
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
     implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
@@ -141,7 +131,7 @@ def loadJson(useDefault) {
     def customConfigPath = projectDir.getAbsolutePath() + "/app-config-custom.json"
     def file = null
 
-    if (useDefault){
+    if (useDefault) {
         file = new File(defaultConfigPath)
     } else {
         if (new File(customConfigPath).exists()) {
@@ -150,7 +140,6 @@ def loadJson(useDefault) {
             file = new File(defaultConfigPath)
         }
     }
-
 
 
     def json = new JsonSlurper().parseText(file.text)

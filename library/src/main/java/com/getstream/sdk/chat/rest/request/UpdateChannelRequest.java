@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.rest.request;
 
 
-import io.getstream.chat.android.client.models.Message;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+
+import io.getstream.chat.android.client.models.Message;
 
 /*
  * Created by Anton Bevza on 2019-10-04.

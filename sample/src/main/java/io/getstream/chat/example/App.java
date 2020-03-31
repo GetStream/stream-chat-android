@@ -1,29 +1,22 @@
 package io.getstream.chat.example;
 
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
-import com.getstream.sdk.chat.StreamChat;
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
 import com.getstream.sdk.chat.style.StreamChatStyle;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-
 import io.fabric.sdk.android.Fabric;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
@@ -32,12 +25,12 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.example.utils.AppConfig;
 
 
-public class BaseApplication extends Application {
+public class App extends Application {
 
     private StreamChatStyle style;
     private AppConfig appConfig;
 
-    private static final String TAG = BaseApplication.class.getSimpleName();
+    private static final String TAG = App.class.getSimpleName();
     public static final String EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE";
     public static final String EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID";
 
@@ -50,7 +43,8 @@ public class BaseApplication extends Application {
         appConfig = new AppConfig(this);
 
         setupChatStyle();
-        initChat();
+        //initDefaultChat();
+        initCustomChat();
 
         Crashlytics.setString("apiKey", appConfig.getApiKey());
     }
@@ -109,40 +103,44 @@ public class BaseApplication extends Application {
         }
     }
 
-    private void initChat() {
+    private void initDefaultChat() {
 
-        final Context context = this;
+        String apiKey = appConfig.getApiKey();
 
-        StreamChat.Config config = new StreamChat.Config(appConfig.getApiKey(), context)
+        Chat chat = new Chat.Builder(apiKey, this).build();
+    }
+
+    private void initCustomChat(){
+
+        String apiKey = appConfig.getApiKey();
+        Context context = this;
+
+        Chat chat = new Chat.Builder(apiKey, this)
                 .apiEndpoint(appConfig.getApiEndPoint())
-                .apiTimout(appConfig.getApiTimeout())
-                .cdnTimout(appConfig.getCdnTimeout())
+                .apiTimeout(appConfig.getApiTimeout())
+                .cdnTimeout(appConfig.getCdnTimeout())
                 .logLevel(ChatLogLevel.ALL)
                 .style(style)
-                .navigationHandler(new ChatNavigationHandler() {
-                    @Override
-                    public boolean navigate(ChatDestination destination) {
-                        String url = "";
+                .navigationHandler(destination -> {
+                    String url = "";
 
-                        if (destination instanceof WebLinkDestination) {
-                            url = ((WebLinkDestination) destination).url;
-                        } else if (destination instanceof AttachmentDestination) {
-                            url = ((AttachmentDestination) destination).url;
-                        }
+                    if (destination instanceof WebLinkDestination) {
+                        url = ((WebLinkDestination) destination).url;
+                    } else if (destination instanceof AttachmentDestination) {
+                        url = ((AttachmentDestination) destination).url;
+                    }
 
-                        if (url.startsWith("https://your.domain.com")) {
-                            Toast.makeText(context, "Custom url handling: " + url, Toast.LENGTH_SHORT).show();
-                            // handle/change/update url
-                            // open your webview, system browser or your own activity
-                            // and return true to override default behaviour
-                            return true;
-                        } else {
-                            return false;
-                        }
+                    if (url.startsWith("https://your.domain.com")) {
+                        Toast.makeText(context, "Custom url handling: " + url, Toast.LENGTH_SHORT).show();
+                        // handle/change/update url
+                        // open your webview, system browser or your own activity
+                        // and return true to override default behaviour
+                        return true;
+                    } else {
+                        return false;
                     }
                 })
-                .notifications(new NotificationConfig(context));
-
-        StreamChat.init(config);
+                .notifications(new NotificationConfig(context))
+                .build();
     }
 }

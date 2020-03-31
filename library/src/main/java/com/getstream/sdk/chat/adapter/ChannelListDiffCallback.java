@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.models.Message;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.computeLastMessage;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.currentUserRead;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastMessageDate;
-import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsLastReaders;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsName;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.equalsUserLists;
 import static com.getstream.sdk.chat.utils.LlcMigrationUtils.getOtherUsers;

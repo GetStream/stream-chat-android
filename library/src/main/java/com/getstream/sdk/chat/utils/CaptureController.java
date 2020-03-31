@@ -8,13 +8,13 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.R;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import androidx.annotation.Nullable;
 
 public class CaptureController {
 

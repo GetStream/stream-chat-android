@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.interfaces;
 
 import com.getstream.sdk.chat.enums.ClientErrorCode;
+
 import io.getstream.chat.android.client.models.User;
 
 public interface ClientConnectionCallback {

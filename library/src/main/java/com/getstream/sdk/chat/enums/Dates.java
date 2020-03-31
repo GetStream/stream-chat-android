@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.enums;
 
-import androidx.annotation.StringRes;
-
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.StreamChat;
+
+import androidx.annotation.StringRes;
 
 public enum Dates {
     TODAY(R.string.stream_today),
@@ -14,7 +14,7 @@ public enum Dates {
     private final int labelId;
 
     public String getLabel() {
-        return StreamChat.getStrings().get(labelId);
+        return Chat.getInstance().getStrings().get(labelId);
     }
 
     Dates(@StringRes int labelId) {

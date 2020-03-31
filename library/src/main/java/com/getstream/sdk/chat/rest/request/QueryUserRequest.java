@@ -1,13 +1,13 @@
 package com.getstream.sdk.chat.rest.request;
 
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.enums.FilterObject;
 import com.getstream.sdk.chat.enums.QuerySort;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.Nullable;
 
 /*
  * Created by Anton Bevza on 2019-10-16.

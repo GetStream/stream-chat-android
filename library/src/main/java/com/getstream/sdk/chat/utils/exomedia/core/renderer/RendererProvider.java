@@ -19,9 +19,6 @@ package com.getstream.sdk.chat.utils.exomedia.core.renderer;
 import android.content.Context;
 import android.os.Handler;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
@@ -41,6 +38,9 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Provides all the necessary {@link com.google.android.exoplayer2.Renderer}s

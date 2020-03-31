@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.example.BaseApplication;
+import io.getstream.chat.example.App;
 import io.getstream.chat.example.utils.AppConfig;
 import io.getstream.chat.example.utils.SingleLiveEvent;
 import io.getstream.chat.example.utils.UserConfig;
@@ -46,7 +46,7 @@ public class MessageSearchVM extends AndroidViewModel {
         super(application);
 
         context = application;
-        appConfig = ((BaseApplication) context.getApplicationContext()).getAppConfig();
+        appConfig = ((App) context.getApplicationContext()).getAppConfig();
 
         initLiveData();
     }
@@ -69,7 +69,7 @@ public class MessageSearchVM extends AndroidViewModel {
     void loadChannel() {
         String type = cid.split(":")[0];
         String id = cid.split(":")[1];
-        StreamChat.getInstance().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
+        Chat.getInstance().getClient().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
             if (result.isSuccess()) {
                 channelResult.setValue(result.data());
             } else {
@@ -114,7 +114,7 @@ public class MessageSearchVM extends AndroidViewModel {
 
             isLoading.setValue(true);
 
-            StreamChat.getInstance().searchMessages(searchRequest).enqueue(new Function1<Result<List<Message>>, Unit>() {
+            Chat.getInstance().getClient().searchMessages(searchRequest).enqueue(new Function1<Result<List<Message>>, Unit>() {
                 @Override
                 public Unit invoke(Result<List<Message>> result) {
 

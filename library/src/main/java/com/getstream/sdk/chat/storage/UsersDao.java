@@ -1,13 +1,12 @@
 package com.getstream.sdk.chat.storage;
 
+import java.util.List;
+
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
 import io.getstream.chat.android.client.models.User;
-
-import java.util.List;
 
 @Dao
 public interface UsersDao {

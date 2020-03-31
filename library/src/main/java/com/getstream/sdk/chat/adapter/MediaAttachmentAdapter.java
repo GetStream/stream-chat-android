@@ -6,17 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding;
-import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
+import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.StringUtility;
 
 import java.io.File;
 import java.util.List;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MediaAttachmentAdapter extends RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder> {
 

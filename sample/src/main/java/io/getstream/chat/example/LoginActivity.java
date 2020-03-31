@@ -6,7 +6,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.Chat;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,12 +31,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        appConfig = ((BaseApplication) getApplicationContext()).getAppConfig();
+        appConfig = ((App) getApplicationContext()).getAppConfig();
 
         lv_users = findViewById(R.id.lv_users);
 
         if (appConfig.getCurrentUser() != null) {
-            StreamChat.getNavigator().navigate(new HomeDestination(this));
+            Chat.getInstance().getNavigator().navigate(new HomeDestination(this));
             finish();
             return;
         }
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         lv_users.setOnItemClickListener((AdapterView<?> adapterView, View view, int position, long l) -> {
             appConfig.setCurrentUser(appConfig.getUsers().get(position).getId());
             setPushToken();
-            StreamChat.getNavigator().navigate(new HomeDestination(this));
+            Chat.getInstance().getNavigator().navigate(new HomeDestination(this));
             finish();
         });
     }
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                StreamChat.getInstance().addDevice(task.getResult().getToken()).enqueue(new Function1<Result<Unit>, Unit>() {
+                                Chat.getInstance().getClient().addDevice(task.getResult().getToken()).enqueue(new Function1<Result<Unit>, Unit>() {
                                     @Override
                                     public Unit invoke(Result<Unit> result) {
 
