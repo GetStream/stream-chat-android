@@ -4,10 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
@@ -27,6 +24,40 @@ val parentMessageId = ""
 val firstMessageId = ""
 val userId = ""
 
+fun getApplicationContext(): Context {
+    return null!!
+}
+
+
+fun init() {
+    // Typically done in your Application class
+    val client = ChatClient.Builder("{{ api_key }}", context).build()
+
+    // Static reference to initialised client
+    // val client = ChatClient.instance()
+}
+
+fun setUser() {
+
+    val user = User("user-id")
+    val token = "{{ chat_user_token }}"
+
+    user.extraData["name"] = "Bender"
+    user.extraData["image"] = "https://bit.ly/321RmWb"
+
+
+    client.setUser(user, token, object : InitConnectionListener() {
+        override fun onSuccess(data: ConnectionData) {
+            val user = data.user
+            val connectionId = data.connectionId
+        }
+
+        override fun onError(error: ChatError) {
+            error.printStackTrace()
+        }
+    })
+}
+
 fun channel() {
 
     val channel = client.channel(channelType, channelId)
@@ -34,8 +65,8 @@ fun channel() {
 
     extraData["name"] = "Talking about life"
 
-// watching a channel"s state
-// note how the withWatch() argument ensures that we are watching the channel for any changes/new messages
+    // watching a channel"s state
+    // note how the withWatch() argument ensures that we are watching the channel for any changes/new messages
     val request = ChannelQueryRequest()
         .withData(extraData)
         .withMessages(20).withWatch()
@@ -52,11 +83,11 @@ fun channel() {
 fun sendMessage() {
 
 
-// prepare the message
+    // prepare the message
     val message = Message()
     message.text = "hello world"
 
-// send the message to the channel
+    // send the message to the channel
     channelController.sendMessage(message).enqueue {
         if (it.isSuccess) {
             val message = it.data()
@@ -75,25 +106,25 @@ fun events() {
     subscription.unsubscribe()
 }
 
-fun init() {
+fun initClient() {
     // Typically done in your Application class
-    val client = ChatClient.Builder("{{ api_key }}", context).build()
 
-    // Static reference to initialised client
-    // val client = ChatClient.instance()
-}
-
-fun setUser() {
-
-    val user = User("user-id")
+    val apiKey = "{{ api_key }}"
     val token = "{{ chat_user_token }}"
+    val context = getApplicationContext()
+    val client = ChatClient.Builder(apiKey, context).build()
 
-// extraData allows you to add any custom fields you want to store about your user
-    user.extraData["name"] = "Bender"
+    // Set the user to establish the websocket connection
+    // Usually done when you open the chat interface
+    // extraData allows you to add any custom fields you want to store about your user
+    // the UI components will pick up name and image by default
+
+    val user = User("bender")
     user.extraData["image"] = "https://bit.ly/321RmWb"
-
+    user.extraData["name"] = "Bender"
 
     client.setUser(user, token, object : InitConnectionListener() {
+
         override fun onSuccess(data: ConnectionData) {
             val user = data.user
             val connectionId = data.connectionId
@@ -104,7 +135,6 @@ fun setUser() {
         }
     })
 }
-
 
 fun setGuestUser() {
     val userId = "user-id"
