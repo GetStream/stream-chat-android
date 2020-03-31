@@ -78,7 +78,6 @@ open class ChatModules(val config: ChatClientConfig) {
             .addInterceptor(HeadersInterceptor(config))
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(TokenAuthInterceptor(config, parser))
-            .addNetworkInterceptor(StethoInterceptor())
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
