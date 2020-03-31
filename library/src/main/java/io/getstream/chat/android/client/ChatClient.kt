@@ -208,7 +208,7 @@ interface ChatClient {
         private val apiKey: String
         private val appContext: Context
 
-        private var baseUrl: String = "chat-us-east-staging.stream-io-api.com"
+        private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
