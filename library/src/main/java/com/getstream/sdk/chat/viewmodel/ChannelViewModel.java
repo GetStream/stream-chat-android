@@ -133,18 +133,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         Callable<Void> markRead = () -> {
 
             //TODO: llc unsub from all enqueue
-            Chat.getInstance().getClient().markMessageRead(channelType, channelId, "").enqueue(new Function1<Result<Unit>, Unit>() {
-                @Override
-                public Unit invoke(Result<Unit> result) {
+            Chat.getInstance().getClient().markMessageRead(channelType, channelId, "").enqueue(result -> {
 
-                    if (result.isSuccess()) {
-                        logger.logI("Marked read message");
-                    } else {
-                        logger.logE(result.error().getMessage());
-                    }
-
-                    return null;
+                if (result.isSuccess()) {
+                    logger.logI("Marked read message");
+                } else {
+                    logger.logE(result.error().getMessage());
                 }
+
+                return null;
             });
             return null;
         };
@@ -1155,7 +1152,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 sendStoppedTyping();
 
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     break;
                 }

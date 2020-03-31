@@ -59,8 +59,6 @@ android {
             minifyEnabled false
             shrinkResources false
 
-            buildConfigField "String", "SDK_VERSION", '"master"'
-
             def usersConfig = loadJson(false)
             buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
         }

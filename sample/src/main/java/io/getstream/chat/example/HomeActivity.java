@@ -1,15 +1,16 @@
 package io.getstream.chat.example;
 
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.getstream.sdk.chat.Chat;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.viewpager2.widget.ViewPager2;
-
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.example.adapter.ViewPagerAdapter;
 import io.getstream.chat.example.databinding.ActivityHomeBinding;
 
@@ -71,6 +72,8 @@ public class HomeActivity extends AppCompatActivity {
     private void initToolbar(ActivityHomeBinding binding) {
         setSupportActionBar(binding.toolbar);
         binding.toolbar.setTitle("Stream Chat");
-        binding.toolbar.setSubtitle("sdk:" + BuildConfig.SDK_VERSION + " / " + BuildConfig.VERSION_NAME + " / " + BuildConfig.APPLICATION_ID);
+        String clientVersion = ChatClient.instance().getVersion();
+        String chatVersion = Chat.getInstance().getVersion();
+        binding.toolbar.setSubtitle("client[" + clientVersion + "] chat[" + chatVersion + "]");
     }
 }
