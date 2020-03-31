@@ -171,7 +171,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return channelState.getValue();
     }
 
-    public LiveData<Boolean> getInitializedState() {
+    public LiveData<Channel> getInitialized() {
         return initialized;
     }
 
@@ -718,7 +718,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         messages.setValue(channel.getMessages());
         initEventHandlers();
         setLoadingDone();
-        initialized.postValue(true);
+        initialized.postValue(channel);
     }
 
     public MessageListItemLiveData getEntities() {
@@ -1160,23 +1160,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         }
     }
 
-    static class InitViewModelLiveData extends MutableLiveData<Boolean> {
+    static class InitViewModelLiveData extends MutableLiveData<Channel> {
 
         protected ChannelViewModel viewModel;
 
         public InitViewModelLiveData(ChannelViewModel viewModel) {
-            //super(value);
             this.viewModel = viewModel;
         }
 
         @Override
         protected void onActive() {
             super.onActive();
-            Boolean value = getValue();
-
-            if (value == null || value == false) {
-                viewModel.watchChannel();
-            }
+            if (getValue() == null) viewModel.watchChannel();
         }
     }
 }

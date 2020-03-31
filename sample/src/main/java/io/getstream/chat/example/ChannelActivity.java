@@ -76,7 +76,7 @@ public class ChannelActivity extends AppCompatActivity
 
         ChannelActivity activity = this;
 
-        viewModel.getInitializedState().observe(this, initialized -> {
+        viewModel.getInitialized().observe(this, channel -> {
             this.viewModel.getCurrentUserUnreadMessageCount().observe(this, (Number count) -> {
                 Log.i(TAG, String.format("The current user unread count is now %d", count));
             });
