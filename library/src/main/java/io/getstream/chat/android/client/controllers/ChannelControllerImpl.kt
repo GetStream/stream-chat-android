@@ -24,7 +24,6 @@ internal class ChannelControllerImpl(
         }
     }
 
-
     override fun query(request: ChannelQueryRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }

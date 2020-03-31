@@ -4,6 +4,7 @@ import android.util.Base64
 import java.nio.charset.StandardCharsets
 
 object ChatUtils {
+    @JvmStatic
     fun devToken(userId: String): String {
         require(userId.isNotEmpty()) { "User id must not be empty" }
         val header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
