@@ -9,6 +9,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 /**
@@ -55,7 +57,11 @@ class ChatQueryChannelRepo(var query: QueryChannelsEntity, var client: ChatClien
                 // store the results in the database
                 val channelsResponse = it.data()
 
-                repo.storeStateForChannels(channelsResponse)
+                GlobalScope.launch(Dispatchers.IO) {
+                    repo.storeStateForChannels(channelsResponse)
+                }
+
+
 
                 //TODO: either emit or rely on livedata at the storage level to make this work
 

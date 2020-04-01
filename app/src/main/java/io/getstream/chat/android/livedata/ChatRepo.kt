@@ -352,15 +352,13 @@ class StreamChatRepository(
         return queryRepo
     }
 
-    fun insertConfigs(configs: MutableMap<String, Config>) {
+    suspend fun insertConfigs(configs: MutableMap<String, Config>) {
         val configEntities = mutableListOf<ChannelConfigEntity>()
         for ((channelType, config) in configs) {
             val entity = ChannelConfigEntity(channelType)
             entity.config = config
         }
-        GlobalScope.launch {
-            channelConfigDao.insertMany(configEntities)
-        }
+        channelConfigDao.insertMany(configEntities)
     }
 
 
@@ -386,70 +384,53 @@ class StreamChatRepository(
     }
 
 
-    fun insertUser(user: User) {
-        GlobalScope.launch {
+    suspend fun insertUser(user: User) {
             userDao.insert(UserEntity(user))
-        }
-
     }
 
-    fun insertChannel(channel: Channel) {
+    suspend fun insertChannel(channel: Channel) {
         var channelEntity = ChannelStateEntity(channel)
 
-        GlobalScope.launch {
-            channelStateDao.insert(ChannelStateEntity(channel))
-        }
+        channelStateDao.insert(ChannelStateEntity(channel))
     }
 
-    fun insertChannelStateEntity(channelStateEntity: ChannelStateEntity) {
+    suspend fun insertChannelStateEntity(channelStateEntity: ChannelStateEntity) {
 
-        GlobalScope.launch {
-            channelStateDao.insert(channelStateEntity)
-        }
+        channelStateDao.insert(channelStateEntity)
     }
 
-    fun insertChannels(channels: List<Channel>) {
+    suspend fun insertChannels(channels: List<Channel>) {
         var entities = mutableListOf<ChannelStateEntity>()
         for (channel in channels) {
             entities.add(ChannelStateEntity(channel))
         }
 
-        GlobalScope.launch {
-            channelStateDao.insertMany(entities)
-        }
+        channelStateDao.insertMany(entities)
     }
 
 
-    fun insertReactionEntity(reactionEntity: ReactionEntity) {
-        GlobalScope.launch {
-            reactionDao.insert(reactionEntity)
-        }
+    suspend fun insertReactionEntity(reactionEntity: ReactionEntity) {
+        reactionDao.insert(reactionEntity)
     }
 
-    fun insertQuery(queryChannelsEntity: QueryChannelsEntity) {
-        GlobalScope.launch {
-            channelQueryDao.insert(queryChannelsEntity)
-        }
+    suspend fun insertQuery(queryChannelsEntity: QueryChannelsEntity) {
+        channelQueryDao.insert(queryChannelsEntity)
     }
 
-    fun insertUsers(users: List<User>) {
-        GlobalScope.launch {
-            val userEntities = mutableListOf<UserEntity>()
-            for (user in users) {
-                userEntities.add(UserEntity(user))
-            }
-            userDao.insertMany(userEntities)
+    suspend fun insertUsers(users: List<User>) {
+        val userEntities = mutableListOf<UserEntity>()
+        for (user in users) {
+            userEntities.add(UserEntity(user))
         }
+        userDao.insertMany(userEntities)
     }
 
-    fun insertMessages(messages: List<Message>) {
-        GlobalScope.launch {
-            val messageEntities = mutableListOf<MessageEntity>()
-            for (message in messages) {
-                messageEntities.add(MessageEntity(message))
-            }
-            messageDao.insertMany(messageEntities)
+    suspend fun insertMessages(messages: List<Message>) {
+        val messageEntities = mutableListOf<MessageEntity>()
+        for (message in messages) {
+            messageEntities.add(MessageEntity(message))
         }
+        messageDao.insertMany(messageEntities)
     }
 
     suspend fun insertMessage(message: Message) {
@@ -457,13 +438,11 @@ class StreamChatRepository(
         messageDao.insert(messageEntity)
     }
 
-    fun insertMessageEntity(messageEntity: MessageEntity) {
-        GlobalScope.launch {
-            messageDao.insert(messageEntity)
-        }
+    suspend fun insertMessageEntity(messageEntity: MessageEntity) {
+        messageDao.insert(messageEntity)
     }
 
-    fun connectionRecovered() {
+    suspend fun connectionRecovered() {
         // update the results for queries that are actively being shown right now
         for (query in activeQueryMap) {
             // TODO: talk about this with tommaso
@@ -492,23 +471,19 @@ class StreamChatRepository(
         return messageEntities
     }
 
-    fun retryFailedEntities() {
-        GlobalScope.launch {
-            // fake the user map for enriching objects
-            val user = client.getCurrentUser()!!
-            val userMap: Map<String, User> = mutableMapOf(user.id to user)
+    suspend fun retryFailedEntities() {
+        // fake the user map for enriching objects
+        val user = client.getCurrentUser()!!
+        val userMap: Map<String, User> = mutableMapOf(user.id to user)
 
-            val reactionEntities = reactionDao.selectSyncNeeded()
-            for (reactionEntity in reactionEntities) {
-                client.sendReaction(reactionEntity.toReaction(userMap))
-            }
-
-
-            retryMessages()
-            // TODO: support channels in version 1.1
-
-
+        val reactionEntities = reactionDao.selectSyncNeeded()
+        for (reactionEntity in reactionEntities) {
+            client.sendReaction(reactionEntity.toReaction(userMap))
         }
+
+
+        retryMessages()
+        // TODO: support channels in version 1.1
     }
 
 
@@ -528,7 +503,7 @@ class StreamChatRepository(
         return userDao.select(userIds)
     }
 
-    fun storeStateForChannel(channel: Channel) {
+    suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))
     }
 
@@ -546,7 +521,7 @@ class StreamChatRepository(
         return userMap
     }
 
-    fun storeStateForChannels(channelsResponse: List<Channel>) {
+    suspend fun storeStateForChannels(channelsResponse: List<Channel>) {
         val users = mutableSetOf<User>()
         val configs: MutableMap<String, Config> = mutableMapOf()
         // start by gathering all the users
