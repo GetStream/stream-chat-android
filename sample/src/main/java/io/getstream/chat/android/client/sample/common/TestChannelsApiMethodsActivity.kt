@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.and
@@ -55,9 +56,12 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        client.setUser(User(userId), token, object : InitConnectionListener() {
+        val user = User(userId)
+        user.name = "some-name"
+
+        client.setUser(user, token, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
-                val user = data.user
+                val updatedUser = data.user
                 val connectionId = data.connectionId
             }
 
@@ -90,6 +94,30 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnMarkReadMessage.setOnClickListener { markReadMessage() }
         btnWatchChannel.setOnClickListener { watchChannel() }
         btnGetMessage.setOnClickListener { getMessage() }
+        btnCheckTyping.setOnClickListener { checkTyping() }
+    }
+
+    private fun checkTyping() {
+        client.events()
+            .filter(TypingStartEvent::class.java)
+            .subscribe {
+                println("checkTyping: received")
+            }
+
+        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1)).enqueue {
+            val channel = it.data()[0]
+
+            val controller = client.channel(channel.cid)
+
+            controller.watch().enqueue {
+                controller.keystroke().enqueue {
+                    if (it.isSuccess)
+                        println("checkTyping: sent")
+                    else
+                        it.error().printStackTrace()
+                }
+            }
+        }
     }
 
     private fun watchChannel() {

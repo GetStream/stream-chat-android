@@ -9,8 +9,6 @@ import java.util.*
 
 class User(var id: String = "") : UserEntity, CustomObject {
 
-    var name: String = ""
-    var image: String = ""
     var role: String = ""
 
     @IgnoreSerialisation
@@ -18,8 +16,12 @@ class User(var id: String = "") : UserEntity, CustomObject {
 
     var invisible: Boolean = false
     var banned: Boolean = false
+    @SerializedName("total_unread_count")
     var totalUnreadCount: Int = 0
+    @SerializedName("unread_channel")
     var unreadChannels: Int = 0
+    @SerializedName("unread_count")
+    var unreadCount: Int = 0
     var mutes: List<Mute> = mutableListOf()
     var devices: List<Device> = mutableListOf()
 
