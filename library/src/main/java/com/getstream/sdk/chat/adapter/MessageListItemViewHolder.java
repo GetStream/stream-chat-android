@@ -39,6 +39,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
@@ -450,9 +451,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     protected void configAttachmentView() {
-        if (isDeletedMessage()
-                || isFailedMessage()
-                || this.message.getAttachments().isEmpty()) {
+        boolean deletedMessage = isDeletedMessage();
+        boolean failedMessage = isFailedMessage();
+        boolean noAttachments = this.message.getAttachments().isEmpty();
+        if (deletedMessage || failedMessage || noAttachments) {
+            ChatLogger.Companion.getInstance().logE(getClass().getSimpleName(), "attachment hidden: deletedMessage:" + deletedMessage + ", failedMessage:" + failedMessage + " noAttachments:" + noAttachments);
             attachmentview.setVisibility(View.GONE);
             return;
         }

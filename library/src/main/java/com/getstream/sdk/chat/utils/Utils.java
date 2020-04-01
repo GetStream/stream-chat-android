@@ -18,6 +18,7 @@ import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
 import android.view.*;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
@@ -35,6 +37,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import androidx.annotation.StringRes;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -86,8 +89,18 @@ public class Utils {
         return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
 
-    public static void showMessage(Context mContext, String message) {
-        Toast toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+    public static void showMessage(Context context, @StringRes int stringRes, Object... formatArgs) {
+        String s = Chat.getInstance().getStrings().get(stringRes, formatArgs);
+        showMessage(context, s);
+    }
+
+    public static void showMessage(Context context, @StringRes int stringRes) {
+        String s = Chat.getInstance().getStrings().get(stringRes);
+        showMessage(context, s);
+    }
+
+    public static void showMessage(Context context, String message) {
+        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         View toastView = toast.getView();
         TextView toastMessage = toastView.findViewById(android.R.id.message);
         toastMessage.setGravity(Gravity.CENTER);
@@ -238,11 +251,13 @@ public class Utils {
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
             int type = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
             int t = imagecursor.getInt(type);
-            File file = new File(imagecursor.getString(dataColumnIndex));
+            String filePath = imagecursor.getString(dataColumnIndex);
+            File file = new File(filePath);
             if (!file.exists()) continue;
-            AttachmentMetaData attachment = new AttachmentMetaData(new File(imagecursor.getString(dataColumnIndex)));
+            AttachmentMetaData attachment = new AttachmentMetaData(file);
             if (t == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.type = ModelType.attach_image;
+                attachment.mimeType = getMimeType(filePath);
             } else if (t == Constant.MEDIA_TYPE_VIDEO) {
                 float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
                 attachment.videoLength = ((int) (videolengh / 1000));
@@ -252,6 +267,15 @@ public class Utils {
         }
         imagecursor.close();
         return attachments;
+    }
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 
     public static void configFileAttachment(AttachmentMetaData attachment,

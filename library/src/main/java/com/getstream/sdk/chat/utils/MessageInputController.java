@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
@@ -35,6 +34,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Command;
 import io.getstream.chat.android.client.models.Member;
@@ -43,7 +44,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback;
 
 public class MessageInputController {
 
-    private static final String TAG = MessageInputController.class.getSimpleName();
+    private TaggedLogger logger = ChatLogger.Companion.get(MessageInputController.class.getSimpleName());
 
     private ChannelViewModel viewModel;
     private Channel channel;
@@ -229,17 +230,17 @@ public class MessageInputController {
         }
     }
 
-    public boolean isOverMaxUploadFileSize(File file, boolean showErrorToast) {
+    private boolean isOverMaxUploadFileSize(File file) {
         if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
-            if (showErrorToast)
-                Utils.showMessage(context, Chat.getInstance().getStrings().get(R.string.stream_large_size_file_error));
+            Utils.showMessage(context, R.string.stream_large_size_file_error);
             return true;
         }
         return false;
     }
 
     private void uploadAttachment(AttachmentMetaData attachment, boolean fromGallery, boolean isMedia) {
-        if (isOverMaxUploadFileSize(new File(attachment.file.getPath()), true))
+        File file = new File(attachment.file.getPath());
+        if (isOverMaxUploadFileSize(file))
             return;
         attachment.isSelected = true;
         selectedAttachments.add(attachment);
@@ -260,12 +261,14 @@ public class MessageInputController {
         uploadManager.uploadFile(attachment, new ProgressCallback() {
             @Override
             public void onSuccess(@NotNull String s) {
-                selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
+                selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia);
                 uploadedFileProgress(attachment);
             }
 
             @Override
             public void onError(@NotNull ChatError chatError) {
+                logger.logE(chatError);
+                Utils.showMessage(context, R.string.stream_attachment_uploading_error);
                 cancelAttachment(attachment, fromGallery, isMedia);
             }
 
@@ -292,8 +295,7 @@ public class MessageInputController {
             totalAttachmentAdapterChanged(null, isMedia);
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia);
         configSendButtonEnableState();
-        if ((selectedAttachments == null || selectedAttachments.isEmpty())
-                && messageInputType == MessageInputType.EDIT_MESSAGE)
+        if ((selectedAttachments.isEmpty()) && messageInputType == MessageInputType.EDIT_MESSAGE)
             configAttachmentButtonVisible(true);
     }
 

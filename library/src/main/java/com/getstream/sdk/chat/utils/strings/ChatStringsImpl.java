@@ -15,4 +15,9 @@ public class ChatStringsImpl implements ChatStrings {
     public String get(int resId) {
         return appContext.getString(resId);
     }
+
+    @Override
+    public String get(int resId, Object... formatArgs) {
+        return appContext.getString(resId, formatArgs);
+    }
 }

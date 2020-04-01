@@ -88,7 +88,7 @@ public class ChannelActivity extends AppCompatActivity
             binding.messageList.setAttachmentClickListener(activity);
             // If you are using own MessageInputView please comment this line.
             binding.messageInput.setPermissionRequestListener(activity);
-            binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
+            //binding.messageList.setViewHolderFactory(new CustomMessageViewHolderFactory());
 
             // connect the view model
             Log.d(TAG, "Set View Model = " + viewModel);
