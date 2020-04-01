@@ -38,7 +38,6 @@ class ChatApiImpl(
     ) {
         val body = ProgressRequestBody(
             file,
-            null,
             callback
         )
         val part = createFormData("file", file.name, body)
@@ -61,7 +60,6 @@ class ChatApiImpl(
     ) {
         val body = ProgressRequestBody(
             file,
-            null,
             callback
         )
         val part = createFormData("file", file.name, body)
