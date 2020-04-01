@@ -35,7 +35,7 @@ import java.util.*
  * - channelRepo.sendReaction stores the reaction locally and sends it when network is available
  *
  */
-class ChatChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.StreamChatRepository) {
+class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.StreamChatRepository) {
 
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
@@ -200,7 +200,7 @@ class ChatChannelRepo(var channelType: String, var channelId: String, var client
             // update the message in the local storage
             val messageEntity = repo.selectMessageEntity(reaction.messageId)
             messageEntity?.let {
-                it.addReaction(reaction)
+                it.addReaction(reaction, repo.currentUser.id==reaction.user!!.id)
                 repo.insertMessageEntity(it)
             }
 

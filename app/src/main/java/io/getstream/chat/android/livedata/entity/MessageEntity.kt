@@ -30,8 +30,8 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     /** message type can be system, regular or ephemeral */
     var type: String = ""
 
-    /** if the message has been synced to the servers */
-    var syncStatus: SyncStatus? = null
+    /** if the message has been synced to the servers, default is synced */
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     /** the number of replies */
     var replyCount = 0
@@ -68,11 +68,14 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     var extraData = mutableMapOf<String, Any>()
 
     /** add a reaction to this message. updated the own reactions, latestReactions, reaction Count */
-    fun addReaction(reaction: Reaction) {
+    fun addReaction(reaction: Reaction, isMine: Boolean) {
         val reactionEntity = ReactionEntity(reaction)
 
         // add to own reactions
-        ownReactions.add(reactionEntity)
+        if (isMine) {
+            ownReactions.add(reactionEntity)
+        }
+
 
         // add to latest reactions
         latestReactions.add(reactionEntity)

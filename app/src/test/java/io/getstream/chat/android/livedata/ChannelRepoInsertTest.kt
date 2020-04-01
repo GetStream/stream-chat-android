@@ -9,6 +9,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.utils.TestDataHelper
+import io.getstream.chat.android.livedata.utils.TestLoggerHandler
+import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -16,7 +20,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
@@ -26,7 +29,7 @@ class ChannelRepoInsertTest {
     lateinit var repo: StreamChatRepository
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
-    lateinit var channelRepo: ChatChannelRepo
+    lateinit var channelRepo: ChannelRepo
     lateinit var db: ChatDatabase
 
     @get:Rule
@@ -43,14 +46,19 @@ class ChannelRepoInsertTest {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
-        waitForSetUser(client, user, token)
+        waitForSetUser(
+            client,
+            user,
+            token
+        )
         db = Room.inMemoryDatabaseBuilder(
             ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
-        repo = StreamChatRepository(client, db)
+        data = TestDataHelper()
+
+        repo = StreamChatRepository(client, data.user1, db)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
-        data = TestDataHelper()
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
         // TODO: should this be part of the constructor?
         channelRepo.updateChannel(data.channel1)
@@ -69,6 +77,7 @@ class ChannelRepoInsertTest {
         repo.insertChannel(data.channel1)
         channelRepo.sendMessage(data.message1)
         // get the message and channel state both live and offline versions
+        sleep(100)
         var roomChannel = runBlocking(Dispatchers.IO) { repo.selectChannelEntity(data.message1.channel.cid) }
         var liveChannel = channelRepo.channel.getOrAwaitValue()
         var roomMessages = runBlocking(Dispatchers.IO) { repo.selectMessagesForChannel(data.message1.channel.cid) }
@@ -81,7 +90,7 @@ class ChannelRepoInsertTest {
         // verify the message is stored in room, and set to retry
         // verify the channel is updated as well (lastMessage at and lastMessageAt)
         Truth.assertThat(liveChannel.lastMessageAt).isEqualTo(data.message1.createdAt)
-        Truth.assertThat(roomChannel?.lastMessageAt).isEqualTo(data.message1.createdAt)
+        Truth.assertThat(roomChannel!!.lastMessageAt).isEqualTo(data.message1.createdAt)
 
         var messageEntities = runBlocking(Dispatchers.IO) { repo.retryMessages() }
         Truth.assertThat(messageEntities.size).isEqualTo(1)

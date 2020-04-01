@@ -31,15 +31,12 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     var frozen: Boolean = false
 
     /** list of the channel members, can be regular members, moderators or admins */
-    var members: List<MemberEntity> = mutableListOf()
+    // TODO: do we prefer a map? a map seems better..
+    var members: MutableList<MemberEntity> = mutableListOf()
 
     /** list of how far each user has read */
-    var reads: List<ChannelUserReadEntity> = mutableListOf()
+    var reads: MutableMap<String, ChannelUserReadEntity> = mutableMapOf()
 
-    /** denormalized copy of the last message */
-    @Embedded(prefix = "last_message_")
-    // TODO: remove this denormalization, think it's not needed and makes code more complex
-    var lastMessage: MessageEntity? = null
     /** denormalize the last message date so we can sort on it */
     var lastMessageAt: Date? = null
 
@@ -63,13 +60,12 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
 
-        members = c.members.map { MemberEntity(it) }
-        reads = c.read.map { ChannelUserReadEntity(it) }
-
-        if (c.messages.isNotEmpty()) {
-            lastMessage = MessageEntity(c.messages.last())
-            lastMessage?.let { lastMessageAt = it.createdAt }
+        members = c.members.map { MemberEntity(it) }.toMutableList()
+        reads = mutableMapOf()
+        for (r in c.read) {
+            reads[r.getUserId()] = ChannelUserReadEntity(r)
         }
+        lastMessageAt = c.lastMessageAt
         createdByUserId = c.createdBy.getUserId()
     }
 
@@ -84,9 +80,11 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         c.updatedAt = updatedAt
         c.deletedAt = deletedAt
         c.extraData = extraData
+        c.lastMessageAt = lastMessageAt
 
         c.members = members.map { it.toMember(userMap) }
-        c.read = reads.map { it.toChannelUserRead(userMap) }
+
+        c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
         c.createdBy = userMap[createdByUserId] ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
 
@@ -99,15 +97,13 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
         if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
             lastMessageAt = messageEntity.createdAt
-            lastMessage = messageEntity
         }
     }
 
     /** updates last message and lastmessagedate on this channel entity */
     fun updateReads(read: ChannelUserRead) {
         val readEntity = ChannelUserReadEntity(read)
-
-
+        reads.set(read.getUserId(), readEntity)
     }
 
 

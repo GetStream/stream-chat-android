@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 

@@ -36,7 +36,7 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
     var syncStatus: SyncStatus? = null
 
     /** create a reactionEntity from a reaction object */
-    constructor(r: Reaction): this(r.messageId, r.userId, r.type) {
+    constructor(r: Reaction): this(r.messageId, r.user!!.id, r.type) {
         score = r.score
         createdAt = r.createdAt
         extraData = r.extraData

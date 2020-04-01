@@ -1,16 +1,15 @@
 package io.getstream.chat.android.livedata
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.livedata.utils.TestDataHelper
+import io.getstream.chat.android.livedata.utils.TestLoggerHandler
+import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.junit.*
 import org.junit.runner.RunWith
 
@@ -26,7 +25,7 @@ class ChatChannelRepoEventTest {
     lateinit var repo: StreamChatRepository
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
-    lateinit var channelRepo: ChatChannelRepo
+    lateinit var channelRepo: ChannelRepo
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
@@ -43,7 +42,7 @@ class ChatChannelRepoEventTest {
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
         //waitForSetUser(client, user, token)
-        repo = StreamChatRepository(ApplicationProvider.getApplicationContext(), user.id, client)
+        repo = StreamChatRepository(ApplicationProvider.getApplicationContext(), user, client)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

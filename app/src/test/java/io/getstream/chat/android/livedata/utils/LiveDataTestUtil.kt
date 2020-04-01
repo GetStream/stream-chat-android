@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.utils
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

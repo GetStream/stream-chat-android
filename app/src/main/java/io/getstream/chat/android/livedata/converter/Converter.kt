@@ -43,10 +43,7 @@ class Converter {
         )
     }
 
-    @TypeConverter
-    fun readListToString(someObjects: List<ChannelUserReadEntity>?): String? {
-        return gson.toJson(someObjects)
-    }
+
 
     @TypeConverter
     fun stringToSyncStatus(data: String): SyncStatus {
@@ -58,14 +55,18 @@ class Converter {
         return syncStatus.toString()
     }
 
+    @TypeConverter
+    fun readListToString(someObjects: MutableMap<String, ChannelUserReadEntity>?): String? {
+        return gson.toJson(someObjects)
+    }
 
     @TypeConverter
-    fun stringToReadList(data: String?): List<ChannelUserReadEntity>? {
+    fun stringToReadList(data: String?): MutableMap<String, ChannelUserReadEntity>? {
         if (data == null) {
-            return emptyList()
+            return mutableMapOf()
         }
         val listType = object :
-            TypeToken<List<ChannelUserReadEntity>?>() {}.type
+            TypeToken<MutableMap<String, ChannelUserReadEntity>>() {}.type
         return gson.fromJson(
             data,
             listType
