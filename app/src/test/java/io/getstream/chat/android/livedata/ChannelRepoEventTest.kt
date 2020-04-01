@@ -37,16 +37,16 @@ class ChatChannelRepoEventTest {
                 ChatLogLevel.ALL
             ).loggerHandler(TestLoggerHandler()).build()
 
-        val user = User("broad-lake-3")
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
         //waitForSetUser(client, user, token)
-        repo = ChatRepo(ApplicationProvider.getApplicationContext(), user, client)
+        data = TestDataHelper()
+        repo = ChatRepo(ApplicationProvider.getApplicationContext(), data.user1, client)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
-        data = TestDataHelper()
+
         channelRepo = repo.channel("messaging", "test123")
     }
 

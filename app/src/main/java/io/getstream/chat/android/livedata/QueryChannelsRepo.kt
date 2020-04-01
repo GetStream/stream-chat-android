@@ -30,6 +30,8 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
+    // TODO: add pagination & loading
+
     // TODO: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {

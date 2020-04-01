@@ -92,7 +92,7 @@ class ChatRepo(
         }
 
         // verify that you're not connecting 2 different users
-        if (client.getCurrentUser()?.id != currentUser.id) {
+        if (client.getCurrentUser()!= null && client.getCurrentUser()?.id != currentUser.id) {
             throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
         }
 

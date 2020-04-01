@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -80,6 +81,16 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         it.values.sortedBy { it.user.name + it.user.id }
     }
 
+    private val _loading = MutableLiveData<Boolean>(false)
+    val loading : LiveData<Boolean> = _loading
+
+    private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
+    val loadingOlderMessages : LiveData<Boolean> = _loadingOlderMessages
+
+    private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
+    val loadingNewerMessages : LiveData<Boolean> = _loadingNewerMessages
+
+
     // TODO: this is not great, individual livedata objects would be better
     val threads = Transformations.map(_messages) {
         val sorted = it.values.sortedBy { it.createdAt }
@@ -97,17 +108,36 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         threads
     }
 
+    suspend fun loadOlderMessages(limit: Int = 30) {
+        _loadingOlderMessages.value = true
+        val messageMap = _messages.value ?: mutableMapOf()
+        val messages = messageMap.values.sortedByDescending { it.createdAt }
+        val oldestId = messages.first().id
+        val request = ChannelWatchRequest().withMessages(Pagination.GREATER_THAN, oldestId, limit)
+        runChannelQuery(request)
+        _loadingOlderMessages.value = false
 
+    }
+
+    suspend fun loadNewerMessages(limit: Int = 30) {
+        _loadingNewerMessages.value = true
+        val messageMap = _messages.value ?: mutableMapOf()
+        val messages = messageMap.values.sortedBy { it.createdAt }
+        val newestId = messages.first().id
+        val request = ChannelWatchRequest().withMessages(Pagination.GREATER_THAN, newestId, limit)
+        runChannelQuery(request)
+        _loadingOlderMessages.value = false
+    }
 
     fun watch() {
-        // TODO: messages need to update whenever the messages in room change. the transform is kinda tricky
-        // because of the user enrichment though...
+        _loading.value = true
 
         GlobalScope.launch(Dispatchers.IO) {
             // first we load the data from room and update the messages and channel livedata
             val channel = repo.selectAndEnrichChannel(cid, 100)
 
             channel?.let {
+                _loading.value = false
                 if (it.messages.isNotEmpty()) {
                     upsertMessages(it.messages)
                 }
@@ -122,26 +152,30 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
 
             // next we run the actual API call
-            // TODO: figure out why repo.isOnline returns the wrong value
-            val response = channelController.watch(ChannelWatchRequest()).execute()
+            if (repo.isOnline()) {
+                val request = ChannelWatchRequest()
+                runChannelQuery(request)
 
-            if (!response.isSuccess) {
-                repo.addError(response.error())
-            } else {
-                val channelResponse = response.data()
-                upsertMessages(channelResponse.messages)
-                channelResponse.messages = emptyList()
-                _channel.postValue(channelResponse)
-
-                repo.storeStateForChannel(channelResponse)
             }
-
         }
-
-
     }
 
+    suspend fun runChannelQuery(request: ChannelWatchRequest) {
+        val response = channelController.watch(request).execute()
 
+        if (response.isError) {
+            _loading.value = false
+            repo.addError(response.error())
+        } else {
+            _loading.value = false
+            val channelResponse = response.data()
+            upsertMessages(channelResponse.messages)
+            channelResponse.messages = emptyList()
+            _channel.postValue(channelResponse)
+
+            repo.storeStateForChannel(channelResponse)
+        }
+    }
 
     /**
      * - Generate an ID
