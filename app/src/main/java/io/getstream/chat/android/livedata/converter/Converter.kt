@@ -26,17 +26,17 @@ class Converter {
     }
 
     @TypeConverter
-    fun memberListToString(someObjects: List<MemberEntity>?): String? {
+    fun memberListToString(someObjects: Map<String,MemberEntity>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToMemberList(data: String?): List<MemberEntity>? {
+    fun stringToMemberList(data: String?): Map<String,MemberEntity>? {
         if (data == null) {
-            return emptyList()
+            return emptyMap()
         }
         val listType = object :
-            TypeToken<List<MemberEntity>?>() {}.type
+            TypeToken<Map<String,MemberEntity>>() {}.type
         return gson.fromJson(
             data,
             listType

@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import java.util.*
 
@@ -31,8 +32,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     var frozen: Boolean = false
 
     /** list of the channel members, can be regular members, moderators or admins */
-    // TODO: do we prefer a map? a map seems better..
-    var members: MutableList<MemberEntity> = mutableListOf()
+    var members: MutableMap<String, MemberEntity> = mutableMapOf()
 
     /** list of how far each user has read */
     var reads: MutableMap<String, ChannelUserReadEntity> = mutableMapOf()
@@ -60,7 +60,10 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
 
-        members = c.members.map { MemberEntity(it) }.toMutableList()
+        members = mutableMapOf()
+        for (m in c.members) {
+            members[m.getUserId()] = MemberEntity(m)
+        }
         reads = mutableMapOf()
         for (r in c.read) {
             reads[r.getUserId()] = ChannelUserReadEntity(r)
@@ -82,7 +85,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
 
-        c.members = members.map { it.toMember(userMap) }
+        c.members = members.values.map { it.toMember(userMap) }
 
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
@@ -104,6 +107,15 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     fun updateReads(read: ChannelUserRead) {
         val readEntity = ChannelUserReadEntity(read)
         reads.set(read.getUserId(), readEntity)
+    }
+
+    fun setMember(userId: String, member: Member?) {
+        if (member == null) {
+            members.remove(userId)
+        } else {
+            members.set(userId, MemberEntity(member))
+        }
+
     }
 
 

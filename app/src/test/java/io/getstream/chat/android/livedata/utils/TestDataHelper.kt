@@ -53,7 +53,7 @@ class TestDataHelper {
     val reactionEvent2 = ReactionNewEvent().apply { reaction=reaction2}
 
     val newMessageWithThreadEvent = NewMessageEvent().apply { message=messageThread }
-    val channelUpdatedEvent = ChannelUpdatedEvent().apply { channel=channel1Updated }
+    val channelUpdatedEvent = ChannelUpdatedEvent().apply { channel=channel1Updated; cid=channel1Updated.cid }
     val user1TypingStarted = TypingStartEvent().apply{user=user1}
     val user2TypingStarted = TypingStartEvent().apply{user=user2}
     val user1TypingStop = TypingStopEvent().apply{user=user1}
@@ -61,6 +61,6 @@ class TestDataHelper {
     val readEvent = MessageReadEvent().apply{message=message1;user=user1;cid=channel1.cid; createdAt=Date()}
 
     val user1Read = MessageReadEvent().apply { user=user1; createdAt= Date() }
-    val memberAddedToChannelEvent = MemberAddedEvent().apply { member=member2 }
+    val memberAddedToChannelEvent = MemberAddedEvent().apply { member=member2; cid=channel1.cid }
 
 }

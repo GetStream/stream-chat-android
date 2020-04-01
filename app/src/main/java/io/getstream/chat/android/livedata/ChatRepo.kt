@@ -226,12 +226,22 @@ class StreamChatRepository(
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
                     insertMessage(event.message)
+                    // TODO: this isn't right, use the same approach as with newReaction
                 }
                 is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
                     // get the channel, update members, write the channel
-                    event.channel?.let {
-                        insertChannel(it)
+                    val channelEntity = selectChannelEntity(event.cid!!)
+                    if (channelEntity != null) {
+                        var member = event.member
+                        val userId = event.member!!.user.id
+                        if (event is MemberRemovedEvent) {
+                            member = null
+                        }
+                        channelEntity.setMember(userId, member)
+                        insertChannelStateEntity(channelEntity)
                     }
+
+
                 }
                 is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
@@ -599,14 +609,10 @@ class StreamChatRepository(
         for (channelEntity in channelEntities) {
             channelEntity.createdByUserId?.let { userIds.add(it) }
             channelEntity.members.let {
-                for (member in it) {
-                    userIds.add(member.userId)
-                }
+                userIds.addAll(it.keys)
             }
             channelEntity.reads.let {
-                for (userId in it.keys) {
-                    userIds.add(userId)
-                }
+                userIds.addAll(it.keys)
             }
             if (messageLimit > 0) {
                 val messages = selectMessagesForChannel(channelEntity.cid, messageLimit)
