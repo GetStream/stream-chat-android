@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -20,11 +21,13 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.robolectric.shadows.ShadowLooper
 
+@RunWith(AndroidJUnit4::class)
 class ChannelRepoReadPaginateTest {
     lateinit var database: ChatDatabase
-    lateinit var repo: StreamChatRepository
+    lateinit var repo: ChatRepo
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
     lateinit var channelRepo: ChannelRepo
@@ -53,7 +56,7 @@ class ChannelRepoReadPaginateTest {
             ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
         data = TestDataHelper()
 
-        repo = StreamChatRepository(client,data.user1,  db)
+        repo = ChatRepo(client,data.user1,  db)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

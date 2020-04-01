@@ -1,18 +1,13 @@
 package io.getstream.chat.android.livedata
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -24,7 +19,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 
 /**
@@ -34,7 +28,7 @@ import java.lang.Thread.sleep
 class ChatRepoEventTest {
 
     lateinit var database: ChatDatabase
-    lateinit var repo: StreamChatRepository
+    lateinit var repo: ChatRepo
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
     lateinit var channelRepo: ChannelRepo
@@ -63,7 +57,7 @@ class ChatRepoEventTest {
             ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
         data = TestDataHelper()
 
-        repo = StreamChatRepository(client,data.user1, db)
+        repo = ChatRepo(client,data.user1, db)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

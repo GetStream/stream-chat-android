@@ -29,11 +29,61 @@ Stream's Chat SDKs for Android have 3 libraries:
 
 Here are the most common ways to use the library
 
+## Create a chat repo
+
+```
+val repo = ChatRepo(context, user, client, offlineEnabled)
+```
+
 ## Unread counts
+
+```
+repo.totalUnreadCount.observe
+repo.channelUnreadCount.observe
+```
 
 ## Messages for a channel
 
+This shows how to fetch messages and other common channel level livedata objects
+
+```
+val channelRepo = repo.channel("messaging", "test123")
+channelRepo.watch()
+channelRepo.messages.observe
+channelRepo.threads.observe
+channelRepo.reads.observe
+channelRepo.typing.observe
+channelRepo.loading.observe
+```
+
+## Loading
+
+The loading observable returns an loading data class that specifies the type of loading and what's loading
+
+- READY
+- LOADING_FIRST
+- LOADING_NEWER
+- LOADING_LATER
+
+## Sending a message
+
+Messages are immediately stored in local storage and your livedata objects.
+Afterwards they are retried using the retry policy.
+
+```
+channelRepo.sendMessage(Message(user, "hello world"))
+```
+
 ## Querying channels
+
+```
+val filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
+val sort : QuerySort? = null
+queryRepo = repo.queryChannels(filter, sort)
+
+// TODO this is a bit ugly
+queryRepo.query(QueryChannelsRequest(offset=0, limit=10, messageLimit=100))
+```
 
 # Development
 

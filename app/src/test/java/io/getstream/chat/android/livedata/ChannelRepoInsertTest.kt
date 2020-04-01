@@ -26,7 +26,7 @@ import java.lang.Thread.sleep
 class ChannelRepoInsertTest {
 
     lateinit var database: ChatDatabase
-    lateinit var repo: StreamChatRepository
+    lateinit var repo: ChatRepo
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
     lateinit var channelRepo: ChannelRepo
@@ -55,7 +55,7 @@ class ChannelRepoInsertTest {
             ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
         data = TestDataHelper()
 
-        repo = StreamChatRepository(client, data.user1, db)
+        repo = ChatRepo(client, data.user1, db)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

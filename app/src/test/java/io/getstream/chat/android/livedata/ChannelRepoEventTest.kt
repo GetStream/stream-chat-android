@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 class ChatChannelRepoEventTest {
 
     lateinit var database: ChatDatabase
-    lateinit var repo: StreamChatRepository
+    lateinit var repo: ChatRepo
     lateinit var client: ChatClient
     lateinit var data: TestDataHelper
     lateinit var channelRepo: ChannelRepo
@@ -42,7 +42,7 @@ class ChatChannelRepoEventTest {
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
 
         //waitForSetUser(client, user, token)
-        repo = StreamChatRepository(ApplicationProvider.getApplicationContext(), user, client)
+        repo = ChatRepo(ApplicationProvider.getApplicationContext(), user, client)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

@@ -7,7 +7,7 @@ import java.util.*
 
 class TestDataHelper {
 
-    val user1 = User("test-user-1")
+    val user1 = User("broad-lake-3")
     val user2 = User("test-user-2")
 
     val watcher1 = Watcher("test").apply { user = user1 }
@@ -62,5 +62,8 @@ class TestDataHelper {
 
     val user1Read = MessageReadEvent().apply { user=user1; createdAt= Date() }
     val memberAddedToChannelEvent = MemberAddedEvent().apply { member=member2; cid=channel1.cid }
+
+    // TODO: figure out the structure of the added To channel event
+    val notificationAddedToChannelEvent = NotificationAddedToChannelEvent().apply {member=member1; channel=channel1}
 
 }

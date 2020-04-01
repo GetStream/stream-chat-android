@@ -6,11 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
@@ -39,7 +40,7 @@ import java.util.*
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class StreamChatRepository(
+class ChatRepo(
     var client: ChatClient,
     var currentUser: User
 ) {
@@ -71,7 +72,7 @@ class StreamChatRepository(
 
     // TODO: make this more dry
 
-    constructor(context: Context, currentUser: User, client: ChatClient) : this(client, currentUser) {
+    constructor(context: Context, currentUser: User, client: ChatClient, offlineEnabled: Boolean = true) : this(client, currentUser) {
         val database = ChatDatabase.getDatabase(context, currentUser.id)
         channelQueryDao = database.queryChannelsQDao()
         userDao = database.userDao()
@@ -151,7 +152,7 @@ class StreamChatRepository(
         mutableMapOf()
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMap: MutableMap<QueryChannelsEntity, ChatQueryChannelRepo> =
+    var activeQueryMap: MutableMap<QueryChannelsEntity, QueryChannelsRepo> =
         mutableMapOf()
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
@@ -186,13 +187,9 @@ class StreamChatRepository(
             }
         }
 
-        // notifications of messages on channels you're a member of but not watching
-        if (event is NotificationAddedToChannelEvent) {
-            // this one is trickier. we need to insert the message
-            // we also need to add the channel to the query which is tricker...
-            for ((_, queryRepo) in activeQueryMap) {
-                queryRepo.handleMessageNotification(event)
-            }
+        // queryRepo mainly monitors for the notification added to channel event
+        for ((_, queryRepo) in activeQueryMap) {
+            queryRepo.handleEvent(event)
         }
 
         if (offlineEnabled) {
@@ -289,6 +286,12 @@ class StreamChatRepository(
         eventSubscription?.let { it.unsubscribe() }
     }
 
+    fun channel(cid: String): ChannelRepo {
+        val parts = cid.split(":")
+        check(parts.size==2) {"Received invalid cid, expected format messaging:123, got ${cid}"}
+        return channel(parts[0], parts[1])
+    }
+
     /**
      * repo.channel("messaging", "12") return a ChatChannelRepository
      */
@@ -344,10 +347,12 @@ class StreamChatRepository(
      * - if we are online make the API call to update results
      */
     fun queryChannels(
-        queryChannelsEntity: QueryChannelsEntity
-    ): ChatQueryChannelRepo {
+        filter: FilterObject,
+        sort: QuerySort? = null
+    ): QueryChannelsRepo {
         // mark this query as active
-        val queryRepo = ChatQueryChannelRepo(queryChannelsEntity, client, this)
+        val queryChannelsEntity  = QueryChannelsEntity(filter).apply { this.sort=sort }
+        val queryRepo = QueryChannelsRepo(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
     }

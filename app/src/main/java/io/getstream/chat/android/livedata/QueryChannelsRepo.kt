@@ -1,9 +1,10 @@
 package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
+import androidx.lifecycle.MutableLiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
@@ -20,12 +21,14 @@ import kotlinx.coroutines.launch
  * updates whenever a new message is added to one of the channels, the read state changes for members of these channels,
  * messages are edited or updated, or the channel is updated.
  */
-class ChatQueryChannelRepo(var query: QueryChannelsEntity, var client: ChatClient, var repo: StreamChatRepository) {
+class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, var repo: ChatRepo) {
     /**
      * A livedata object with the channels matching this query.
      */
-    lateinit var channels: LiveData<List<Channel>>
-    private val logger = ChatLogger.get("ChatQueryRepo")
+    private val _channels = MutableLiveData<List<Channel>>()
+    var channels: LiveData<List<Channel>> = _channels
+
+    private val logger = ChatLogger.get("QueryChannelsRepo")
 
     // TODO: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
@@ -34,40 +37,41 @@ class ChatQueryChannelRepo(var query: QueryChannelsEntity, var client: ChatClien
         }
     }
 
+    fun handleEvent(event: ChatEvent) {
+        if (event is NotificationAddedToChannelEvent) {
+            handleMessageNotification(event)
+        }
+    }
+
     /**
      * Run the given queryChannels request and update the channels livedata object
      */
     fun query(request: QueryChannelsRequest) {
-        channels = liveData(Dispatchers.IO) {
-            // start by getting the query results from offline storage
-            val query = repo.selectQuery(query.id)
-            // TODO: we should use a transform so it's based on the livedata perhaps?
-            if (query != null) {
-                val channels = repo.selectAndEnrichChannels(query.channelCIDs)
-
-
-                emit(channels.toList())
-            }
+        GlobalScope.launch(Dispatchers.IO) {
+            _query(request)
+        }
+    }
+    suspend fun _query(request: QueryChannelsRequest) {
+        // start by getting the query results from offline storage
+        val query = repo.selectQuery(query.id)
+        if (query != null) {
+            val channels = repo.selectAndEnrichChannels(query.channelCIDs)
+            _channels.postValue(channels)
+        }
+        val online = repo.isOnline()
+        if (online) {
             // next run the actual query
-            client.queryChannels(request).enqueue {
-                // check for an error
-                if (!it.isSuccess) {
-                    repo.addError(it.error())
-                }
+            val response = client.queryChannels(request).execute()
+
+            // check for an error
+            if (!response.isSuccess) {
+                repo.addError(response.error())
+            } else {
                 // store the results in the database
-                val channelsResponse = it.data()
-
-                GlobalScope.launch(Dispatchers.IO) {
-                    repo.storeStateForChannels(channelsResponse)
-                }
-
-
-
-                //TODO: either emit or rely on livedata at the storage level to make this work
-
-
+                val channelsResponse = response.data()
+                _channels.postValue(channelsResponse)
+                repo.storeStateForChannels(channelsResponse)
             }
-
         }
     }
 }
