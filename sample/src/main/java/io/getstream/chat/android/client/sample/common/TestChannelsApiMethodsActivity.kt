@@ -30,9 +30,26 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val client = App.client
     val channelId = "general"
     val channelType = "team"
-    val userId = "bender"
+
     var chatSub: Subscription? = null
     var watchingChannel: Channel? = null
+
+    val benderUserId = "bender"
+
+    val benderToken =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
+
+    val benderZUserId = "bender-z"
+
+    val benderZToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXoifQ.ZGXziY6D_Stv57n3elJrLi-3DulawwSXw-IZk_w2zoI"
+
+    val benderXUserId = "bender-x"
+
+    val benderXToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXgifQ.LDgXkymWSYSq0GD6oosc0PNpUytR8Md9m1bvJLl1QCY"
+
+    val benderFUserId = "bender-f"
+
+    val benderFToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLWYifQ.7xHlQUI276vLSd_0r5TqqPxjEjwOYr6kelhODLRgUs4\n"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,13 +70,12 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             }
         }
 
-        val token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        val user = User(userId)
-        user.name = "some-name"
 
-        client.setUser(user, token, object : InitConnectionListener() {
+        val user = User(benderFUserId)
+        user.extraData["name"] = benderFUserId
+
+        client.setUser(user, benderFToken, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val updatedUser = data.user
                 val connectionId = data.connectionId
@@ -183,23 +199,27 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
     private fun queryChannels() {
 
-        val filter = and(eq("type", "messaging"), `in`("members", userId))
+        val filter = and(eq("type", "messaging"), `in`("members", benderUserId))
 
         client.queryChannels(
             QueryChannelsRequest(filter, 0, 1)
         ).enqueue {
 
-            val channels = it.data()
-            val channel = channels[0]
-            val type = channel.type
-            val id = channel.id
+            if(it.isSuccess){
+                val channels = it.data()
+                val channel = channels[0]
+                val type = channel.type
+                val id = channel.id
 
-            val controller = client.channel(type, id)
-            controller.watch().enqueue {
-                if (it.isSuccess) {
+                val controller = client.channel(type, id)
+                controller.watch().enqueue {
+                    if (it.isSuccess) {
 
+                    }
                 }
             }
+
+
 
             echoResult(it)
         }
