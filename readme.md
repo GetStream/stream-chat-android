@@ -95,6 +95,5 @@ queryRepo.query(QueryChannelsRequest(offset=0, limit=10, messageLimit=100))
 
 # Questions/Research:
 
-- Should we call it a StreamChatRepository or something like StreamChatUtility (it's not 100% the same as the standard repository concept)
-- Converters can be very verbose is there a better way?
-- How to manually trigger an event on the low level client...
+- User updates are very complex since they are attached to channels, messages, reactions, read state etc. So making sure you update everything efficiently when a user changes their name is hard.
+
