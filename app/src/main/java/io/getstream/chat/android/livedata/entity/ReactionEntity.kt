@@ -33,13 +33,14 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
     var extraData = mutableMapOf<String, Any>()
 
     /** if the reaction has been synced to the servers */
-    var syncStatus: SyncStatus? = null
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     /** create a reactionEntity from a reaction object */
     constructor(r: Reaction): this(r.messageId, r.user!!.id, r.type) {
         score = r.score
         createdAt = r.createdAt
         extraData = r.extraData
+        syncStatus = r.syncStatus
     }
 
     /** converts a reaction entity into a Reaction */
@@ -49,6 +50,7 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
         r.extraData = extraData
         r.createdAt = createdAt
+        r.syncStatus = syncStatus
 
         return r
 

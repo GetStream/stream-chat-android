@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
@@ -172,7 +173,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
 
             if (repo.isOnline()) {
-                channelController.sendMessage(message)
+                val runnable = {
+                    channelController.sendMessage(message) as Call<Any>
+                }
+                repo.runAndRetry(runnable)
+
             }
         }
 
@@ -204,13 +209,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 repo.insertMessageEntity(it)
             }
 
+            if (repo.isOnline()) {
+                val runnable = {
+                    client.sendReaction(reaction) as Call<Any>
+                }
+                repo.runAndRetry(runnable)
+            }
+
         }
-
-
-        if (repo.isOnline()) {
-            client.sendReaction(reaction)
-        }
-
     }
 
     fun setWatcherCount(watcherCount: Int) {

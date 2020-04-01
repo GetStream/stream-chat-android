@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.ChannelStateEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 @Dao
 interface ChannelStateDao {
@@ -14,6 +15,11 @@ interface ChannelStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(channelStateEntities: List<ChannelStateEntity>)
 
+    @Query(
+        "SELECT * FROM stream_chat_channel_state " +
+                "WHERE stream_chat_channel_state.syncStatus IN (-1, 2)"
+    )
+    suspend fun selectSyncNeeded(): List<ChannelStateEntity>
 
     @Query(
         "SELECT * FROM stream_chat_channel_state " +

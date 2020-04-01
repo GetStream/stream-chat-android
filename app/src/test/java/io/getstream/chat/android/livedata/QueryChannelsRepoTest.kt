@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.eq
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
@@ -34,6 +35,7 @@ class QueryChannelsRepoTest {
     lateinit var db: ChatDatabase
     lateinit var queryRepo: QueryChannelsRepo
     lateinit var query: QueryChannelsEntity
+    lateinit var filter: FilterObject
 
 
     @get:Rule
@@ -72,7 +74,7 @@ class QueryChannelsRepoTest {
         // TODO: should this be part of the constructor?
         channelRepo.updateChannel(data.channel1)
 
-        val filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
+        filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
 
 
         queryRepo = repo.queryChannels(filter)
@@ -86,7 +88,7 @@ class QueryChannelsRepoTest {
 
     @Test
     fun newChannelAdded() {
-        val request = QueryChannelsRequest(query.filter, 0, 100, messageLimit = 100)
+        val request = QueryChannelsRequest(filter, 0, 100, messageLimit = 100)
         runBlocking(Dispatchers.IO) {queryRepo._query(request)}
         // TODO: mock the server response for the queryChannels...
         var channels = queryRepo.channels.getOrAwaitValue()

@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 
@@ -50,7 +51,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     var extraData = mutableMapOf<String, Any>()
 
     /** if the channel has been synced to the servers */
-    var syncStatus: Int? = null
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     /** create a ChannelStateEntity from a Channel object */
     constructor(c: Channel): this(c.type, c.id) {
@@ -59,6 +60,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         updatedAt = c.updatedAt
         deletedAt = c.deletedAt
         extraData = c.extraData
+        syncStatus = c.syncStatus
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -84,6 +86,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
         c.deletedAt = deletedAt
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
+        c.syncStatus = syncStatus
 
         c.members = members.values.map { it.toMember(userMap) }
 

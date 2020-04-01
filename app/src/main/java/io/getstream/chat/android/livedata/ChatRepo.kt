@@ -7,17 +7,20 @@ import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.Thread.sleep
 import java.util.*
@@ -53,6 +56,8 @@ class ChatRepo(
     private lateinit var channelConfigDao: ChannelConfigDao
     private val logger = ChatLogger.get("ChatRepo")
 
+    val retryPolicy: RetryPolicy = DefaultRetryPolicy()
+
     constructor(client: ChatClient, currentUser: User, database: ChatDatabase) : this(client, currentUser) {
         channelQueryDao = database.queryChannelsQDao()
         userDao = database.userDao()
@@ -86,8 +91,56 @@ class ChatRepo(
             loadConfigs()
         }
 
+        // verify that you're not connecting 2 different users
+        if (client.getCurrentUser()?.id != currentUser.id) {
+            throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
+        }
+
         // start listening for events
         startListening()
+
+    }
+
+
+    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
+        val result = runnable().execute()
+        if (result.isError) {
+            val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
+            val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
+
+            if (shouldRetry) {
+                if (timeout!= null) {
+                    delay(timeout.toLong())
+                }
+                runAndRetry(runnable, attempt+1)
+            }
+
+        }
+    }
+
+
+    fun createChannel(c: Channel)  {
+        // TODO should this return Call<Channel>?
+        c.createdAt = c.createdAt ?: Date()
+        c.syncStatus = SyncStatus.SYNC_NEEDED
+
+        GlobalScope.launch {
+            // update livedata
+            val channelRepo = channel(c.cid)
+            channelRepo.updateChannel(c)
+            val channelController = client.channel(c.type, c.id)
+
+            // Update Room State
+            insertChannel(c)
+
+            // make the API call and follow retry policy
+            val runnable = {
+                channelController.watch() as Call<Any>
+            }
+            runAndRetry(runnable)
+        }
+
+
 
     }
 
@@ -476,8 +529,7 @@ class ChatRepo(
         return messageEntities
     }
 
-    suspend fun retryFailedEntities() {
-        // fake the user map for enriching objects
+    suspend fun retryReactions(): List<ReactionEntity> {
         val user = client.getCurrentUser()!!
         val userMap: Map<String, User> = mutableMapOf(user.id to user)
 
@@ -485,10 +537,29 @@ class ChatRepo(
         for (reactionEntity in reactionEntities) {
             client.sendReaction(reactionEntity.toReaction(userMap))
         }
+        return reactionEntities
+    }
 
 
+    suspend fun retryChannels(): List<ChannelStateEntity> {
+        val user = client.getCurrentUser()!!
+        val userMap: Map<String, User> = mutableMapOf(user.id to user)
+
+        val channelEntities = channelStateDao.selectSyncNeeded()
+
+        for (channelEntity in channelEntities) {
+            val controller = client.channel(channelEntity.type, channelEntity.type)
+            val runnable = controller.watch()::execute
+            runnable()
+        }
+        return channelEntities
+    }
+
+    suspend fun retryFailedEntities() {
+        // retry channels, messages and reactions in that order..
+        retryChannels()
         retryMessages()
-        // TODO: support channels in version 1.1
+        retryReactions()
     }
 
 
