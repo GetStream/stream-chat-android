@@ -14,6 +14,8 @@ import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import io.getstream.chat.android.livedata.utils.waitForSetUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -83,9 +85,9 @@ class ChannelRepoReadPaginateTest {
         c.id = "test123"
         c.cid = "${c.type}:${c.id}"
         c.createdBy = User("john")
-        repo.insertUser(c.createdBy)
-        repo.insertUser(message.user)
-        repo.insertChannel(c)
+        runBlocking(Dispatchers.IO) { repo.insertUser(c.createdBy) }
+        runBlocking(Dispatchers.IO) {repo.insertUser(message.user) }
+        runBlocking(Dispatchers.IO) {repo.insertChannel(c) }
 
         //repo.insertMessage(message)
         Thread.sleep(1000)

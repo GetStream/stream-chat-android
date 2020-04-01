@@ -70,7 +70,7 @@ class ChatRepoEventTest {
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
         // TODO: should this be part of the constructor?
         channelRepo.updateChannel(data.channel1)
-        repo.insertChannel(data.channel1)
+        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1) }
     }
 
     @After
