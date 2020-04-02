@@ -676,7 +676,7 @@ public class DocumentationSamplesJava {
             }
 
             static void unwatch() {
-                channelController.stopTyping().enqueue();
+                channelController.stopTyping().enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -861,16 +861,16 @@ public class DocumentationSamplesJava {
 
         static class DeletingAndHidingChannel {
             {
-                channelController.delete().enqueue();
+                channelController.delete().enqueue(result -> Unit.INSTANCE);
             }
 
             static void hidingChannel() {
                 // hides the channel until a new message is added there
-                channelController.hide(false).enqueue();
+                channelController.hide(false).enqueue(result -> Unit.INSTANCE);
                 // shows a previously hidden channel
-                channelController.show().enqueue();
+                channelController.show().enqueue(result -> Unit.INSTANCE);
                 // hide the channel and clear the message history
-                channelController.hide(true).enqueue();
+                channelController.hide(true).enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -888,7 +888,7 @@ public class DocumentationSamplesJava {
                     }
                 });
 
-                channelController.unmuteCurrentUser().enqueue();
+                channelController.unmuteCurrentUser().enqueue(result -> Unit.INSTANCE);
 
                 channelController.muteUser(userId);
 
@@ -906,7 +906,7 @@ public class DocumentationSamplesJava {
 
                 client.queryChannels(
                         new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
-                ).enqueue();
+                ).enqueue(result -> Unit.INSTANCE);
 
                 // retrieve muted channels
 
@@ -914,12 +914,12 @@ public class DocumentationSamplesJava {
 
                 client.queryChannels(
                         new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
-                ).enqueue();
+                ).enqueue(result -> Unit.INSTANCE);
             }
 
             static void unmuteCurrentUser() {
                 // unmute channel for current user
-                channelController.unmuteCurrentUser().enqueue();
+                channelController.unmuteCurrentUser().enqueue(result -> Unit.INSTANCE);
             }
         }
 
@@ -947,7 +947,7 @@ public class DocumentationSamplesJava {
                     ChannelWatchRequest request = new ChannelWatchRequest();
                     request.withData(data);
 
-                    channelController.watch(request).enqueue();
+                    channelController.watch(request).enqueue(result -> Unit.INSTANCE);
 
                     // queryChannels allows you to listen to the members of the channels that are returned
                     // so this does the same thing as above and listens to online status changes for john and jack
@@ -956,7 +956,7 @@ public class DocumentationSamplesJava {
                     watchRequestWithPresence.setPresence(true);
                     watchRequestWithPresence.withData(data);
 
-                    channelController.watch(watchRequestWithPresence).enqueue();
+                    channelController.watch(watchRequestWithPresence).enqueue(result -> Unit.INSTANCE);
 
                     // queryUsers allows you to listen to user presence changes for john and jack
 
@@ -995,7 +995,7 @@ public class DocumentationSamplesJava {
                     ChannelWatchRequest request = new ChannelWatchRequest();
                     request.withData(data);
 
-                    channelController.watch(request).enqueue();
+                    channelController.watch(request).enqueue(result -> Unit.INSTANCE);
 
                     // queryChannels allows you to listen to the members of the channels that are returned
                     // so this does the same thing as above and listens to online status changes for john and jack
@@ -1004,7 +1004,7 @@ public class DocumentationSamplesJava {
                     watchRequestWithPresence.setPresence(true);
                     watchRequestWithPresence.withData(data);
 
-                    channelController.watch(watchRequestWithPresence).enqueue();
+                    channelController.watch(watchRequestWithPresence).enqueue(result -> Unit.INSTANCE);
 
                     // queryUsers allows you to listen to user presence changes for john and jack
 
@@ -1059,7 +1059,7 @@ public class DocumentationSamplesJava {
                 }
 
                 {
-                    channelController.markRead().enqueue();
+                    channelController.markRead().enqueue(result -> Unit.INSTANCE);
                 }
 
                 {
