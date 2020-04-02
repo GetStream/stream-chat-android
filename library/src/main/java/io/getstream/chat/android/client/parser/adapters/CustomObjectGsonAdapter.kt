@@ -34,15 +34,17 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                     field.isAccessible = true
                     val name = field.name
                     val value = field.get(obj)
-
-                    if (value == null) continue
-                    result[name] = value
+                    try {
+                        result[name] = value
+                    } catch (e: Exception) {
+                        throw ChatParsingError("unable to set field $name with value $value")
+                    }
                 }
 
                 gson.getAdapter(HashMap::class.java).write(writer, result)
             }
         } catch (e: Exception) {
-            throw ChatParsingError("custom object serialisation error", e)
+            throw ChatParsingError("custom object serialisation error of $clazz", e)
         }
     }
 
@@ -75,15 +77,18 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                     field.isAccessible = true
                     val rawValue = gson.toJson(map.remove(name))
                     val value = gson.getAdapter(field.type).fromJson(rawValue)
-                    if (value == null) continue
-                    field.set(result, value)
+                    try {
+                        field.set(result, value)
+                    } catch (e: Exception) {
+                        throw ChatParsingError("unable to set field $name with value $value")
+                    }
                 }
             }
             result.extraData = map
 
             return result
         } catch (e: Exception) {
-            throw ChatParsingError("custom object deserialisation error", e)
+            throw ChatParsingError("custom object deserialisation error of $clazz", e)
         }
     }
 }
