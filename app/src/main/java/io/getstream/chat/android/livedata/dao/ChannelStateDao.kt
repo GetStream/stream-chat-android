@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.ChannelStateEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 @Dao
 interface ChannelStateDao {

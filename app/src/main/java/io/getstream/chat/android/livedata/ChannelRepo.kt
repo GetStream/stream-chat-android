@@ -16,7 +16,6 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.bouncycastle.crypto.tls.ConnectionEnd.client
 import java.util.*
 
 

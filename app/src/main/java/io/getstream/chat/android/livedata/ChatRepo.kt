@@ -175,10 +175,7 @@ class ChatRepo(
      * the number of unread channels for the current user
      */
     val channelUnreadCount: LiveData<Int> = _channelUnreadCount
-
-
-    // TODO: implement retry policy
-
+    
     private val _errorEvent = MutableLiveData<io.getstream.chat.android.livedata.Event<ChatError>>()
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -419,18 +416,6 @@ class ChatRepo(
         channelConfigDao.insertMany(configEntities)
     }
 
-
-    fun messagesForChannel(
-        cid: String,
-        limit: Int = 100,
-        offset: Int = 0
-    ): LiveData<List<MessageEntity>> {
-        var messagesLiveData = liveData(Dispatchers.IO) {
-            val messages = messageDao.messagesForChannelLive(cid, limit, offset)
-            emitSource(messages)
-        }
-        return messagesLiveData
-    }
 
     suspend fun selectMessagesForChannel(
         cid: String,

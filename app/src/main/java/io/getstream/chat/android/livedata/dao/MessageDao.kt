@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -16,9 +15,6 @@ interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(messageEntity: MessageEntity)
-
-    @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
-    fun messagesForChannelLive(cid: String, limit: Int = 100, offset: Int = 0): LiveData<List<MessageEntity>>
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit OFFSET :offset")
     fun messagesForChannel(cid: String, limit: Int = 100, offset: Int = 0): List<MessageEntity>
