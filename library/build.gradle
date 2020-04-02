@@ -102,7 +102,7 @@ dependencies {
     testImplementation "org.json:json:20190722"
 
 
-    api 'com.github.GetStream:stream-chat-android-client:1.0.5'
+    api 'com.github.GetStream:stream-chat-android-client:1.0.7'
 }
 
 task javadoc(type: Javadoc) {
