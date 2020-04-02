@@ -54,7 +54,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         ChatFonts chatFonts = Chat.getInstance().getFonts();
 
         User user = reads.get(0).getUser();
-        String image = user.getImage();
+        String image = user.getExtraValue("name", "");
         // Avatar
         CircularImageView imageView = new CircularImageView(getContext());
 

@@ -257,7 +257,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         if (style.isUserNameShow() && messageListItem.isTheirs()) {
             tv_username.setVisibility(View.VISIBLE);
-            tv_username.setText(message.getUser().getName());
+            tv_username.setText(message.getUser().getExtraValue("name", ""));
         } else {
             tv_username.setVisibility(View.GONE);
         }

@@ -472,7 +472,7 @@ public class MessageInputController {
                 binding.etMessage.setText("/" + ((Command) commands.get(position)).getName() + " ");
             else {
                 String messageStr = binding.etMessage.getText().toString();
-                String userName = ((User) commands.get(position)).getName();
+                String userName = ((User) commands.get(position)).getExtraValue("name", "");
                 String converted = StringUtility.convertMentionedText(messageStr, userName);
                 binding.etMessage.setText(converted);
             }
@@ -526,7 +526,8 @@ public class MessageInputController {
         for (int i = 0; i < members.size(); i++) {
             Member member = members.get(i);
             User user = member.getUser();
-            if (user.getName().toLowerCase().contains(string.toLowerCase()))
+            String name = user.getExtraValue("name", "");
+            if (name.toLowerCase().contains(string.toLowerCase()))
                 commands.add(user);
         }
     }

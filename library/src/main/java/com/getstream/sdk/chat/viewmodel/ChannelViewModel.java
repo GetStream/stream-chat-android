@@ -42,11 +42,6 @@ import kotlin.jvm.functions.Function1;
 
 import static java.util.UUID.randomUUID;
 
-/*
- * - store the channel data
- * - load more data
- * -
- */
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();
@@ -262,6 +257,16 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.threadParentPosition = threadParentPosition;
     }
 
+    private boolean isChildOfCurrentThread(Message message) {
+        if (!isThread()) return false;
+        String parentId = message.getParentId();
+        String type = message.getType();
+        if (parentId == null || parentId.isEmpty()) return false;
+        if (!type.equals(ModelType.message_reply)) return false;
+        String currentParentId = threadParentMessage.getValue().getId();
+        return parentId.equals(currentParentId);
+    }
+
     public boolean isThread() {
         return threadParentMessage.getValue() != null;
     }
@@ -386,71 +391,32 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected void initEventHandlers() {
 
-        subscriptions.add(Chat.getInstance().getClient().events().subscribe(new Function1<ChatEvent, Unit>() {
-            @Override
-            public Unit invoke(ChatEvent event) {
+        subscriptions.add(Chat.getInstance().getClient().events().subscribe(event -> {
 
-                Channel channel = event.getChannel();
+            logger.logI("new event:" + event.getType());
 
-                if (event instanceof NewMessageEvent) {
-                    upsertMessage(event.getMessage());
-                } else if (event instanceof UserStartWatchingEvent) {
+            Channel channel = event.getChannel();
 
-                } else if (event instanceof UserStopWatchingEvent) {
+            if (event instanceof NewMessageEvent) {
+                upsertMessage(event.getMessage());
+            } else if (event instanceof UserStartWatchingEvent) {
 
-                } else if (event instanceof ChannelUpdatedEvent) {
+            } else if (event instanceof UserStopWatchingEvent) {
 
-                } else if (event instanceof MessageUpdatedEvent) {
-                    updateMessage(event.message);
-                } else if (event instanceof MessageDeletedEvent) {
-                    deleteMessage(event.message);
-                } else if (event instanceof MessageReadEvent) {
+            } else if (event instanceof ChannelUpdatedEvent) {
 
+            } else if (event instanceof MessageUpdatedEvent) {
+                updateMessage(event.message);
+            } else if (event instanceof MessageDeletedEvent) {
+                deleteMessage(event.message);
+            } else if (event instanceof MessageReadEvent) {
 
-                    if (channel != null) {
-                        reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
-
-                        User currentUser = Chat.getInstance().getClient().getCurrentUser();
-                        String currentUserId = currentUser.getId();
-
-                        int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
-
-                        if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
-                            lastCurrentUserUnreadMessageCount = unreadMessageCount;
-                            currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                        }
-                    }
-
-
-                } else if (event instanceof ReactionNewEvent) {
-                    updateMessage(event.message);
-                } else if (event instanceof ReactionDeletedEvent) {
-                    updateMessage(event.message);
-                } else if (event instanceof TypingStartEvent) {
-                    if (!LlcMigrationUtils.isFromCurrentUser(event)) {
-                        User user = event.getUser();
-                        typingState.put(user.getId(), event);
-                        typingUsers.postValue(getCleanedTypingUsers());
-                    }
-                } else if (event instanceof TypingStopEvent) {
-                    if (!LlcMigrationUtils.isFromCurrentUser(event)) {
-                        User user = event.getUser();
-                        typingState.remove(user.getId());
-                        typingUsers.postValue(getCleanedTypingUsers());
-                    }
-                } else if (event instanceof MemberAddedEvent) {
-
-                } else if (event instanceof MemberRemovedEvent) {
-
-                } else if (event instanceof MemberUpdatedEvent) {
-
-                }
-
-                User currentUser = Chat.getInstance().getClient().getCurrentUser();
-                String currentUserId = currentUser.getId();
 
                 if (channel != null) {
-                    channelState.postValue(channel);
+                    reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
+
+                    User currentUser = Chat.getInstance().getClient().getCurrentUser();
+                    String currentUserId = currentUser.getId();
 
                     int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
 
@@ -460,8 +426,46 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                     }
                 }
 
-                return null;
+
+            } else if (event instanceof ReactionNewEvent) {
+                updateMessage(event.message);
+            } else if (event instanceof ReactionDeletedEvent) {
+                updateMessage(event.message);
+            } else if (event instanceof TypingStartEvent) {
+                if (!LlcMigrationUtils.isFromCurrentUser(event)) {
+                    User user = event.getUser();
+                    typingState.put(user.getId(), event);
+                    typingUsers.postValue(getCleanedTypingUsers());
+                }
+            } else if (event instanceof TypingStopEvent) {
+                if (!LlcMigrationUtils.isFromCurrentUser(event)) {
+                    User user = event.getUser();
+                    typingState.remove(user.getId());
+                    typingUsers.postValue(getCleanedTypingUsers());
+                }
+            } else if (event instanceof MemberAddedEvent) {
+
+            } else if (event instanceof MemberRemovedEvent) {
+
+            } else if (event instanceof MemberUpdatedEvent) {
+
             }
+
+            User currentUser = Chat.getInstance().getClient().getCurrentUser();
+            String currentUserId = currentUser.getId();
+
+            if (channel != null) {
+                channelState.postValue(channel);
+
+                int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
+
+                if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
+                    lastCurrentUserUnreadMessageCount = unreadMessageCount;
+                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
+                }
+            }
+
+            return null;
         }));
 
     }
@@ -492,14 +496,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     protected void upsertMessage(Message message) {
-        // doesn't touch the message order, since message.created_at can't change
-
-        if (message.getType().equals(ModelType.message_reply)
-                || !TextUtils.isEmpty(message.getParentId())) {
-            if (!isThread()
-                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
-                return;
-
+        if (isChildOfCurrentThread(message)) {
             List<Message> messagesCopy = threadMessages.getValue();
             for (int i = 0; i < threadMessages.getValue().size(); i++) {
                 if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
@@ -525,10 +522,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             if (!updated) {
                 messagesCopy.add(message);
+                updateMessageLiveData(messagesCopy);
+                markLastMessageRead();
             }
-
-            updateMessageLiveData(messagesCopy);
-            markLastMessageRead();
         }
     }
 
@@ -810,21 +806,18 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
 
-        Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(new Function1<Result<Channel>, Unit>() {
-            @Override
-            public Unit invoke(Result<Channel> channelResult) {
+        Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(channelResult -> {
 
-                Channel channel = channelResult.data();
+            Channel channel = channelResult.data();
 
-                if (channelResult.isSuccess()) {
-                    onChannelLoaded(channel);
-                } else {
-                    //TODO: show error message
-                }
-
-
-                return null;
+            if (channelResult.isSuccess()) {
+                onChannelLoaded(channel);
+            } else {
+                //TODO: show error message
             }
+
+
+            return null;
         });
     }
 
@@ -936,49 +929,24 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param message the Message sent
      */
     public Call<Message> sendMessage(Message message) {
-        // set the current user
-        // message.setUser(client().getUser());
-        // set the thread id if we are viewing a thread
 
         if (isThread()) {
             String parentMessageId = getThreadParentMessage().getValue().getId();
             message.setParentId(parentMessageId);
         }
 
-        //if (message.getSyncStatus() == LOCAL_ONLY) return;
-
         checkErrorOrPendingMessage();
         checkFailedMessage(message);
         stopTyping();
 
-        //TODO: llc check in memory offline
-
-        // Check uploading file
-//        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
-//            addMessage(message);
-//            return;
-//        }
-//
-//        if (message.getSyncStatus() == Sync.IN_MEMORY) {
-//            // insert the message into local storage
-//            client().getStorage().insertMessageForChannel(channel, message);
-//
-//            // add the message here
-//            addMessage(message);
-//        }
-
-        message.setCreatedAt(new Date());
-        message.setUser(Chat.getInstance().getClient().getCurrentUser());
-
-        addMessage(message);
-
         return Chat.getInstance().getClient()
                 .sendMessage(channelType, channelId, message)
                 .onSuccess(m -> {
-                    replaceMessage(message, m);
+                    upsertMessage(m);
+                    //replaceMessage(message, m);
                     return Unit.INSTANCE;
                 }).onError(chatError -> {
-                    updateFailedMessage(message);
+                    //updateFailedMessage(message);
                     return Unit.INSTANCE;
                 });
     }

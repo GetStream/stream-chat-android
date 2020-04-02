@@ -72,7 +72,7 @@ public class UserListItemAdapter extends BaseAdapter {
 
     private void configUIs(StreamItemUserBinding binding, User user) {
 //        binding.viewUserAvatar.setUser(user, style);
-        binding.tvName.setText(user.getName());
+        binding.tvName.setText(user.getExtraValue("name", ""));
 
         if (user.getOnline())
             binding.ivActiveMark.setVisibility(View.VISIBLE);
