@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
@@ -13,11 +14,13 @@ class Message : UserEntity {
     var text: String = ""
     val html: String = ""
 
+    @IgnoreSerialisation
     lateinit var user: User
 
     /** if the message has been synced to the servers */
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
+    @IgnoreSerialisation
     lateinit var channel: Channel
 
     var attachments = mutableListOf<Attachment>()
@@ -56,6 +59,8 @@ class Message : UserEntity {
 
     var commandInfo: Map<String, String>? = null
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     var extraData = mutableMapOf<String, Any>()
 
     var isStartDay = false

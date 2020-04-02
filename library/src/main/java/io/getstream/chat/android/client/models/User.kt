@@ -9,8 +9,6 @@ import java.util.*
 
 class User(var id: String = "") : UserEntity, CustomObject {
 
-    var name: String = ""
-    var image: String = ""
     var role: String = ""
 
     @IgnoreSerialisation
@@ -18,9 +16,7 @@ class User(var id: String = "") : UserEntity, CustomObject {
 
     var invisible: Boolean = false
     var banned: Boolean = false
-    var totalUnreadCount: Int = 0
-    var unreadChannels: Int = 0
-    var mutes: List<Mute> = mutableListOf()
+
     var devices: List<Device> = mutableListOf()
 
     @IgnoreSerialisation
@@ -32,6 +28,25 @@ class User(var id: String = "") : UserEntity, CustomObject {
     @IgnoreSerialisation
     @SerializedName("last_active")
     var lastActive: Date? = null
+
+
+    //region current user fields
+    @IgnoreSerialisation
+    @SerializedName("total_unread_count")
+    var totalUnreadCount: Int = 0
+
+    @IgnoreSerialisation
+    @SerializedName("unread_channels")
+    var unreadChannels: Int = 0
+
+    @IgnoreSerialisation
+    @SerializedName("unread_count")
+    var unreadCount: Int = 0
+
+    @IgnoreSerialisation
+    @SerializedName("channel_mutes")
+    var mutes: List<Mute> = mutableListOf()
+    //endregion
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

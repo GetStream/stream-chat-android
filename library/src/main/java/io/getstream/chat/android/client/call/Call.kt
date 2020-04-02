@@ -19,7 +19,4 @@ interface Call<T> {
     fun onSuccess(handler: (T) -> Unit): Call<T>
     fun <K> zipWith(call: Call<K>): Call<Pair<T, K>>
     fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>>
-    fun enqueue() {
-
-    }
 }

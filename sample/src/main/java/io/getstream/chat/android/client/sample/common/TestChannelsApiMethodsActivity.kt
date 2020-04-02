@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.models.Filters.and
@@ -29,9 +30,29 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val client = App.client
     val channelId = "general"
     val channelType = "team"
-    val userId = "bender"
+
     var chatSub: Subscription? = null
     var watchingChannel: Channel? = null
+
+    val benderUserId = "bender"
+
+    val benderToken =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
+
+    val benderZUserId = "bender-z"
+
+    val benderZToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXoifQ.ZGXziY6D_Stv57n3elJrLi-3DulawwSXw-IZk_w2zoI"
+
+    val benderXUserId = "bender-x"
+
+    val benderXToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXgifQ.LDgXkymWSYSq0GD6oosc0PNpUytR8Md9m1bvJLl1QCY"
+
+    val benderFUserId = "bender-f"
+
+    val benderFToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLWYifQ.7xHlQUI276vLSd_0r5TqqPxjEjwOYr6kelhODLRgUs4\n"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +73,13 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             }
         }
 
-        val token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-        client.setUser(User(userId), token, object : InitConnectionListener() {
+        val user = User(benderUserId)
+        user.extraData["name"] = benderUserId
+
+        client.setUser(user, benderToken, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
-                val user = data.user
+                val updatedUser = data.user
                 val connectionId = data.connectionId
             }
 
@@ -90,6 +112,48 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnMarkReadMessage.setOnClickListener { markReadMessage() }
         btnWatchChannel.setOnClickListener { watchChannel() }
         btnGetMessage.setOnClickListener { getMessage() }
+        btnCheckTyping.setOnClickListener { checkTyping() }
+        btnUpdateMessage.setOnClickListener { updatedMessage() }
+    }
+
+    private fun updatedMessage() {
+        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1)).enqueue { queryResult ->
+
+            if (queryResult.isSuccess) {
+                val channel = queryResult.data()[0]
+                val message = channel.messages[0]
+                message.text = message.text + "a"
+                client.updateMessage(message).enqueue { updateResult ->
+                    if (updateResult.isSuccess) {
+
+                    }
+                }
+            }
+
+        }
+    }
+
+    private fun checkTyping() {
+        client.events()
+            .filter(TypingStartEvent::class.java)
+            .subscribe {
+                println("checkTyping: received")
+            }
+
+        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1)).enqueue {
+            val channel = it.data()[0]
+
+            val controller = client.channel(channel.cid)
+
+            controller.watch().enqueue {
+                controller.keystroke().enqueue {
+                    if (it.isSuccess)
+                        println("checkTyping: sent")
+                    else
+                        it.error().printStackTrace()
+                }
+            }
+        }
     }
 
     private fun watchChannel() {
@@ -155,23 +219,27 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
     private fun queryChannels() {
 
-        val filter = and(eq("type", "messaging"), `in`("members", userId))
+        val filter = and(eq("type", "messaging"), `in`("members", benderUserId))
 
         client.queryChannels(
             QueryChannelsRequest(filter, 0, 1)
         ).enqueue {
 
-            val channels = it.data()
-            val channel = channels[0]
-            val type = channel.type
-            val id = channel.id
+            if (it.isSuccess) {
+                val channels = it.data()
+                val channel = channels[0]
+                val type = channel.type
+                val id = channel.id
 
-            val controller = client.channel(type, id)
-            controller.watch().enqueue {
-                if (it.isSuccess) {
+                val controller = client.channel(type, id)
+                controller.watch().enqueue {
+                    if (it.isSuccess) {
 
+                    }
                 }
             }
+
+
 
             echoResult(it)
         }

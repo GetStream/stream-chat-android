@@ -20,6 +20,7 @@ data class Result<T>(
     }
 
     fun error(): ChatError {
-        return error!!
+        if (error == null) throw IllegalStateException("Result is successful, no error. Check result.isSuccess before getting error: result.error()")
+        return error
     }
 }

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client
 
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.*
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
@@ -18,7 +17,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-open class ChatModules(val config: ChatClientConfig) {
+internal open class ChatModules(val config: ChatClientConfig) {
 
     private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }

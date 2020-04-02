@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.parser.IgnoreDeserialisation
+import io.getstream.chat.android.client.parser.IgnoreSerialisation
 
 
 class Attachment {
@@ -30,5 +32,7 @@ class Attachment {
     var name: String? = null
     var fallback: String? = null
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     var extraData = mutableMapOf<String, Any>()
 }
