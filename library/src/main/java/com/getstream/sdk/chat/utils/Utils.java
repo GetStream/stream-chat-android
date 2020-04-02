@@ -269,9 +269,13 @@ public class Utils {
         return attachments;
     }
 
-    public static String getMimeType(String url) {
-        String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    public static String getMimeType(File file) {
+        return getMimeType(file.getPath());
+    }
+
+    public static String getMimeType(String filePath) {
+        String type = "";
+        String extension = MimeTypeMap.getFileExtensionFromUrl(filePath);
         if (extension != null) {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }

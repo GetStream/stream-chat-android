@@ -67,7 +67,7 @@ class UploadManager {
             }
         };
 
-        if (data.mimeType.contains("image")) {
+        if (data.isImage()) {
             Chat.getInstance().getClient().sendImage(type, id, data.file, progressCallback);
         } else {
             Chat.getInstance().getClient().sendFile(type, id, data.file, progressCallback);
