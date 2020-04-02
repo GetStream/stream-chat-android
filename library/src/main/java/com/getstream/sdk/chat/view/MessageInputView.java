@@ -365,12 +365,9 @@ public class MessageInputView extends RelativeLayout {
     }
 
     protected void sendMessage(Message message) {
-        onSendMessage(message).enqueue(new Function1<Result<Message>, Unit>() {
-            @Override
-            public Unit invoke(Result<Message> result) {
-                handleSentMessage(result);
-                return null;
-            }
+        onSendMessage(message).enqueue(result -> {
+            handleSentMessage(result);
+            return null;
         });
     }
 

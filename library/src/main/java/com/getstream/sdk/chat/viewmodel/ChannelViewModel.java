@@ -5,14 +5,12 @@ import android.text.TextUtils;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.LlcMigrationUtils;
-import com.getstream.sdk.chat.utils.MessageListItemLiveData;
-import com.getstream.sdk.chat.utils.ResultCallback;
+import com.getstream.sdk.chat.utils.*;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -31,6 +29,7 @@ import io.getstream.chat.android.client.api.models.ChannelWatchRequest;
 import io.getstream.chat.android.client.api.models.Pagination;
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
@@ -943,9 +942,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 .sendMessage(channelType, channelId, message)
                 .onSuccess(m -> {
                     upsertMessage(m);
-                    //replaceMessage(message, m);
                     return Unit.INSTANCE;
                 }).onError(chatError -> {
+                    Utils.showMessage(getApplication(), R.string.stream_message_failed_send_toast);
                     //updateFailedMessage(message);
                     return Unit.INSTANCE;
                 });
@@ -966,7 +965,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         // Check Error or Pending Messages
         checkErrorOrPendingMessage();
 
-        return Chat.getInstance().getClient().updateMessage(message);
+        return Chat.getInstance().getClient().updateMessage(message).onSuccess(message1 -> {
+            upsertMessage(message1);
+            return Unit.INSTANCE;
+        }).onError(chatError -> {
+            Utils.showMessage(getApplication(), R.string.stream_message_failed_edit_toast);
+            return Unit.INSTANCE;
+        });
     }
 
     /**

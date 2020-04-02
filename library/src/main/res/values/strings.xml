@@ -38,6 +38,8 @@
     <!-- Message Status -->
     <string name="stream_delete_message">This message was deleted.</string>
     <string name="stream_message_failed_send">MESSAGE FAILED ּ• CLICK TO TRY AGAIN</string>
+    <string name="stream_message_failed_send_toast">Unable to send message</string>
+    <string name="stream_message_failed_edit_toast">Unable to edit message</string>
     <string name="stream_message_invalid_command">UNSENT ּ• INVALID COMMAND</string>
     <string name="stream_message_invalid_response">Response or message is empty.</string>
     <!--Thread-->
