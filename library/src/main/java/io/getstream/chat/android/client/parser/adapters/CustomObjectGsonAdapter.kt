@@ -34,6 +34,8 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                     field.isAccessible = true
                     val name = field.name
                     val value = field.get(obj)
+
+                    if (value == null) continue
                     result[name] = value
                 }
 
@@ -72,7 +74,9 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                 if (map.containsKey(name)) {
                     field.isAccessible = true
                     val rawValue = gson.toJson(map.remove(name))
-                    field.set(result, gson.getAdapter(field.type).fromJson(rawValue))
+                    val value = gson.getAdapter(field.type).fromJson(rawValue)
+                    if (value == null) continue
+                    field.set(result, value)
                 }
             }
             result.extraData = map
