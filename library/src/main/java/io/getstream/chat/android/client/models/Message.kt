@@ -13,6 +13,7 @@ class Message : UserEntity {
     var text: String = ""
     val html: String = ""
 
+    @IgnoreSerialisation
     lateinit var user: User
 
     /** if the message has been synced to the servers */
