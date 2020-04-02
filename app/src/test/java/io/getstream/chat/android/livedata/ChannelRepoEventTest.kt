@@ -122,9 +122,9 @@ class ChatChannelRepoEventTest {
         // TODO: improve thread handling
         channelRepo.handleEvent(data.newMessageEvent)
         channelRepo.handleEvent(data.newMessageWithThreadEvent)
-        val parentId = data.newMessageWithThreadEvent.message.parentId
-        val threads = channelRepo.threads.getOrAwaitValue()
-        val messages = threads[data.newMessageWithThreadEvent.message.parentId]
+        val parentId = data.newMessageWithThreadEvent.message.parentId!!
+
+        val messages = channelRepo.getThread(parentId).getOrAwaitValue()
         Truth.assertThat(messages?.size).isEqualTo(2)
     }
 

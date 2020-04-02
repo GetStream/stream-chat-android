@@ -74,7 +74,7 @@ class ChannelRepoInsertTest {
     fun sendMessage() {
         // send the message while offline
         repo.setOffline()
-        runBlocking { repo.insertChannel(data.channel1) }
+        runBlocking(Dispatchers.IO) { repo.insertChannel(data.channel1) }
         channelRepo.sendMessage(data.message1)
         // get the message and channel state both live and offline versions
         sleep(100)

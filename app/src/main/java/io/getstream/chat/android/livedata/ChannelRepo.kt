@@ -16,6 +16,7 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.bouncycastle.crypto.tls.ConnectionEnd.client
 import java.util.*
 
 
@@ -52,7 +53,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         it.values.sortedBy { it.createdAt }
     }
 
-    // TODO: should we expose a loading and loading more object?
+    // TODO: support user references and updating user references
 
     private val _channel = MutableLiveData<Channel>()
     /** LiveData object with the channel information (members, data etc.) */
@@ -91,23 +92,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val loadingNewerMessages : LiveData<Boolean> = _loadingNewerMessages
 
 
-    // TODO: this is not great, individual livedata objects would be better
-    val threads = Transformations.map(_messages) {
-        val sorted = it.values.sortedBy { it.createdAt }
-        val threads = mutableMapOf<String, MutableList<Message>>()
-        for (message in sorted) {
-            var parentId: String = message.parentId ?: ""
-            if (message.parentId.isNullOrBlank()) {
-                parentId = message.id
-            }
-            if (threads[parentId] == null) {
-                threads[parentId] = mutableListOf()
-            }
-            threads[parentId]?.add(message)
-        }
-        threads
+    val _threads : MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
+
+    fun getThread(threadId: String): LiveData<List<Message>> {
+        val threadMessageMap = _threads.getOrDefault(threadId, MutableLiveData(mutableMapOf()))
+        return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt }}
     }
 
+    // TODO: test me
     suspend fun loadOlderMessages(limit: Int = 30) {
         _loadingOlderMessages.value = true
         val messageMap = _messages.value ?: mutableMapOf()
@@ -230,6 +222,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
+    // TODO: test me
     fun sendReaction(reaction: Reaction) {
         GlobalScope.launch {
             // insert the message into local storage
@@ -263,16 +256,50 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         upsertMessages(listOf<Message>(message))
     }
 
+    fun getMessage(messageId: String): Message? {
+        val copy = _messages.value ?: mutableMapOf()
+        val message = copy.get(messageId)
+        return message
+    }
+
     fun upsertMessages(messages: List<Message>) {
         val copy = _messages.value ?: mutableMapOf()
         for (message in messages) {
-            copy.put(message.id, message)
+            copy[message.id] = message
+            // handle threads
+            val parentId = message.parentId ?: ""
+            if (!parentId.isEmpty()) {
+                var threadMessages = mutableMapOf<String, Message>()
+                if (_threads.contains(parentId)) {
+                    threadMessages = _threads[parentId]!!.value!!
+                } else {
+                    val parent = getMessage(parentId)
+                    parent?.let { threadMessages.set(it.id, it) }
+                }
+                threadMessages.set(message.id, message)
+                _threads[parentId] = MutableLiveData(threadMessages)
+            }
         }
         _messages.value = copy
     }
 
+    // TODO: test me
     fun clean() {
         // Cleanup typing events that are older than 15 seconds
+        val copy = _typing.value ?: mutableMapOf()
+        var changed = false
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.SECOND, -15);
+        val old = calendar.time
+        for ((userId, typing) in copy) {
+            if (typing.receivedAt.before(old)) {
+                copy.remove(userId)
+                changed = true
+            }
+        }
+        if (changed) {
+            _typing.value = copy
+        }
     }
 
     fun setTyping(userId: String, event: ChatEvent?) {
@@ -289,7 +316,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         event.channel?.watcherCount?.let {
             setWatcherCount(it)
         }
-        // TODO: the current event system leads to a lot of !! in the codebase
         when (event) {
             is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
                 upsertMessage(event.message)
@@ -302,7 +328,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
             is MemberAddedEvent, is MemberUpdatedEvent, is NotificationAddedToChannelEvent -> {
                 // add /remove the members etc
-                // TODO: what are members sorted on?
                 upsertMember(event.member!!)
             }
             is UserStartWatchingEvent -> {

@@ -98,3 +98,4 @@ queryRepo.query(QueryChannelsRequest(offset=0, limit=10, messageLimit=100))
 - User updates are very complex since they are attached to channels, messages, reactions, read state etc. So making sure you update everything efficiently when a user changes their name is hard.
 - createChannel, sendMessage & sendReaction need some sort of callback system. Do we use a simple callback or something more like Call<T> like we do in the LLC?
 - recover flow depends on design of the backend...
+- Dispatchers.IO can be set in many different places in the code. What's the best place?
