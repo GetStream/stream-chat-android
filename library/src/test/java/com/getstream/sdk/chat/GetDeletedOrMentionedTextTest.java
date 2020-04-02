@@ -21,10 +21,10 @@ public class GetDeletedOrMentionedTextTest {
         List<User>mentionedUsers = new ArrayList<>();
 
         User user1 = new User("steep-moon-9");
-        user1.setName("Steep moon");
+        user1.getExtraData().put("name", "Steep moon");
 
         User user2 = new User("broken-waterfall-5");
-        user2.setName("Broken waterfall");
+        user2.getExtraData().put("name", "Broken waterfall");
 
         mentionedUsers.add(user1);
         mentionedUsers.add(user2);
@@ -42,7 +42,7 @@ public class GetDeletedOrMentionedTextTest {
         List<User>mentionedUsers = new ArrayList<>();
 
         User user = new User("steep-moon-9");
-        user.setName("Steep moon");
+        user.getExtraData().put("name", "Steep moon");
         mentionedUsers.add(user);
         message.getMentionedUsers().addAll(mentionedUsers);
 
