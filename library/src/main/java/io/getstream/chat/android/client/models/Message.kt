@@ -20,6 +20,7 @@ class Message : UserEntity {
     /** if the message has been synced to the servers */
     var syncStatus: SyncStatus? = null
 
+    @IgnoreSerialisation
     lateinit var channel: Channel
 
     var attachments = mutableListOf<Attachment>()
