@@ -41,15 +41,18 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
     val benderZUserId = "bender-z"
 
-    val benderZToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXoifQ.ZGXziY6D_Stv57n3elJrLi-3DulawwSXw-IZk_w2zoI"
+    val benderZToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXoifQ.ZGXziY6D_Stv57n3elJrLi-3DulawwSXw-IZk_w2zoI"
 
     val benderXUserId = "bender-x"
 
-    val benderXToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXgifQ.LDgXkymWSYSq0GD6oosc0PNpUytR8Md9m1bvJLl1QCY"
+    val benderXToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLXgifQ.LDgXkymWSYSq0GD6oosc0PNpUytR8Md9m1bvJLl1QCY"
 
     val benderFUserId = "bender-f"
 
-    val benderFToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLWYifQ.7xHlQUI276vLSd_0r5TqqPxjEjwOYr6kelhODLRgUs4\n"
+    val benderFToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLWYifQ.7xHlQUI276vLSd_0r5TqqPxjEjwOYr6kelhODLRgUs4\n"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,11 +74,10 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         }
 
 
+        val user = User(benderUserId)
+        user.extraData["name"] = benderUserId
 
-        val user = User(benderFUserId)
-        user.extraData["name"] = benderFUserId
-
-        client.setUser(user, benderFToken, object : InitConnectionListener() {
+        client.setUser(user, benderToken, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val updatedUser = data.user
                 val connectionId = data.connectionId
@@ -111,6 +113,24 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         btnWatchChannel.setOnClickListener { watchChannel() }
         btnGetMessage.setOnClickListener { getMessage() }
         btnCheckTyping.setOnClickListener { checkTyping() }
+        btnUpdateMessage.setOnClickListener { updatedMessage() }
+    }
+
+    private fun updatedMessage() {
+        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1)).enqueue { queryResult ->
+
+            if (queryResult.isSuccess) {
+                val channel = queryResult.data()[0]
+                val message = channel.messages[0]
+                message.text = message.text + "a"
+                client.updateMessage(message).enqueue { updateResult ->
+                    if (updateResult.isSuccess) {
+
+                    }
+                }
+            }
+
+        }
     }
 
     private fun checkTyping() {
@@ -205,7 +225,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             QueryChannelsRequest(filter, 0, 1)
         ).enqueue {
 
-            if(it.isSuccess){
+            if (it.isSuccess) {
                 val channels = it.data()
                 val channel = channels[0]
                 val type = channel.type
