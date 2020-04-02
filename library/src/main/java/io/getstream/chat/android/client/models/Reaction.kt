@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.api.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 
@@ -20,6 +21,8 @@ data class Reaction(
     var userId: String = ""
     @SerializedName("created_at")
     var createdAt: Date? = null
+
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

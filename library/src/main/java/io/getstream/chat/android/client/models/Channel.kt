@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.api.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
 
@@ -32,6 +33,8 @@ class Channel : CustomObject {
     var members: List<Member> = mutableListOf()
     var watchers: List<Watcher> = mutableListOf()
     var read: List<ChannelUserRead> = mutableListOf()
+
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

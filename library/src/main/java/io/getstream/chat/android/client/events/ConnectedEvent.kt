@@ -8,8 +8,6 @@ import io.getstream.chat.android.client.models.User
 class ConnectedEvent : ChatEvent() {
 
     lateinit var me: User
-    val member: Member? = null
-    val reaction: Reaction? = null
     var online = false
 
     @SerializedName("connection_id")

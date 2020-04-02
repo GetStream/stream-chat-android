@@ -16,7 +16,7 @@ class Message : UserEntity {
     lateinit var user: User
 
     /** if the message has been synced to the servers */
-    var syncStatus: SyncStatus? = null
+    var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     lateinit var channel: Channel
 
