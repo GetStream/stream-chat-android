@@ -46,8 +46,6 @@ public class App extends Application {
         //initDefaultChat();
         initCustomChat();
 
-
-
         Crashlytics.setString("apiKey", appConfig.getApiKey());
     }
 
@@ -114,10 +112,14 @@ public class App extends Application {
 
     private void initCustomChat() {
 
+
         String apiKey = appConfig.getApiKey();
         Context context = this;
 
         Chat chat = new Chat.Builder(apiKey, this)
+                .markdown((textView, text) -> {
+
+                })
                 .apiTimeout(appConfig.getApiTimeout())
                 .cdnTimeout(appConfig.getCdnTimeout())
                 .logLevel(ChatLogLevel.ALL)
