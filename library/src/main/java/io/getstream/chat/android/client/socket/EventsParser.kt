@@ -153,6 +153,10 @@ class EventsParser(
                 parser.fromJson(data, ChannelDeletedEvent::class.java)
             }
 
+            EventType.CHANNEL_VISIBLE -> {
+                parser.fromJson(data, ChannelVisible::class.java)
+            }
+
             //region Watching
 
             EventType.USER_WATCHING_START -> {
@@ -172,8 +176,48 @@ class EventsParser(
                 parser.fromJson(data, NotificationMarkReadEvent::class.java)
             }
 
+            EventType.NOTIFICATION_MESSAGE_NEW -> {
+                parser.fromJson(data, NotificationMessageNew::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITED -> {
+                parser.fromJson(data, NotificationInvited::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITE_ACCEPTED -> {
+                parser.fromJson(data, NotificationInviteAccepted::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITE_REJECTED -> {
+                parser.fromJson(data, NotificationInviteRejected::class.java)
+            }
+
+            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> {
+                parser.fromJson(data, NotificationRemovedFromChannel::class.java)
+            }
+
+            EventType.NOTIFICATION_MUTES_UPDATED -> {
+                parser.fromJson(data, NotificationMutesUpdated::class.java)
+            }
+
             EventType.HEALTH_CHECK -> {
                 parser.fromJson(data, HealthEvent::class.java)
+            }
+
+            EventType.USER_PRESENCE_CHANGED -> {
+                parser.fromJson(data, UserPresenceChanged::class.java)
+            }
+
+            EventType.USER_UPDATED -> {
+                parser.fromJson(data, UserUpdated::class.java)
+            }
+
+            EventType.USER_BANNED -> {
+                parser.fromJson(data, UserBanned::class.java)
+            }
+
+            EventType.USER_UNBANNED -> {
+                parser.fromJson(data, UserUnbanned::class.java)
             }
 
             else -> {
