@@ -10,6 +10,7 @@ class TestDataHelper {
     val user1 = User("broad-lake-3")
     val user1Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
     val user2 = User("test-user-2")
+    val user1updated = User("broad-lake-3").apply { extraData= mutableMapOf("color" to "green") }
 
     val watcher1 = Watcher("test").apply { user = user1 }
     val member1 = Member().apply { user = user1; role="user" }
@@ -58,7 +59,9 @@ class TestDataHelper {
     val newMessageWithThreadEvent = NewMessageEvent().apply { message=messageThread }
     val channelUpdatedEvent = ChannelUpdatedEvent().apply { channel=channel1Updated; cid=channel1Updated.cid }
     val user1TypingStarted = TypingStartEvent().apply{user=user1}
-    val user2TypingStarted = TypingStartEvent().apply{user=user2}
+    val user1TypingStartedOld = TypingStartEvent().apply{user=user1; createdAt=Date(2019, 1,1) }
+
+    val user2TypingStarted = TypingStartEvent().apply{user=user2; createdAt= Date()}
     val user1TypingStop = TypingStopEvent().apply{user=user1}
     val user2TypingStop = TypingStopEvent().apply{user=user2}
     val readEvent = MessageReadEvent().apply{message=message1;user=user1;cid=channel1.cid; createdAt=Date()}
@@ -68,5 +71,7 @@ class TestDataHelper {
 
     // TODO: figure out the structure of the added To channel event
     val notificationAddedToChannelEvent = NotificationAddedToChannelEvent().apply {member=member1; channel=channel1}
+
+    val user1UpdatedEvent= UserUpdated().apply{user=user1updated}
 
 }

@@ -25,46 +25,12 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatRepoEventTest {
-
-    lateinit var database: ChatDatabase
-    lateinit var repo: ChatRepo
-    lateinit var client: ChatClient
-    lateinit var data: TestDataHelper
-    lateinit var channelRepo: ChannelRepo
-    lateinit var db: ChatDatabase
-
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
+class ChatRepoEventTest: BaseTest() {
 
     @Before
     fun setup() {
-        client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext())
-            .logLevel(
-                ChatLogLevel.ALL
-            ).loggerHandler(TestLoggerHandler()).build()
-
-        val user = User("broad-lake-3")
-        val token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
-
-        waitForSetUser(
-            client,
-            user,
-            token
-        )
-        db = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
-        data = TestDataHelper()
-
-        repo = ChatRepo(client,data.user1, db)
-        repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
-            System.out.println("error event$it")
-        })
-        channelRepo = repo.channel(data.channel1.type, data.channel1.id)
-        // TODO: should this be part of the constructor?
-        channelRepo.updateChannel(data.channel1)
-        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1) }
+        client = createClient()
+        setupRepo(client, false)
     }
 
     @After

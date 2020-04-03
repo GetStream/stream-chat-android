@@ -61,11 +61,16 @@ class ChatChannelRepoEventTest: BaseTest() {
         Truth.assertThat(messages).isEqualTo(listOf(event.message))
     }
 
-//    @Test
-//    fun userUpdatedEvent() {
-//        channelRepo.handleEvent(data.newMessageEvent)
-//        // TODO this event is missing in LLC
-//    }
+    @Test
+    fun userChangesFavoriteColor() {
+        channelRepo.handleEvent(data.newMessageEvent)
+        channelRepo.handleEvent(data.reactionEvent)
+        channelRepo.handleEvent(data.user1UpdatedEvent)
+        val message = channelRepo.getMessage(data.message1.id)
+        Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
+        Truth.assertThat(message!!.latestReactions.first().user!!.extraData["color"]).isEqualTo("green")
+
+    }
 
     @Test
     fun memberAddedEvent() {

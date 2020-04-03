@@ -56,11 +56,14 @@ open class BaseTest {
     fun setupRepo(client: ChatClient, setUser: Boolean) {
         data = TestDataHelper()
 
-        waitForSetUser(
-            client,
-            data.user1,
-            data.user1Token
-        )
+        if (setUser) {
+            waitForSetUser(
+                client,
+                data.user1,
+                data.user1Token
+            )
+        }
+
         db = createRoomDb()
 
         repo = ChatRepo(client, data.user1, db)

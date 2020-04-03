@@ -102,14 +102,18 @@ class ChatRepo(
     suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
         val result = runnable().execute()
         if (result.isError) {
+
             val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
             val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
 
             if (shouldRetry) {
+                logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds")
                 if (timeout!= null) {
                     delay(timeout.toLong())
                 }
                 runAndRetry(runnable, attempt+1)
+            } else {
+                logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
             }
 
         }
@@ -258,19 +262,22 @@ class ChatRepo(
                 }
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
-                    // TODO: should we do this or update based the message based on reaction?
+                    // note that we need to use event.reaction and not event.message
+                    // event.message only has a subset of reactions
                     val message = selectMessageEntity(event.reaction!!.messageId)
                     message?.let {
                         val userId = event.reaction!!.user!!.id
                         it.addReaction(event.reaction!!, currentUser.id == userId)
                         insertMessageEntity(it)
                     }
-
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
                     insertMessage(event.message)
                     // TODO: this isn't right, use the same approach as with newReaction
+                }
+                is UserPresenceChanged, is UserUpdated -> {
+                    insertUser(event.user!!)
                 }
                 is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
                     // get the channel, update members, write the channel
@@ -627,8 +634,6 @@ class ChatRepo(
         val channelStates = selectAndEnrichChannels(listOf(channelId), messageLimit)
         return channelStates.getOrNull(0)
     }
-
-    // TODO: Chat repo should raise a big fat error if the currentUser != client.currentUser
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,

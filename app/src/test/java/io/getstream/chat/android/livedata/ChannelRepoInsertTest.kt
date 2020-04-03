@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.utils.TestDataHelper
@@ -23,45 +24,12 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelRepoInsertTest {
-
-    lateinit var database: ChatDatabase
-    lateinit var repo: ChatRepo
-    lateinit var client: ChatClient
-    lateinit var data: TestDataHelper
-    lateinit var channelRepo: ChannelRepo
-    lateinit var db: ChatDatabase
-
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
+class ChannelRepoInsertTest: BaseTest() {
 
     @Before
     fun setup() {
-        client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext())
-            .logLevel(
-                ChatLogLevel.ALL
-            ).loggerHandler(TestLoggerHandler()).build()
-
-        val user = User("broad-lake-3")
-        val token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
-
-        waitForSetUser(
-            client,
-            user,
-            token
-        )
-        db = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(), ChatDatabase::class.java).build()
-        data = TestDataHelper()
-
-        repo = ChatRepo(client, data.user1, db)
-        repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
-            System.out.println("error event$it")
-        })
-        channelRepo = repo.channel(data.channel1.type, data.channel1.id)
-        // TODO: should this be part of the constructor?
-        channelRepo.updateChannel(data.channel1)
+        client = createClient()
+        setupRepo(client, true)
     }
 
     @After
@@ -107,10 +75,34 @@ class ChannelRepoInsertTest {
 
     }
 
-    // TODO: Test sendReaction
-    // TODO: test markRead
-    // TODO: Test recover/resend
+    @Test
+    fun sendReaction() {
+        // TODO: fix this test
+        repo.setOffline()
+        runBlocking(Dispatchers.IO) { repo.insertChannel(data.channel1) }
+        runBlocking(Dispatchers.IO) { channelRepo.upsertMessage(data.message1) }
+        // send the reaction while offline
+        runBlocking(Dispatchers.IO) {channelRepo.sendReaction(data.reaction1)}
+    }
 
+    @Test
+    fun clean() {
+        // clean should remove old typing indicators
+        channelRepo.setTyping(data.user1.id, data.user1TypingStartedOld)
+        channelRepo.setTyping(data.user2.id, data.user2TypingStarted)
 
+        Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(2)
+        channelRepo.clean()
+        Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(1)
+    }
+
+    @Test
+    fun markRead() {
+        runBlocking(Dispatchers.IO) { repo.insertChannel(data.channel1) }
+        runBlocking(Dispatchers.IO) { channelRepo.upsertMessage(data.message1) }
+        // send the reaction while offline
+        //runBlocking(Dispatchers.IO) {channelRepo.markRead()}
+        // TODO implement mark read
+    }
 
 }

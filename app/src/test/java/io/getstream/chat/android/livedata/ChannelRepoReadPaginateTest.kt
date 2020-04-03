@@ -64,7 +64,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         //repo.insertMessage(message)
         Thread.sleep(1000)
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        channelRepo.watch()
+        runBlocking(Dispatchers.IO) { channelRepo._watch() }
         Thread.sleep(1000)
         ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         val messages = channelRepo.messages.getOrAwaitValue()

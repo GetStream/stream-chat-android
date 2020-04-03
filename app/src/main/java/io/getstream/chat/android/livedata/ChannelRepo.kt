@@ -100,7 +100,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun loadOlderMessages(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
-            // TODO check lessthan/more than sort etc.
             val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
             runChannelQuery(request)
         }
@@ -110,7 +109,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun loadNewerMessages(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
-            // TODO check lessthan/more than sort etc.
             val request = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
             runChannelQuery(request)
         }
@@ -142,34 +140,39 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun watch() {
+        GlobalScope.launch(Dispatchers.IO) {
+            _watch()
+        }
+    }
+
+    suspend fun _watch() {
         _loading.value = true
 
-        GlobalScope.launch(Dispatchers.IO) {
-            // first we load the data from room and update the messages and channel livedata
-            val channel = repo.selectAndEnrichChannel(cid, 100)
+        // first we load the data from room and update the messages and channel livedata
+        val channel = repo.selectAndEnrichChannel(cid, 100)
 
-            channel?.let {
-                _loading.value = false
-                if (it.messages.isNotEmpty()) {
-                    upsertMessages(it.messages)
-                }
-
+        channel?.let {
+            _loading.value = false
+            if (it.messages.isNotEmpty()) {
+                upsertMessages(it.messages)
             }
 
-            // for pagination we cant use channel.messages, so discourage that
-            if (channel != null) {
-                channel.messages = emptyList()
-                _channel.postValue(channel)
-            }
-
-
-            // next we run the actual API call
-            if (repo.isOnline()) {
-                val request = ChannelWatchRequest()
-                runChannelQuery(request)
-
-            }
         }
+
+        // for pagination we cant use channel.messages, so discourage that
+        if (channel != null) {
+            channel.messages = emptyList()
+            _channel.postValue(channel)
+        }
+
+
+        // next we run the actual API call
+        if (repo.isOnline()) {
+            val request = ChannelWatchRequest()
+            runChannelQuery(request)
+
+        }
+
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
@@ -246,9 +249,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
-    // TODO: test me
-    fun sendReaction(reaction: Reaction) {
-        GlobalScope.launch {
+    suspend fun sendReaction(reaction: Reaction) {
             // insert the message into local storage
             val reactionEntity = ReactionEntity(reaction)
             reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
@@ -266,8 +267,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 }
                 repo.runAndRetry(runnable)
             }
-
-        }
     }
 
     fun setWatcherCount(watcherCount: Int) {
@@ -307,7 +306,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _messages.postValue(copy)
     }
 
-    // TODO: test me
     fun clean() {
         // Cleanup typing events that are older than 15 seconds
         val copy = _typing.value ?: mutableMapOf()
@@ -354,6 +352,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 // add /remove the members etc
                 upsertMember(event.member!!)
             }
+
+            is UserPresenceChanged, is UserUpdated -> {
+                upsertUser(event.user)
+            }
+
             is UserStartWatchingEvent -> {
                 upsertWatcher(event.user!!)
             }
@@ -374,6 +377,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 updateRead(event.user!!, event.createdAt!!)
             }
         }
+    }
+
+    private fun upsertUser(user: User?) {
+        // TODO: implement me
     }
 
     private fun deleteWatcher(user: User) {
@@ -400,7 +407,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _members.value = copy
     }
 
-    private fun updateRead(
+    fun updateRead(
         user1: User,
         createdAt: Date
     ) {
