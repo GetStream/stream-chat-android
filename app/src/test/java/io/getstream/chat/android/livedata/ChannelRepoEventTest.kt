@@ -19,39 +19,18 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChatChannelRepoEventTest {
-
-    lateinit var database: ChatDatabase
-    lateinit var repo: ChatRepo
-    lateinit var client: ChatClient
-    lateinit var data: TestDataHelper
-    lateinit var channelRepo: ChannelRepo
-
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
+class ChatChannelRepoEventTest: BaseTest() {
 
     @Before
     fun setup() {
-        client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext())
-            .logLevel(
-                ChatLogLevel.ALL
-            ).loggerHandler(TestLoggerHandler()).build()
 
-        val token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
-
-        //waitForSetUser(client, user, token)
-        data = TestDataHelper()
-        repo = ChatRepo(ApplicationProvider.getApplicationContext(), data.user1, client)
-        repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
-            System.out.println("error event$it")
-        })
-
-        channelRepo = repo.channel("messaging", "test123")
+        client = createClient()
+        setupRepo(client, false)
     }
 
     @After
-    fun teardown() {
+    fun tearDown() {
+        db.close()
         client.disconnect()
     }
 

@@ -8,6 +8,7 @@ import java.util.*
 class TestDataHelper {
 
     val user1 = User("broad-lake-3")
+    val user1Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
     val user2 = User("test-user-2")
 
     val watcher1 = Watcher("test").apply { user = user1 }
@@ -36,11 +37,13 @@ class TestDataHelper {
     val reaction1 = Reaction("message-1", "like", 1).apply { user=user1 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user=user2 }
 
-    val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=Date() }
+    val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=Date(2020, 1,1) }
     val message1Updated = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1 }
     val reactionMessage = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1;
         reactionCounts= mutableMapOf("like" to 1); ownReactions= mutableListOf(reaction1); latestReactions=mutableListOf(reaction1) }
     val messageThread = Message().apply { channel=channel1; parentId="message-1"; id="message-2"}
+    val message2Older = Message().apply { this.channel = channel1; text="message2"; id="message-2"; user=user1; createdAt=Date(2019, 1,1) }
+
 
     val connectedEvent = ConnectedEvent()
     val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount=3; unreadChannels=2 }

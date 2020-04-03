@@ -98,26 +98,47 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt }}
     }
 
-    // TODO: test me
-    suspend fun loadOlderMessages(limit: Int = 30) {
-        _loadingOlderMessages.value = true
-        val messageMap = _messages.value ?: mutableMapOf()
-        val messages = messageMap.values.sortedByDescending { it.createdAt }
-        val oldestId = messages.first().id
-        val request = ChannelWatchRequest().withMessages(Pagination.GREATER_THAN, oldestId, limit)
-        runChannelQuery(request)
-        _loadingOlderMessages.value = false
-
+    fun loadOlderMessages(limit: Int = 30) {
+        GlobalScope.launch(Dispatchers.IO) {
+            // TODO check lessthan/more than sort etc.
+            val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
+            runChannelQuery(request)
+        }
     }
 
-    suspend fun loadNewerMessages(limit: Int = 30) {
-        _loadingNewerMessages.value = true
+
+
+    fun loadNewerMessages(limit: Int = 30) {
+        GlobalScope.launch(Dispatchers.IO) {
+            // TODO check lessthan/more than sort etc.
+            val request = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
+            runChannelQuery(request)
+        }
+    }
+
+    fun sortedMessages(): List<Message> {
+        // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
-        val messages = messageMap.values.sortedBy { it.createdAt }
-        val newestId = messages.first().id
-        val request = ChannelWatchRequest().withMessages(Pagination.GREATER_THAN, newestId, limit)
-        runChannelQuery(request)
-        _loadingOlderMessages.value = false
+        return messageMap.values.sortedBy { it.createdAt }
+    }
+
+    fun loadMoreMessagesRequest(limit: Int = 30, direction: Pagination): ChannelWatchRequest {
+        val messages = sortedMessages()
+        var request = ChannelWatchRequest().withMessages(limit)
+        if (messages.isNotEmpty()) {
+            val messageId: String = when(direction) {
+                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
+                    messages.last().id
+                }
+                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
+                    messages.first().id
+                }
+            }
+            request = ChannelWatchRequest().withMessages(direction, messageId, limit)
+
+        }
+
+        return request
     }
 
     fun watch() {
@@ -152,20 +173,24 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
+        _loadingNewerMessages.value = true
         val response = channelController.watch(request).execute()
 
         if (response.isError) {
-            _loading.value = false
+            _loading.postValue(false)
             repo.addError(response.error())
         } else {
-            _loading.value = false
+            _loading.postValue(false)
             val channelResponse = response.data()
             upsertMessages(channelResponse.messages)
             channelResponse.messages = emptyList()
             _channel.postValue(channelResponse)
 
+
+
             repo.storeStateForChannel(channelResponse)
         }
+        _loadingNewerMessages.value = false
     }
 
     /**
@@ -279,7 +304,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 _threads[parentId] = MutableLiveData(threadMessages)
             }
         }
-        _messages.value = copy
+        _messages.postValue(copy)
     }
 
     // TODO: test me
@@ -395,7 +420,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 copy[it.id] = it
             }
         }
+
         _watchers.value = copy
+
+
 
     }
 }

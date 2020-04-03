@@ -18,10 +18,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.lang.Thread.sleep
 import java.util.*
 
@@ -67,7 +64,7 @@ class ChatRepo(
         channelConfigDao = database.channelConfigDao()
 
         // load channel configs from Room into memory
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             loadConfigs()
         }
 
@@ -228,12 +225,12 @@ class ChatRepo(
         // connection events
         when (event) {
             is DisconnectedEvent -> {
-                _online.value = false
+                _online.postValue(false)
 
             }
             is ConnectedEvent -> {
-                _online.value = true
-                _initialized.value = true
+                _online.postValue(true)
+                _initialized.postValue(true)
             }
         }
 
@@ -589,9 +586,11 @@ class ChatRepo(
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
 
-            activeChannelMap.get(channel.cid)?.let {
-                it.setWatchers(channel.watchers)
-                it.setWatcherCount(channel.watcherCount)
+            withContext(Dispatchers.Main) {
+                activeChannelMap.get(channel.cid)?.let {
+                    it.setWatchers(channel.watchers)
+                    it.setWatcherCount(channel.watcherCount)
+                }
             }
 
             users.add(channel.createdBy)
