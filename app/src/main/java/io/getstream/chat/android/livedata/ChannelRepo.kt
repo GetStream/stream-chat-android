@@ -73,12 +73,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
     val watchers : LiveData<List<User>> = Transformations.map(_watchers) {
-        it.values.sortedBy { it.name + it.id }
+        it.values.sortedBy { it.createdAt }
     }
 
     private val _members = MutableLiveData<MutableMap<String, Member>>()
     val members : LiveData<List<Member>> = Transformations.map(_members) {
-        it.values.sortedBy { it.user.name + it.user.id }
+        it.values.sortedBy { it.createdAt }
     }
 
     private val _loading = MutableLiveData<Boolean>(false)

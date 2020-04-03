@@ -175,7 +175,7 @@ class ChatRepo(
      * the number of unread channels for the current user
      */
     val channelUnreadCount: LiveData<Int> = _channelUnreadCount
-    
+
     private val _errorEvent = MutableLiveData<io.getstream.chat.android.livedata.Event<ChatError>>()
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.

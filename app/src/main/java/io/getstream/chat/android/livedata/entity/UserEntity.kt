@@ -16,10 +16,10 @@ import java.util.*
  */
 @Entity(tableName = "stream_chat_user")
 data class UserEntity(@PrimaryKey val id: String) {
-    /** the name of the user. this field is used by our UI libraries. */
-    var name: String = ""
-    /** the image of the user. this field is used by our UI libraries. */
-    var image: String = ""
+//    /** the name of the user. this field is used by our UI libraries. */
+//    var name: String = ""
+//    /** the image of the user. this field is used by our UI libraries. */
+//    var image: String = ""
     /** the user's role */
     var role: String = ""
     /** when the user was created */
@@ -36,8 +36,8 @@ data class UserEntity(@PrimaryKey val id: String) {
 
     /** create a userEntity from a user object */
     constructor(user: User): this(user.id) {
-        name = user.name
-        image = user.image
+//        name = user.name
+//        image = user.image
         role = user.role
         createdAt = user.createdAt
         updatedAt = user.updatedAt
@@ -49,8 +49,8 @@ data class UserEntity(@PrimaryKey val id: String) {
     /** converts a user entity into a user */
     fun toUser(): User {
         val u = User(id=this.id)
-        u.name = name
-        u.image = image
+//        u.name = name
+//        u.image = image
         u.role = role
         u.createdAt = createdAt
         u.updatedAt = updatedAt
