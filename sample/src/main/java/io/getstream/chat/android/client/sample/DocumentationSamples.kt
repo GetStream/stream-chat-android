@@ -60,7 +60,7 @@ fun setUser() {
 
 fun channel() {
 
-    val channel = client.channel(channelType, channelId)
+    val channelController = client.channel(channelType, channelId)
     val extraData = mutableMapOf<String, Any>()
 
     extraData["name"] = "Talking about life"
@@ -71,7 +71,7 @@ fun channel() {
         .withData(extraData)
         .withMessages(20).withWatch()
 
-    channel.query(request).enqueue {
+    channelController.query(request).enqueue {
         if (it.isSuccess) {
             val channel = it.data()
         } else {
