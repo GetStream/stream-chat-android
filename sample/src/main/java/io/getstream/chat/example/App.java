@@ -46,6 +46,8 @@ public class App extends Application {
         //initDefaultChat();
         initCustomChat();
 
+
+
         Crashlytics.setString("apiKey", appConfig.getApiKey());
     }
 

@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.style.ChatStyle;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl;
 
+import org.jetbrains.annotations.NotNull;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import io.getstream.chat.android.client.ChatClient;
@@ -43,6 +45,8 @@ public interface Chat {
 
     LiveData<User> getCurrentUser();
 
+    ChatMarkdown getMarkdown();
+
     String getVersion();
 
     class Builder {
@@ -52,6 +56,7 @@ public interface Chat {
         private ChatNavigationHandler navigationHandler;
         private ChatStyle style;
         private UrlSigner urlSigner;
+        private ChatMarkdown markdown;
 
         public Builder(String apiKey, Context context) {
             this.context = context;
@@ -108,10 +113,16 @@ public interface Chat {
             return this;
         }
 
+        public Builder markdown(ChatMarkdown markdown) {
+            this.markdown = markdown;
+            return this;
+        }
+
         public Chat build() {
 
             if (style == null) style = new ChatStyle.Builder().build();
             if (urlSigner == null) urlSigner = new UrlSigner.DefaultUrlSigner();
+            if(markdown == null) markdown = new ChatMarkdownImpl(context);
 
             ChatClient client = clientBuilder.build();
             ChatImpl chat = new ChatImpl(
@@ -119,7 +130,8 @@ public interface Chat {
                     new ChatFontsImpl(style, context),
                     new ChatStringsImpl(context),
                     navigationHandler,
-                    urlSigner
+                    urlSigner,
+                    markdown
             );
 
             chat.init();

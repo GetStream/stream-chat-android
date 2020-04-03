@@ -19,7 +19,7 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.MarkdownImpl;
+import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
@@ -85,7 +85,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected MessageListView.ReactionViewClickListener reactionViewClickListener;
     protected MessageListView.UserClickListener userClickListener;
     protected MessageListView.ReadStateClickListener readStateClickListener;
-    protected MarkdownImpl.MarkdownListener markdownListener;
     protected MessageListView.GiphySendListener giphySendListener;
 
     protected List<MessageViewHolderFactory.Position> positions;
@@ -174,10 +173,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsMessageDate();
         configParamsReply();
         configParamsReadIndicator();
-    }
-
-    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
-        this.markdownListener = markdownListener;
     }
 
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
@@ -377,10 +372,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (markdownListener != null)
-            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        else
-            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        String text = StringUtility.getDeletedOrMentionedText(message);
+        ChatMarkdown markdown = Chat.getInstance().getMarkdown();
+        markdown.setText(tv_text, text);
     }
 
     protected void configMessageTextStyle() {
