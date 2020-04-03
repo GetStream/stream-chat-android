@@ -9,7 +9,7 @@ import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
-import com.getstream.sdk.chat.style.StreamChatStyle;
+import com.getstream.sdk.chat.style.ChatStyle;
 import com.google.firebase.FirebaseApp;
 
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ import io.getstream.chat.example.utils.AppConfig;
 
 public class App extends Application {
 
-    private StreamChatStyle style;
+    private ChatStyle style;
     private AppConfig appConfig;
 
     private static final String TAG = App.class.getSimpleName();
@@ -54,7 +54,7 @@ public class App extends Application {
     }
 
     private void setupChatStyle() {
-        style = new StreamChatStyle.Builder()
+        style = new ChatStyle.Builder()
                 //.setDefaultFont(R.font.lilyofthe_valley)
                 //.setDefaultFont("fonts/odibeesans_regular.ttf")
                 .build();
@@ -110,7 +110,7 @@ public class App extends Application {
         Chat chat = new Chat.Builder(apiKey, this).build();
     }
 
-    private void initCustomChat(){
+    private void initCustomChat() {
 
         String apiKey = appConfig.getApiKey();
         Context context = this;

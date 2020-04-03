@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.style;
 
-public class StreamChatStyleImpl implements StreamChatStyle {
+public class ChatStyleImpl implements ChatStyle {
 
     TextStyle defaultTextStyle;
 

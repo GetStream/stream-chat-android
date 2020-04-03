@@ -19,13 +19,13 @@ import io.getstream.chat.android.client.logger.TaggedLogger;
 
 public class ChatFontsImpl implements ChatFonts {
 
-    private final StreamChatStyle style;
+    private final ChatStyle style;
     private final Context context;
     private SparseArray<Typeface> resourceMap = new SparseArray<>();
     private Map<String, Typeface> pathMap = new HashMap<>();
     private final TaggedLogger logger = ChatLogger.Companion.get(ChatFonts.class.getSimpleName());
 
-    public ChatFontsImpl(StreamChatStyle style, Context context) {
+    public ChatFontsImpl(ChatStyle style, Context context) {
         this.style = style;
         this.context = context;
     }

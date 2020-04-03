@@ -7,7 +7,7 @@ import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
 import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.style.ChatFontsImpl;
-import com.getstream.sdk.chat.style.StreamChatStyle;
+import com.getstream.sdk.chat.style.ChatStyle;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl;
 
@@ -50,7 +50,7 @@ public interface Chat {
         private final Context context;
         private ChatClient.Builder clientBuilder;
         private ChatNavigationHandler navigationHandler;
-        private StreamChatStyle style;
+        private ChatStyle style;
         private UrlSigner urlSigner;
 
         public Builder(String apiKey, Context context) {
@@ -103,14 +103,14 @@ public interface Chat {
             return this;
         }
 
-        public Builder style(@NonNull StreamChatStyle style) {
+        public Builder style(@NonNull ChatStyle style) {
             this.style = style;
             return this;
         }
 
         public Chat build() {
 
-            if (style == null) style = new StreamChatStyle.Builder().build();
+            if (style == null) style = new ChatStyle.Builder().build();
             if (urlSigner == null) urlSigner = new UrlSigner.DefaultUrlSigner();
 
             ChatClient client = clientBuilder.build();
