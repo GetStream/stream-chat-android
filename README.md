@@ -37,14 +37,13 @@ Open the project in Android Studio. Setup your emulator (we're using Pixel 3, AP
 
 This library provides:
 
-* A low level client for making API calls and receiving chat events
-* Livedata objects + Offline support (using Room)
-* 4 reusable chat views
-
-** [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
-** [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
-** [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
-** [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
+- A low level client for making API calls and receiving chat events
+- `ViewModel` for list of channels and `ViewModel` for channel
+- 4 reusable chat views:
+    - [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
+    - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
+    - [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
+    - [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
 
 The documentation for livedata and the custom views is available here:
 [https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
@@ -71,7 +70,6 @@ The low level Chat API docs are available for both [Kotlin](https://getstream.io
 - UI customization
 - Threads
 - Slash commands
-- Offline support
 - Markdown messages formatting
 
 
@@ -101,13 +99,17 @@ android {
     }
 	
     compileOptions {
+        
+        //for java projects
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android:<latest-version>'
+    implementation 'com.github.GetStream:stream-chat-android:version'
 }
 ~~~
 
@@ -121,30 +123,16 @@ Make sure to initialize the SDK only once; the best place to do this is in your 
 
 
 ```java
-public class BaseApplication extends Application {
+public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        StreamChat.init("STREAM-API-KEY", getApplicationContext());
+        Chat chat = new Chat.Builder("api-key", this).build();
     }
 }
 ```
 
-If this is a new Android app you will need to register `BaseApplication` inside AndroidManifest.xml as well. 
-```xml
-...
-
-<application
-    android:name=".BaseApplication"
-    ...
->
-
-...
-
-</application>
-```
-
-With this you will be able to retrieve the shared Chat client from any part of your application using `StreamChat.getInstance()`. Here's an example:
+With this you will be able to retrieve Chat instance from any part of your application using `Chat.getInstance()`. Here's an example:
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -152,36 +140,18 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Client client = StreamChat.getInstance(this.getApplication());
+		Chat chat = Chat.getInstance();
 		...
 	}
 ```
 
-Make sure that your `AndroidManifest.xml` file include INTERNET and ACCESS_NETWORK_STATE permissions:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="...">
-
-    ... 
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    ...
-
-</manifest>    
-```
-
-
-
 ## Online status
 
-Connection status to Chat is available via `StreamChat.getOnlineStatus()` which returns a LiveData object you can attach observers to.
+Connection status to Chat is available via `Chat.getInstance().getOnlineStatus()` which returns a LiveData object you can attach observers to.
 
 ```java
 
-StreamChat.getOnlineStatus().observe(...);
+Chat.getInstance().getOnlineStatus().observe(...);
 ```
 
 
@@ -196,9 +166,11 @@ Currently SDK doesn't support all `Markwon` features and limited to this plugins
 
 If you want to use another library for `Markdown` or extend the `Markwon` plugins you can use the code below
 ```java
-MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
-    // TODO: use your Markdown library or the extended Markwon.
-});
+Chat chat = new Chat.Builder(apiKey, this)
+    .markdown((textView, text) -> {
+        textView.setText(text)
+    })
+    .build()
 ```
 
 
@@ -206,23 +178,22 @@ MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
 ## Debug and development
 
 ### Logging
-By default logging is disabled. You enable logs and set log level when initialising `StreamChat`:
+By default logging is disabled. You enable logs and set log level when initialising `Chat`:
 ```java
-StreamChatLogger logger = new StreamChatLogger.Builder()
-                .loggingLevel(BuildConfig.DEBUG ? StreamLoggerLevel.ALL : StreamLoggerLevel.NOTHING)
-                .build();
-
-StreamChat.Config configuration = new StreamChat.Config(this, "api-key");
-configuration.setLogger(logger);
-StreamChat.init(configuration);
+Chat chat = new Chat.Builder("api-key", context).logLevel(ChatLogLevel.ALL).build()
 ```
 
 If you need to intercept logs you can pass logger handler:
 
 ```java
-StreamChatLogger logger = new StreamChatLogger.Builder()
-                .setLoggingHandler(loggerHandler)
-                .build();
+Chat chat = new Chat.Builder("api-key", context)
+    .loggerHandler(new ChatLoggerHandler() {
+        @Override
+        public void logI(@NotNull Object tag, @NotNull String message) {
+
+        }  
+    }
+    .build()
 ```
 
 ### Editing this library
@@ -246,7 +217,7 @@ project(":chat").projectDir=new File("ABSOLUTEPATHTOstream-chat-android here")
 3. Open up your `project/app/build.gradle` and replace the production SDK with your local copy
 
 ```
-//implementation 'com.github.getstream:stream-chat-android:3.6.2'
+//implementation 'com.github.getstream:stream-chat-android:version'
 implementation project(':chat')
 ```
 

@@ -32,17 +32,20 @@ class ChatImpl implements Chat {
     private final ChatStrings chatStrings;
     private final ChatFonts chatFonts;
     private final UrlSigner urlSigner;
+    private final ChatMarkdown markdown;
 
     ChatImpl(ChatClient client,
              ChatFonts chatFonts,
              ChatStrings chatStrings,
              ChatNavigationHandler navigationHandler,
-             UrlSigner urlSigner) {
+             UrlSigner urlSigner,
+             ChatMarkdown markdown) {
 
         this.client = client;
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
+        this.markdown = markdown;
 
         navigator.setHandler(navigationHandler);
 
@@ -93,6 +96,12 @@ class ChatImpl implements Chat {
     @NotNull
     public ChatFonts getFonts() {
         return chatFonts;
+    }
+
+    @Override
+    @NotNull
+    public ChatMarkdown getMarkdown() {
+        return markdown;
     }
 
     @Override

@@ -7,9 +7,11 @@ import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
 import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.style.ChatFontsImpl;
-import com.getstream.sdk.chat.style.StreamChatStyle;
+import com.getstream.sdk.chat.style.ChatStyle;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl;
+
+import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -43,6 +45,8 @@ public interface Chat {
 
     LiveData<User> getCurrentUser();
 
+    ChatMarkdown getMarkdown();
+
     String getVersion();
 
     class Builder {
@@ -50,8 +54,9 @@ public interface Chat {
         private final Context context;
         private ChatClient.Builder clientBuilder;
         private ChatNavigationHandler navigationHandler;
-        private StreamChatStyle style;
+        private ChatStyle style;
         private UrlSigner urlSigner;
+        private ChatMarkdown markdown;
 
         public Builder(String apiKey, Context context) {
             this.context = context;
@@ -103,15 +108,21 @@ public interface Chat {
             return this;
         }
 
-        public Builder style(@NonNull StreamChatStyle style) {
+        public Builder style(@NonNull ChatStyle style) {
             this.style = style;
+            return this;
+        }
+
+        public Builder markdown(ChatMarkdown markdown) {
+            this.markdown = markdown;
             return this;
         }
 
         public Chat build() {
 
-            if (style == null) style = new StreamChatStyle.Builder().build();
+            if (style == null) style = new ChatStyle.Builder().build();
             if (urlSigner == null) urlSigner = new UrlSigner.DefaultUrlSigner();
+            if(markdown == null) markdown = new ChatMarkdownImpl(context);
 
             ChatClient client = clientBuilder.build();
             ChatImpl chat = new ChatImpl(
@@ -119,7 +130,8 @@ public interface Chat {
                     new ChatFontsImpl(style, context),
                     new ChatStringsImpl(context),
                     navigationHandler,
-                    urlSigner
+                    urlSigner,
+                    markdown
             );
 
             chat.init();

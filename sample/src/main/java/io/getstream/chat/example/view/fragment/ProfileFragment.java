@@ -104,20 +104,17 @@ public class ProfileFragment extends Fragment {
 
     private void removeDevice(String deviceId) {
 
-        Chat.getInstance().getClient().deleteDevice(deviceId).enqueue(new Function1<Result<Unit>, Unit>() {
-            @Override
-            public Unit invoke(Result<Unit> unitResult) {
+        Chat.getInstance().getClient().deleteDevice(deviceId).enqueue(unitResult -> {
 
-                if (unitResult.isSuccess()) {
-                    ProfileFragment.this.onSuccess();
-                } else {
-                    ProfileFragment.this.onError(
-                            unitResult.error().getMessage()
-                    );
-                }
-
-                return null;
+            if (unitResult.isSuccess()) {
+                ProfileFragment.this.onSuccess();
+            } else {
+                ProfileFragment.this.onError(
+                        unitResult.error().getMessage()
+                );
             }
+
+            return null;
         });
 
     }

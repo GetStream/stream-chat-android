@@ -82,7 +82,7 @@ public class SearchMessageRecyclerAdapter extends RecyclerView.Adapter<SearchMes
 
         void bind(Message item) {
             Glide.with(context)
-                    .load(item.getUser().getImage())
+                    .load(item.getUser().getExtraValue("image", ""))
                     .into(itemSearchIv);
 
             String name = LlcMigrationUtils.getName(channel);

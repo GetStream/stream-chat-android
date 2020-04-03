@@ -19,7 +19,7 @@ import android.widget.Space;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.MarkdownImpl;
+import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
@@ -39,6 +39,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
@@ -84,7 +85,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected MessageListView.ReactionViewClickListener reactionViewClickListener;
     protected MessageListView.UserClickListener userClickListener;
     protected MessageListView.ReadStateClickListener readStateClickListener;
-    protected MarkdownImpl.MarkdownListener markdownListener;
     protected MessageListView.GiphySendListener giphySendListener;
 
     protected List<MessageViewHolderFactory.Position> positions;
@@ -175,10 +175,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         configParamsReadIndicator();
     }
 
-    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
-        this.markdownListener = markdownListener;
-    }
-
     public void setMessageClickListener(MessageListView.MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
     }
@@ -256,7 +252,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         if (style.isUserNameShow() && messageListItem.isTheirs()) {
             tv_username.setVisibility(View.VISIBLE);
-            tv_username.setText(message.getUser().getName());
+            tv_username.setText(message.getUser().getExtraValue("name", ""));
         } else {
             tv_username.setVisibility(View.GONE);
         }
@@ -376,10 +372,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
             return;
         }
 
-        if (markdownListener != null)
-            markdownListener.setText(tv_text, StringUtility.getDeletedOrMentionedText(message));
-        else
-            MarkdownImpl.getInstance(context).setMarkdown(tv_text, StringUtility.getDeletedOrMentionedText(message));
+        String text = StringUtility.getDeletedOrMentionedText(message);
+        ChatMarkdown markdown = Chat.getInstance().getMarkdown();
+        markdown.setText(tv_text, text);
     }
 
     protected void configMessageTextStyle() {
@@ -450,9 +445,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     protected void configAttachmentView() {
-        if (isDeletedMessage()
-                || isFailedMessage()
-                || this.message.getAttachments().isEmpty()) {
+        boolean deletedMessage = isDeletedMessage();
+        boolean failedMessage = isFailedMessage();
+        boolean noAttachments = this.message.getAttachments().isEmpty();
+        if (deletedMessage || failedMessage || noAttachments) {
+            ChatLogger.Companion.getInstance().logE(getClass().getSimpleName(), "attachment hidden: deletedMessage:" + deletedMessage + ", failedMessage:" + failedMessage + " noAttachments:" + noAttachments);
             attachmentview.setVisibility(View.GONE);
             return;
         }

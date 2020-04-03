@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
@@ -44,8 +43,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     protected ChannelListView.ChannelClickListener channelLongClickListener;
     protected ChannelListViewStyle style;
 
-    protected MarkdownImpl.MarkdownListener markdownListener;
-
     public ChannelListItemViewHolder(@NonNull View itemView) {
         super(itemView);
         findReferences();
@@ -77,10 +74,6 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     public void setStyle(ChannelListViewStyle style) {
         this.style = style;
-    }
-
-    public void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener) {
-        this.markdownListener = markdownListener;
     }
 
     @Override
@@ -136,11 +129,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
-            if (markdownListener != null)
-                markdownListener.setText(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
-            else
-                MarkdownImpl.getInstance(context).setMarkdown(tv_last_message, StringUtility.getDeletedOrMentionedText(lastMessage));
-
+            String text = StringUtility.getDeletedOrMentionedText(lastMessage);
+            Chat.getInstance().getMarkdown().setText(tv_last_message, text);
             return;
         }
 

@@ -54,7 +54,7 @@ public class StringUtility {
         }
         if (message.getMentionedUsers() != null && !message.getMentionedUsers().isEmpty()) {
             for (User mentionedUser : message.getMentionedUsers()) {
-                String userName = mentionedUser.getName();
+                String userName = mentionedUser.getExtraValue("name", "");
                 int index = text.indexOf(userName);
                 if (index > 1 && text.charAt(index - 2) != ' ')
                     text = text.replace("@" + userName, " **" + "@" + userName + "**");

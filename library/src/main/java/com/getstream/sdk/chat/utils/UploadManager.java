@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ModelType;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 
-public class UploadManager {
+class UploadManager {
 
     private Channel channel;
     private List<AttachmentMetaData> queue = new ArrayList<>();
@@ -67,7 +67,7 @@ public class UploadManager {
             }
         };
 
-        if (data.mimeType.contains("image")) {
+        if (data.isImage()) {
             Chat.getInstance().getClient().sendImage(type, id, data.file, progressCallback);
         } else {
             Chat.getInstance().getClient().sendFile(type, id, data.file, progressCallback);

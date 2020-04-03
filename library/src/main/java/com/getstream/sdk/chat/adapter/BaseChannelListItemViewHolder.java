@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.View;
 
-import com.getstream.sdk.chat.MarkdownImpl;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
@@ -28,7 +27,5 @@ public abstract class BaseChannelListItemViewHolder extends RecyclerView.ViewHol
     public abstract void setChannelClickListener(ChannelListView.ChannelClickListener l);
 
     public abstract void setChannelLongClickListener(ChannelListView.ChannelClickListener l);
-
-    public abstract void setMarkdownListener(MarkdownImpl.MarkdownListener markdownListener);
 
 }

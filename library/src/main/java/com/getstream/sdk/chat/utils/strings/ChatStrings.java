@@ -4,4 +4,5 @@ import androidx.annotation.StringRes;
 
 public interface ChatStrings {
     String get(@StringRes int resId);
+    String get(@StringRes int resId, Object... formatArgs);
 }

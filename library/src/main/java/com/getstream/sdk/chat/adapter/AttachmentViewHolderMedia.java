@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.ModelType;
@@ -170,9 +171,10 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         final String type = attachment.getType();
         configImageThumbBackground();
 
+        String imageUrl = attachment.getImageUrl();
         Glide.with(context)
                 //.load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
-                .load(attachment.getAssetUrl())
+                .load(imageUrl)
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
 

@@ -177,7 +177,7 @@ public class LlcMigrationUtils {
             List<String> usernames = new ArrayList<>();
             for (User u : top3) {
                 if (u == null) continue;
-                usernames.add(u.getName());
+                usernames.add(u.getExtraValue("name", ""));
             }
 
             channelName = TextUtils.join(", ", usernames);

@@ -80,7 +80,7 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         Message oldLastMessage = computeLastMessage(oldChannel);
         Message newLastMessage = computeLastMessage(newChannel);
 
-        if (oldLastMessage != null || newLastMessage != null) {
+        if (oldLastMessage != null && newLastMessage != null) {
             diff.lastMessage = !oldLastMessage.getId().equals(newLastMessage.getId());
         }
 

@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.style;
 
 import androidx.annotation.FontRes;
 
-public interface StreamChatStyle {
+public interface ChatStyle {
 
     TextStyle getDefaultTextStyle();
 
@@ -10,7 +10,7 @@ public interface StreamChatStyle {
 
     class Builder {
 
-        StreamChatStyleImpl result = new StreamChatStyleImpl();
+        ChatStyleImpl result = new ChatStyleImpl();
         TextStyle defaultTextStyle;
 
         public Builder setDefaultFont(String assetPath) {
@@ -25,7 +25,7 @@ public interface StreamChatStyle {
             return this;
         }
 
-        public StreamChatStyle build() {
+        public ChatStyle build() {
             result.defaultTextStyle = defaultTextStyle;
             return result;
         }

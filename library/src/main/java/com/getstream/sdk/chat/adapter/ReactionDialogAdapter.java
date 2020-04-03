@@ -90,10 +90,13 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             String value = reactionTypes.get(key);
             tv_emoji.setText(value);
 
-            if (message.getReactionCounts().containsKey(key)) {
-                tv_count.setText(String.valueOf(message.getReactionCounts().get(key)));
-            } else
+            Map<String, Integer> reactionCounts = message.getReactionCounts();
+
+            if (reactionCounts != null && reactionCounts.containsKey(key)) {
+                tv_count.setText(String.valueOf(reactionCounts.get(key)));
+            } else {
                 tv_count.setText("");
+            }
         }
 
         @Override

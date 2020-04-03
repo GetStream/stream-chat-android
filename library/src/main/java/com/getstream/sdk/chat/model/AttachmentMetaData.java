@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat.model;
 
+import com.getstream.sdk.chat.utils.Utils;
+
 import java.io.File;
 
 import io.getstream.chat.android.client.models.Attachment;
@@ -25,10 +27,15 @@ public class AttachmentMetaData {
 
     public AttachmentMetaData(File file) {
         this.file = file;
+        this.mimeType = Utils.getMimeType(file);
     }
 
     public boolean isUploaded() {
         return attachment != null;
+    }
+
+    public boolean isImage() {
+        return mimeType != null && mimeType.contains("image");
     }
 
 }
