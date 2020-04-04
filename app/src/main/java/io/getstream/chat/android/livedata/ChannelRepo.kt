@@ -180,6 +180,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
+        // TODO: fix direction
         _loadingNewerMessages.value = true
         val response = channelController.watch(request).execute()
 

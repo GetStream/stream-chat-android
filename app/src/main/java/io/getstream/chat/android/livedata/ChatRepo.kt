@@ -6,18 +6,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
+import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.*
 import java.lang.Thread.sleep
 import java.util.*
@@ -53,7 +56,10 @@ class ChatRepo(
     private lateinit var channelConfigDao: ChannelConfigDao
     private val logger = ChatLogger.get("ChatRepo")
 
+    /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
+    /** enable this to receive user update events */
+    var userPresence: Boolean = false
 
     constructor(client: ChatClient, currentUser: User, database: ChatDatabase) : this(client, currentUser) {
         channelQueryDao = database.queryChannelsQDao()
@@ -121,7 +127,6 @@ class ChatRepo(
 
 
     fun createChannel(c: Channel)  {
-        // TODO should this return Call<Channel>?
         c.createdAt = c.createdAt ?: Date()
         c.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -230,11 +235,14 @@ class ChatRepo(
         when (event) {
             is DisconnectedEvent -> {
                 _online.postValue(false)
-
             }
             is ConnectedEvent -> {
+                val recovered = _initialized.value ?: false
                 _online.postValue(true)
                 _initialized.postValue(true)
+                if (recovered) {
+                    connectionRecovered()
+                }
             }
         }
 
@@ -485,16 +493,22 @@ class ChatRepo(
         messageDao.insert(messageEntity)
     }
 
+    // TODO: test me
     suspend fun connectionRecovered() {
-        // update the results for queries that are actively being shown right now
-        for (query in activeQueryMap) {
-            // TODO: talk about this with tommaso
+        // 1 update the results for queries that are actively being shown right now
+        for ((query, queryRepo) in activeQueryMap.entries.toList().slice(0..3)) {
+            queryRepo.query(QueryChannelsPaginationRequest())
         }
-        // update the data for all channels that are being show right now...
-        for (channel in activeChannelMap) {
-            // TODO: talk about this with tommaso
+        // 2 update the data for all channels that are being show right now...
+        val cids = activeChannelMap.keys.toList().slice(0..30)
+        val filter = `in`("cid", cids)
+        val request = QueryChannelsRequest(filter, 0, 30)
+        val result = client.queryChannels(request).execute()
+        if (result.isSuccess) {
+            val channels = result.data()
+            storeStateForChannels(channels)
         }
-        // retry any failed requests
+        // 3 retry any failed requests
         retryFailedEntities()
     }
 

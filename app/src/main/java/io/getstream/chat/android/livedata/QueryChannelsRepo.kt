@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +31,27 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
-    // TODO: add pagination & loading
+    private val _loading = MutableLiveData<Boolean>(false)
+    val loading : LiveData<Boolean> = _loading
+
+    private val _loadingMore = MutableLiveData<Boolean>(false)
+    val loadingMore : LiveData<Boolean> = _loadingMore
+
+    // TODO: test me
+    fun loadMore(limit: Int = 30) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val request = loadMoreRequest(limit)
+            runQuery(request)
+        }
+    }
+
+    fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
+        val channels = _channels.value ?: emptyList()
+        var request = QueryChannelsPaginationRequest().withLimit(limit).withOffset(channels.size).withMessages(messageLimit)
+
+        return request
+    }
+
 
     // TODO: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
@@ -48,13 +69,14 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     /**
      * Run the given queryChannels request and update the channels livedata object
      */
-    fun query(request: QueryChannelsRequest) {
+    fun query(request: QueryChannelsPaginationRequest) {
         GlobalScope.launch(Dispatchers.IO) {
-            _query(request)
+            runQuery(request)
         }
     }
-    suspend fun _query(request: QueryChannelsRequest) {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest) {
         // start by getting the query results from offline storage
+        val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
         val query = repo.selectQuery(query.id)
         if (query != null) {
             val channels = repo.selectAndEnrichChannels(query.channelCIDs)
