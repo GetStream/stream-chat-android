@@ -54,6 +54,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         it.values.sortedBy { it.createdAt }
     }
 
+    // TODO: what about channel data... I think it doesn't matter (handled by createChannel, but not 100% sure)
+
     // TODO: support user references and updating user references
 
     private val _channel = MutableLiveData<Channel>()

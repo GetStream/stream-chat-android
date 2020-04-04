@@ -70,7 +70,6 @@ open class BaseTest {
             System.out.println("error event$it")
         })
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
-        // TODO: should this be part of the constructor?
         channelRepo.updateChannel(data.channel1)
 
         filter = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(data.user1.id)))

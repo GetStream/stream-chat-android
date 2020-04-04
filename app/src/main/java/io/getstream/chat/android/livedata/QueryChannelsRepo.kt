@@ -35,9 +35,9 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     val loading : LiveData<Boolean> = _loading
 
     private val _loadingMore = MutableLiveData<Boolean>(false)
+    // TODO: trigger loading more
     val loadingMore : LiveData<Boolean> = _loadingMore
 
-    // TODO: test me
     fun loadMore(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
             val request = loadMoreRequest(limit)
