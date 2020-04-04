@@ -69,6 +69,7 @@ class ChatRepoEventTest: BaseTest() {
 
     @Test
     fun messageRead() {
+        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1)}
         runBlocking(Dispatchers.IO) {repo.handleEvent(data.readEvent)}
         // check channel level read info
         val cid = data.readEvent.cid!!
@@ -118,6 +119,7 @@ class ChatRepoEventTest: BaseTest() {
     @Test
     fun memberEvent() {
         // add the member to the channel
+        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1)}
         runBlocking(Dispatchers.IO) {repo.handleEvent(data.memberAddedToChannelEvent)}
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members

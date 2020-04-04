@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -29,7 +30,7 @@ class ChannelRepoInsertTest: BaseTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, false)
+        setupRepo(client, true)
         val handler = CoroutineExceptionHandler { _, exception ->
             println("Caught $exception")
         }
@@ -42,18 +43,28 @@ class ChannelRepoInsertTest: BaseTest() {
     }
 
     @Test
+    fun reactionStorage() = runBlocking(Dispatchers.IO) {
+        val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
+        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
+        repo.insertReactionEntity(reactionEntity)
+        val results = repo.retryReactions()
+        Truth.assertThat(results.size).isEqualTo(1)
+    }
+
+    @Test
     fun sendReaction() = runBlocking {
         repo.setOffline()
+        // TODO: Mock socket and mock client
         withContext(Dispatchers.IO) {
             repo.insertChannel(data.channel1)
             channelRepo.upsertMessage(data.message1)
             // send the reaction while offline
             channelRepo.sendReaction(data.reaction1)
-            var reactionEntity = repo.selectReaction(data.message1.id, data.user1.id, data.reaction1.type)
+            var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
             Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
             repo.setOnline()
             repo.retryReactions()
-            reactionEntity = repo.selectReaction(data.message1.id, data.user1.id, "like")
+            reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, "like")
             Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
         }
     }

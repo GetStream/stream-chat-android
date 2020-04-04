@@ -368,8 +368,7 @@ class ChatRepo(
     }
 
     fun generateMessageId(): String {
-        checkNotNull(client.getCurrentUser()) { "client.getCurrentUser() must be available to generate a message id" }
-        return client.getCurrentUser()!!.getUserId() + "-" + UUID.randomUUID().toString()
+        return currentUser.getUserId() + "-" + UUID.randomUUID().toString()
     }
 
     suspend fun selectMessageEntity(messageId: String): MessageEntity? {
@@ -522,10 +521,17 @@ class ChatRepo(
 
         val reactionEntities = reactionDao.selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
-            val result = client.sendReaction(reactionEntity.toReaction(userMap)).execute()
+            val reaction = reactionEntity.toReaction(userMap)
+            // TODO: we should not be sending syncStatus to the backend
+            reaction.user = null
+            val result = client.sendReaction(reaction).execute()
             if (result.isSuccess) {
+                println("one")
                 reactionEntity.syncStatus = SyncStatus.SYNCED
                 insertReactionEntity(reactionEntity)
+            } else {
+                println("two")
+                addError(result.error())
             }
         }
         return reactionEntities
@@ -694,7 +700,7 @@ class ChatRepo(
         return channels.toList()
     }
 
-    suspend fun selectReaction(messageId: String, userId: String, type: String): ReactionEntity? {
+    suspend fun selectReactionEntity(messageId: String, userId: String, type: String): ReactionEntity? {
         return reactionDao.select(messageId, userId, type)
     }
 

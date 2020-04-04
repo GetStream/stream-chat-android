@@ -17,7 +17,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 open class BaseTest {
     lateinit var database: ChatDatabase
     lateinit var repo: ChatRepo

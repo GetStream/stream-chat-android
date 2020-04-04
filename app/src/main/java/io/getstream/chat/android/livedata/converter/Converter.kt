@@ -46,13 +46,14 @@ class Converter {
 
 
     @TypeConverter
-    fun stringToSyncStatus(data: String): SyncStatus {
-        return SyncStatus.valueOf(data)
+    fun stringToSyncStatus(data: Int): SyncStatus {
+        val st = SyncStatus.fromInt(data)!!
+        return st
     }
 
     @TypeConverter
-    fun syncStatusToString(syncStatus: SyncStatus): String? {
-        return syncStatus.toString()
+    fun syncStatusToString(syncStatus: SyncStatus): Int {
+        return syncStatus.status
     }
 
     @TypeConverter
