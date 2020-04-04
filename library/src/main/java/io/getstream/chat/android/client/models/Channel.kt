@@ -34,6 +34,7 @@ class Channel : CustomObject {
     var watchers: List<Watcher> = mutableListOf()
     var read: List<ChannelUserRead> = mutableListOf()
 
+    @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     @IgnoreSerialisation

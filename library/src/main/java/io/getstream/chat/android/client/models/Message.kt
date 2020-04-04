@@ -18,6 +18,7 @@ class Message : UserEntity {
     lateinit var user: User
 
     /** if the message has been synced to the servers */
+    @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     @IgnoreSerialisation

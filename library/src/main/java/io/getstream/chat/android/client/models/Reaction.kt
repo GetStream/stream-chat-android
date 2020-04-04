@@ -22,6 +22,7 @@ data class Reaction(
     @SerializedName("created_at")
     var createdAt: Date? = null
 
+    @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     @IgnoreSerialisation
