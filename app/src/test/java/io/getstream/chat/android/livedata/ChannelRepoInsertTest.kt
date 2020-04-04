@@ -14,8 +14,8 @@ import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import io.getstream.chat.android.livedata.utils.waitForSetUser
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -29,13 +29,33 @@ class ChannelRepoInsertTest: BaseTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, true)
+        setupRepo(client, false)
+        val handler = CoroutineExceptionHandler { _, exception ->
+            println("Caught $exception")
+        }
     }
 
     @After
     fun tearDown() {
         db.close()
         client.disconnect()
+    }
+
+    @Test
+    fun sendReaction() = runBlocking {
+        repo.setOffline()
+        withContext(Dispatchers.IO) {
+            repo.insertChannel(data.channel1)
+            channelRepo.upsertMessage(data.message1)
+            // send the reaction while offline
+            channelRepo.sendReaction(data.reaction1)
+            var reactionEntity = repo.selectReaction(data.message1.id, data.user1.id, data.reaction1.type)
+            Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+            repo.setOnline()
+            repo.retryReactions()
+            reactionEntity = repo.selectReaction(data.message1.id, data.user1.id, "like")
+            Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
+        }
     }
 
     @Test
@@ -75,15 +95,7 @@ class ChannelRepoInsertTest: BaseTest() {
 
     }
 
-    @Test
-    fun sendReaction() {
-        // TODO: fix this test
-        repo.setOffline()
-        runBlocking(Dispatchers.IO) { repo.insertChannel(data.channel1) }
-        runBlocking(Dispatchers.IO) { channelRepo.upsertMessage(data.message1) }
-        // send the reaction while offline
-        runBlocking(Dispatchers.IO) {channelRepo.sendReaction(data.reaction1)}
-    }
+
 
     @Test
     fun clean() {

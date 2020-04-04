@@ -16,7 +16,9 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
+import java.util.Arrays.copyOf
 
 
 /**
@@ -140,6 +142,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun watch() {
+        // Support withdata
+        // TODO: channelController.watch(ChannelWatchRequest().withData(data))
         GlobalScope.launch(Dispatchers.IO) {
             _watch()
         }
@@ -250,23 +254,23 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If the request fails we retry according to the retry policy set on the repo
      */
     suspend fun sendReaction(reaction: Reaction) {
-            // insert the message into local storage
-            val reactionEntity = ReactionEntity(reaction)
-            reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-            repo.insertReactionEntity(reactionEntity)
-            // update the message in the local storage
-            val messageEntity = repo.selectMessageEntity(reaction.messageId)
-            messageEntity?.let {
-                it.addReaction(reaction, repo.currentUser.id==reaction.user!!.id)
-                repo.insertMessageEntity(it)
-            }
+        // insert the message into local storage
+        val reactionEntity = ReactionEntity(reaction)
+        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
+        repo.insertReactionEntity(reactionEntity)
+        // update the message in the local storage
+        val messageEntity = repo.selectMessageEntity(reaction.messageId)
+        messageEntity?.let {
+            it.addReaction(reaction, repo.currentUser.id==reaction.user!!.id)
+            repo.insertMessageEntity(it)
+        }
 
-            if (repo.isOnline()) {
-                val runnable = {
-                    client.sendReaction(reaction) as Call<Any>
-                }
-                repo.runAndRetry(runnable)
+        if (repo.isOnline()) {
+            val runnable = {
+                client.sendReaction(reaction) as Call<Any>
             }
+            repo.runAndRetry(runnable)
+        }
     }
 
     fun setWatcherCount(watcherCount: Int) {
@@ -276,7 +280,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun upsertMessage(message: Message) {
-        upsertMessages(listOf<Message>(message))
+        upsertMessages(listOf(message))
     }
 
     fun getMessage(messageId: String): Message? {
@@ -313,7 +317,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -15);
         val old = calendar.time
-        for ((userId, typing) in copy) {
+        for ((userId, typing) in copy.toList()) {
             if (typing.receivedAt.before(old)) {
                 copy.remove(userId)
                 changed = true
@@ -433,4 +437,5 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
 
     }
+
 }

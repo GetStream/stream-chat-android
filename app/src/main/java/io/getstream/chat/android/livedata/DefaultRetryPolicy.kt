@@ -12,6 +12,9 @@ class DefaultRetryPolicy: RetryPolicy {
         return attempt < 5
     }
 
+    /**
+     * Returns the timeout in milliseconds
+     */
     override fun retryTimeout(
         client: ChatClient,
         attempt: Int,

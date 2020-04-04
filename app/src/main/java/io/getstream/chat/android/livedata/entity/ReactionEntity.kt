@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -19,7 +20,10 @@ import java.util.*
  * and back:
  * reactionEntity.toUser()
  */
-@Entity(tableName = "stream_chat_reaction")
+@Entity(tableName = "stream_chat_reaction", indices = arrayOf(
+    Index(value = ["messageId", "userId", "type"],
+    unique = true)
+))
 data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
 
 

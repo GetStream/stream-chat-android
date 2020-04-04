@@ -387,7 +387,6 @@ class ChatRepo(
 
     fun isOnline(): Boolean {
         val online = _online.value!!
-        sleep(100000)
         return online
     }
 
@@ -436,8 +435,6 @@ class ChatRepo(
     }
 
     suspend fun insertChannel(channel: Channel) {
-        var channelEntity = ChannelStateEntity(channel)
-
         channelStateDao.insert(ChannelStateEntity(channel))
     }
 
@@ -503,43 +500,51 @@ class ChatRepo(
     }
 
     suspend fun retryMessages(): List<MessageEntity> {
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
-        val user = client.getCurrentUser()!!
-        val userMap: Map<String, User> = mutableMapOf(user.id to user)
         val messageEntities = messageDao.selectSyncNeeded()
         if (isOnline()) {
             for (messageEntity in messageEntities) {
-                // TODO: remove this as soon as the low level client has a better solution
-                val parts = messageEntity.cid.split(":")
-                val channel = client.channel(parts[0], parts[1])
-                channel.sendMessage(messageEntity.toMessage(userMap))
+                val channel = client.channel(messageEntity.cid)
+                val result = channel.sendMessage(messageEntity.toMessage(userMap)).execute()
+
+                if (result.isSuccess) {
+                    messageEntity.syncStatus = SyncStatus.SYNCED
+                    insertMessageEntity(messageEntity)
+                }
             }
         }
         return messageEntities
     }
 
     suspend fun retryReactions(): List<ReactionEntity> {
-        val user = client.getCurrentUser()!!
-        val userMap: Map<String, User> = mutableMapOf(user.id to user)
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
         val reactionEntities = reactionDao.selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
-            client.sendReaction(reactionEntity.toReaction(userMap))
+            val result = client.sendReaction(reactionEntity.toReaction(userMap)).execute()
+            if (result.isSuccess) {
+                reactionEntity.syncStatus = SyncStatus.SYNCED
+                insertReactionEntity(reactionEntity)
+            }
         }
         return reactionEntities
     }
 
 
     suspend fun retryChannels(): List<ChannelStateEntity> {
-        val user = client.getCurrentUser()!!
-        val userMap: Map<String, User> = mutableMapOf(user.id to user)
-
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
         val channelEntities = channelStateDao.selectSyncNeeded()
 
         for (channelEntity in channelEntities) {
+            val channel = channelEntity.toChannel(userMap)
             val controller = client.channel(channelEntity.type, channelEntity.type)
-            val runnable = controller.watch()::execute
-            runnable()
+            val result = controller.watch().execute()
+            if (result.isSuccess) {
+                channelEntity.syncStatus = SyncStatus.SYNCED
+                insertChannelStateEntity(channelEntity)
+            }
+
         }
         return channelEntities
     }
@@ -687,6 +692,10 @@ class ChatRepo(
             channels.add(channel)
         }
         return channels.toList()
+    }
+
+    suspend fun selectReaction(messageId: String, userId: String, type: String): ReactionEntity? {
+        return reactionDao.select(messageId, userId, type)
     }
 
 

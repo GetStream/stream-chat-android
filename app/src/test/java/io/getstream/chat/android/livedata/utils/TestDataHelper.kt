@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.utils
 
-import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import java.util.*
+
 
 class TestDataHelper {
 
@@ -15,6 +15,14 @@ class TestDataHelper {
     val watcher1 = Watcher("test").apply { user = user1 }
     val member1 = Member().apply { user = user1; role="user" }
     val member2 = Member().apply { user=user2; role="user"  }
+
+    fun getOldDate(): Date {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.YEAR, 1988)
+        cal.set(Calendar.MONTH, Calendar.JANUARY)
+        cal.set(Calendar.DAY_OF_MONTH, 1)
+        return cal.getTime()
+    }
 
     val channel1 = Channel().apply {
         type = "messaging"
@@ -59,9 +67,9 @@ class TestDataHelper {
     val newMessageWithThreadEvent = NewMessageEvent().apply { message=messageThread }
     val channelUpdatedEvent = ChannelUpdatedEvent().apply { channel=channel1Updated; cid=channel1Updated.cid }
     val user1TypingStarted = TypingStartEvent().apply{user=user1}
-    val user1TypingStartedOld = TypingStartEvent().apply{user=user1; createdAt=Date(2019, 1,1) }
+    val user1TypingStartedOld = TypingStartEvent().apply{user=user1; receivedAt=getOldDate() }
 
-    val user2TypingStarted = TypingStartEvent().apply{user=user2; createdAt= Date()}
+    val user2TypingStarted = TypingStartEvent().apply{user=user2; receivedAt= Date()}
     val user1TypingStop = TypingStopEvent().apply{user=user1}
     val user2TypingStop = TypingStopEvent().apply{user=user2}
     val readEvent = MessageReadEvent().apply{message=message1;user=user1;cid=channel1.cid; createdAt=Date()}
