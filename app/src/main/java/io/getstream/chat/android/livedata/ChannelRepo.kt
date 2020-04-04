@@ -184,19 +184,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _loadingNewerMessages.value = true
         val response = channelController.watch(request).execute()
 
-        if (response.isError) {
-            _loading.postValue(false)
-            repo.addError(response.error())
-        } else {
+        if (response.isSuccess) {
             _loading.postValue(false)
             val channelResponse = response.data()
-            upsertMessages(channelResponse.messages)
-            channelResponse.messages = emptyList()
-            _channel.postValue(channelResponse)
-
-
-
             repo.storeStateForChannel(channelResponse)
+        } else {
+            _loading.postValue(false)
+            repo.addError(response.error())
         }
         _loadingNewerMessages.value = false
     }
@@ -379,7 +373,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 setTyping(event.user?.id!!, event)
             }
             is MessageReadEvent, is NotificationMarkReadEvent -> {
-                updateRead(event.user!!, event.createdAt!!)
+                val read = ChannelUserRead().apply{user=event.user!!; lastRead=event.createdAt!!}
+                updateRead(read)
             }
         }
     }
@@ -412,13 +407,39 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _members.value = copy
     }
 
-    fun updateRead(
-        user1: User,
-        createdAt: Date
+    fun updateReads(
+        reads: List<ChannelUserRead>
     ) {
         val copy = _reads.value ?: mutableMapOf()
-        copy[user1.id] = ChannelUserRead().apply {user = user1; lastRead = createdAt}
+        for (r in reads) {
+            copy[r.getUserId()] = r
+        }
         _reads.value = copy
+    }
+
+    fun updateRead(
+        read: ChannelUserRead
+    ) {
+        updateReads(listOf(read))
+    }
+
+    fun updateLiveDataFromChannel(c: Channel) {
+        // Update all the livedata objects based on the channel
+        // TODO: there are some issues here when you have more than 100 members, watchers
+        updateChannel(c)
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        setWatcherCount(c.watcherCount)
+        updateReads(c.read)
+        upsertMessages(c.messages)
+    }
+
+    private fun setMembers(members: List<Member>) {
+        val copy = _members.value ?: mutableMapOf()
+        for (m in members) {
+            copy[m.getUserId()] = m
+        }
+        _members.value = copy
     }
 
     fun updateChannel(channel: Channel) {

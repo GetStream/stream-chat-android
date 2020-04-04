@@ -87,14 +87,19 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
             // next run the actual query
             val response = client.queryChannels(request).execute()
 
-            // check for an error
-            if (!response.isSuccess) {
-                repo.addError(response.error())
-            } else {
+            if (response.isSuccess) {
                 // store the results in the database
                 val channelsResponse = response.data()
+
+                // initialize channel repos for all of these channels
+                for (c in channelsResponse) {
+                    repo.channel(c)
+                }
+
                 _channels.postValue(channelsResponse)
                 repo.storeStateForChannels(channelsResponse)
+            } else {
+                repo.addError(response.error())
             }
         }
     }

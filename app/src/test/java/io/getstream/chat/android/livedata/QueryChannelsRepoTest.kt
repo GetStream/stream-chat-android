@@ -48,5 +48,15 @@ class QueryChannelsRepoTest: BaseTest() {
         Truth.assertThat(channels.size).isEqualTo(3)
     }
 
+    @Test
+    fun testLoadMore() = runBlocking(Dispatchers.IO) {
+        val paginate = QueryChannelsPaginationRequest(3)
+        queryRepo.runQuery(paginate)
+        val channels = queryRepo.channels.getOrAwaitValue()
+        Truth.assertThat(channels.size).isEqualTo(3)
+        queryRepo.loadMore(2)
+        Truth.assertThat(channels.size).isEqualTo(5)
+    }
+
 
 }

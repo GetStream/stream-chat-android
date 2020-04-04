@@ -76,6 +76,7 @@ class ChatRepo(
 
         // start listening for events
         startListening()
+        ChatRepo.instance = this
     }
 
     // TODO: make this more dry
@@ -101,6 +102,7 @@ class ChatRepo(
 
         // start listening for events
         startListening()
+        ChatRepo.instance = this
 
     }
 
@@ -348,6 +350,10 @@ class ChatRepo(
         eventSubscription?.let { it.unsubscribe() }
     }
 
+    fun channel(c: Channel): ChannelRepo {
+        return channel(c.type, c.id)
+    }
+
     fun channel(cid: String): ChannelRepo {
         val parts = cid.split(":")
         check(parts.size==2) {"Received invalid cid, expected format messaging:123, got ${cid}"}
@@ -536,15 +542,12 @@ class ChatRepo(
         val reactionEntities = reactionDao.selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
             val reaction = reactionEntity.toReaction(userMap)
-            // TODO: we should not be sending syncStatus to the backend
             reaction.user = null
             val result = client.sendReaction(reaction).execute()
             if (result.isSuccess) {
-                println("one")
                 reactionEntity.syncStatus = SyncStatus.SYNCED
                 insertReactionEntity(reactionEntity)
             } else {
-                println("two")
                 addError(result.error())
             }
         }
@@ -618,11 +621,8 @@ class ChatRepo(
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
 
-            withContext(Dispatchers.Main) {
-                activeChannelMap.get(channel.cid)?.let {
-                    it.setWatchers(channel.watchers)
-                    it.setWatcherCount(channel.watcherCount)
-                }
+            activeChannelMap.get(channel.cid)?.let {
+                it.updateLiveDataFromChannel(channel)
             }
 
             users.add(channel.createdBy)
@@ -718,7 +718,17 @@ class ChatRepo(
         return reactionDao.select(messageId, userId, type)
     }
 
+    companion object {
 
+        private lateinit var instance: ChatRepo
+
+        @JvmStatic
+        fun instance(): ChatRepo {
+            return instance
+        }
+
+
+    }
 }
 
 var gson = Gson()
