@@ -31,7 +31,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, false)
+        setupRepo(client, true)
     }
 
     @After
@@ -44,33 +44,22 @@ class ChannelRepoReadPaginateTest: BaseTest() {
      * test that a message added only to the local storage is picked up
      */
     @Test
-    fun watchSetsMessagesAndChannelOffline() {
+    fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
         repo.setOffline()
-        val channelRepo = repo.channel("messaging", "test123")
-        // setup an offline message
-        val message = Message()
-        message.user = User("thierry")
-        message.cid = channelRepo.cid
-        message.syncStatus = SyncStatus.SYNC_NEEDED
-        val c = Channel()
-        c.type = "messaging"
-        c.id = "test123"
-        c.cid = "${c.type}:${c.id}"
-        c.createdBy = User("john")
-        runBlocking(Dispatchers.IO) { repo.insertUser(c.createdBy) }
-        runBlocking(Dispatchers.IO) {repo.insertUser(message.user) }
-        runBlocking(Dispatchers.IO) {repo.insertChannel(c) }
+        // add a message to local storage
+        repo.insertUser(data.user1)
+        repo.insertChannel(data.channel1)
+        channelRepo._sendMessage(data.message1)
+        // remove the livedata
+        channelRepo = ChannelRepo(data.channel1.type, data.channel1.id, repo.client, repo)
 
-        //repo.insertMessage(message)
-        Thread.sleep(1000)
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        runBlocking(Dispatchers.IO) { channelRepo._watch() }
-        Thread.sleep(1000)
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        // run watch while we're offline
+        channelRepo._watch()
+
+        // the message should still show up
         val messages = channelRepo.messages.getOrAwaitValue()
         val channel = channelRepo.channel.getOrAwaitValue()
 
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         Truth.assertThat(messages).isNotEmpty()
         Truth.assertThat(channel).isNotNull()
     }
@@ -79,28 +68,19 @@ class ChannelRepoReadPaginateTest: BaseTest() {
      * test that a message added only to the local storage is picked up
      */
     @Test
-    fun watchSetsMessagesAndChannelOnline() {
+    fun watchSetsMessagesAndChannelOnline() = runBlocking(Dispatchers.IO) {
         repo.setOnline()
-        val channelRepo = repo.channel("messaging", "testabc")
         // setup an online message
         val message = Message()
-        message.cid = channelRepo.cid
         message.syncStatus = SyncStatus.SYNC_NEEDED
-        // create the channel
-        channelRepo.channelController.watch().execute()
         // write a message
-        val result = channelRepo.channelController.sendMessage(message).execute()
-
-        channelRepo.watch()
-        Thread.sleep(1000)
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
+        channelRepo._sendMessage(message)
 
         val messages = channelRepo.messages.getOrAwaitValue()
         val channel = channelRepo.channel.getOrAwaitValue()
 
-        Thread.sleep(1000)
-        ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
         Truth.assertThat(messages.size).isGreaterThan(0)
+        Truth.assertThat(messages.first().id).isEqualTo(message.id)
         Truth.assertThat(channel).isNotNull()
     }
 

@@ -219,6 +219,9 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (message.cid.isEmpty()) {
             message.cid = cid
         }
+        val channel = checkNotNull(_channel.value) {"Channel needs to be set before sending a message"}
+        message.channel = channel
+        message.user = repo.currentUser
         message.createdAt = message.createdAt ?: Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
