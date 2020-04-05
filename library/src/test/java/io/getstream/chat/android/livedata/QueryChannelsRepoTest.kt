@@ -27,25 +27,17 @@ class QueryChannelsRepoTest: BaseTest() {
         client.disconnect()
     }
     @Test
-    fun newChannelAdded() {
-        val request = QueryChannelsPaginationRequest()
-        runBlocking(Dispatchers.IO) {queryRepo.runQuery(request)}
+    fun newChannelAdded() = runBlocking(Dispatchers.IO) {
         // TODO: mock the server response for the queryChannels...
+        val request = QueryChannelsPaginationRequest()
+        queryRepo.runQuery(request)
         var channels = queryRepo.channels.getOrAwaitValue()
         val oldSize = channels.size
         // verify that a new channel is added to the list
-        runBlocking(Dispatchers.IO) {queryRepo.handleEvent(data.notificationAddedToChannelEvent)}
+        queryRepo.handleEvent(data.notificationAddedToChannelEvent)
         channels = queryRepo.channels.getOrAwaitValue()
         val newSize = channels.size
         Truth.assertThat(newSize-oldSize).isEqualTo(1)
-    }
-
-    @Test
-    fun testQuery() = runBlocking(Dispatchers.IO) {
-        val paginate = QueryChannelsPaginationRequest(3)
-        queryRepo.runQuery(paginate)
-        val channels = queryRepo.channels.getOrAwaitValue()
-        Truth.assertThat(channels.size).isEqualTo(3)
     }
 
     @Test

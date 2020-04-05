@@ -58,7 +58,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     // TODO: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {
-            query.channelCIDs.add(0, it.cid)
+            addChannels(listOf(it))
         }
     }
 
