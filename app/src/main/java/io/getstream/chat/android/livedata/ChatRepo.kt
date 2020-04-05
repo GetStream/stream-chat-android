@@ -417,7 +417,7 @@ class ChatRepo(
         sort: QuerySort? = null
     ): QueryChannelsRepo {
         // mark this query as active
-        val queryChannelsEntity  = QueryChannelsEntity(filter).apply { this.sort=sort }
+        val queryChannelsEntity  = QueryChannelsEntity(filter, sort)
         val queryRepo = QueryChannelsRepo(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo

@@ -1,10 +1,10 @@
 
-
+- Expand test coverage, mock LLC as needed
 - All TODO items in the code
-- Expand test coverage
-- Fully implement offlineEnabled flag set to false
 
-TBD
+
+Later
 
 - User updates
-- Return syntax for methods that create data/need a callback
+- Fully implement offlineEnabled flag set to false
+- Decide on return syntax for methods that create data/need a callback like sendMessage, sendReaction, createChannel etc.
