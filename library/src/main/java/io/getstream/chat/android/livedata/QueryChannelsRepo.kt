@@ -26,8 +26,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     /**
      * A livedata object with the channels matching this query.
      */
-    private val _channels = MutableLiveData<List<Channel>>()
-    var channels: LiveData<List<Channel>> = _channels
+
+    // TODO: verify that all livedata objects expose List<Any> and not MutabeleList<Any>
+    private val _channels = MutableLiveData<List<ChannelRepo>>()
+    var channels: LiveData<List<ChannelRepo>> = _channels
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
@@ -80,7 +82,15 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         val query = repo.selectQuery(query.id)
         if (query != null) {
             val channels = repo.selectAndEnrichChannels(query.channelCIDs)
-            _channels.postValue(channels)
+            for (c in channels) {
+                val channelRepo = repo.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
+            if (pagination.isFirstPage()) {
+                setChannels(channels)
+            } else {
+                addChannels(channels)
+            }
         }
         val online = repo.isOnline()
         if (online) {
@@ -93,14 +103,33 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
 
                 // initialize channel repos for all of these channels
                 for (c in channelsResponse) {
-                    repo.channel(c)
+                    val channelRepo = repo.channel(c)
+                    channelRepo.updateLiveDataFromChannel(c)
                 }
 
-                _channels.postValue(channelsResponse)
                 repo.storeStateForChannels(channelsResponse)
+
+                if (pagination.isFirstPage()) {
+                    setChannels(channelsResponse)
+                } else {
+                    addChannels(channelsResponse)
+                }
             } else {
                 repo.addError(response.error())
             }
         }
+    }
+
+    private fun addChannels(channelsResponse: List<Channel>) {
+        val copy = _channels.value?.toMutableList() ?: mutableListOf()
+        val copyMap = copy.associateBy { it.cid }
+        val missingRepos = channelsResponse.filterNot { it.cid in copyMap }.map { repo.channel(it.cid) }
+        copy.addAll(missingRepos)
+        _channels.postValue(copy)
+    }
+
+    private fun setChannels(channelsResponse: List<Channel>) {
+        val repos = channelsResponse.map { repo.channel(it.cid) }
+        _channels.postValue(repos)
     }
 }

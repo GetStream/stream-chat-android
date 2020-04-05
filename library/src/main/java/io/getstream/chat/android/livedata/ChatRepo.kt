@@ -622,10 +622,6 @@ class ChatRepo(
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
 
-            activeChannelMap.get(channel.cid)?.let {
-                it.updateLiveDataFromChannel(channel)
-            }
-
             users.add(channel.createdBy)
             configs[channel.type] = channel.config
             for (member in channel.members) {

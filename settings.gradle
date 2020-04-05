@@ -1,4 +1,4 @@
-include ':app'
+include ':library'
 rootProject.name='StreamChatAndroidLivedata'
 
 include ':chat'

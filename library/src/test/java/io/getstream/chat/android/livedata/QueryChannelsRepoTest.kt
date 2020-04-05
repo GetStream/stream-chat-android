@@ -50,12 +50,15 @@ class QueryChannelsRepoTest: BaseTest() {
 
     @Test
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
-        val paginate = QueryChannelsPaginationRequest(3)
+        val paginate = QueryChannelsPaginationRequest(0, 2)
         queryRepo.runQuery(paginate)
-        val channels = queryRepo.channels.getOrAwaitValue()
+        var channels = queryRepo.channels.getOrAwaitValue()
+        Truth.assertThat(channels.size).isEqualTo(2)
+        val request = queryRepo.loadMoreRequest(1)
+        Truth.assertThat(request.offset).isEqualTo(2)
+        queryRepo.runQuery(request)
+        channels = queryRepo.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
-        queryRepo.loadMore(2)
-        Truth.assertThat(channels.size).isEqualTo(5)
     }
 
 

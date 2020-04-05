@@ -16,6 +16,7 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 import java.util.*
 import java.util.Arrays.copyOf
@@ -189,6 +190,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (response.isSuccess) {
             _loading.postValue(false)
             val channelResponse = response.data()
+            updateLiveDataFromChannel(channelResponse)
             repo.storeStateForChannel(channelResponse)
         } else {
             _loading.postValue(false)
@@ -435,15 +437,18 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         updateReads(listOf(read))
     }
 
-    fun updateLiveDataFromChannel(c: Channel) {
+    suspend fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         // TODO: there are some issues here when you have more than 100 members, watchers
-        updateChannel(c)
-        setMembers(c.members)
-        setWatchers(c.watchers)
-        setWatcherCount(c.watcherCount)
-        updateReads(c.read)
-        upsertMessages(c.messages)
+
+            updateChannel(c)
+            setMembers(c.members)
+            setWatchers(c.watchers)
+            setWatcherCount(c.watcherCount)
+            updateReads(c.read)
+            upsertMessages(c.messages)
+
+
     }
 
     private fun setMembers(members: List<Member>) {

@@ -14,10 +14,14 @@ import io.getstream.chat.android.client.utils.FilterObject
  * Since those are provided by the QueryChannelsRepo
  */
 data class QueryChannelsPaginationRequest(
+    var offset: Int = 0,
     var limit: Int = 30,
-    var messageLimit: Int = 10,
-    var offset: Int = 0
+    var messageLimit: Int = 10
 ) : BaseQueryChannelRequest<QueryChannelsPaginationRequest>() {
+
+    fun isFirstPage(): Boolean {
+        return offset == 0
+    }
 
     fun withMessages(limit: Int): QueryChannelsPaginationRequest {
         return cloneOpts().apply { messageLimit = limit }
@@ -47,10 +51,10 @@ data class QueryChannelsPaginationRequest(
     override fun cloneOpts(): QueryChannelsPaginationRequest {
         val clone = QueryChannelsPaginationRequest(
             offset,
-            limit
+            limit,
+            messageLimit
         )
         clone.presence = this.presence
-        clone.messageLimit = messageLimit
         return clone
     }
 }
