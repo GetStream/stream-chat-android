@@ -204,36 +204,46 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * - If the request fails we retry according to the retry policy set on the repo
      */
     fun sendMessage(message: Message) {
-        message.id = repo.generateMessageId()
-        message.cid = cid
+        GlobalScope.launch(Dispatchers.IO) {
+            _sendMessage(message)
+        }
+    }
+
+    suspend fun _sendMessage(message: Message) {
+        // set defaults for id, cid and created at
+        if (message.id.isEmpty()) {
+            message.id = repo.generateMessageId()
+        }
+        if (message.cid.isEmpty()) {
+            message.cid = cid
+        }
         message.createdAt = message.createdAt ?: Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
-        GlobalScope.launch {
-            val messageEntity = MessageEntity(message)
+        val messageEntity = MessageEntity(message)
 
-            // Update livedata
-            upsertMessage(message)
-            setLastMessage(message)
+        // Update livedata
+        upsertMessage(message)
+        setLastMessage(message)
 
-            // Update Room State
-            repo.insertMessage(message)
+        // Update Room State
+        repo.insertMessage(message)
 
-            val channelStateEntity = repo.selectChannelEntity(message.channel.cid)
-            channelStateEntity?.let {
-                // update channel lastMessage at and lastMessageAt
-                it.addMessage(messageEntity)
-                repo.insertChannelStateEntity(it)
-            }
-
-            if (repo.isOnline()) {
-                val runnable = {
-                    channelController.sendMessage(message) as Call<Any>
-                }
-                repo.runAndRetry(runnable)
-
-            }
+        val channelStateEntity = repo.selectChannelEntity(message.channel.cid)
+        channelStateEntity?.let {
+            // update channel lastMessage at and lastMessageAt
+            it.addMessage(messageEntity)
+            repo.insertChannelStateEntity(it)
         }
+
+        if (repo.isOnline()) {
+            val runnable = {
+                channelController.sendMessage(message) as Call<Any>
+            }
+            repo.runAndRetry(runnable)
+
+        }
+
 
     }
 
@@ -261,8 +271,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             it.addReaction(reaction, repo.currentUser.id==reaction.user!!.id)
             repo.insertMessageEntity(it)
         }
-
-        if (repo.isOnline()) {
+        val online = repo.isOnline()
+        if (online) {
             val runnable = {
                 client.sendReaction(reaction) as Call<Any>
             }

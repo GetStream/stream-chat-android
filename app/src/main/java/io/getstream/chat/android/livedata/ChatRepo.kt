@@ -127,28 +127,29 @@ class ChatRepo(
         }
     }
 
-
     fun createChannel(c: Channel)  {
+        GlobalScope.launch(Dispatchers.IO) {
+            _createChannel(c)
+        }
+    }
+
+    suspend fun _createChannel(c: Channel)  {
         c.createdAt = c.createdAt ?: Date()
         c.syncStatus = SyncStatus.SYNC_NEEDED
 
-        GlobalScope.launch {
-            // update livedata
-            val channelRepo = channel(c.cid)
-            channelRepo.updateChannel(c)
-            val channelController = client.channel(c.type, c.id)
+        // update livedata
+        val channelRepo = channel(c.cid)
+        channelRepo.updateChannel(c)
+        val channelController = client.channel(c.type, c.id)
 
-            // Update Room State
-            insertChannel(c)
+        // Update Room State
+        insertChannel(c)
 
-            // make the API call and follow retry policy
-            val runnable = {
-                channelController.watch() as Call<Any>
-            }
-            runAndRetry(runnable)
+        // make the API call and follow retry policy
+        val runnable = {
+            channelController.watch() as Call<Any>
         }
-
-
+        runAndRetry(runnable)
 
     }
 

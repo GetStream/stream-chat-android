@@ -53,9 +53,13 @@ class ChannelRepoInsertTest: BaseTest() {
 
     @Test
     fun sendReaction() = runBlocking {
-        repo.setOffline()
+
         // TODO: Mock socket and mock client
         withContext(Dispatchers.IO) {
+            // ensure the message exists
+            repo._createChannel(data.channel1)
+            channelRepo._sendMessage(data.message1)
+            repo.setOffline()
             repo.insertChannel(data.channel1)
             channelRepo.upsertMessage(data.message1)
             // send the reaction while offline
@@ -63,7 +67,8 @@ class ChannelRepoInsertTest: BaseTest() {
             var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
             Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
             repo.setOnline()
-            repo.retryReactions()
+            val reactionEntities = repo.retryReactions()
+            Truth.assertThat(reactionEntities.size).isEqualTo(1)
             reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, "like")
             Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
         }
