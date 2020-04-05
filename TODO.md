@@ -1,5 +1,7 @@
 
-- Expand test coverage, mock LLC as needed
+- Expand test coverage, mock LLC
+- Test integration in sample app to see if API really makes sense
+- Builder syntax
 - All TODO items in the code
 
 

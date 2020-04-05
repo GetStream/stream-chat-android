@@ -108,8 +108,6 @@ class ChannelRepoInsertTest: BaseTest() {
 
     }
 
-
-
     @Test
     fun clean() {
         // clean should remove old typing indicators
@@ -121,13 +119,5 @@ class ChannelRepoInsertTest: BaseTest() {
         Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(1)
     }
 
-    @Test
-    fun markRead() {
-        runBlocking(Dispatchers.IO) { repo.insertChannel(data.channel1) }
-        runBlocking(Dispatchers.IO) { channelRepo.upsertMessage(data.message1) }
-        // send the reaction while offline
-        //runBlocking(Dispatchers.IO) {channelRepo.markRead()}
-        // TODO implement mark read
-    }
 
 }

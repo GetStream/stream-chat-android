@@ -53,7 +53,7 @@ This shows how to fetch messages and other common channel level livedata objects
 val channelRepo = repo.channel("messaging", "test123")
 channelRepo.watch()
 channelRepo.messages.observe
-channelRepo.threads.observe
+channelRepo.getThread("parent-id").observe
 channelRepo.reads.observe
 channelRepo.typing.observe
 channelRepo.loading.observe
@@ -75,8 +75,7 @@ val filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
 val sort : QuerySort? = null
 queryRepo = repo.queryChannels(filter, sort)
 
-// TODO this is a bit ugly
-queryRepo.query(QueryChannelsRequest(offset=0, limit=10, messageLimit=100))
+queryRepo.query(QueryChannelsPaginationRequest(0, 30))
 ```
 
 # Development

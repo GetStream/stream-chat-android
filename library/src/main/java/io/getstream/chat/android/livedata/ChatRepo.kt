@@ -79,6 +79,8 @@ class ChatRepo(
         ChatRepo.instance = this
     }
 
+    // TODO: use a builder pattern
+
     // TODO: make this more dry
 
     constructor(context: Context, currentUser: User, client: ChatClient, offlineEnabled: Boolean = true) : this(client, currentUser) {
