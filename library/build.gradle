@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 
-        versionName "4.0.13"
+        versionName "4.0.14"
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
@@ -102,7 +102,7 @@ dependencies {
     testImplementation "org.json:json:20190722"
 
 
-    api 'com.github.GetStream:stream-chat-android-client:1.0.10'
+    api 'com.github.GetStream:stream-chat-android-client:1.0.12'
 }
 
 task javadoc(type: Javadoc) {
