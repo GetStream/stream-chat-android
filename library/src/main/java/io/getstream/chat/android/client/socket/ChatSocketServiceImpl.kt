@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.socket
 
 import android.os.Message
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -186,6 +187,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
             data["user_id"] = user.id
         }
         data["server_determines_connection_id"] = true
+        data["X-STREAM-CLIENT"] = ChatClient.instance().getVersion()
         return chatParser.toJson(data)
     }
 

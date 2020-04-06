@@ -317,7 +317,7 @@ internal class ChatClientImpl(
     }
 
     override fun getVersion(): String {
-        return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE;
     }
 
     override fun acceptInvite(
