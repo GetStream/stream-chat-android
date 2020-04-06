@@ -1,10 +1,11 @@
 package com.getstream.sdk.chat.rest.controller;
 
-import android.util.Log;
-
+import com.getstream.sdk.chat.BuildConfig;
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.CachedTokenProvider;
 import com.getstream.sdk.chat.rest.response.ErrorResponse;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,13 +47,14 @@ public class TokenAuthInterceptor implements Interceptor {
 
         Request request = chain.request();
         request = addTokenHeader(request);
+        request = addVersionHeader(request);
         Response response = chain.proceed(request);
 
         // check the error and only hit this path if the token was expired (error response code)
         if (!response.isSuccessful()) {
             ErrorResponse err = ErrorResponse.parseError(response);
             if (err.getCode() == ErrorResponse.TOKEN_EXPIRED_CODE) {
-                StreamChat.getLogger().logD(this,"Retrying new request");
+                StreamChat.getLogger().logD(this, "Retrying new request");
                 token = null; // invalidate local cache
                 tokenProvider.tokenExpired();
                 response.close();
@@ -65,6 +67,10 @@ public class TokenAuthInterceptor implements Interceptor {
 
     private Request addTokenHeader(Request req) {
         return req.newBuilder().header("Authorization", token).build();
+    }
+
+    private Request addVersionHeader(Request req) {
+        return req.newBuilder().header(Constant.HEADER_VERSION, Utils.version()).build();
     }
 
 }

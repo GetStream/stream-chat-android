@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.rest.core.providers;
 
-import android.util.Log;
-
 import com.getstream.sdk.chat.StreamChat;
 import com.getstream.sdk.chat.interfaces.WSResponseHandler;
 import com.getstream.sdk.chat.rest.StreamWebSocketService;
@@ -10,6 +8,8 @@ import com.getstream.sdk.chat.rest.WebSocketService;
 import com.getstream.sdk.chat.rest.codecs.GsonConverter;
 import com.getstream.sdk.chat.rest.core.ApiClientOptions;
 import com.getstream.sdk.chat.rest.core.Client;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.Utils;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +35,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
     @Override
     public WebSocketService provideWebSocketService(User user, @Nullable String userToken, WSResponseHandler listener, boolean anonymousAuth) throws UnsupportedEncodingException {
         String wsUrl = getWsUrl(userToken, user, anonymousAuth);
-        StreamChat.getLogger().logD(this,"WebSocket URL : " + wsUrl);
+        StreamChat.getLogger().logD(this, "WebSocket URL : " + wsUrl);
         return new StreamWebSocketService(wsUrl, listener);
     }
 
@@ -44,7 +44,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
             StreamChat.getLogger().logE(this, "Can\'t use anonymousAuth with userToken. UserToken will be ignored");
         }
         if (!anonymousAuth && userToken == null) {
-            StreamChat.getLogger().logE(this,"userToken must be non-null in non anonymous mode");
+            StreamChat.getLogger().logE(this, "userToken must be non-null in non anonymous mode");
             return null;
         }
 
@@ -69,6 +69,7 @@ public class StreamWebSocketServiceProvider implements WebSocketServiceProvider 
         data.put("user_details", user);
         data.put("server_determines_connection_id", true);
         data.put("user_id", user.getId());
+        data.put(Constant.HEADER_VERSION, Utils.version());
         return GsonConverter.Gson().toJson(data);
     }
 }
