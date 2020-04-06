@@ -64,8 +64,8 @@ open class BaseTest {
         }
 
         db = createRoomDb()
+        repo = ChatRepo.Builder(ApplicationProvider.getApplicationContext(), client, data.user1).userPresenceEnabled().build()
 
-        repo = ChatRepo(client, data.user1, db)
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })

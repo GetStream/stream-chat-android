@@ -4,16 +4,25 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
+import androidx.room.Room
+import androidx.test.core.app.ApplicationProvider
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatClientImpl
+import io.getstream.chat.android.client.ChatModules
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.logger.TaggedLoggerImpl
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
@@ -47,21 +56,21 @@ class ChatRepo(
     var client: ChatClient,
     var currentUser: User
 ) {
-
     private lateinit var channelQueryDao: ChannelQueryDao
     private lateinit var userDao: UserDao
     private lateinit var reactionDao: ReactionDao
     private lateinit var messageDao: MessageDao
     private lateinit var channelStateDao: ChannelStateDao
     private lateinit var channelConfigDao: ChannelConfigDao
-    private val logger = ChatLogger.get("ChatRepo")
+    private var baseLogger: ChatLogger = ChatLogger.instance
+    private var logger = ChatLogger.get("ChatRepo")
 
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
     /** enable this to receive user update events */
     var userPresence: Boolean = false
 
-    constructor(client: ChatClient, currentUser: User, database: ChatDatabase) : this(client, currentUser) {
+    constructor(client: ChatClient, currentUser: User, database: ChatDatabase, offlineEnabled: Boolean = true) : this(client, currentUser) {
         channelQueryDao = database.queryChannelsQDao()
         userDao = database.userDao()
         reactionDao = database.reactionDao()
@@ -83,8 +92,14 @@ class ChatRepo(
 
     // TODO: make this more dry
 
-    constructor(context: Context, currentUser: User, client: ChatClient, offlineEnabled: Boolean = true) : this(client, currentUser) {
-        val database = ChatDatabase.getDatabase(context, currentUser.id)
+    constructor(client: ChatClient, currentUser: User, context: Context, offlineEnabled: Boolean = true) : this(client, currentUser) {
+        val database = if (offlineEnabled) {
+            ChatDatabase.getDatabase(context, currentUser.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(
+                context, ChatDatabase::class.java
+            ).build()
+        }
         channelQueryDao = database.queryChannelsQDao()
         userDao = database.userDao()
         reactionDao = database.reactionDao()
@@ -107,6 +122,8 @@ class ChatRepo(
         ChatRepo.instance = this
 
     }
+
+
 
 
     suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
@@ -715,6 +732,80 @@ class ChatRepo(
 
     suspend fun selectReactionEntity(messageId: String, userId: String, type: String): ReactionEntity? {
         return reactionDao.select(messageId, userId, type)
+    }
+
+    data class Builder(
+        private var appContext: Context, private var client: ChatClient, private var user: User
+    ) {
+
+        private var database: ChatDatabase? = null
+
+        private var userPresence: Boolean = false
+        private var offlineEnabled: Boolean = true
+
+        private var logLevel = ChatLogLevel.NOTHING
+        private var loggerHandler: ChatLoggerHandler? = null
+
+        fun logLevel(level: ChatLogLevel): Builder {
+            logLevel = level
+            return this
+        }
+
+        fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
+            this.loggerHandler = loggerHandler
+            return this
+        }
+
+        fun database(db: ChatDatabase): Builder {
+            this.database = db
+            return this
+        }
+
+        fun offlineEnabled(): Builder {
+            this.offlineEnabled = true
+            return this
+        }
+
+        fun offlineDisabled(): Builder {
+            this.offlineEnabled = false
+            return this
+        }
+
+        fun userPresenceEnabled(): Builder{
+            this.userPresence = true
+            return this
+        }
+
+        fun userPresenceDisabled(): Builder{
+            this.userPresence = false
+            return this
+        }
+
+        fun build(): ChatRepo {
+            var chatRepo = if (database!=null) {
+                ChatRepo(client, user, database!!, offlineEnabled)
+            } else if (appContext != null) {
+                ChatRepo(client, user, appContext!!, offlineEnabled)
+            } else {
+                null
+            }
+            checkNotNull(chatRepo) {"please specify either database or appContext when building a ChatRepo"}
+
+            // TODO: this logger system works a bit differently than what i've seen in the past
+            val loggerConfig = ChatLogger.Config(logLevel, loggerHandler)
+            val logger = ChatLogger.Builder(loggerConfig).build()
+            chatRepo.setLogger(logger)
+
+
+            ChatRepo.instance = chatRepo!!
+
+            return chatRepo
+        }
+    }
+
+    private fun setLogger(logger: ChatLogger) {
+        this.baseLogger = logger
+        this.logger = TaggedLoggerImpl("ChatRepo", logger)
     }
 
     companion object {
