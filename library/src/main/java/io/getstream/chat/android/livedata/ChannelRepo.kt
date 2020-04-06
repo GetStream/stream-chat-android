@@ -50,12 +50,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     private val _messages = MutableLiveData<MutableMap<String, Message>>()
     /** LiveData object with the messages */
 
-    // TODO, we could make this more efficient by using a data structure that keeps the sort
+    // TODO 1.1: we could make this more efficient by using a data structure that keeps the sort
     val messages : LiveData<List<Message>> = Transformations.map(_messages) {
         it.values.sortedBy { it.createdAt }
     }
-
-    // TODO: support user references and updating user references
 
     private val _channel = MutableLiveData<Channel>()
     /** LiveData object with the channel information (members, data etc.) */
@@ -398,7 +396,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     private fun upsertUser(user: User?) {
-        // TODO: implement me
+        // TODO: 1.1 add support for updating users
     }
 
     private fun deleteWatcher(user: User) {

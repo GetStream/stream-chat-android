@@ -68,7 +68,6 @@ class ChatChannelRepoEventTest: BaseTest() {
         channelRepo.handleEvent(data.reactionEvent)
         channelRepo.handleEvent(data.user1UpdatedEvent)
         val message = channelRepo.getMessage(data.message1.id)
-        // TODO: Implement this
         Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
         Truth.assertThat(message!!.latestReactions.first().user!!.extraData["color"]).isEqualTo("green")
 
@@ -105,7 +104,6 @@ class ChatChannelRepoEventTest: BaseTest() {
 
     @Test
     fun eventMessageWithThread() {
-        // TODO: improve thread handling
         channelRepo.handleEvent(data.newMessageEvent)
         channelRepo.handleEvent(data.newMessageWithThreadEvent)
         val parentId = data.newMessageWithThreadEvent.message.parentId!!

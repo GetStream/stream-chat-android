@@ -640,7 +640,6 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
         }
 
         // store the channel configs
-        // TODO: only store if the data changed
         insertConfigs(configs)
         // store the users
         insertUsers(users.toList())
@@ -722,19 +721,6 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
 
-        private var logLevel = ChatLogLevel.NOTHING
-        private var loggerHandler: ChatLoggerHandler? = null
-
-        fun logLevel(level: ChatLogLevel): Builder {
-            logLevel = level
-            return this
-        }
-
-        fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
-            this.loggerHandler = loggerHandler
-            return this
-        }
-
         fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
@@ -766,12 +752,6 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
             } else {
                 ChatRepo(appContext, client, user, offlineEnabled, userPresence)
             }
-
-            // TODO: this logger system works a bit differently than what i've seen in the past
-            // Ideally i'd like to inherit the logging configs from the client and use those here..
-            val loggerConfig = ChatLogger.Config(logLevel, loggerHandler)
-            val logger = ChatLogger.Builder(loggerConfig).build()
-            chatRepo.setLogger(logger)
 
             ChatRepo.instance = chatRepo
 

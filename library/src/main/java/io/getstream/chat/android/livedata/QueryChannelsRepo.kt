@@ -27,7 +27,6 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
      * A livedata object with the channels matching this query.
      */
 
-    // TODO: verify that all livedata objects expose List<Any> and not MutabeleList<Any>
     private val _channels = MutableLiveData<List<ChannelRepo>>()
     var channels: LiveData<List<ChannelRepo>> = _channels
 
@@ -37,7 +36,6 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     val loading : LiveData<Boolean> = _loading
 
     private val _loadingMore = MutableLiveData<Boolean>(false)
-    // TODO: trigger loading more
     val loadingMore : LiveData<Boolean> = _loadingMore
 
     fun loadMore(limit: Int = 30) {
@@ -55,7 +53,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
 
-    // TODO: handleMessageNotification should be configurable
+    // TODO 1.1: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {
             addChannels(listOf(it))
@@ -77,6 +75,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         }
     }
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest) {
+        val loader = if(pagination.isFirstPage()) {_loading} else {
+            _loadingMore
+        }
+        loader.value = true
         // start by getting the query results from offline storage
         val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
         val query = repo.selectQuery(query.id)
@@ -118,6 +120,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                 repo.addError(response.error())
             }
         }
+        loader.value = false
     }
 
     private fun addChannels(channelsResponse: List<Channel>) {
