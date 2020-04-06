@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.ChatClient
 import okhttp3.Interceptor
 import okhttp3.Response
 
@@ -11,6 +12,7 @@ class HeadersInterceptor(val config: ChatClientConfig) : Interceptor {
             .addHeader("Content-Type", "application/json")
             .addHeader("stream-auth-type", authType)
             .addHeader("Accept-Encoding", "application/gzip")
+            .addHeader("X-STREAM-CLIENT", ChatClient.instance().getVersion())
             .build()
         return chain.proceed(request)
     }
