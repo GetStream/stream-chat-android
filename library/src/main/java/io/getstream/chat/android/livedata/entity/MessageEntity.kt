@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
+import kotlin.collections.HashMap
 
 
 /**
@@ -85,6 +86,20 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         reactionCounts.set(reaction.type, currentCount + 1)
     }
 
+    // removes this reaction and update the counts
+    fun removeReaction(reaction: Reaction, updateCounts:Boolean = false) {
+        val reactionEntity = ReactionEntity(reaction)
+        val removed1 = ownReactions.remove(reactionEntity)
+        val removed2 = latestReactions.remove(reactionEntity)
+        if (updateCounts) {
+            val shouldDecrement = removed1 || removed2 || latestReactions.size >= 15
+            if (shouldDecrement) {
+                val currentCount = reactionCounts.getOrDefault(reaction.type, 1)
+                reactionCounts[reaction.type] = currentCount - 1
+            }
+        }
+    }
+
     /** create a messageEntity from a message object */
     constructor(m: Message): this(m.id, m.cid, m.getUserId()) {
         text = m.text
@@ -135,4 +150,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         return m
 
     }
+
+
 }

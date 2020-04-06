@@ -162,7 +162,7 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
      * LiveData<Boolean> that indicates if we are currently online
      */
     val online: LiveData<Boolean> = _online
-    // TODO: in 1.1 we should accelerate online/offline detection
+    // TODO 1.1: We should accelerate online/offline detection
 
     private val _totalUnreadCount = MutableLiveData<Int>()
 
@@ -211,7 +211,7 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
 
     suspend fun handleEvent(event : ChatEvent) {
         // keep the data in Room updated based on the various events..
-        // TODO: cache users, messages and channels to reduce number of Room queries
+        // TODO 1.1: cache users, messages and channels to reduce number of Room queries
 
 
         // any event can have channel and unread count information
@@ -277,8 +277,13 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
-                    insertMessage(event.message)
-                    // TODO: this isn't right, use the same approach as with newReaction
+                    val message = selectMessageEntity(event.reaction!!.messageId)
+                    message?.let {
+                        val userId = event.reaction!!.user!!.id
+                        it.removeReaction(event.reaction!!, false)
+                        it.reactionCounts = event.message.reactionCounts
+                        insertMessageEntity(it)
+                    }
                 }
                 is UserPresenceChanged, is UserUpdated -> {
                     insertUser(event.user!!)
