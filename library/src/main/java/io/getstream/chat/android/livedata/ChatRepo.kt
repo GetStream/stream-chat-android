@@ -8,9 +8,6 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClientImpl
-import io.getstream.chat.android.client.ChatModules
-import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
@@ -52,10 +49,7 @@ import java.util.*
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class ChatRepo(
-    var client: ChatClient,
-    var currentUser: User
-) {
+class ChatRepo internal constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean=false) {
     private lateinit var channelQueryDao: ChannelQueryDao
     private lateinit var userDao: UserDao
     private lateinit var reactionDao: ReactionDao
@@ -68,44 +62,10 @@ class ChatRepo(
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
     /** enable this to receive user update events */
-    var userPresence: Boolean = false
 
-    constructor(client: ChatClient, currentUser: User, database: ChatDatabase, offlineEnabled: Boolean = true) : this(client, currentUser) {
-        channelQueryDao = database.queryChannelsQDao()
-        userDao = database.userDao()
-        reactionDao = database.reactionDao()
-        messageDao = database.messageDao()
-        channelStateDao = database.channelStateDao()
-        channelConfigDao = database.channelConfigDao()
-
-        // load channel configs from Room into memory
-        GlobalScope.launch(Dispatchers.IO) {
-            loadConfigs()
-        }
-
-        // start listening for events
-        startListening()
-        ChatRepo.instance = this
-    }
-
-    // TODO: use a builder pattern
-
-    // TODO: make this more dry
-
-    constructor(client: ChatClient, currentUser: User, context: Context, offlineEnabled: Boolean = true) : this(client, currentUser) {
-        val database = if (offlineEnabled) {
-            ChatDatabase.getDatabase(context, currentUser.id)
-        } else {
-            Room.inMemoryDatabaseBuilder(
-                context, ChatDatabase::class.java
-            ).build()
-        }
-        channelQueryDao = database.queryChannelsQDao()
-        userDao = database.userDao()
-        reactionDao = database.reactionDao()
-        messageDao = database.messageDao()
-        channelStateDao = database.channelStateDao()
-        channelConfigDao = database.channelConfigDao()
+    internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
+        val chatDatabase = db ?: createDatabase()
+        setupDao(chatDatabase)
 
         // load channel configs from Room into memory
         GlobalScope.launch {
@@ -119,12 +79,27 @@ class ChatRepo(
 
         // start listening for events
         startListening()
-        ChatRepo.instance = this
-
     }
 
+    private fun setupDao(database: ChatDatabase) {
+        channelQueryDao = database.queryChannelsQDao()
+        userDao = database.userDao()
+        reactionDao = database.reactionDao()
+        messageDao = database.messageDao()
+        channelStateDao = database.channelStateDao()
+        channelConfigDao = database.channelConfigDao()
+    }
 
-
+    private fun createDatabase(): ChatDatabase {
+        val database = if (offlineEnabled) {
+            ChatDatabase.getDatabase(context, currentUser.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(
+                context, ChatDatabase::class.java
+            ).build()
+        }
+        return database
+    }
 
     suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
         val result = runnable().execute()
@@ -220,8 +195,7 @@ class ChatRepo(
         _errorEvent.value = io.getstream.chat.android.livedata.Event(error)
     }
 
-    /** if we should enable offline storage or not */
-    var offlineEnabled = true // TODO we will implement support for disabling offline support in 1.1
+
 
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
@@ -782,22 +756,19 @@ class ChatRepo(
         }
 
         fun build(): ChatRepo {
-            var chatRepo = if (database!=null) {
-                ChatRepo(client, user, database!!, offlineEnabled)
-            } else if (appContext != null) {
-                ChatRepo(client, user, appContext!!, offlineEnabled)
+            val chatRepo = if (database!=null) {
+                ChatRepo(appContext, client, user, offlineEnabled, userPresence, database!!)
             } else {
-                null
+                ChatRepo(appContext, client, user, offlineEnabled, userPresence)
             }
-            checkNotNull(chatRepo) {"please specify either database or appContext when building a ChatRepo"}
 
             // TODO: this logger system works a bit differently than what i've seen in the past
+            // Ideally i'd like to inherit the logging configs from the client and use those here..
             val loggerConfig = ChatLogger.Config(logLevel, loggerHandler)
             val logger = ChatLogger.Builder(loggerConfig).build()
             chatRepo.setLogger(logger)
 
-
-            ChatRepo.instance = chatRepo!!
+            ChatRepo.instance = chatRepo
 
             return chatRepo
         }

@@ -35,7 +35,7 @@ Here are the most common ways to use the library
 ## Create a chat repo
 
 ```
-val repo = ChatRepo(context, user, client, offlineEnabled)
+val repo = ChatRepo.Builder(context, client, data.user1).offlineEnabled().userPresenceEnabled().build()
 ```
 
 ## Unread counts

@@ -55,8 +55,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         it.values.sortedBy { it.createdAt }
     }
 
-    // TODO: what about channel data... I think it doesn't matter (handled by createChannel, but not 100% sure)
-
     // TODO: support user references and updating user references
 
     private val _channel = MutableLiveData<Channel>()
@@ -145,8 +143,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun watch() {
-        // Support withdata
-        // TODO: channelController.watch(ChannelWatchRequest().withData(data))
         GlobalScope.launch(Dispatchers.IO) {
             _watch()
         }
@@ -183,8 +179,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
-        // TODO: fix direction
-        _loadingNewerMessages.value = true
+        val loader = if (request.isFilteringNewerMessages()) {
+            _loadingNewerMessages
+        } else {
+            _loadingOlderMessages
+        }
+
+        loader.value = true
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
@@ -196,7 +197,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             _loading.postValue(false)
             repo.addError(response.error())
         }
-        _loadingNewerMessages.value = false
+        loader.value = false
     }
 
     /**

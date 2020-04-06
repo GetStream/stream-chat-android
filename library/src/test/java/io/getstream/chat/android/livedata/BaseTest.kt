@@ -1,8 +1,10 @@
 package io.getstream.chat.android.livedata
 
+import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -32,7 +34,7 @@ open class BaseTest {
     val rule = InstantTaskExecutorRule()
 
     fun createClient(): ChatClient {
-        val client = ChatClient.Builder("b67pax5b2wdq", ApplicationProvider.getApplicationContext())
+        val client = ChatClient.Builder("b67pax5b2wdq", getApplicationContext())
             .logLevel(
                 ChatLogLevel.ALL
             ).loggerHandler(TestLoggerHandler()).build()
@@ -47,7 +49,7 @@ open class BaseTest {
 
     fun createRoomDb(): ChatDatabase {
         db = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(), ChatDatabase::class.java
+            getApplicationContext(), ChatDatabase::class.java
         ).build()
         return db
     }
@@ -64,7 +66,8 @@ open class BaseTest {
         }
 
         db = createRoomDb()
-        repo = ChatRepo.Builder(ApplicationProvider.getApplicationContext(), client, data.user1).userPresenceEnabled().build()
+        val context = getApplicationContext() as Context
+        repo = ChatRepo.Builder(context, client, data.user1).offlineEnabled().userPresenceEnabled().build()
 
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
