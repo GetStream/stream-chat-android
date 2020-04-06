@@ -1,5 +1,5 @@
 include ':library'
-rootProject.name='StreamChatAndroidLivedata'
+rootProject.name='stream-chat-android-livedata'
 
 include ':chat'
 

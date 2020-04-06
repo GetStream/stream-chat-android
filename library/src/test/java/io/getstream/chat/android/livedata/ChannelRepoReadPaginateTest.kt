@@ -85,6 +85,20 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     }
 
     @Test
+    fun recovery() = runBlocking(Dispatchers.IO) {
+        // running recover should trigger channels to show up for active queries and channels
+        repo.connectionRecovered()
+
+        // verify channel data is loaded
+        val channelRepos = queryRepo.channels.getOrAwaitValue()
+        Truth.assertThat(channelRepos.size).isGreaterThan(0)
+
+        // verify we have messages as well
+        val messages = channelRepo.messages.getOrAwaitValue()
+        Truth.assertThat(messages.size).isGreaterThan(0)
+    }
+
+    @Test
     fun loadNewerMessages() {
         val channelRepo = repo.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.getstream.sdk.chat.livedata">
+    package="io.getstream.chat.android.livedata">
 
     <application
         android:allowBackup="true"

@@ -28,6 +28,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
      */
 
     private val _channels = MutableLiveData<List<ChannelRepo>>()
+    // TODO: perhaps call this channelRepos
     var channels: LiveData<List<ChannelRepo>> = _channels
 
     private val logger = ChatLogger.get("QueryChannelsRepo")

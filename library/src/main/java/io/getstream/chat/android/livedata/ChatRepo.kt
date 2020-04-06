@@ -49,7 +49,7 @@ import java.util.*
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class ChatRepo internal constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean=false) {
+class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean=false) {
     private lateinit var channelQueryDao: ChannelQueryDao
     private lateinit var userDao: UserDao
     private lateinit var reactionDao: ReactionDao
@@ -57,11 +57,10 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
     private lateinit var channelStateDao: ChannelStateDao
     private lateinit var channelConfigDao: ChannelConfigDao
     private var baseLogger: ChatLogger = ChatLogger.instance
-    private var logger = ChatLogger.get("ChatRepo")
+    private var logger = ChatLogger.get("Repo")
 
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
-    /** enable this to receive user update events */
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
         val chatDatabase = db ?: createDatabase()
@@ -498,19 +497,22 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
         messageDao.insert(messageEntity)
     }
 
-    // TODO: test me
     suspend fun connectionRecovered() {
         // 1 update the results for queries that are actively being shown right now
-        for ((query, queryRepo) in activeQueryMap.entries.toList().slice(0..3)) {
+        for ((_, queryRepo) in activeQueryMap.entries.toList().take(3)) {
             queryRepo.query(QueryChannelsPaginationRequest())
         }
         // 2 update the data for all channels that are being show right now...
-        val cids = activeChannelMap.keys.toList().slice(0..30)
+        val cids = activeChannelMap.keys.toList().take(30)
         val filter = `in`("cid", cids)
         val request = QueryChannelsRequest(filter, 0, 30)
         val result = client.queryChannels(request).execute()
         if (result.isSuccess) {
             val channels = result.data()
+            for (c in channels) {
+                val channelRepo = this.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
             storeStateForChannels(channels)
         }
         // 3 retry any failed requests
@@ -747,11 +749,7 @@ class ChatRepo internal constructor(var context: Context, var client: ChatClient
         }
 
         fun build(): ChatRepo {
-            val chatRepo = if (database!=null) {
-                ChatRepo(appContext, client, user, offlineEnabled, userPresence, database!!)
-            } else {
-                ChatRepo(appContext, client, user, offlineEnabled, userPresence)
-            }
+            val chatRepo = ChatRepo(appContext, client, user, offlineEnabled, userPresence, database)
 
             ChatRepo.instance = chatRepo
 

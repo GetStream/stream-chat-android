@@ -67,7 +67,7 @@ open class BaseTest {
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
-        repo = ChatRepo.Builder(context, client, data.user1).offlineEnabled().userPresenceEnabled().build()
+        repo = ChatRepo.Builder(context, client, data.user1).database(db).offlineEnabled().userPresenceEnabled().build()
 
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")

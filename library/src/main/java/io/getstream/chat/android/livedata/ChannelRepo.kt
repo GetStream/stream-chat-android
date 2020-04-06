@@ -45,7 +45,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
 
-    private val logger = ChatLogger.get("ChatChannelRepo")
+    private val logger = ChatLogger.get("ChannelRepo")
 
     private val _messages = MutableLiveData<MutableMap<String, Message>>()
     /** LiveData object with the messages */
