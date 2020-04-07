@@ -1,1 +1,6 @@
 include ':library', ':sample'
+
+
+include ':livedata'
+
+project(":livedata").projectDir=new File("/Users/thierry/workspace/stream-chat-android-livedata/library")

@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
+import io.getstream.chat.android.livedata.ChatRepo;
 import io.getstream.chat.example.App;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
@@ -56,6 +57,7 @@ public class ChannelListFragment extends Fragment {
     //private final Boolean offlineEnabled = false;
     private ChannelListViewModel viewModel;
     private ChatClient client;
+    private ChatRepo repo;
 
     // establish a websocket connection to stream
     private void configureStreamClient() {
@@ -76,6 +78,8 @@ public class ChannelListFragment extends Fragment {
 
         User user = new User(USER_ID);
         user.setExtraData(extraData);
+
+        repo = new ChatRepo.Builder(getContext().getApplicationContext(), Chat.getInstance().getClient(), user).offlineEnabled().userPresenceEnabled().build();
 
         client.setUser(user, USER_TOKEN, new InitConnectionListener(){
             @Override
@@ -138,7 +142,7 @@ public class ChannelListFragment extends Fragment {
 
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
-        viewModel.setChannelFilter(filter);
+        viewModel.setQuery(filter, null);
 
 
         // Example on how to ignore some events handled by the VM
@@ -236,8 +240,6 @@ public class ChannelListFragment extends Fragment {
 
         String channelId = name.replaceAll(" ", "-").toLowerCase();
 
-        viewModel.setLoading();
-
         ChannelQueryRequest request = new ChannelQueryRequest().withData(extraData);
 
         client.queryChannel(ModelType.channel_messaging, channelId, request).enqueue(new Function1<Result<io.getstream.chat.android.client.models.Channel>, Unit>() {
@@ -249,10 +251,8 @@ public class ChannelListFragment extends Fragment {
                     io.getstream.chat.android.client.models.Channel channel = channelResult.data();
 
                     Chat.getInstance().getNavigator().navigate(new ChannelDestination(channel.getType(), channel.getId(), getContext()));
-                    viewModel.addChannels(Arrays.asList(channel));
-                    viewModel.setLoadingDone();
+                    // TODO: viewModel.addChannels(Arrays.asList(channel));
                 } else {
-                    viewModel.setLoadingDone();
                     Toast.makeText(getContext(), channelResult.error().getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
@@ -293,7 +293,7 @@ public class ChannelListFragment extends Fragment {
     private void showHiddenChannels() {
         Utils.showMessage(getContext(), Chat.getInstance().getStrings().get(R.string.show_hidden_channel));
         FilterObject filter = Filters.INSTANCE.eq("type", "messaging").put("hidden", true);
-        viewModel.setChannelFilter(filter);
+        viewModel.setQuery(filter, null);
         viewModel.queryChannels();
     }
 

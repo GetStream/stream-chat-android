@@ -28,6 +28,7 @@ buildscript {
         recyclerViewVersion = '1.0.0'
         runnerVersion = '1.2.0'
         viewPagerVersion = '1.0.0-rc01'
+        kotlin_version = '1.3.61'
     }
 
     repositories {
@@ -45,6 +46,7 @@ buildscript {
         classpath "io.fabric.tools:gradle:$fabricVersion"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
         classpath "com.dicedmelon.gradle:jacoco-android:$jacocoVersion"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.10.1"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }

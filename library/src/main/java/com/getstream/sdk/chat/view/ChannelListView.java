@@ -13,10 +13,16 @@ import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Transformations;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.livedata.ChannelRepo;
 
 
 public class ChannelListView extends RecyclerView {
@@ -83,11 +89,19 @@ public class ChannelListView extends RecyclerView {
         setOnLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
-        viewModel.getChannels().observe(lifecycleOwner, channels -> {
+        // TODO Chat repo approach is not convenient here. Need to change the API
+        Transformations.map(viewModel.getChannelRepos(), channelRepos -> {
+            List<Channel> channels = new ArrayList<Channel>();
+            for (ChannelRepo channelRepo : channelRepos) {
+                channels.add(channelRepo.getChannel().getValue());
+            }
+            return channels;
+        }).observe(lifecycleOwner, channels -> {
             adapter.replaceChannels(channels);
             if (canScrollUpForChannelEvent())
                 layoutManager.scrollToPosition(0);
         });
+
     }
 
     private boolean canScrollUpForChannelEvent(){
