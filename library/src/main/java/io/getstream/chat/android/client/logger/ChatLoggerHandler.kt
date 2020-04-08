@@ -3,13 +3,15 @@ package io.getstream.chat.android.client.logger
 interface ChatLoggerHandler {
     fun logT(throwable: Throwable)
 
-    fun logT(className: String, throwable: Throwable)
+    fun logT(tag: Any, throwable: Throwable)
 
-    fun logI(className: String, message: String)
+    fun logI(tag: Any, message: String)
 
-    fun logD(className: String, message: String)
+    fun logD(tag: Any, message: String)
 
-    fun logW(className: String, message: String)
+    fun logW(tag: Any, message: String)
 
-    fun logE(className: String, message: String)
+    fun logE(tag: Any, message: String)
+
+    fun logE(tag: Any, message: String, throwable: Throwable)
 }

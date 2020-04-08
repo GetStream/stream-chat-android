@@ -4,15 +4,17 @@ import android.content.Context
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.models.RetrofitApi
-import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
@@ -55,7 +57,7 @@ class MockClientBuilder {
             "socket.url",
             1000,
             1000,
-            ChatLogLevel.NOTHING,
+            ChatLogger.Config(ChatLogLevel.NOTHING, null),
             ChatNotificationConfig(context)
         )
 
@@ -64,16 +66,17 @@ class MockClientBuilder {
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
         api = ChatApiImpl(
+            config.apiKey,
             retrofitApi,
             retrofitCdnApi,
-            config,
-            ChatParserImpl()
+            ChatParserImpl(),
+            UuidGeneratorImpl()
         )
 
         Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
         client = ChatClientImpl(config, api, socket, notificationsManager)
-        client.setUser(user)
+        client.setUser(user, token)
 
         return client
     }

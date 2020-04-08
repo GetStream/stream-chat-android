@@ -5,25 +5,30 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 interface ChatClient {
 
-    fun setUser(user: User)
+    fun setUser(user: User, token: String, listener: InitConnectionListener? = null)
 
-    fun setAnonymousUser()
+    fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener? = null)
 
-    fun getGuestToken(userId: String, userName: String): Call<TokenResponse>
+    fun setAnonymousUser(listener: InitConnectionListener? = null)
+
+    fun getGuestToken(userId: String, userName: String): Call<GuestUser>
 
     fun disconnect()
 
@@ -37,21 +42,44 @@ interface ChatClient {
 
     fun getCurrentUser(): User?
 
+    fun channel(cid: String): ChannelController
+
+    fun channel(channelType: String, channelId: String): ChannelController
+
+    fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
+
+    fun createChannel(channelType: String, members: List<String>): Call<Channel>
+
+    fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
+
+    fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
+
     //region CDN
 
     fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
         callback: ProgressCallback
     )
 
     fun sendFile(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
+    ): Call<String>
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File
     ): Call<String>
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -72,13 +100,17 @@ interface ChatClient {
 
     //region Users
 
-    fun getUsers(query: QueryUsersRequest): Call<List<User>>
+    fun updateUser(user: User): Call<User>
+
+    fun updateUsers(users: List<User>): Call<List<User>>
+
+    fun queryUsers(query: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
     fun removeMembers(
         channelType: String,
@@ -86,22 +118,32 @@ interface ChatClient {
         members: List<String>
     ): Call<Channel>
 
-    fun muteUser(targetId: String): Call<MuteUserResponse>
-    fun unMuteUser(targetId: String): Call<MuteUserResponse>
-    fun flag(targetId: String): Call<FlagResponse>
+    fun muteUser(userId: String): Call<Mute>
+    fun muteCurrentUser(): Call<Mute>
+    fun unmuteUser(userId: String): Call<Mute>
+    fun unmuteCurrentUser(): Call<Mute>
+    fun flag(targetId: String): Call<Flag>
     fun banUser(
         targetId: String,
         channelType: String,
         channelId: String,
         reason: String,
         timeout: Int
-    ): Call<CompletableResponse>
+    ): Call<Unit>
 
     fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
-    ): Call<CompletableResponse>
+    ): Call<Unit>
+
+    //region Reactions
+    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+
+    fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
+    fun sendReaction(reaction: Reaction): Call<Reaction>
+    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    //endregion
 
     //endregion
 
@@ -109,12 +151,10 @@ interface ChatClient {
 
     fun getDevices(): Call<List<Device>>
     fun deleteDevice(deviceId: String): Call<Unit>
-    fun addDevice(firebaseToken: String): Call<Unit>
+    fun addDevice(deviceId: String): Call<Unit>
     fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
-    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
-    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun sendAction(request: SendActionRequest): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>
     fun getMessage(messageId: String): Call<Message>
@@ -124,10 +164,10 @@ interface ChatClient {
     fun queryChannel(
         channelType: String,
         channelId: String,
-        request: ChannelQueryRequest
+        request: QueryChannelRequest
     ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>
     fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,
@@ -157,7 +197,14 @@ interface ChatClient {
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
-    fun sendEvent(eventType:String, channelType: String, channelId: String, extraData: Map<Any, Any> = emptyMap()): Call<ChatEvent>
+    fun sendEvent(
+        eventType: String,
+        channelType: String,
+        channelId: String,
+        extraData: Map<Any, Any> = emptyMap()
+    ): Call<ChatEvent>
+
+    fun getVersion(): String
 
     class Builder {
         private val apiKey: String
@@ -167,24 +214,22 @@ interface ChatClient {
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
-        private var tokenProviderInstance: TokenProvider
         private var logLevel = ChatLogLevel.NOTHING
+        private var loggerHandler: ChatLoggerHandler? = null
         private lateinit var notificationsConfig: ChatNotificationConfig
 
-        constructor(apiKey: String, token: String, appContext: Context) {
+        constructor(apiKey: String, appContext: Context) {
             this.apiKey = apiKey
-            this.tokenProviderInstance = ImmediateTokenProvider(token)
-            this.appContext = appContext
-        }
-
-        constructor(apiKey: String, tokenProvider: TokenProvider, appContext: Context) {
-            this.apiKey = apiKey
-            this.tokenProviderInstance = tokenProvider
             this.appContext = appContext
         }
 
         fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
+            return this
+        }
+
+        fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
+            this.loggerHandler = loggerHandler
             return this
         }
 
@@ -250,13 +295,12 @@ interface ChatClient {
                 "wss://$baseUrl/",
                 baseTimeout,
                 cdnTimeout,
-                logLevel,
+                ChatLogger.Config(logLevel, loggerHandler),
                 notificationsConfig
             )
 
-            config.tokenProvider.setTokenProvider(tokenProviderInstance)
-
             val modules = ChatModules(config)
+
             val result = ChatClientImpl(
                 config,
                 modules.api(),
@@ -264,6 +308,7 @@ interface ChatClient {
                 modules.notifications()
             )
             instance = result
+
             return result
         }
     }
@@ -272,6 +317,7 @@ interface ChatClient {
 
         private lateinit var instance: ChatClient
 
+        @JvmStatic
         fun instance(): ChatClient {
             return instance
         }
@@ -280,3 +326,5 @@ interface ChatClient {
     }
 
 }
+
+

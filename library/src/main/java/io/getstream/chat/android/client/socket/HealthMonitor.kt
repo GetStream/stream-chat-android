@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
 import java.util.*
 import kotlin.math.floor
@@ -15,19 +16,23 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     private var consecutiveFailures = 0
     var lastEventDate: Date? = null
 
+    private val logger = ChatLogger.get("SocketMonitor")
+
     private val reconnect = Runnable {
-        socket.setupWS()
+        socket.setupSocket()
     }
 
     private val healthCheck: Runnable = Runnable {
-        if (socket.state is ChatSocketServiceImpl.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
+            logger.logI("Ok")
+            consecutiveFailures = 0
             socket.sendEvent(ChatEvent(EventType.HEALTH_CHECK))
-            delayHandler.postDelayed(monitor, 1000)
+            delayHandler.postDelayed(monitor, healthCheckInterval)
         }
     }
 
     private val monitor = Runnable {
-        if (socket.state is ChatSocketServiceImpl.State.Connected) {
+        if (socket.state is ChatSocketService.State.Connected) {
             val millisNow = Date().time
             val monitorInterval = 1000L
 
@@ -45,22 +50,29 @@ class HealthMonitor(val socket: ChatSocketServiceImpl) {
     }
 
     fun start() {
+        logger.logI("Start")
         monitor.run()
     }
 
     fun reset() {
+        delayHandler.removeCallbacks(monitor)
+        delayHandler.removeCallbacks(reconnect)
+        delayHandler.removeCallbacks(healthCheck)
         lastEventDate = null
-        consecutiveFailures = 0
     }
 
     fun onError() {
+        logger.logI("Error")
+        consecutiveFailures++
         reconnect()
     }
 
     private fun reconnect() {
+        val retryInterval = getRetryInterval()
+        logger.logI("Next connection attempt in $retryInterval ms")
         delayHandler.postDelayed(
             reconnect,
-            getRetryInterval()
+            retryInterval
         )
     }
 

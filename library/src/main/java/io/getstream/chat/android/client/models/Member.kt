@@ -1,34 +1,20 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.utils.UndefinedDate
 import java.util.*
 
 
-class Member : UserEntity {
-    @SerializedName("user")
-    
-    lateinit var user: User
-    @SerializedName("role")
-    
-    var role: String = ""
+data class Member(
+    override var user: User,
+    var role: String = "",
     @SerializedName("created_at")
-    
-    var createdAt:Date = UndefinedDate
+    var createdAt: Date? = null,
     @SerializedName("updated_at")
-    
-    var updatedAt:Date = UndefinedDate
+    var updatedAt: Date? = null,
     @SerializedName("invited")
-    
-    var isInvited = false
+    var isInvited: Boolean = false,
     @SerializedName("invite_accepted_at")
-    
-    var inviteAcceptedAt:Date = UndefinedDate
+    var inviteAcceptedAt: Date? = null,
     @SerializedName("invite_rejected_at")
-    
-    var inviteRejectedAt:Date = UndefinedDate
-
-    override fun getUserId(): String {
-        return user.id
-    }
-}
+    var inviteRejectedAt: Date? = null
+) : UserEntity

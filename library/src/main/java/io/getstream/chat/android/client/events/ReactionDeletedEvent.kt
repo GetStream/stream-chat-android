@@ -1,3 +1,5 @@
 package io.getstream.chat.android.client.events
 
-class ReactionDeletedEvent: ChatEvent()
+import io.getstream.chat.android.client.models.Reaction
+
+class ReactionDeletedEvent(val reaction: Reaction) : ChatEvent()

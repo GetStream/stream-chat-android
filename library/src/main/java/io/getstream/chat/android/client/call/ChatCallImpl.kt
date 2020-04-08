@@ -22,7 +22,7 @@ abstract class ChatCallImpl<T> : Call<T> {
         return callMapper(this, mapper)
     }
 
-    override fun onNext(handler: (T) -> Unit): Call<T> {
+    override fun onSuccess(handler: (T) -> Unit): Call<T> {
         nextHandler = handler
         return this
     }
@@ -32,7 +32,15 @@ abstract class ChatCallImpl<T> : Call<T> {
         return this
     }
 
-    companion object {
+    override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
+        return ZipCall.zip(this, call)
+    }
+
+    override fun <K, P> zipWith(callK: Call<K>, callP: Call<P>): Call<Triple<T, K, P>> {
+        return ZipCall.zip(this, callK, callP)
+    }
+
+    internal companion object {
         private fun <A, B> callMapper(
             callA: Call<A>,
             mapper: (A) -> B

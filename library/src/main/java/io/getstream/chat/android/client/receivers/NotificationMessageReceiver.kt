@@ -42,27 +42,16 @@ class NotificationMessageReceiver : BroadcastReceiver() {
                 // Unsupported action
             }
         }
-        cancelNotification(
-            context,
-            intent?.getIntExtra(KEY_NOTIFICATION_ID, 0)
-        )
+        cancelNotification(context, intent?.getIntExtra(KEY_NOTIFICATION_ID, 0))
     }
 
-    private fun markAsRead(
-        messageId: String?,
-        channelId: String?,
-        type: String?
-    ) {
-        if (messageId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank()) {
+    private fun markAsRead(messageId: String?, channelId: String?, channelType: String?) {
+        if (messageId.isNullOrBlank() || channelId.isNullOrBlank() || channelType.isNullOrBlank()) {
             //Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
 
-        ChatClient.instance().markRead(
-            channelType = type,
-            channelId = channelId,
-            messageId = messageId
-        ).enqueue { result ->
+        ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue { result ->
             if (result.isSuccess) {
                 //Log.i(TAG, "Channel marked as read")
             } else {

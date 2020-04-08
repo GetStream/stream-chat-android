@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api
 
-import android.util.Log
 import io.getstream.chat.android.client.errors.ErrorCode
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.ChatParser
@@ -38,7 +37,7 @@ class TokenAuthInterceptor internal constructor(
             try {
                 latch.await()
             } catch (e: InterruptedException) {
-                ChatLogger.instance?.logT(TAG, e)
+                ChatLogger.instance.logE(TAG, e)
             }
             val request: Request = addTokenHeader(chain.request())
             var response: Response = chain.proceed(request)
@@ -47,13 +46,12 @@ class TokenAuthInterceptor internal constructor(
 
                 val err = parser.toError(response)
                 if (err.streamCode == ErrorCode.TOKEN_EXPIRED.value) {
-                    Log.d(TAG, "Retrying new request")
                     token = null // invalidate local cache
                     config.tokenProvider.tokenExpired()
                     response.close()
                     response = chain.proceed(request)
                 } else {
-                    throw IOException(err.message, err.cause)
+                    throw IOException(err.description, err.cause)
                 }
             }
             return response
@@ -61,7 +59,11 @@ class TokenAuthInterceptor internal constructor(
     }
 
     private fun addTokenHeader(req: Request): Request {
-        return req.newBuilder().header("Authorization", token!!).build()
+        try {
+            return req.newBuilder().header("Authorization", token!!).build()
+        } catch (e: Exception) {
+            throw IOException("Invalid token: $token", e)
+        }
     }
 
 }

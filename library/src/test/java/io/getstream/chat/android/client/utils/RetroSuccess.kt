@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.utils
 
 import okhttp3.Request
+import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -32,6 +33,10 @@ class RetroSuccess<T>(val result: T) : Call<T> {
 
     override fun request(): Request {
         return null!!
+    }
+
+    override fun timeout(): Timeout {
+        return Timeout()
     }
 
 }

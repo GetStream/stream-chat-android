@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
+
 class ChannelsApiCallsTests {
 
 
@@ -34,12 +35,12 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                ChannelQueryRequest()
+                QueryChannelRequest()
             )
         ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
 
         verifySuccess(result, response)
     }
@@ -54,12 +55,12 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                ChannelQueryRequest()
+                QueryChannelRequest()
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
 
         verifyError(result, mock.serverErrorCode)
     }
@@ -364,7 +365,7 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroSuccess(EventResponse(event)))
 
         val result =
-            client.markRead(mock.channelType, mock.channelId, messageId).execute()
+            client.markMessageRead(mock.channelType, mock.channelId, messageId).execute()
 
         verifySuccess(result, Unit)
     }
@@ -386,7 +387,7 @@ class ChannelsApiCallsTests {
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.markRead(mock.channelType, mock.channelId, messageId).execute()
+            client.markMessageRead(mock.channelType, mock.channelId, messageId).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

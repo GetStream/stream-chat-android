@@ -3,10 +3,7 @@ package io.getstream.chat.android.client.api
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
@@ -20,15 +17,26 @@ interface ChatApi {
         channelType: String,
         channelId: String,
         file: File,
-        mimeType: String,
+        callback: ProgressCallback
+    )
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File,
         callback: ProgressCallback
     )
 
     fun sendFile(
         channelType: String,
         channelId: String,
-        file: File,
-        mimeType: String
+        file: File
+    ): Call<String>
+
+    fun sendImage(
+        channelType: String,
+        channelId: String,
+        file: File
     ): Call<String>
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -49,6 +57,8 @@ interface ChatApi {
     fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    fun sendReaction(reaction: Reaction): Call<Reaction>
+    fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun deleteMessage(messageId: String): Call<Message>
     fun sendAction(request: SendActionRequest): Call<Message>
@@ -72,7 +82,7 @@ interface ChatApi {
     fun queryChannel(
         channelType: String,
         channelId: String = "",
-        query: ChannelQueryRequest
+        query: QueryChannelRequest
     ): Call<Channel>
 
     fun updateChannel(
@@ -94,33 +104,35 @@ interface ChatApi {
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     fun markAllRead(): Call<EventResponse>
 
-    fun setGuestUser(userId: String, userName: String): Call<TokenResponse>
+    fun updateUsers(users: List<User>): Call<List<User>>
 
-    fun getUsers(queryUsers: QueryUsersRequest): Call<QueryUserListResponse>
+    fun getGuestUser(userId: String, userName: String): Call<GuestUser>
+
+    fun queryUsers(queryUsers: QueryUsersRequest): Call<List<User>>
 
     fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
     fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
-    ): Call<ChannelResponse>
+    ): Call<Channel>
 
-    fun muteUser(
-        targetId: String
-    ): Call<MuteUserResponse>
+    fun muteCurrentUser(): Call<Mute>
 
-    fun unMuteUser(
-        targetId: String
-    ): Call<MuteUserResponse>
+    fun muteUser(userId: String): Call<Mute>
+
+    fun unmuteUser(userId: String): Call<Mute>
+
+    fun unmuteCurrentUser(): Call<Mute>
 
     fun flag(
         targetId: String
-    ): Call<FlagResponse>
+    ): Call<Flag>
 
     fun banUser(
         targetId: String,

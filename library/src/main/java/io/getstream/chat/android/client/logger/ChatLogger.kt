@@ -1,9 +1,6 @@
 package io.getstream.chat.android.client.logger
 
 interface ChatLogger {
-    fun logT(throwable: Throwable)
-
-    fun logT(tag: Any, throwable: Throwable)
 
     fun logI(tag: Any, message: String)
 
@@ -13,29 +10,46 @@ interface ChatLogger {
 
     fun logE(tag: Any, message: String)
 
+    fun logE(tag: Any, throwable: Throwable)
+
+    fun logE(tag: Any, message: String, throwable: Throwable)
+
+    fun getLevel(): ChatLogLevel
+
+    data class Config(val level: ChatLogLevel, val handler: ChatLoggerHandler?)
+
     class Builder {
 
-        private var loggingLevel = ChatLogLevel.NOTHING
-        private var loggingHandler: ChatLoggerHandler? = null
+        private var level = ChatLogLevel.NOTHING
+        private var handler: ChatLoggerHandler? = null
+
+        constructor(config: Config) {
+            this.level = config.level
+            this.handler = config.handler
+        }
 
         fun level(level: ChatLogLevel): Builder {
-            loggingLevel = level
+            this.level = level
             return this
         }
 
         fun handler(handler: ChatLoggerHandler): Builder {
-            loggingHandler = handler
+            this.handler = handler
             return this
         }
 
         fun build(): ChatLogger {
-            val result = ChatLoggerImpl(loggingLevel, loggingHandler)
+            val result = ChatLoggerImpl(level, handler)
             instance = result
             return result
         }
     }
 
     companion object {
-        var instance: ChatLogger? = null
+        var instance: ChatLogger = ChatSilentLogger()
+
+        fun get(tag: Any): TaggedLogger {
+            return TaggedLoggerImpl(tag, instance)
+        }
     }
 }

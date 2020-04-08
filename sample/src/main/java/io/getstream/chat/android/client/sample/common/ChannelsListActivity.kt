@@ -50,7 +50,10 @@ class ChannelsListActivity : AppCompatActivity() {
 //            }
         }
 
-        client.setUser(User("bender"))
+        val token =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
+
+        client.setUser(User("bender"), token)
 
         client.events().subscribe {
             Log.d("chat-events", it.toString())

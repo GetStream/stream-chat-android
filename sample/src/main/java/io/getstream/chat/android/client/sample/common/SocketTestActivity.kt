@@ -6,10 +6,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_socket_tests.*
 import java.text.SimpleDateFormat
 import kotlin.time.ExperimentalTime
@@ -17,7 +17,10 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
-    var sub: Subscription? = null
+    var subs = mutableListOf<Subscription>()
+
+    val token =
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,47 +33,55 @@ class SocketTestActivity : AppCompatActivity() {
 
             textSocketState.text = "Connecting..."
 
-            sub = client.events().subscribe {
 
-                Log.d("evt", it.type)
-                appendEvent(it)
 
-                when (it) {
-                    is ConnectedEvent -> {
-                        textSocketState.text = "Connected"
-                        Toast.makeText(this, "Connection resolved", Toast.LENGTH_SHORT).show()
-                    }
-                    is ErrorEvent -> {
-                        Log.d("error", it.error.toString())
-                        Toast.makeText(this, "Error event", Toast.LENGTH_SHORT).show()
-                    }
-                    is ConnectingEvent -> {
-                        Toast.makeText(this, "Connecting...", Toast.LENGTH_SHORT).show()
-                    }
-                    is DisconnectedEvent -> {
-                        textSocketState.text = "Disconnected"
-                        Toast.makeText(this, "Disconnected", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        Toast.makeText(this, "Some event", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
+            subs.add(client
+                .events()
+                .filter(ConnectedEvent::class.java)
+                .first()
+                .subscribe {
+                    Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
+                })
 
-            client.setUser(User("bender"))
+            subs.add(client
+                .events()
+                .subscribe {
+
+                    Log.d("evt", it::class.java.simpleName)
+                    appendEvent(it)
+
+                    when (it) {
+                        is ConnectedEvent -> {
+                            textSocketState.text = "Connected"
+                        }
+                        is ErrorEvent -> {
+                            textSocketState.text = "Error: " + it.error.toString()
+                        }
+                        is ConnectingEvent -> {
+                            textSocketState.text = "Connecting..."
+                        }
+                        is DisconnectedEvent -> {
+                            textSocketState.text = "Disconnected"
+                        }
+                    }
+                })
+
+            client.setUser(User("bender"), token)
+
         }
 
         btnDisconnect.setOnClickListener {
             textSocketState.text = "Disconnected"
             client.disconnect()
-            sub?.unsubscribe()
+            subs.forEach { it.unsubscribe() }
+            subs.clear()
         }
-
 
     }
 
     override fun onDestroy() {
-        sub?.unsubscribe()
+        subs.forEach { it.unsubscribe() }
+        subs.clear()
         super.onDestroy()
     }
 

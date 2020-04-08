@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.socket
 
-import android.util.Log
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket
@@ -15,16 +15,17 @@ class EventsParser(
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
-    private var firstReceivedMessage = false
-    private val TAG = javaClass.simpleName
+    private var firstMessageReceived = false
+    private val logger = ChatLogger.get("Events")
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
-        firstReceivedMessage = true
+        logger.logI("onOpen")
+        firstMessageReceived = false
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
 
-        Log.d(TAG, "onMessage: $text")
+        logger.logI("onMessage: $text")
 
         val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
         val errorData = errorMessage.data()
@@ -46,6 +47,7 @@ class EventsParser(
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+        logger.logE("onFailure", t)
         // Called when socket is disconnected by client also (client.disconnect())
         // See issue here https://stream-io.atlassian.net/browse/CAS-88
         service.onSocketError(ChatNetworkError("listener.onFailure error. reconnecting", t))
@@ -57,8 +59,8 @@ class EventsParser(
         if (eventMessage.isSuccess) {
             val event = eventMessage.data()
 
-            if (firstReceivedMessage) {
-                firstReceivedMessage = false
+            if (!firstMessageReceived) {
+                firstMessageReceived = true
                 val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
 
                 if (connection.isSuccess) {
@@ -70,8 +72,11 @@ class EventsParser(
                 }
 
             } else {
-                service.onEvent(parseEvent(event.type, text))
+                val parsedEvent = parseEvent(event.type, text)
+                service.onEvent(parsedEvent)
             }
+
+
         } else {
             service.onSocketError(
                 ChatNetworkError("Unable to parse message: $text")
@@ -82,7 +87,7 @@ class EventsParser(
     private fun handleErrorEvent(error: ErrorResponse) {
         service.onSocketError(
             ChatNetworkError(
-                "$TAG error. Error code: ${error.code}. Message: ${error.message}",
+                "Error code: ${error.code}. Message: ${error.message}",
                 streamCode = error.code
             )
         )
@@ -148,6 +153,10 @@ class EventsParser(
                 parser.fromJson(data, ChannelDeletedEvent::class.java)
             }
 
+            EventType.CHANNEL_VISIBLE -> {
+                parser.fromJson(data, ChannelVisible::class.java)
+            }
+
             //region Watching
 
             EventType.USER_WATCHING_START -> {
@@ -160,8 +169,57 @@ class EventsParser(
             //region Notifications
 
             EventType.NOTIFICATION_ADDED_TO_CHANNEL -> {
-                parser.fromJson(data, AddedToChannelEvent::class.java)
+                parser.fromJson(data, NotificationAddedToChannelEvent::class.java)
             }
+
+            EventType.NOTIFICATION_MARK_READ -> {
+                parser.fromJson(data, NotificationMarkReadEvent::class.java)
+            }
+
+            EventType.NOTIFICATION_MESSAGE_NEW -> {
+                parser.fromJson(data, NotificationMessageNew::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITED -> {
+                parser.fromJson(data, NotificationInvited::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITE_ACCEPTED -> {
+                parser.fromJson(data, NotificationInviteAccepted::class.java)
+            }
+
+            EventType.NOTIFICATION_INVITE_REJECTED -> {
+                parser.fromJson(data, NotificationInviteRejected::class.java)
+            }
+
+            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> {
+                parser.fromJson(data, NotificationRemovedFromChannel::class.java)
+            }
+
+            EventType.NOTIFICATION_MUTES_UPDATED -> {
+                parser.fromJson(data, NotificationMutesUpdated::class.java)
+            }
+
+            EventType.HEALTH_CHECK -> {
+                parser.fromJson(data, HealthEvent::class.java)
+            }
+
+            EventType.USER_PRESENCE_CHANGED -> {
+                parser.fromJson(data, UserPresenceChanged::class.java)
+            }
+
+            EventType.USER_UPDATED -> {
+                parser.fromJson(data, UserUpdated::class.java)
+            }
+
+            EventType.USER_BANNED -> {
+                parser.fromJson(data, UserBanned::class.java)
+            }
+
+            EventType.USER_UNBANNED -> {
+                parser.fromJson(data, UserUnbanned::class.java)
+            }
+
             else -> {
                 parser.fromJson(data, ChatEvent::class.java)
             }

@@ -1,53 +1,44 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.utils.UndefinedDate
+import io.getstream.chat.android.client.api.models.CustomObject
+import io.getstream.chat.android.client.parser.IgnoreDeserialisation
+import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.util.*
 
 
-class Channel {
-    var cid: String = ""
-    var id: String = ""
-    var type: String = ""
+data class Channel(
+    var cid: String = "",
+    var id: String = "",
+    var type: String = "",
+    var watcherCount: Int = 0,
+    var frozen: Boolean = false,
 
     @SerializedName("last_message_at")
-    var lastMessageDate: Date = UndefinedDate
+    var lastMessageAt: Date? = null,
     @SerializedName("created_at")
-    var createdAt: Date = UndefinedDate
+    var createdAt: Date? = null,
     @SerializedName("deleted_at")
-    var deletedAt: Date = UndefinedDate
+    var deletedAt: Date? = null,
     @SerializedName("updated_at")
-    var updatedAt: Date = UndefinedDate
-    @SerializedName("created_by")
-    lateinit var createdByUser: User
-    @SerializedName("member_count")
-    val memberCount: Int = 0
+    var updatedAt: Date? = null,
 
-    val frozen = false
+    @SerializedName("member_count")
+    val memberCount: Int = 0,
+    var messages: List<Message> = mutableListOf(),
+    var members: List<Member> = mutableListOf(),
+    var watchers: List<Watcher> = mutableListOf(),
+    var read: List<ChannelUserRead> = mutableListOf()
+) : CustomObject {
+
     lateinit var config: Config
 
-    var extraData = mutableMapOf<String, Any>()
+    @SerializedName("created_by")
+    lateinit var createdBy: User
 
-    lateinit var messages: List<Message>
-    lateinit var members: List<Member>
-    lateinit var read: List<ChannelUserRead>
-    var watcherCount: Int = 0
-
-    internal lateinit var client: ChatClient
-
-    fun watch(request: ChannelWatchRequest): Call<Channel> {
-        return client.queryChannel(type, id, request)
-    }
-
-    fun getName(): String? {
-        val name = extraData["name"]
-        return if (name is String) {
-            name
-        } else null
-    }
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    override var extraData = mutableMapOf<String, Any>()
 
     override fun toString(): String {
         return "Channel(cid='$cid')"

@@ -4,11 +4,11 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.socket.ErrorResponse
+import io.getstream.chat.android.client.utils.Result
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,12 +16,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
+    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
 
     private val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-            .setPrettyPrinting()
+            .setDateFormat(defaultDateFormat)
             .addSerializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipClass(clazz: Class<*>): Boolean {
                     return false
@@ -79,7 +79,7 @@ class ChatParserImpl : ChatParser {
             val error = toError(body)
             ChatNetworkError(error.message, streamCode = error.code, statusCode = statusCode)
         } catch (t: Throwable) {
-            ChatLogger.instance?.logT(TAG, t)
+            ChatLogger.instance.logE(TAG, t)
             ChatNetworkError(t.message.toString(), t, okHttpResponse.code, statusCode)
         }
     }
@@ -97,7 +97,7 @@ class ChatParserImpl : ChatParser {
         return try {
             fromJson(body, ErrorResponse::class.java)
         } catch (t: Throwable) {
-            ChatLogger.instance?.logT(TAG, t)
+            ChatLogger.instance.logE(TAG, t)
             ErrorResponse().apply {
                 message = t.message.toString() + " from body: " + body
             }

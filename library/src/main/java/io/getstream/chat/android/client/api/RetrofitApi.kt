@@ -1,6 +1,6 @@
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.api.QueryChannelsResponse
+import io.getstream.chat.android.client.api.models.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -24,7 +24,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
-        @Body request: ChannelQueryRequest
+        @Body request: QueryChannelRequest
     ): Call<ChannelResponse>
 
     @POST("/channels/{type}/query")
@@ -33,7 +33,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
-        @Body request: ChannelQueryRequest
+        @Body request: QueryChannelRequest
     ): Call<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
@@ -131,8 +131,14 @@ interface RetrofitApi {
 
     //region users
 
+    @POST("/users")
+    fun updateUsers(
+        @Query("connection_id") connectionId: String,
+        @Body body: UpdateUsersRequest
+    ): Call<UpdateUsersResponse>
+
     @POST("/guest")
-    fun setGuestUser(
+    fun getGuestUser(
         @Query("api_key") apiKey: String,
         @Body body: GuestUserRequest
     ): Call<TokenResponse>
@@ -259,7 +265,7 @@ interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: ReactionRequest
-    ): Call<MessageResponse>
+    ): Call<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
     fun deleteReaction(

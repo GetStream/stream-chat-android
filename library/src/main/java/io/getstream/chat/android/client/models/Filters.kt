@@ -3,6 +3,8 @@ package io.getstream.chat.android.client.models
 import io.getstream.chat.android.client.utils.FilterObject
 
 object Filters {
+
+    @JvmStatic
     fun and(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$and",
@@ -10,6 +12,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun or(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$or",
@@ -17,6 +20,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun nor(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$nor",
@@ -24,10 +28,12 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun eq(field: String, value: Any): FilterObject {
         return FilterObject(field, value)
     }
 
+    @JvmStatic
     fun ne(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
@@ -35,6 +41,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun greaterThan(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
@@ -42,6 +49,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun greaterThanEquals(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
@@ -49,6 +57,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun lessThan(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
@@ -56,6 +65,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun lessThanEquals(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
@@ -63,6 +73,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun `in`(field: String, vararg values: String): FilterObject {
         return FilterObject(
             field,
@@ -70,6 +81,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun `in`(field: String, values: List<*>): FilterObject {
         return FilterObject(
             field,
@@ -77,6 +89,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun `in`(field: String, vararg values: Number): FilterObject {
         return FilterObject(
             field,
@@ -84,6 +97,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun nin(field: String, vararg values: String): FilterObject {
         return FilterObject(
             field,
@@ -91,6 +105,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun nin(field: String, values: List<*>): FilterObject {
         return FilterObject(
             field,
@@ -98,6 +113,7 @@ object Filters {
         )
     }
 
+    @JvmStatic
     fun nin(field: String, vararg values: Number): FilterObject {
         return FilterObject(
             field,

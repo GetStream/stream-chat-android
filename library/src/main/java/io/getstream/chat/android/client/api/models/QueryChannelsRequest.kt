@@ -1,55 +1,40 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
 
-data class QueryChannelsRequest(
+class QueryChannelsRequest(
     @IgnoreSerialisation
     val filter: FilterObject,
     var offset: Int,
     var limit: Int,
+    @IgnoreSerialisation
     val querySort: QuerySort = QuerySort(),
-    var message_limit: Int = 0
-) : BaseQueryChannelRequest<QueryChannelsRequest>() {
+    @SerializedName("message_limit")
+    var messageLimit: Int = 0
+) : ChannelRequest<QueryChannelsRequest> {
+
+    override var state: Boolean = true
+    override var watch: Boolean = true
+    override var presence: Boolean = false
 
     val sort = querySort.data
-    val filter_conditions: Map<String, Any> = filter.getMap()
+    val filter_conditions: Map<String, Any> = filter.toMap()
 
-    fun withMessageLimit(limit: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        return clone
+    fun withMessages(limit: Int): QueryChannelsRequest {
+        messageLimit = limit
+        return this
     }
 
     fun withLimit(limit: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        clone.limit = limit
-        return clone
+        this.limit = limit
+        return this
     }
 
     fun withOffset(offset: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        clone.offset = offset
-        return clone
-    }
-
-    init {
-        this.watch = true
-        this.state = true
-        this.presence = false
-    }
-
-    override fun cloneOpts(): QueryChannelsRequest {
-        val _this = QueryChannelsRequest(
-            filter,
-            offset,
-            limit,
-            querySort
-        )
-        _this.state = this.state
-        _this.watch = this.watch
-        _this.presence = this.presence
-        _this.message_limit = message_limit
-        return _this
+        this.offset = offset
+        return this
     }
 }

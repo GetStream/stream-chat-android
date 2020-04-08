@@ -1,10 +1,12 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 
 
 data class MuteUserResponse(
     var mute: Mute,
-    var own_user: User
+    @SerializedName("own_user")
+    var ownUser: User
 )

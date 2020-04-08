@@ -64,6 +64,24 @@
             android:layout_height="wrap_content"
             android:text="Stop watching" />
 
+        <Button
+                android:id="@+id/btnGetMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get message" />
+
+        <Button
+                android:id="@+id/btnCheckTyping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check typing" />
+
+        <Button
+                android:id="@+id/btnUpdateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update message" />
+
     </LinearLayout>
 
 

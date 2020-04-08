@@ -15,7 +15,6 @@ class QuerySortAdapter(val gson: Gson) : TypeAdapter<QuerySort>() {
     }
 
     override fun read(`in`: JsonReader?): QuerySort? {
-        IOException("QuerySort must not be deserialised")
-        return null
+        throw IOException("QuerySort must not be deserialized")
     }
 }

@@ -1,18 +1,17 @@
 package io.getstream.chat.android.client.socket
 
-import io.getstream.chat.android.client.token.CachedTokenProvider
-import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.token.CachedTokenProvider
+import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 class ChatSocketImpl(
-    val apiKey: String,
-    val wssUrl: String,
-    val cachedTokenProvider: CachedTokenProvider,
-    val chatParser: ChatParser,
-    logger: ChatLogger?
+    private val apiKey: String,
+    private val wssUrl: String,
+    private val cachedTokenProvider: CachedTokenProvider,
+    private val chatParser: ChatParser
 ) : ChatSocket {
 
     private val service = ChatSocketServiceImpl(chatParser)
@@ -29,7 +28,7 @@ class ChatSocketImpl(
         })
     }
 
-    override fun events(): ChatObservableImpl {
+    override fun events(): ChatObservable {
         return ChatObservableImpl(
             service
         )

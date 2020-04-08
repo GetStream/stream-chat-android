@@ -1,3 +1,5 @@
 package io.getstream.chat.android.client.events
 
-class ReactionNewEvent: ChatEvent()
+import io.getstream.chat.android.client.models.Reaction
+
+class ReactionNewEvent(val reaction:Reaction): ChatEvent()

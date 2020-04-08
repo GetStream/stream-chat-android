@@ -73,11 +73,14 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setGuestUser() {
         //testUserApiLoadingShapeContainer.makeVisible()
 
+        val token =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
+
         client.getGuestToken("id", "name").enqueue {
 
             if (it.isSuccess) {
                 val user = it.data().user
-                client.setUser(user)
+                client.setUser(user, token)
             }
         }
     }
@@ -97,7 +100,10 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             }
         }
 
-        client.setUser(User("bender"))
+        val token =
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
+
+        client.setUser(User("bender"), token)
     }
 
     private fun registerDevice() {
@@ -117,7 +123,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun getUsers() {
-        client.getUsers(getQueryUserRequest()).enqueue { result ->
+        client.queryUsers(getQueryUserRequest()).enqueue { result ->
 
             if (result.isSuccess) {
                 Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
@@ -151,17 +157,13 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun muteUser() {
-        client.muteUser(
-            targetId = "stream-eugene"
-        ).enqueue { result ->
+        client.muteUser("stream-eugene").enqueue { result ->
             //echoResult(result, "Member muted successful")
         }
     }
 
     private fun unMuteUser() {
-        client.unMuteUser(
-            targetId = "stream-eugene"
-        ).enqueue { result ->
+        client.unmuteUser("stream-eugene").enqueue { result ->
             //echoResult(result, "Member unmuted successful")
         }
     }

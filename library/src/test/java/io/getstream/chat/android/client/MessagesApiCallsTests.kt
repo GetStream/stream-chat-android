@@ -118,7 +118,6 @@ class MessagesApiCallsTests {
             .apply {
                 this.text = messageText
                 this.user = user
-                this.channel = channel
             }
         val searchRequest = SearchMessagesRequest("search-text", 0, 1, FilterObject("type", "a"))
 
@@ -128,7 +127,6 @@ class MessagesApiCallsTests {
         ).thenReturn(RetroSuccess(SearchMessagesResponse(listOf(MessageResponse(Message().apply {
             this.text = messageText
             this.user = user
-            this.channel = channel
         })))))
 
         val result = client.searchMessages(searchRequest).execute()
@@ -396,10 +394,11 @@ class MessagesApiCallsTests {
     fun getReactionsSuccess() {
 
         val messageId = "message-id"
+        val reactionType = "reaction-type"
+        val score = 10
         val offset = 0
         val limit = 1
-        val reaction =
-            Reaction(messageId)
+        val reaction = Reaction(messageId, reactionType, score)
 
         Mockito.`when`(
             mock.retrofitApi
