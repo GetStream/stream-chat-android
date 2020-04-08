@@ -2,8 +2,8 @@ package io.getstream.chat.android.livedata
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -27,9 +27,8 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
      * A livedata object with the channels matching this query.
      */
 
-    private val _channels = MutableLiveData<List<ChannelRepo>>()
-    // TODO: perhaps call this channelRepos
-    var channels: LiveData<List<ChannelRepo>> = _channels
+    private val _channels = MutableLiveData<MutableMap<String, Channel>>()
+    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.values.toList()}
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
@@ -47,7 +46,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
-        val channels = _channels.value ?: emptyList()
+        val channels = _channels.value ?: mutableMapOf()
         var request = QueryChannelsPaginationRequest().withLimit(limit).withOffset(channels.size).withMessages(messageLimit)
 
         return request
@@ -65,6 +64,18 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         if (event is NotificationAddedToChannelEvent) {
             handleMessageNotification(event)
         }
+        // TODO abstrac tthis check somewhere
+        if (event.cid != null && event.cid!!.isNotBlank() && event.cid != "*") {
+            // update the info for that channel from the channel repo
+            val channel = repo.channel(event.cid!!).toChannel()
+            updateChannel(channel)
+        }
+    }
+
+    fun updateChannel(c: Channel) {
+        val copy = _channels.value ?: mutableMapOf()
+        copy[c.id] = c
+        _channels.postValue(copy)
     }
 
     /**
@@ -106,6 +117,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                 // store the results in the database
                 val channelsResponse = response.data()
                 // update the results stored in the db
+                // TODO: Figure out why tests didn't catch this
                 if (pagination.isFirstPage()) {
                     val cids = channelsResponse.map{it.cid}
                     queryEntity.channelCIDs = cids.toMutableList()
@@ -118,8 +130,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                     channelRepo.updateLiveDataFromChannel(c)
                 }
 
-                // TODO: actually insert the query
-                // TODO: Figure out why tests didn't catch this
+
 
                 repo.storeStateForChannels(channelsResponse)
 
@@ -136,15 +147,17 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     private fun addChannels(channelsResponse: List<Channel>) {
-        val copy = _channels.value?.toMutableList() ?: mutableListOf()
-        val copyMap = copy.associateBy { it.cid }
-        val missingRepos = channelsResponse.filterNot { it.cid in copyMap }.map { repo.channel(it.cid) }
-        copy.addAll(missingRepos)
+        val copy = _channels.value ?: mutableMapOf()
+
+        val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { repo.channel(it.cid).toChannel() }
+        for (channel in missingChannels) {
+            copy[channel.cid] = channel
+        }
         _channels.postValue(copy)
     }
 
     private fun setChannels(channelsResponse: List<Channel>) {
-        val repos = channelsResponse.map { repo.channel(it.cid) }
-        _channels.postValue(repos)
+        val channels = channelsResponse.map { repo.channel(it.cid).toChannel() }
+        _channels.postValue(channels.associateBy { it.cid }.toMutableMap())
     }
 }

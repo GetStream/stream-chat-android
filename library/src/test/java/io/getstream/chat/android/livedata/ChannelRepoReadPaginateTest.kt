@@ -1,29 +1,17 @@
 package io.getstream.chat.android.livedata
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.shadows.ShadowLooper
 
 @RunWith(AndroidJUnit4::class)
 class ChannelRepoReadPaginateTest: BaseTest() {

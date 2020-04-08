@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -51,6 +50,8 @@ class QueryChannelsRepoTest: BaseTest() {
         queryRepo.runQuery(request)
         channels = queryRepo.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
+
+        // channels would be easier to work with than channelRepos.
     }
 
 
