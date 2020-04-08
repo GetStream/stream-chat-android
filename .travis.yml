@@ -1,4 +1,8 @@
 language: android
+
+before_install:
+  - yes | sdkmanager "platforms;android-28"
+
 android:
   components:
     - tools
