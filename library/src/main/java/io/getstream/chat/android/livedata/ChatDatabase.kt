@@ -18,7 +18,7 @@ import io.getstream.chat.android.livedata.entity.*
         ChannelStateEntity::class,
         ChannelConfigEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 
@@ -29,7 +29,7 @@ import io.getstream.chat.android.livedata.entity.*
     Converter::class,
     DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
-    abstract fun queryChannelsQDao(): ChannelQueryDao
+    abstract fun queryChannelsQDao(): QueryChannelsDao
     abstract fun userDao(): UserDao
     abstract fun reactionDao(): ReactionDao
     abstract fun messageDao(): MessageDao
@@ -48,7 +48,7 @@ abstract class ChatDatabase : RoomDatabase() {
                         context.applicationContext,
                         ChatDatabase::class.java,
                         "stream_chat_database_$userId"
-                    ).build()
+                    ).fallbackToDestructiveMigration().build()
                     INSTANCES[userId] = db
 
                 }

@@ -8,12 +8,16 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -72,6 +76,8 @@ open class BaseTest {
         repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
+        val config = Config().apply { isTypingEvents=true; isReadEvents=true }
+        runBlocking(Dispatchers.IO) {repo.insertConfigs(mutableMapOf("messaging" to config))}
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
         channelRepo.updateChannel(data.channel1)
 

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata
 
-import android.provider.Settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -11,7 +10,6 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -41,6 +39,9 @@ import java.util.*
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
 
+    private var lastMarkReadEvent: Date? = null
+    private var lastKeystrokeAt: Date? = null
+    private var lastStartTypingEvent: Date? = null
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
 
@@ -94,7 +95,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val _threads : MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
     fun getThread(threadId: String): LiveData<List<Message>> {
-        val threadMessageMap = _threads.getOrDefault(threadId, MutableLiveData(mutableMapOf()))
+        val threadMessageMap = _threads.getOrElse(threadId) {MutableLiveData(mutableMapOf())}
         return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt }}
     }
 
@@ -105,6 +106,48 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         }
     }
 
+    fun getConfig(): Config {
+        return repo.getChannelConfig(channelType)
+    }
+
+    fun keystroke(): Boolean {
+        if (!getConfig().isTypingEvents) return false
+        lastKeystrokeAt = Date()
+        if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
+            lastStartTypingEvent = lastKeystrokeAt
+            client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
+            return true
+        }
+        return false
+    }
+
+    fun stopTyping() {
+        if (!getConfig().isTypingEvents) return
+        if (lastStartTypingEvent != null) {
+            lastStartTypingEvent = null
+            lastKeystrokeAt = null
+            client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
+        }
+    }
+
+
+
+    fun markRead(): Boolean {
+        if (!getConfig().isReadEvents) return false
+        // throttle the mark read
+        val messages = sortedMessages()
+        if (messages.isNotEmpty()) {
+            val last = messages.last()
+            val lastMessageDate = last.createdAt
+
+            if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
+                lastMarkReadEvent = lastMessageDate
+                client.markMessageRead(channelType, channelId, last.id).execute()
+                return true
+            }
+        }
+        return false
+    }
 
 
     fun loadNewerMessages(limit: Int = 30) {
@@ -362,6 +405,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun clean() {
+        // cleanup your own typing state
+        val now = Date()
+        if (lastStartTypingEvent != null && now.time - lastStartTypingEvent!!.time > 5000) {
+            stopTyping()
+        }
+
         // Cleanup typing events that are older than 15 seconds
         val copy = _typing.value ?: mutableMapOf()
         var changed = false
@@ -519,6 +568,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     }
 
+    fun editMessage(message: Message) {
+        // TODO fix me
+        sendMessage(message)
+    }
 
 
 }

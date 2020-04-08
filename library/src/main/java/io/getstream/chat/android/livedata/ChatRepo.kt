@@ -1,11 +1,11 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -13,12 +13,9 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
@@ -27,7 +24,6 @@ import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.*
-import java.lang.Thread.sleep
 import java.util.*
 
 
@@ -49,7 +45,8 @@ import java.util.*
  *
  */
 class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean=false) {
-    private lateinit var channelQueryDao: ChannelQueryDao
+    private lateinit var mainHandler: Handler
+    private lateinit var queryChannelsDao: QueryChannelsDao
     private lateinit var userDao: UserDao
     private lateinit var reactionDao: ReactionDao
     private lateinit var messageDao: MessageDao
@@ -57,6 +54,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     private lateinit var channelConfigDao: ChannelConfigDao
     private var baseLogger: ChatLogger = ChatLogger.instance
     private var logger = ChatLogger.get("Repo")
+    private val cleanTask = object : Runnable {
+        override fun run() {
+            clean()
+            mainHandler.postDelayed(this, 1000)
+        }
+    }
 
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
@@ -77,10 +80,26 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
         // start listening for events
         startListening()
+        initClean()
+    }
+
+    private fun stop() {
+        stopListening()
+        stopClean()
+    }
+
+    private fun stopClean() {
+        mainHandler.removeCallbacks(cleanTask)
+    }
+
+    private fun initClean() {
+        mainHandler = Handler(Looper.getMainLooper())
+
+        mainHandler.postDelayed(cleanTask, 5000)
     }
 
     private fun setupDao(database: ChatDatabase) {
-        channelQueryDao = database.queryChannelsQDao()
+        queryChannelsDao = database.queryChannelsQDao()
         userDao = database.userDao()
         reactionDao = database.reactionDao()
         messageDao = database.messageDao()
@@ -422,11 +441,19 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     suspend fun insertConfigs(configs: MutableMap<String, Config>) {
         val configEntities = mutableListOf<ChannelConfigEntity>()
+
+        // update the local configs
         for ((channelType, config) in configs) {
-            val entity = ChannelConfigEntity(channelType)
-            entity.config = config
+            channelConfigs[channelType] = config
+        }
+
+        // insert into room db
+        for ((channelType, config) in configs) {
+            val entity = ChannelConfigEntity(channelType, config)
+            configEntities.add(entity)
         }
         channelConfigDao.insertMany(configEntities)
+
     }
 
 
@@ -468,7 +495,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun insertQuery(queryChannelsEntity: QueryChannelsEntity) {
-        channelQueryDao.insert(queryChannelsEntity)
+        queryChannelsDao.insert(queryChannelsEntity)
     }
 
     suspend fun insertUsers(users: List<User>) {
@@ -585,7 +612,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun selectQuery(id: String): QueryChannelsEntity? {
-        return channelQueryDao.select(id)
+        return queryChannelsDao.select(id)
     }
 
     suspend fun selectChannelEntities(channelCIDs: List<String>): List<ChannelStateEntity> {
@@ -711,6 +738,18 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     suspend fun selectReactionEntity(messageId: String, userId: String, type: String): ReactionEntity? {
         return reactionDao.select(messageId, userId, type)
+    }
+
+    fun clean() {
+        for (channelRepo in activeChannelMap.values) {
+            channelRepo.clean()
+        }
+    }
+
+    fun getChannelConfig(channelType: String): Config {
+        val config = channelConfigs.get(channelType)
+        checkNotNull(config) {"Missing channel config for channel type $channelType"}
+        return config
     }
 
     data class Builder(

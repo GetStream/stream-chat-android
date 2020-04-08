@@ -8,8 +8,10 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
@@ -19,6 +21,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
@@ -117,6 +120,34 @@ class ChannelRepoInsertTest: BaseTest() {
         Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(2)
         channelRepo.clean()
         Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(1)
+    }
+
+    @Test
+    fun insertQuery() = runBlocking(Dispatchers.IO){
+        val filter = Filters.eq("type", "messaging")
+        val sort = null
+        val query = QueryChannelsEntity(filter, sort)
+        query.channelCIDs = listOf("messaging:123", "messaging:234").toMutableList()
+        repo.insertQuery(query)
+    }
+
+
+    @Test
+    fun typing() = runBlocking(Dispatchers.IO){
+        // second typing keystroke after each other should not resend the typing event
+        Truth.assertThat(channelRepo.keystroke()).isTrue()
+        Truth.assertThat(channelRepo.keystroke()).isFalse()
+        sleep(3001)
+        Truth.assertThat(channelRepo.keystroke()).isTrue()
+    }
+
+    @Test
+    fun markRead() = runBlocking(Dispatchers.IO){
+        // ensure there is at least one message
+        channelRepo.upsertMessage(data.message1)
+        Truth.assertThat(channelRepo.markRead()).isTrue()
+        Truth.assertThat(channelRepo.markRead()).isFalse()
+
     }
 
 

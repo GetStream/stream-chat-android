@@ -82,9 +82,9 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         loader.postValue(true)
         // start by getting the query results from offline storage
         val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
-        val query = repo.selectQuery(query.id)
+        var queryEntity = repo.selectQuery(query.id)
         // TODO: add logging here
-        if (query != null) {
+        if (queryEntity != null) {
             val channels = repo.selectAndEnrichChannels(query.channelCIDs)
             for (c in channels) {
                 val channelRepo = repo.channel(c)
@@ -100,16 +100,26 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         if (online) {
             // next run the actual query
             val response = client.queryChannels(request).execute()
+            queryEntity = queryEntity ?: QueryChannelsEntity(query.filter, query.sort)
 
             if (response.isSuccess) {
                 // store the results in the database
                 val channelsResponse = response.data()
+                // update the results stored in the db
+                if (pagination.isFirstPage()) {
+                    val cids = channelsResponse.map{it.cid}
+                    queryEntity.channelCIDs = cids.toMutableList()
+                    repo.insertQuery(queryEntity)
+                }
 
                 // initialize channel repos for all of these channels
                 for (c in channelsResponse) {
                     val channelRepo = repo.channel(c)
                     channelRepo.updateLiveDataFromChannel(c)
                 }
+
+                // TODO: actually insert the query
+                // TODO: Figure out why tests didn't catch this
 
                 repo.storeStateForChannels(channelsResponse)
 
