@@ -79,10 +79,11 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         val loader = if(pagination.isFirstPage()) {_loading} else {
             _loadingMore
         }
-        loader.value = true
+        loader.postValue(true)
         // start by getting the query results from offline storage
         val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
         val query = repo.selectQuery(query.id)
+        // TODO: add logging here
         if (query != null) {
             val channels = repo.selectAndEnrichChannels(query.channelCIDs)
             for (c in channels) {
@@ -121,7 +122,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                 repo.addError(response.error())
             }
         }
-        loader.value = false
+        loader.postValue(false)
     }
 
     private fun addChannels(channelsResponse: List<Channel>) {

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata
 
+import android.provider.Settings
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -10,16 +11,14 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 import java.util.*
-import java.util.Arrays.copyOf
 
 
 /**
@@ -121,6 +120,44 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return messageMap.values.sortedBy { it.createdAt }
     }
 
+    fun threadLoadOlderMessages(threadId: String, limit: Int=30) {
+        GlobalScope.launch(Dispatchers.IO) {
+            loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
+        }
+    }
+
+    // TODO: test me
+    fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination) {
+        val thread = getThread(threadId)
+
+        val threadMessages = thread.value ?: emptyList()
+
+        var getRepliesCall: Call<List<Message>>
+        if (threadMessages.size > 0) {
+            val messageId: String = when(direction) {
+                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
+                    threadMessages.last().id
+                }
+                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
+                    threadMessages.first().id
+                }
+            }
+
+            getRepliesCall = client.getRepliesMore(threadId, messageId, limit)
+        } else {
+            getRepliesCall = client.getReplies(threadId, limit)
+        }
+
+        val response = getRepliesCall.execute()
+        if (response.isSuccess) {
+            upsertMessages(response.data())
+        } else {
+            repo.addError(response.error())
+        }
+
+
+    }
+
     fun loadMoreMessagesRequest(limit: Int = 30, direction: Pagination): ChannelWatchRequest {
         val messages = sortedMessages()
         var request = ChannelWatchRequest().withMessages(limit)
@@ -140,20 +177,22 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return request
     }
 
-    fun watch() {
+    fun watch(limit: Int=30) {
         GlobalScope.launch(Dispatchers.IO) {
-            _watch()
+            _watch(limit)
         }
     }
 
-    suspend fun _watch() {
-        _loading.value = true
+    suspend fun _watch(limit: Int=30) {
+        // TODO: watch and loadMore should perhaps check if we are already loading and do nothing if we are
+        // Otherwise it's too easy for devs to create UI bugs which DDOS our API
+        _loading.postValue(true)
 
         // first we load the data from room and update the messages and channel livedata
         val channel = repo.selectAndEnrichChannel(cid, 100)
 
         channel?.let {
-            _loading.value = false
+            _loading.postValue(false)
             if (it.messages.isNotEmpty()) {
                 upsertMessages(it.messages)
             }
@@ -169,9 +208,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
         // next we run the actual API call
         if (repo.isOnline()) {
-            val request = ChannelWatchRequest()
+            var request = ChannelWatchRequest().withMessages(limit)
+            if (repo.userPresence) {
+                request = request.withPresence()
+            }
             runChannelQuery(request)
-
         }
 
     }
@@ -183,19 +224,17 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             _loadingOlderMessages
         }
 
-        loader.value = true
+        loader.postValue(true)
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
-            _loading.postValue(false)
             val channelResponse = response.data()
             updateLiveDataFromChannel(channelResponse)
             repo.storeStateForChannel(channelResponse)
         } else {
-            _loading.postValue(false)
             repo.addError(response.error())
         }
-        loader.value = false
+        loader.postValue(false)
     }
 
     /**
@@ -254,7 +293,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     private fun setLastMessage(message: Message) {
         val copy = _channel.value!!
         copy.lastMessageAt = message.createdAt
-        _channel.value = copy
+        _channel.postValue(copy)
     }
 
     /**
@@ -286,10 +325,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun setWatcherCount(watcherCount: Int) {
         if (watcherCount != _watcherCount.value) {
-            _watcherCount.value = watcherCount
+            _watcherCount.postValue(watcherCount)
         }
     }
 
+    // This one needs to be public for flows such as running a message action
     fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
@@ -335,7 +375,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
         }
         if (changed) {
-            _typing.value = copy
+            _typing.postValue(copy)
         }
     }
 
@@ -346,7 +386,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         } else {
             copy[userId] = event
         }
-        _typing.value = copy
+        _typing.postValue(copy)
     }
 
     fun handleEvent(event: ChatEvent) {
@@ -402,25 +442,25 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     private fun deleteWatcher(user: User) {
         val copy = _watchers.value ?: mutableMapOf()
         copy.remove(user.id)
-        _watchers.value = copy
+        _watchers.postValue(copy)
     }
 
     private fun upsertWatcher(user: User) {
         val copy = _watchers.value ?: mutableMapOf()
         copy[user.id] = user
-        _watchers.value = copy
+        _watchers.postValue(copy)
     }
 
     private fun deleteMember(member: Member) {
         val copy = _members.value ?: mutableMapOf()
         copy.remove(member.user.id)
-        _members.value = copy
+        _members.postValue(copy)
     }
 
     fun upsertMember(member: Member) {
         val copy = _members.value ?: mutableMapOf()
         copy[member.user.id] = member
-        _members.value = copy
+        _members.postValue(copy)
     }
 
     fun updateReads(
@@ -430,7 +470,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         for (r in reads) {
             copy[r.getUserId()] = r
         }
-        _reads.value = copy
+        _reads.postValue(copy)
     }
 
     fun updateRead(
@@ -458,11 +498,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         for (m in members) {
             copy[m.getUserId()] = m
         }
-        _members.value = copy
+        _members.postValue(copy)
     }
 
     fun updateChannel(channel: Channel) {
-        _channel.value = channel
+        _channel.postValue(channel)
     }
 
     fun setWatchers(watchers: List<Watcher>) {
@@ -473,10 +513,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
         }
 
-        _watchers.value = copy
+        _watchers.postValue(copy)
 
 
 
     }
+
+
 
 }

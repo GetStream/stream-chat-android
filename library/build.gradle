@@ -11,7 +11,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion "29.0.2"
     defaultConfig {
-        minSdkVersion 28
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -43,10 +43,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    //implementation 'com.github.getstream:stream-chat-android-client:0.9.55'
-    implementation project(':chat')
+    implementation 'com.github.getstream:stream-chat-android-client:1.0.13-alpha01'
+    //implementation project(':theclient123')
 
-    def room_version = "2.2.4"
+    def room_version = "2.2.5"
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"

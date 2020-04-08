@@ -16,7 +16,6 @@ import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.logger.TaggedLoggerImpl
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -191,7 +190,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     val errorEvents: LiveData<io.getstream.chat.android.livedata.Event<ChatError>> = _errorEvent
 
     fun addError(error: ChatError) {
-        _errorEvent.value = io.getstream.chat.android.livedata.Event(error)
+        _errorEvent.postValue(io.getstream.chat.android.livedata.Event(error))
     }
 
 
@@ -316,14 +315,14 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     private fun setChannelUnreadCount(newCount: Int) {
         val currentCount = _channelUnreadCount.value ?: 0
         if (currentCount != newCount) {
-            _channelUnreadCount.value = newCount
+            _channelUnreadCount.postValue(newCount)
         }
     }
 
     private fun setTotalUnreadCount(newCount: Int) {
         val currentCount = _totalUnreadCount.value ?: 0
         if (currentCount != newCount) {
-            _totalUnreadCount.value = newCount
+            _totalUnreadCount.postValue(newCount)
         }
     }
 
@@ -755,11 +754,6 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
             return chatRepo
         }
-    }
-
-    private fun setLogger(logger: ChatLogger) {
-        this.baseLogger = logger
-        this.logger = TaggedLoggerImpl("ChatRepo", logger)
     }
 
     companion object {
