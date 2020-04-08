@@ -81,3 +81,11 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 }
+
+gradle.taskGraph.useFilter { task ->
+    /**
+     * Ignores release unit tests.
+     * As it's assembled with releaseSdkVersion, which might be outdated
+     */
+    return task.name != 'testReleaseUnitTest'
+}

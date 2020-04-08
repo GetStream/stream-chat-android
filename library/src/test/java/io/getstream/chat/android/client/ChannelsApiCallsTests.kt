@@ -28,6 +28,8 @@ class ChannelsApiCallsTests {
 
         val response = Channel()
 
+        val request = QueryChannelRequest()
+
         Mockito.`when`(
             mock.retrofitApi.queryChannel(
                 mock.channelType,
@@ -35,12 +37,11 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                QueryChannelRequest()
+                request
             )
         ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
-        val result =
-            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
+        val result = client.queryChannel(mock.channelType, mock.channelId, request).execute()
 
         verifySuccess(result, response)
     }
@@ -48,6 +49,8 @@ class ChannelsApiCallsTests {
     @Test
     fun queryChannelError() {
 
+        val request = QueryChannelRequest()
+
         Mockito.`when`(
             mock.retrofitApi.queryChannel(
                 mock.channelType,
@@ -55,12 +58,12 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                QueryChannelRequest()
+                request
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
+            client.queryChannel(mock.channelType, mock.channelId, request).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'jacoco-android'
 
 group = 'com.github.getstream'
 
@@ -79,6 +80,14 @@ dependencies {
 
     //Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // Tests
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.2.1"
+    testImplementation "org.mockito:mockito-core:2.23.0"
+    testImplementation "org.json:json:20190722"
 }
 
 apply from: 'scripts/docs.gradle'
