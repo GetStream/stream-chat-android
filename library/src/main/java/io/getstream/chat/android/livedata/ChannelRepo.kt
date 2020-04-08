@@ -176,7 +176,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val threadMessages = thread.value ?: emptyList()
 
         var getRepliesCall: Call<List<Message>>
-        if (threadMessages.size > 0) {
+        if (threadMessages.isNotEmpty()) {
             val messageId: String = when(direction) {
                 Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
                     threadMessages.last().id
@@ -563,14 +563,31 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         }
 
         _watchers.postValue(copy)
-
-
-
     }
 
     fun editMessage(message: Message) {
-        // TODO fix me
-        sendMessage(message)
+        GlobalScope.launch(Dispatchers.IO) {
+            _editMessage(message)
+        }
+    }
+
+    suspend fun _editMessage(message: Message) {
+        message.updatedAt = Date()
+        message.syncStatus = SyncStatus.SYNC_NEEDED
+
+        // Update livedata
+        upsertMessage(message)
+
+        // Update Room State
+        repo.insertMessage(message)
+
+        if (repo.isOnline()) {
+            val runnable = {
+                client.updateMessage(message) as Call<Any>
+            }
+            repo.runAndRetry(runnable)
+
+        }
     }
 
     fun toChannel(): Channel {

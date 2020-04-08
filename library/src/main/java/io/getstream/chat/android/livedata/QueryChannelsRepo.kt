@@ -64,7 +64,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         if (event is NotificationAddedToChannelEvent) {
             handleMessageNotification(event)
         }
-        // TODO abstrac tthis check somewhere
+        // TODO abstract this check somewhere
         if (event.cid != null && event.cid!!.isNotBlank() && event.cid != "*") {
             // update the info for that channel from the channel repo
             val channel = repo.channel(event.cid!!).toChannel()
@@ -129,7 +129,6 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                 val channelsResponse = response.data()
                 logger.logI("api call returned ${channelsResponse.size} channels")
                 // update the results stored in the db
-                // TODO: Figure out why tests didn't catch this
                 if (pagination.isFirstPage()) {
                     val cids = channelsResponse.map{it.cid}
                     val queryEntity = QueryChannelsEntity(query.filter, query.sort)
