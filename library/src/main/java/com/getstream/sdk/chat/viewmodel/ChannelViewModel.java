@@ -1,11 +1,9 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
-import android.text.TextUtils;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
@@ -16,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.Nullable;
@@ -24,22 +21,19 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest;
-import io.getstream.chat.android.client.api.models.Pagination;
+
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
-import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
+import io.getstream.chat.android.livedata.ChannelRepo;
+import io.getstream.chat.android.livedata.ChatRepo;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-
-import static java.util.UUID.randomUUID;
 
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
@@ -48,15 +42,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     /**
      * The A livedata object for the list of messages
      */
-    protected MutableLiveData<List<Message>> messages = new MutableLiveData<>();
+    protected LiveData<List<Message>> messages = new MutableLiveData<>();
     /**
      * The numbers of users currently watching this channel
      */
-    protected LiveData<Number> watcherCount;
+    protected LiveData<Integer> watcherCount;
     /**
      * The list of users currently typing
      */
-    protected MutableLiveData<List<User>> typingUsers = new MutableLiveData<>();
+    protected LiveData<List<User>> typingUsers = new MutableLiveData<>();
     /**
      * Mutable live data object for the current messageInputText
      */
@@ -68,6 +62,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected String channelId;
     protected String channelType;
 
+    protected ChatRepo repo;
+    protected ChannelRepo channelRepo;
+
     protected Looper looper;
     protected Map<String, ChatEvent> typingState;
 
@@ -75,16 +72,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected int threadParentPosition = 0;
 
     protected InitViewModelLiveData initialized = new InitViewModelLiveData(this);
-    protected AtomicBoolean isLoading = new AtomicBoolean(false);
-    protected AtomicBoolean isLoadingMore = new AtomicBoolean(false);
     protected boolean reachedEndOfPagination;
     protected boolean reachedEndOfPaginationThread;
     protected Date lastMarkRead;
     protected MutableLiveData<Number> currentUserUnreadMessageCount = new MutableLiveData<>();
     protected Integer lastCurrentUserUnreadMessageCount = 0;
-    protected MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
+    protected LiveData<Boolean> loading = new MutableLiveData<>(false);
     protected MutableLiveData<Boolean> messageListScrollUp = new MutableLiveData<>(false);
-    protected MutableLiveData<Boolean> loadingMore = new MutableLiveData<>(false);
+    protected LiveData<Boolean> loadingMore = new MutableLiveData<>(false);
     protected MutableLiveData<Boolean> failed = new MutableLiveData<>(false);
     protected MutableLiveData<Message> editMessage;
     protected MutableLiveData<Message> threadParentMessage = new MutableLiveData<>(null);
@@ -95,7 +90,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected MutableLiveData<Boolean> hasNewMessages = new MutableLiveData<>(false);
 
-    protected MutableLiveData<Map<String, ChannelUserRead>> reads = new MutableLiveData<>();
+    protected LiveData<List<ChannelUserRead>> reads = new MutableLiveData<>();
     protected MutableLiveData<InputType> inputType = new MutableLiveData<>(InputType.DEFAULT);
     protected MessageListItemLiveData entities;
     protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
@@ -110,16 +105,30 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.channelType = channelType;
         this.channelId = channelId;
 
+        repo = ChatRepo.instance();
+
+
+        channelRepo = repo.channel(channelType, channelId);
+
+        // connect livedata objects
+        watcherCount = channelRepo.getWatcherCount();
+        typingUsers = channelRepo.getTyping();
+        reads = channelRepo.getReads();
+        typingUsers = channelRepo.getTyping();
+        messages = channelRepo.getMessages();
+        loading = channelRepo.getLoading();
+        loadingMore = channelRepo.getLoadingOlderMessages();
+
+
         logger.logI("instance created");
 
+        // TODO: find a solution for thread messages, design is weird
         threadMessages.setValue(null);
-        typingUsers.setValue(new ArrayList<>());
 
         User currentUser = Chat.getInstance().getClient().getCurrentUser();
 
         entities = new MessageListItemLiveData(currentUser, messages, threadMessages, typingUsers, reads);
 
-        typingState = new HashMap<>();
         editMessage = new MutableLiveData<>();
 
         enableMarkRead = true;
@@ -144,7 +153,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         new StreamLifecycleObserver(this);
 
-        setupConnectionRecovery();
     }
 
     // region Getter
@@ -185,11 +193,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return loadingMore;
     }
 
-    public LiveData<Map<String, ChannelUserRead>> getReads() {
+    public LiveData<List<ChannelUserRead>> getReads() {
         return reads;
     }
 
-    public LiveData<Number> getWatcherCount() {
+    public LiveData<Integer> getWatcherCount() {
         return watcherCount;
     }
 
@@ -299,10 +307,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     public void initThread() {
+        // TODO: this thread thing is a mess
         threadParentMessage.postValue(null);
         threadMessages.postValue(null);
         Channel channel = channelState.getValue();
-        updateMessageLiveData(new ArrayList<>(channel.getMessages()));
         reachedEndOfPaginationThread = false;
     }
     // endregion
@@ -314,32 +322,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         if (messages != null && messages.size() > 1)
             return threadMessages.getValue().get(1).getId();
         return "";
-    }
-
-    protected boolean setLoading() {
-        if (isLoading.compareAndSet(false, true)) {
-            loading.postValue(true);
-            return true;
-        }
-        return false;
-    }
-
-    protected void setLoadingDone() {
-        if (isLoading.compareAndSet(true, false))
-            loading.postValue(false);
-    }
-
-    protected boolean setLoadingMore() {
-        if (isLoadingMore.compareAndSet(false, true)) {
-            loadingMore.postValue(true);
-            return true;
-        }
-        return false;
-    }
-
-    protected void setLoadingMoreDone() {
-        if (isLoadingMore.compareAndSet(true, false))
-            loadingMore.postValue(false);
     }
 
     public void markLastMessageRead() {
@@ -388,317 +370,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return Chat.getInstance().getClient().unBanUser(targetUserId, channelType, channelId);
     }
 
-    protected void initEventHandlers() {
-
-        subscriptions.add(Chat.getInstance().getClient().events().subscribe(event -> {
-
-            logger.logI("new event:" + event.getType());
-
-            Channel channel = event.getChannel();
-
-            if (event instanceof NewMessageEvent) {
-                upsertMessage(event.getMessage());
-            } else if (event instanceof UserStartWatchingEvent) {
-
-            } else if (event instanceof UserStopWatchingEvent) {
-
-            } else if (event instanceof ChannelUpdatedEvent) {
-
-            } else if (event instanceof MessageUpdatedEvent) {
-                updateMessage(event.message);
-            } else if (event instanceof MessageDeletedEvent) {
-                deleteMessage(event.message);
-            } else if (event instanceof MessageReadEvent) {
-
-
-                if (channel != null) {
-                    reads.postValue(LlcMigrationUtils.getReadsByUser(channel));
-
-                    User currentUser = Chat.getInstance().getClient().getCurrentUser();
-                    String currentUserId = currentUser.getId();
-
-                    int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
-
-                    if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
-                        lastCurrentUserUnreadMessageCount = unreadMessageCount;
-                        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                    }
-                }
-
-
-            } else if (event instanceof ReactionNewEvent) {
-                updateMessage(event.message);
-            } else if (event instanceof ReactionDeletedEvent) {
-                updateMessage(event.message);
-            } else if (event instanceof TypingStartEvent) {
-                if (!LlcMigrationUtils.isFromCurrentUser(event)) {
-                    User user = event.getUser();
-                    typingState.put(user.getId(), event);
-                    typingUsers.postValue(getCleanedTypingUsers());
-                }
-            } else if (event instanceof TypingStopEvent) {
-                if (!LlcMigrationUtils.isFromCurrentUser(event)) {
-                    User user = event.getUser();
-                    typingState.remove(user.getId());
-                    typingUsers.postValue(getCleanedTypingUsers());
-                }
-            } else if (event instanceof MemberAddedEvent) {
-
-            } else if (event instanceof MemberRemovedEvent) {
-
-            } else if (event instanceof MemberUpdatedEvent) {
-
-            }
-
-            User currentUser = Chat.getInstance().getClient().getCurrentUser();
-            String currentUserId = currentUser.getId();
-
-            if (channel != null) {
-                channelState.postValue(channel);
-
-                int unreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUserId, channel);
-
-                if (unreadMessageCount != lastCurrentUserUnreadMessageCount) {
-                    lastCurrentUserUnreadMessageCount = unreadMessageCount;
-                    currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-                }
-            }
-
-            return null;
-        }));
-
-    }
-
-    protected void replaceMessage(Message oldMessage, Message newMessage) {
-        List<Message> messagesCopy = getMessages().getValue();
-        String oldMessageId = oldMessage.getId();
-        for (int i = messagesCopy.size() - 1; i >= 0; i--) {
-            String messageId = messagesCopy.get(i).getId();
-            if (oldMessageId.equals(messageId)) {
-                //TODO: llc test offline case
-//                if (oldMessage.getSyncStatus() == Sync.LOCAL_FAILED) {
-//                    messagesCopy.remove(oldMessage);
-//                } else {
-//                    messagesCopy.set(i, newMessage);
-//                }
-
-                messagesCopy.set(i, newMessage);
-
-                if (isThread())
-                    threadMessages.postValue(messagesCopy);
-                else
-                    updateMessageLiveData(messagesCopy);
-
-                break;
-            }
-        }
-    }
-
-    protected void upsertMessage(Message message) {
-        if (isChildOfCurrentThread(message)) {
-            List<Message> messagesCopy = threadMessages.getValue();
-            for (int i = 0; i < threadMessages.getValue().size(); i++) {
-                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
-                    messagesCopy.set(i, message);
-                    threadMessages.postValue(messagesCopy);
-                    return;
-                }
-            }
-
-            messagesCopy.add(message);
-            threadMessages.postValue(messagesCopy);
-        } else {
-            List<Message> messagesCopy = messages.getValue();
-            boolean updated = false;
-            for (int i = 0; i < messagesCopy.size(); i++) {
-                Message m = messagesCopy.get(i);
-                if (m.getId().equals(message.getId())) {
-                    updated = true;
-                    messagesCopy.set(i, message);
-                    break;
-                }
-            }
-
-            if (!updated) {
-                messagesCopy.add(message);
-                updateMessageLiveData(messagesCopy);
-                markLastMessageRead();
-            }
-        }
-    }
-
-    private void updateMessageLiveData(List<Message> messagesCopy) {
-        messages.postValue(messagesCopy);
-    }
-
-    protected boolean updateMessage(Message message) {
-        // doesn't touch the message order, since message.created_at can't change
-        List<Message> messagesCopy = getMessages().getValue();
-        boolean updated = false;
-        if (message.getType().equals(ModelType.message_reply)
-                || !TextUtils.isEmpty(message.getParentId())) {
-            if (!isThread()
-                    || !message.getParentId().equals(threadParentMessage.getValue().getId()))
-                return updated;
-
-            for (int i = 0; i < threadMessages.getValue().size(); i++) {
-                if (message.getId().equals(threadMessages.getValue().get(i).getId())) {
-                    messagesCopy.set(i, message);
-                    threadMessages.postValue(messagesCopy);
-                    updated = true;
-                    break;
-                }
-            }
-        } else {
-            int index = LlcMigrationUtils.indexOf(messagesCopy, message);
-            updated = index != -1;
-            if (updated) {
-                messagesCopy.set(index, message);
-                updateMessageLiveData(messagesCopy);
-            }
-            // Check if message is Thread Parent Message
-            if (isThread() && threadParentMessage.getValue().getId().equals(message.getId())) {
-                List<Message> messagesCopy_ = threadMessages.getValue();
-                messagesCopy_.set(0, message);
-                threadMessages.postValue(messagesCopy_);
-                updated = true;
-            }
-            logger.logI("updateMessage:" + updated);
-        }
-        return updated;
-    }
-
-    protected void updateFailedMessage(Message message) {
-        // doesn't touch the message order, since message.created_at can't change
-        List<Message> messagesCopy = messages.getValue();
-        int index = LlcMigrationUtils.indexOf(messagesCopy, message);
-        boolean updated = index != -1;
-        if (updated) {
-            User currentUser = Chat.getInstance().getClient().getCurrentUser();
-            String clientSideID = currentUser.getUserId() + "-" + randomUUID().toString();
-            message.setId(clientSideID);
-            messagesCopy.set(index, message);
-            updateMessageLiveData(messagesCopy);
-        }
-    }
-
-    protected void shuffleGiphy(Message oldMessage, Message message) {
-        List<Message> messagesCopy = getMessages().getValue();
-        int index = LlcMigrationUtils.indexOf(messagesCopy, oldMessage);
-        if (index != -1) {
-            messagesCopy.set(index, message);
-            if (isThread())
-                threadMessages.postValue(messagesCopy);
-            else
-                updateMessageLiveData(messagesCopy);
-        }
-    }
-
-
-    protected boolean deleteMessage(Message message) {
-        List<Message> messagesCopy = getMessages().getValue();
-        for (int i = 0; i < messagesCopy.size(); i++) {
-            if (message.getId().equals(messagesCopy.get(i).getId())) {
-                messagesCopy.set(i, message);
-                if (isThread()) {
-                    if (i == 0)
-                        initThread();
-                    else
-                        threadMessages.postValue(messagesCopy);
-                } else
-                    updateMessageLiveData(messagesCopy);
-
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void checkErrorOrPendingMessage() {
-        boolean hasErrorOrPendingMessage = false;
-        List<Message> messagesCopy = getMessages().getValue();
-        for (int i = 0; i < messagesCopy.size(); i++) {
-            Message message = getMessages().getValue().get(i);
-            if (message.getType().equals(ModelType.message_error)) {
-                messagesCopy.remove(i);
-                hasErrorOrPendingMessage = true;
-            }
-        }
-        if (!hasErrorOrPendingMessage) return;
-
-        if (isThread()) {
-            threadMessages.postValue(messagesCopy);
-        } else
-            updateMessageLiveData(messagesCopy);
-    }
-
-    protected void checkFailedMessage(Message message) {
-
-        List<Message> messagesCopy = getMessages().getValue();
-        for (int i = 0; i < messagesCopy.size(); i++) {
-            if (message.getId().equals(messagesCopy.get(i).getId())) {
-                messagesCopy.remove(message);
-                if (isThread())
-                    threadMessages.postValue(messagesCopy);
-                else
-                    updateMessageLiveData(messagesCopy);
-                break;
-            }
-        }
-    }
-
-    protected void addMessage(Message message) {
-        List<Message> messagesCopy = getMessages().getValue();
-        messagesCopy.add(message);
-        if (isThread())
-            threadMessages.postValue(messagesCopy);
-        else
-            updateMessageLiveData(messagesCopy);
-
-    }
-
-
-    protected void addMessages(List<Message> newMessages) {
-        List<Message> messagesCopy = messages.getValue();
-        if (messagesCopy == null) {
-            messagesCopy = new ArrayList<>();
-        }
-
-        // iterate in reverse-order since newMessages is assumed to be ordered by created_at DESC
-        for (int i = newMessages.size() - 1; i >= 0; i--) {
-            Message message = newMessages.get(i);
-
-            int index = LlcMigrationUtils.indexOf(messagesCopy, message);
-
-            if (index == -1) {
-                messagesCopy.add(0, message);
-            } else {
-                messagesCopy.set(index, message);
-            }
-        }
-        updateMessageLiveData(messagesCopy);
-    }
 
     protected void onChannelLoaded(Channel channel) {
 
+        // TODO this is a weird check?
         reachedEndOfPagination = channel.getMessages().size() < 10;
 
-        //Log.d(TAG, "Setting channel. Client:" + client() + ", storage:" + client().getStorage());
-        // fetch offline messages
-//        client().getStorage().selectChannelState(channel.getCid(), new OnQueryListener<ChannelState>() {
-//            @Override
-//            public void onSuccess(ChannelState channelState) {
-//                StreamChat.getLogger().logI("Read messages from local cache...");
-//                if (channelState != null) {
-//                    messages.setValue(channelState.getMessages());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                StreamChat.getLogger().logW(this, String.format("Failed to read channel state from offline storage, error %s", e.toString()));
-//            }
-//        });
+
 
         User currentUser = Chat.getInstance().getClient().getCurrentUser();
 
@@ -709,10 +387,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
 
         channelState.postValue(channel);
-        reads.setValue(getReadsByUser(channel));
-        messages.setValue(channel.getMessages());
-        initEventHandlers();
-        setLoadingDone();
         initialized.postValue(channel);
     }
 
@@ -720,19 +394,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return entities;
     }
 
-    protected List<User> getCleanedTypingUsers() {
-        List<User> users = new ArrayList<>();
-        long now = new Date().getTime();
-        for (ChatEvent event : typingState.values()) {
-            // constants
-            long TYPING_TIMEOUT = 10000;
-            if (now - event.getReceivedAt().getTime() < TYPING_TIMEOUT) {
-                users.add(event.getUser());
-            }
-        }
-        return users;
-    }
 
+    // TODO: this is totally a UI thing, create from other observables
     public MutableLiveData<Boolean> getHasNewMessages() {
         return hasNewMessages;
     }
@@ -757,197 +420,47 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         logger.logI("onCleared");
 
-        for (Subscription sub : subscriptions) sub.unsubscribe();
-        subscriptions.clear();
-
-
         if (looper != null) {
             looper.interrupt();
         }
 
-        if (channelSubscriptionId != 0) {
-            //TODO: llc unsubscribe
-            //channel.removeEventHandler(channelSubscriptionId);
-        }
     }
 
-    protected void setupConnectionRecovery() {
 
-        //TODO: llc unsubscrube
-        subscriptions.add(Chat.getInstance().getClient().events().subscribe(chatEvent -> {
-            if (chatEvent instanceof ConnectedEvent) {
-
-                //TODO: llc refresh on connected
-
-//                    String type = channel.getType();
-//                    String id = channel.getId();
-//                    StreamChat.getInstance().queryChannel(type, id, new ChannelQueryRequest().withMessages()).enqueue(
-//                            new Function1<Result<Channel>, Unit>() {
-//                                @Override
-//                                public Unit invoke(Result<Channel> channelResult) {
-//                                    addMessages(channel.getMessages());
-//                                    channelLoadingDone();
-//                                    return null;
-//                                }
-//                            }
-//                    );
-            }
-            return null;
-        }));
-    }
 
     /**
      * watches channel
      */
     public void watchChannel() {
         int limit = 10; // Constant.DEFAULT_LIMIT
-        if (!setLoading()) return;
 
-        ChannelWatchRequest request = new ChannelWatchRequest().withMessages(limit);
+        channelRepo.watch(limit);
 
-        Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(channelResult -> {
-
-            Channel channel = channelResult.data();
-
-            if (channelResult.isSuccess()) {
-                onChannelLoaded(channel);
-            } else {
-                //TODO: show error message
-            }
-
-
-            return null;
-        });
     }
 
     /**
      * loads more messages, use this to load a previous page
      */
     public void loadMore() {
-        if (!Chat.getInstance().getClient().isSocketConnected()) {
-            logger.logI("connection failed.");
-            return;
-        }
-
-        if (isLoading.get()) {
-            logger.logI("already loading, skip loading more");
-            return;
-        }
-
-        if (!setLoadingMore()) {
-            logger.logI("already loading next page, skip loading more");
-            return;
-        }
 
         if (isThread()) {
-            if (reachedEndOfPaginationThread) {
-                setLoadingMoreDone();
-                logger.logI("already reached end of pagination, skip loading more");
-                return;
-            }
-
-            if (threadParentMessage.getValue() == null) {
-                setLoadingMoreDone();
-                logger.logI("Can't find thread parent message.");
-                return;
-            }
-
-            String id = threadParentMessage.getValue().getId();
-            String oldestMessageId = getThreadOldestMessageId();
-
-            if (oldestMessageId.isEmpty()) {
-                Chat.getInstance().getClient().getReplies(id, Constant.DEFAULT_LIMIT).enqueue(result -> {
-                    onReactionsLoaded(result);
-                    return null;
-                });
-            } else {
-                Chat.getInstance().getClient().getRepliesMore(id, oldestMessageId, Constant.DEFAULT_LIMIT).enqueue(result -> {
-                    onReactionsLoaded(result);
-                    return null;
-                });
-            }
+            channelRepo.threadLoadOlderMessages(threadParentMessage.getValue().getId(), 30);
         } else {
-
-            if (reachedEndOfPagination) {
-                setLoadingMoreDone();
-                logger.logI("already reached end of pagination, skip loading more");
-                return;
-            }
-
-            Message oldestMessage = messages.getValue().get(0);
-            String oldestMessageId = oldestMessage.getId();
-
-            ChannelQueryRequest request = new ChannelQueryRequest().
-                    withMessages(Pagination.LESS_THAN,
-                            oldestMessageId,
-                            Constant.DEFAULT_LIMIT);
-
-            Chat.getInstance().getClient().queryChannel(channelType, channelId, request).enqueue(result -> {
-
-                if (result.isSuccess()) {
-
-                    Channel channel = result.data();
-
-                    reachedEndOfPagination = channel.getMessages().isEmpty();
-                    List<Message> newMessages = new ArrayList<>(channel.getMessages());
-                    // used to modify the scroll behaviour...
-                    entities.setIsLoadingMore(true);
-                    addMessages(newMessages);
-                    setLoadingMoreDone();
-                } else {
-                    setLoadingMoreDone();
-                }
-
-                return null;
-            });
+            channelRepo.loadOlderMessages(Constant.DEFAULT_LIMIT);
         }
     }
 
-    private void onReactionsLoaded(Result<List<Message>> result) {
-        if (result.isSuccess()) {
-
-            List<Message> messages = result.data();
-
-            entities.setIsLoadingMore(true);
-            List<Message> newMessages = new ArrayList<>(messages);
-            List<Message> messagesCopy = threadMessages.getValue();
-            for (int i = newMessages.size() - 1; i > -1; i--)
-                messagesCopy.add(1, newMessages.get(i));
-
-            threadMessages.postValue(messagesCopy);
-            reachedEndOfPaginationThread = newMessages.size() < Constant.DEFAULT_LIMIT;
-            setLoadingMoreDone();
-        } else {
-            setLoadingMoreDone();
-        }
-    }
-
-    /**
-     * sends message
-     *
-     * @param message the Message sent
-     */
-    public Call<Message> sendMessage(Message message) {
+    public void sendMessage(Message message) {
 
         if (isThread()) {
             String parentMessageId = getThreadParentMessage().getValue().getId();
             message.setParentId(parentMessageId);
         }
 
-        checkErrorOrPendingMessage();
-        checkFailedMessage(message);
         stopTyping();
 
-        return Chat.getInstance().getClient()
-                .sendMessage(channelType, channelId, message)
-                .onSuccess(m -> {
-                    upsertMessage(m);
-                    return Unit.INSTANCE;
-                }).onError(chatError -> {
-                    Utils.showMessage(getApplication(), R.string.stream_message_failed_send_toast);
-                    //updateFailedMessage(message);
-                    return Unit.INSTANCE;
-                });
+        channelRepo.sendMessage(message);
+
     }
 
 
@@ -956,22 +469,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      *
      * @param message the Message sent
      */
-    public Call<Message> editMessage(Message message) {
-//        if (message.getSyncStatus() == Sync.LOCAL_UPDATE_PENDING) {
-//            replaceMessage(message, message);
-//            return;
-//        }
-
-        // Check Error or Pending Messages
-        checkErrorOrPendingMessage();
-
-        return Chat.getInstance().getClient().updateMessage(message).onSuccess(message1 -> {
-            upsertMessage(message1);
-            return Unit.INSTANCE;
-        }).onError(chatError -> {
-            Utils.showMessage(getApplication(), R.string.stream_message_failed_edit_toast);
-            return Unit.INSTANCE;
-        });
+    public void editMessage(Message message) {
+        channelRepo.sendMessage(message);
     }
 
     /**
@@ -990,15 +489,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                List<Message> messagesCopy = getMessages().getValue();
-                int index = LlcMigrationUtils.indexOf(messagesCopy, message);
-                if (index != -1) {
-                    messagesCopy.remove(message);
-                    if (isThread())
-                        threadMessages.postValue(messagesCopy);
-                    else
-                        updateMessageLiveData(messagesCopy);
-                }
+                channelRepo.upsertMessage(message);
+
                 return;
         }
 
@@ -1010,8 +502,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         Chat.getInstance().getClient().sendAction(request).enqueue(result -> {
 
-            if (result.isSuccess())
-                if (action == GiphyAction.SHUFFLE) shuffleGiphy(message, result.data());
+            if (result.isSuccess()) {
+                Message actionMessage = result.data();
+                channelRepo.upsertMessage(actionMessage);
+            }
 
             return null;
         });
@@ -1057,11 +551,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * typing.stop event for long time
      */
     protected void cleanupTypingUsers() {
-        List<User> prev = typingUsers.getValue();
-        List<User> cleaned = getCleanedTypingUsers();
-        if (prev != null && cleaned != null && prev.size() != cleaned.size()) {
-            typingUsers.postValue(getCleanedTypingUsers());
-        }
+        channelRepo.clean();
     }
 
     public MutableLiveData<String> getMessageInputText() {

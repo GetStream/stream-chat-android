@@ -351,24 +351,18 @@ public class MessageInputView extends RelativeLayout {
      * Prepare message takes the message input string and returns a message object
      * You can overwrite this method in case you want to attach more custom properties to the message
      */
-    private Call<Message> onSendMessage(Message message) {
+    private void onSendMessage(Message message) {
 
         Call<Message> call;
         binding.ivSend.setEnabled(false);
 
         if (isEdit())
-            call = viewModel.editMessage(message);
+            viewModel.editMessage(message);
         else
-            call = viewModel.sendMessage(message);
+            viewModel.sendMessage(message);
 
-        return call;
-    }
+        handleSentMessage();
 
-    protected void sendMessage(Message message) {
-        onSendMessage(message).enqueue(result -> {
-            handleSentMessage(result);
-            return null;
-        });
     }
 
     private Message getNewMessage() {
@@ -380,26 +374,14 @@ public class MessageInputView extends RelativeLayout {
 
     protected void onSendMessage() {
         Message message = isEdit() ? getEditMessage() : getNewMessage();
-        onSendMessage(isEdit() ? prepareEditMessage(message) : prepareNewMessage(message)).enqueue(result -> {
-            handleSentMessage(result);
-            return null;
-        });
+        handleSentMessage();
         if (isEdit())
             Utils.hideSoftKeyboard((Activity) getContext());
     }
 
-    private void handleSentMessage(Result<Message> result) {
-        if (result.isSuccess()) {
-            if (messageSendListener != null)
-                messageSendListener.onSendMessageSuccess(result.data());
-            initSendMessage();
-            if (isEdit()) clearFocus();
-        } else {
-            if (messageSendListener != null)
-                messageSendListener.onSendMessageError(result.error());
-            initSendMessage();
-            if (isEdit()) clearFocus();
-        }
+    private void handleSentMessage() {
+        initSendMessage();
+        if (isEdit()) clearFocus();
     }
 
     private void initSendMessage() {
