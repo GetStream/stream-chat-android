@@ -34,13 +34,13 @@ Here are the most common ways to use the library
 
 ## Create a chat repo
 
-```
+```kotlin
 val repo = ChatRepo.Builder(context, client, data.user1).offlineEnabled().userPresenceEnabled().build()
 ```
 
 ## Unread counts
 
-```
+```kotlin
 repo.totalUnreadCount.observe
 repo.channelUnreadCount.observe
 ```
@@ -49,7 +49,7 @@ repo.channelUnreadCount.observe
 
 This shows how to fetch messages and other common channel level livedata objects
 
-```
+```kotlin
 val channelRepo = repo.channel("messaging", "test123")
 channelRepo.watch()
 channelRepo.messages.observe
@@ -64,13 +64,13 @@ channelRepo.loading.observe
 Messages are immediately stored in local storage and your livedata objects.
 Afterwards they are retried using the retry policy.
 
-```
+```kotlin
 channelRepo.sendMessage(Message(user, "hello world"))
 ```
 
 ## Querying channels
 
-```
+```kotlin
 val filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
 val sort : QuerySort? = null
 queryRepo = repo.queryChannels(filter, sort)
@@ -82,12 +82,3 @@ queryRepo.query(QueryChannelsPaginationRequest(0, 30))
 
 * Each user has it's own Room DB. Some of our API responses are user specific. One example is own_reactions on a message. so if you switch users we need to use a different database/storage for the results
 * Suspend functions are only used on private methods. Public ones expose livedata objects.
-* Room automatically updates the livedata objects it exposes. This library should also work if offline storage is disabled though. So we shouldn't rely on that behaviour from Room.
-
-
-# Questions/Research:
-
-- User updates are very complex since they are attached to channels, messages, reactions, read state etc. So making sure you update everything efficiently when a user changes their name is hard.
-- createChannel, sendMessage & sendReaction need some sort of callback system. Do we use a simple callback or something more like Call<T> like we do in the LLC?
-- recover flow depends on design of the backend...
-- Dispatchers.IO can be set in many different places in the code. What's the best place?
