@@ -526,7 +526,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun connectionRecovered() {
         // 1 update the results for queries that are actively being shown right now
         for ((_, queryRepo) in activeQueryMap.entries.toList().take(3)) {
-            queryRepo.query(QueryChannelsPaginationRequest())
+            queryRepo.query(30)
         }
         // 2 update the data for all channels that are being show right now...
         val cids = activeChannelMap.keys.toList().take(30)

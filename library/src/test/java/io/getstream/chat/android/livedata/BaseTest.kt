@@ -78,10 +78,12 @@ open class BaseTest {
         })
         val config = Config().apply { isTypingEvents=true; isReadEvents=true }
         runBlocking(Dispatchers.IO) {repo.insertConfigs(mutableMapOf("messaging" to config))}
+        data.channel1.config = config
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
         channelRepo.updateChannel(data.channel1)
 
         filter = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(data.user1.id)))
+        query = QueryChannelsEntity(filter, null)
 
         queryRepo = repo.queryChannels(filter)
     }

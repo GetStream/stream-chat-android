@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +54,34 @@ class QueryChannelsRepoTest: BaseTest() {
 
         // channels would be easier to work with than channelRepos.
     }
+
+    @Test
+    fun offlineRunQuery() = runBlocking(Dispatchers.IO) {
+        // insert the query result into offline storage
+        val query = QueryChannelsEntity(query.filter, query.sort)
+        query.channelCIDs = listOf(data.channel1.cid).toMutableList()
+        repo.insertQuery(query)
+        repo.storeStateForChannel(data.channel1)
+        repo.setOffline()
+        val channels = queryRepo.runQueryOffline(QueryChannelsPaginationRequest(0, 2))
+        // should return 1 since only 1 is stored in offline storage
+        Truth.assertThat(channels?.size).isEqualTo(1)
+    }
+
+    @Test
+    fun onlineRunQuery() = runBlocking(Dispatchers.IO) {
+        // insert the query result into offline storage
+        val query = QueryChannelsEntity(query.filter, query.sort)
+        query.channelCIDs = listOf(data.channel1.cid).toMutableList()
+        repo.insertQuery(query)
+        repo.storeStateForChannel(data.channel1)
+        repo.setOffline()
+        queryRepo.runQuery(QueryChannelsPaginationRequest(0, 2))
+        val channels = queryRepo.channels.getOrAwaitValue()
+        // should return 1 since only 1 is stored in offline storage
+        Truth.assertThat(channels.size).isEqualTo(1)
+    }
+
 
 
 }

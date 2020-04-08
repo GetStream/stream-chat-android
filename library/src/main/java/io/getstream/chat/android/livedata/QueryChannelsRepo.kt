@@ -38,9 +38,9 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     private val _loadingMore = MutableLiveData<Boolean>(false)
     val loadingMore : LiveData<Boolean> = _loadingMore
 
-    fun loadMore(limit: Int = 30) {
+    fun loadMore(limit: Int = 30, messageLimit: Int = 10) {
         GlobalScope.launch(Dispatchers.IO) {
-            val request = loadMoreRequest(limit)
+            val request = loadMoreRequest(limit, messageLimit)
             runQuery(request)
         }
     }
@@ -81,45 +81,58 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     /**
      * Run the given queryChannels request and update the channels livedata object
      */
-    fun query(request: QueryChannelsPaginationRequest) {
+    fun query(limit: Int = 30, messageLimit: Int = 10) {
         GlobalScope.launch(Dispatchers.IO) {
-            runQuery(request)
+            runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
         }
     }
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest) {
+
+    suspend fun runQueryOffline(pagination : QueryChannelsPaginationRequest): List<Channel>? {
+        var queryEntity = repo.selectQuery(query.id)
+        var channels : List<Channel>? = null
+        if (queryEntity != null) {
+            channels = repo.selectAndEnrichChannels(queryEntity.channelCIDs)
+            for (c in channels) {
+                val channelRepo = repo.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
+            logger.logI("found ${channels.size} channels in offline storage")
+        }
+        return channels
+    }
+
+    suspend fun runQuery(pagination : QueryChannelsPaginationRequest) {
         val loader = if(pagination.isFirstPage()) {_loading} else {
             _loadingMore
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
         val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
-        var queryEntity = repo.selectQuery(query.id)
-        // TODO: add logging here
-        if (queryEntity != null) {
-            val channels = repo.selectAndEnrichChannels(query.channelCIDs)
-            for (c in channels) {
-                val channelRepo = repo.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
-            }
+        val channels = runQueryOffline(pagination)
+
+        if (channels != null) {
             if (pagination.isFirstPage()) {
                 setChannels(channels)
             } else {
                 addChannels(channels)
             }
         }
+
+
         val online = repo.isOnline()
         if (online) {
             // next run the actual query
             val response = client.queryChannels(request).execute()
-            queryEntity = queryEntity ?: QueryChannelsEntity(query.filter, query.sort)
 
             if (response.isSuccess) {
                 // store the results in the database
                 val channelsResponse = response.data()
+                logger.logI("api call returned ${channelsResponse.size} channels")
                 // update the results stored in the db
                 // TODO: Figure out why tests didn't catch this
                 if (pagination.isFirstPage()) {
                     val cids = channelsResponse.map{it.cid}
+                    val queryEntity = QueryChannelsEntity(query.filter, query.sort)
                     queryEntity.channelCIDs = cids.toMutableList()
                     repo.insertQuery(queryEntity)
                 }
