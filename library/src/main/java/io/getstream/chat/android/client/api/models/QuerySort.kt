@@ -1,34 +1,22 @@
 package io.getstream.chat.android.client.api.models
 
 
-class QuerySort {
+data class QuerySort(val data: MutableList<Map<String, Any>> = mutableListOf()) {
 
-    private var mSort = mutableListOf<Map<String, Any>>()
-
-    val data: List<Map<String, Any>>
-        get() = mSort
-
-    fun clone(): QuerySort {
-        val _this = QuerySort()
-        _this.mSort = ArrayList(mSort)
-        return _this
+    private fun add(fieldName: String, direction: Int): QuerySort {
+        val map = mutableMapOf<String, Any>()
+        map["field"] = fieldName
+        map["direction"] = direction
+        data.add(map)
+        return this
     }
 
-    private fun add(fieldName: String, direction: Number): QuerySort {
-        val v: MutableMap<String, Any> = HashMap()
-        v["field"] = fieldName
-        v["direction"] = direction
-        val _this = clone()
-        _this.mSort.add(v)
-        return _this
+    fun asc(field: String): QuerySort {
+        return add(field, ASC)
     }
 
-    fun asc(fieldName: String): QuerySort {
-        return add(fieldName, ASC)
-    }
-
-    fun desc(fieldName: String): QuerySort {
-        return add(fieldName, DESC)
+    fun desc(field: String): QuerySort {
+        return add(field, DESC)
     }
 
     companion object {

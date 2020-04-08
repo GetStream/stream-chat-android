@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
 
-data class QueryChannelsRequest(
+class QueryChannelsRequest(
     @IgnoreSerialisation
     val filter: FilterObject,
     var offset: Int,
@@ -14,42 +14,27 @@ data class QueryChannelsRequest(
     val querySort: QuerySort = QuerySort(),
     @SerializedName("message_limit")
     var messageLimit: Int = 0
-) : BaseQueryChannelRequest<QueryChannelsRequest>() {
+) : ChannelRequest<QueryChannelsRequest> {
+
+    override var state: Boolean = true
+    override var watch: Boolean = true
+    override var presence: Boolean = false
 
     val sort = querySort.data
-    val filter_conditions: Map<String, Any> = filter.getMap()
+    val filter_conditions: Map<String, Any> = filter.toMap()
 
     fun withMessages(limit: Int): QueryChannelsRequest {
-        return cloneOpts().apply { messageLimit = limit }
+        messageLimit = limit
+        return this
     }
 
     fun withLimit(limit: Int): QueryChannelsRequest {
-        val clone = cloneOpts()
-        clone.limit = limit
-        return clone
+        this.limit = limit
+        return this
     }
 
     fun withOffset(offset: Int): QueryChannelsRequest {
-        return cloneOpts().apply { this.offset = offset }
-    }
-
-    init {
-        this.watch = true
-        this.state = true
-        this.presence = false
-    }
-
-    override fun cloneOpts(): QueryChannelsRequest {
-        val clone = QueryChannelsRequest(
-            filter,
-            offset,
-            limit,
-            querySort
-        )
-        clone.state = this.state
-        clone.watch = this.watch
-        clone.presence = this.presence
-        clone.messageLimit = messageLimit
-        return clone
+        this.offset = offset
+        return this
     }
 }

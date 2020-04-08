@@ -371,7 +371,7 @@ class ChatApiImpl(
     override fun queryChannel(
         channelType: String,
         channelId: String,
-        query: ChannelQueryRequest
+        query: QueryChannelRequest
     ): Call<Channel> {
 
         if (connectionId.isEmpty()) {

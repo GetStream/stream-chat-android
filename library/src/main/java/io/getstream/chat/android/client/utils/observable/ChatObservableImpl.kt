@@ -80,23 +80,21 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         if (firstEvent != null) subscription.onNext(firstEvent)
     }
 
+    /**
+     * Maps methods of [SocketListener] to events of [ChatObservable]
+     */
     private class EventsMapper(val observable: ChatObservableImpl) : SocketListener() {
 
-        val connectingEvent = ConnectingEvent()
-        val disconnectedEvent = DisconnectedEvent()
-        var connectedEvent: ConnectedEvent? = null
-
         override fun onConnecting() {
-            observable.onNext(connectingEvent)
+            observable.onNext(ConnectingEvent())
         }
 
         override fun onConnected(event: ConnectedEvent) {
-            connectedEvent = event
             observable.onNext(event)
         }
 
         override fun onDisconnected() {
-            observable.onNext(disconnectedEvent)
+            observable.onNext(DisconnectedEvent())
         }
 
         override fun onEvent(event: ChatEvent) {

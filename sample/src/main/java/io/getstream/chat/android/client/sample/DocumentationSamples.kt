@@ -67,9 +67,10 @@ fun channel() {
 
     // watching a channel"s state
     // note how the withWatch() argument ensures that we are watching the channel for any changes/new messages
-    val request = ChannelQueryRequest()
+    val request = QueryChannelRequest()
         .withData(extraData)
-        .withMessages(20).withWatch()
+        .withMessages(20)
+        .withWatch()
 
     channelController.query(request).enqueue {
         if (it.isSuccess) {
@@ -619,7 +620,7 @@ fun queryUsers() {
     // If you pass presence: true to channel.watch it will watch the list of user presence changes.
     // Note that you can listen to at most 10 users using this API call
 
-    val watchRequest = ChannelWatchRequest()
+    val watchRequest = WatchChannelRequest()
     watchRequest.data["members"] = listOf("john", "jack")
 
     channelController.watch(watchRequest).enqueue {
@@ -629,7 +630,7 @@ fun queryUsers() {
     // queryChannels allows you to listen to the members of the channels that are returned
     // so this does the same thing as above and listens to online status changes for john and jack
 
-    val wathRequestWithPresence = ChannelWatchRequest()
+    val wathRequestWithPresence = WatchChannelRequest()
     wathRequestWithPresence.presence = true
     wathRequestWithPresence.data["members"] = listOf("john", "jack")
 

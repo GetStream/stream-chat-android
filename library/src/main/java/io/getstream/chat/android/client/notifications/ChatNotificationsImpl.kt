@@ -10,7 +10,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -124,7 +124,7 @@ class ChatNotificationsImpl(
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
 
         val getMessage = client.getMessage(messageId)
-        val getChannel = client.queryChannel(channelType, channelId, ChannelQueryRequest())
+        val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
         getChannel.zipWith(getMessage).enqueue { result ->
             if (result.isSuccess) {

@@ -1,9 +1,12 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
+
 
 data class SendActionRequest(
     val channelId: String,
     val messageId: String,
     val type: String,
-    val form_data: Map<Any, Any>
+    @SerializedName("form_data")
+    val formData: Map<Any, Any>
 )

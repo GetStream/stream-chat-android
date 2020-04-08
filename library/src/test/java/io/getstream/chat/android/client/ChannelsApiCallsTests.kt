@@ -35,12 +35,12 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                ChannelQueryRequest()
+                QueryChannelRequest()
             )
         ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
 
         verifySuccess(result, response)
     }
@@ -55,12 +55,12 @@ class ChannelsApiCallsTests {
                 mock.apiKey,
                 mock.userId,
                 mock.connectionId,
-                ChannelQueryRequest()
+                QueryChannelRequest()
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
 
         val result =
-            client.queryChannel(mock.channelType, mock.channelId, ChannelQueryRequest()).execute()
+            client.queryChannel(mock.channelType, mock.channelId, QueryChannelRequest()).execute()
 
         verifyError(result, mock.serverErrorCode)
     }

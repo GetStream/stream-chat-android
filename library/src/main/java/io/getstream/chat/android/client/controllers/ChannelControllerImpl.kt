@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.controllers
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
@@ -11,12 +11,12 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 internal class ChannelControllerImpl(
-    val channelType: String,
-    val channelId: String,
-    val client: ChatClient
+    override val channelType: String,
+    override val channelId: String,
+    private val client: ChatClient
 ) : ChannelController {
 
-    private val cid = "$channelType:$channelId"
+    override val cid = "$channelType:$channelId"
 
     override fun events(): ChatObservable {
         return client.events().filter { event ->
@@ -24,22 +24,22 @@ internal class ChannelControllerImpl(
         }
     }
 
-    override fun query(request: ChannelQueryRequest): Call<Channel> {
+    override fun query(request: QueryChannelRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }
 
-    override fun watch(request: ChannelWatchRequest): Call<Channel> {
+    override fun watch(request: WatchChannelRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }
 
     override fun watch(data: Map<String, Any>): Call<Channel> {
-        val request = ChannelWatchRequest()
+        val request = WatchChannelRequest()
         request.data.putAll(data)
         return watch(request)
     }
 
     override fun watch(): Call<Channel> {
-        return client.queryChannel(channelType, channelId, ChannelWatchRequest())
+        return client.queryChannel(channelType, channelId, WatchChannelRequest())
     }
 
     override fun stopWatching(): Call<Unit> {

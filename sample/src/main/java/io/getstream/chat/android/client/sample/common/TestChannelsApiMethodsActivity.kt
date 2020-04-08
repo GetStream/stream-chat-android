@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -171,8 +171,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 val channels = channelsResult.data()
                 val channel = channels[0]
 
+                val request = WatchChannelRequest().withMessages(100)
                 val watchResult =
-                    client.channel(channelType, channelId).watch((ChannelWatchRequest().withMessages(100))).execute()
+                    client.channel(channelType, channelId).watch(request).execute()
                 echoResult(watchResult)
             }
         }.start()

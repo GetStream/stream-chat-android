@@ -1,5 +1,7 @@
-package io.getstream.chat.android.client.api.models
+package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.UploadFileResponse
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*

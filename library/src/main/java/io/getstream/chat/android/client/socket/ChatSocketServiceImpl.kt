@@ -35,7 +35,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     private val eventHandler = EventHandler(this)
     private val healthMonitor = HealthMonitor(this)
 
-    override var state: State = State.Disconnected
+    override var state: State = State.Disconnected(false)
 
     fun setLastEventDate(date: Date) {
         healthMonitor.lastEventDate = date
@@ -45,7 +45,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
         if (state is State.Connected || state is State.Connecting) {
             updateState(State.Error(error))
-            updateState(State.Disconnected)
+            updateState(State.Disconnected(true))
             clearState()
             healthMonitor.onError()
         }
@@ -72,7 +72,8 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         logger.logI("connect")
 
         if (state is State.Connecting || state is State.Connected) {
-            disconnect()
+            updateState(State.Disconnected(true))
+            clearState()
         }
 
         this.endpoint = endpoint
@@ -86,7 +87,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     }
 
     override fun disconnect() {
-        updateState(State.Disconnected)
+        updateState(State.Disconnected(false))
         clearState()
     }
 
@@ -98,7 +99,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
-        val success = eventHandler.sendMessage(eventMsg)
+        eventHandler.sendMessage(eventMsg)
     }
 
     internal fun sendEvent(event: ChatEvent) {

@@ -68,7 +68,8 @@ public class DocumentationSamplesJava {
                 // extraData allows you to add any custom fields you want to store about your user
                 // the UI components will pick up name and image by default
 
-                User user = new User("user-id");
+                User user = new User();
+                user.setId("user-id");
 
                 user.getExtraData().put("name", "Bender");
                 user.getExtraData().put("image", "https://bit.ly/321RmWb");
@@ -95,7 +96,7 @@ public class DocumentationSamplesJava {
 
                 // watching a channel's state
                 // note how the withWatch() argument ensures that we are watching the channel for any changes/new messages
-                ChannelQueryRequest request = new ChannelQueryRequest()
+                QueryChannelRequest request = new QueryChannelRequest()
                         .withData(extraData)
                         .withMessages(20)
                         .withWatch();
@@ -152,7 +153,8 @@ public class DocumentationSamplesJava {
         static class GettingStarted {
 
             public static void chatClient() {
-                User user = new User("user-id");
+                User user = new User();
+                user.setId("user-id");
                 String token = "{{ chat_user_token }}";
 
                 user.getExtraData().put("name", "Bender");
@@ -178,7 +180,7 @@ public class DocumentationSamplesJava {
 
                 extraData.put("name", "Talking about life");
 
-                ChannelQueryRequest request = new ChannelQueryRequest()
+                QueryChannelRequest request = new QueryChannelRequest()
                         .withData(extraData)
                         .withMessages(20)
                         .withWatch();
@@ -243,7 +245,8 @@ public class DocumentationSamplesJava {
 
             static void settingTheUser() {
 
-                User user = new User("user-id");
+                User user = new User();
+                user.setId("user-id");
                 String token = "{{ chat_user_token }}";
 
                 // extraData allows you to add any custom fields you want to store about your user
@@ -270,7 +273,8 @@ public class DocumentationSamplesJava {
             static void developmentTokens() {
                 String userId = "user-id";
                 String token = ChatUtils.devToken(userId);
-                User user = new User(userId);
+                User user = new User();
+                user.setId(userId);
 
                 client.setUser(user, token, new InitConnectionListener() {
                     @Override
@@ -404,7 +408,9 @@ public class DocumentationSamplesJava {
 
             message.getAttachments().add(attachment);
 
-            message.getMentionedUsers().add(new User(userId));
+            User user = new User();
+            user.setId(userId);
+            message.getMentionedUsers().add(user);
 
             channelController.sendMessage(message).enqueue(result -> null);
         }
@@ -489,7 +495,9 @@ public class DocumentationSamplesJava {
 
         static class Reactions {
             {
-                Reaction reaction = new Reaction(messageId, "like", 1);
+                Reaction reaction = new Reaction();
+                reaction.setMessageId(messageId);
+                reaction.setType("like");
                 channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
             }
 
@@ -510,8 +518,10 @@ public class DocumentationSamplesJava {
             }
 
             static void cumulativeReactions() {
-                int score = 5;
-                Reaction reaction = new Reaction(messageId, "like", score);
+                Reaction reaction = new Reaction();
+                reaction.setMessageId(messageId);
+                reaction.setType("like");
+                reaction.setScore(5);
 
                 channelController.sendReaction(reaction).enqueue(result -> Unit.INSTANCE);
             }
@@ -929,7 +939,8 @@ public class DocumentationSamplesJava {
              */
             static class UserPresenceFormat {
                 static void invisible() {
-                    User user = new User(userId);
+                    User user = new User();
+                    user.setId(userId);
                     user.setInvisible(false);
                     client.setUser(user, token, null);
                 }
@@ -944,7 +955,7 @@ public class DocumentationSamplesJava {
                     Map<String, Object> data = new HashMap<>();
                     data.put("members", members);
 
-                    ChannelWatchRequest request = new ChannelWatchRequest();
+                    WatchChannelRequest request = new WatchChannelRequest();
                     request.withData(data);
 
                     channelController.watch(request).enqueue(result -> Unit.INSTANCE);
@@ -952,7 +963,7 @@ public class DocumentationSamplesJava {
                     // queryChannels allows you to listen to the members of the channels that are returned
                     // so this does the same thing as above and listens to online status changes for john and jack
 
-                    ChannelWatchRequest watchRequestWithPresence = new ChannelWatchRequest();
+                    WatchChannelRequest watchRequestWithPresence = new WatchChannelRequest();
                     watchRequestWithPresence.setPresence(true);
                     watchRequestWithPresence.withData(data);
 
@@ -975,7 +986,8 @@ public class DocumentationSamplesJava {
 
             static class Invisible {
                 {
-                    User user = new User(userId);
+                    User user = new User();
+                    user.setId(userId);
                     user.setInvisible(true);
                     client.setUser(user, token, null);
                 }
@@ -992,7 +1004,7 @@ public class DocumentationSamplesJava {
                     Map<String, Object> data = new HashMap<>();
                     data.put("members", members);
 
-                    ChannelWatchRequest request = new ChannelWatchRequest();
+                    WatchChannelRequest request = new WatchChannelRequest();
                     request.withData(data);
 
                     channelController.watch(request).enqueue(result -> Unit.INSTANCE);
@@ -1000,7 +1012,7 @@ public class DocumentationSamplesJava {
                     // queryChannels allows you to listen to the members of the channels that are returned
                     // so this does the same thing as above and listens to online status changes for john and jack
 
-                    ChannelWatchRequest watchRequestWithPresence = new ChannelWatchRequest();
+                    WatchChannelRequest watchRequestWithPresence = new WatchChannelRequest();
                     watchRequestWithPresence.setPresence(true);
                     watchRequestWithPresence.withData(data);
 

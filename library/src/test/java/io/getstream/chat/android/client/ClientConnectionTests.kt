@@ -4,8 +4,8 @@ import android.content.Context
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.models.RetrofitApi
-import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
