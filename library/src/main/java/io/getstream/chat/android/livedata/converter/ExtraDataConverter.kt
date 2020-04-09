@@ -9,7 +9,7 @@ object ExtraDataConverter {
     @TypeConverter
     @JvmStatic
     fun stringToMap(data: String?): MutableMap<String, Any> {
-        if (data == null) {
+        if (data == null || data=="" || data=="null") {
             return mutableMapOf()
         }
         val mapType = object :
@@ -23,6 +23,9 @@ object ExtraDataConverter {
     @TypeConverter
     @JvmStatic
     fun mapToString(someObjects: MutableMap<String?, Any?>?): String {
+        if (someObjects== null) {
+            return ""
+        }
         return gson.toJson(someObjects)
     }
 }

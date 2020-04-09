@@ -91,7 +91,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         var queryEntity = repo.selectQuery(query.id)
         var channels : List<Channel>? = null
         if (queryEntity != null) {
-            channels = repo.selectAndEnrichChannels(queryEntity.channelCIDs)
+            channels = repo.selectAndEnrichChannels(queryEntity.channelCIDs, pagination.messageLimit)
             for (c in channels) {
                 val channelRepo = repo.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
@@ -111,6 +111,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         val channels = runQueryOffline(pagination)
 
         if (channels != null) {
+            for (c in channels) {
+                val channelRepo = repo.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
             if (pagination.isFirstPage()) {
                 setChannels(channels)
             } else {

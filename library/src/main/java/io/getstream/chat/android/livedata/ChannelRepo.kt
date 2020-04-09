@@ -592,16 +592,15 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channel = _channel.value
-        checkNotNull(channel) {"channel needs to be present, missing for channel repo $cid"}
+        val channel = _channel.value ?: Channel().apply {this.type = channelType; this.id = channelId; this.cid = "${channelType}:${channelId}"}
         val messages = sortedMessages()
         val members = (_members.value ?: mutableMapOf()).values.toList()
         val watchers = (_watchers.value ?: mutableMapOf()).values.toList()
         val reads = (_reads.value ?: mutableMapOf()).values.toList()
         channel.messages = messages
         channel.members = members
-        // TODO: we should clearly store watchers
-        // channel.watchers = watchers.map{Watcher("").apply(user=it)}
+        // TODO: we should clearly store watchers, event system is weird though
+        channel.watchers = watchers.map{Watcher(it.id).apply {user=it}}
         channel.read = reads
         return channel
     }

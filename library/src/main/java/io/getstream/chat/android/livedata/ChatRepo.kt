@@ -24,6 +24,7 @@ import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.*
+import java.security.InvalidParameterException
 import java.util.*
 
 
@@ -509,6 +510,9 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun insertMessages(messages: List<Message>) {
         val messageEntities = mutableListOf<MessageEntity>()
         for (message in messages) {
+            if (message.cid=="") {
+                throw InvalidParameterException("message.cid cant be empty")
+            }
             messageEntities.add(MessageEntity(message))
         }
         messageDao.insertMany(messageEntities)
@@ -656,14 +660,17 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             for (read in channel.read) {
                 users.add(read.user)
             }
-            messages.addAll(channel.messages)
+
 
             for (message in channel.messages) {
+                message.cid = channel.cid
                 users.add(message.user)
                 for (reaction in message.latestReactions) {
                     reaction.user?.let { users.add(it) }
                 }
             }
+
+            messages.addAll(channel.messages)
 
         }
 
@@ -675,6 +682,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         insertChannels(channelsResponse)
         // store the messages
         insertMessages(messages)
+
+        logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
     suspend fun selectAndEnrichChannel(channelId: String, messageLimit: Int = 0): Channel? {

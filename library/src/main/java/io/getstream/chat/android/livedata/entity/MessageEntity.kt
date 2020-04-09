@@ -77,12 +77,11 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
             ownReactions.add(reactionEntity)
         }
 
-
         // add to latest reactions
         latestReactions.add(reactionEntity)
 
         // update the count
-        val currentCount = reactionCounts.getOrDefault(reaction.type, 0)
+        val currentCount = reactionCounts.getOrElse(reaction.type){0}
         reactionCounts.set(reaction.type, currentCount + 1)
     }
 
@@ -94,7 +93,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         if (updateCounts) {
             val shouldDecrement = removed1 || removed2 || latestReactions.size >= 15
             if (shouldDecrement) {
-                val currentCount = reactionCounts.getOrDefault(reaction.type, 1)
+                val currentCount = reactionCounts.getOrElse(reaction.type) {1}
                 reactionCounts[reaction.type] = currentCount - 1
             }
         }
