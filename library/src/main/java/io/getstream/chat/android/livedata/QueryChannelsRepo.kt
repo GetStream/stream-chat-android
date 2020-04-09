@@ -67,6 +67,8 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         // TODO abstract this check somewhere
         if (event.cid != null && event.cid!!.isNotBlank() && event.cid != "*") {
             // update the info for that channel from the channel repo
+            logger.logI("received channel event $event")
+
             val channel = repo.channel(event.cid!!).toChannel()
             updateChannel(channel)
         }

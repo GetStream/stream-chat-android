@@ -7,9 +7,8 @@ import io.getstream.chat.android.livedata.gson
 import java.lang.reflect.Type
 
 
-object FilterObjectConverter {
+class FilterObjectConverter {
     @TypeConverter
-    @JvmStatic
     fun stringToObject(data: String?): FilterObject {
         if (data == null) {
             return FilterObject()
@@ -19,7 +18,6 @@ object FilterObjectConverter {
     }
 
     @TypeConverter
-    @JvmStatic
     fun objectToString(someObjects: FilterObject?): String {
         return gson.toJson(someObjects)
     }

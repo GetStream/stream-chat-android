@@ -5,9 +5,8 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.gson
 
-object QuerySortConverter {
+class QuerySortConverter {
     @TypeConverter
-    @JvmStatic
     fun stringToObject(data: String?): QuerySort? {
         if (data == null || data.isEmpty()) {
             return null
@@ -17,7 +16,6 @@ object QuerySortConverter {
     }
 
     @TypeConverter
-    @JvmStatic
     fun objectToString(someObjects: QuerySort?): String {
         if (someObjects== null) return ""
 

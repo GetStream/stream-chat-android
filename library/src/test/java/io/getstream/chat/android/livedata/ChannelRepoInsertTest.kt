@@ -131,6 +131,20 @@ class ChannelRepoInsertTest: BaseTest() {
         repo.insertQuery(query)
     }
 
+    @Test
+    fun insertReaction() = runBlocking(Dispatchers.IO) {
+        // check DAO layer and converters
+        val reactionEntity = ReactionEntity(data.reaction1)
+        repo.insertReactionEntity(reactionEntity)
+        val reactionEntity2 = repo.selectReactionEntity(reactionEntity.messageId, reactionEntity.userId, reactionEntity.type)
+        Truth.assertThat(reactionEntity2).isEqualTo(reactionEntity)
+        Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
+        // verify conversion logic is ok
+        val userMap = mutableMapOf(data.user1.id to data.user1)
+        val reactionConverted = reactionEntity2!!.toReaction(userMap)
+        Truth.assertThat(reactionConverted).isEqualTo(data.reaction1)
+    }
+
 
     @Test
     fun typing() = runBlocking(Dispatchers.IO){

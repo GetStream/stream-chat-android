@@ -5,9 +5,8 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.livedata.gson
 
 
-object ExtraDataConverter {
+class ExtraDataConverter {
     @TypeConverter
-    @JvmStatic
     fun stringToMap(data: String?): MutableMap<String, Any> {
         if (data == null || data=="" || data=="null") {
             return mutableMapOf()
@@ -21,10 +20,9 @@ object ExtraDataConverter {
     }
 
     @TypeConverter
-    @JvmStatic
     fun mapToString(someObjects: MutableMap<String?, Any?>?): String {
         if (someObjects== null) {
-            return ""
+            return "{}"
         }
         return gson.toJson(someObjects)
     }

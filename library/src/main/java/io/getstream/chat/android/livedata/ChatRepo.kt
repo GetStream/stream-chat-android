@@ -750,7 +750,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     fun clean() {
-        for (channelRepo in activeChannelMap.values) {
+        for (channelRepo in activeChannelMap.values.toList()) {
             channelRepo.clean()
         }
     }
