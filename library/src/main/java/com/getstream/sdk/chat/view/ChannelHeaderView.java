@@ -70,13 +70,6 @@ public class ChannelHeaderView extends RelativeLayout {
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
         viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
         viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
-
-        Chat.getInstance().getOnlineStatus().observe(lifecycleOwner, this::onlineStatus);
-        binding.setOnlineStatus(Chat.getInstance().getOnlineStatus().getValue() == CONNECTED);
-    }
-
-    protected void onlineStatus(OnlineStatus status) {
-        binding.setOnlineStatus(status == CONNECTED);
     }
 
     protected void setHeaderTitle(Channel channel) {

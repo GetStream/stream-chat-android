@@ -23,6 +23,7 @@ import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
+import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
@@ -43,6 +44,7 @@ import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.utils.SyncStatus;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
@@ -763,9 +765,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     }
 
     protected boolean isFailedMessage() {
-        //TODO: llc check sync
-        return false;
-        //return message.getSyncStatus() == Sync.LOCAL_FAILED || message.getType().equals(ModelType.message_error);
+
+        return message.getSyncStatus() == SyncStatus.SYNC_FAILED || message.getType().equals(ModelType.message_error) || message.getSyncStatus() == SyncStatus.SYNC_NEEDED;
     }
 
     protected boolean isThread() {

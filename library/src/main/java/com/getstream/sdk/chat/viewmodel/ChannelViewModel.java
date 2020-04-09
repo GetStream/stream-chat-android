@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
-import android.os.Looper;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
@@ -14,8 +13,6 @@ import com.getstream.sdk.chat.utils.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,7 +22,6 @@ import androidx.lifecycle.Transformations;
 
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
-import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.*;
@@ -68,7 +64,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected int threadParentPosition = 0;
 
-    protected InitViewModelLiveData initialized = new InitViewModelLiveData(this);
+    protected LiveData<Boolean> online = new MutableLiveData<>(false);
+    public LiveData<Boolean> getOnline() {
+        return online;
+    }
+    protected LiveData<Boolean> initialized = new MutableLiveData<>(false);
     protected boolean reachedEndOfPagination;
     protected boolean reachedEndOfPaginationThread;
     protected MutableLiveData<Number> currentUserUnreadMessageCount = new MutableLiveData<>();
@@ -106,6 +106,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelRepo = repo.channel(channelType, channelId);
 
         // connect livedata objects
+        channelRepo.watch(30);
+        initialized = repo.getInitialized();
+        online = repo.getOnline();
         watcherCount = channelRepo.getWatcherCount();
         typingUsers = channelRepo.getTyping();
         reads = channelRepo.getReads();
@@ -145,10 +148,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     public Channel getChannel() {
-        return channelState.getValue();
+        return channelRepo.toChannel();
     }
 
-    public LiveData<Channel> getInitialized() {
+    public LiveData<Boolean> getInitialized() {
         return initialized;
     }
 
@@ -340,7 +343,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
 
         channelState.postValue(channel);
-        initialized.postValue(channel);
     }
 
     public MessageListItemLiveData getEntities() {
@@ -492,18 +494,5 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         channelRepo.markRead();
     }
 
-    static class InitViewModelLiveData extends MutableLiveData<Channel> {
 
-        protected ChannelViewModel viewModel;
-
-        public InitViewModelLiveData(ChannelViewModel viewModel) {
-            this.viewModel = viewModel;
-        }
-
-        @Override
-        protected void onActive() {
-            super.onActive();
-            if (getValue() == null) viewModel.watchChannel();
-        }
-    }
 }

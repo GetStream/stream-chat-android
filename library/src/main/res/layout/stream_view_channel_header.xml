@@ -14,9 +14,6 @@
             name="channelName"
             type="String" />
         <variable
-            name="onlineStatus"
-            type="Boolean" />
-        <variable
             name="offlineText"
             type="String" />
     </data>
@@ -63,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text='@{onlineStatus ? channelLastActive : offlineText}'
+            android:text='@{viewModel.getOnline() ? channelLastActive : offlineText}'
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toEndOf="@+id/tv_channel_name"
             app:layout_constraintStart_toStartOf="@+id/tv_channel_name"
@@ -82,7 +79,7 @@
             android:id="@+id/iv_active_badge"
             android:layout_width="@dimen/stream_channel_header_avatar_active"
             android:layout_height="@dimen/stream_channel_header_avatar_active"
-            android:background="@{(safeUnbox(viewModel.anyOtherUsersOnline) &amp;&amp; onlineStatus) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
+            android:background="@{(safeUnbox(viewModel.anyOtherUsersOnline) &amp;&amp; viewModel.getOnline()) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
             app:layout_constraintEnd_toEndOf="@+id/avatar_group"
             app:layout_constraintStart_toEndOf="@+id/avatar_group"
             app:layout_constraintTop_toTopOf="@+id/avatar_group" />

@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.livedata.ChatRepo;
 
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
@@ -124,36 +125,22 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         private void sendReaction(final View view, String type) {
 
+            // TODO: this seems like it should be handled by the viewModel, not here
             clickListener.onClick(view);
 
-            Chat.getInstance().getClient().sendReaction(message.getId(), type).enqueue(reactionResult -> {
 
+            Reaction reaction = new Reaction(message.getId(), type, 1);
+            ChatRepo.instance().channel(message.getCid()).sendReaction(reaction);
 
-                if (reactionResult.isSuccess()) {
-                    notifyItemChanged(position);
-                } else {
-                    //TODO: add error message
-                }
-
-
-                return null;
-            });
         }
 
         private void deleteReaction(final View view, String type) {
 
             clickListener.onClick(view);
 
-            Chat.getInstance().getClient().deleteReaction(message.getId(), type).enqueue(messageResult -> {
+            Reaction reaction = new Reaction(message.getId(), type, 1);
+            ChatRepo.instance().channel(message.getCid()).deleteReaction(reaction);
 
-                if (messageResult.isSuccess()) {
-                    notifyItemChanged(position);
-                } else {
-                    //TODO: add error message
-                }
-
-                return null;
-            });
         }
 
         private void addReaction(Reaction reaction) {

@@ -353,7 +353,6 @@ public class MessageInputView extends RelativeLayout {
      */
     private void onSendMessage(Message message) {
 
-        Call<Message> call;
         binding.ivSend.setEnabled(false);
 
         if (isEdit())
@@ -367,13 +366,14 @@ public class MessageInputView extends RelativeLayout {
 
     private Message getNewMessage() {
         Message message = new Message();
-        message.setId(UUID.randomUUID().toString());
         message.setText(getMessageText());
         return message;
     }
 
     protected void onSendMessage() {
+        // TODO: fix the horrible naming on the send message flows
         Message message = isEdit() ? getEditMessage() : getNewMessage();
+        onSendMessage(message);
         handleSentMessage();
         if (isEdit())
             Utils.hideSoftKeyboard((Activity) getContext());
