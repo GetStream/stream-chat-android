@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.livedata.ChatRepo;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
@@ -212,7 +213,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
         tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
 
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
+        User currentUser = ChatRepo.instance().getCurrentUser();
         String currentUserId = currentUser.getId();
 
         Message lastMessage = LlcMigrationUtils.computeLastMessage(channel);
