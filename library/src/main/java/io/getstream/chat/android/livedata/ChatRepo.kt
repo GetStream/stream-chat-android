@@ -26,6 +26,7 @@ import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationReques
 import kotlinx.coroutines.*
 import java.security.InvalidParameterException
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
@@ -218,12 +219,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
     /** stores the mapping from cid to channelRepository */
-    var activeChannelMap: MutableMap<String, io.getstream.chat.android.livedata.ChannelRepo> =
-        mutableMapOf()
+    var activeChannelMap: ConcurrentHashMap<String, ChannelRepo> = ConcurrentHashMap()
+
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMap: MutableMap<QueryChannelsEntity, QueryChannelsRepo> =
-        mutableMapOf()
+    var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsRepo> = ConcurrentHashMap()
+
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
@@ -255,7 +256,9 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 _online.postValue(true)
                 _initialized.postValue(true)
                 if (recovered) {
-                    connectionRecovered()
+                    connectionRecovered(true)
+                } else {
+                    connectionRecovered(false)
                 }
             }
         }
@@ -440,20 +443,26 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return queryRepo
     }
 
-    suspend fun insertConfigs(configs: MutableMap<String, Config>) {
-        val configEntities = mutableListOf<ChannelConfigEntity>()
+    suspend fun insertConfigEntities(configEntities: List<ChannelConfigEntity>) {
 
         // update the local configs
-        for ((channelType, config) in configs) {
-            channelConfigs[channelType] = config
+        for (configEntity in configEntities) {
+            channelConfigs[configEntity.channelType] = configEntity.config
         }
 
         // insert into room db
+        channelConfigDao.insertMany(configEntities)
+
+    }
+
+    suspend fun insertConfigs(configs: MutableMap<String, Config>) {
+        val configEntities = mutableListOf<ChannelConfigEntity>()
+
         for ((channelType, config) in configs) {
             val entity = ChannelConfigEntity(channelType, config)
             configEntities.add(entity)
         }
-        channelConfigDao.insertMany(configEntities)
+        insertConfigEntities(configEntities)
 
     }
 
@@ -527,16 +536,20 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         messageDao.insert(messageEntity)
     }
 
-    suspend fun connectionRecovered() {
+    suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
         // 1 update the results for queries that are actively being shown right now
-        for ((_, queryRepo) in activeQueryMap.entries.toList().take(3)) {
+        for (queryRepo in activeQueryMap.values.toList().filter{it.recoveryNeeded || recoveryNeeded}.take(3)) {
+            // TODO: this should only run the online part of the query not the offline
             queryRepo.query(30)
         }
         // 2 update the data for all channels that are being show right now...
         val cids = activeChannelMap.keys.toList().take(30)
+
+        // TODO: exclude ones we just updated
         val filter = `in`("cid", cids)
         val request = QueryChannelsRequest(filter, 0, 30)
         val result = client.queryChannels(request).execute()
+
         if (result.isSuccess) {
             val channels = result.data()
             for (c in channels) {

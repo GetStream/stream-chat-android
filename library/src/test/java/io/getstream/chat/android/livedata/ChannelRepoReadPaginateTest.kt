@@ -50,6 +50,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
 
         Truth.assertThat(messages).isNotEmpty()
         Truth.assertThat(channel).isNotNull()
+        Truth.assertThat(channel.config).isNotNull()
     }
 
     /**
@@ -70,12 +71,13 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         Truth.assertThat(messages.size).isGreaterThan(0)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
         Truth.assertThat(channel).isNotNull()
+        Truth.assertThat(channel.config).isNotNull()
     }
 
     @Test
     fun recovery() = runBlocking(Dispatchers.IO) {
         // running recover should trigger channels to show up for active queries and channels
-        repo.connectionRecovered()
+        repo.connectionRecovered(true)
 
         // verify channel data is loaded
         val channelRepos = queryRepo.channels.getOrAwaitValue()

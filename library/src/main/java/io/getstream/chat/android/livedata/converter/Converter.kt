@@ -113,9 +113,9 @@ class Converter {
     }
 
     @TypeConverter
-    fun stringToMap(data: String?): Map<String?, Int?>? {
-        if (data == null) {
-            return ArrayMap()
+    fun stringToMap(data: String?): Map<String?, Int?> {
+        if (data == null || data=="null" || data=="") {
+            return mutableMapOf()
         }
         val mapType = object :
             TypeToken<Map<String?, Int?>?>() {}.type
@@ -127,6 +127,9 @@ class Converter {
 
     @TypeConverter
     fun mapToString(someObjects: Map<String?, Int?>?): String? {
+        if (someObjects== null) {
+            return "{}"
+        }
         return gson.toJson(
             someObjects
         )

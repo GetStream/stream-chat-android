@@ -113,7 +113,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         command = m.command
         commandInfo = m.commandInfo
         extraData = m.extraData
-        reactionCounts = m.reactionCounts
+        reactionCounts = m.reactionCounts ?: mutableMapOf()
 
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
@@ -139,7 +139,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.command = command
         m.commandInfo = commandInfo
         m.extraData = extraData
-        m.reactionCounts = reactionCounts
+        m.reactionCounts = reactionCounts ?: mutableMapOf()
         m.syncStatus = syncStatus
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()

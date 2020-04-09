@@ -8,11 +8,14 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Thread.sleep
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
@@ -23,12 +26,13 @@ import kotlinx.coroutines.launch
  * messages are edited or updated, or the channel is updated.
  */
 class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, var repo: ChatRepo) {
+    var recoveryNeeded: Boolean = false
     /**
      * A livedata object with the channels matching this query.
      */
 
-    private val _channels = MutableLiveData<MutableMap<String, Channel>>()
-    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.values.toList()}
+    private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
+    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.toMap().values.toList()}
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
@@ -46,7 +50,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
-        val channels = _channels.value ?: mutableMapOf()
+        val channels = _channels.value ?: ConcurrentHashMap()
         var request = QueryChannelsPaginationRequest().withLimit(limit).withOffset(channels.size).withMessages(messageLimit)
 
         return request
@@ -75,7 +79,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     fun updateChannel(c: Channel) {
-        val copy = _channels.value ?: mutableMapOf()
+        val copy = _channels.value ?: ConcurrentHashMap()
         copy[c.id] = c
         _channels.postValue(copy)
     }
@@ -124,15 +128,24 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
             }
         }
 
-
+        // we could either wait till we are online
+        // or mark ourselves as needing recovery and trigger recovery
         val online = repo.isOnline()
         if (online) {
+
             // next run the actual query
             val response = client.queryChannels(request).execute()
 
             if (response.isSuccess) {
+                recoveryNeeded = false
+
+
+
                 // store the results in the database
                 val channelsResponse = response.data()
+                // first things first, store the configs
+                val configEntities = channelsResponse.associateBy { it.type }.values.map {ChannelConfigEntity(it.type, it.config)}
+                repo.insertConfigEntities(configEntities)
                 logger.logI("api call returned ${channelsResponse.size} channels")
                 // update the results stored in the db
                 if (pagination.isFirstPage()) {
@@ -156,14 +169,17 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                     addChannels(channelsResponse)
                 }
             } else {
+                recoveryNeeded = true
                 repo.addError(response.error())
             }
+        } else {
+            recoveryNeeded = true
         }
         loader.postValue(false)
     }
 
     private fun addChannels(channelsResponse: List<Channel>) {
-        val copy = _channels.value ?: mutableMapOf()
+        val copy = _channels.value ?: ConcurrentHashMap()
 
         val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { repo.channel(it.cid).toChannel() }
         for (channel in missingChannels) {
@@ -174,6 +190,8 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
 
     private fun setChannels(channelsResponse: List<Channel>) {
         val channels = channelsResponse.map { repo.channel(it.cid).toChannel() }
-        _channels.postValue(channels.associateBy { it.cid }.toMutableMap())
+        val channelMap = channels.associateBy { it.cid }.toMutableMap()
+        val safeMap = ConcurrentHashMap(channelMap)
+        _channels.postValue(safeMap)
     }
 }

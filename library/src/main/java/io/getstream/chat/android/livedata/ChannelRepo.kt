@@ -39,6 +39,7 @@ import java.util.*
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
 
+    var recoveryNeeded: Boolean = false
     private var lastMarkReadEvent: Date? = null
     private var lastKeystrokeAt: Date? = null
     private var lastStartTypingEvent: Date? = null
@@ -234,16 +235,20 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         // first we load the data from room and update the messages and channel livedata
         val channel = repo.selectAndEnrichChannel(cid, 100)
 
+
         channel?.let {
+            it.config = repo.getChannelConfig(it.type)
             _loading.postValue(false)
             if (it.messages.isNotEmpty()) {
                 upsertMessages(it.messages)
             }
+            logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
 
         }
 
         // for pagination we cant use channel.messages, so discourage that
         if (channel != null) {
+            // TODO: having a channel data concept which only has a subset of the channel fields would prevent coding errors
             channel.messages = emptyList()
             _channel.postValue(channel)
         }
@@ -256,6 +261,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 request = request.withPresence()
             }
             runChannelQuery(request)
+        } else {
+            recoveryNeeded=true
         }
 
     }
@@ -271,10 +278,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
+            recoveryNeeded = false
             val channelResponse = response.data()
+            // TODO: first thing here needs to be updating configs otherwise we have a race
             updateLiveDataFromChannel(channelResponse)
             repo.storeStateForChannel(channelResponse)
         } else {
+            recoveryNeeded = true
             repo.addError(response.error())
         }
         loader.postValue(false)
@@ -339,6 +349,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _channel.postValue(copy)
     }
 
+    fun sendReaction(reaction: Reaction) {
+        GlobalScope.launch(Dispatchers.IO) {
+            _sendReaction(reaction)
+        }
+    }
+
     /**
      * sendReaction posts the reaction on local storage
      * message reaction count should increase, latest reactions and own_reactions should be updated
@@ -346,7 +362,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
-    suspend fun sendReaction(reaction: Reaction) {
+    suspend fun _sendReaction(reaction: Reaction) {
+        reaction.user = repo.currentUser
         // insert the message into local storage
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
@@ -599,10 +616,15 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val reads = (_reads.value ?: mutableMapOf()).values.toList()
         channel.messages = messages
         channel.members = members
+        channel.config = getConfig()
         // TODO: we should clearly store watchers, event system is weird though
         channel.watchers = watchers.map{Watcher(it.id).apply {user=it}}
         channel.read = reads
         return channel
+    }
+
+    fun deleteReaction(reaction: Reaction) {
+        // TODO: implement me
     }
 
 
