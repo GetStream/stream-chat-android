@@ -64,7 +64,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected Handler retryLooper;
     protected ChatRepo repo;
     protected QueryChannelsRepo queryRepo;
-    private LiveData<List<ChannelRepo>> channelRepos;
+    private LiveData<List<Channel>> channels;
 
 
     public ChannelListViewModel(@NonNull Application application) {
@@ -103,13 +103,14 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         }
 
         // connect the livedata objects
-        this.channelRepos = queryRepo.getChannels();
+        this.channels = queryRepo.getChannels();
         this.loading = queryRepo.getLoading();
         this.loadingMore = queryRepo.getLoadingMore();
+        this.queryChannels();
     }
 
-    public LiveData<List<ChannelRepo>> getChannelRepos() {
-        return channelRepos;
+    public LiveData<List<Channel>> getChannels() {
+        return channels;
     }
 
 
@@ -174,8 +175,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * query channels
      */
     public void queryChannels() {
-        QueryChannelsPaginationRequest request = new QueryChannelsPaginationRequest(0, pageSize, 20);
-        queryRepo.query(request);
+        queryRepo.query(pageSize, 20);
     }
 
     /**
@@ -191,7 +191,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             return;
         }
 
-        queryRepo.loadMore(pageSize);
+        queryRepo.loadMore(pageSize, 20);
 
     }
 

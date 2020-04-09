@@ -89,14 +89,7 @@ public class ChannelListView extends RecyclerView {
         setOnLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
 
-        // TODO Chat repo approach is not convenient here. Need to change the API
-        Transformations.map(viewModel.getChannelRepos(), channelRepos -> {
-            List<Channel> channels = new ArrayList<Channel>();
-            for (ChannelRepo channelRepo : channelRepos) {
-                channels.add(channelRepo.getChannel().getValue());
-            }
-            return channels;
-        }).observe(lifecycleOwner, channels -> {
+        viewModel.getChannels().observe(lifecycleOwner, channels -> {
             adapter.replaceChannels(channels);
             if (canScrollUpForChannelEvent())
                 layoutManager.scrollToPosition(0);

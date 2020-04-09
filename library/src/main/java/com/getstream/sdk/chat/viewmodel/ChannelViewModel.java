@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.os.Looper;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
@@ -65,16 +66,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected ChatRepo repo;
     protected ChannelRepo channelRepo;
 
-    protected Looper looper;
-    protected Map<String, ChatEvent> typingState;
-
-    protected int channelSubscriptionId = 0;
     protected int threadParentPosition = 0;
 
     protected InitViewModelLiveData initialized = new InitViewModelLiveData(this);
     protected boolean reachedEndOfPagination;
     protected boolean reachedEndOfPaginationThread;
-    protected Date lastMarkRead;
     protected MutableLiveData<Number> currentUserUnreadMessageCount = new MutableLiveData<>();
     protected Integer lastCurrentUserUnreadMessageCount = 0;
     protected LiveData<Boolean> loading = new MutableLiveData<>(false);
@@ -93,7 +89,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected LiveData<List<ChannelUserRead>> reads = new MutableLiveData<>();
     protected MutableLiveData<InputType> inputType = new MutableLiveData<>(InputType.DEFAULT);
     protected MessageListItemLiveData entities;
-    protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
 
     private List<Subscription> subscriptions = new ArrayList<>();
     private TaggedLogger logger = ChatLogger.Companion.get("ChannelViewModel");
@@ -130,26 +125,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         entities = new MessageListItemLiveData(currentUser, messages, threadMessages, typingUsers, reads);
 
         editMessage = new MutableLiveData<>();
-
-        enableMarkRead = true;
-
-        Callable<Void> markRead = () -> {
-
-            //TODO: llc unsub from all enqueue
-            Chat.getInstance().getClient().markMessageRead(channelType, channelId, "").enqueue(result -> {
-
-                if (result.isSuccess()) {
-                    logger.logI("Marked read message");
-                } else {
-                    logger.logE(result.error().getMessage());
-                }
-
-                return null;
-            });
-            return null;
-        };
-        looper = new Looper(markRead);
-        looper.start();
 
         new StreamLifecycleObserver(this);
 
@@ -324,28 +299,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return "";
     }
 
-    public void markLastMessageRead() {
-        // this prevents infinite loops with mark read commands
-        Channel channel = channelState.getValue();
-        Message message = LlcMigrationUtils.computeLastMessage(channel);
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
-        if (message == null || !isEnableMarkRead() || message.getUserId().equals(currentUser.getUserId())) {
-            return;
-        }
-        if (lastMarkRead == null || message.getCreatedAt().getTime() > lastMarkRead.getTime()) {
-            looper.markRead();
-            lastMarkRead = message.getCreatedAt();
-        }
-    }
-
-    protected boolean isEnableMarkRead() {
-        return enableMarkRead;
-    }
-
-    public void setEnableMarkRead(boolean enableMarkRead) {
-        this.enableMarkRead = enableMarkRead;
-    }
-
     /**
      * bans a user from this channel
      *
@@ -420,10 +373,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         logger.logI("onCleared");
 
-        if (looper != null) {
-            looper.interrupt();
-        }
-
     }
 
 
@@ -470,7 +419,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param message the Message sent
      */
     public void editMessage(Message message) {
-        channelRepo.sendMessage(message);
+        channelRepo.editMessage(message);
     }
 
     /**
@@ -518,18 +467,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public synchronized void keystroke() {
         if (isThread()) return;
 
-        Date now = new Date();
-        lastKeystrokeAt = now;
-
-        if (lastStartTypingEvent == null || (now.getTime() - lastStartTypingEvent.getTime() > 3000)) {
-            lastStartTypingEvent = now;
-
-            Chat.getInstance().getClient()
-                    .sendEvent(EventType.INSTANCE.getTYPING_START(), channelType, channelId, new HashMap<>())
-                    .enqueue(
-                            chatEventResult -> null
-                    );
-        }
+        channelRepo.keystroke();
     }
 
     /**
@@ -539,19 +477,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void stopTyping() {
         if (isThread()) return;
 
-        Chat.getInstance().getClient()
-                .sendEvent(EventType.INSTANCE.getTYPING_STOP(), channelType, channelId, new HashMap<>())
-                .enqueue(
-                        chatEventResult -> null
-                );
-    }
-
-    /**
-     * Cleans up the typing state by removing typing users that did not send
-     * typing.stop event for long time
-     */
-    protected void cleanupTypingUsers() {
-        channelRepo.clean();
+        channelRepo.stopTyping();
     }
 
     public MutableLiveData<String> getMessageInputText() {
@@ -562,65 +488,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.messageInputText = messageInputText;
     }
 
-    /**
-     * Service thread to keep state neat and clean. Ticks twice per second
-     */
-    class Looper extends Thread {
-        protected Callable<Void> markReadFn;
-        protected AtomicInteger pendingMarkReadRequests;
-
-        Looper(Callable<Void> markReadFn) {
-            this.markReadFn = markReadFn;
-            pendingMarkReadRequests = new AtomicInteger(0);
-        }
-
-        void markRead() {
-            pendingMarkReadRequests.incrementAndGet();
-        }
-
-        protected void sendStoppedTyping() {
-
-            // typing did not start, quit
-            if (lastStartTypingEvent == null) {
-                return;
-            }
-
-            // if we didn't press a key for more than 5 seconds send the stopTyping event
-
-            long timeSinceLastKeystroke = new Date().getTime() - lastKeystrokeAt.getTime();
-
-            // TODO: this should be a config value on the client or channel object...
-            if (timeSinceLastKeystroke > 5000) {
-                stopTyping();
-            }
-        }
-
-        protected void throttledMarkRead() {
-            int pendingCalls = pendingMarkReadRequests.get();
-            if (pendingCalls == 0) {
-                return;
-            }
-            try {
-                markReadFn.call();
-            } catch (Exception e) {
-                logger.logE(e);
-            }
-            pendingMarkReadRequests.compareAndSet(pendingCalls, 0);
-        }
-
-        public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                cleanupTypingUsers();
-                throttledMarkRead();
-                sendStoppedTyping();
-
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    break;
-                }
-            }
-        }
+    public void markLastMessageRead() {
+        channelRepo.markRead();
     }
 
     static class InitViewModelLiveData extends MutableLiveData<Channel> {
