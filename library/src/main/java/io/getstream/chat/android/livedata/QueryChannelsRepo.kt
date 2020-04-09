@@ -142,8 +142,6 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
                     channelRepo.updateLiveDataFromChannel(c)
                 }
 
-
-
                 repo.storeStateForChannels(channelsResponse)
 
                 if (pagination.isFirstPage()) {
