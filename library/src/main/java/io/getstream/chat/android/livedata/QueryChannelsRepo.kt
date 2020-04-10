@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
@@ -17,6 +19,8 @@ import kotlinx.coroutines.launch
 import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentHashMap
 
+// TODO: move this to the LLC at some point
+fun ChatEvent.isChannelEvent(): Boolean =  !this.cid.isNullOrEmpty() && this.cid != "*"
 
 /**
  * The StreamQueryChannelRepository is a small helper to show a list of channels
@@ -32,6 +36,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
      */
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
+    // TODO: track positions and sort
     var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.toMap().values.toList()}
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
@@ -68,8 +73,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         if (event is NotificationAddedToChannelEvent) {
             handleMessageNotification(event)
         }
-        // TODO abstract this check somewhere
-        if (event.cid != null && event.cid!!.isNotBlank() && event.cid != "*") {
+        if (event.isChannelEvent()) {
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
@@ -107,13 +111,57 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         return channels
     }
 
+    suspend fun runQueryOnline(pagination : QueryChannelsPaginationRequest): Result<List<Channel>> {
+        val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
+        // next run the actual query
+        val response = client.queryChannels(request).execute()
+
+        if (response.isSuccess) {
+            recoveryNeeded = false
+
+
+
+            // store the results in the database
+            val channelsResponse = response.data()
+            // first things first, store the configs
+            val configEntities = channelsResponse.associateBy { it.type }.values.map {ChannelConfigEntity(it.type, it.config)}
+            repo.insertConfigEntities(configEntities)
+            logger.logI("api call returned ${channelsResponse.size} channels")
+            // update the results stored in the db
+            if (pagination.isFirstPage()) {
+                val cids = channelsResponse.map{it.cid}
+                val queryEntity = QueryChannelsEntity(query.filter, query.sort)
+                queryEntity.channelCIDs = cids.toMutableList()
+                repo.insertQuery(queryEntity)
+            }
+
+            // initialize channel repos for all of these channels
+            for (c in channelsResponse) {
+                val channelRepo = repo.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
+
+            repo.storeStateForChannels(channelsResponse)
+
+            if (pagination.isFirstPage()) {
+                setChannels(channelsResponse)
+            } else {
+                addChannels(channelsResponse)
+            }
+        } else {
+            recoveryNeeded = true
+            repo.addError(response.error())
+        }
+        return response
+    }
+
     suspend fun runQuery(pagination : QueryChannelsPaginationRequest) {
         val loader = if(pagination.isFirstPage()) {_loading} else {
             _loadingMore
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
-        val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
+
         val channels = runQueryOffline(pagination)
 
         if (channels != null) {
@@ -132,46 +180,8 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
         // or mark ourselves as needing recovery and trigger recovery
         val online = repo.isOnline()
         if (online) {
+            runQueryOnline(pagination)
 
-            // next run the actual query
-            val response = client.queryChannels(request).execute()
-
-            if (response.isSuccess) {
-                recoveryNeeded = false
-
-
-
-                // store the results in the database
-                val channelsResponse = response.data()
-                // first things first, store the configs
-                val configEntities = channelsResponse.associateBy { it.type }.values.map {ChannelConfigEntity(it.type, it.config)}
-                repo.insertConfigEntities(configEntities)
-                logger.logI("api call returned ${channelsResponse.size} channels")
-                // update the results stored in the db
-                if (pagination.isFirstPage()) {
-                    val cids = channelsResponse.map{it.cid}
-                    val queryEntity = QueryChannelsEntity(query.filter, query.sort)
-                    queryEntity.channelCIDs = cids.toMutableList()
-                    repo.insertQuery(queryEntity)
-                }
-
-                // initialize channel repos for all of these channels
-                for (c in channelsResponse) {
-                    val channelRepo = repo.channel(c)
-                    channelRepo.updateLiveDataFromChannel(c)
-                }
-
-                repo.storeStateForChannels(channelsResponse)
-
-                if (pagination.isFirstPage()) {
-                    setChannels(channelsResponse)
-                } else {
-                    addChannels(channelsResponse)
-                }
-            } else {
-                recoveryNeeded = true
-                repo.addError(response.error())
-            }
         } else {
             recoveryNeeded = true
         }

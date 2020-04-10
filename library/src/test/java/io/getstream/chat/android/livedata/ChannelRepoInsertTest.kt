@@ -51,27 +51,43 @@ class ChannelRepoInsertTest: BaseTest() {
         Truth.assertThat(results.size).isEqualTo(1)
     }
 
+    // TODO: converter/repo test suite
+
     @Test
-    fun sendReaction() = runBlocking {
+    fun sendReaction() = runBlocking(Dispatchers.IO) {
 
         // TODO: Mock socket and mock client
-        withContext(Dispatchers.IO) {
-            // ensure the message exists
-            repo._createChannel(data.channel1)
-            channelRepo._sendMessage(data.message1)
-            repo.setOffline()
-            repo.insertChannel(data.channel1)
-            channelRepo.upsertMessage(data.message1)
-            // send the reaction while offline
-            channelRepo.sendReaction(data.reaction1)
-            var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
-            Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
-            repo.setOnline()
-            val reactionEntities = repo.retryReactions()
-            Truth.assertThat(reactionEntities.size).isEqualTo(1)
-            reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, "like")
-            Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
-        }
+        // ensure the message exists
+        repo._createChannel(data.channel1)
+        channelRepo._sendMessage(data.message1)
+        repo.setOffline()
+        repo.insertChannel(data.channel1)
+        channelRepo.upsertMessage(data.message1)
+        // send the reaction while offline
+        channelRepo.sendReaction(data.reaction1)
+        var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
+        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+        repo.setOnline()
+        val reactionEntities = repo.retryReactions()
+        Truth.assertThat(reactionEntities.size).isEqualTo(1)
+        reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, "like")
+        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
+
+    }
+
+    @Test
+    fun deleteReaction() = runBlocking(Dispatchers.IO) {
+        repo.setOffline()
+
+        channelRepo._sendReaction(data.reaction1)
+        channelRepo._deleteReaction(data.reaction1)
+
+        val reaction = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
+        Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+        Truth.assertThat(reaction!!.deletedAt).isNotNull()
+
+        val reactions = repo.retryReactions()
+        Truth.assertThat(reactions.size).isEqualTo(1)
     }
 
     @Test

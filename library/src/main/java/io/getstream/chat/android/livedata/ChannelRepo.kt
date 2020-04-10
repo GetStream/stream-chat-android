@@ -290,6 +290,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         loader.postValue(false)
     }
 
+    // TODO: delete message support
+
+    // TODO: hasmore implementation
+
     /**
      * - Generate an ID
      * - Insert the message into offline storage with sync status set to Sync Needed
@@ -378,6 +382,32 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (online) {
             val runnable = {
                 client.sendReaction(reaction) as Call<Any>
+            }
+            repo.runAndRetry(runnable)
+        }
+    }
+
+    fun deleteReaction(reaction: Reaction) {
+        GlobalScope.launch(Dispatchers.IO) {
+            _deleteReaction(reaction)
+        }
+    }
+
+    suspend fun _deleteReaction(reaction: Reaction) {
+        reaction.user = repo.currentUser
+        val reactionEntity = ReactionEntity(reaction)
+        reactionEntity.deletedAt = Date()
+        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
+        repo.insertReactionEntity(reactionEntity)
+        val messageEntity = repo.selectMessageEntity(reaction.messageId)
+        messageEntity?.let {
+            it.removeReaction(reaction, repo.currentUser.id==reaction.user!!.id)
+            repo.insertMessageEntity(it)
+        }
+        val online = repo.isOnline()
+        if (online) {
+            val runnable = {
+                client.deleteReaction(reaction.messageId, reaction.type) as Call<Any>
             }
             repo.runAndRetry(runnable)
         }
@@ -623,9 +653,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return channel
     }
 
-    fun deleteReaction(reaction: Reaction) {
-        // TODO: implement me
-    }
+
 
 
 }

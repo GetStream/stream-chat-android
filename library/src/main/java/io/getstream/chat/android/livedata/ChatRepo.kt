@@ -238,7 +238,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         event.totalUnreadCount?.let { setTotalUnreadCount(it) }
 
         // if this is a channel level event, let the channel repo handle it
-        if (!event.cid.isNullOrEmpty()) {
+        if (event.isChannelEvent()) {
             val cid = event.cid!!
             if (activeChannelMap.containsKey(cid)) {
                 val channelRepo = activeChannelMap.get(cid)!!
@@ -538,14 +538,17 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
         // 1 update the results for queries that are actively being shown right now
+        val updatedChannelIds = mutableSetOf<String>()
         for (queryRepo in activeQueryMap.values.toList().filter{it.recoveryNeeded || recoveryNeeded}.take(3)) {
-            // TODO: this should only run the online part of the query not the offline
-            queryRepo.query(30)
+            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
+            if (response.isSuccess) {
+                updatedChannelIds.addAll(response.data().map { it.cid })
+            }
         }
         // 2 update the data for all channels that are being show right now...
-        val cids = activeChannelMap.keys.toList().take(30)
+        // exclude ones we just updated
+        val cids = activeChannelMap.keys.toList().filterNot { updatedChannelIds.contains(it) }.take(30)
 
-        // TODO: exclude ones we just updated
         val filter = `in`("cid", cids)
         val request = QueryChannelsRequest(filter, 0, 30)
         val result = client.queryChannels(request).execute()
@@ -571,6 +574,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 val channel = client.channel(messageEntity.cid)
                 val result = channel.sendMessage(messageEntity.toMessage(userMap)).execute()
 
+                // TODO: support deleting and editing messages here
+
                 if (result.isSuccess) {
                     messageEntity.syncStatus = SyncStatus.SYNCED
                     insertMessageEntity(messageEntity)
@@ -587,7 +592,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         for (reactionEntity in reactionEntities) {
             val reaction = reactionEntity.toReaction(userMap)
             reaction.user = null
-            val result = client.sendReaction(reaction).execute()
+            val result = if (reactionEntity.deletedAt != null) {
+                client.deleteReaction(reaction.messageId, reaction.type).execute()
+            } else {
+                client.sendReaction(reaction).execute()
+            }
+
             if (result.isSuccess) {
                 reactionEntity.syncStatus = SyncStatus.SYNCED
                 insertReactionEntity(reactionEntity)
@@ -611,6 +621,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 channelEntity.syncStatus = SyncStatus.SYNCED
                 insertChannelStateEntity(channelEntity)
             }
+            // TODO: 1.1 support hiding channels
 
         }
         return channelEntities
