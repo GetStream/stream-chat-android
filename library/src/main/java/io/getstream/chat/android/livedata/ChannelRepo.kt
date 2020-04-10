@@ -41,12 +41,8 @@ import java.util.*
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
 
-    private val _unreadCount = MutableLiveData<Int>()
 
-    /**
-     * unread count for this channel
-     */
-    val unreadCount: LiveData<Int> = _unreadCount
+
 
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
@@ -88,6 +84,16 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val reads : LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
         it.values.sortedBy { it.lastRead }
     }
+
+    private val _read = MutableLiveData<ChannelUserRead>()
+    val read : LiveData<ChannelUserRead> = _read
+
+
+    private val _unreadCount = MutableLiveData<Int>()
+    /**
+     * unread count for this channel
+     */
+    val unreadCount: LiveData<Int> = ChannelUnreadCountLiveData(repo.currentUser, read, messages)
 
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
     val watchers : LiveData<List<User>> = Transformations.map(_watchers) {
@@ -159,6 +165,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
 
 
+
     fun markRead(): Boolean {
         if (!getConfig().isReadEvents) return false
         // throttle the mark read
@@ -169,6 +176,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
+                val userRead = ChannelUserRead().apply{user=repo.currentUser; lastRead=last.createdAt}
+                _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return true
             }
@@ -292,7 +301,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             _channel.postValue(channel)
         }
 
-
         // next we run the actual API call
         if (repo.isOnline()) {
             var request = ChannelWatchRequest().withMessages(limit)
@@ -306,25 +314,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     }
 
-    // TODO: fix  and test me
-    fun getUnreadMessageCount(userId: String, channel: Channel): Int {
-        var unreadMessageCount = 0
-        val read = channel.read
-        if (read == null || read.isEmpty()) return unreadMessageCount
-        val lastReadDate = Date()
-        val messages = channel.messages
-        for (i in messages.indices.reversed()) {
-            val message = messages[i]
-            if (message.user.id == userId) continue
-            if (message.deletedAt != null) continue
-            if (message.createdAt!!.time > lastReadDate.time) unreadMessageCount++
-        }
-        return unreadMessageCount
-    }
-
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
-
-
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
@@ -652,9 +642,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     fun updateReads(
         reads: List<ChannelUserRead>
     ) {
+        val currentUser = repo.currentUser
         val copy = _reads.value ?: mutableMapOf()
         for (r in reads) {
             copy[r.getUserId()] = r
+            // update read state for the current user
+            if (r.getUserId()==currentUser.id) {
+                _read.postValue(r)
+            }
         }
         _reads.postValue(copy)
     }
