@@ -35,6 +35,7 @@ import kotlin.jvm.functions.Function1;
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();
+    LiveData<Integer> unreadCount;
 
     /**
      * The A livedata object for the list of messages
@@ -69,8 +70,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return online;
     }
     protected LiveData<Boolean> initialized = new MutableLiveData<>(false);
-    protected boolean reachedEndOfPagination;
-    protected boolean reachedEndOfPaginationThread;
+    protected LiveData<Boolean> reachedEndOfPagination;
+    protected LiveData<Boolean> reachedEndOfPaginationThread;
     protected MutableLiveData<Number> currentUserUnreadMessageCount = new MutableLiveData<>();
     protected Integer lastCurrentUserUnreadMessageCount = 0;
     protected LiveData<Boolean> loading = new MutableLiveData<>(false);
@@ -81,7 +82,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected MutableLiveData<Message> threadParentMessage = new MutableLiveData<>(null);
     protected MutableLiveData<Channel> channelState = new MutableLiveData<>();
 
-    protected MutableLiveData<List<Message>> threadMessages = new MutableLiveData<>();
+    protected LiveData<List<Message>> threadMessages = new MutableLiveData<>();
     protected LiveData<Boolean> anyOtherUsersOnline;
 
     protected MutableLiveData<Boolean> hasNewMessages = new MutableLiveData<>(false);
@@ -116,14 +117,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         messages = channelRepo.getMessages();
         loading = channelRepo.getLoading();
         loadingMore = channelRepo.getLoadingOlderMessages();
+        reachedEndOfPagination = channelRepo.getEndOfOlderMessages();
+        unreadCount = channelRepo.getUnreadCount();
 
 
         logger.logI("instance created");
 
-        // TODO: find a solution for thread messages, design is weird
-        threadMessages.setValue(null);
-
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
+        User currentUser = ChatRepo.instance().getCurrentUser();
 
         entities = new MessageListItemLiveData(currentUser, messages, threadMessages, typingUsers, reads);
 
@@ -133,15 +133,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     }
 
-    // region Getter
-
-    public Map<String, ChannelUserRead> getReadsByUser(Channel channel) {
-        Map<String, ChannelUserRead> readsByUser = new HashMap<>();
-        for (ChannelUserRead r : channel.getRead()) {
-            readsByUser.put(r.getUserId(), r);
-        }
-        return readsByUser;
-    }
 
     public MutableLiveData<Number> getCurrentUserUnreadMessageCount() {
         return currentUserUnreadMessageCount;
@@ -199,10 +190,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.inputType.postValue(inputType);
     }
 
-    public LiveData<List<User>> getTypingUsers() {
-        return typingUsers;
-    }
-
     public LiveData<Message> getEditMessage() {
         return editMessage;
     }
@@ -257,39 +244,26 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     protected void configThread(Message message) {
+        String parentId = message.getId();
 
         if (message.getReplyCount() == 0) {
-            reachedEndOfPaginationThread = true;
-            threadMessages.postValue(new ArrayList<Message>() {
-                {
-                    add(message);
-                }
-            });
+            threadMessages = channelRepo.getThread(parentId);
         } else {
+            threadMessages = channelRepo.getThread(parentId);
+            // TODO: support threadReachedEndOfPagination
+            //reachedEndOfPaginationThread = channelRepo.getThreadReachedEnd(parentId);
+            channelRepo.threadLoadOlderMessages(parentId, 30);
 
-            Chat.getInstance().getClient().getReplies(message.getId(), 30).enqueue(new Function1<Result<List<Message>>, Unit>() {
-                @Override
-                public Unit invoke(Result<List<Message>> result) {
 
-                    if (result.isSuccess()) {
-                        List<Message> newMessages = new ArrayList<>(result.data());
-                        newMessages.add(0, message);
-                        reachedEndOfPaginationThread = newMessages.size() < 30 + 1;
-                        threadMessages.postValue(newMessages);
-                    }
 
-                    return null;
-                }
-            });
         }
     }
 
     public void initThread() {
         // TODO: this thread thing is a mess
         threadParentMessage.postValue(null);
-        threadMessages.postValue(null);
-        Channel channel = channelState.getValue();
-        reachedEndOfPaginationThread = false;
+        threadMessages = new MutableLiveData<>();
+        reachedEndOfPaginationThread = new MutableLiveData<Boolean>(false);
     }
     // endregion
 
@@ -327,23 +301,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
 
-    protected void onChannelLoaded(Channel channel) {
-
-        // TODO this is a weird check?
-        reachedEndOfPagination = channel.getMessages().size() < 10;
-
-
-
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
-
-        watcherCount = Transformations.map(channelState, Channel::getWatcherCount);
-        anyOtherUsersOnline = Transformations.map(watcherCount, count -> count != null && count.intValue() > 1);
-        lastCurrentUserUnreadMessageCount = LlcMigrationUtils.getUnreadMessageCount(currentUser.getUserId(), channel);
-        currentUserUnreadMessageCount.postValue(lastCurrentUserUnreadMessageCount);
-
-
-        channelState.postValue(channel);
-    }
 
     public MessageListItemLiveData getEntities() {
         return entities;
@@ -421,6 +378,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      * @param message the Message sent
      */
     public void editMessage(Message message) {
+        stopTyping();
         channelRepo.editMessage(message);
     }
 

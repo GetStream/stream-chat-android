@@ -419,7 +419,9 @@ public class MessageInputView extends RelativeLayout {
     }
 
     protected Message getEditMessage() {
-        return viewModel.getEditMessage().getValue();
+        Message message =  viewModel.getEditMessage().getValue();
+        message.setText(getMessageText());
+        return message;
     }
     // endregion
 

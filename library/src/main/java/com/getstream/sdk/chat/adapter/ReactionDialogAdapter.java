@@ -143,41 +143,6 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
         }
 
-        private void addReaction(Reaction reaction) {
-            Map<String, Integer> reactionCounts = message.getReactionCounts();
-
-            message.getOwnReactions().add(reaction);
-
-            if (reactionCounts.containsKey(reactionKey)) {
-                reactionCounts.put(reactionKey, reactionCounts.get(reactionKey) + 1);
-            } else {
-                reactionCounts.put(reactionKey, 1);
-            }
-        }
-
-        private void removeReaction(String type) {
-            List<Reaction> ownReactions = message.getOwnReactions();
-            Iterator<Reaction> iterator = ownReactions.iterator();
-
-            while (iterator.hasNext()) {
-                Reaction reaction = iterator.next();
-                if (reaction.getType().equals(type)) {
-                    iterator.remove();
-                    break;
-                }
-            }
-
-            Map<String, Integer> reactionCounts = message.getReactionCounts();
-
-            if (reactionCounts.containsKey(reactionKey)) {
-                int count = reactionCounts.get(reactionKey);
-                if (count == 1) {
-                    reactionCounts.remove(reactionKey);
-                } else {
-                    reactionCounts.put(reactionKey, count - 1);
-                }
-            }
-        }
     }
 
 }

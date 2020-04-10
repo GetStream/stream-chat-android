@@ -32,7 +32,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private TaggedLogger logger = ChatLogger.Companion.get("MessageListItemLiveData");
 
     private LiveData<List<Message>> messages;
-    private MutableLiveData<List<Message>> threadMessages;
+    private LiveData<List<Message>> threadMessages;
     private LiveData<List<User>> typing;
     private LiveData<List<ChannelUserRead>> reads;
 
@@ -46,7 +46,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public MessageListItemLiveData(User currentUser,
                                    LiveData<List<Message>> messages,
-                                   MutableLiveData<List<Message>> threadMessages,
+                                   LiveData<List<Message>> threadMessages,
                                    LiveData<List<User>> typing,
                                    LiveData<List<ChannelUserRead>> reads) {
         this.messages = messages;
