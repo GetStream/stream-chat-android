@@ -64,7 +64,7 @@ class ChannelRepoInsertTest: BaseTest() {
         repo.insertChannel(data.channel1)
         channelRepo.upsertMessage(data.message1)
         // send the reaction while offline
-        channelRepo.sendReaction(data.reaction1)
+        channelRepo._sendReaction(data.reaction1)
         var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         repo.setOnline()

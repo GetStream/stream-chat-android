@@ -35,6 +35,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
      * A livedata object with the channels matching this query.
      */
 
+    private val _endOfChannels = MutableLiveData<Boolean>(false)
+    val endOfChannels : LiveData<Boolean> = _endOfChannels
+
+
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
     // TODO: track positions and sort
     var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.toMap().values.toList()}
@@ -123,6 +127,9 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
 
             // store the results in the database
             val channelsResponse = response.data()
+            if (channelsResponse.size < pagination.limit) {
+                _endOfChannels.postValue(true)
+            }
             // first things first, store the configs
             val configEntities = channelsResponse.associateBy { it.type }.values.map {ChannelConfigEntity(it.type, it.config)}
             repo.insertConfigEntities(configEntities)
@@ -158,6 +165,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     suspend fun runQuery(pagination : QueryChannelsPaginationRequest) {
         val loader = if(pagination.isFirstPage()) {_loading} else {
             _loadingMore
+        }
+        if (loader.value == true) {
+            logger.logI("Another query channels request is in progress. Ignoring this request.")
+            return
         }
         loader.postValue(true)
         // start by getting the query results from offline storage

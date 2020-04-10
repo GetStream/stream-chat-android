@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,13 @@ import java.util.*
  *
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
+
+
+    private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
+    val endOfNewerMessages : LiveData<Boolean> = _endOfNewerMessages
+
+    private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
+    val endOfOlderMessages : LiveData<Boolean> = _endOfOlderMessages
 
     var recoveryNeeded: Boolean = false
     private var lastMarkReadEvent: Date? = null
@@ -103,9 +111,19 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun loadOlderMessages(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
-            val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
-            runChannelQuery(request)
+            _loadOlderMessages(limit)
         }
+    }
+
+    suspend fun _loadOlderMessages(limit: Int = 30) {
+        if (_loadingOlderMessages.value == true) {
+            logger.logI("Another request to load older messages is in progress. Ignoring this request.")
+            return
+        }
+        _loadingOlderMessages.value = true
+        val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
+        runChannelQuery(request)
+        _loadingOlderMessages.value = false
     }
 
     fun getConfig(): Config {
@@ -154,9 +172,19 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun loadNewerMessages(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
-            val request = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
-            runChannelQuery(request)
+            _loadNewerMessages(limit)
         }
+    }
+
+    suspend fun _loadNewerMessages(limit: Int = 30) {
+        if (_loadingNewerMessages.value == true) {
+            logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
+            return
+        }
+        _loadingNewerMessages.value = true
+        val request = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
+        runChannelQuery(request)
+        _loadingNewerMessages.value = false
     }
 
     fun sortedMessages(): List<Message> {
@@ -229,8 +257,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun _watch(limit: Int=30) {
-        // TODO: watch and loadMore should perhaps check if we are already loading and do nothing if we are
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
+        if (_loading.value == true) {
+            logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
+            return
+        }
         _loading.postValue(true)
 
         // first we load the data from room and update the messages and channel livedata
@@ -269,31 +300,33 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {
-        val loader = if (request.isFilteringNewerMessages()) {
-            _loadingNewerMessages
-        } else {
-            _loadingOlderMessages
-        }
 
-        loader.postValue(true)
+
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
             recoveryNeeded = false
             val channelResponse = response.data()
-            // TODO: first thing here needs to be updating configs otherwise we have a race
+            // TODO: LLC should make this a bit cleaner
+            val limit = request.messages["limit"] as Int
+            if (limit > channelResponse.messages.size) {
+                if (request.isFilteringNewerMessages()) {
+                    _endOfNewerMessages.postValue(true)
+                } else {
+                    _endOfOlderMessages.postValue(true)
+                }
+            }
+            // first thing here needs to be updating configs otherwise we have a race with receiving events
+            val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
+            repo.insertConfigEntities(listOf(configEntities))
             updateLiveDataFromChannel(channelResponse)
             repo.storeStateForChannel(channelResponse)
+
         } else {
             recoveryNeeded = true
             repo.addError(response.error())
         }
-        loader.postValue(false)
     }
-
-    // TODO: delete message support
-
-    // TODO: hasmore implementation
 
     /**
      * - Generate an ID
