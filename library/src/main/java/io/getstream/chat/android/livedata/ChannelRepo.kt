@@ -438,6 +438,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
         repo.insertReactionEntity(reactionEntity)
+        // update livedata
+        val currentMessage = getMessage(reaction.messageId)
+        currentMessage?.let {
+            it.ownReactions.add(reaction)
+            it.latestReactions.add(reaction)
+            upsertMessage(it)
+        }
         // update the message in the local storage
         val messageEntity = repo.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
@@ -465,6 +472,15 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         reactionEntity.deletedAt = Date()
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
         repo.insertReactionEntity(reactionEntity)
+
+        // update livedata
+        val currentMessage = getMessage(reaction.messageId)
+        currentMessage?.let {
+            it.ownReactions = it.ownReactions.filter {it.user!!.id==reaction.userId && it.type == reaction.type}.toMutableList()
+            it.latestReactions = it.latestReactions.filter {it.user!!.id==reaction.userId && it.type == reaction.type}.toMutableList()
+            upsertMessage(it)
+        }
+
         val messageEntity = repo.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
             it.removeReaction(reaction, repo.currentUser.id==reaction.user!!.id)
@@ -487,6 +503,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     // This one needs to be public for flows such as running a message action
     fun upsertMessage(message: Message) {
+        upsertMessages(listOf(message))
+    }
+
+    fun upsertEventMessage(message: Message) {
+        // make sure we don't lose ownReactions
+        getMessage(message.id)?.let {
+            message.ownReactions = it.ownReactions
+        }
         upsertMessages(listOf(message))
     }
 
@@ -557,10 +581,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         }
         when (event) {
             is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is ReactionNewEvent, is ReactionDeletedEvent -> {
-                upsertMessage(event.message)
+                upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
                 deleteMember(event.member!!)

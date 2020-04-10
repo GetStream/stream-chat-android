@@ -186,6 +186,8 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
                 channelRepo.updateLiveDataFromChannel(c)
             }
             if (pagination.isFirstPage()) {
+                // TODO: update query.channelids
+                queryEntity.channelCIDs = channels.map { it.cid }.toMutableList()
                 setChannels(channels)
             } else {
                 addChannels(channels)
