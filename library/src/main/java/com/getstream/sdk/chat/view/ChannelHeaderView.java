@@ -7,10 +7,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding;
-import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
@@ -21,7 +19,6 @@ import androidx.lifecycle.LifecycleOwner;
 import io.getstream.chat.android.client.models.Channel;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
-import static com.getstream.sdk.chat.enums.OnlineStatus.CONNECTED;
 
 /*
 ChannelHeaderView is used to show a header for a channel
@@ -100,7 +97,7 @@ public class ChannelHeaderView extends RelativeLayout {
         // setup the onMessageClick listener for the back button
         binding.btnBack.setOnClickListener(view ->{
             if(viewModel.isThread())
-                viewModel.initThread();
+                viewModel.resetThread();
             else
                 ((Activity) getContext()).finish();
         });

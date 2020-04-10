@@ -129,7 +129,7 @@ public class MessageMoreActionDialog extends Dialog {
                         if (messageResult.isSuccess()) {
                             Utils.showMessage(context, "Deleted Successfully");
                             if (TextUtils.isEmpty(message.getParentId()))
-                                viewModel.initThread();
+                                viewModel.resetThread();
                         } else {
                             ChatError error = messageResult.error();
                             Utils.showMessage(context, error.getMessage());
@@ -168,7 +168,7 @@ public class MessageMoreActionDialog extends Dialog {
 
         ll_thread.setOnClickListener(view -> {
             dismiss();
-            viewModel.setThreadParentMessage(message);
+            viewModel.setActiveThread(message);
         });
         ll_copy.setOnClickListener(view -> {
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);

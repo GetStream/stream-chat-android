@@ -34,7 +34,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,13 +43,10 @@ import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import io.getstream.chat.android.client.call.Call;
+
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.utils.Result;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 import static java.util.UUID.randomUUID;
 
@@ -271,7 +267,7 @@ public class MessageInputView extends RelativeLayout {
         setOnKeyListener((View v, int keyCode, KeyEvent event) -> {
             if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                 if (viewModel.isThread()) {
-                    viewModel.initThread();
+                    viewModel.resetThread();
                     initSendMessage();
                     return true;
                 }
@@ -336,7 +332,7 @@ public class MessageInputView extends RelativeLayout {
             if (messageListScrollup)
                 Utils.hideSoftKeyboard((Activity) getContext());
         });
-        viewModel.getThreadParentMessage().observe(lifecycleOwner, threadParentMessage -> {
+        viewModel.getActiveThread().observe(lifecycleOwner, threadParentMessage -> {
             if (threadParentMessage == null) {
                 initSendMessage();
                 Utils.hideSoftKeyboard((Activity) getContext());

@@ -17,20 +17,19 @@ import java.util.*;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.*;
-import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
 import io.getstream.chat.android.livedata.ChannelRepo;
 import io.getstream.chat.android.livedata.ChatRepo;
+import io.getstream.chat.android.livedata.ThreadRepo;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
@@ -54,8 +53,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     protected MutableLiveData<String> messageInputText = new MutableLiveData<>("");
 
-    private Date lastKeystrokeAt;
-    private Date lastStartTypingEvent;
 
     protected String channelId;
     protected String channelType;
@@ -66,6 +63,10 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected int threadParentPosition = 0;
 
     protected LiveData<Boolean> online = new MutableLiveData<>(false);
+    protected MutableLiveData<Message> activeThread = new MutableLiveData<>(null);
+    private MediatorLiveData<List<Message>> threadMessages;
+    private LiveData<Boolean> threadLoadingMore;
+
     public LiveData<Boolean> getOnline() {
         return online;
     }
@@ -73,16 +74,15 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected LiveData<Boolean> reachedEndOfPagination;
     protected LiveData<Boolean> reachedEndOfPaginationThread;
     protected MutableLiveData<Number> currentUserUnreadMessageCount = new MutableLiveData<>();
-    protected Integer lastCurrentUserUnreadMessageCount = 0;
     protected LiveData<Boolean> loading = new MutableLiveData<>(false);
     protected MutableLiveData<Boolean> messageListScrollUp = new MutableLiveData<>(false);
     protected LiveData<Boolean> loadingMore = new MutableLiveData<>(false);
     protected MutableLiveData<Boolean> failed = new MutableLiveData<>(false);
     protected MutableLiveData<Message> editMessage;
-    protected MutableLiveData<Message> threadParentMessage = new MutableLiveData<>(null);
+
     protected MutableLiveData<Channel> channelState = new MutableLiveData<>();
 
-    protected LiveData<List<Message>> threadMessages = new MutableLiveData<>();
+
     protected LiveData<Boolean> anyOtherUsersOnline;
 
     protected MutableLiveData<Boolean> hasNewMessages = new MutableLiveData<>(false);
@@ -119,6 +119,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         loadingMore = channelRepo.getLoadingOlderMessages();
         reachedEndOfPagination = channelRepo.getEndOfOlderMessages();
         unreadCount = channelRepo.getUnreadCount();
+        threadMessages = new MediatorLiveData<>();
 
 
         logger.logI("instance created");
@@ -211,13 +212,19 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     // region Thread
-    public LiveData<Message> getThreadParentMessage() {
-        return threadParentMessage;
+    public LiveData<Message> getActiveThread() {
+        return activeThread;
     }
 
-    public void setThreadParentMessage(Message threadParentMessage_) {
-        threadParentMessage.postValue(threadParentMessage_);
-        configThread(threadParentMessage_);
+    public void setActiveThread(Message parentMessage) {
+        activeThread.postValue(parentMessage);
+        String parentId = parentMessage.getId();
+
+        ThreadRepo threadRepo = channelRepo.getThread(parentId);
+        threadMessages.addSource(threadRepo.getMessages(), value -> threadMessages.setValue(value));
+        reachedEndOfPaginationThread = threadRepo.getEndOfOlderMessages();
+        threadLoadingMore = threadRepo.getLoadingOlderMessages();
+        threadRepo.loadOlderMessages(30);
     }
 
     public int getThreadParentPosition() {
@@ -229,51 +236,22 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         this.threadParentPosition = threadParentPosition;
     }
 
-    private boolean isChildOfCurrentThread(Message message) {
-        if (!isThread()) return false;
-        String parentId = message.getParentId();
-        String type = message.getType();
-        if (parentId == null || parentId.isEmpty()) return false;
-        if (!type.equals(ModelType.message_reply)) return false;
-        String currentParentId = threadParentMessage.getValue().getId();
-        return parentId.equals(currentParentId);
-    }
-
     public boolean isThread() {
-        return threadParentMessage.getValue() != null;
+        return activeThread.getValue() != null;
     }
 
-    protected void configThread(Message message) {
-        String parentId = message.getId();
 
-        if (message.getReplyCount() == 0) {
-            threadMessages = channelRepo.getThread(parentId);
-        } else {
-            threadMessages = channelRepo.getThread(parentId);
-            // TODO: support threadReachedEndOfPagination
-            //reachedEndOfPaginationThread = channelRepo.getThreadReachedEnd(parentId);
-            channelRepo.threadLoadOlderMessages(parentId, 30);
-
-
-
+    public void resetThread() {
+        Message thread = activeThread.getValue();
+        if (thread!= null) {
+            activeThread.postValue(null);
+            threadMessages.removeSource(channelRepo.getThread(thread.getId()).getMessages());
         }
-    }
 
-    public void initThread() {
-        // TODO: this thread thing is a mess
-        threadParentMessage.postValue(null);
-        threadMessages = new MutableLiveData<>();
+        // TODO; use a similar mediator approach
         reachedEndOfPaginationThread = new MutableLiveData<Boolean>(false);
-    }
-    // endregion
+        threadLoadingMore= new MutableLiveData<Boolean>(false);
 
-    // endregion
-
-    protected String getThreadOldestMessageId() {
-        List<Message> messages = threadMessages.getValue();
-        if (messages != null && messages.size() > 1)
-            return threadMessages.getValue().get(1).getId();
-        return "";
     }
 
     /**
@@ -334,25 +312,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     }
 
-
-
-    /**
-     * watches channel
-     */
-    public void watchChannel() {
-        int limit = 10; // Constant.DEFAULT_LIMIT
-
-        channelRepo.watch(limit);
-
-    }
-
     /**
      * loads more messages, use this to load a previous page
      */
     public void loadMore() {
 
         if (isThread()) {
-            channelRepo.threadLoadOlderMessages(threadParentMessage.getValue().getId(), 30);
+            channelRepo.threadLoadOlderMessages(activeThread.getValue().getId(), 30);
         } else {
             channelRepo.loadOlderMessages(Constant.DEFAULT_LIMIT);
         }
@@ -361,7 +327,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void sendMessage(Message message) {
 
         if (isThread()) {
-            String parentMessageId = getThreadParentMessage().getValue().getId();
+            String parentMessageId = getActiveThread().getValue().getId();
             message.setParentId(parentMessageId);
         }
 

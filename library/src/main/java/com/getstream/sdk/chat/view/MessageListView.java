@@ -276,7 +276,7 @@ public class MessageListView extends RecyclerView {
             }
         });
 
-        viewModel.getThreadParentMessage().observe(lifecycleOwner, message -> {
+        viewModel.getActiveThread().observe(lifecycleOwner, message -> {
         });
 
         this.setAdapterWithStyle(adapter);
@@ -333,7 +333,7 @@ public class MessageListView extends RecyclerView {
 //                } else
 
                 if (message.getReplyCount() > 0) {
-                    viewModel.setThreadParentMessage(message);
+                    viewModel.setActiveThread(message);
                 }else{
                     //viewModel.sendMessage(message);
                 }
