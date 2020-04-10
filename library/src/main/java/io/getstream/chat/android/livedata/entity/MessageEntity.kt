@@ -34,6 +34,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     /** if the message has been synced to the servers, default is synced */
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
+    /** tracks when send message was completed */
+    var sendMessageCompletedAt: Date? = null
+
     /** the number of replies */
     var replyCount = 0
 

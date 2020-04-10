@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
@@ -121,6 +122,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
+        runAndRetry(runnable, attempt) {
+            // do nothing with this
+        }
+    }
+
+    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1, callback: suspend ( Result<Any>) -> Unit) {
         val result = runnable().execute()
         if (result.isError) {
 
@@ -137,6 +144,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
             }
 
+        } else {
+            callback(result)
         }
     }
 
@@ -572,12 +581,22 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         if (isOnline()) {
             for (messageEntity in messageEntities) {
                 val channel = client.channel(messageEntity.cid)
-                val result = channel.sendMessage(messageEntity.toMessage(userMap)).execute()
-
-                // TODO: support deleting and editing messages here
+                // support sending, deleting and editing messages here
+                val result = when {
+                    messageEntity.deletedAt != null -> {
+                        channel.deleteMessage(messageEntity.id).execute()
+                    }
+                    messageEntity.sendMessageCompletedAt != null -> {
+                        client.updateMessage(messageEntity.toMessage(userMap)).execute()
+                    }
+                    else -> {
+                        channel.sendMessage(messageEntity.toMessage(userMap)).execute()
+                    }
+                }
 
                 if (result.isSuccess) {
                     messageEntity.syncStatus = SyncStatus.SYNCED
+                    messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt ?: Date()
                     insertMessageEntity(messageEntity)
                 }
             }

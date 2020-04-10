@@ -16,6 +16,7 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 
@@ -338,9 +339,18 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
         if (repo.isOnline()) {
             val runnable = {
-                channelController.sendMessage(message) as Call<Any>
+                val result = channelController.sendMessage(message)
+                result as Call<Any>
             }
-            repo.runAndRetry(runnable)
+            repo.runAndRetry(runnable) {
+                if (it.isSuccess) {
+                    // set sendMessageCompletedAt so we know when to edit vs call sendMessage
+                    messageEntity.syncStatus = SyncStatus.SYNCED
+                    messageEntity.sendMessageCompletedAt = Date()
+                    runBlocking {repo.insertMessageEntity(messageEntity)}
+                }
+            }
+
 
         }
 
@@ -619,6 +629,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun _editMessage(message: Message) {
+        val messageEntity = repo.selectMessageEntity(message.id)
+
         message.updatedAt = Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -631,6 +643,31 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (repo.isOnline()) {
             val runnable = {
                 client.updateMessage(message) as Call<Any>
+            }
+            repo.runAndRetry(runnable)
+
+        }
+    }
+
+    fun deleteMessage(message: Message) {
+        GlobalScope.launch(Dispatchers.IO) {
+            _deleteMessage(message)
+        }
+    }
+
+    suspend fun _deleteMessage(message: Message) {
+        message.deletedAt = Date()
+        message.syncStatus = SyncStatus.SYNC_NEEDED
+
+        // Update livedata
+        upsertMessage(message)
+
+        // Update Room State
+        repo.insertMessage(message)
+
+        if (repo.isOnline()) {
+            val runnable = {
+                client.deleteMessage(message.id) as Call<Any>
             }
             repo.runAndRetry(runnable)
 
