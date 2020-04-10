@@ -41,6 +41,13 @@ import java.util.*
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
 
+    private val _unreadCount = MutableLiveData<Int>()
+
+    /**
+     * unread count for this channel
+     */
+    val unreadCount: LiveData<Int> = _unreadCount
+
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
     val endOfNewerMessages : LiveData<Boolean> = _endOfNewerMessages
@@ -120,10 +127,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             logger.logI("Another request to load older messages is in progress. Ignoring this request.")
             return
         }
-        _loadingOlderMessages.value = true
+        _loadingOlderMessages.postValue(true)
         val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
         runChannelQuery(request)
-        _loadingOlderMessages.value = false
+        _loadingOlderMessages.postValue(false)
     }
 
     fun getConfig(): Config {
@@ -297,6 +304,22 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             recoveryNeeded=true
         }
 
+    }
+
+    // TODO: fix  and test me
+    fun getUnreadMessageCount(userId: String, channel: Channel): Int {
+        var unreadMessageCount = 0
+        val read = channel.read
+        if (read == null || read.isEmpty()) return unreadMessageCount
+        val lastReadDate = Date()
+        val messages = channel.messages
+        for (i in messages.indices.reversed()) {
+            val message = messages[i]
+            if (message.user.id == userId) continue
+            if (message.deletedAt != null) continue
+            if (message.createdAt!!.time > lastReadDate.time) unreadMessageCount++
+        }
+        return unreadMessageCount
     }
 
     suspend fun runChannelQuery(request: ChannelWatchRequest) {

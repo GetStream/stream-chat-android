@@ -4,9 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
@@ -16,7 +17,6 @@ import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationReques
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Thread.sleep
 import java.util.concurrent.ConcurrentHashMap
 
 // TODO: move this to the LLC at some point
@@ -29,19 +29,21 @@ fun ChatEvent.isChannelEvent(): Boolean =  !this.cid.isNullOrEmpty() && this.cid
  * updates whenever a new message is added to one of the channels, the read state changes for members of these channels,
  * messages are edited or updated, or the channel is updated.
  */
-class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, var repo: ChatRepo) {
+class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatClient, var repo: ChatRepo) {
     var recoveryNeeded: Boolean = false
     /**
      * A livedata object with the channels matching this query.
      */
+
+
 
     private val _endOfChannels = MutableLiveData<Boolean>(false)
     val endOfChannels : LiveData<Boolean> = _endOfChannels
 
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
-    // TODO: track positions and sort
-    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.toMap().values.toList()}
+    // Ensure we don't lose the sort in the channel
+    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.values.toList().filter{queryEntity.channelCIDs.contains(it.cid)}.sortedBy { queryEntity.channelCIDs.indexOf(it.cid) }}
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
@@ -78,6 +80,10 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
             handleMessageNotification(event)
         }
         if (event.isChannelEvent()) {
+            // skip events that are typically not impacting the query channels overview
+            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
+                return
+            }
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
@@ -102,7 +108,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     suspend fun runQueryOffline(pagination : QueryChannelsPaginationRequest): List<Channel>? {
-        var queryEntity = repo.selectQuery(query.id)
+        var queryEntity = repo.selectQuery(queryEntity.id)
         var channels : List<Channel>? = null
         if (queryEntity != null) {
             channels = repo.selectAndEnrichChannels(queryEntity.channelCIDs, pagination.messageLimit)
@@ -116,7 +122,7 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
     }
 
     suspend fun runQueryOnline(pagination : QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val request = pagination.toQueryChannelsRequest(query.filter, query.sort, repo.userPresence)
+        val request = pagination.toQueryChannelsRequest(queryEntity.filter, queryEntity.sort, repo.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
 
@@ -137,7 +143,6 @@ class QueryChannelsRepo(var query: QueryChannelsEntity, var client: ChatClient, 
             // update the results stored in the db
             if (pagination.isFirstPage()) {
                 val cids = channelsResponse.map{it.cid}
-                val queryEntity = QueryChannelsEntity(query.filter, query.sort)
                 queryEntity.channelCIDs = cids.toMutableList()
                 repo.insertQuery(queryEntity)
             }

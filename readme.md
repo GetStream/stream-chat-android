@@ -78,6 +78,20 @@ queryRepo = repo.queryChannels(filter, sort)
 queryRepo.query(QueryChannelsPaginationRequest(0, 30))
 ```
 
+## Tips
+
+To prevent race conditions caused by offline being ready before the client is initialized, be sure to replace
+
+```kotlin
+Chat.getInstance().getClient().getCurrentUser()
+```
+
+With
+
+```kotlin
+ChatRepo.instance().getCurrentUser();
+```
+
 # Development
 
 * Each user has it's own Room DB. Some of our API responses are user specific. One example is own_reactions on a message. so if you switch users we need to use a different database/storage for the results
