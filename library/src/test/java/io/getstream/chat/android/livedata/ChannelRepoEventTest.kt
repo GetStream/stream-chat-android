@@ -1,14 +1,7 @@
 package io.getstream.chat.android.livedata
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.junit.*
 import org.junit.runner.RunWith
@@ -108,7 +101,7 @@ class ChatChannelRepoEventTest: BaseTest() {
         channelRepo.handleEvent(data.newMessageWithThreadEvent)
         val parentId = data.newMessageWithThreadEvent.message.parentId!!
 
-        val messages = channelRepo.getThread(parentId).getOrAwaitValue()
+        val messages = channelRepo.getThreadMessages(parentId).getOrAwaitValue()
         Truth.assertThat(messages?.size).isEqualTo(2)
     }
 

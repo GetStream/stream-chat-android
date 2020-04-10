@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -19,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
@@ -40,10 +42,6 @@ import java.util.*
  *
  */
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
-
-
-
-
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
     val endOfNewerMessages : LiveData<Boolean> = _endOfNewerMessages
@@ -117,9 +115,17 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     val _threads : MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
-    fun getThread(threadId: String): LiveData<List<Message>> {
+    fun getThreadMessages(threadId: String): LiveData<List<Message>> {
         val threadMessageMap = _threads.getOrElse(threadId) {MutableLiveData(mutableMapOf())}
         return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt }}
+    }
+
+    fun getThread(threadId: String): ThreadRepo {
+        if (!activeThreadMap.containsKey(threadId)) {
+            val channelRepo = ThreadRepo(threadId, this)
+            activeThreadMap.put(threadId, channelRepo)
+        }
+        return activeThreadMap.getValue(threadId)
     }
 
     fun loadOlderMessages(limit: Int = 30) {
@@ -192,6 +198,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         }
     }
 
+    /** stores the mapping from cid to channelRepository */
+    var activeThreadMap: ConcurrentHashMap<String, ThreadRepo> = ConcurrentHashMap()
+
+
     suspend fun _loadNewerMessages(limit: Int = 30) {
         if (_loadingNewerMessages.value == true) {
             logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
@@ -216,8 +226,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     // TODO: test me
-    fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination) {
-        val thread = getThread(threadId)
+    suspend fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination): Result<List<Message>> {
+        val thread = getThreadMessages(threadId)
 
         val threadMessages = thread.value ?: emptyList()
 
@@ -243,6 +253,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         } else {
             repo.addError(response.error())
         }
+        return response
 
 
     }
