@@ -46,12 +46,12 @@ class TestDataHelper {
     val reaction1 = Reaction("message-1", "like", 1).apply { user=user1 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user=user2 }
 
-    val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=Date(2020, 1,1) }
+    val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=calendar(2020, 1,1) }
     val message1Updated = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1 }
     val reactionMessage = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1;
         reactionCounts= mutableMapOf("like" to 1); ownReactions= mutableListOf(reaction1); latestReactions=mutableListOf(reaction1) }
     val messageThread = Message().apply { channel=channel1; parentId="message-1"; id="message-2"}
-    val message2Older = Message().apply { this.channel = channel1; text="message2"; id="message-2"; user=user1; createdAt=Date(2019, 1,1) }
+    val message2Older = Message().apply { this.channel = channel1; text="message2"; id="message-2"; user=user1; createdAt=calendar(2019, 1,1) }
 
 
     val connectedEvent = ConnectedEvent()
@@ -81,4 +81,10 @@ class TestDataHelper {
 
     val user1UpdatedEvent= UserUpdated().apply{user=user1updated}
 
+}
+
+fun calendar(year: Int, month: Int, date: Int, hourOfDay: Int = 0, minute: Int = 0, seconds: Int = 0): Date {
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month, date, hourOfDay, minute, seconds)
+    return calendar.getTime()
 }
