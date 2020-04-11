@@ -2,16 +2,25 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.Mockito
 
 @RunWith(AndroidJUnit4::class)
 class ChannelRepoReadPaginateTest: BaseTest() {
@@ -26,6 +35,32 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     fun tearDown() {
         db.close()
         client.disconnect()
+    }
+
+    @Test
+    @Ignore
+    fun loadNewerMessages() = runBlocking(Dispatchers.IO) {
+        val channelRepo = repo.channel("messaging", "testabc")
+        Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
+        channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
+        // verify we sort correctly
+        val messages = channelRepo.sortedMessages()
+        Truth.assertThat(messages[0].createdAt!!.before(messages[1].createdAt)).isTrue()
+        // verify we generate the right request
+        val request = channelRepo.loadMoreMessagesRequest(10, Pagination.GREATER_THAN)
+        val filter = request.messages.get("id_gt") ?: ""
+        // message 2 is older, we should use message1 for filtering on newer messages
+        Truth.assertThat(filter).isEqualTo(data.message1.id)
+        // verify that running the query doesn't error
+
+        val result = Result(data.channel1, null)
+
+        val channelMock = client.channel(data.channel1.type, data.channel1.id)
+
+        val args = any<ChannelWatchRequest>()
+        whenever(channelMock.watch(args)).thenReturn(ChatCallTestImpl(result))
+
+        channelRepo.runChannelQuery(request)
     }
 
     /**
@@ -88,23 +123,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 
-    @Test
-    fun loadNewerMessages() {
-        val channelRepo = repo.channel("messaging", "testabc")
-        Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
-        channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
-        // verify we sort correctly
-        val messages = channelRepo.sortedMessages()
-        Truth.assertThat(messages[0].createdAt!!.before(messages[1].createdAt)).isTrue()
-        // verify we generate the right request
-        val request = channelRepo.loadMoreMessagesRequest(10, Pagination.GREATER_THAN)
-        val filter = request.messages.get("id_gt") ?: ""
-        // message 2 is older, we should use message1 for filtering on newer messages
-        Truth.assertThat(filter).isEqualTo(data.message1.id)
-        // verify that running the query doesn't error
-        runBlocking(Dispatchers.IO) {channelRepo.runChannelQuery(request)}
-        // TODO: Mock the call to query channel
-    }
+
 
     @Test
     fun loadOlderMessages() {

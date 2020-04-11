@@ -1,9 +1,12 @@
 
-- Expand test coverage, mock LLC
-- Test integration in sample app to see if API really makes sense
-
-Later
-
+- Mock LLC
+- Pagination on offline storage
+- Threads don't fully work
 - User updates
-- Fully implement offlineEnabled flag set to false
-- Decide on return syntax for methods that create data/need a callback like sendMessage, sendReaction, createChannel etc.
+
+Cleanup
+
+- Split out repos
+- Interfaces for testability
+- Evaluate use cases based API
+- Update LLC

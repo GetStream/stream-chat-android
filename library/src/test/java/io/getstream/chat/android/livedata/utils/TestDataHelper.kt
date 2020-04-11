@@ -7,6 +7,9 @@ import java.util.*
 
 class TestDataHelper {
 
+    val apiKey = "b67pax5b2wdq"
+
+    val connection1 = "test-connection"
     val user1 = User("broad-lake-3")
     val user1Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
     val user2 = User("test-user-2")
@@ -24,6 +27,7 @@ class TestDataHelper {
         return cal.getTime()
     }
 
+    val config1 = Config().apply { isTypingEvents=true; isReadEvents=true }
     val channel1 = Channel().apply {
         type = "messaging"
         id = "123-testing"
@@ -32,7 +36,10 @@ class TestDataHelper {
         createdBy = user1
         watchers = listOf(watcher1)
         members = listOf(member1)
+        config=config1
     }
+
+
     val channel1Updated = Channel().apply {
         type = "messaging"
         id = "123-testing"
