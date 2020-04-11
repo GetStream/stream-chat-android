@@ -38,7 +38,6 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     }
 
     @Test
-    @Ignore
     fun loadNewerMessages() = runBlocking(Dispatchers.IO) {
         val channelRepo = repo.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()

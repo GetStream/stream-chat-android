@@ -292,8 +292,9 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _loading.postValue(true)
 
         // first we load the data from room and update the messages and channel livedata
-        val channel = repo.selectAndEnrichChannel(cid, 100)
+        val channel = repo.selectAndEnrichChannel(cid, limit)
 
+        
 
         channel?.let {
             it.config = repo.getChannelConfig(it.type)

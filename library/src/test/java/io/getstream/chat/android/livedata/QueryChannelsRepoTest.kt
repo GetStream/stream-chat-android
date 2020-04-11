@@ -41,6 +41,23 @@ class QueryChannelsRepoTest: BaseTest() {
     }
 
     @Test
+    fun testChannelIdPagination() {
+        val list = listOf("a", "b", "c")
+
+        var sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(0, 5))
+        Truth.assertThat(sub).isEqualTo(listOf("a", "b", "c"))
+
+        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(1, 2))
+        Truth.assertThat(sub).isEqualTo(listOf("b", "c"))
+
+        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(3, 2))
+        Truth.assertThat(sub).isEqualTo(listOf<String>())
+
+        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(4, 2))
+        Truth.assertThat(sub).isEqualTo(listOf<String>())
+    }
+
+    @Test
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(0, 2)
         queryRepo.runQuery(paginate)
@@ -52,7 +69,6 @@ class QueryChannelsRepoTest: BaseTest() {
         channels = queryRepo.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
 
-        // channels would be easier to work with than channelRepos.
     }
 
     @Test

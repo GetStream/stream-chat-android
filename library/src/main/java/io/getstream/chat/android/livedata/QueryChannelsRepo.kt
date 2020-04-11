@@ -107,11 +107,29 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         }
     }
 
+    fun paginateChannelIds(channelIds: List<String>, pagination : QueryChannelsPaginationRequest): List<String> {
+        var min = pagination.offset
+        var max = pagination.offset + pagination.limit
+        if (max > channelIds.size - 1) {
+            max = channelIds.size - 1
+        }
+
+        if (min > channelIds.size -1) {
+            return listOf()
+        } else {
+            return channelIds.slice(IntRange(min, max))
+        }
+    }
+
     suspend fun runQueryOffline(pagination : QueryChannelsPaginationRequest): List<Channel>? {
         var queryEntity = repo.selectQuery(queryEntity.id)
         var channels : List<Channel>? = null
+
         if (queryEntity != null) {
-            channels = repo.selectAndEnrichChannels(queryEntity.channelCIDs, pagination.messageLimit)
+
+            var channelIds = paginateChannelIds(queryEntity.channelCIDs, pagination)
+
+            channels = repo.selectAndEnrichChannels(channelIds, pagination.messageLimit)
             for (c in channels) {
                 val channelRepo = repo.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
@@ -185,9 +203,8 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
                 val channelRepo = repo.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
             }
+            // first page replaces the results, second page adds to them
             if (pagination.isFirstPage()) {
-                // TODO: update query.channelids
-                queryEntity.channelCIDs = channels.map { it.cid }.toMutableList()
                 setChannels(channels)
             } else {
                 addChannels(channels)
@@ -207,6 +224,8 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     private fun addChannels(channelsResponse: List<Channel>) {
+        // second page adds to the list of channels
+        queryEntity.channelCIDs.addAll(channelsResponse.map { it.cid }.toMutableList())
         val copy = _channels.value ?: ConcurrentHashMap()
 
         val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { repo.channel(it.cid).toChannel() }
@@ -217,6 +236,8 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     private fun setChannels(channelsResponse: List<Channel>) {
+        // first page sets the channels/overwrites..
+        queryEntity.channelCIDs = channelsResponse.map { it.cid }.toMutableList()
         val channels = channelsResponse.map { repo.channel(it.cid).toChannel() }
         val channelMap = channels.associateBy { it.cid }.toMutableMap()
         val safeMap = ConcurrentHashMap(channelMap)
