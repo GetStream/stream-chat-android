@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.entity.UserEntity
+import io.getstream.chat.android.livedata.requests.AnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.*
 import java.security.InvalidParameterException
@@ -476,13 +478,32 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
 
-    suspend fun selectMessagesForChannel(
+    internal suspend fun selectMessagesForChannel(
         cid: String,
-        limit: Int = 100,
-        offset: Int = 0
+        pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
 
-        return messageDao.messagesForChannel(cid, limit, offset)
+        // - fetch the message you are filtering on and get it's date
+        // - sort asc or desc based on filter direction
+        var sort = "ASC"
+        if (pagination.isFilteringOlderMessages()) {
+            sort = "DESC"
+        }
+        if (pagination.hasFilter()) {
+            // TODO: this doesn't support the difference between gte vs gt
+            val message = messageDao.select(pagination.messageFilterValue)
+            if (message?.createdAt == null) {
+                return listOf()
+            } else if (pagination.isFilteringNewerMessages()) {
+                return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message!!.createdAt!!)
+            } else if (pagination.isFilteringOlderMessages()) {
+                return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message!!.createdAt!!)
+
+            }
+
+        }
+
+        return messageDao.messagesForChannel(cid, pagination.messageLimit)
     }
 
 
@@ -729,14 +750,26 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, messageLimit: Int = 0): Channel? {
-        val channelStates = selectAndEnrichChannels(listOf(channelId), messageLimit)
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): Channel? {
+        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
+        return channelStates.getOrNull(0)
+    }
+
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): Channel? {
+        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
-        messageLimit: Int = 0
+        pagination: QueryChannelsPaginationRequest
+    ): List<Channel> {
+        return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
+    }
+
+    internal suspend fun selectAndEnrichChannels(
+        channelIds: List<String>,
+        pagination: AnyChannelPaginationRequest
     ): List<Channel> {
 
         // fetch the channel entities from room
@@ -753,8 +786,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             channelEntity.reads.let {
                 userIds.addAll(it.keys)
             }
-            if (messageLimit > 0) {
-                val messages = selectMessagesForChannel(channelEntity.cid, messageLimit)
+            if (pagination.messageLimit > 0) {
+                val messages = selectMessagesForChannel(channelEntity.cid, pagination)
                 for (message in messages) {
                     userIds.add(message.userId)
                     for (reaction in message.latestReactions) {
@@ -777,7 +810,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 channel.config = it
             }
 
-            if (messageLimit > 0) {
+            if (pagination.messageLimit > 0) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
                 val messages = messageEntities.map { it.toMessage(userMap) }
                 channel.messages = messages

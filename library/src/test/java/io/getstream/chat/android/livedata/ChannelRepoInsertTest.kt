@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.requests.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -100,7 +101,7 @@ class ChannelRepoInsertTest: BaseTest() {
         // get the message and channel state both live and offline versions
         var roomChannel = repo.selectChannelEntity(data.message1.channel.cid)
         var liveChannel = channelRepo.channel.getOrAwaitValue()
-        var roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid)
+        var roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
         var liveMessages = channelRepo.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -120,7 +121,7 @@ class ChannelRepoInsertTest: BaseTest() {
         messageEntities = repo.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
-        roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid)
+        roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
         liveMessages = channelRepo.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)

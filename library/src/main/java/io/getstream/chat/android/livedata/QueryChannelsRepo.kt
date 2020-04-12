@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -62,7 +63,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
-        var request = QueryChannelsPaginationRequest().withLimit(limit).withOffset(channels.size).withMessages(messageLimit)
+        var request = QueryChannelsPaginationRequest(channels.size,limit,  messageLimit)
 
         return request
     }
@@ -108,8 +109,8 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     fun paginateChannelIds(channelIds: List<String>, pagination : QueryChannelsPaginationRequest): List<String> {
-        var min = pagination.offset
-        var max = pagination.offset + pagination.limit
+        var min = pagination.channelOffset
+        var max = pagination.channelOffset + pagination.channelLimit
         if (max > channelIds.size - 1) {
             max = channelIds.size - 1
         }
@@ -129,7 +130,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
             var channelIds = paginateChannelIds(queryEntity.channelCIDs, pagination)
 
-            channels = repo.selectAndEnrichChannels(channelIds, pagination.messageLimit)
+            channels = repo.selectAndEnrichChannels(channelIds, pagination)
             for (c in channels) {
                 val channelRepo = repo.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
@@ -151,7 +152,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
             // store the results in the database
             val channelsResponse = response.data()
-            if (channelsResponse.size < pagination.limit) {
+            if (channelsResponse.size < pagination.channelLimit) {
                 _endOfChannels.postValue(true)
             }
             // first things first, store the configs

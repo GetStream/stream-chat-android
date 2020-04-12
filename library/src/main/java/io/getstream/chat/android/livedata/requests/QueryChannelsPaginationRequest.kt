@@ -14,47 +14,33 @@ import io.getstream.chat.android.client.utils.FilterObject
  * Since those are provided by the QueryChannelsRepo
  */
 data class QueryChannelsPaginationRequest(
-    var offset: Int = 0,
-    var limit: Int = 30,
+    var channelOffset: Int = 0,
+    var channelLimit: Int = 30,
     var messageLimit: Int = 10
-) : BaseQueryChannelRequest<QueryChannelsPaginationRequest>() {
+) {
 
     fun isFirstPage(): Boolean {
-        return offset == 0
+        return channelOffset == 0
     }
 
-    fun withMessages(limit: Int): QueryChannelsPaginationRequest {
-        return cloneOpts().apply { messageLimit = limit }
+    internal fun toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
+        return AnyChannelPaginationRequest().apply {
+            this.channelLimit=channelLimit
+            this.channelOffset=channelOffset
+            this.messageLimit=messageLimit
+        }
     }
 
-    fun withLimit(limit: Int): QueryChannelsPaginationRequest {
-        val clone = cloneOpts()
-        clone.limit = limit
-        return clone
-    }
-
-    fun withOffset(offset: Int): QueryChannelsPaginationRequest {
-        return cloneOpts().apply { this.offset = offset }
-    }
-
-    fun toQueryChannelsRequest(filter: FilterObject, sort: QuerySort?, presence: Boolean): QueryChannelsRequest {
+    fun toQueryChannelsRequest(filter: FilterObject, sort: QuerySort?, userPresence: Boolean): QueryChannelsRequest {
         val querySort = sort ?: QuerySort()
-        var request = QueryChannelsRequest(filter, offset, limit, querySort)
+        var request = QueryChannelsRequest(filter, channelOffset, channelLimit, querySort)
 
         request = request.withMessages(messageLimit)
-        if (presence) {
+        if (userPresence) {
             request = request.withPresence()
         }
         return request.withWatch()
     }
 
-    override fun cloneOpts(): QueryChannelsPaginationRequest {
-        val clone = QueryChannelsPaginationRequest(
-            offset,
-            limit,
-            messageLimit
-        )
-        clone.presence = this.presence
-        return clone
-    }
+
 }

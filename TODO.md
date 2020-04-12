@@ -1,7 +1,4 @@
 
-- Pagination on offline storage
-- Threads don't fully work
-- User updates
 
 Cleanup
 
@@ -10,3 +7,4 @@ Cleanup
 - Interfaces for testability
 - Evaluate use cases based API
 - Update LLC
+- User updates

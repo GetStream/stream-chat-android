@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -134,16 +135,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         }
     }
 
-    suspend fun _loadOlderMessages(limit: Int = 30) {
-        if (_loadingOlderMessages.value == true) {
-            logger.logI("Another request to load older messages is in progress. Ignoring this request.")
-            return
-        }
-        _loadingOlderMessages.postValue(true)
-        val request = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
-        runChannelQuery(request)
-        _loadingOlderMessages.postValue(false)
-    }
 
     fun getConfig(): Config {
         return repo.getChannelConfig(channelType)
@@ -202,16 +193,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     var activeThreadMap: ConcurrentHashMap<String, ThreadRepo> = ConcurrentHashMap()
 
 
-    suspend fun _loadNewerMessages(limit: Int = 30) {
-        if (_loadingNewerMessages.value == true) {
-            logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
-            return
-        }
-        _loadingNewerMessages.value = true
-        val request = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
-        runChannelQuery(request)
-        _loadingNewerMessages.value = false
-    }
+
 
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
@@ -258,24 +240,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     }
 
-    fun loadMoreMessagesRequest(limit: Int = 30, direction: Pagination): ChannelWatchRequest {
-        val messages = sortedMessages()
-        var request = ChannelWatchRequest().withMessages(limit)
-        if (messages.isNotEmpty()) {
-            val messageId: String = when(direction) {
-                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
-                    messages.last().id
-                }
-                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
-                    messages.first().id
-                }
-            }
-            request = ChannelWatchRequest().withMessages(direction, messageId, limit)
-
-        }
-
-        return request
-    }
 
     fun watch(limit: Int=30) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -290,11 +254,71 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             return
         }
         _loading.postValue(true)
+        val pagination = QueryChannelPaginationRequest(limit)
+        runChannelQuery(pagination)
 
+        _loading.postValue(false)
+    }
+
+    fun loadMoreMessagesRequest(limit: Int = 30, direction: Pagination): QueryChannelPaginationRequest {
+        val messages = sortedMessages()
+        var request = QueryChannelPaginationRequest(limit)
+        if (messages.isNotEmpty()) {
+            val messageId: String = when(direction) {
+                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
+                    messages.last().id
+                }
+                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
+                    messages.first().id
+                }
+            }
+            request = request.apply { messageFilterDirection=direction; messageFilterValue=messageId }
+
+        }
+
+        return request
+    }
+
+
+
+    suspend fun _loadOlderMessages(limit: Int = 30) {
+        if (_loadingOlderMessages.value == true) {
+            logger.logI("Another request to load older messages is in progress. Ignoring this request.")
+            return
+        }
+        _loadingOlderMessages.postValue(true)
+        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
+        runChannelQuery(pagination)
+        _loadingOlderMessages.postValue(false)
+    }
+
+    suspend fun _loadNewerMessages(limit: Int = 30) {
+        if (_loadingNewerMessages.value == true) {
+            logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
+            return
+        }
+        _loadingNewerMessages.value = true
+        val pagination = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
+        runChannelQuery(pagination)
+        _loadingNewerMessages.value = false
+    }
+
+    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest) {
         // first we load the data from room and update the messages and channel livedata
-        val channel = repo.selectAndEnrichChannel(cid, limit)
+        runChannelQueryOffline(pagination)
 
-        
+        // if we are online we we run the actual API call
+        if (repo.isOnline()) {
+
+            runChannelQueryOnline(pagination)
+        } else {
+            // if we are not offline we mark it as needing recovery
+            recoveryNeeded=true
+        }
+    }
+
+    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest) {
+        val channel = repo.selectAndEnrichChannel(cid, pagination)
 
         channel?.let {
             it.config = repo.getChannelConfig(it.type)
@@ -312,29 +336,16 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             channel.messages = emptyList()
             _channel.postValue(channel)
         }
-
-        // next we run the actual API call
-        if (repo.isOnline()) {
-            var request = ChannelWatchRequest().withMessages(limit)
-            if (repo.userPresence) {
-                request = request.withPresence()
-            }
-            runChannelQuery(request)
-        } else {
-            recoveryNeeded=true
-        }
-
     }
 
-    suspend fun runChannelQuery(request: ChannelWatchRequest) {
+    suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest) {
+        val request = pagination.toQueryChannelRequest(repo.userPresence)
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
             recoveryNeeded = false
             val channelResponse = response.data()
-            // TODO: LLC should make this a bit cleaner
-            val limit = request.messages["limit"] as Int
-            if (limit > channelResponse.messages.size) {
+            if (pagination.messageLimit > channelResponse.messages.size) {
                 if (request.isFilteringNewerMessages()) {
                     _endOfNewerMessages.postValue(true)
                 } else {

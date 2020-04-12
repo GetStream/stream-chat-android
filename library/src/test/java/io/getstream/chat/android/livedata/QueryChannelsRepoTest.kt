@@ -64,7 +64,7 @@ class QueryChannelsRepoTest: BaseTest() {
         var channels = queryRepo.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(2)
         val request = queryRepo.loadMoreRequest(1)
-        Truth.assertThat(request.offset).isEqualTo(2)
+        Truth.assertThat(request.channelOffset).isEqualTo(2)
         queryRepo.runQuery(request)
         channels = queryRepo.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
