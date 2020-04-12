@@ -13,7 +13,7 @@ class FilterObjectConverter {
         if (data == null) {
             return FilterObject()
         }
-        val listType: Type = object : TypeToken<FilterObject?>() {}.getType()
+        val listType: Type = object : TypeToken<FilterObject?>() {}.type
         return gson.fromJson(data, listType)
     }
 

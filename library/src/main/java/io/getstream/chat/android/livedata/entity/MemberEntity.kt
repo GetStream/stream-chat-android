@@ -28,7 +28,7 @@ data class MemberEntity(var userId: String) {
 
 
     /** creates a memberEntity from the member */
-    constructor(r: Member): this(r.getUserId()) {
+    constructor(r: Member) : this(r.getUserId()) {
         role = r.role
         createdAt = r.createdAt
         updatedAt = r.updatedAt

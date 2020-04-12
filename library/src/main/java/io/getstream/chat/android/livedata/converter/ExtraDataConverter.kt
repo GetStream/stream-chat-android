@@ -8,20 +8,20 @@ import io.getstream.chat.android.livedata.gson
 class ExtraDataConverter {
     @TypeConverter
     fun stringToMap(data: String?): MutableMap<String, Any> {
-        if (data == null || data=="" || data=="null") {
+        if (data == null || data == "" || data == "null") {
             return mutableMapOf()
         }
         val mapType = object :
-            TypeToken<MutableMap<String?, Any?>?>() {}.type
+                TypeToken<MutableMap<String?, Any?>?>() {}.type
         return gson.fromJson(
-            data,
-            mapType
+                data,
+                mapType
         )
     }
 
     @TypeConverter
     fun mapToString(someObjects: MutableMap<String?, Any?>?): String {
-        if (someObjects== null) {
+        if (someObjects == null) {
             return "{}"
         }
         return gson.toJson(someObjects)

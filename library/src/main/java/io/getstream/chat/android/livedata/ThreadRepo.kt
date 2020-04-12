@@ -14,19 +14,19 @@ class ThreadRepo(var threadId: String, var channelRepo: ChannelRepo) {
     val messages = channelRepo.getThreadMessages(threadId)
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
-    val loadingOlderMessages : LiveData<Boolean> = _loadingOlderMessages
+    val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
 
 
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
-    val endOfOlderMessages : LiveData<Boolean> = _endOfOlderMessages
+    val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
 
-    fun loadOlderMessages(limit: Int=30) {
+    fun loadOlderMessages(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
             _loadOlderMessages(limit)
         }
     }
 
-    suspend fun _loadOlderMessages(limit: Int=30) {
+    suspend fun _loadOlderMessages(limit: Int = 30) {
         if (_loadingOlderMessages.value == true) {
             logger.logI("already loading messages for this thread, ignoring the load more requests.")
             return
@@ -34,7 +34,7 @@ class ThreadRepo(var threadId: String, var channelRepo: ChannelRepo) {
         _loadingOlderMessages.postValue(true)
         val response = channelRepo.loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
         if (response.isSuccess) {
-            if(response.data().size < limit) {
+            if (response.data().size < limit) {
                 _endOfOlderMessages.postValue(true)
             }
         }

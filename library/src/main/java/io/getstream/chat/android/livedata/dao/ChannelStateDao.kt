@@ -15,20 +15,20 @@ interface ChannelStateDao {
     suspend fun insertMany(channelStateEntities: List<ChannelStateEntity>)
 
     @Query(
-        "SELECT * FROM stream_chat_channel_state " +
-                "WHERE stream_chat_channel_state.syncStatus IN (-1, 2)"
+            "SELECT * FROM stream_chat_channel_state " +
+                    "WHERE stream_chat_channel_state.syncStatus IN (-1, 2)"
     )
     suspend fun selectSyncNeeded(): List<ChannelStateEntity>
 
     @Query(
-        "SELECT * FROM stream_chat_channel_state " +
-                "WHERE stream_chat_channel_state.cid IN (:cids)"
+            "SELECT * FROM stream_chat_channel_state " +
+                    "WHERE stream_chat_channel_state.cid IN (:cids)"
     )
     suspend fun select(cids: List<String>): List<ChannelStateEntity>
 
     @Query(
-        "SELECT * FROM stream_chat_channel_state " +
-                "WHERE stream_chat_channel_state.cid IN (:cid)"
+            "SELECT * FROM stream_chat_channel_state " +
+                    "WHERE stream_chat_channel_state.cid IN (:cid)"
     )
     suspend fun select(cid: String?): ChannelStateEntity?
 }

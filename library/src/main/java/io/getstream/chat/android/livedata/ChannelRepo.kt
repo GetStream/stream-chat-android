@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.*
@@ -45,10 +44,10 @@ import java.util.concurrent.ConcurrentHashMap
 class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
-    val endOfNewerMessages : LiveData<Boolean> = _endOfNewerMessages
+    val endOfNewerMessages: LiveData<Boolean> = _endOfNewerMessages
 
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
-    val endOfOlderMessages : LiveData<Boolean> = _endOfOlderMessages
+    val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
 
     var recoveryNeeded: Boolean = false
     private var lastMarkReadEvent: Date? = null
@@ -63,29 +62,29 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     /** LiveData object with the messages */
 
     // TODO 1.1: we could make this more efficient by using a data structure that keeps the sort
-    val messages : LiveData<List<Message>> = Transformations.map(_messages) {
+    val messages: LiveData<List<Message>> = Transformations.map(_messages) {
         it.values.sortedBy { it.createdAt }
     }
 
     private val _channel = MutableLiveData<Channel>()
     /** LiveData object with the channel information (members, data etc.) */
-    val channel : LiveData<Channel> = _channel
+    val channel: LiveData<Channel> = _channel
 
     private val _watcherCount = MutableLiveData<Int>()
-    val watcherCount : LiveData<Int> = _watcherCount
+    val watcherCount: LiveData<Int> = _watcherCount
 
     private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
-    val typing : LiveData<List<User>> = Transformations.map(_typing) {
+    val typing: LiveData<List<User>> = Transformations.map(_typing) {
         it.values.sortedBy { it.receivedAt }.map { it.user!! }
     }
 
     private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
-    val reads : LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
+    val reads: LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
         it.values.sortedBy { it.lastRead }
     }
 
     private val _read = MutableLiveData<ChannelUserRead>()
-    val read : LiveData<ChannelUserRead> = _read
+    val read: LiveData<ChannelUserRead> = _read
 
 
     private val _unreadCount = MutableLiveData<Int>()
@@ -95,30 +94,30 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val unreadCount: LiveData<Int> = ChannelUnreadCountLiveData(repo.currentUser, read, messages)
 
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
-    val watchers : LiveData<List<User>> = Transformations.map(_watchers) {
+    val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
         it.values.sortedBy { it.createdAt }
     }
 
     private val _members = MutableLiveData<MutableMap<String, Member>>()
-    val members : LiveData<List<Member>> = Transformations.map(_members) {
+    val members: LiveData<List<Member>> = Transformations.map(_members) {
         it.values.sortedBy { it.createdAt }
     }
 
     private val _loading = MutableLiveData<Boolean>(false)
-    val loading : LiveData<Boolean> = _loading
+    val loading: LiveData<Boolean> = _loading
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
-    val loadingOlderMessages : LiveData<Boolean> = _loadingOlderMessages
+    val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
 
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
-    val loadingNewerMessages : LiveData<Boolean> = _loadingNewerMessages
+    val loadingNewerMessages: LiveData<Boolean> = _loadingNewerMessages
 
 
-    val _threads : MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
+    val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
     fun getThreadMessages(threadId: String): LiveData<List<Message>> {
-        val threadMessageMap = _threads.getOrElse(threadId) {MutableLiveData(mutableMapOf())}
-        return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt }}
+        val threadMessageMap = _threads.getOrElse(threadId) { MutableLiveData(mutableMapOf()) }
+        return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt } }
     }
 
     fun getThread(threadId: String): ThreadRepo {
@@ -161,8 +160,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
 
-
-
     fun markRead(): Boolean {
         if (!getConfig().isReadEvents) return false
         // throttle the mark read
@@ -173,7 +170,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead().apply{user=repo.currentUser; lastRead=last.createdAt}
+                val userRead = ChannelUserRead().apply { user = repo.currentUser; lastRead = last.createdAt }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return true
@@ -193,15 +190,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     var activeThreadMap: ConcurrentHashMap<String, ThreadRepo> = ConcurrentHashMap()
 
 
-
-
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
         return messageMap.values.sortedBy { it.createdAt }
     }
 
-    fun threadLoadOlderMessages(threadId: String, limit: Int=30) {
+    fun threadLoadOlderMessages(threadId: String, limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
             loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
         }
@@ -215,7 +210,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
         var getRepliesCall: Call<List<Message>>
         if (threadMessages.isNotEmpty()) {
-            val messageId: String = when(direction) {
+            val messageId: String = when (direction) {
                 Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
                     threadMessages.last().id
                 }
@@ -241,13 +236,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
 
-    fun watch(limit: Int=30) {
+    fun watch(limit: Int = 30) {
         GlobalScope.launch(Dispatchers.IO) {
             _watch(limit)
         }
     }
 
-    suspend fun _watch(limit: Int=30) {
+    suspend fun _watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value == true) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
@@ -264,7 +259,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val messages = sortedMessages()
         var request = QueryChannelPaginationRequest(limit)
         if (messages.isNotEmpty()) {
-            val messageId: String = when(direction) {
+            val messageId: String = when (direction) {
                 Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
                     messages.last().id
                 }
@@ -272,13 +267,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                     messages.first().id
                 }
             }
-            request = request.apply { messageFilterDirection=direction; messageFilterValue=messageId }
+            request = request.apply { messageFilterDirection = direction; messageFilterValue = messageId }
 
         }
 
         return request
     }
-
 
 
     suspend fun _loadOlderMessages(limit: Int = 30) {
@@ -313,7 +307,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             runChannelQueryOnline(pagination)
         } else {
             // if we are not offline we mark it as needing recovery
-            recoveryNeeded=true
+            recoveryNeeded = true
         }
     }
 
@@ -384,7 +378,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (message.cid.isEmpty()) {
             message.cid = cid
         }
-        val channel = checkNotNull(_channel.value) {"Channel needs to be set before sending a message"}
+        val channel = checkNotNull(_channel.value) { "Channel needs to be set before sending a message" }
         message.channel = channel
         message.user = repo.currentUser
         message.createdAt = message.createdAt ?: Date()
@@ -416,7 +410,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                     // set sendMessageCompletedAt so we know when to edit vs call sendMessage
                     messageEntity.syncStatus = SyncStatus.SYNCED
                     messageEntity.sendMessageCompletedAt = Date()
-                    runBlocking {repo.insertMessageEntity(messageEntity)}
+                    runBlocking { repo.insertMessageEntity(messageEntity) }
                 }
             }
 
@@ -461,7 +455,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         // update the message in the local storage
         val messageEntity = repo.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
-            it.addReaction(reaction, repo.currentUser.id==reaction.user!!.id)
+            it.addReaction(reaction, repo.currentUser.id == reaction.user!!.id)
             repo.insertMessageEntity(it)
         }
         val online = repo.isOnline()
@@ -489,14 +483,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
-            it.ownReactions = it.ownReactions.filter {it.user!!.id==reaction.userId && it.type == reaction.type}.toMutableList()
-            it.latestReactions = it.latestReactions.filter {it.user!!.id==reaction.userId && it.type == reaction.type}.toMutableList()
+            it.ownReactions = it.ownReactions.filter { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
+            it.latestReactions = it.latestReactions.filter { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
             upsertMessage(it)
         }
 
         val messageEntity = repo.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
-            it.removeReaction(reaction, repo.currentUser.id==reaction.user!!.id)
+            it.removeReaction(reaction, repo.currentUser.id == reaction.user!!.id)
             repo.insertMessageEntity(it)
         }
         val online = repo.isOnline()
@@ -565,7 +559,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val copy = _typing.value ?: mutableMapOf()
         var changed = false
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.SECOND, -15);
+        calendar.add(Calendar.SECOND, -15)
         val old = calendar.time
         for ((userId, typing) in copy.toList()) {
             if (typing.receivedAt.before(old)) {
@@ -628,7 +622,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 setTyping(event.user?.id!!, event)
             }
             is MessageReadEvent, is NotificationMarkReadEvent -> {
-                val read = ChannelUserRead().apply{user=event.user!!; lastRead=event.createdAt!!}
+                val read = ChannelUserRead().apply { user = event.user!!; lastRead = event.createdAt!! }
                 updateRead(read)
             }
         }
@@ -663,14 +657,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun updateReads(
-        reads: List<ChannelUserRead>
+            reads: List<ChannelUserRead>
     ) {
         val currentUser = repo.currentUser
         val copy = _reads.value ?: mutableMapOf()
         for (r in reads) {
             copy[r.getUserId()] = r
             // update read state for the current user
-            if (r.getUserId()==currentUser.id) {
+            if (r.getUserId() == currentUser.id) {
                 _read.postValue(r)
             }
         }
@@ -678,7 +672,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun updateRead(
-        read: ChannelUserRead
+            read: ChannelUserRead
     ) {
         updateReads(listOf(read))
     }
@@ -687,12 +681,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         // Update all the livedata objects based on the channel
         // TODO: there are some issues here when you have more than 100 members, watchers
 
-            updateChannel(c)
-            setMembers(c.members)
-            setWatchers(c.watchers)
-            setWatcherCount(c.watcherCount)
-            updateReads(c.read)
-            upsertMessages(c.messages)
+        updateChannel(c)
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        setWatcherCount(c.watcherCount)
+        updateReads(c.read)
+        upsertMessages(c.messages)
 
 
     }
@@ -774,7 +768,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
     fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channel = _channel.value ?: Channel().apply {this.type = channelType; this.id = channelId; this.cid = "${channelType}:${channelId}"}
+        val channel = _channel.value
+                ?: Channel().apply { this.type = channelType; this.id = channelId; this.cid = "${channelType}:${channelId}" }
         val messages = sortedMessages()
         val members = (_members.value ?: mutableMapOf()).values.toList()
         val watchers = (_watchers.value ?: mutableMapOf()).values.toList()
@@ -783,12 +778,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         channel.members = members
         channel.config = getConfig()
         // TODO: we should clearly store watchers, event system is weird though
-        channel.watchers = watchers.map{Watcher(it.id).apply {user=it}}
+        channel.watchers = watchers.map { Watcher(it.id).apply { user = it } }
         channel.read = reads
         return channel
     }
-
-
 
 
 }

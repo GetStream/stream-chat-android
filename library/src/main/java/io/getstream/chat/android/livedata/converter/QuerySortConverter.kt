@@ -17,7 +17,7 @@ class QuerySortConverter {
 
     @TypeConverter
     fun objectToString(someObjects: QuerySort?): String {
-        if (someObjects== null) return ""
+        if (someObjects == null) return ""
 
         return gson.toJson(someObjects)
     }

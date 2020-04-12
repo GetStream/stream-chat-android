@@ -12,14 +12,15 @@ data class ChannelUserReadEntity(var userId: String) {
     /** how far this user had read */
     var lastRead: Date? = null
 
-    constructor(r: ChannelUserRead): this(r.getUserId()) {
+    constructor(r: ChannelUserRead) : this(r.getUserId()) {
         lastRead = r.lastRead
     }
 
     /** converts the entity into channel user read */
     fun toChannelUserRead(userMap: Map<String, User>): ChannelUserRead {
         val r = ChannelUserRead()
-        r.user = userMap[userId] ?: error("userMap doesnt contain the user $userId for the channel read")
+        r.user = userMap[userId]
+                ?: error("userMap doesnt contain the user $userId for the channel read")
         r.lastRead = lastRead
 
         return r

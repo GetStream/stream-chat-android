@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean=false) {
+class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
     private lateinit var mainHandler: Handler
     private lateinit var queryChannelsDao: QueryChannelsDao
     private lateinit var userDao: UserDao
@@ -79,7 +79,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
 
         // verify that you're not connecting 2 different users
-        if (client.getCurrentUser()!= null && client.getCurrentUser()?.id != currentUser.id) {
+        if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
             throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
         }
 
@@ -117,19 +117,19 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             ChatDatabase.getDatabase(context, currentUser.id)
         } else {
             Room.inMemoryDatabaseBuilder(
-                context, ChatDatabase::class.java
+                    context, ChatDatabase::class.java
             ).build()
         }
         return database
     }
 
-    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1) {
+    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int = 1) {
         runAndRetry(runnable, attempt) {
             // do nothing with this
         }
     }
 
-    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int=1, callback: suspend ( Result<Any>) -> Unit) {
+    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int = 1, callback: suspend (Result<Any>) -> Unit) {
         val result = runnable().execute()
         if (result.isError) {
 
@@ -138,10 +138,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
             if (shouldRetry) {
                 logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds")
-                if (timeout!= null) {
+                if (timeout != null) {
                     delay(timeout.toLong())
                 }
-                runAndRetry(runnable, attempt+1)
+                runAndRetry(runnable, attempt + 1)
             } else {
                 logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
             }
@@ -151,13 +151,13 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
     }
 
-    fun createChannel(c: Channel)  {
+    fun createChannel(c: Channel) {
         GlobalScope.launch(Dispatchers.IO) {
             _createChannel(c)
         }
     }
 
-    suspend fun _createChannel(c: Channel)  {
+    suspend fun _createChannel(c: Channel) {
         c.createdAt = c.createdAt ?: Date()
         c.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -226,7 +226,6 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
 
-
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
     /** stores the mapping from cid to channelRepository */
@@ -239,7 +238,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
-    suspend fun handleEvent(event : ChatEvent) {
+    suspend fun handleEvent(event: ChatEvent) {
         // keep the data in Room updated based on the various events..
         // TODO 1.1: cache users, messages and channels to reduce number of Room queries
 
@@ -280,8 +279,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
 
         if (offlineEnabled) {
+            event.user?.let { insertUser(it) }
+
+            // TODO: all of these events should insert users
 
             when (event) {
+                // TODO: all of these events should also update user information
                 is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
                     insertMessage(event.message)
                 }
@@ -387,7 +390,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     fun channel(cid: String): ChannelRepo {
         val parts = cid.split(":")
-        check(parts.size==2) {"Received invalid cid, expected format messaging:123, got ${cid}"}
+        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got ${cid}" }
         return channel(parts[0], parts[1])
     }
 
@@ -395,18 +398,18 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
      * repo.channel("messaging", "12") return a ChatChannelRepository
      */
     fun channel(
-        channelType: String,
-        channelId: String
+            channelType: String,
+            channelId: String
     ): io.getstream.chat.android.livedata.ChannelRepo {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMap.containsKey(cid)) {
             val channelRepo =
-                io.getstream.chat.android.livedata.ChannelRepo(
-                    channelType,
-                    channelId,
-                    client,
-                    this
-                )
+                    io.getstream.chat.android.livedata.ChannelRepo(
+                            channelType,
+                            channelId,
+                            client,
+                            this
+                    )
             activeChannelMap.put(cid, channelRepo)
         }
         return activeChannelMap.getValue(cid)
@@ -444,11 +447,11 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
      * - if we are online make the API call to update results
      */
     fun queryChannels(
-        filter: FilterObject,
-        sort: QuerySort? = null
+            filter: FilterObject,
+            sort: QuerySort? = null
     ): QueryChannelsRepo {
         // mark this query as active
-        val queryChannelsEntity  = QueryChannelsEntity(filter, sort)
+        val queryChannelsEntity = QueryChannelsEntity(filter, sort)
         val queryRepo = QueryChannelsRepo(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
@@ -479,8 +482,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
 
     internal suspend fun selectMessagesForChannel(
-        cid: String,
-        pagination: AnyChannelPaginationRequest
+            cid: String,
+            pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
 
         // - fetch the message you are filtering on and get it's date
@@ -495,9 +498,9 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             if (message?.createdAt == null) {
                 return listOf()
             } else if (pagination.isFilteringNewerMessages()) {
-                return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message!!.createdAt!!)
+                return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message.createdAt!!)
             } else if (pagination.isFilteringOlderMessages()) {
-                return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message!!.createdAt!!)
+                return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message.createdAt!!)
 
             }
 
@@ -508,7 +511,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
 
     suspend fun insertUser(user: User) {
-            userDao.insert(UserEntity(user))
+        userDao.insert(UserEntity(user))
     }
 
     suspend fun insertChannel(channel: Channel) {
@@ -549,7 +552,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun insertMessages(messages: List<Message>) {
         val messageEntities = mutableListOf<MessageEntity>()
         for (message in messages) {
-            if (message.cid=="") {
+            if (message.cid == "") {
                 throw InvalidParameterException("message.cid cant be empty")
             }
             messageEntities.add(MessageEntity(message))
@@ -569,7 +572,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        for (queryRepo in activeQueryMap.values.toList().filter{it.recoveryNeeded || recoveryNeeded}.take(3)) {
+        for (queryRepo in activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)) {
             val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
@@ -617,7 +620,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
                 if (result.isSuccess) {
                     messageEntity.syncStatus = SyncStatus.SYNCED
-                    messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt ?: Date()
+                    messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
+                            ?: Date()
                     insertMessageEntity(messageEntity)
                 }
             }
@@ -761,15 +765,15 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun selectAndEnrichChannels(
-        channelIds: List<String>,
-        pagination: QueryChannelsPaginationRequest
+            channelIds: List<String>,
+            pagination: QueryChannelsPaginationRequest
     ): List<Channel> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     internal suspend fun selectAndEnrichChannels(
-        channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest
+            channelIds: List<String>,
+            pagination: AnyChannelPaginationRequest
     ): List<Channel> {
 
         // fetch the channel entities from room
@@ -833,12 +837,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     fun getChannelConfig(channelType: String): Config {
         val config = channelConfigs.get(channelType)
-        checkNotNull(config) {"Missing channel config for channel type $channelType"}
+        checkNotNull(config) { "Missing channel config for channel type $channelType" }
         return config
     }
 
     data class Builder(
-        private var appContext: Context, private var client: ChatClient, private var user: User
+            private var appContext: Context, private var client: ChatClient, private var user: User
     ) {
 
         private var database: ChatDatabase? = null
@@ -861,12 +865,12 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             return this
         }
 
-        fun userPresenceEnabled(): Builder{
+        fun userPresenceEnabled(): Builder {
             this.userPresence = true
             return this
         }
 
-        fun userPresenceDisabled(): Builder{
+        fun userPresenceDisabled(): Builder {
             this.userPresence = false
             return this
         }

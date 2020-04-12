@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
-import kotlin.collections.HashMap
 
 
 /**
@@ -84,26 +83,26 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         latestReactions.add(reactionEntity)
 
         // update the count
-        val currentCount = reactionCounts.getOrElse(reaction.type){0}
+        val currentCount = reactionCounts.getOrElse(reaction.type) { 0 }
         reactionCounts.set(reaction.type, currentCount + 1)
     }
 
     // removes this reaction and update the counts
-    fun removeReaction(reaction: Reaction, updateCounts:Boolean = false) {
+    fun removeReaction(reaction: Reaction, updateCounts: Boolean = false) {
         val reactionEntity = ReactionEntity(reaction)
         val removed1 = ownReactions.remove(reactionEntity)
         val removed2 = latestReactions.remove(reactionEntity)
         if (updateCounts) {
             val shouldDecrement = removed1 || removed2 || latestReactions.size >= 15
             if (shouldDecrement) {
-                val currentCount = reactionCounts.getOrElse(reaction.type) {1}
+                val currentCount = reactionCounts.getOrElse(reaction.type) { 1 }
                 reactionCounts[reaction.type] = currentCount - 1
             }
         }
     }
 
     /** create a messageEntity from a message object */
-    constructor(m: Message): this(m.id, m.cid, m.getUserId()) {
+    constructor(m: Message) : this(m.id, m.cid, m.getUserId()) {
         text = m.text
         attachments = m.attachments
         syncStatus = m.syncStatus
@@ -116,7 +115,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         command = m.command
         commandInfo = m.commandInfo
         extraData = m.extraData
-        reactionCounts = m.reactionCounts ?: mutableMapOf()
+        reactionCounts = m.reactionCounts
 
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
@@ -130,7 +129,8 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         val m = Message()
         m.id = id
         m.cid = cid
-        m.user = userMap[userId] ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
+        m.user = userMap[userId]
+                ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
         m.text = text
         m.attachments = attachments
         m.type = type
@@ -142,7 +142,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.command = command
         m.commandInfo = commandInfo
         m.extraData = extraData
-        m.reactionCounts = reactionCounts ?: mutableMapOf()
+        m.reactionCounts = reactionCounts
         m.syncStatus = syncStatus
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()

@@ -15,10 +15,10 @@ interface RetryPolicy {
      * @return
      */
     fun shouldRetry(
-        client: ChatClient,
-        attempt: Int,
-        error: ChatError
-        ): Boolean
+            client: ChatClient,
+            attempt: Int,
+            error: ChatError
+    ): Boolean
 
     /**
      * In the case that we want to retry a failed request the retryTimeout method is called
@@ -31,8 +31,8 @@ interface RetryPolicy {
      * @return
      */
     fun retryTimeout(
-        client: ChatClient,
-        attempt: Int,
-        error: ChatError
+            client: ChatClient,
+            attempt: Int,
+            error: ChatError
     ): Int?
 }

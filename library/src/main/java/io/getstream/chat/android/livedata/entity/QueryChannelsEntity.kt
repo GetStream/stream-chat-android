@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import java.util.*
 
 @Entity(tableName = "stream_channel_query")
-data class QueryChannelsEntity(val filter: FilterObject, val sort: QuerySort?=null) {
+data class QueryChannelsEntity(val filter: FilterObject, val sort: QuerySort? = null) {
     @PrimaryKey
     var id: String = (Objects.hash(filter) + Objects.hash(sort?.data)).toString()
 

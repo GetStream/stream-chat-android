@@ -17,8 +17,8 @@ interface QueryChannelsDao {
     suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
 
     @Query(
-        "SELECT * FROM stream_channel_query " +
-                "WHERE stream_channel_query.id=:id"
+            "SELECT * FROM stream_channel_query " +
+                    "WHERE stream_channel_query.id=:id"
     )
     suspend fun select(id: String): QueryChannelsEntity?
 }

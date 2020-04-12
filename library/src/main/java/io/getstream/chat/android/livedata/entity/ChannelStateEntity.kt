@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.entity
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Channel
@@ -54,7 +53,7 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     /** create a ChannelStateEntity from a Channel object */
-    constructor(c: Channel): this(c.type, c.id) {
+    constructor(c: Channel) : this(c.type, c.id) {
         frozen = c.frozen
         createdAt = c.createdAt
         updatedAt = c.updatedAt
@@ -92,14 +91,15 @@ data class ChannelStateEntity(var type: String, var channelId: String) {
 
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
-        c.createdBy = userMap[createdByUserId] ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
+        c.createdBy = userMap[createdByUserId]
+                ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
 
         return c
     }
 
     /** updates last message and lastmessagedate on this channel entity */
     fun addMessage(messageEntity: MessageEntity) {
-        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt"}
+        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
         if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
             lastMessageAt = messageEntity.createdAt

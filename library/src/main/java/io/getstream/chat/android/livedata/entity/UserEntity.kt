@@ -35,7 +35,7 @@ data class UserEntity(@PrimaryKey val id: String) {
     var extraData = mutableMapOf<String, Any>()
 
     /** create a userEntity from a user object */
-    constructor(user: User): this(user.id) {
+    constructor(user: User) : this(user.id) {
 //        name = user.name
 //        image = user.image
         role = user.role
@@ -48,7 +48,7 @@ data class UserEntity(@PrimaryKey val id: String) {
 
     /** converts a user entity into a user */
     fun toUser(): User {
-        val u = User(id=this.id)
+        val u = User(id = this.id)
 //        u.name = name
 //        u.image = image
         u.role = role

@@ -9,9 +9,9 @@ import io.getstream.chat.android.client.models.User
 
 
 class ChannelUnreadCountLiveData(
-    val currentUser: User,
-    val readLiveData: LiveData<ChannelUserRead>,
-    val messagesLiveData: LiveData<List<Message>>
+        val currentUser: User,
+        val readLiveData: LiveData<ChannelUserRead>,
+        val messagesLiveData: LiveData<List<Message>>
 ) : LiveData<Int>() {
     var read: ChannelUserRead? = null
     var messages: List<Message>? = null

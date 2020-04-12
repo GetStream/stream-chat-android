@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
 // TODO: move this to the LLC at some point
-fun ChatEvent.isChannelEvent(): Boolean =  !this.cid.isNullOrEmpty() && this.cid != "*"
+fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
 
 /**
  * The StreamQueryChannelRepository is a small helper to show a list of channels
@@ -37,22 +36,21 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
      */
 
 
-
     private val _endOfChannels = MutableLiveData<Boolean>(false)
-    val endOfChannels : LiveData<Boolean> = _endOfChannels
+    val endOfChannels: LiveData<Boolean> = _endOfChannels
 
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
     // Ensure we don't lose the sort in the channel
-    var channels: LiveData<List<Channel>> = Transformations.map(_channels) {it.values.toList().filter{queryEntity.channelCIDs.contains(it.cid)}.sortedBy { queryEntity.channelCIDs.indexOf(it.cid) }}
+    var channels: LiveData<List<Channel>> = Transformations.map(_channels) { it.values.toList().filter { queryEntity.channelCIDs.contains(it.cid) }.sortedBy { queryEntity.channelCIDs.indexOf(it.cid) } }
 
     private val logger = ChatLogger.get("QueryChannelsRepo")
 
     private val _loading = MutableLiveData<Boolean>(false)
-    val loading : LiveData<Boolean> = _loading
+    val loading: LiveData<Boolean> = _loading
 
     private val _loadingMore = MutableLiveData<Boolean>(false)
-    val loadingMore : LiveData<Boolean> = _loadingMore
+    val loadingMore: LiveData<Boolean> = _loadingMore
 
     fun loadMore(limit: Int = 30, messageLimit: Int = 10) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -63,7 +61,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
-        var request = QueryChannelsPaginationRequest(channels.size,limit,  messageLimit)
+        var request = QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
 
         return request
     }
@@ -108,23 +106,23 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         }
     }
 
-    fun paginateChannelIds(channelIds: List<String>, pagination : QueryChannelsPaginationRequest): List<String> {
+    fun paginateChannelIds(channelIds: List<String>, pagination: QueryChannelsPaginationRequest): List<String> {
         var min = pagination.channelOffset
         var max = pagination.channelOffset + pagination.channelLimit
         if (max > channelIds.size - 1) {
             max = channelIds.size - 1
         }
 
-        if (min > channelIds.size -1) {
+        if (min > channelIds.size - 1) {
             return listOf()
         } else {
             return channelIds.slice(IntRange(min, max))
         }
     }
 
-    suspend fun runQueryOffline(pagination : QueryChannelsPaginationRequest): List<Channel>? {
+    suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
         var queryEntity = repo.selectQuery(queryEntity.id)
-        var channels : List<Channel>? = null
+        var channels: List<Channel>? = null
 
         if (queryEntity != null) {
 
@@ -140,7 +138,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         return channels
     }
 
-    suspend fun runQueryOnline(pagination : QueryChannelsPaginationRequest): Result<List<Channel>> {
+    suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val request = pagination.toQueryChannelsRequest(queryEntity.filter, queryEntity.sort, repo.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
@@ -149,19 +147,18 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
             recoveryNeeded = false
 
 
-
             // store the results in the database
             val channelsResponse = response.data()
             if (channelsResponse.size < pagination.channelLimit) {
                 _endOfChannels.postValue(true)
             }
             // first things first, store the configs
-            val configEntities = channelsResponse.associateBy { it.type }.values.map {ChannelConfigEntity(it.type, it.config)}
+            val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
             repo.insertConfigEntities(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
             // update the results stored in the db
             if (pagination.isFirstPage()) {
-                val cids = channelsResponse.map{it.cid}
+                val cids = channelsResponse.map { it.cid }
                 queryEntity.channelCIDs = cids.toMutableList()
                 repo.insertQuery(queryEntity)
             }
@@ -186,8 +183,10 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         return response
     }
 
-    suspend fun runQuery(pagination : QueryChannelsPaginationRequest) {
-        val loader = if(pagination.isFirstPage()) {_loading} else {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest) {
+        val loader = if (pagination.isFirstPage()) {
+            _loading
+        } else {
             _loadingMore
         }
         if (loader.value == true) {

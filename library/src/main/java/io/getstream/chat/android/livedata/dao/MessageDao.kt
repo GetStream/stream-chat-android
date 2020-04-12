@@ -27,22 +27,21 @@ interface MessageDao {
     fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
 
-
     @Query(
-        "SELECT * FROM stream_chat_message " +
-                "WHERE stream_chat_message.id IN (:ids)"
+            "SELECT * FROM stream_chat_message " +
+                    "WHERE stream_chat_message.id IN (:ids)"
     )
     suspend fun select(ids: List<String>): List<MessageEntity>
 
     @Query(
-        "SELECT * FROM stream_chat_message " +
-                "WHERE stream_chat_message.id IN (:id)"
+            "SELECT * FROM stream_chat_message " +
+                    "WHERE stream_chat_message.id IN (:id)"
     )
     suspend fun select(id: String?): MessageEntity?
 
     @Query(
-        "SELECT * FROM stream_chat_message " +
-                "WHERE stream_chat_message.syncStatus IN (-1, 2)"
+            "SELECT * FROM stream_chat_message " +
+                    "WHERE stream_chat_message.syncStatus IN (-1, 2)"
     )
     suspend fun selectSyncNeeded(): List<MessageEntity>
 

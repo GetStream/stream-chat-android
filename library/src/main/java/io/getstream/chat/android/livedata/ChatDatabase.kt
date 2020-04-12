@@ -10,24 +10,24 @@ import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
 
 @Database(
-    entities = [
-        QueryChannelsEntity::class,
-        MessageEntity::class,
-        UserEntity::class,
-        ReactionEntity::class,
-        ChannelStateEntity::class,
-        ChannelConfigEntity::class
-    ],
-    version = 7,
-    exportSchema = false
+        entities = [
+            QueryChannelsEntity::class,
+            MessageEntity::class,
+            UserEntity::class,
+            ReactionEntity::class,
+            ChannelStateEntity::class,
+            ChannelConfigEntity::class
+        ],
+        version = 8,
+        exportSchema = false
 )
 
 @TypeConverters(
-    FilterObjectConverter::class,
-    QuerySortConverter::class,
-    ExtraDataConverter::class,
-    Converter::class,
-    DateConverter::class)
+        FilterObjectConverter::class,
+        QuerySortConverter::class,
+        ExtraDataConverter::class,
+        Converter::class,
+        DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): QueryChannelsDao
     abstract fun userDao(): UserDao
@@ -45,9 +45,9 @@ abstract class ChatDatabase : RoomDatabase() {
             if (!INSTANCES.containsKey(userId)) {
                 synchronized(this) {
                     val db = Room.databaseBuilder(
-                        context.applicationContext,
-                        ChatDatabase::class.java,
-                        "stream_chat_database_$userId"
+                            context.applicationContext,
+                            ChatDatabase::class.java,
+                            "stream_chat_database_$userId"
                     ).fallbackToDestructiveMigration().build()
                     INSTANCES[userId] = db
 

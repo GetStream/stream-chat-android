@@ -1,7 +1,8 @@
 package io.getstream.chat.android.livedata.requests
 
-import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.api.models.ChannelQueryRequest
+import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.Pagination
 
 
 class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRequest() {
@@ -25,13 +26,13 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRe
 
     internal fun toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
         return AnyChannelPaginationRequest().apply {
-            this.messageLimit=messageLimit
-            this.messageFilterDirection=messageFilterDirection
-            this.memberLimit=memberLimit
-            this.memberOffset=memberOffset
-            this.watcherLimit=watcherLimit
-            this.watcherOffset=watcherOffset
-            this.channelLimit=1
+            this.messageLimit = messageLimit
+            this.messageFilterDirection = messageFilterDirection
+            this.memberLimit = memberLimit
+            this.memberOffset = memberOffset
+            this.watcherLimit = watcherLimit
+            this.watcherOffset = watcherOffset
+            this.channelLimit = 1
         }
     }
 
@@ -45,7 +46,6 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRe
         }
         return request
     }
-
 
 
     fun isFilteringNewerMessages(): Boolean {

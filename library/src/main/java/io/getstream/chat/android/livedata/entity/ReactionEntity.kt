@@ -21,8 +21,8 @@ import java.util.*
  * reactionEntity.toUser()
  */
 @Entity(tableName = "stream_chat_reaction", indices = arrayOf(
-    Index(value = ["messageId", "userId", "type"],
-    unique = true)
+        Index(value = ["messageId", "userId", "type"],
+                unique = true)
 ))
 data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
 
@@ -42,12 +42,12 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
     var syncStatus: SyncStatus = SyncStatus.SYNCED
 
     /** create a reactionEntity from a reaction object */
-    constructor(r: Reaction): this(r.messageId, r.user!!.id, r.type) {
+    constructor(r: Reaction) : this(r.messageId, r.user!!.id, r.type) {
         score = r.score
         createdAt = r.createdAt
         // defend against GSON unsafe decoding/encoding
-        extraData = r.extraData ?: mutableMapOf()
-        syncStatus = r.syncStatus ?: SyncStatus.SYNCED
+        extraData = r.extraData
+        syncStatus = r.syncStatus
     }
 
     /** converts a reaction entity into a Reaction */
@@ -55,9 +55,9 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         val r = Reaction(messageId, type, score)
         r.userId = userId
         r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
-        r.extraData = extraData ?: mutableMapOf()
+        r.extraData = extraData
         r.createdAt = createdAt
-        r.syncStatus = syncStatus ?: SyncStatus.SYNCED
+        r.syncStatus = syncStatus
 
         return r
 

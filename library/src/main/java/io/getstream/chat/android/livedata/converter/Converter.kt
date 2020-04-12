@@ -18,31 +18,30 @@ class Converter {
             return emptyList()
         }
         val listType = object :
-            TypeToken<List<String?>?>() {}.type
+                TypeToken<List<String?>?>() {}.type
         return gson.fromJson(
-            data,
-            listType
+                data,
+                listType
         )
     }
 
     @TypeConverter
-    fun memberListToString(someObjects: Map<String,MemberEntity>?): String? {
+    fun memberListToString(someObjects: Map<String, MemberEntity>?): String? {
         return gson.toJson(someObjects)
     }
 
     @TypeConverter
-    fun stringToMemberList(data: String?): Map<String,MemberEntity>? {
+    fun stringToMemberList(data: String?): Map<String, MemberEntity>? {
         if (data == null) {
             return emptyMap()
         }
         val listType = object :
-            TypeToken<Map<String,MemberEntity>>() {}.type
+                TypeToken<Map<String, MemberEntity>>() {}.type
         return gson.fromJson(
-            data,
-            listType
+                data,
+                listType
         )
     }
-
 
 
     @TypeConverter
@@ -67,10 +66,10 @@ class Converter {
             return mutableMapOf()
         }
         val listType = object :
-            TypeToken<MutableMap<String, ChannelUserReadEntity>>() {}.type
+                TypeToken<MutableMap<String, ChannelUserReadEntity>>() {}.type
         return gson.fromJson(
-            data,
-            listType
+                data,
+                listType
         )
     }
 
@@ -82,10 +81,10 @@ class Converter {
     @TypeConverter
     fun stringToChannelConfig(data: String?): Config? {
         val listType = object :
-            TypeToken<Config>() {}.type
+                TypeToken<Config>() {}.type
         return gson.fromJson<Config>(
-            data,
-            listType
+                data,
+                listType
         )
     }
 
@@ -100,10 +99,10 @@ class Converter {
             return emptyList()
         }
         val listType = object :
-            TypeToken<List<Attachment?>?>() {}.type
+                TypeToken<List<Attachment?>?>() {}.type
         return gson.fromJson(
-            data,
-            listType
+                data,
+                listType
         )
     }
 
@@ -114,24 +113,24 @@ class Converter {
 
     @TypeConverter
     fun stringToMap(data: String?): Map<String?, Int?> {
-        if (data == null || data=="null" || data=="") {
+        if (data == null || data == "null" || data == "") {
             return mutableMapOf()
         }
         val mapType = object :
-            TypeToken<Map<String?, Int?>?>() {}.type
+                TypeToken<Map<String?, Int?>?>() {}.type
         return gson.fromJson(
-            data,
-            mapType
+                data,
+                mapType
         )
     }
 
     @TypeConverter
     fun mapToString(someObjects: Map<String?, Int?>?): String? {
-        if (someObjects== null) {
+        if (someObjects == null) {
             return "{}"
         }
         return gson.toJson(
-            someObjects
+                someObjects
         )
     }
 
@@ -141,17 +140,17 @@ class Converter {
             return ArrayMap()
         }
         val mapType = object :
-            TypeToken<Map<String, String>?>() {}.type
+                TypeToken<Map<String, String>?>() {}.type
         return gson.fromJson(
-            data,
-            mapType
+                data,
+                mapType
         )
     }
 
     @TypeConverter
     fun stringMapToString(someObjects: Map<String, String>?): String? {
         return gson.toJson(
-            someObjects
+                someObjects
         )
     }
 
@@ -161,17 +160,17 @@ class Converter {
             return emptyList()
         }
         val listType = object :
-            TypeToken<List<ReactionEntity>?>() {}.type
+                TypeToken<List<ReactionEntity>?>() {}.type
         return gson.fromJson(
-            data,
-            listType
+                data,
+                listType
         )
     }
 
     @TypeConverter
     fun reactionListToString(someObjects: List<ReactionEntity>?): String? {
         return gson.toJson(
-            someObjects
+                someObjects
         )
     }
 }
