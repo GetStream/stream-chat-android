@@ -572,7 +572,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        for (queryRepo in activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)) {
+        val queriesToRetry =  activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
@@ -580,11 +581,13 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMap.keys.toList().filterNot { updatedChannelIds.contains(it) }.take(30)
+        val cids = activeChannelMap.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         val filter = `in`("cid", cids)
         val request = QueryChannelsRequest(filter, 0, 30)
         val result = client.queryChannels(request).execute()
+
+        logger.logI("connection established: recoveryNeeded= ${recoveryNeeded}, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
         if (result.isSuccess) {
             val channels = result.data()
@@ -673,9 +676,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     suspend fun retryFailedEntities() {
         // retry channels, messages and reactions in that order..
-        retryChannels()
-        retryMessages()
-        retryReactions()
+        val channelEntities = retryChannels()
+        val messageEntities = retryMessages()
+        val reactionEntities = retryReactions()
+        logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
     }
 
 

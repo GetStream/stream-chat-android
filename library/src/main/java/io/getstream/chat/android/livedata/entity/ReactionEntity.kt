@@ -46,8 +46,8 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         score = r.score
         createdAt = r.createdAt
         // defend against GSON unsafe decoding/encoding
-        extraData = r.extraData
-        syncStatus = r.syncStatus
+        extraData = r.extraData ?: mutableMapOf()
+        syncStatus = r.syncStatus ?: SyncStatus.SYNCED
     }
 
     /** converts a reaction entity into a Reaction */
@@ -55,9 +55,9 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         val r = Reaction(messageId, type, score)
         r.userId = userId
         r.user = userMap[userId] ?: error("userMap is missing the user for this reaction")
-        r.extraData = extraData
+        r.extraData = extraData ?: mutableMapOf()
         r.createdAt = createdAt
-        r.syncStatus = syncStatus
+        r.syncStatus = syncStatus ?: SyncStatus.SYNCED
 
         return r
 
