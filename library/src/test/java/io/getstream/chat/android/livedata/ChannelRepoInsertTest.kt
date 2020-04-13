@@ -144,7 +144,7 @@ class ChannelRepoInsertTest: BaseTest() {
         val filter = Filters.eq("type", "messaging")
         val sort = null
         val query = QueryChannelsEntity(filter, sort)
-        query.channelCIDs = listOf("messaging:123", "messaging:234").toMutableList()
+        query.channelCIDs = sortedSetOf("messaging:123", "messaging:234")
         repo.insertQuery(query)
     }
 

@@ -238,6 +238,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
+
+    // TODO: we need a handle events endpoints, instead of handle event
     suspend fun handleEvent(event: ChatEvent) {
         // keep the data in Room updated based on the various events..
         // TODO 1.1: cache users, messages and channels to reduce number of Room queries
@@ -281,7 +283,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         if (offlineEnabled) {
             event.user?.let { insertUser(it) }
 
-            // TODO: all of these events should insert users
+            // TODO: all of these events should insert related objects like users, messages, channels etc
 
             when (event) {
                 // TODO: all of these events should also update user information
@@ -570,6 +572,9 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
+        /*
+         * client.recoverEvents(channelIDs, {limit: 100, since: last_time_online, [offset: $offset_returned_by_previous_call ]})
+         */
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry =  activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
@@ -622,6 +627,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 }
 
                 if (result.isSuccess) {
+                    // TODO: 1.1 image upload support
                     messageEntity.syncStatus = SyncStatus.SYNCED
                     messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
                             ?: Date()

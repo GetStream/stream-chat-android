@@ -42,7 +42,7 @@ class QueryChannelsRepoTest: BaseTest() {
 
     @Test
     fun testChannelIdPagination() {
-        val list = listOf("a", "b", "c")
+        val list = sortedSetOf("a", "b", "c")
 
         var sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(0, 5))
         Truth.assertThat(sub).isEqualTo(listOf("a", "b", "c"))
@@ -75,7 +75,7 @@ class QueryChannelsRepoTest: BaseTest() {
     fun offlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCIDs = listOf(data.channel1.cid).toMutableList()
+        query.channelCIDs = sortedSetOf(data.channel1.cid)
         repo.insertQuery(query)
         repo.storeStateForChannel(data.channel1)
         repo.setOffline()
@@ -88,7 +88,7 @@ class QueryChannelsRepoTest: BaseTest() {
     fun onlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCIDs = listOf(data.channel1.cid).toMutableList()
+        query.channelCIDs = sortedSetOf(data.channel1.cid)
         repo.insertQuery(query)
         repo.storeStateForChannel(data.channel1)
         repo.setOffline()

@@ -117,7 +117,9 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         Truth.assertThat(channelRepos.size).isGreaterThan(0)
 
         // verify we have messages as well
-        val messages = channelRepo.messages.getOrAwaitValue()
+        val channelId = channelRepos.first().cid
+
+        val messages = repo.channel(channelId).messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 

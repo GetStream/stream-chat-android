@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.gson
+import java.util.*
 
 class Converter {
     @TypeConverter
@@ -108,6 +109,24 @@ class Converter {
 
     @TypeConverter
     fun someObjectListToString(someObjects: List<Attachment?>?): String {
+        return gson.toJson(someObjects)
+    }
+
+    @TypeConverter
+    fun stringToSortedSet(data: String?): SortedSet<String> {
+        if (data == null) {
+            return sortedSetOf()
+        }
+        val sortedSetType = object :
+                TypeToken<SortedSet<String>>() {}.type
+        return gson.fromJson(
+                data,
+                sortedSetType
+        )
+    }
+
+    @TypeConverter
+    fun sortedSetToString(someObjects: SortedSet<String>): String {
         return gson.toJson(someObjects)
     }
 
