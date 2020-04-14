@@ -35,7 +35,7 @@ class ChannelRepoInsertTest: BaseTest() {
     fun reactionStorage() = runBlocking(Dispatchers.IO) {
         val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.insertReactionEntity(reactionEntity)
+        repo.repos.reactions.insert(reactionEntity)
         val results = repo.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
@@ -50,16 +50,16 @@ class ChannelRepoInsertTest: BaseTest() {
         repo._createChannel(data.channel1)
         channelRepo._sendMessage(data.message1)
         repo.setOffline()
-        repo.insertChannel(data.channel1)
+        repo.repos.channels.insert(data.channel1)
         channelRepo.upsertMessage(data.message1)
         // send the reaction while offline
         channelRepo._sendReaction(data.reaction1)
-        var reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
+        var reactionEntity = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         repo.setOnline()
         val reactionEntities = repo.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
-        reactionEntity = repo.selectReactionEntity(data.message1.id, data.user1.id, "like")
+        reactionEntity = repo.repos.reactions.select(data.message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
 
     }
@@ -71,7 +71,7 @@ class ChannelRepoInsertTest: BaseTest() {
         channelRepo._sendReaction(data.reaction1)
         channelRepo._deleteReaction(data.reaction1)
 
-        val reaction = repo.selectReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
+        val reaction = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction!!.deletedAt).isNotNull()
 
@@ -87,9 +87,9 @@ class ChannelRepoInsertTest: BaseTest() {
         repo.setOffline()
         channelRepo._sendMessage(data.message1)
         // get the message and channel state both live and offline versions
-        var roomChannel = repo.selectChannelEntity(data.message1.channel.cid)
+        var roomChannel = repo.repos.channels.select(data.message1.channel.cid)
         var liveChannel = channelRepo.channel.getOrAwaitValue()
-        var roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
+        var roomMessages = repo.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
         var liveMessages = channelRepo.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -109,7 +109,7 @@ class ChannelRepoInsertTest: BaseTest() {
         messageEntities = repo.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
-        roomMessages = repo.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
+        roomMessages = repo.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
         liveMessages = channelRepo.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
@@ -133,15 +133,15 @@ class ChannelRepoInsertTest: BaseTest() {
         val sort = null
         val query = QueryChannelsEntity(filter, sort)
         query.channelCIDs = sortedSetOf("messaging:123", "messaging:234")
-        repo.insertQuery(query)
+        repo.repos.queryChannels.insert(query)
     }
 
     @Test
     fun insertReaction() = runBlocking(Dispatchers.IO) {
         // check DAO layer and converters
         val reactionEntity = ReactionEntity(data.reaction1)
-        repo.insertReactionEntity(reactionEntity)
-        val reactionEntity2 = repo.selectReactionEntity(reactionEntity.messageId, reactionEntity.userId, reactionEntity.type)
+        repo.repos.reactions.insert(reactionEntity)
+        val reactionEntity2 = repo.repos.reactions.select(reactionEntity.messageId, reactionEntity.userId, reactionEntity.type)
         Truth.assertThat(reactionEntity2).isEqualTo(reactionEntity)
         Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
         // verify conversion logic is ok

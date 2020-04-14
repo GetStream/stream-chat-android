@@ -42,6 +42,16 @@ class MessageRepository(var messageDao: MessageDao) {
         return messageDao.select(messageIds)
     }
 
+    suspend fun insertMessageEntities(messageEntities: List<MessageEntity>) {
+        val messageEntities = mutableListOf<MessageEntity>()
+        for (messageEntity in messageEntities) {
+            if (messageEntity.cid == "") {
+                throw InvalidParameterException("message.cid cant be empty")
+            }
+        }
+        messageDao.insertMany(messageEntities)
+    }
+
     suspend fun insertMessages(messages: List<Message>) {
         val messageEntities = mutableListOf<MessageEntity>()
         for (message in messages) {

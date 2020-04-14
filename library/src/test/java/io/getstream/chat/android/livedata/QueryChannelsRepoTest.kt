@@ -76,7 +76,7 @@ class QueryChannelsRepoTest: BaseTest() {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCIDs = sortedSetOf(data.channel1.cid)
-        repo.insertQuery(query)
+        repo.repos.queryChannels.insert(query)
         repo.storeStateForChannel(data.channel1)
         repo.setOffline()
         val channels = queryRepo.runQueryOffline(QueryChannelsPaginationRequest(0, 2))
@@ -89,7 +89,7 @@ class QueryChannelsRepoTest: BaseTest() {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCIDs = sortedSetOf(data.channel1.cid)
-        repo.insertQuery(query)
+        repo.repos.queryChannels.insert(query)
         repo.storeStateForChannel(data.channel1)
         repo.setOffline()
         queryRepo.runQuery(QueryChannelsPaginationRequest(0, 2))

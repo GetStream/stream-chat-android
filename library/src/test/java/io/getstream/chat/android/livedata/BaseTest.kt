@@ -135,7 +135,7 @@ open class BaseTest {
             System.out.println("error event$it")
         })
 
-        runBlocking(Dispatchers.IO) {repo.insertConfigs(mutableMapOf("messaging" to data.config1))}
+        runBlocking(Dispatchers.IO) {repo.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))}
         channelRepo = repo.channel(data.channel1.type, data.channel1.id)
         channelRepo.updateChannel(data.channel1)
 

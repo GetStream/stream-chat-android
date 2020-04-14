@@ -67,8 +67,8 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
         repo.setOffline()
         // add a message to local storage
-        repo.insertUser(data.user1)
-        repo.insertChannel(data.channel1)
+        repo.repos.users.insert(data.user1)
+        repo.repos.channels.insert(data.channel1)
         channelRepo._sendMessage(data.message1)
         // remove the livedata
         channelRepo = ChannelRepo(data.channel1.type, data.channel1.id, repo.client, repo)

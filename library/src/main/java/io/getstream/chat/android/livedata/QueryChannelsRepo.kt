@@ -75,6 +75,12 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         }
     }
 
+    fun handleEvents(events: List<ChatEvent>) {
+        for (event in events) {
+            handleEvent(event)
+        }
+    }
+
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             handleMessageNotification(event)
@@ -122,7 +128,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        var queryEntity = repo.selectQuery(queryEntity.id)
+        var queryEntity = repo.repos.queryChannels.selectQuery(queryEntity.id)
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
@@ -155,7 +161,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
             }
             // first things first, store the configs
             val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
-            repo.insertConfigEntities(configEntities)
+            repo.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
 
 
@@ -172,7 +178,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
             } else {
                 addChannels(channelsResponse)
             }
-            repo.insertQuery(queryEntity)
+            repo.repos.queryChannels.insert(queryEntity)
         } else {
             recoveryNeeded = true
             repo.addError(response.error())

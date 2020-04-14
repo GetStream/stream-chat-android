@@ -10,6 +10,10 @@ class UserRepository(
     var cacheSize: Int = 1000,
     var client: ChatClient
 ) {
+    suspend fun insertUserEntities(userEntities: List<UserEntity>) {
+
+        userDao.insertMany(userEntities)
+    }
     suspend fun insert(users: List<User>) {
         val userEntities = mutableListOf<UserEntity>()
         for (user in users) {

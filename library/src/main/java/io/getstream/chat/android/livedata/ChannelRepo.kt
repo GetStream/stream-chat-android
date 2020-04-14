@@ -350,7 +350,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
-            repo.insertConfigEntities(listOf(configEntities))
+            repo.repos.configs.insert(listOf(configEntities))
             updateLiveDataFromChannel(channelResponse)
             repo.storeStateForChannel(channelResponse)
 
@@ -394,13 +394,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         setLastMessage(message)
 
         // Update Room State
-        repo.insertMessage(message)
+        repo.repos.messages.insertMessage(message)
 
-        val channelStateEntity = repo.selectChannelEntity(message.channel.cid)
+        val channelStateEntity = repo.repos.channels.select(message.channel.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.addMessage(messageEntity)
-            repo.insertChannelStateEntity(it)
+            repo.repos.channels.insert(it)
         }
 
         if (repo.isOnline()) {
@@ -413,7 +413,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                     // set sendMessageCompletedAt so we know when to edit vs call sendMessage
                     messageEntity.syncStatus = SyncStatus.SYNCED
                     messageEntity.sendMessageCompletedAt = Date()
-                    runBlocking { repo.insertMessageEntity(messageEntity) }
+                    runBlocking { repo.repos.messages.insert(messageEntity) }
                 }
             }
 
@@ -447,7 +447,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         // insert the message into local storage
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.insertReactionEntity(reactionEntity)
+        repo.repos.reactions.insert(reactionEntity)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
@@ -456,10 +456,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             upsertMessage(it)
         }
         // update the message in the local storage
-        val messageEntity = repo.selectMessageEntity(reaction.messageId)
+        val messageEntity = repo.repos.messages.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
             it.addReaction(reaction, repo.currentUser.id == reaction.user!!.id)
-            repo.insertMessageEntity(it)
+            repo.repos.messages.insert(it)
         }
         val online = repo.isOnline()
         if (online) {
@@ -481,7 +481,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.deletedAt = Date()
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.insertReactionEntity(reactionEntity)
+        repo.repos.reactions.insert(reactionEntity)
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
@@ -491,10 +491,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             upsertMessage(it)
         }
 
-        val messageEntity = repo.selectMessageEntity(reaction.messageId)
+        val messageEntity = repo.repos.messages.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
             it.removeReaction(reaction, repo.currentUser.id == reaction.user!!.id)
-            repo.insertMessageEntity(it)
+            repo.repos.messages.insert(it)
         }
         val online = repo.isOnline()
         if (online) {
@@ -583,6 +583,12 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             copy[userId] = event
         }
         _typing.postValue(copy)
+    }
+
+    fun handleEvents(events: List<ChatEvent>) {
+        for (event in events) {
+            handleEvent(event)
+        }
     }
 
     fun handleEvent(event: ChatEvent) {
@@ -724,8 +730,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun _editMessage(message: Message) {
-        val messageEntity = repo.selectMessageEntity(message.id)
-
         message.updatedAt = Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -733,7 +737,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         upsertMessage(message)
 
         // Update Room State
-        repo.insertMessage(message)
+        repo.repos.messages.insertMessage(message)
 
         if (repo.isOnline()) {
             val runnable = {
@@ -758,7 +762,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         upsertMessage(message)
 
         // Update Room State
-        repo.insertMessage(message)
+        repo.repos.messages.insertMessage(message)
 
         if (repo.isOnline()) {
             val runnable = {

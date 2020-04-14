@@ -43,37 +43,37 @@ class ChatRepoEventTest: BaseTest() {
     @Test
     fun newMessageEvent() {
         // new messages should be stored in room
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.newMessageEvent)}
         val message = runBlocking(Dispatchers.IO) {
-            repo.selectMessageEntity(data.newMessageEvent.message.id)
+            repo.repos.messages.selectMessageEntity(data.newMessageEvent.message.id)
         }
         Truth.assertThat(message).isNotNull()
     }
 
     @Test
     fun initializeAndConnect() {
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.connectedEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.connectedEvent)}
         Truth.assertThat(repo.initialized.getOrAwaitValue()).isTrue()
         Truth.assertThat(repo.online.getOrAwaitValue()).isTrue()
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.disconnectedEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.disconnectedEvent)}
         Truth.assertThat(repo.initialized.getOrAwaitValue()).isTrue()
         Truth.assertThat(repo.online.getOrAwaitValue()).isFalse()
     }
 
     @Test
     fun unreadCounts() {
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.connectedEvent2)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.connectedEvent2)}
         Truth.assertThat(repo.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)
         Truth.assertThat(repo.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
     }
 
     @Test
     fun messageRead() {
-        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1)}
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.readEvent)}
+        runBlocking(Dispatchers.IO) {repo.repos.channels.insert(data.channel1)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.readEvent)}
         // check channel level read info
         val cid = data.readEvent.cid!!
-        val channel = runBlocking(Dispatchers.IO) { repo.selectChannelEntity(cid) }
+        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid) }
         Truth.assertThat(channel!!.reads.size).isEqualTo(1)
         val read = channel!!.reads.values.first()
         Truth.assertThat(read.userId).isEqualTo(data.readEvent.user!!.id)
@@ -83,14 +83,14 @@ class ChatRepoEventTest: BaseTest() {
     fun reactionEvent() {
         // add the message
         val messageId = data.newMessageEvent.message.id
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.newMessageEvent)}
         // add the reaction
         val secondId = data.reactionEvent.reaction!!.messageId
         Truth.assertThat(secondId).isEqualTo(messageId)
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.reactionEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.reactionEvent)}
         // fetch the message
         var message = runBlocking(Dispatchers.IO) {
-            repo.selectMessageEntity(messageId)!!
+            repo.repos.messages.selectMessageEntity(messageId)!!
         }
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(1)
@@ -98,9 +98,9 @@ class ChatRepoEventTest: BaseTest() {
         Truth.assertThat(message.ownReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
 
         // add a reaction from a different user, it should not go into own reaction
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.reactionEvent2)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.reactionEvent2)}
         message = runBlocking(Dispatchers.IO) {
-            repo.selectMessageEntity(messageId)!!
+            repo.repos.messages.selectMessageEntity(messageId)!!
         }
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
@@ -109,21 +109,21 @@ class ChatRepoEventTest: BaseTest() {
 
     @Test
     fun channelUpdatedEvent() {
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.channelUpdatedEvent)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.channelUpdatedEvent)}
         // check channel level read info
         val cid = data.channelUpdatedEvent.cid!!
-        val channel = runBlocking(Dispatchers.IO) { repo.selectChannelEntity(cid)!! }
+        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid)!! }
         Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
     }
 
     @Test
     fun memberEvent() {
         // add the member to the channel
-        runBlocking(Dispatchers.IO) {repo.insertChannel(data.channel1)}
-        runBlocking(Dispatchers.IO) {repo.handleEvent(data.memberAddedToChannelEvent)}
+        runBlocking(Dispatchers.IO) {repo.repos.channels.insert(data.channel1)}
+        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.memberAddedToChannelEvent)}
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members
-        val channel = runBlocking(Dispatchers.IO) { repo.selectChannelEntity(cid)!! }
+        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid)!! }
         Truth.assertThat(channel.members.size).isEqualTo(2)
     }
 

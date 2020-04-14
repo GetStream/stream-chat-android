@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
-    private lateinit var eventHandler: EventHandlerImpl
+    internal lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
     private var baseLogger: ChatLogger = ChatLogger.instance
     private var logger = ChatLogger.get("Repo")
@@ -58,7 +58,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
     }
 
-    lateinit internal var repos: RepositoryHelper
+    internal lateinit var repos: RepositoryHelper
 
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
@@ -218,20 +218,18 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     /** stores the mapping from cid to channelRepository */
     var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsRepo> = ConcurrentHashMap()
 
+    fun isActiveChannel(cid: String): Boolean {
+        return activeChannelMap.contains(cid)
+    }
 
-
-
-
-
-
-    private fun setChannelUnreadCount(newCount: Int) {
+    fun setChannelUnreadCount(newCount: Int) {
         val currentCount = _channelUnreadCount.value ?: 0
         if (currentCount != newCount) {
             _channelUnreadCount.postValue(newCount)
         }
     }
 
-    private fun setTotalUnreadCount(newCount: Int) {
+    fun setTotalUnreadCount(newCount: Int) {
         val currentCount = _totalUnreadCount.value ?: 0
         if (currentCount != newCount) {
             _totalUnreadCount.postValue(newCount)
@@ -308,6 +306,15 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     fun isOffline(): Boolean {
         return !_online.value!!
     }
+
+    fun isInitialized(): Boolean {
+        return _initialized.value ?: false
+    }
+
+    fun getActiveQueries(): List<QueryChannelsRepo> {
+        return activeQueryMap.values.toList()
+    }
+
 
     /**
      * queryChannels
@@ -568,6 +575,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         val config = repos.configs.select(channelType)
         checkNotNull(config) { "Missing channel config for channel type $channelType" }
         return config
+    }
+
+    fun setInitialized() {
+        _initialized.value = true
     }
 
     data class Builder(

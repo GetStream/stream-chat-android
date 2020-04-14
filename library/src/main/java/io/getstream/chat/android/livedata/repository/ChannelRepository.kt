@@ -15,6 +15,11 @@ class ChannelRepository(var channelDao: ChannelDao) {
         channelDao.insert(channelEntity)
     }
 
+    suspend fun insertChannelEntities(channelEntities: List<ChannelEntity>) {
+
+        channelDao.insertMany(channelEntities)
+    }
+
     suspend fun insert(channels: List<Channel>) {
         var entities = mutableListOf<ChannelEntity>()
         for (channel in channels) {
