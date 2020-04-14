@@ -1,5 +1,9 @@
 ## Upcoming
 
+## March 16th, 2020 - 3.6.9
+
+- fix no filter in case connection recovered in ChannelListViewModel
+
 ## March 16th, 2020 - 3.6.7
 
 - build jar generation

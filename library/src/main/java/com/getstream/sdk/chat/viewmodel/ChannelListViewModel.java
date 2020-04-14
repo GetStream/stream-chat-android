@@ -276,6 +276,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             @Override
             public void onConnectionRecovered(Event event) {
                 StreamChat.getLogger().logI(this,"onConnectionRecovered");
+
+                if(filter == null) return;
+
                 if (!queryChannelDone) {
                     queryChannelsInner(0);
                     return;
