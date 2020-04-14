@@ -108,22 +108,22 @@ class ChatRepoEventTest: BaseTest() {
     }
 
     @Test
-    fun channelUpdatedEvent() {
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.channelUpdatedEvent)}
+    fun channelUpdatedEvent() = runBlocking(Dispatchers.IO) {
+        repo.eventHandler.handleEvent(data.channelUpdatedEvent)
         // check channel level read info
         val cid = data.channelUpdatedEvent.cid!!
-        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid)!! }
+        val channel = repo.repos.channels.select(cid)!!
         Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
     }
 
     @Test
-    fun memberEvent() {
+    fun memberEvent() = runBlocking(Dispatchers.IO) {
         // add the member to the channel
-        runBlocking(Dispatchers.IO) {repo.repos.channels.insert(data.channel1)}
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.memberAddedToChannelEvent)}
+        repo.repos.channels.insert(data.channel1)
+        repo.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members
-        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid)!! }
+        val channel = repo.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
     }
 

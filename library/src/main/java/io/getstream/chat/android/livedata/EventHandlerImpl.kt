@@ -127,14 +127,19 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                         channelEntity.setMember(userId, member)
                         channels[channelEntity.cid] = channelEntity
                     }
-                    users.putAll(event.message.channel.users().map{UserEntity(it)}.associateBy { it.id })
+                    event.channel?.let { c ->
+                        users.putAll(c.users().map{UserEntity(it)}.associateBy { it.id })
+                    }
+
                 }
                 is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
                     event.channel?.let {
                         channels[it.cid] = ChannelEntity(it)
                     }
-                    users.putAll(event.message.channel.users().map{UserEntity(it)}.associateBy { it.id })
+                    event.channel?.let { c ->
+                        users.putAll(c.users().map{UserEntity(it)}.associateBy { it.id })
+                    }
                 }
             }
             // actually insert the data
