@@ -10,6 +10,8 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -20,8 +22,29 @@ import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-// TODO: move this to the LLC at some point
+// TODO: move these to the LLC at some point
 fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
+
+fun Message.users(): List<User> {
+    val users = mutableListOf<User>()
+    users.add(this.user)
+    for (reaction in this.latestReactions) {
+        reaction.user?.let { users.add(it) }
+    }
+    return users
+}
+
+fun Channel.users(): List<User> {
+    val users = mutableListOf<User>()
+    users.add(this.createdBy)
+    for (member in this.members) {
+        users.add(member.user)
+    }
+    for (read in this.read) {
+        users.add(read.user)
+    }
+    return users
+}
 
 /**
  * The StreamQueryChannelRepository is a small helper to show a list of channels

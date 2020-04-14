@@ -466,28 +466,18 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     suspend fun storeStateForChannels(channelsResponse: List<Channel>) {
-        val users = mutableSetOf<User>()
+        val users = mutableMapOf<String, User>()
         val configs: MutableMap<String, Config> = mutableMapOf()
         // start by gathering all the users
         val messages = mutableListOf<Message>()
         for (channel in channelsResponse) {
 
-            users.add(channel.createdBy)
+            users.putAll(channel.users().associateBy { it.id })
             configs[channel.type] = channel.config
-            for (member in channel.members) {
-                users.add(member.user)
-            }
-            for (read in channel.read) {
-                users.add(read.user)
-            }
-
 
             for (message in channel.messages) {
                 message.cid = channel.cid
-                users.add(message.user)
-                for (reaction in message.latestReactions) {
-                    reaction.user?.let { users.add(it) }
-                }
+                users.putAll(message.users().associateBy { it.id })
             }
 
             messages.addAll(channel.messages)
@@ -497,7 +487,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         // store the channel configs
         repos.configs.insertConfigs(configs)
         // store the users
-        repos.users.insert(users.toList())
+        repos.users.insertMany(users.values.toList())
         // store the channel data
         repos.channels.insert(channelsResponse)
         // store the messages

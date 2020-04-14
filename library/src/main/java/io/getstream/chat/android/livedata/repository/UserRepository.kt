@@ -22,7 +22,7 @@ class UserRepository(
             userCache.put(userEntity.id, userEntity)
         }
     }
-    suspend fun insert(users: List<User>) {
+    suspend fun insertMany(users: List<User>) {
         val userEntities = users.map { UserEntity(it) }
         insertUserEntities(userEntities)
     }

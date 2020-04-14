@@ -76,10 +76,12 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
 
             when (event) {
                 // keep the data in Room updated based on the various events..
-                // TODO: all of these events should also update user information
+                // note that many of these events should also update user information
                 is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
                     messages[event.message.id] = MessageEntity(event.message)
                     channels[event.message.channel.id] = ChannelEntity(event.message.channel)
+                    users.putAll(event.message.users().map{UserEntity(it)}.associateBy { it.id })
+                    users.putAll(event.message.channel.users().map{UserEntity(it)}.associateBy { it.id })
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
@@ -125,12 +127,14 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                         channelEntity.setMember(userId, member)
                         channels[channelEntity.cid] = channelEntity
                     }
+                    users.putAll(event.message.channel.users().map{UserEntity(it)}.associateBy { it.id })
                 }
                 is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
                     event.channel?.let {
                         channels[it.cid] = ChannelEntity(it)
                     }
+                    users.putAll(event.message.channel.users().map{UserEntity(it)}.associateBy { it.id })
                 }
             }
             // actually insert the data
