@@ -21,7 +21,7 @@ import java.util.*
  *
  */
 @Entity(tableName = "stream_chat_channel_state")
-data class ChannelStateEntity(var type: String, var channelId: String) {
+data class ChannelEntity(var type: String, var channelId: String) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 

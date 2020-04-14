@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
@@ -20,14 +19,12 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
-import io.getstream.chat.android.livedata.dao.*
 import io.getstream.chat.android.livedata.entity.*
-import io.getstream.chat.android.livedata.entity.UserEntity
-import io.getstream.chat.android.livedata.requests.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.repository.RepositoryHelper
+import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import kotlinx.coroutines.*
-import java.security.InvalidParameterException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -50,13 +47,8 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
+    private lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
-    private lateinit var queryChannelsDao: QueryChannelsDao
-    private lateinit var userDao: UserDao
-    private lateinit var reactionDao: ReactionDao
-    private lateinit var messageDao: MessageDao
-    private lateinit var channelStateDao: ChannelStateDao
-    private lateinit var channelConfigDao: ChannelConfigDao
     private var baseLogger: ChatLogger = ChatLogger.instance
     private var logger = ChatLogger.get("Repo")
     private val cleanTask = object : Runnable {
@@ -66,16 +58,19 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
     }
 
+    lateinit internal var repos: RepositoryHelper
+
     /** The retry policy for retrying failed requests */
     val retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
         val chatDatabase = db ?: createDatabase()
-        setupDao(chatDatabase)
+        repos = RepositoryHelper( client, chatDatabase)
+
 
         // load channel configs from Room into memory
-        GlobalScope.launch {
-            loadConfigs()
+        GlobalScope.launch(Dispatchers.IO) {
+            repos.configs.load()
         }
 
         // verify that you're not connecting 2 different users
@@ -84,13 +79,15 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
 
         // start listening for events
+        eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
     }
 
-    private fun stop() {
+    private fun disconnect() {
         stopListening()
         stopClean()
+        client.disconnect()
     }
 
     private fun stopClean() {
@@ -101,15 +98,6 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.postDelayed(cleanTask, 5000)
-    }
-
-    private fun setupDao(database: ChatDatabase) {
-        queryChannelsDao = database.queryChannelsQDao()
-        userDao = database.userDao()
-        reactionDao = database.reactionDao()
-        messageDao = database.messageDao()
-        channelStateDao = database.channelStateDao()
-        channelConfigDao = database.channelConfigDao()
     }
 
     private fun createDatabase(): ChatDatabase {
@@ -167,7 +155,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         val channelController = client.channel(c.type, c.id)
 
         // Update Room State
-        insertChannel(c)
+        repos.channels.insert(c)
 
         // make the API call and follow retry policy
         val runnable = {
@@ -177,12 +165,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     }
 
-    private suspend fun loadConfigs() {
-        val configEntities = channelConfigDao.selectAll()
-        for (configEntity in configEntities) {
-            channelConfigs[configEntity.channelType] = configEntity.config
-        }
-    }
+
 
     private val _initialized = MutableLiveData<Boolean>(false)
     val initialized: LiveData<Boolean> = _initialized
@@ -236,120 +219,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsRepo> = ConcurrentHashMap()
 
 
-    var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
 
-    // TODO: we need a handle events endpoints, instead of handle event
-    suspend fun handleEvent(event: ChatEvent) {
-        // keep the data in Room updated based on the various events..
-        // TODO 1.1: cache users, messages and channels to reduce number of Room queries
 
 
-        // any event can have channel and unread count information
-        event.unreadChannels?.let { setChannelUnreadCount(it) }
-        event.totalUnreadCount?.let { setTotalUnreadCount(it) }
-
-        // if this is a channel level event, let the channel repo handle it
-        if (event.isChannelEvent()) {
-            val cid = event.cid!!
-            if (activeChannelMap.containsKey(cid)) {
-                val channelRepo = activeChannelMap.get(cid)!!
-                channelRepo.handleEvent(event)
-            }
-        }
-
-        // connection events
-        when (event) {
-            is DisconnectedEvent -> {
-                _online.postValue(false)
-            }
-            is ConnectedEvent -> {
-                val recovered = _initialized.value ?: false
-                _online.postValue(true)
-                _initialized.postValue(true)
-                if (recovered) {
-                    connectionRecovered(true)
-                } else {
-                    connectionRecovered(false)
-                }
-            }
-        }
-
-        // queryRepo mainly monitors for the notification added to channel event
-        for ((_, queryRepo) in activeQueryMap) {
-            queryRepo.handleEvent(event)
-        }
-
-        if (offlineEnabled) {
-            event.user?.let { insertUser(it) }
-
-            // TODO: all of these events should insert related objects like users, messages, channels etc
-
-            when (event) {
-                // TODO: all of these events should also update user information
-                is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
-                    insertMessage(event.message)
-                }
-                is MessageReadEvent -> {
-                    // get the channel, update reads, write the channel
-                    val channel = channelStateDao.select(event.cid)
-                    val read = ChannelUserRead()
-                    read.user = event.user!!
-                    read.lastRead = event.createdAt
-                    channel?.let {
-                        it.updateReads(read)
-                        insertChannelStateEntity(it)
-                    }
-                }
-                is ReactionNewEvent -> {
-                    // get the message, update the reaction data, update the message
-                    // note that we need to use event.reaction and not event.message
-                    // event.message only has a subset of reactions
-                    val message = selectMessageEntity(event.reaction!!.messageId)
-                    message?.let {
-                        val userId = event.reaction!!.user!!.id
-                        it.addReaction(event.reaction!!, currentUser.id == userId)
-                        insertMessageEntity(it)
-                    }
-                }
-                is ReactionDeletedEvent -> {
-                    // get the message, update the reaction data, update the message
-                    val message = selectMessageEntity(event.reaction!!.messageId)
-                    message?.let {
-                        val userId = event.reaction!!.user!!.id
-                        it.removeReaction(event.reaction!!, false)
-                        it.reactionCounts = event.message.reactionCounts
-                        insertMessageEntity(it)
-                    }
-                }
-                is UserPresenceChanged, is UserUpdated -> {
-                    insertUser(event.user!!)
-                }
-                is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
-                    // get the channel, update members, write the channel
-                    val channelEntity = selectChannelEntity(event.cid!!)
-                    if (channelEntity != null) {
-                        var member = event.member
-                        val userId = event.member!!.user.id
-                        if (event is MemberRemovedEvent) {
-                            member = null
-                        }
-                        channelEntity.setMember(userId, member)
-                        insertChannelStateEntity(channelEntity)
-                    }
-
-
-                }
-                is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
-                    // get the channel, update members, write the channel
-                    event.channel?.let {
-                        insertChannel(it)
-                    }
-                }
-
-            }
-        }
-    }
 
     private fun setChannelUnreadCount(newCount: Int) {
         val currentCount = _channelUnreadCount.value ?: 0
@@ -373,9 +246,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             return
         }
         eventSubscription = client.events().subscribe {
-            GlobalScope.launch(Dispatchers.IO) {
-                handleEvent(it)
-            }
+            eventHandler.handleEvents(listOf(it))
         }
     }
 
@@ -421,11 +292,6 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return currentUser.getUserId() + "-" + UUID.randomUUID().toString()
     }
 
-    suspend fun selectMessageEntity(messageId: String): MessageEntity? {
-        return messageDao.select(messageId)
-    }
-
-
     fun setOffline() {
         _online.value = false
     }
@@ -457,118 +323,6 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         val queryRepo = QueryChannelsRepo(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
-    }
-
-    suspend fun insertConfigEntities(configEntities: List<ChannelConfigEntity>) {
-
-        // update the local configs
-        for (configEntity in configEntities) {
-            channelConfigs[configEntity.channelType] = configEntity.config
-        }
-
-        // insert into room db
-        channelConfigDao.insertMany(configEntities)
-
-    }
-
-    suspend fun insertConfigs(configs: MutableMap<String, Config>) {
-        val configEntities = mutableListOf<ChannelConfigEntity>()
-
-        for ((channelType, config) in configs) {
-            val entity = ChannelConfigEntity(channelType, config)
-            configEntities.add(entity)
-        }
-        insertConfigEntities(configEntities)
-
-    }
-
-
-    internal suspend fun selectMessagesForChannel(
-            cid: String,
-            pagination: AnyChannelPaginationRequest
-    ): List<MessageEntity> {
-
-        // - fetch the message you are filtering on and get it's date
-        // - sort asc or desc based on filter direction
-        var sort = "ASC"
-        if (pagination.isFilteringOlderMessages()) {
-            sort = "DESC"
-        }
-        if (pagination.hasFilter()) {
-            // TODO: this doesn't support the difference between gte vs gt
-            val message = messageDao.select(pagination.messageFilterValue)
-            if (message?.createdAt == null) {
-                return listOf()
-            } else if (pagination.isFilteringNewerMessages()) {
-                return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message.createdAt!!)
-            } else if (pagination.isFilteringOlderMessages()) {
-                return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message.createdAt!!)
-
-            }
-
-        }
-
-        return messageDao.messagesForChannel(cid, pagination.messageLimit)
-    }
-
-
-    suspend fun insertUser(user: User) {
-        userDao.insert(UserEntity(user))
-    }
-
-    suspend fun insertChannel(channel: Channel) {
-        channelStateDao.insert(ChannelStateEntity(channel))
-    }
-
-    suspend fun insertChannelStateEntity(channelStateEntity: ChannelStateEntity) {
-
-        channelStateDao.insert(channelStateEntity)
-    }
-
-    suspend fun insertChannels(channels: List<Channel>) {
-        var entities = mutableListOf<ChannelStateEntity>()
-        for (channel in channels) {
-            entities.add(ChannelStateEntity(channel))
-        }
-
-        channelStateDao.insertMany(entities)
-    }
-
-
-    suspend fun insertReactionEntity(reactionEntity: ReactionEntity) {
-        reactionDao.insert(reactionEntity)
-    }
-
-    suspend fun insertQuery(queryChannelsEntity: QueryChannelsEntity) {
-        queryChannelsDao.insert(queryChannelsEntity)
-    }
-
-    suspend fun insertUsers(users: List<User>) {
-        val userEntities = mutableListOf<UserEntity>()
-        for (user in users) {
-            userEntities.add(UserEntity(user))
-        }
-        userDao.insertMany(userEntities)
-    }
-
-    suspend fun insertMessages(messages: List<Message>) {
-        val messageEntities = mutableListOf<MessageEntity>()
-        for (message in messages) {
-            if (message.cid == "") {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
-            messageEntities.add(MessageEntity(message))
-        }
-        messageDao.insertMany(messageEntities)
-    }
-
-    suspend fun insertMessage(message: Message) {
-        val messageEntity = MessageEntity(message)
-        messageDao.insert(messageEntity)
-    }
-
-    suspend fun insertMessageEntity(messageEntity: MessageEntity) {
-        messageDao.insert(messageEntity)
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
@@ -609,7 +363,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun retryMessages(): List<MessageEntity> {
         val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
-        val messageEntities = messageDao.selectSyncNeeded()
+        val messageEntities = repos.messages.selectSyncNeeded()
         if (isOnline()) {
             for (messageEntity in messageEntities) {
                 val channel = client.channel(messageEntity.cid)
@@ -631,7 +385,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                     messageEntity.syncStatus = SyncStatus.SYNCED
                     messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
                             ?: Date()
-                    insertMessageEntity(messageEntity)
+                    repos.messages.insert(messageEntity)
                 }
             }
         }
@@ -641,7 +395,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     suspend fun retryReactions(): List<ReactionEntity> {
         val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
-        val reactionEntities = reactionDao.selectSyncNeeded()
+        val reactionEntities = repos.reactions.selectSyncNeeded()
         for (reactionEntity in reactionEntities) {
             val reaction = reactionEntity.toReaction(userMap)
             reaction.user = null
@@ -653,7 +407,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
             if (result.isSuccess) {
                 reactionEntity.syncStatus = SyncStatus.SYNCED
-                insertReactionEntity(reactionEntity)
+                repos.reactions.insert(reactionEntity)
             } else {
                 addError(result.error())
             }
@@ -662,9 +416,9 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
 
-    suspend fun retryChannels(): List<ChannelStateEntity> {
+    suspend fun retryChannels(): List<ChannelEntity> {
         val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-        val channelEntities = channelStateDao.selectSyncNeeded()
+        val channelEntities = repos.channels.selectSyncNeeded()
 
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
@@ -672,7 +426,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             val result = controller.watch().execute()
             if (result.isSuccess) {
                 channelEntity.syncStatus = SyncStatus.SYNCED
-                insertChannelStateEntity(channelEntity)
+                repos.channels.insert(channelEntity)
             }
             // TODO: 1.1 support hiding channels
 
@@ -688,39 +442,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
     }
 
-
-    suspend fun selectChannelEntity(cid: String): ChannelStateEntity? {
-        return channelStateDao.select(cid)
-    }
-
-    suspend fun selectQuery(id: String): QueryChannelsEntity? {
-        return queryChannelsDao.select(id)
-    }
-
-    suspend fun selectChannelEntities(channelCIDs: List<String>): List<ChannelStateEntity> {
-        return channelStateDao.select(channelCIDs)
-    }
-
-    suspend fun selectUsers(userIds: List<String>): List<UserEntity> {
-        return userDao.select(userIds)
-    }
-
     suspend fun storeStateForChannel(channel: Channel) {
         return storeStateForChannels(listOf(channel))
-    }
-
-
-    suspend fun selectUserMap(userIds: List<String>): MutableMap<String, User> {
-        val userEntities = selectUsers(userIds.toList())
-        val userMap = mutableMapOf<String, User>()
-        for (userEntity in userEntities) {
-            userMap[userEntity.id] = userEntity.toUser()
-        }
-        client.getCurrentUser()?.let {
-            userMap[it.id] = it
-        }
-
-        return userMap
     }
 
     suspend fun storeStateForChannels(channelsResponse: List<Channel>) {
@@ -753,13 +476,13 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
 
         // store the channel configs
-        insertConfigs(configs)
+        repos.configs.insertConfigs(configs)
         // store the users
-        insertUsers(users.toList())
+        repos.users.insert(users.toList())
         // store the channel data
-        insertChannels(channelsResponse)
+        repos.channels.insert(channelsResponse)
         // store the messages
-        insertMessages(messages)
+        repos.messages.insertMessages(messages)
 
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
@@ -787,7 +510,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     ): List<Channel> {
 
         // fetch the channel entities from room
-        val channelEntities = selectChannelEntities(channelIds)
+        val channelEntities = repos.channels.select(channelIds)
 
         // gather the user ids from channels, members and the last message
         val userIds = mutableSetOf<String>()
@@ -801,7 +524,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
                 userIds.addAll(it.keys)
             }
             if (pagination.messageLimit > 0) {
-                val messages = selectMessagesForChannel(channelEntity.cid, pagination)
+                val messages = repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
                 for (message in messages) {
                     userIds.add(message.userId)
                     for (reaction in message.latestReactions) {
@@ -813,16 +536,14 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
 
         // get a map with user id to User
-        val userMap = selectUserMap(userIds.toList())
+        val userMap = repos.users.selectUserMap(userIds.toList())
 
         // convert the channels
         val channels = mutableListOf<Channel>()
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
             // get the config we have stored offline
-            channelConfigs.get(channel.type)?.let {
-                channel.config = it
-            }
+            channel.config = getChannelConfig(channel.type)
 
             if (pagination.messageLimit > 0) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
@@ -835,9 +556,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return channels.toList()
     }
 
-    suspend fun selectReactionEntity(messageId: String, userId: String, type: String): ReactionEntity? {
-        return reactionDao.select(messageId, userId, type)
-    }
+
 
     fun clean() {
         for (channelRepo in activeChannelMap.values.toList()) {
@@ -846,7 +565,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     }
 
     fun getChannelConfig(channelType: String): Config {
-        val config = channelConfigs.get(channelType)
+        val config = repos.configs.select(channelType)
         checkNotNull(config) { "Missing channel config for channel type $channelType" }
         return config
     }

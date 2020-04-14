@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.requests
+package io.getstream.chat.android.livedata.request
 
 import io.getstream.chat.android.client.api.models.Pagination
 

@@ -15,7 +15,7 @@ import io.getstream.chat.android.livedata.entity.*
             MessageEntity::class,
             UserEntity::class,
             ReactionEntity::class,
-            ChannelStateEntity::class,
+            ChannelEntity::class,
             ChannelConfigEntity::class
         ],
         version = 8,
@@ -33,7 +33,7 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun reactionDao(): ReactionDao
     abstract fun messageDao(): MessageDao
-    abstract fun channelStateDao(): ChannelStateDao
+    abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
 
 

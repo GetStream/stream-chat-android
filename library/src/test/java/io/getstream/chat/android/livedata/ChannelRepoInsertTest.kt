@@ -1,28 +1,16 @@
 package io.getstream.chat.android.livedata
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.requests.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
+import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
 import org.junit.runner.RunWith
-import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)

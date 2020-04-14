@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.requests.QueryChannelPaginationRequest
+import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -55,6 +55,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     private var lastStartTypingEvent: Date? = null
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
+
+
 
     private val logger = ChatLogger.get("ChannelRepo")
 
@@ -367,6 +369,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     fun sendMessage(message: Message) {
         GlobalScope.launch(Dispatchers.IO) {
             _sendMessage(message)
+
         }
     }
 
