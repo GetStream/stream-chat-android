@@ -11,7 +11,6 @@ import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.*
 import org.junit.*
 import org.junit.runner.RunWith
-import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
@@ -32,7 +31,16 @@ class ChannelRepoInsertTest: BaseTest() {
         client.disconnect()
         db.close()
 
+
     }
+
+    @Test
+    fun sendMessageUseCase() = runBlocking(Dispatchers.IO) {
+        val call = repo.useCases.sendMessage(data.message1)
+        val result = call.execute()
+    }
+
+
 
     @Test
     fun reactionStorage() = runBlocking(Dispatchers.IO) {
@@ -51,12 +59,12 @@ class ChannelRepoInsertTest: BaseTest() {
         // TODO: Mock socket and mock client
         // ensure the message exists
         repo._createChannel(data.channel1)
-        channelRepo._sendMessage(data.message1)
+        channelRepo.sendMessage(data.message1)
         repo.setOffline()
         repo.repos.channels.insert(data.channel1)
         channelRepo.upsertMessage(data.message1)
         // send the reaction while offline
-        channelRepo._sendReaction(data.reaction1)
+        channelRepo.sendReaction(data.reaction1)
         var reactionEntity = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         repo.setOnline()
@@ -71,8 +79,8 @@ class ChannelRepoInsertTest: BaseTest() {
     fun deleteReaction() = runBlocking(Dispatchers.IO) {
         repo.setOffline()
 
-        channelRepo._sendReaction(data.reaction1)
-        channelRepo._deleteReaction(data.reaction1)
+        channelRepo.sendReaction(data.reaction1)
+        channelRepo.deleteReaction(data.reaction1)
 
         val reaction = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
@@ -88,7 +96,7 @@ class ChannelRepoInsertTest: BaseTest() {
         // send the message while offline
         repo._createChannel(data.channel1)
         repo.setOffline()
-        channelRepo._sendMessage(data.message1)
+        channelRepo.sendMessage(data.message1)
         // get the message and channel state both live and offline versions
         var roomChannel = repo.repos.channels.select(data.message1.channel.cid)
         var liveChannel = channelRepo.channel.getOrAwaitValue()

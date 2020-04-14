@@ -141,24 +141,27 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return repo.getChannelConfig(channelType)
     }
 
-    fun keystroke(): Boolean {
-        if (!getConfig().isTypingEvents) return false
+    fun keystroke(): Result<Boolean> {
+        if (!getConfig().isTypingEvents) return Result(false, null)
         lastKeystrokeAt = Date()
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
-            client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
-            return true
+            val result = client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
+            return Result(result.isSuccess, result.error())
         }
-        return false
+        return return Result(false, null)
     }
 
-    fun stopTyping() {
-        if (!getConfig().isTypingEvents) return
+
+    fun stopTyping(): Result<Boolean> {
+        if (!getConfig().isTypingEvents) return Result(false, null)
         if (lastStartTypingEvent != null) {
             lastStartTypingEvent = null
             lastKeystrokeAt = null
-            client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
+            val result = client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
+            return Result(result.isSuccess, result.error())
         }
+        return Result(false, null)
     }
 
 
@@ -366,14 +369,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
-    fun sendMessage(message: Message) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _sendMessage(message)
-
-        }
-    }
-
-    suspend fun _sendMessage(message: Message) {
+    suspend fun sendMessage(message: Message): Result<Message> {
+        var result : Result<Message>
         // set defaults for id, cid and created at
         if (message.id.isEmpty()) {
             message.id = repo.generateMessageId()
@@ -408,19 +405,17 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
                 val result = channelController.sendMessage(message)
                 result as Call<Any>
             }
-            repo.runAndRetry(runnable) {
-                if (it.isSuccess) {
-                    // set sendMessageCompletedAt so we know when to edit vs call sendMessage
-                    messageEntity.syncStatus = SyncStatus.SYNCED
-                    messageEntity.sendMessageCompletedAt = Date()
-                    runBlocking { repo.repos.messages.insert(messageEntity) }
-                }
+            val result = repo.runAndRetry(runnable)
+            if (result.isSuccess) {
+                // set sendMessageCompletedAt so we know when to edit vs call sendMessage
+                messageEntity.syncStatus = SyncStatus.SYNCED
+                messageEntity.sendMessageCompletedAt = Date()
+                repo.repos.messages.insert(messageEntity)
             }
-
-
+            return Result(result.data() as Message?, result.error())
         }
-
-
+        // TODO: indicate that we are offline
+        return Result(message, null)
     }
 
     private fun setLastMessage(message: Message) {
@@ -429,11 +424,6 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _channel.postValue(copy)
     }
 
-    fun sendReaction(reaction: Reaction) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _sendReaction(reaction)
-        }
-    }
 
     /**
      * sendReaction posts the reaction on local storage
@@ -442,7 +432,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If you're online we make the API call to sync to the server
      * If the request fails we retry according to the retry policy set on the repo
      */
-    suspend fun _sendReaction(reaction: Reaction) {
+    suspend fun sendReaction(reaction: Reaction): Result<Reaction> {
         reaction.user = repo.currentUser
         // insert the message into local storage
         val reactionEntity = ReactionEntity(reaction)
@@ -466,18 +456,21 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             val runnable = {
                 client.sendReaction(reaction) as Call<Any>
             }
-            repo.runAndRetry(runnable)
+            val result = repo.runAndRetry(runnable)
+            if (result.isSuccess) {
+                return Result(result.data() as Reaction, result.error())
+            } else {
+                return Result(null, result.error())
+            }
         }
+        return Result(reaction, null)
     }
 
-    fun deleteReaction(reaction: Reaction) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _deleteReaction(reaction)
-        }
-    }
 
-    suspend fun _deleteReaction(reaction: Reaction) {
+    suspend fun deleteReaction(reaction: Reaction): Result<Reaction> {
         reaction.user = repo.currentUser
+        reaction.syncStatus = SyncStatus.SYNC_NEEDED
+
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.deletedAt = Date()
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
@@ -501,8 +494,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             val runnable = {
                 client.deleteReaction(reaction.messageId, reaction.type) as Call<Any>
             }
-            repo.runAndRetry(runnable)
+            val result = repo.runAndRetry(runnable)
+            if (result.isSuccess) {
+                return Result(result.data() as Reaction, null)
+            } else {
+                return Result(null, result.error())
+            }
         }
+        return Result(reaction, null)
     }
 
     fun setWatcherCount(watcherCount: Int) {
@@ -725,13 +724,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         _watchers.postValue(copy)
     }
 
-    fun editMessage(message: Message) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _editMessage(message)
-        }
-    }
-
-    suspend fun _editMessage(message: Message) {
+    suspend fun editMessage(message: Message): Result<Message> {
         message.updatedAt = Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -745,18 +738,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             val runnable = {
                 client.updateMessage(message) as Call<Any>
             }
-            repo.runAndRetry(runnable)
-
+            val result = repo.runAndRetry(runnable)
+            return Result(result.data() as Message, result.error())
         }
+        return Result(message, null)
     }
 
-    fun deleteMessage(message: Message) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _deleteMessage(message)
-        }
-    }
 
-    suspend fun _deleteMessage(message: Message) {
+    suspend fun deleteMessage(message: Message): Result<Message> {
         message.deletedAt = Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -770,9 +759,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             val runnable = {
                 client.deleteMessage(message.id) as Call<Any>
             }
-            repo.runAndRetry(runnable)
-
+            val result = repo.runAndRetry(runnable)
+            return Result(result.data() as Message, result.error())
         }
+        return Result(message, null)
     }
 
     fun toChannel(): Channel {

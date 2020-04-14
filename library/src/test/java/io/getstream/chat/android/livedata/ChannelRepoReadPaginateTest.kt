@@ -69,7 +69,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         // add a message to local storage
         repo.repos.users.insert(data.user1)
         repo.repos.channels.insert(data.channel1)
-        channelRepo._sendMessage(data.message1)
+        channelRepo.sendMessage(data.message1)
         // remove the livedata
         channelRepo = ChannelRepo(data.channel1.type, data.channel1.id, repo.client, repo)
 
@@ -95,7 +95,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         val message = Message()
         message.syncStatus = SyncStatus.SYNC_NEEDED
         // write a message
-        channelRepo._sendMessage(message)
+        channelRepo.sendMessage(message)
 
         val messages = channelRepo.messages.getOrAwaitValue()
         val channel = channelRepo.channel.getOrAwaitValue()

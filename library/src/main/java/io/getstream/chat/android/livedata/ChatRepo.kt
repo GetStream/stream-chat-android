@@ -24,6 +24,7 @@ import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.usecase.*
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -47,6 +48,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
+    lateinit var useCases: UseCaseHelper
     internal lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
     private var baseLogger: ChatLogger = ChatLogger.instance
@@ -72,6 +74,17 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         GlobalScope.launch(Dispatchers.IO) {
             repos.configs.load()
         }
+
+        useCases = UseCaseHelper(
+            CreateChannel(this),
+            DeleteMessage(this),
+            DeleteReaction(this),
+            EditMessage(this),
+            Keystroke(this),
+            SendMessage(this),
+            SendReaction(this),
+            StopTyping(this)
+        )
 
         // verify that you're not connecting 2 different users
         if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
@@ -111,32 +124,34 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return database
     }
 
-    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int = 1) {
-        runAndRetry(runnable, attempt) {
-            // do nothing with this
-        }
-    }
+    suspend fun runAndRetry(runnable: () -> Call<Any>): Result<Any> {
+        var attempt = 1
+        var result: Result<Any>
 
-    suspend fun runAndRetry(runnable: () -> Call<Any>, attempt: Int = 1, callback: suspend (Result<Any>) -> Unit) {
-        val result = runnable().execute()
-        if (result.isError) {
-
-            val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
-            val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
-
-            if (shouldRetry) {
-                logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds")
-                if (timeout != null) {
-                    delay(timeout.toLong())
-                }
-                runAndRetry(runnable, attempt + 1)
+        while (true) {
+            result = runnable().execute()
+            if (result.isSuccess) {
+                return result
             } else {
-                logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
-            }
+                // retry logic
+                val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
+                val timeout = retryPolicy.retryTimeout(client, attempt, result.error())
 
-        } else {
-            callback(result)
+                if (shouldRetry) {
+                    // temporary failure, continue
+                    logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds")
+                    if (timeout != null) {
+                        delay(timeout.toLong())
+                    }
+                    attempt += 1
+                } else {
+                    logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
+                    break
+                }
+            }
         }
+        // permanent failure case return
+        return result
     }
 
     fun createChannel(c: Channel) {
@@ -145,7 +160,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
     }
 
-    suspend fun _createChannel(c: Channel) {
+    suspend fun _createChannel(c: Channel): Result<Channel> {
         c.createdAt = c.createdAt ?: Date()
         c.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -158,10 +173,19 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         repos.channels.insert(c)
 
         // make the API call and follow retry policy
-        val runnable = {
-            channelController.watch() as Call<Any>
+        if (isOnline()) {
+            val runnable = {
+                channelController.watch() as Call<Any>
+            }
+            val result = runAndRetry(runnable)
+            if (result.isSuccess) {
+                c.syncStatus = SyncStatus.SYNCED
+                repos.channels.insert(c)
+            }
+            return Result(result.data() as Channel, result.error())
+        } else {
+            return Result(c, null)
         }
-        runAndRetry(runnable)
 
     }
 
