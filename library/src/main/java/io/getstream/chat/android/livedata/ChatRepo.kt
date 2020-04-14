@@ -219,7 +219,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsRepo> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
-        return activeChannelMap.contains(cid)
+        return activeChannelMap.containsKey(cid)
     }
 
     fun setChannelUnreadCount(newCount: Int) {

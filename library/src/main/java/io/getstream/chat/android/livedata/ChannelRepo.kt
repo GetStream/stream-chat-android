@@ -538,7 +538,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             val parentId = message.parentId ?: ""
             if (!parentId.isEmpty()) {
                 var threadMessages = mutableMapOf<String, Message>()
-                if (_threads.contains(parentId)) {
+                if (_threads.containsKey(parentId)) {
                     threadMessages = _threads[parentId]!!.value!!
                 } else {
                     val parent = getMessage(parentId)
@@ -586,6 +586,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     fun handleEvents(events: List<ChatEvent>) {
+        // livedata actually batches many frequent updates after each other
+        // we might not need a more optimized handleEvents implementation.. TBD.
         for (event in events) {
             handleEvent(event)
         }
