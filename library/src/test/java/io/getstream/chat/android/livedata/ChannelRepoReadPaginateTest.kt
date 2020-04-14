@@ -125,7 +125,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
 
 
     @Test
-    fun loadOlderMessages() {
+    fun loadOlderMessages() = runBlocking(Dispatchers.IO) {
         val channelRepo = repo.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
         channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
@@ -137,7 +137,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
         // message 2 is older, we should use message 2 for getting older messages
         Truth.assertThat(request.messageFilterValue).isEqualTo(data.message2Older.id)
         // verify that running the query doesn't error
-        runBlocking(Dispatchers.IO) {channelRepo.runChannelQueryOnline(request)}
+        channelRepo.runChannelQueryOnline(request)
         // TODO: Mock the call to query channel
     }
 

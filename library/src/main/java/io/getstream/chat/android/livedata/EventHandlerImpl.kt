@@ -14,7 +14,7 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                 handleEventsInternal(events)
             }
         } else {
-            runBlocking(Dispatchers.IO) {  }
+            runBlocking(Dispatchers.IO) { handleEventsInternal(events) }
         }
     }
 
@@ -25,7 +25,7 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
     internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
-        // TODO: messages that receive events should probably be cached
+
         val messages: MutableMap<String, MessageEntity> = mutableMapOf()
         var unreadChannels: Int? = null
         var totalUnreadCount: Int? = null
@@ -76,7 +76,6 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
 
             when (event) {
                 // keep the data in Room updated based on the various events..
-                // TODO 1.1: cache users, messages and channels to reduce number of Room queries
                 // TODO: all of these events should also update user information
                 is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
                     messages[event.message.id] = MessageEntity(event.message)
@@ -137,7 +136,8 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
             // actually insert the data
             repo.repos.users.insertUserEntities(users.values.toList())
             repo.repos.channels.insertChannelEntities(channels.values.toList())
-            repo.repos.messages.insertMessageEntities(messages.values.toList())
+            // we only cache messages for which we're receiving events
+            repo.repos.messages.insertMessageEntities(messages.values.toList(), true)
 
             unreadChannels?.let { repo.setChannelUnreadCount(it) }
             totalUnreadCount?.let { repo.setTotalUnreadCount(it) }
@@ -154,17 +154,12 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                 // connection events are never send on the recovery endpoint, so handle them 1 by 1
                 when (event) {
                     is DisconnectedEvent -> {
-                        withContext(Dispatchers.Main) {
-                            repo.setOffline()
-                        }
-
+                        repo.postOffline()
                     }
                     is ConnectedEvent -> {
                         val recovered = repo.isInitialized()
-                        withContext(Dispatchers.Main) {
-                            repo.setOnline()
-                            repo.setInitialized()
-                        }
+                        repo.postOnline()
+                        repo.postInitialized()
                         if (recovered) {
                             repo.connectionRecovered(true)
                         } else {

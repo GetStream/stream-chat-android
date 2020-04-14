@@ -1,12 +1,17 @@
 package io.getstream.chat.android.livedata.repository
 
+import androidx.collection.LruCache
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.dao.MessageDao
+import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 
-class MessageRepository(var messageDao: MessageDao) {
+class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100) {
+    // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
+    var messageCache = LruCache<String, MessageEntity>(cacheSize)
+
     internal suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest
@@ -36,14 +41,23 @@ class MessageRepository(var messageDao: MessageDao) {
     }
 
     suspend fun selectMessageEntity(messageId: String): MessageEntity? {
-        return messageDao.select(messageId)
+        return select(listOf(messageId)).getOrElse(0) {null}
     }
     suspend fun select(messageIds: List<String>): List<MessageEntity> {
-        return messageDao.select(messageIds)
+        val cachedMessages: MutableList<MessageEntity> = mutableListOf()
+        for (messageId in messageIds) {
+            val messageEntity = messageCache.get(messageId)
+            messageEntity?.let { cachedMessages.add(it) }
+        }
+        val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
+        val dbMessages = messageDao.select(missingMessageIds).toMutableList()
+
+        dbMessages.addAll(cachedMessages)
+        return dbMessages
     }
 
-    suspend fun insertMessageEntities(messageEntities: List<MessageEntity>) {
-        val messageEntities = mutableListOf<MessageEntity>()
+    suspend fun insertMessageEntities(messageEntities: List<MessageEntity>, cache: Boolean=false) {
+        if (messageEntities.isEmpty()) return
         for (messageEntity in messageEntities) {
             if (messageEntity.cid == "") {
                 throw InvalidParameterException("message.cid cant be empty")
@@ -53,23 +67,17 @@ class MessageRepository(var messageDao: MessageDao) {
     }
 
     suspend fun insertMessages(messages: List<Message>) {
-        val messageEntities = mutableListOf<MessageEntity>()
-        for (message in messages) {
-            if (message.cid == "") {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
-            messageEntities.add(MessageEntity(message))
-        }
-        messageDao.insertMany(messageEntities)
+        val messageEntities = messages.map { MessageEntity(it) }
+        insertMessageEntities(messageEntities)
     }
 
     suspend fun insertMessage(message: Message) {
         val messageEntity = MessageEntity(message)
-        messageDao.insert(messageEntity)
+        insertMessageEntities(listOf(messageEntity))
     }
 
     suspend fun insert(messageEntity: MessageEntity) {
-        messageDao.insert(messageEntity)
+        insertMessageEntities(listOf(messageEntity))
     }
 
     suspend fun selectSyncNeeded(): List<MessageEntity> {

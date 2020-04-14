@@ -11,6 +11,7 @@ import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.*
 import org.junit.*
 import org.junit.runner.RunWith
+import org.robolectric.shadows.ShadowLooper
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
@@ -27,8 +28,10 @@ class ChannelRepoInsertTest: BaseTest() {
 
     @After
     fun tearDown() {
-        db.close()
+        //ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
         client.disconnect()
+        db.close()
+
     }
 
     @Test

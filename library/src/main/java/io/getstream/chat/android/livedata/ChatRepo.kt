@@ -294,8 +294,16 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         _online.value = false
     }
 
+    fun postOffline() {
+        _online.postValue(false)
+    }
+
     fun setOnline() {
         _online.value = true
+    }
+
+    fun postOnline() {
+        _online.postValue(true)
     }
 
     fun isOnline(): Boolean {
@@ -349,20 +357,24 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         // exclude ones we just updated
         val cids = activeChannelMap.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
-        val filter = `in`("cid", cids)
-        val request = QueryChannelsRequest(filter, 0, 30)
-        val result = client.queryChannels(request).execute()
+
 
         logger.logI("connection established: recoveryNeeded= ${recoveryNeeded}, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
-        if (result.isSuccess) {
-            val channels = result.data()
-            for (c in channels) {
-                val channelRepo = this.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
+        if (cids.isNotEmpty()) {
+            val filter = `in`("cid", cids)
+            val request = QueryChannelsRequest(filter, 0, 30)
+            val result = client.queryChannels(request).execute()
+            if (result.isSuccess) {
+                val channels = result.data()
+                for (c in channels) {
+                    val channelRepo = this.channel(c)
+                    channelRepo.updateLiveDataFromChannel(c)
+                }
+                storeStateForChannels(channels)
             }
-            storeStateForChannels(channels)
         }
+
         // 3 retry any failed requests
         retryFailedEntities()
     }
@@ -577,8 +589,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return config
     }
 
-    fun setInitialized() {
-        _initialized.value = true
+    fun postInitialized() {
+        _initialized.postValue(true)
     }
 
     data class Builder(

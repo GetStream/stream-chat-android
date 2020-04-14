@@ -116,6 +116,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         commandInfo = m.commandInfo
         extraData = m.extraData
         reactionCounts = m.reactionCounts
+        if (cid.isNullOrEmpty() && m.channel!= null) {
+            cid = m.channel.cid
+        }
 
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
