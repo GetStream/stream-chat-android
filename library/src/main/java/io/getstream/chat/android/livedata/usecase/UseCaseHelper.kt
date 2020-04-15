@@ -8,5 +8,6 @@ data class UseCaseHelper(
     var keystroke: Keystroke,
     var sendMessage: SendMessage,
     var sendReaction: SendReaction,
-    var stopTyping: StopTyping
+    var stopTyping: StopTyping,
+    var watchChannel: WatchChannel
 )

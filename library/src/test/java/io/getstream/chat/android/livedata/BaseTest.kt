@@ -3,26 +3,21 @@ package io.getstream.chat.android.livedata
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.RetrofitApi
 import io.getstream.chat.android.client.api.models.RetrofitCdnApi
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -30,25 +25,20 @@ import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
-import org.junit.runner.RunWith
 import org.mockito.Mockito
-import org.mockito.Mockito.mock
 
 open class BaseTest {
     lateinit var database: ChatDatabase
-    lateinit var repo: ChatRepo
+    lateinit var chatDomain: ChatDomain
     lateinit var client: ChatClient
-    lateinit var channelRepo: ChannelRepo
+    lateinit var channelController: io.getstream.chat.android.livedata.ChannelController
     lateinit var db: ChatDatabase
-    lateinit var queryRepo: QueryChannelsRepo
+    lateinit var queryController: QueryChannelsController
     lateinit var query: QueryChannelsEntity
     lateinit var filter: FilterObject
 
@@ -129,21 +119,31 @@ open class BaseTest {
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
-        repo = ChatRepo.Builder(context, client, data.user1).database(db).offlineEnabled().userPresenceEnabled().build()
-        repo.eventHandler = EventHandlerImpl(repo, true)
+        chatDomain = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled().userPresenceEnabled().build()
+        chatDomain.eventHandler = EventHandlerImpl(chatDomain, true)
+        chatDomain.retryPolicy = object: RetryPolicy {
+            override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
+                return false
+            }
 
-        repo.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
+            override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int? {
+                return 1000
+            }
+
+        }
+
+        chatDomain.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
 
-        runBlocking(Dispatchers.IO) {repo.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))}
-        channelRepo = repo.channel(data.channel1.type, data.channel1.id)
-        channelRepo.updateChannel(data.channel1)
+        runBlocking(Dispatchers.IO) {chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))}
+        channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
+        channelController.updateChannel(data.channel1)
 
         filter = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(data.user1.id)))
         query = QueryChannelsEntity(filter, null)
 
-        queryRepo = repo.queryChannels(filter)
+        queryController = chatDomain.queryChannels(filter)
     }
 
 

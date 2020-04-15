@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsRepoTest: BaseTest() {
+class QueryChannelsControllerTest: BaseTest() {
 
     @Before
     fun setup() {
@@ -30,12 +30,12 @@ class QueryChannelsRepoTest: BaseTest() {
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {
         // TODO: mock the server response for the queryChannels...
         val request = QueryChannelsPaginationRequest()
-        queryRepo.runQuery(request)
-        var channels = queryRepo.channels.getOrAwaitValue()
+        queryController.runQuery(request)
+        var channels = queryController.channels.getOrAwaitValue()
         val oldSize = channels.size
         // verify that a new channel is added to the list
-        queryRepo.handleEvent(data.notificationAddedToChannelEvent)
-        channels = queryRepo.channels.getOrAwaitValue()
+        queryController.handleEvent(data.notificationAddedToChannelEvent)
+        channels = queryController.channels.getOrAwaitValue()
         val newSize = channels.size
         Truth.assertThat(newSize-oldSize).isEqualTo(1)
     }
@@ -44,29 +44,29 @@ class QueryChannelsRepoTest: BaseTest() {
     fun testChannelIdPagination() {
         val list = sortedSetOf("a", "b", "c")
 
-        var sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(0, 5))
+        var sub = queryController.paginateChannelIds(list, QueryChannelsPaginationRequest(0, 5))
         Truth.assertThat(sub).isEqualTo(listOf("a", "b", "c"))
 
-        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(1, 2))
+        sub = queryController.paginateChannelIds(list, QueryChannelsPaginationRequest(1, 2))
         Truth.assertThat(sub).isEqualTo(listOf("b", "c"))
 
-        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(3, 2))
+        sub = queryController.paginateChannelIds(list, QueryChannelsPaginationRequest(3, 2))
         Truth.assertThat(sub).isEqualTo(listOf<String>())
 
-        sub = queryRepo.paginateChannelIds(list, QueryChannelsPaginationRequest(4, 2))
+        sub = queryController.paginateChannelIds(list, QueryChannelsPaginationRequest(4, 2))
         Truth.assertThat(sub).isEqualTo(listOf<String>())
     }
 
     @Test
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(0, 2)
-        queryRepo.runQuery(paginate)
-        var channels = queryRepo.channels.getOrAwaitValue()
+        queryController.runQuery(paginate)
+        var channels = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(2)
-        val request = queryRepo.loadMoreRequest(1)
+        val request = queryController.loadMoreRequest(1)
         Truth.assertThat(request.channelOffset).isEqualTo(2)
-        queryRepo.runQuery(request)
-        channels = queryRepo.channels.getOrAwaitValue()
+        queryController.runQuery(request)
+        channels = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
 
     }
@@ -76,10 +76,10 @@ class QueryChannelsRepoTest: BaseTest() {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCIDs = sortedSetOf(data.channel1.cid)
-        repo.repos.queryChannels.insert(query)
-        repo.storeStateForChannel(data.channel1)
-        repo.setOffline()
-        val channels = queryRepo.runQueryOffline(QueryChannelsPaginationRequest(0, 2))
+        chatDomain.repos.queryChannels.insert(query)
+        chatDomain.storeStateForChannel(data.channel1)
+        chatDomain.setOffline()
+        val channels = queryController.runQueryOffline(QueryChannelsPaginationRequest(0, 2))
         // should return 1 since only 1 is stored in offline storage
         Truth.assertThat(channels?.size).isEqualTo(1)
     }
@@ -89,11 +89,11 @@ class QueryChannelsRepoTest: BaseTest() {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCIDs = sortedSetOf(data.channel1.cid)
-        repo.repos.queryChannels.insert(query)
-        repo.storeStateForChannel(data.channel1)
-        repo.setOffline()
-        queryRepo.runQuery(QueryChannelsPaginationRequest(0, 2))
-        val channels = queryRepo.channels.getOrAwaitValue()
+        chatDomain.repos.queryChannels.insert(query)
+        chatDomain.storeStateForChannel(data.channel1)
+        chatDomain.setOffline()
+        queryController.runQuery(QueryChannelsPaginationRequest(0, 2))
+        val channels = queryController.channels.getOrAwaitValue()
         // should return 1 since only 1 is stored in offline storage
         Truth.assertThat(channels.size).isEqualTo(1)
     }

@@ -9,9 +9,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 
-class ThreadRepo(var threadId: String, var channelRepo: ChannelRepo) {
+class ThreadController(var threadId: String, var channelController: ChannelController) {
     private val logger = ChatLogger.get("ThreadRepo")
-    val messages = channelRepo.getThreadMessages(threadId)
+    val messages = channelController.getThreadMessages(threadId)
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
@@ -32,7 +32,7 @@ class ThreadRepo(var threadId: String, var channelRepo: ChannelRepo) {
             return
         }
         _loadingOlderMessages.postValue(true)
-        val response = channelRepo.loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
+        val response = channelController.loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
         if (response.isSuccess) {
             if (response.data().size < limit) {
                 _endOfOlderMessages.postValue(true)

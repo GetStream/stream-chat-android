@@ -16,9 +16,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -53,12 +51,15 @@ fun Channel.users(): List<User> {
  * updates whenever a new message is added to one of the channels, the read state changes for members of these channels,
  * messages are edited or updated, or the channel is updated.
  */
-class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatClient, var repo: ChatRepo) {
+class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: ChatClient, var domain: ChatDomain) {
     var recoveryNeeded: Boolean = false
     /**
      * A livedata object with the channels matching this query.
      */
 
+
+    val job = SupervisorJob()
+    val scope = CoroutineScope(Dispatchers.IO + domain.job + job)
 
     private val _endOfChannels = MutableLiveData<Boolean>(false)
     val endOfChannels: LiveData<Boolean> = _endOfChannels
@@ -116,7 +117,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
-            val channel = repo.channel(event.cid!!).toChannel()
+            val channel = domain.channel(event.cid!!).toChannel()
             updateChannel(channel)
         }
     }
@@ -151,16 +152,16 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        var queryEntity = repo.repos.queryChannels.selectQuery(queryEntity.id)
+        var queryEntity = domain.repos.queryChannels.selectQuery(queryEntity.id)
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
 
             var channelIds = paginateChannelIds(queryEntity.channelCIDs, pagination)
 
-            channels = repo.selectAndEnrichChannels(channelIds, pagination)
+            channels = domain.selectAndEnrichChannels(channelIds, pagination)
             for (c in channels) {
-                val channelRepo = repo.channel(c)
+                val channelRepo = domain.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
             }
             logger.logI("found ${channels.size} channels in offline storage")
@@ -169,7 +170,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     }
 
     suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val request = pagination.toQueryChannelsRequest(queryEntity.filter, queryEntity.sort, repo.userPresence)
+        val request = pagination.toQueryChannelsRequest(queryEntity.filter, queryEntity.sort, domain.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
 
@@ -184,27 +185,27 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
             }
             // first things first, store the configs
             val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
-            repo.repos.configs.insert(configEntities)
+            domain.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
 
 
             // initialize channel repos for all of these channels
             for (c in channelsResponse) {
-                val channelRepo = repo.channel(c)
+                val channelRepo = domain.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
             }
 
-            repo.storeStateForChannels(channelsResponse)
+            domain.storeStateForChannels(channelsResponse)
 
             if (pagination.isFirstPage()) {
                 setChannels(channelsResponse)
             } else {
                 addChannels(channelsResponse)
             }
-            repo.repos.queryChannels.insert(queryEntity)
+            domain.repos.queryChannels.insert(queryEntity)
         } else {
             recoveryNeeded = true
-            repo.addError(response.error())
+            domain.addError(response.error())
         }
         return response
     }
@@ -226,7 +227,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
         if (channels != null) {
             for (c in channels) {
-                val channelRepo = repo.channel(c)
+                val channelRepo = domain.channel(c)
                 channelRepo.updateLiveDataFromChannel(c)
             }
             // first page replaces the results, second page adds to them
@@ -239,7 +240,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
-        val online = repo.isOnline()
+        val online = domain.isOnline()
         if (online) {
             runQueryOnline(pagination)
 
@@ -260,7 +261,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
         }
         val copy = _channels.value ?: ConcurrentHashMap()
 
-        val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { repo.channel(it.cid).toChannel() }
+        val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { domain.channel(it.cid).toChannel() }
         for (channel in missingChannels) {
             copy[channel.cid] = channel
         }
@@ -270,7 +271,7 @@ class QueryChannelsRepo(var queryEntity: QueryChannelsEntity, var client: ChatCl
     private fun setChannels(channelsResponse: List<Channel>) {
         // first page sets the channels/overwrites..
         queryEntity.channelCIDs = channelsResponse.map { it.cid }.toSortedSet()
-        val channels = channelsResponse.map { repo.channel(it.cid).toChannel() }
+        val channels = channelsResponse.map { domain.channel(it.cid).toChannel() }
         val channelMap = channels.associateBy { it.cid }.toMutableMap()
         val safeMap = ConcurrentHashMap(channelMap)
         _channels.postValue(safeMap)

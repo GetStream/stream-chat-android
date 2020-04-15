@@ -3,10 +3,10 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
-import io.getstream.chat.android.livedata.ChatRepo
+import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
-class DeleteMessage(var repo: ChatRepo) {
+class DeleteMessage(var domain: ChatDomain) {
     operator fun invoke (message: Message): Call2<Message> {
         var runnable = suspend {
             var cid = message.cid
@@ -17,7 +17,7 @@ class DeleteMessage(var repo: ChatRepo) {
                 throw InvalidParameterException("message.cid cant be empty")
             }
 
-            val channelRepo = repo.channel(cid)
+            val channelRepo = domain.channel(cid)
             channelRepo.deleteMessage(message)
         }
         return CallImpl2<Message>(runnable)

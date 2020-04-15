@@ -7,14 +7,14 @@ import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import kotlinx.coroutines.*
 
-class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, var runAsync: Boolean=true) {
+class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain, var runAsync: Boolean=true) {
     fun handleEvents(events: List<ChatEvent>) {
         if (runAsync) {
-            GlobalScope.launch(Dispatchers.IO) {
+            domain.scope.launch(Dispatchers.IO) {
                 handleEventsInternal(events)
             }
         } else {
-            runBlocking(Dispatchers.IO) { handleEventsInternal(events) }
+            runBlocking(domain.scope.coroutineContext) { handleEventsInternal(events) }
         }
     }
 
@@ -54,8 +54,8 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
             }
         }
         // actually fetch the data
-        val channelMap = repo.repos.channels.select(channelsToFetch.toList()).associateBy{it.cid}
-        val messageMap = repo.repos.messages.select(messagesToFetch.toList()).associateBy{it.id}
+        val channelMap = domain.repos.channels.select(channelsToFetch.toList()).associateBy{it.cid}
+        val messageMap = domain.repos.messages.select(messagesToFetch.toList()).associateBy{it.id}
 
 
         // step 2. second pass through the events, make a list of what we need to update
@@ -105,7 +105,7 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                     val message = messageMap[event.reaction!!.messageId]
                     message?.let {
                         val userId = event.reaction!!.user!!.id
-                        it.addReaction(event.reaction!!, repo.currentUser.id == userId)
+                        it.addReaction(event.reaction!!, domain.currentUser.id == userId)
                         messages[it.id] = it
                     }
                 }
@@ -147,18 +147,18 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                 }
             }
             // actually insert the data
-            repo.repos.users.insertUserEntities(users.values.toList())
-            repo.repos.channels.insertChannelEntities(channels.values.toList())
+            domain.repos.users.insertUserEntities(users.values.toList())
+            domain.repos.channels.insertChannelEntities(channels.values.toList())
             // we only cache messages for which we're receiving events
-            repo.repos.messages.insertMessageEntities(messages.values.toList(), true)
+            domain.repos.messages.insertMessageEntities(messages.values.toList(), true)
 
-            unreadChannels?.let { repo.setChannelUnreadCount(it) }
-            totalUnreadCount?.let { repo.setTotalUnreadCount(it) }
+            unreadChannels?.let { domain.setChannelUnreadCount(it) }
+            totalUnreadCount?.let { domain.setTotalUnreadCount(it) }
 
             // step 3 - forward the events to the active queries and channels
             for ((cid, cEvents) in channelEvents) {
-                if (repo.isActiveChannel(cid)) {
-                    repo.channel(cid).handleEvents(cEvents)
+                if (domain.isActiveChannel(cid)) {
+                    domain.channel(cid).handleEvents(cEvents)
                 }
             }
 
@@ -167,22 +167,22 @@ class EventHandlerImpl(var repo: io.getstream.chat.android.livedata.ChatRepo, va
                 // connection events are never send on the recovery endpoint, so handle them 1 by 1
                 when (event) {
                     is DisconnectedEvent -> {
-                        repo.postOffline()
+                        domain.postOffline()
                     }
                     is ConnectedEvent -> {
-                        val recovered = repo.isInitialized()
-                        repo.postOnline()
-                        repo.postInitialized()
+                        val recovered = domain.isInitialized()
+                        domain.postOnline()
+                        domain.postInitialized()
                         if (recovered) {
-                            repo.connectionRecovered(true)
+                            domain.connectionRecovered(true)
                         } else {
-                            repo.connectionRecovered(false)
+                            domain.connectionRecovered(false)
                         }
                     }
                 }
             }
             // queryRepo mainly monitors for the notification added to channel event
-            for (queryRepo in repo.getActiveQueries()) {
+            for (queryRepo in domain.getActiveQueries()) {
                 queryRepo.handleEvents(events)
             }
 

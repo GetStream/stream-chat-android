@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class ChatRepo private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
+class ChatDomain private constructor(var context: Context, var client: ChatClient, var currentUser: User, var offlineEnabled: Boolean = false, var userPresence: Boolean = false) {
     lateinit var useCases: UseCaseHelper
     internal lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
@@ -60,10 +60,13 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         }
     }
 
+    val job = SupervisorJob()
+    val scope = CoroutineScope(Dispatchers.IO + job)
+
     internal lateinit var repos: RepositoryHelper
 
     /** The retry policy for retrying failed requests */
-    val retryPolicy: RetryPolicy = DefaultRetryPolicy()
+    var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
         val chatDatabase = db ?: createDatabase()
@@ -71,7 +74,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
 
         // load channel configs from Room into memory
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             repos.configs.load()
         }
 
@@ -83,7 +86,8 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             Keystroke(this),
             SendMessage(this),
             SendReaction(this),
-            StopTyping(this)
+            StopTyping(this),
+            WatchChannel(this)
         )
 
         // verify that you're not connecting 2 different users
@@ -154,13 +158,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return result
     }
 
-    fun createChannel(c: Channel) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _createChannel(c)
-        }
-    }
-
-    suspend fun _createChannel(c: Channel): Result<Channel> {
+    suspend fun createChannel(c: Channel): Result<Channel> {
         c.createdAt = c.createdAt ?: Date()
         c.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -236,11 +234,11 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
     /** stores the mapping from cid to channelRepository */
-    var activeChannelMap: ConcurrentHashMap<String, ChannelRepo> = ConcurrentHashMap()
+    var activeChannelMap: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
 
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsRepo> = ConcurrentHashMap()
+    var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsController> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMap.containsKey(cid)
@@ -279,11 +277,11 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         eventSubscription?.let { it.unsubscribe() }
     }
 
-    fun channel(c: Channel): ChannelRepo {
+    fun channel(c: Channel): ChannelController {
         return channel(c.type, c.id)
     }
 
-    fun channel(cid: String): ChannelRepo {
+    fun channel(cid: String): ChannelController {
         val parts = cid.split(":")
         check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got ${cid}" }
         return channel(parts[0], parts[1])
@@ -295,11 +293,11 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     fun channel(
             channelType: String,
             channelId: String
-    ): io.getstream.chat.android.livedata.ChannelRepo {
+    ): io.getstream.chat.android.livedata.ChannelController {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMap.containsKey(cid)) {
             val channelRepo =
-                    io.getstream.chat.android.livedata.ChannelRepo(
+                    io.getstream.chat.android.livedata.ChannelController(
                             channelType,
                             channelId,
                             client,
@@ -343,7 +341,7 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
         return _initialized.value ?: false
     }
 
-    fun getActiveQueries(): List<QueryChannelsRepo> {
+    fun getActiveQueries(): List<QueryChannelsController> {
         return activeQueryMap.values.toList()
     }
 
@@ -356,10 +354,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
     fun queryChannels(
             filter: FilterObject,
             sort: QuerySort? = null
-    ): QueryChannelsRepo {
+    ): QueryChannelsController {
         // mark this query as active
         val queryChannelsEntity = QueryChannelsEntity(filter, sort)
-        val queryRepo = QueryChannelsRepo(queryChannelsEntity, client, this)
+        val queryRepo = QueryChannelsController(queryChannelsEntity, client, this)
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
     }
@@ -641,10 +639,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
             return this
         }
 
-        fun build(): ChatRepo {
-            val chatRepo = ChatRepo(appContext, client, user, offlineEnabled, userPresence, database)
+        fun build(): ChatDomain {
+            val chatRepo = ChatDomain(appContext, client, user, offlineEnabled, userPresence, database)
 
-            ChatRepo.instance = chatRepo
+            ChatDomain.instance = chatRepo
 
             return chatRepo
         }
@@ -652,10 +650,10 @@ class ChatRepo private constructor(var context: Context, var client: ChatClient,
 
     companion object {
 
-        private lateinit var instance: ChatRepo
+        private lateinit var instance: ChatDomain
 
         @JvmStatic
-        fun instance(): ChatRepo {
+        fun instance(): ChatDomain {
             return instance
         }
 

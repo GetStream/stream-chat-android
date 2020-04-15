@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelRepoInsertTest: BaseTest() {
+class ChannelControllerInsertTest: BaseTest() {
 
     @Before
     fun setup() {
@@ -36,7 +36,7 @@ class ChannelRepoInsertTest: BaseTest() {
 
     @Test
     fun sendMessageUseCase() = runBlocking(Dispatchers.IO) {
-        val call = repo.useCases.sendMessage(data.message1)
+        val call = chatDomain.useCases.sendMessage(data.message1)
         val result = call.execute()
     }
 
@@ -46,8 +46,8 @@ class ChannelRepoInsertTest: BaseTest() {
     fun reactionStorage() = runBlocking(Dispatchers.IO) {
         val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.repos.reactions.insert(reactionEntity)
-        val results = repo.retryReactions()
+        chatDomain.repos.reactions.insert(reactionEntity)
+        val results = chatDomain.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
 
@@ -58,35 +58,35 @@ class ChannelRepoInsertTest: BaseTest() {
 
         // TODO: Mock socket and mock client
         // ensure the message exists
-        repo._createChannel(data.channel1)
-        channelRepo.sendMessage(data.message1)
-        repo.setOffline()
-        repo.repos.channels.insert(data.channel1)
-        channelRepo.upsertMessage(data.message1)
+        chatDomain.createChannel(data.channel1)
+        channelController.sendMessage(data.message1)
+        chatDomain.setOffline()
+        chatDomain.repos.channels.insert(data.channel1)
+        channelController.upsertMessage(data.message1)
         // send the reaction while offline
-        channelRepo.sendReaction(data.reaction1)
-        var reactionEntity = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
+        channelController.sendReaction(data.reaction1)
+        var reactionEntity = chatDomain.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
-        repo.setOnline()
-        val reactionEntities = repo.retryReactions()
+        chatDomain.setOnline()
+        val reactionEntities = chatDomain.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
-        reactionEntity = repo.repos.reactions.select(data.message1.id, data.user1.id, "like")
+        reactionEntity = chatDomain.repos.reactions.select(data.message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
 
     }
 
     @Test
     fun deleteReaction() = runBlocking(Dispatchers.IO) {
-        repo.setOffline()
+        chatDomain.setOffline()
 
-        channelRepo.sendReaction(data.reaction1)
-        channelRepo.deleteReaction(data.reaction1)
+        channelController.sendReaction(data.reaction1)
+        channelController.deleteReaction(data.reaction1)
 
-        val reaction = repo.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
+        val reaction = chatDomain.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction!!.deletedAt).isNotNull()
 
-        val reactions = repo.retryReactions()
+        val reactions = chatDomain.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
     }
 
@@ -94,14 +94,14 @@ class ChannelRepoInsertTest: BaseTest() {
     @Ignore("Needs a mock, message id already exists")
     fun sendMessage() = runBlocking(Dispatchers.IO){
         // send the message while offline
-        repo._createChannel(data.channel1)
-        repo.setOffline()
-        channelRepo.sendMessage(data.message1)
+        chatDomain.createChannel(data.channel1)
+        chatDomain.setOffline()
+        channelController.sendMessage(data.message1)
         // get the message and channel state both live and offline versions
-        var roomChannel = repo.repos.channels.select(data.message1.channel.cid)
-        var liveChannel = channelRepo.channel.getOrAwaitValue()
-        var roomMessages = repo.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
-        var liveMessages = channelRepo.messages.getOrAwaitValue()
+        var roomChannel = chatDomain.repos.channels.select(data.message1.channel.cid)
+        var liveChannel = channelController.channel.getOrAwaitValue()
+        var roomMessages = chatDomain.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
+        var liveMessages = channelController.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
@@ -112,16 +112,16 @@ class ChannelRepoInsertTest: BaseTest() {
         Truth.assertThat(liveChannel.lastMessageAt).isEqualTo(data.message1.createdAt)
         Truth.assertThat(roomChannel!!.lastMessageAt).isEqualTo(data.message1.createdAt)
 
-        var messageEntities = repo.retryMessages()
+        var messageEntities = chatDomain.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         // now we go online and retry, after the retry all state should be updated
-        repo.setOnline()
-        messageEntities = repo.retryMessages()
+        chatDomain.setOnline()
+        messageEntities = chatDomain.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
-        roomMessages = repo.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
-        liveMessages = channelRepo.messages.getOrAwaitValue()
+        roomMessages = chatDomain.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })
+        liveMessages = channelController.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
 
@@ -130,12 +130,12 @@ class ChannelRepoInsertTest: BaseTest() {
     @Test
     fun clean() {
         // clean should remove old typing indicators
-        channelRepo.setTyping(data.user1.id, data.user1TypingStartedOld)
-        channelRepo.setTyping(data.user2.id, data.user2TypingStarted)
+        channelController.setTyping(data.user1.id, data.user1TypingStartedOld)
+        channelController.setTyping(data.user2.id, data.user2TypingStarted)
 
-        Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(2)
-        channelRepo.clean()
-        Truth.assertThat(channelRepo.typing.getOrAwaitValue().size).isEqualTo(1)
+        Truth.assertThat(channelController.typing.getOrAwaitValue().size).isEqualTo(2)
+        channelController.clean()
+        Truth.assertThat(channelController.typing.getOrAwaitValue().size).isEqualTo(1)
     }
 
     @Test
@@ -144,15 +144,15 @@ class ChannelRepoInsertTest: BaseTest() {
         val sort = null
         val query = QueryChannelsEntity(filter, sort)
         query.channelCIDs = sortedSetOf("messaging:123", "messaging:234")
-        repo.repos.queryChannels.insert(query)
+        chatDomain.repos.queryChannels.insert(query)
     }
 
     @Test
     fun insertReaction() = runBlocking(Dispatchers.IO) {
         // check DAO layer and converters
         val reactionEntity = ReactionEntity(data.reaction1)
-        repo.repos.reactions.insert(reactionEntity)
-        val reactionEntity2 = repo.repos.reactions.select(reactionEntity.messageId, reactionEntity.userId, reactionEntity.type)
+        chatDomain.repos.reactions.insert(reactionEntity)
+        val reactionEntity2 = chatDomain.repos.reactions.select(reactionEntity.messageId, reactionEntity.userId, reactionEntity.type)
         Truth.assertThat(reactionEntity2).isEqualTo(reactionEntity)
         Truth.assertThat(reactionEntity2!!.extraData).isNotNull()
         // verify conversion logic is ok
@@ -165,18 +165,19 @@ class ChannelRepoInsertTest: BaseTest() {
     @Test
     fun typing() = runBlocking(Dispatchers.IO){
         // second typing keystroke after each other should not resend the typing event
-        Truth.assertThat(channelRepo.keystroke()).isTrue()
-        Truth.assertThat(channelRepo.keystroke()).isFalse()
+        Truth.assertThat(chatDomain.useCases.keystroke(data.channel1.cid).execute().data()).isTrue()
+        Truth.assertThat(chatDomain.useCases.keystroke(data.channel1.cid).execute().data()).isFalse()
+
         sleep(3001)
-        Truth.assertThat(channelRepo.keystroke()).isTrue()
+        Truth.assertThat(chatDomain.useCases.keystroke(data.channel1.cid).execute().data()).isTrue()
     }
 
     @Test
     fun markRead() = runBlocking(Dispatchers.IO){
         // ensure there is at least one message
-        channelRepo.upsertMessage(data.message1)
-        Truth.assertThat(channelRepo.markRead()).isTrue()
-        Truth.assertThat(channelRepo.markRead()).isFalse()
+        channelController.upsertMessage(data.message1)
+        Truth.assertThat(channelController.markRead()).isTrue()
+        Truth.assertThat(channelController.markRead()).isFalse()
 
     }
 

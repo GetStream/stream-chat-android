@@ -15,10 +15,7 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -41,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap
  * - channelRepo.sendReaction stores the reaction locally and sends it when network is available
  *
  */
-class ChannelRepo(var channelType: String, var channelId: String, var client: ChatClient, var repo: io.getstream.chat.android.livedata.ChatRepo) {
+class ChannelController(var channelType: String, var channelId: String, var client: ChatClient, var domain: io.getstream.chat.android.livedata.ChatDomain) {
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
     val endOfNewerMessages: LiveData<Boolean> = _endOfNewerMessages
@@ -56,7 +53,8 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     val channelController = client.channel(channelType, channelId)
     val cid = "%s:%s".format(channelType, channelId)
 
-
+    val job = SupervisorJob()
+    val scope = CoroutineScope(Dispatchers.IO + domain.job + job)
 
     private val logger = ChatLogger.get("ChannelRepo")
 
@@ -93,7 +91,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     /**
      * unread count for this channel
      */
-    val unreadCount: LiveData<Int> = ChannelUnreadCountLiveData(repo.currentUser, read, messages)
+    val unreadCount: LiveData<Int> = ChannelUnreadCountLiveData(domain.currentUser, read, messages)
 
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
     val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
@@ -122,23 +120,18 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         return Transformations.map(threadMessageMap) { it.values.sortedBy { m -> m.createdAt } }
     }
 
-    fun getThread(threadId: String): ThreadRepo {
+    fun getThread(threadId: String): ThreadController {
         if (!activeThreadMap.containsKey(threadId)) {
-            val channelRepo = ThreadRepo(threadId, this)
+            val channelRepo = ThreadController(threadId, this)
             activeThreadMap.put(threadId, channelRepo)
         }
         return activeThreadMap.getValue(threadId)
     }
 
-    fun loadOlderMessages(limit: Int = 30) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _loadOlderMessages(limit)
-        }
-    }
 
 
     fun getConfig(): Config {
-        return repo.getChannelConfig(channelType)
+        return domain.getChannelConfig(channelType)
     }
 
     fun keystroke(): Result<Boolean> {
@@ -147,7 +140,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (lastStartTypingEvent == null || lastKeystrokeAt!!.time - lastStartTypingEvent!!.time > 3000) {
             lastStartTypingEvent = lastKeystrokeAt
             val result = client.sendEvent(EventType.TYPING_START, channelType, channelId).execute()
-            return Result(result.isSuccess, result.error())
+            return if (result.isSuccess) {
+                Result(result.isSuccess, null)
+            } else {
+                Result(result.isSuccess, null)
+            }
         }
         return return Result(false, null)
     }
@@ -175,7 +172,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead().apply { user = repo.currentUser; lastRead = last.createdAt }
+                val userRead = ChannelUserRead().apply { user = domain.currentUser; lastRead = last.createdAt }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return true
@@ -192,7 +189,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     /** stores the mapping from cid to channelRepository */
-    var activeThreadMap: ConcurrentHashMap<String, ThreadRepo> = ConcurrentHashMap()
+    var activeThreadMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
 
     fun sortedMessages(): List<Message> {
@@ -233,7 +230,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         if (response.isSuccess) {
             upsertMessages(response.data())
         } else {
-            repo.addError(response.error())
+            domain.addError(response.error())
         }
         return response
 
@@ -242,7 +239,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
 
     fun watch(limit: Int = 30) {
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch(Dispatchers.IO) {
             _watch(limit)
         }
     }
@@ -280,7 +277,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
 
-    suspend fun _loadOlderMessages(limit: Int = 30) {
+    suspend fun loadOlderMessages(limit: Int = 30) {
         if (_loadingOlderMessages.value == true) {
             logger.logI("Another request to load older messages is in progress. Ignoring this request.")
             return
@@ -307,7 +304,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         runChannelQueryOffline(pagination)
 
         // if we are online we we run the actual API call
-        if (repo.isOnline()) {
+        if (domain.isOnline()) {
 
             runChannelQueryOnline(pagination)
         } else {
@@ -317,10 +314,10 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest) {
-        val channel = repo.selectAndEnrichChannel(cid, pagination)
+        val channel = domain.selectAndEnrichChannel(cid, pagination)
 
         channel?.let {
-            it.config = repo.getChannelConfig(it.type)
+            it.config = domain.getChannelConfig(it.type)
             _loading.postValue(false)
             if (it.messages.isNotEmpty()) {
                 upsertMessages(it.messages)
@@ -338,7 +335,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest) {
-        val request = pagination.toQueryChannelRequest(repo.userPresence)
+        val request = pagination.toQueryChannelRequest(domain.userPresence)
         val response = channelController.watch(request).execute()
 
         if (response.isSuccess) {
@@ -353,13 +350,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             }
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
-            repo.repos.configs.insert(listOf(configEntities))
+            domain.repos.configs.insert(listOf(configEntities))
             updateLiveDataFromChannel(channelResponse)
-            repo.storeStateForChannel(channelResponse)
+            domain.storeStateForChannel(channelResponse)
 
         } else {
             recoveryNeeded = true
-            repo.addError(response.error())
+            domain.addError(response.error())
         }
     }
 
@@ -373,14 +370,14 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         var result : Result<Message>
         // set defaults for id, cid and created at
         if (message.id.isEmpty()) {
-            message.id = repo.generateMessageId()
+            message.id = domain.generateMessageId()
         }
         if (message.cid.isEmpty()) {
             message.cid = cid
         }
         val channel = checkNotNull(_channel.value) { "Channel needs to be set before sending a message" }
         message.channel = channel
-        message.user = repo.currentUser
+        message.user = domain.currentUser
         message.createdAt = message.createdAt ?: Date()
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -391,26 +388,26 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         setLastMessage(message)
 
         // Update Room State
-        repo.repos.messages.insertMessage(message)
+        domain.repos.messages.insertMessage(message)
 
-        val channelStateEntity = repo.repos.channels.select(message.channel.cid)
+        val channelStateEntity = domain.repos.channels.select(message.channel.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.addMessage(messageEntity)
-            repo.repos.channels.insert(it)
+            domain.repos.channels.insert(it)
         }
 
-        if (repo.isOnline()) {
+        if (domain.isOnline()) {
             val runnable = {
                 val result = channelController.sendMessage(message)
                 result as Call<Any>
             }
-            val result = repo.runAndRetry(runnable)
+            val result = domain.runAndRetry(runnable)
             if (result.isSuccess) {
                 // set sendMessageCompletedAt so we know when to edit vs call sendMessage
                 messageEntity.syncStatus = SyncStatus.SYNCED
                 messageEntity.sendMessageCompletedAt = Date()
-                repo.repos.messages.insert(messageEntity)
+                domain.repos.messages.insert(messageEntity)
             }
             return Result(result.data() as Message?, result.error())
         }
@@ -433,11 +430,11 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
      * If the request fails we retry according to the retry policy set on the repo
      */
     suspend fun sendReaction(reaction: Reaction): Result<Reaction> {
-        reaction.user = repo.currentUser
+        reaction.user = domain.currentUser
         // insert the message into local storage
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.repos.reactions.insert(reactionEntity)
+        domain.repos.reactions.insert(reactionEntity)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
@@ -446,17 +443,17 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             upsertMessage(it)
         }
         // update the message in the local storage
-        val messageEntity = repo.repos.messages.selectMessageEntity(reaction.messageId)
+        val messageEntity = domain.repos.messages.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
-            it.addReaction(reaction, repo.currentUser.id == reaction.user!!.id)
-            repo.repos.messages.insert(it)
+            it.addReaction(reaction, domain.currentUser.id == reaction.user!!.id)
+            domain.repos.messages.insert(it)
         }
-        val online = repo.isOnline()
+        val online = domain.isOnline()
         if (online) {
             val runnable = {
                 client.sendReaction(reaction) as Call<Any>
             }
-            val result = repo.runAndRetry(runnable)
+            val result = domain.runAndRetry(runnable)
             if (result.isSuccess) {
                 return Result(result.data() as Reaction, result.error())
             } else {
@@ -468,13 +465,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
 
 
     suspend fun deleteReaction(reaction: Reaction): Result<Reaction> {
-        reaction.user = repo.currentUser
+        reaction.user = domain.currentUser
         reaction.syncStatus = SyncStatus.SYNC_NEEDED
 
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.deletedAt = Date()
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        repo.repos.reactions.insert(reactionEntity)
+        domain.repos.reactions.insert(reactionEntity)
 
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
@@ -484,17 +481,17 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
             upsertMessage(it)
         }
 
-        val messageEntity = repo.repos.messages.selectMessageEntity(reaction.messageId)
+        val messageEntity = domain.repos.messages.selectMessageEntity(reaction.messageId)
         messageEntity?.let {
-            it.removeReaction(reaction, repo.currentUser.id == reaction.user!!.id)
-            repo.repos.messages.insert(it)
+            it.removeReaction(reaction, domain.currentUser.id == reaction.user!!.id)
+            domain.repos.messages.insert(it)
         }
-        val online = repo.isOnline()
+        val online = domain.isOnline()
         if (online) {
             val runnable = {
                 client.deleteReaction(reaction.messageId, reaction.type) as Call<Any>
             }
-            val result = repo.runAndRetry(runnable)
+            val result = domain.runAndRetry(runnable)
             if (result.isSuccess) {
                 return Result(result.data() as Reaction, null)
             } else {
@@ -669,7 +666,7 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
     fun updateReads(
             reads: List<ChannelUserRead>
     ) {
-        val currentUser = repo.currentUser
+        val currentUser = domain.currentUser
         val copy = _reads.value ?: mutableMapOf()
         for (r in reads) {
             copy[r.getUserId()] = r
@@ -732,13 +729,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         upsertMessage(message)
 
         // Update Room State
-        repo.repos.messages.insertMessage(message)
+        domain.repos.messages.insertMessage(message)
 
-        if (repo.isOnline()) {
+        if (domain.isOnline()) {
             val runnable = {
                 client.updateMessage(message) as Call<Any>
             }
-            val result = repo.runAndRetry(runnable)
+            val result = domain.runAndRetry(runnable)
             return Result(result.data() as Message, result.error())
         }
         return Result(message, null)
@@ -753,13 +750,13 @@ class ChannelRepo(var channelType: String, var channelId: String, var client: Ch
         upsertMessage(message)
 
         // Update Room State
-        repo.repos.messages.insertMessage(message)
+        domain.repos.messages.insertMessage(message)
 
-        if (repo.isOnline()) {
+        if (domain.isOnline()) {
             val runnable = {
                 client.deleteMessage(message.id) as Call<Any>
             }
-            val result = repo.runAndRetry(runnable)
+            val result = domain.runAndRetry(runnable)
             return Result(result.data() as Message, result.error())
         }
         return Result(message, null)

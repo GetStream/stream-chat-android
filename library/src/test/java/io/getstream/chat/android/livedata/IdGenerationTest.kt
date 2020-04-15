@@ -1,22 +1,12 @@
 package io.getstream.chat.android.livedata
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
-import io.getstream.chat.android.livedata.utils.waitForSetUser
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -37,7 +27,7 @@ class IdGenerationTest: BaseTest() {
     }
     @Test
     fun messageIdGeneration() {
-        val messageId = repo.generateMessageId()
+        val messageId = chatDomain.generateMessageId()
         Truth.assertThat(messageId).isNotNull()
         Truth.assertThat(messageId).isNotEmpty()
     }

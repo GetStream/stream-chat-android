@@ -1,22 +1,12 @@
 package io.getstream.chat.android.livedata
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -25,7 +15,7 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatRepoEventTest: BaseTest() {
+class ChatDomainEventTest: BaseTest() {
 
     @Before
     fun setup() {
@@ -43,37 +33,37 @@ class ChatRepoEventTest: BaseTest() {
     @Test
     fun newMessageEvent() {
         // new messages should be stored in room
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.newMessageEvent)}
         val message = runBlocking(Dispatchers.IO) {
-            repo.repos.messages.selectMessageEntity(data.newMessageEvent.message.id)
+            chatDomain.repos.messages.selectMessageEntity(data.newMessageEvent.message.id)
         }
         Truth.assertThat(message).isNotNull()
     }
 
     @Test
     fun initializeAndConnect() {
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.connectedEvent)}
-        Truth.assertThat(repo.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(repo.online.getOrAwaitValue()).isTrue()
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.disconnectedEvent)}
-        Truth.assertThat(repo.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(repo.online.getOrAwaitValue()).isFalse()
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.connectedEvent)}
+        Truth.assertThat(chatDomain.initialized.getOrAwaitValue()).isTrue()
+        Truth.assertThat(chatDomain.online.getOrAwaitValue()).isTrue()
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.disconnectedEvent)}
+        Truth.assertThat(chatDomain.initialized.getOrAwaitValue()).isTrue()
+        Truth.assertThat(chatDomain.online.getOrAwaitValue()).isFalse()
     }
 
     @Test
     fun unreadCounts() {
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.connectedEvent2)}
-        Truth.assertThat(repo.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)
-        Truth.assertThat(repo.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.connectedEvent2)}
+        Truth.assertThat(chatDomain.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)
+        Truth.assertThat(chatDomain.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
     }
 
     @Test
     fun messageRead() {
-        runBlocking(Dispatchers.IO) {repo.repos.channels.insert(data.channel1)}
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.readEvent)}
+        runBlocking(Dispatchers.IO) {chatDomain.repos.channels.insert(data.channel1)}
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.readEvent)}
         // check channel level read info
         val cid = data.readEvent.cid!!
-        val channel = runBlocking(Dispatchers.IO) { repo.repos.channels.select(cid) }
+        val channel = runBlocking(Dispatchers.IO) { chatDomain.repos.channels.select(cid) }
         Truth.assertThat(channel!!.reads.size).isEqualTo(1)
         val read = channel!!.reads.values.first()
         Truth.assertThat(read.userId).isEqualTo(data.readEvent.user!!.id)
@@ -83,14 +73,14 @@ class ChatRepoEventTest: BaseTest() {
     fun reactionEvent() {
         // add the message
         val messageId = data.newMessageEvent.message.id
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.newMessageEvent)}
         // add the reaction
         val secondId = data.reactionEvent.reaction!!.messageId
         Truth.assertThat(secondId).isEqualTo(messageId)
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.reactionEvent)}
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent)}
         // fetch the message
         var message = runBlocking(Dispatchers.IO) {
-            repo.repos.messages.selectMessageEntity(messageId)!!
+            chatDomain.repos.messages.selectMessageEntity(messageId)!!
         }
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(1)
@@ -98,9 +88,9 @@ class ChatRepoEventTest: BaseTest() {
         Truth.assertThat(message.ownReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
 
         // add a reaction from a different user, it should not go into own reaction
-        runBlocking(Dispatchers.IO) {repo.eventHandler.handleEvent(data.reactionEvent2)}
+        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent2)}
         message = runBlocking(Dispatchers.IO) {
-            repo.repos.messages.selectMessageEntity(messageId)!!
+            chatDomain.repos.messages.selectMessageEntity(messageId)!!
         }
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
@@ -109,21 +99,21 @@ class ChatRepoEventTest: BaseTest() {
 
     @Test
     fun channelUpdatedEvent() = runBlocking(Dispatchers.IO) {
-        repo.eventHandler.handleEvent(data.channelUpdatedEvent)
+        chatDomain.eventHandler.handleEvent(data.channelUpdatedEvent)
         // check channel level read info
         val cid = data.channelUpdatedEvent.cid!!
-        val channel = repo.repos.channels.select(cid)!!
+        val channel = chatDomain.repos.channels.select(cid)!!
         Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
     }
 
     @Test
     fun memberEvent() = runBlocking(Dispatchers.IO) {
         // add the member to the channel
-        repo.repos.channels.insert(data.channel1)
-        repo.eventHandler.handleEvent(data.memberAddedToChannelEvent)
+        chatDomain.repos.channels.insert(data.channel1)
+        chatDomain.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members
-        val channel = repo.repos.channels.select(cid)!!
+        val channel = chatDomain.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
     }
 

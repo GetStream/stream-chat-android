@@ -20,7 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelRepoReadPaginateTest: BaseTest() {
+class ChannelControllerReadPaginateTest: BaseTest() {
 
     @Before
     fun setup() {
@@ -35,9 +35,33 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     }
 
     @Test
+    fun watchChannelUseCase() = runBlocking(Dispatchers.IO) {
+        // use case style syntax
+        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        var messages = channelState.messages.getOrAwaitValue()
+        var reads = channelState.reads.getOrAwaitValue()
+        Truth.assertThat(messages.size).isGreaterThan(0)
+        var message = chatDomain.useCases.sendMessage(data.message1).execute().data()
+
+        // alternative syntax (channel level use cases)
+//        var channelController = chatController.channel(data.channel1.cid)
+//        channelControler.useCases.watchChannel(10)
+//
+//
+
+//        // direct access syntax
+//        channelState = chatController.channel(data.channel1.cid)
+//        channelState.watch(10)
+//        messages = channelState.messages.getOrAwaitValue()
+//        reads = channelState.reads.getOrAwaitValue()
+//        Truth.assertThat(messages.size).isGreaterThan(0)
+//        message = channelState.sendMessage(data.message1).execute().data()
+    }
+
+    @Test
     @Ignore
     fun loadNewerMessages() = runBlocking(Dispatchers.IO) {
-        val channelRepo = repo.channel("messaging", "testabc")
+        val channelRepo = chatDomain.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
         channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
         // verify we sort correctly
@@ -65,20 +89,20 @@ class ChannelRepoReadPaginateTest: BaseTest() {
      */
     @Test
     fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
-        repo.setOffline()
+        chatDomain.setOffline()
         // add a message to local storage
-        repo.repos.users.insert(data.user1)
-        repo.repos.channels.insert(data.channel1)
-        channelRepo.sendMessage(data.message1)
+        chatDomain.repos.users.insert(data.user1)
+        chatDomain.repos.channels.insert(data.channel1)
+        channelController.sendMessage(data.message1)
         // remove the livedata
-        channelRepo = ChannelRepo(data.channel1.type, data.channel1.id, repo.client, repo)
+        channelController = ChannelController(data.channel1.type, data.channel1.id, chatDomain.client, chatDomain)
 
         // run watch while we're offline
-        channelRepo._watch()
+        channelController._watch()
 
         // the message should still show up
-        val messages = channelRepo.messages.getOrAwaitValue()
-        val channel = channelRepo.channel.getOrAwaitValue()
+        val messages = channelController.messages.getOrAwaitValue()
+        val channel = channelController.channel.getOrAwaitValue()
 
         Truth.assertThat(messages).isNotEmpty()
         Truth.assertThat(channel).isNotNull()
@@ -90,15 +114,15 @@ class ChannelRepoReadPaginateTest: BaseTest() {
      */
     @Test
     fun watchSetsMessagesAndChannelOnline() = runBlocking(Dispatchers.IO) {
-        repo.setOnline()
+        chatDomain.setOnline()
         // setup an online message
         val message = Message()
         message.syncStatus = SyncStatus.SYNC_NEEDED
         // write a message
-        channelRepo.sendMessage(message)
+        channelController.sendMessage(message)
 
-        val messages = channelRepo.messages.getOrAwaitValue()
-        val channel = channelRepo.channel.getOrAwaitValue()
+        val messages = channelController.messages.getOrAwaitValue()
+        val channel = channelController.channel.getOrAwaitValue()
 
         Truth.assertThat(messages.size).isGreaterThan(0)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
@@ -109,16 +133,16 @@ class ChannelRepoReadPaginateTest: BaseTest() {
     @Test
     fun recovery() = runBlocking(Dispatchers.IO) {
         // running recover should trigger channels to show up for active queries and channels
-        repo.connectionRecovered(true)
+        chatDomain.connectionRecovered(true)
 
         // verify channel data is loaded
-        val channelRepos = queryRepo.channels.getOrAwaitValue()
+        val channelRepos = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channelRepos.size).isGreaterThan(0)
 
         // verify we have messages as well
         val channelId = channelRepos.first().cid
 
-        val messages = repo.channel(channelId).messages.getOrAwaitValue()
+        val messages = chatDomain.channel(channelId).messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 
@@ -126,7 +150,7 @@ class ChannelRepoReadPaginateTest: BaseTest() {
 
     @Test
     fun loadOlderMessages() = runBlocking(Dispatchers.IO) {
-        val channelRepo = repo.channel("messaging", "testabc")
+        val channelRepo = chatDomain.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
         channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
         // verify we sort correctly
