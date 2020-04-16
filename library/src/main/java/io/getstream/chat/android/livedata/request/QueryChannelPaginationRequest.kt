@@ -1,11 +1,11 @@
 package io.getstream.chat.android.livedata.request
 
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 
 
-class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRequest() {
+class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
 
     var messageFilterDirection: Pagination? = null
     var messageFilterValue: String = ""
@@ -36,8 +36,8 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRe
         }
     }
 
-    fun toQueryChannelRequest(userPresence: Boolean): ChannelWatchRequest {
-        var request = ChannelWatchRequest().withMessages(messageLimit)
+    fun toQueryChannelRequest(userPresence: Boolean): QueryChannelRequest {
+        var request = QueryChannelRequest().withMessages(messageLimit).withWatch()
         if (userPresence) {
             request = request.withPresence()
         }
@@ -48,11 +48,4 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : ChannelQueryRe
     }
 
 
-    fun isFilteringNewerMessages(): Boolean {
-        return (messageFilterDirection != null && (messageFilterDirection == Pagination.GREATER_THAN_OR_EQUAL || messageFilterDirection == Pagination.GREATER_THAN))
-    }
-
-    fun isFilteringOlderMessages(): Boolean {
-        return (messageFilterDirection != null && (messageFilterDirection == Pagination.LESS_THAN || messageFilterDirection == Pagination.LESS_THAN_OR_EQUAL))
-    }
 }

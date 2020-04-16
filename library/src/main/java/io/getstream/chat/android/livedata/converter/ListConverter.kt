@@ -12,7 +12,7 @@ import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.gson
 import java.util.*
 
-class Converter {
+class ListConverter {
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
         if (data == null) {

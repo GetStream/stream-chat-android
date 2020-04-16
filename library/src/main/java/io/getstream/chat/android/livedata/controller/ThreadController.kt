@@ -1,9 +1,10 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.livedata.controller.ChannelController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch

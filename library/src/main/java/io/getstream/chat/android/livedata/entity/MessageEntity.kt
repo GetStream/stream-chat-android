@@ -102,7 +102,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     }
 
     /** create a messageEntity from a message object */
-    constructor(m: Message) : this(m.id, m.cid, m.getUserId()) {
+    constructor(m: Message) : this(m.id, m.cid, m.id) {
         text = m.text
         attachments = m.attachments
         syncStatus = m.syncStatus
@@ -123,7 +123,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
         ownReactions = (m.ownReactions.map { ReactionEntity(it) }).toMutableList()
-        mentionedUsersId = (m.mentionedUsers.map { it.getUserId() }).toMutableList()
+        mentionedUsersId = (m.mentionedUsers.map { it.id }).toMutableList()
 
     }
 

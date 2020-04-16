@@ -19,6 +19,9 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.controller.users
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -101,7 +104,8 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         initClean()
     }
 
-    private fun disconnect() {
+    fun disconnect() {
+        job.cancelChildren()
         stopListening()
         stopClean()
         client.disconnect()
@@ -293,23 +297,23 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     fun channel(
             channelType: String,
             channelId: String
-    ): io.getstream.chat.android.livedata.ChannelController {
+    ): ChannelController {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMap.containsKey(cid)) {
             val channelRepo =
-                    io.getstream.chat.android.livedata.ChannelController(
-                            channelType,
-                            channelId,
-                            client,
-                            this
-                    )
+                ChannelController(
+                    channelType,
+                    channelId,
+                    client,
+                    this
+                )
             activeChannelMap.put(cid, channelRepo)
         }
         return activeChannelMap.getValue(cid)
     }
 
     fun generateMessageId(): String {
-        return currentUser.getUserId() + "-" + UUID.randomUUID().toString()
+        return currentUser.id + "-" + UUID.randomUUID().toString()
     }
 
     fun setOffline() {
@@ -357,7 +361,12 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     ): QueryChannelsController {
         // mark this query as active
         val queryChannelsEntity = QueryChannelsEntity(filter, sort)
-        val queryRepo = QueryChannelsController(queryChannelsEntity, client, this)
+        val queryRepo =
+            QueryChannelsController(
+                queryChannelsEntity,
+                client,
+                this
+            )
         activeQueryMap[queryChannelsEntity] = queryRepo
         return queryRepo
     }

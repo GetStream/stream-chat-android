@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatDomainEventTest: BaseTest() {
+class ChatDomainEventDomainTest: BaseDomainTest() {
 
     @Before
     fun setup() {

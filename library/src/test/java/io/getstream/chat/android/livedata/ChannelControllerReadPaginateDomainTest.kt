@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerReadPaginateTest: BaseTest() {
+class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
 
     @Before
     fun setup() {
@@ -30,8 +31,8 @@ class ChannelControllerReadPaginateTest: BaseTest() {
 
     @After
     fun tearDown() {
+        chatDomain.disconnect()
         db.close()
-        client.disconnect()
     }
 
     @Test
@@ -41,7 +42,7 @@ class ChannelControllerReadPaginateTest: BaseTest() {
         var messages = channelState.messages.getOrAwaitValue()
         var reads = channelState.reads.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
-        var message = chatDomain.useCases.sendMessage(data.message1).execute().data()
+        var message = chatDomain.useCases.sendMessage(data.message1).execute()
 
         // alternative syntax (channel level use cases)
 //        var channelController = chatController.channel(data.channel1.cid)
@@ -95,7 +96,13 @@ class ChannelControllerReadPaginateTest: BaseTest() {
         chatDomain.repos.channels.insert(data.channel1)
         channelController.sendMessage(data.message1)
         // remove the livedata
-        channelController = ChannelController(data.channel1.type, data.channel1.id, chatDomain.client, chatDomain)
+        channelController =
+            ChannelController(
+                data.channel1.type,
+                data.channel1.id,
+                chatDomain.client,
+                chatDomain
+            )
 
         // run watch while we're offline
         channelController._watch()

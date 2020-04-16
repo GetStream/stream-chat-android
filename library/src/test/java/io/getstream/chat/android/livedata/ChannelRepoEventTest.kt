@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChatChannelControllerEventTest: BaseTest() {
+class ChatChannelControllerEventDomainTest: BaseDomainTest() {
 
     @Before
     fun setup() {

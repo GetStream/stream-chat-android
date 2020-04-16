@@ -70,7 +70,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
             reads[r.getUserId()] = ChannelUserReadEntity(r)
         }
         lastMessageAt = c.lastMessageAt
-        createdByUserId = c.createdBy.getUserId()
+        createdByUserId = c.createdBy.id
     }
 
     /** convert a channelEntity into a channel object */

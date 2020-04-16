@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest

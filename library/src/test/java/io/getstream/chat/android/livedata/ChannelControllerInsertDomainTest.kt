@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerInsertTest: BaseTest() {
+class ChannelControllerInsertDomainTest: BaseDomainTest() {
 
     @Before
     fun setup() {

@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
@@ -14,7 +13,7 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ChannelUnreadCountTest: BaseTest() {
+class ChannelUnreadCountDomainTest: BaseDomainTest() {
 
 
     @Before

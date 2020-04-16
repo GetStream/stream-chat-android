@@ -39,9 +39,8 @@ data class MemberEntity(var userId: String) {
 
     /** converts a member entity into a member */
     fun toMember(userMap: Map<String, User>): Member {
-        val r = Member()
-        r.user = userMap[userId] ?: error("userMap is missing the user for this member")
-        r.role = role
+        val user = userMap[userId] ?: error("userMap is missing the user for this member")
+        val r = Member(user, role)
         r.createdAt = createdAt
         r.updatedAt = updatedAt
         r.isInvited = isInvited

@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
-import io.getstream.chat.android.livedata.ChannelController
+import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.client.utils.Result
 

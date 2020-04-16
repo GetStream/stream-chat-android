@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +11,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -38,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap
  * - channelRepo.sendReaction stores the reaction locally and sends it when network is available
  *
  */
-class ChannelController(var channelType: String, var channelId: String, var client: ChatClient, var domain: io.getstream.chat.android.livedata.ChatDomain) {
+class ChannelController(var channelType: String, var channelId: String, var client: ChatClient, var domain: ChatDomain) {
 
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
     val endOfNewerMessages: LiveData<Boolean> = _endOfNewerMessages
@@ -91,7 +93,12 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     /**
      * unread count for this channel
      */
-    val unreadCount: LiveData<Int> = ChannelUnreadCountLiveData(domain.currentUser, read, messages)
+    val unreadCount: LiveData<Int> =
+        ChannelUnreadCountLiveData(
+            domain.currentUser,
+            read,
+            messages
+        )
 
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
     val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
@@ -122,7 +129,11 @@ class ChannelController(var channelType: String, var channelId: String, var clie
 
     fun getThread(threadId: String): ThreadController {
         if (!activeThreadMap.containsKey(threadId)) {
-            val channelRepo = ThreadController(threadId, this)
+            val channelRepo =
+                ThreadController(
+                    threadId,
+                    this
+                )
             activeThreadMap.put(threadId, channelRepo)
         }
         return activeThreadMap.getValue(threadId)
@@ -172,7 +183,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead().apply { user = domain.currentUser; lastRead = last.createdAt }
+                val userRead = ChannelUserRead(domain.currentUser).apply { lastRead = last.createdAt }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return true
@@ -408,10 +419,11 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 messageEntity.syncStatus = SyncStatus.SYNCED
                 messageEntity.sendMessageCompletedAt = Date()
                 domain.repos.messages.insert(messageEntity)
+                return Result(result.data() as Message?, null)
+            } else {
+                return Result(null, result.error())
             }
-            return Result(result.data() as Message?, result.error())
         }
-        // TODO: indicate that we are offline
         return Result(message, null)
     }
 
@@ -629,7 +641,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 setTyping(event.user?.id!!, event)
             }
             is MessageReadEvent, is NotificationMarkReadEvent -> {
-                val read = ChannelUserRead().apply { user = event.user!!; lastRead = event.createdAt!! }
+                val read = ChannelUserRead(event.user!!, event.createdAt!!)
                 updateRead(read)
             }
         }
@@ -773,8 +785,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         channel.messages = messages
         channel.members = members
         channel.config = getConfig()
-        // TODO: we should clearly store watchers, event system is weird though
-        channel.watchers = watchers.map { Watcher(it.id).apply { user = it } }
+        // our event system is a bit weird when it comes to watchers
+        channel.watchers = watchers.map { Watcher(it.id, it, null) }
         channel.read = reads
         return channel
     }
