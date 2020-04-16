@@ -7,6 +7,7 @@ import java.util.*
 
 class TestDataHelper {
 
+
     val apiKey = "b67pax5b2wdq"
 
     val connection1 = "test-connection"
@@ -15,9 +16,11 @@ class TestDataHelper {
     val user2 = User("test-user-2")
     val user1updated = User("broad-lake-3").apply { extraData= mutableMapOf("color" to "green") }
 
-    val watcher1 = Watcher("test").apply { user = user1 }
-    val member1 = Member().apply { user = user1; role="user" }
-    val member2 = Member().apply { user=user2; role="user"  }
+    val filter1 = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
+
+    val watcher1 = Watcher("test", user1, null)
+    val member1 = Member(user = user1, role="user")
+    val member2 = Member(user=user2, role="user")
 
     fun getOldDate(): Date {
         val cal = Calendar.getInstance()
@@ -26,6 +29,8 @@ class TestDataHelper {
         cal.set(Calendar.DAY_OF_MONTH, 1)
         return cal.getTime()
     }
+
+    val extraData1 = mutableMapOf("color" to "green", "score" to 1.1)
 
     val config1 = Config().apply { isTypingEvents=true; isReadEvents=true }
     val channel1 = Channel().apply {

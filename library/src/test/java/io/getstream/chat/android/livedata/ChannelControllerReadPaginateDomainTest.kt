@@ -4,8 +4,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.whenever
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -79,7 +79,7 @@ class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
 
         val channelMock = client.channel(data.channel1.type, data.channel1.id)
 
-        val args = any<ChannelWatchRequest>()
+        val args = any<WatchChannelRequest>()
         whenever(channelMock.watch(args)).thenReturn(ChatCallTestImpl(result))
 
         channelRepo.runChannelQueryOnline(request)

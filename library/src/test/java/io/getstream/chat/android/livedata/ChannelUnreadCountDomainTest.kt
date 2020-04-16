@@ -31,7 +31,7 @@ class ChannelUnreadCountDomainTest: BaseDomainTest() {
     @Test
     fun testUnreadCount() {
         val messages = listOf(data.message1, data.message2Older)
-        val read = ChannelUserRead().apply { lastRead=data.message2Older.createdAt; user=data.user1  }
+        val read = ChannelUserRead(data.user1, data.message2Older.createdAt)
         val messagesLd = MutableLiveData<List<Message>>(messages)
         val readLd = MutableLiveData<ChannelUserRead>(read)
         // use user2 since the messages are written by user 1 (own messages are ignored)

@@ -11,8 +11,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.models.RetrofitApi
-import io.getstream.chat.android.client.api.models.RetrofitCdnApi
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -68,17 +66,7 @@ open class BaseDomainTest {
             ChatNotificationConfig(getApplicationContext())
         )
 
-        var socket = Mockito.mock(ChatSocket::class.java)
-        var retrofitApi = Mockito.mock(RetrofitApi::class.java)
-        var retrofitCdnApi = Mockito.mock(RetrofitCdnApi::class.java)
-        var notificationsManager = Mockito.mock(ChatNotifications::class.java)
-        var api = ChatApiImpl(
-            config.apiKey,
-            retrofitApi,
-            retrofitCdnApi,
-            ChatParserImpl(),
-            UuidGeneratorImpl()
-        )
+
 
         val connectedEvent = ConnectedEvent().apply {
             me = data.user1
@@ -141,8 +129,8 @@ open class BaseDomainTest {
         channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
         channelController.updateChannel(data.channel1)
 
-        filter = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(data.user1.id)))
-        query = QueryChannelsEntity(filter, null)
+
+        query = QueryChannelsEntity(data.filter1, null)
 
         queryController = chatDomain.queryChannels(filter)
     }

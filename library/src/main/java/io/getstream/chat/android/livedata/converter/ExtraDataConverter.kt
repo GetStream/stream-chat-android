@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.gson
 class ExtraDataConverter {
     @TypeConverter
     fun stringToMap(data: String?): MutableMap<String, Any> {
-        if (data == null || data == "" || data == "null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
         val mapType = object :
@@ -20,7 +20,7 @@ class ExtraDataConverter {
     }
 
     @TypeConverter
-    fun mapToString(someObjects: MutableMap<String?, Any?>?): String {
+    fun mapToString(someObjects: MutableMap<String, Any>?): String {
         if (someObjects == null) {
             return "{}"
         }

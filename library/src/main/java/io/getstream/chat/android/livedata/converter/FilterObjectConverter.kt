@@ -10,7 +10,7 @@ import java.lang.reflect.Type
 class FilterObjectConverter {
     @TypeConverter
     fun stringToObject(data: String?): FilterObject {
-        if (data == null) {
+        if (data.isNullOrEmpty() || data == "null") {
             return FilterObject()
         }
         val listType: Type = object : TypeToken<FilterObject?>() {}.type
