@@ -27,6 +27,10 @@ import io.getstream.chat.android.livedata.entity.*
         QuerySortConverter::class,
         ExtraDataConverter::class,
         ListConverter::class,
+        MapConverter::class,
+        SetConverter::class,
+        ConfigConverter::class,
+        SyncStatusConverter::class,
         DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): QueryChannelsDao

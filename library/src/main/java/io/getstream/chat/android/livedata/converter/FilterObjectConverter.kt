@@ -13,13 +13,16 @@ class FilterObjectConverter {
         if (data.isNullOrEmpty() || data == "null") {
             return FilterObject()
         }
-        val listType: Type = object : TypeToken<FilterObject?>() {}.type
-        return gson.fromJson(data, listType)
+        val hashType: Type = object : TypeToken<HashMap<String, Any>?>() {}.type
+        val data: HashMap<String, Any> = gson.fromJson(data, hashType)
+        return FilterObject(data)
     }
 
     @TypeConverter
     fun objectToString(someObjects: FilterObject?): String {
-        return gson.toJson(someObjects)
+        if (someObjects==null) return ""
+
+        return gson.toJson(someObjects.toMap())
     }
 }
 

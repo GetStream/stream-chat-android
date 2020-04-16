@@ -7,9 +7,16 @@ import io.getstream.chat.android.client.utils.FilterObject
 import java.util.*
 
 @Entity(tableName = "stream_channel_query")
-data class QueryChannelsEntity(val filter: FilterObject, val sort: QuerySort? = null) {
+data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort? = null) {
     @PrimaryKey
-    var id: String = (Objects.hash(filter) + Objects.hash(sort?.data)).toString()
+    var id: String
+
+    init {
+        // TODO: remove this ugly hack once FilterObject has correct equality implementation
+        // ugly hack to cleanup the filter object to prevent issues with filter object equality
+        filter = FilterObject(filter.toMap())
+        id = (Objects.hash(filter.toMap()) + Objects.hash(sort?.data)).toString()
+    }
 
     var channelCIDs: SortedSet<String> = sortedSetOf()
 
