@@ -40,12 +40,30 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return this
     }
 
+
+
     open fun withMessages(direction: Pagination, messageId: String, limit: Int): QueryChannelRequest {
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
         messages[direction.toString()] = messageId
         this.messages.putAll(messages)
         return this
+    }
+
+    fun isFilteringNewerMessages(): Boolean {
+        if (messages.isEmpty()) {
+            return false
+        }
+        val keys = messages.keys
+        return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())
+    }
+
+    fun filteringOlderMessages(): Boolean {
+        if (messages.isEmpty()) {
+            return false
+        }
+        val keys = messages.keys
+        return keys.contains(Pagination.LESS_THAN.toString()) || keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
 
 }

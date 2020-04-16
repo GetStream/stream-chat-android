@@ -17,21 +17,7 @@ class WatchChannelRequest : QueryChannelRequest() {
         return super.withMembers(limit, offset) as WatchChannelRequest
     }
 
-    fun isFilteringNewerMessages(): Boolean {
-        if (messages.isEmpty()) {
-            return false
-        }
-        val keys = messages.keys
-        return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())
-    }
 
-    fun filteringOlderMessages(): Boolean {
-        if (messages.isEmpty()) {
-            return false
-        }
-        val keys = messages.keys
-        return keys.contains(Pagination.LESS_THAN.toString()) || keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
-    }
 
     override fun withWatchers(limit: Int, offset: Int): WatchChannelRequest {
         return super.withWatchers(limit, offset) as WatchChannelRequest
