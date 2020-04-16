@@ -4,8 +4,8 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MessageResponse
-import io.getstream.chat.android.client.api.models.RetrofitApi
-import io.getstream.chat.android.client.api.models.RetrofitCdnApi
+import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.RetroSuccess

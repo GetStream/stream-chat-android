@@ -4,14 +4,8 @@ import com.google.gson.annotations.SerializedName
 import java.util.*
 
 
-class ChannelUserRead : UserEntity {
-
-    lateinit var user: User
-
+data class ChannelUserRead(
+    override var user: User,
     @SerializedName("last_read")
     var lastRead: Date? = null
-
-    override fun getUserId(): String {
-        return user.id
-    }
-}
+) : UserEntity

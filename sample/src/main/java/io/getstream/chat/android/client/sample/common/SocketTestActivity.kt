@@ -7,10 +7,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
-import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_socket_tests.*
 import java.text.SimpleDateFormat
@@ -35,7 +33,7 @@ class SocketTestActivity : AppCompatActivity() {
 
             textSocketState.text = "Connecting..."
 
-            client.setUser(User("bender"), token)
+
 
             subs.add(client
                 .events()
@@ -49,7 +47,7 @@ class SocketTestActivity : AppCompatActivity() {
                 .events()
                 .subscribe {
 
-                    Log.d("evt", it.type)
+                    Log.d("evt", it::class.java.simpleName)
                     appendEvent(it)
 
                     when (it) {
@@ -68,6 +66,7 @@ class SocketTestActivity : AppCompatActivity() {
                     }
                 })
 
+            client.setUser(User("bender"), token)
 
         }
 
@@ -78,16 +77,6 @@ class SocketTestActivity : AppCompatActivity() {
             subs.clear()
         }
 
-    }
-
-    fun xxx() {
-
-        val client = ChatClient.instance()
-
-        //sync
-        val result = client.getMessage("message-id").execute()
-        //async
-        client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
     }
 
     override fun onDestroy() {

@@ -61,7 +61,7 @@ internal class ChatLoggerImpl constructor(
 
     private fun getTag(tag: Any?): String {
 
-        var stringTag = ""
+        var stringTag: String
 
         if (tag == null) {
             stringTag = "null"

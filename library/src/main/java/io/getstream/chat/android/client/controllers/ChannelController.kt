@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.controllers
 
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest
-import io.getstream.chat.android.client.api.models.ChannelWatchRequest
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
@@ -13,13 +13,18 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 
 interface ChannelController {
-    fun query(request: ChannelQueryRequest): Call<Channel>
-    fun watch(request: ChannelWatchRequest): Call<Channel>
+
+    val channelType: String
+    val channelId: String
+    val cid: String
+
+    fun query(request: QueryChannelRequest): Call<Channel>
+    fun watch(request: WatchChannelRequest): Call<Channel>
     fun watch(): Call<Channel>
     fun stopWatching(): Call<Unit>
     fun sendMessage(message: Message): Call<Message>
     fun updateMessage(message: Message): Call<Message>
-    fun deleteMessage(messageId:String): Call<Message>
+    fun deleteMessage(messageId: String): Call<Message>
     fun getMessage(messageId: String): Call<Message>
     fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>
     fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit>
@@ -35,7 +40,7 @@ interface ChannelController {
     fun sendReaction(reaction: Reaction): Call<Reaction>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
-    fun getReactions(messageId: String, firstId: String, limit: Int): Call<List<Message>>
+    fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
     fun events(): ChatObservable
     fun update(message: Message, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>

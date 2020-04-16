@@ -21,9 +21,9 @@ interface ChatSocketService {
     fun removeListener(listener: SocketListener)
 
     sealed class State {
-        object Disconnected : State()
         object Connecting : State()
         class Connected(val event: ConnectedEvent) : State()
+        class Disconnected(val connectionWillFollow: Boolean) : State()
         class Error(val error: ChatError) : State()
     }
 }

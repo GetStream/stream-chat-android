@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api.models
 import com.google.gson.annotations.SerializedName
 
 
-class AddMembersRequest(
+data class AddMembersRequest(
     @SerializedName("add_members")
     val members: List<String>
 )

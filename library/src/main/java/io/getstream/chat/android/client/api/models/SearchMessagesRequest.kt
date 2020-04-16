@@ -11,6 +11,6 @@ data class SearchMessagesRequest(
     @IgnoreSerialisation
     val filter: FilterObject
 ) {
-    val filter_conditions = filter.getMap()
+    val filter_conditions = filter.toMap()
 }
 

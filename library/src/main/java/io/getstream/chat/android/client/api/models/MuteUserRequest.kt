@@ -1,6 +1,10 @@
 package io.getstream.chat.android.client.api.models
 
+import com.google.gson.annotations.SerializedName
+
 data class MuteUserRequest(
-    val target_id: String,
-    val user_id: String
+    @SerializedName("target_id")
+    val targetId: String,
+    @SerializedName("user_id")
+    val userId: String
 )

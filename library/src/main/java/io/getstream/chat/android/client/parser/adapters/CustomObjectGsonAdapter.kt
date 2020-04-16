@@ -46,6 +46,8 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
         } catch (e: Exception) {
             throw ChatParsingError("custom object serialisation error of $clazz", e)
         }
+
+
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -56,7 +58,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
             val read = gson.getAdapter(HashMap::class.java).read(reader)
 
             if (read == null) {
-                ChatLogger.instance?.logE(
+                ChatLogger.instance.logE(
                     TAG,
                     "exception case when api returned null where it shouldn't: $reader"
                 )

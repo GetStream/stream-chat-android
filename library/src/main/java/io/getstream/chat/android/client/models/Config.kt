@@ -4,41 +4,40 @@ import com.google.gson.annotations.SerializedName
 import java.util.*
 
 
-class Config {
+data class Config(
     @SerializedName("created_at")
-    var created_at: Date? = null
+    var created_at: Date? = null,
 
     @SerializedName("updated_at")
-    var updated_at: Date? = null
+    var updated_at: Date? = null,
 
     @SerializedName("typing_events")
-    var isTypingEvents = false
+    var isTypingEvents: Boolean = false,
 
     @SerializedName("read_events")
-    var isReadEvents = false
+    var isReadEvents: Boolean = false,
 
     @SerializedName("connect_events")
-    var isConnectEvents = false
+    var isConnectEvents: Boolean = false,
 
     @SerializedName("search")
-    var isSearch = false
+    var isSearch: Boolean = false,
 
     @SerializedName("reactions")
-    var isReactionsEnabled = false
+    var isReactionsEnabled: Boolean = false,
 
     @SerializedName("replies")
-    var isRepliesEnabled = false
+    var isRepliesEnabled: Boolean = false,
 
     @SerializedName("mutes")
-    var isMutes = false
+    var isMutes: Boolean = false,
 
     @SerializedName("max_message_length")
-    var maxMessageLength = 0
+    var maxMessageLength: Int = 0,
 
-    var automod: String = ""
-    var infinite: String = ""
-    var name: String = ""
+    var automod: String = "",
+    var infinite: String = "",
+    var name: String = "",
 
     var commands: List<Command> = mutableListOf()
-
-}
+)

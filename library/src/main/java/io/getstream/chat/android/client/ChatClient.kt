@@ -164,7 +164,7 @@ interface ChatClient {
     fun queryChannel(
         channelType: String,
         channelId: String,
-        request: ChannelQueryRequest
+        request: QueryChannelRequest
     ): Call<Channel>
 
     fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>

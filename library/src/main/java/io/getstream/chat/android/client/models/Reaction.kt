@@ -10,17 +10,15 @@ import java.util.*
 
 data class Reaction(
     @SerializedName("message_id")
-    var messageId: String,
-    var type: String,
-    var score: Int
-) : CustomObject {
-
-    var user: User? = null
-
+    var messageId: String = "",
+    var type: String = "",
+    var score: Int = 0,
+    var user: User? = null,
     @SerializedName("user_id")
-    var userId: String = ""
+    var userId: String = "",
     @SerializedName("created_at")
     var createdAt: Date? = null
+) : CustomObject {
 
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED

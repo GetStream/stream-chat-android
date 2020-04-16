@@ -248,7 +248,7 @@ internal class ChatClientImpl(
     override fun queryChannel(
         channelType: String,
         channelId: String,
-        request: ChannelQueryRequest
+        request: QueryChannelRequest
     ): Call<Channel> {
         return api.queryChannel(channelType, channelId, request)
             .map { channel ->
@@ -439,7 +439,7 @@ internal class ChatClientImpl(
     }
 
     override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> {
-        val request = ChannelQueryRequest().withData(extraData)
+        val request = QueryChannelRequest().withData(extraData)
         return queryChannel(channelType, channelId, request)
     }
 

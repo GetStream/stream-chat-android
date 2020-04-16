@@ -11,4 +11,8 @@ interface CustomObject {
             default
         }
     }
+
+    fun putExtraValue(key: String, value: Any) {
+        extraData[key] = value
+    }
 }

@@ -23,7 +23,5 @@ class ConnectedEvent : ChatEvent() {
         get() = cid != "*"
 
     val isAnonymous: Boolean
-        get() = if (me != null) {
-            me.id == "!anon"
-        } else true
+        get() = me.id == "!anon"
 }
