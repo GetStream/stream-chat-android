@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 
 @Dao
@@ -16,9 +17,9 @@ interface ChannelDao {
 
     @Query(
             "SELECT * FROM stream_chat_channel_state " +
-                    "WHERE stream_chat_channel_state.syncStatus IN (-1)"
+                    "WHERE stream_chat_channel_state.syncStatus IN (:syncStatus)"
     )
-    suspend fun selectSyncNeeded(): List<ChannelEntity>
+    suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<ChannelEntity>
 
     @Query(
             "SELECT * FROM stream_chat_channel_state " +

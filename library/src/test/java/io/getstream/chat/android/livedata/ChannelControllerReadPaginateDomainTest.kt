@@ -93,7 +93,7 @@ class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
         chatDomain.setOffline()
         // add a message to local storage
         chatDomain.repos.users.insertUser(data.user1)
-        chatDomain.repos.channels.insert(data.channel1)
+        chatDomain.repos.channels.insertChannel(data.channel1)
         channelController.sendMessage(data.message1)
         // remove the livedata
         channelController =

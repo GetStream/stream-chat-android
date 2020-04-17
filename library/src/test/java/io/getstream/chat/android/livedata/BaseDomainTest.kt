@@ -18,7 +18,9 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
@@ -68,12 +70,14 @@ open class BaseDomainTest {
 
         val result = Result(listOf(data.channel1), null)
         val channelMock =  mock<ChannelController> {
-
+            on { sendMessage(any())} doReturn ChatCallTestImpl<Message>(Result(data.message1, null))
         }
         val client = mock<ChatClient> {
             on { events() } doReturn JustObservable(connectedEvent)
             on { queryChannels(any())} doReturn ChatCallTestImpl(result)
             on { channel(any(), any())} doReturn channelMock
+            on { channel(any())} doReturn channelMock
+            on { createChannel(any<String>(), any<String>(), any<Map<String, Any>>())} doReturn ChatCallTestImpl<Channel>(Result(data.channel1, null))
             on { sendReaction(any())} doReturn ChatCallTestImpl<Reaction>(Result(data.reaction1, null))
         }
 

@@ -58,11 +58,23 @@ class TestDataHelper {
         members = listOf(member1)
         extraData = mutableMapOf("color" to "green")
     }
+
+    val channel2 = Channel().apply {
+        type = "messaging"
+        id = "222-testing"
+        cid = "messaging:222-testing"
+        watcherCount = 22
+        createdBy = user1
+        watchers = listOf(watcher1)
+        members = listOf(member1)
+        config=config1
+    }
+
     val reaction1 = Reaction("message-1", "like", 1).apply { user=user1; userId=user1.id }
     val reaction2 = Reaction("message-1", "like", 1).apply { user=user2 }
 
-    val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=calendar(2020, 1,1) }
-    val message1Updated = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1 }
+    val message1 = Message().apply { this.channel = channel1; cid=channel1.cid; text="hi there"; id="message-1"; user=user1; createdAt=calendar(2020, 1,1) }
+    val message1Updated = Message().apply { channel = channel1; cid=channel1.cid; text="im update now"; id="message-1"; user=user1 }
     val reactionMessage = Message().apply { channel = channel1; text="im update now"; id="message-1"; user=user1;
         reactionCounts= mutableMapOf("like" to 1); ownReactions= mutableListOf(reaction1); latestReactions=mutableListOf(reaction1) }
     val messageThread = Message().apply { channel=channel1; parentId="message-1"; id="message-2"}

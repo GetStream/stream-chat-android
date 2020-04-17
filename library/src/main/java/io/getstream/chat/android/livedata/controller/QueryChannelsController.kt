@@ -153,7 +153,7 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        var queryEntity = domain.repos.queryChannels.selectQuery(queryEntity.id)
+        var queryEntity = domain.repos.queryChannels.select(queryEntity.id)
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {

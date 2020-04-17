@@ -78,6 +78,6 @@ class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, va
 }
 
 // TODO: move to llc
-private fun ChatError.isPermanent(): Boolean {
+fun ChatError.isPermanent(): Boolean {
     return true
 }

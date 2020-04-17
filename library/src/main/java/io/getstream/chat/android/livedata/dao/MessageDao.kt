@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import java.util.*
 
@@ -18,13 +19,13 @@ interface MessageDao {
     suspend fun insert(messageEntity: MessageEntity)
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt > :dateFilter ORDER BY createdAt ASC LIMIT :limit")
-    fun messagesForChannelNewerThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
+    suspend fun messagesForChannelNewerThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt < :dateFilter ORDER BY createdAt ASC LIMIT :limit")
-    fun messagesForChannelOlderThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
+    suspend fun messagesForChannelOlderThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt ASC LIMIT :limit")
-    fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
+    suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
 
     @Query(
@@ -41,9 +42,9 @@ interface MessageDao {
 
     @Query(
             "SELECT * FROM stream_chat_message " +
-                    "WHERE stream_chat_message.syncStatus IN (-1)"
+                    "WHERE stream_chat_message.syncStatus IN (:syncStatus)"
     )
-    suspend fun selectSyncNeeded(): List<MessageEntity>
+    suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<MessageEntity>
 
 
 }

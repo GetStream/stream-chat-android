@@ -61,7 +61,7 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         chatDomain.createChannel(data.channel1)
         channelController.sendMessage(data.message1)
         chatDomain.setOffline()
-        chatDomain.repos.channels.insert(data.channel1)
+        chatDomain.repos.channels.insertChannel(data.channel1)
         channelController.upsertMessage(data.message1)
         // send the reaction while offline
         channelController.sendReaction(data.reaction1)
@@ -112,12 +112,12 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         Truth.assertThat(liveChannel.lastMessageAt).isEqualTo(data.message1.createdAt)
         Truth.assertThat(roomChannel!!.lastMessageAt).isEqualTo(data.message1.createdAt)
 
-        var messageEntities = chatDomain.retryMessages()
+        var messageEntities = chatDomain.repos.messages.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         // now we go online and retry, after the retry all state should be updated
         chatDomain.setOnline()
-        messageEntities = chatDomain.retryMessages()
+        messageEntities = chatDomain.repos.messages.retryMessages()
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         roomMessages = chatDomain.repos.messages.selectMessagesForChannel(data.message1.channel.cid, AnyChannelPaginationRequest().apply { messageLimit=10 })

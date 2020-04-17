@@ -172,7 +172,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         val channelController = client.channel(c.type, c.id)
 
         // Update Room State
-        repos.channels.insert(c)
+        repos.channels.insertChannel(c)
 
         // make the API call and follow retry policy
         if (isOnline()) {
@@ -182,7 +182,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             val result = runAndRetry(runnable)
             if (result.isSuccess) {
                 c.syncStatus = SyncStatus.SYNCED
-                repos.channels.insert(c)
+                repos.channels.insertChannel(c)
             }
             return Result(result.data() as Channel, result.error())
         } else {
@@ -405,66 +405,22 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         }
 
         // 3 retry any failed requests
-        retryFailedEntities()
-    }
-
-    suspend fun retryMessages(): List<MessageEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-
-        val messageEntities = repos.messages.selectSyncNeeded()
         if (isOnline()) {
-            for (messageEntity in messageEntities) {
-                val channel = client.channel(messageEntity.cid)
-                // support sending, deleting and editing messages here
-                val result = when {
-                    messageEntity.deletedAt != null -> {
-                        channel.deleteMessage(messageEntity.id).execute()
-                    }
-                    messageEntity.sendMessageCompletedAt != null -> {
-                        client.updateMessage(messageEntity.toMessage(userMap)).execute()
-                    }
-                    else -> {
-                        channel.sendMessage(messageEntity.toMessage(userMap)).execute()
-                    }
-                }
-
-                if (result.isSuccess) {
-                    // TODO: 1.1 image upload support
-                    messageEntity.syncStatus = SyncStatus.SYNCED
-                    messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
-                            ?: Date()
-                    repos.messages.insert(messageEntity)
-                }
-            }
+            retryFailedEntities()
         }
-        return messageEntities
     }
 
 
 
 
-    suspend fun retryChannels(): List<ChannelEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-        val channelEntities = repos.channels.selectSyncNeeded()
 
-        for (channelEntity in channelEntities) {
-            val channel = channelEntity.toChannel(userMap)
-            val controller = client.channel(channelEntity.type, channelEntity.type)
-            val result = controller.watch().execute()
-            if (result.isSuccess) {
-                channelEntity.syncStatus = SyncStatus.SYNCED
-                repos.channels.insert(channelEntity)
-            }
-            // TODO: 1.1 support hiding channels
 
-        }
-        return channelEntities
-    }
+
 
     suspend fun retryFailedEntities() {
         // retry channels, messages and reactions in that order..
-        val channelEntities = retryChannels()
-        val messageEntities = retryMessages()
+        val channelEntities = repos.channels.retryChannels()
+        val messageEntities = repos.messages.retryMessages()
         val reactionEntities = repos.reactions.retryReactions()
         logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
     }
@@ -497,7 +453,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // store the users
         repos.users.insertManyUsers(users.values.toList())
         // store the channel data
-        repos.channels.insert(channelsResponse)
+        repos.channels.insertChannel(channelsResponse)
         // store the messages
         repos.messages.insertMessages(messages)
 

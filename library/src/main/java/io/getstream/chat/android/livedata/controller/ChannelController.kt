@@ -456,7 +456,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             upsertMessage(it)
         }
         // update the message in the local storage
-        val messageEntity = domain.repos.messages.selectMessageEntity(reaction.messageId)
+        val messageEntity = domain.repos.messages.select(reaction.messageId)
         messageEntity?.let {
             it.addReaction(reaction, domain.currentUser.id == reaction.user!!.id)
             domain.repos.messages.insert(it)
@@ -503,7 +503,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             upsertMessage(it)
         }
 
-        val messageEntity = domain.repos.messages.selectMessageEntity(reaction.messageId)
+        val messageEntity = domain.repos.messages.select(reaction.messageId)
         messageEntity?.let {
             it.removeReaction(reaction, domain.currentUser.id == reaction.user!!.id)
             domain.repos.messages.insert(it)

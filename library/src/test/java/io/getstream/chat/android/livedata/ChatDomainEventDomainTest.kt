@@ -35,7 +35,7 @@ class ChatDomainEventDomainTest: BaseDomainTest() {
         // new messages should be stored in room
         runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.newMessageEvent)}
         val message = runBlocking(Dispatchers.IO) {
-            chatDomain.repos.messages.selectMessageEntity(data.newMessageEvent.message.id)
+            chatDomain.repos.messages.select(data.newMessageEvent.message.id)
         }
         Truth.assertThat(message).isNotNull()
     }
@@ -59,7 +59,7 @@ class ChatDomainEventDomainTest: BaseDomainTest() {
 
     @Test
     fun messageRead() {
-        runBlocking(Dispatchers.IO) {chatDomain.repos.channels.insert(data.channel1)}
+        runBlocking(Dispatchers.IO) {chatDomain.repos.channels.insertChannel(data.channel1)}
         runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.readEvent)}
         // check channel level read info
         val cid = data.readEvent.cid!!
@@ -80,7 +80,7 @@ class ChatDomainEventDomainTest: BaseDomainTest() {
         runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent)}
         // fetch the message
         var message = runBlocking(Dispatchers.IO) {
-            chatDomain.repos.messages.selectMessageEntity(messageId)!!
+            chatDomain.repos.messages.select(messageId)!!
         }
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(1)
@@ -90,7 +90,7 @@ class ChatDomainEventDomainTest: BaseDomainTest() {
         // add a reaction from a different user, it should not go into own reaction
         runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent2)}
         message = runBlocking(Dispatchers.IO) {
-            chatDomain.repos.messages.selectMessageEntity(messageId)!!
+            chatDomain.repos.messages.select(messageId)!!
         }
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
@@ -109,7 +109,7 @@ class ChatDomainEventDomainTest: BaseDomainTest() {
     @Test
     fun memberEvent() = runBlocking(Dispatchers.IO) {
         // add the member to the channel
-        chatDomain.repos.channels.insert(data.channel1)
+        chatDomain.repos.channels.insertChannel(data.channel1)
         chatDomain.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members

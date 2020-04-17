@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 
@@ -17,9 +18,9 @@ interface ReactionDao {
 
     @Query(
             "SELECT * FROM stream_chat_reaction " +
-                    "WHERE stream_chat_reaction.syncStatus IN (-1)"
+                    "WHERE stream_chat_reaction.syncStatus IN (:syncStatus)"
     )
-    suspend fun selectSyncNeeded(): List<ReactionEntity>
+    suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<ReactionEntity>
 
     @Query(
             "SELECT * FROM stream_chat_reaction " +

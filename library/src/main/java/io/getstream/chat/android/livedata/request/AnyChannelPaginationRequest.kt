@@ -2,8 +2,7 @@ package io.getstream.chat.android.livedata.request
 
 import io.getstream.chat.android.client.api.models.Pagination
 
-internal class AnyChannelPaginationRequest {
-    var messageLimit: Int = 30
+internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
     var messageFilterDirection: Pagination? = null
     var messageFilterValue: String = ""
 
@@ -15,6 +14,11 @@ internal class AnyChannelPaginationRequest {
 
     var watcherLimit: Int = 30
     var watcherOffset: Int = 0
+
+    fun setFilter(messageFilterDirection: Pagination, messageFilterValue: String) {
+        this.messageFilterDirection = messageFilterDirection
+        this.messageFilterValue = messageFilterValue
+    }
 
     fun hasFilter(): Boolean {
         return messageFilterDirection != null

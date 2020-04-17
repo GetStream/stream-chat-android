@@ -1,14 +1,17 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.MessageDao
-import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
+import java.util.*
 
-class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100) {
+class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
     var messageCache = LruCache<String, MessageEntity>(cacheSize)
 
@@ -16,13 +19,6 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100) {
         cid: String,
         pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
-
-        // - fetch the message you are filtering on and get it's date
-        // - sort asc or desc based on filter direction
-        var sort = "ASC"
-        if (pagination.isFilteringOlderMessages()) {
-            sort = "DESC"
-        }
         if (pagination.hasFilter()) {
             // TODO: this doesn't support the difference between gte vs gt
             val message = messageDao.select(pagination.messageFilterValue)
@@ -32,15 +28,12 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100) {
                 return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message.createdAt!!)
             } else if (pagination.isFilteringOlderMessages()) {
                 return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message.createdAt!!)
-
             }
-
         }
-
         return messageDao.messagesForChannel(cid, pagination.messageLimit)
     }
 
-    suspend fun selectMessageEntity(messageId: String): MessageEntity? {
+    suspend fun select(messageId: String): MessageEntity? {
         return select(listOf(messageId)).getOrElse(0) {null}
     }
     suspend fun select(messageIds: List<String>): List<MessageEntity> {
@@ -56,32 +49,71 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100) {
         return dbMessages
     }
 
-    suspend fun insertMessageEntities(messageEntities: List<MessageEntity>, cache: Boolean=false) {
+    suspend fun insert(messageEntities: List<MessageEntity>, cache: Boolean=false) {
         if (messageEntities.isEmpty()) return
         for (messageEntity in messageEntities) {
             if (messageEntity.cid == "") {
                 throw InvalidParameterException("message.cid cant be empty")
             }
         }
+        for (m in messageEntities) {
+            if (messageCache.get(m.id) !=null || cache) {
+                messageCache.put(m.id, m)
+            }
+        }
         messageDao.insertMany(messageEntities)
     }
 
-    suspend fun insertMessages(messages: List<Message>) {
+    suspend fun insertMessages(messages: List<Message>, cache: Boolean=false) {
         val messageEntities = messages.map { MessageEntity(it) }
-        insertMessageEntities(messageEntities)
+        insert(messageEntities, cache)
     }
 
-    suspend fun insertMessage(message: Message) {
+    suspend fun insertMessage(message: Message, cache: Boolean=false) {
         val messageEntity = MessageEntity(message)
-        insertMessageEntities(listOf(messageEntity))
+        insert(listOf(messageEntity), cache)
     }
 
-    suspend fun insert(messageEntity: MessageEntity) {
-        insertMessageEntities(listOf(messageEntity))
+    suspend fun insert(messageEntity: MessageEntity, cache: Boolean=false) {
+        insert(listOf(messageEntity), cache)
     }
 
     suspend fun selectSyncNeeded(): List<MessageEntity> {
         return messageDao.selectSyncNeeded()
+    }
+
+    suspend fun retryMessages(): List<MessageEntity> {
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
+
+        val messageEntities = selectSyncNeeded()
+        for (messageEntity in messageEntities) {
+            val channel = client.channel(messageEntity.cid)
+            // support sending, deleting and editing messages here
+            val result = when {
+                messageEntity.deletedAt != null -> {
+                    channel.deleteMessage(messageEntity.id).execute()
+                }
+                messageEntity.sendMessageCompletedAt != null -> {
+                    client.updateMessage(messageEntity.toMessage(userMap)).execute()
+                }
+                else -> {
+                    channel.sendMessage(messageEntity.toMessage(userMap)).execute()
+                }
+            }
+
+            if (result.isSuccess) {
+                // TODO: 1.1 image upload support
+                messageEntity.syncStatus = SyncStatus.SYNCED
+                messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
+                    ?: Date()
+                insert(messageEntity)
+            } else if (result.isError && result.error().isPermanent()) {
+                messageEntity.syncStatus = SyncStatus.SYNC_FAILED
+                insert(messageEntity)
+            }
+        }
+
+        return messageEntities
     }
 
 }

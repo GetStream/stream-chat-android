@@ -13,10 +13,14 @@ import java.util.*
 class SyncStatusConverterTest: BaseTest() {
     @Test
     fun testEncoding() {
-        val converter = SyncStatusConverter()
-        val output = converter.syncStatusToString(SyncStatus.SYNC_NEEDED)
-        val converted = converter.stringToSyncStatus(output)
-        Truth.assertThat(converted).isEqualTo(SyncStatus.SYNC_NEEDED)
+        val options = listOf(SyncStatus.SYNC_NEEDED, SyncStatus.SYNC_FAILED, SyncStatus.SYNCED)
+
+        for (option in options) {
+            val converter = SyncStatusConverter()
+            val output = converter.syncStatusToString(option)
+            val converted = converter.stringToSyncStatus(output)
+            Truth.assertThat(converted).isEqualTo(option)
+        }
     }
 
 }

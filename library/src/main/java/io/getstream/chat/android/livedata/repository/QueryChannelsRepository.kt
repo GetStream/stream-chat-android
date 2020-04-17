@@ -7,7 +7,7 @@ class QueryChannelsRepository(var queryChannelsDao: QueryChannelsDao) {
     suspend fun insert(queryChannelsEntity: QueryChannelsEntity) {
         queryChannelsDao.insert(queryChannelsEntity)
     }
-    suspend fun selectQuery(id: String): QueryChannelsEntity? {
+    suspend fun select(id: String): QueryChannelsEntity? {
         return queryChannelsDao.select(id)
     }
 }

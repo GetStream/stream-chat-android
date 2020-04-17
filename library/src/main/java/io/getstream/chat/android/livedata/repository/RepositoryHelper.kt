@@ -24,9 +24,9 @@ class RepositoryHelper(var client: ChatClient, var currentUser: User, var databa
     init {
         users = UserRepository(userDao, 100, currentUser)
         configs = ChannelConfigRepository(channelConfigDao)
-        channels = ChannelRepository(channelDao)
+        channels = ChannelRepository(channelDao, 100, currentUser, client)
         queryChannels = QueryChannelsRepository(queryChannelsDao)
-        messages = MessageRepository(messageDao)
+        messages = MessageRepository(messageDao, 100, currentUser, client)
         reactions = ReactionRepository(reactionDao, currentUser, client)
     }
 }
