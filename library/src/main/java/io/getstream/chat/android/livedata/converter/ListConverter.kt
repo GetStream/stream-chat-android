@@ -26,23 +26,6 @@ class ListConverter {
         )
     }
 
-    @TypeConverter
-    fun memberListToString(someObjects: Map<String, MemberEntity>?): String? {
-        return gson.toJson(someObjects)
-    }
-
-    @TypeConverter
-    fun stringToMemberList(data: String?): Map<String, MemberEntity>? {
-        if (data.isNullOrEmpty() || data=="null") {
-            return emptyMap()
-        }
-        val listType = object :
-                TypeToken<Map<String, MemberEntity>>() {}.type
-        return gson.fromJson(
-                data,
-                listType
-        )
-    }
 
     @TypeConverter
     fun stringListToString(someObjects: List<String>?): String? {
@@ -50,7 +33,7 @@ class ListConverter {
     }
 
     @TypeConverter
-    fun stringToSomeObjectList(data: String?): List<Attachment> {
+    fun stringToAttachmentList(data: String?): List<Attachment> {
         if (data.isNullOrEmpty() || data=="null") {
             return emptyList()
         }
@@ -63,13 +46,13 @@ class ListConverter {
     }
 
     @TypeConverter
-    fun someObjectListToString(someObjects: List<Attachment?>?): String {
+    fun attachmentListToString(someObjects: List<Attachment?>?): String {
         return gson.toJson(someObjects)
     }
 
 
     @TypeConverter
-    fun reactionListFromString(data: String?): List<ReactionEntity>? {
+    fun stringToReactionList(data: String?): List<ReactionEntity>? {
         if (data.isNullOrEmpty() || data=="null") {
             return emptyList()
         }

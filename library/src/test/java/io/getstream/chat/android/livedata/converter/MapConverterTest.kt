@@ -4,6 +4,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
+import io.getstream.chat.android.livedata.entity.MemberEntity
 import org.junit.Test
 
 class MapConverterTest: BaseTest() {
@@ -23,6 +24,23 @@ class MapConverterTest: BaseTest() {
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         Truth.assertThat(converted).isEqualTo(readMap)
+    }
+    // member maps
+    @Test
+    fun testNullMemberEncoding() {
+        val converter = MapConverter()
+        val output = converter.memberMapToString(null)
+        val converted = converter.stringToMemberMap(output)
+        Truth.assertThat(converted).isEqualTo(mutableMapOf<String, MemberEntity>())
+    }
+
+    @Test
+    fun testMemberEncoding() {
+        val converter = MapConverter()
+        val memberMap = mutableMapOf(data.user1.id to MemberEntity(data.user1.id))
+        val output = converter.memberMapToString(memberMap)
+        val converted = converter.stringToMemberMap(output)
+        Truth.assertThat(converted).isEqualTo(memberMap)
     }
     // string,int map
     @Test

@@ -388,8 +388,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // exclude ones we just updated
         val cids = activeChannelMap.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
-
-
         logger.logI("connection established: recoveryNeeded= ${recoveryNeeded}, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
         if (cids.isNotEmpty()) {

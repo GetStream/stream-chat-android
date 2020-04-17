@@ -4,6 +4,7 @@ import android.util.ArrayMap
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
+import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.gson
 
 class MapConverter {
@@ -19,6 +20,25 @@ class MapConverter {
         }
         val listType = object :
             TypeToken<MutableMap<String, ChannelUserReadEntity>>() {}.type
+        return gson.fromJson(
+            data,
+            listType
+        )
+    }
+
+
+    @TypeConverter
+    fun memberMapToString(someObjects: Map<String, MemberEntity>?): String? {
+        return gson.toJson(someObjects)
+    }
+
+    @TypeConverter
+    fun stringToMemberMap(data: String?): Map<String, MemberEntity>? {
+        if (data.isNullOrEmpty() || data=="null") {
+            return emptyMap()
+        }
+        val listType = object :
+            TypeToken<Map<String, MemberEntity>>() {}.type
         return gson.fromJson(
             data,
             listType

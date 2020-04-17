@@ -18,6 +18,8 @@ class TestDataHelper {
 
     val filter1 = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
 
+    val attachment1 = Attachment(type="image").apply { extraData= mutableMapOf("color" to "green") }
+
     val watcher1 = Watcher("test", user1, null)
     val member1 = Member(user = user1, role="user")
     val member2 = Member(user=user2, role="user")
