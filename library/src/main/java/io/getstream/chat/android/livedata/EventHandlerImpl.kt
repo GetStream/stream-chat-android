@@ -148,7 +148,7 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
                 }
             }
             // actually insert the data
-            domain.repos.users.insertUserEntities(users.values.toList())
+            domain.repos.users.insert(users.values.toList())
             domain.repos.channels.insertChannelEntities(channels.values.toList())
             // we only cache messages for which we're receiving events
             domain.repos.messages.insertMessageEntities(messages.values.toList(), true)

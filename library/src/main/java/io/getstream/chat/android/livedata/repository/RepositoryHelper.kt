@@ -1,10 +1,11 @@
 package io.getstream.chat.android.livedata.repository
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDatabase
 import io.getstream.chat.android.livedata.dao.*
 
-class RepositoryHelper(var client: ChatClient, var database: ChatDatabase) {
+class RepositoryHelper(var client: ChatClient, var currentUser: User, var database: ChatDatabase) {
 
     private var queryChannelsDao: QueryChannelsDao = database.queryChannelsQDao()
     private var userDao: UserDao = database.userDao()
@@ -21,11 +22,11 @@ class RepositoryHelper(var client: ChatClient, var database: ChatDatabase) {
     var reactions: ReactionRepository
 
     init {
-        users = UserRepository(userDao, 100, client)
+        users = UserRepository(userDao, 100, currentUser)
         configs = ChannelConfigRepository(channelConfigDao)
         channels = ChannelRepository(channelDao)
         queryChannels = QueryChannelsRepository(queryChannelsDao)
         messages = MessageRepository(messageDao)
-        reactions = ReactionRepository(reactionDao)
+        reactions = ReactionRepository(reactionDao, currentUser, client)
     }
 }

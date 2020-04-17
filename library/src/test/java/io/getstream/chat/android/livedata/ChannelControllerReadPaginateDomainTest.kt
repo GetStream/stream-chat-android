@@ -26,7 +26,7 @@ class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, true)
+        setupChatDomain(client, true)
     }
 
     @After
@@ -92,7 +92,7 @@ class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
     fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
         chatDomain.setOffline()
         // add a message to local storage
-        chatDomain.repos.users.insert(data.user1)
+        chatDomain.repos.users.insertUser(data.user1)
         chatDomain.repos.channels.insert(data.channel1)
         channelController.sendMessage(data.message1)
         // remove the livedata

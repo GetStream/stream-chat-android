@@ -17,7 +17,7 @@ interface ChannelConfigDao {
     suspend fun insert(channelConfigEntity: ChannelConfigEntity)
 
     @Query(
-            "SELECT * FROM stream_chat_channel_config "
+            "SELECT * FROM stream_chat_channel_config LIMIT 100"
     )
     suspend fun selectAll(): List<ChannelConfigEntity>
 

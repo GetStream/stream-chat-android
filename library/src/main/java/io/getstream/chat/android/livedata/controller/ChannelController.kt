@@ -6,6 +6,7 @@ import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
@@ -421,6 +422,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 domain.repos.messages.insert(messageEntity)
                 return Result(result.data() as Message?, null)
             } else {
+
                 return Result(null, result.error())
             }
         }
@@ -444,9 +446,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     suspend fun sendReaction(reaction: Reaction): Result<Reaction> {
         reaction.user = domain.currentUser
         // insert the message into local storage
-        val reactionEntity = ReactionEntity(reaction)
-        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
-        domain.repos.reactions.insert(reactionEntity)
+        reaction.syncStatus = SyncStatus.SYNC_NEEDED
+        domain.repos.reactions.insertReaction(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
@@ -469,10 +470,19 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             if (result.isSuccess) {
                 return Result(result.data() as Reaction, result.error())
             } else {
+                if (result.error().isPermanent()) {
+                    reaction.syncStatus=SyncStatus.SYNC_FAILED
+                    domain.repos.reactions.insertReaction(reaction)
+                }
                 return Result(null, result.error())
             }
         }
         return Result(reaction, null)
+    }
+
+    // TODO: move to llc
+    private fun ChatError.isPermanent(): Boolean {
+        return true
     }
 
 

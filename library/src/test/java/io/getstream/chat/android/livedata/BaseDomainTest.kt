@@ -11,12 +11,15 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
@@ -54,7 +57,31 @@ open class BaseDomainTest {
         return client
     }
 
-    fun createMockClient(): ChatClient {
+    fun createDisconnectedMockClient(): ChatClient {
+
+
+
+
+        val connectedEvent = DisconnectedEvent().apply {
+        }
+
+
+        val result = Result(listOf(data.channel1), null)
+        val channelMock =  mock<ChannelController> {
+
+        }
+        val client = mock<ChatClient> {
+            on { events() } doReturn JustObservable(connectedEvent)
+            on { queryChannels(any())} doReturn ChatCallTestImpl(result)
+            on { channel(any(), any())} doReturn channelMock
+            on { sendReaction(any())} doReturn ChatCallTestImpl<Reaction>(Result(data.reaction1, null))
+        }
+
+
+        return client
+    }
+
+    fun createConnectedMockClient(): ChatClient {
         val config = ChatClientConfig(
             data.apiKey,
             "hello.http",
@@ -82,6 +109,8 @@ open class BaseDomainTest {
             on { events() } doReturn JustObservable(connectedEvent)
             on { queryChannels(any())} doReturn ChatCallTestImpl(result)
             on { channel(any(), any())} doReturn channelMock
+            on { sendReaction(any())} doReturn ChatCallTestImpl<Reaction>(Result(data.reaction1, null))
+
         }
 
 
@@ -95,7 +124,7 @@ open class BaseDomainTest {
         return db
     }
 
-    fun setupRepo(client: ChatClient, setUser: Boolean) {
+    fun setupChatDomain(client: ChatClient, setUser: Boolean) {
 
 
         if (setUser) {
@@ -132,7 +161,7 @@ open class BaseDomainTest {
 
         query = QueryChannelsEntity(data.filter1, null)
 
-        queryController = chatDomain.queryChannels(filter)
+        queryController = chatDomain.queryChannels(data.filter1)
     }
 
 

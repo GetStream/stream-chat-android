@@ -16,7 +16,7 @@ interface ChannelDao {
 
     @Query(
             "SELECT * FROM stream_chat_channel_state " +
-                    "WHERE stream_chat_channel_state.syncStatus IN (-1, 2)"
+                    "WHERE stream_chat_channel_state.syncStatus IN (-1)"
     )
     suspend fun selectSyncNeeded(): List<ChannelEntity>
 

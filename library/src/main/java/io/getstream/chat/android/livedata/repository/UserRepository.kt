@@ -9,27 +9,31 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 class UserRepository(
     var userDao: UserDao,
     var cacheSize: Int = 100,
-    var client: ChatClient
+    var currentUser: User?
 ) {
     // the user cache is simple, just keeps the last 100 users in memory
     var userCache = LruCache<String, UserEntity>(cacheSize)
 
-    suspend fun insertUserEntities(userEntities: List<UserEntity>) {
+    suspend fun insert(userEntities: List<UserEntity>) {
         if (userEntities.isEmpty()) return
-
+        cacheUserEntities(userEntities)
         userDao.insertMany(userEntities)
+    }
+
+    private fun cacheUserEntities(userEntities: List<UserEntity>) {
         for (userEntity in userEntities) {
             userCache.put(userEntity.id, userEntity)
         }
     }
-    suspend fun insertMany(users: List<User>) {
+
+    suspend fun insertManyUsers(users: List<User>) {
         val userEntities = users.map { UserEntity(it) }
-        insertUserEntities(userEntities)
+        insert(userEntities)
     }
 
-    suspend fun insert(user: User) {
+    suspend fun insertUser(user: User) {
         val userEntity = UserEntity(user)
-        insertUserEntities(listOf(userEntity))
+        insert(listOf(userEntity))
     }
 
     suspend fun select(userId: String): UserEntity? {
@@ -44,20 +48,20 @@ class UserRepository(
         }
         val missingUserIds = userIds.filter { userCache.get(it) == null }
         val dbUsers = userDao.select(missingUserIds).toMutableList()
-        for (userEntity in dbUsers) {
-            userCache.put(userEntity.id, userEntity)
-        }
+        cacheUserEntities(dbUsers)
         dbUsers.addAll(cacheUsers)
         return dbUsers
     }
 
     suspend fun selectUserMap(userIds: List<String>): MutableMap<String, User> {
         val userEntities = select(userIds.toSet().toList())
+
         val userMap = mutableMapOf<String, User>()
         for (userEntity in userEntities) {
             userMap[userEntity.id] = userEntity.toUser()
         }
-        client.getCurrentUser()?.let {
+        // add the current user
+        currentUser?.let {
             userMap[it.id] = it
         }
 

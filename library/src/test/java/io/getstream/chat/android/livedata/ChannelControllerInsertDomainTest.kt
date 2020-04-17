@@ -19,7 +19,7 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, true)
+        setupChatDomain(client, true)
         val handler = CoroutineExceptionHandler { _, exception ->
             println("Caught $exception")
         }
@@ -47,7 +47,7 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         val reactionEntity = ReactionEntity(data.message1.id, data.user1.id, data.reaction1.type)
         reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
         chatDomain.repos.reactions.insert(reactionEntity)
-        val results = chatDomain.retryReactions()
+        val results = chatDomain.repos.reactions.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
 
@@ -68,7 +68,7 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         var reactionEntity = chatDomain.repos.reactions.select(data.message1.id, data.user1.id, data.reaction1.type)
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         chatDomain.setOnline()
-        val reactionEntities = chatDomain.retryReactions()
+        val reactionEntities = chatDomain.repos.reactions.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
         reactionEntity = chatDomain.repos.reactions.select(data.message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
@@ -86,7 +86,7 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         Truth.assertThat(reaction!!.syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
         Truth.assertThat(reaction!!.deletedAt).isNotNull()
 
-        val reactions = chatDomain.retryReactions()
+        val reactions = chatDomain.repos.reactions.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
     }
 

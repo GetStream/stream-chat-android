@@ -73,7 +73,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
         val chatDatabase = db ?: createDatabase()
-        repos = RepositoryHelper( client, chatDatabase)
+        repos = RepositoryHelper( client, currentUser, chatDatabase)
 
 
         // load channel configs from Room into memory
@@ -440,28 +440,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         return messageEntities
     }
 
-    suspend fun retryReactions(): List<ReactionEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
-        val reactionEntities = repos.reactions.selectSyncNeeded()
-        for (reactionEntity in reactionEntities) {
-            val reaction = reactionEntity.toReaction(userMap)
-            reaction.user = null
-            val result = if (reactionEntity.deletedAt != null) {
-                client.deleteReaction(reaction.messageId, reaction.type).execute()
-            } else {
-                client.sendReaction(reaction).execute()
-            }
-
-            if (result.isSuccess) {
-                reactionEntity.syncStatus = SyncStatus.SYNCED
-                repos.reactions.insert(reactionEntity)
-            } else {
-                addError(result.error())
-            }
-        }
-        return reactionEntities
-    }
 
 
     suspend fun retryChannels(): List<ChannelEntity> {
@@ -486,7 +465,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // retry channels, messages and reactions in that order..
         val channelEntities = retryChannels()
         val messageEntities = retryMessages()
-        val reactionEntities = retryReactions()
+        val reactionEntities = repos.reactions.retryReactions()
         logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
     }
 
@@ -516,7 +495,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // store the channel configs
         repos.configs.insertConfigs(configs)
         // store the users
-        repos.users.insertMany(users.values.toList())
+        repos.users.insertManyUsers(users.values.toList())
         // store the channel data
         repos.channels.insert(channelsResponse)
         // store the messages

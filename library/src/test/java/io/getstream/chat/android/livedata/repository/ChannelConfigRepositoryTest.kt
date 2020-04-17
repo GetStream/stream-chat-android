@@ -1,0 +1,62 @@
+package io.getstream.chat.android.livedata.repository
+
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseDomainTest
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+
+@RunWith(AndroidJUnit4::class)
+class ChannelConfigRepositoryTest: BaseDomainTest() {
+    val repo by lazy { chatDomain.repos.configs }
+
+    @Before
+    fun setup() {
+        client = createDisconnectedMockClient()
+        setupChatDomain(client, false)
+    }
+
+    @After
+    fun tearDown() {
+        chatDomain.disconnect()
+        db.close()
+    }
+
+    @Test
+    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
+        repo.insertConfigs(mutableMapOf("messaging" to data.config1))
+        val config = repo.select("messaging")
+        Truth.assertThat(config).isEqualTo(config)
+    }
+
+    @Test
+    fun testLoadAndRead() = runBlocking(Dispatchers.IO) {
+        repo.insertConfigs(mutableMapOf("messaging" to data.config1))
+        repo.clearCache()
+        var config = repo.select("messaging")
+        Truth.assertThat(config).isNull()
+        repo.load()
+        config = repo.select("messaging")
+        Truth.assertThat(config).isEqualTo(data.config1)
+    }
+
+    @Test
+    fun testUpdate() = runBlocking(Dispatchers.IO) {
+        repo.insertConfigs(mutableMapOf("messaging" to data.config1))
+        data.config1.maxMessageLength = 200
+        repo.insertConfigs(mutableMapOf("messaging" to data.config1))
+
+        repo.clearCache()
+        repo.load()
+
+        var config = repo.select("messaging")
+        Truth.assertThat(config).isEqualTo(data.config1)
+        Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
+    }
+
+}

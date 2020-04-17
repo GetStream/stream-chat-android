@@ -4,6 +4,10 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 
+/**
+ * The channel config repository stores all channel configs in room as well as in memory
+ * Call channelConfigRepository.load to load all configs into memory
+ */
 class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
@@ -14,9 +18,12 @@ class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
         }
     }
 
+    fun clearCache() {
+        channelConfigs = mutableMapOf()
+    }
+
     fun select(channelType: String): Config? {
-        val config = channelConfigs.getOrElse(channelType) {null}
-        return config
+        return channelConfigs.getOrElse(channelType) {null}
     }
 
     suspend fun insert(configEntities: List<ChannelConfigEntity>) {
@@ -32,12 +39,8 @@ class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
     }
 
     suspend fun insertConfigs(configs: MutableMap<String, Config>) {
-        val configEntities = mutableListOf<ChannelConfigEntity>()
+        val configEntities = configs.map {ChannelConfigEntity(it.key, it.value)}
 
-        for ((channelType, config) in configs) {
-            val entity = ChannelConfigEntity(channelType, config)
-            configEntities.add(entity)
-        }
         insert(configEntities)
 
     }

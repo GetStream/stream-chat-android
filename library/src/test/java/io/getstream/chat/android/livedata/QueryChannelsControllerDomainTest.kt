@@ -18,7 +18,7 @@ class QueryChannelsControllerDomainTest: BaseDomainTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, true)
+        setupChatDomain(client, true)
     }
 
     @After

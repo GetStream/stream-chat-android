@@ -18,7 +18,7 @@ class ChatChannelControllerEventDomainTest: BaseDomainTest() {
     fun setup() {
 
         client = createClient()
-        setupRepo(client, false)
+        setupChatDomain(client, false)
     }
 
     @After

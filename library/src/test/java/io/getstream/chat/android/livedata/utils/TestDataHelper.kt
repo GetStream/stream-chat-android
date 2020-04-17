@@ -14,6 +14,7 @@ class TestDataHelper {
     val user1 = User("broad-lake-3")
     val user1Token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
     val user2 = User("test-user-2")
+    val userMap = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)
     val user1updated = User("broad-lake-3").apply { extraData= mutableMapOf("color" to "green") }
 
     val filter1 = Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
@@ -57,7 +58,7 @@ class TestDataHelper {
         members = listOf(member1)
         extraData = mutableMapOf("color" to "green")
     }
-    val reaction1 = Reaction("message-1", "like", 1).apply { user=user1 }
+    val reaction1 = Reaction("message-1", "like", 1).apply { user=user1; userId=user1.id }
     val reaction2 = Reaction("message-1", "like", 1).apply { user=user2 }
 
     val message1 = Message().apply { this.channel = channel1; text="hi there"; id="message-1"; user=user1; createdAt=calendar(2020, 1,1) }

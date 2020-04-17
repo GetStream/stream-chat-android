@@ -19,7 +19,7 @@ class ChannelUnreadCountDomainTest: BaseDomainTest() {
     @Before
     fun setup() {
         client = createClient()
-        setupRepo(client, false)
+        setupChatDomain(client, false)
     }
 
     @After
