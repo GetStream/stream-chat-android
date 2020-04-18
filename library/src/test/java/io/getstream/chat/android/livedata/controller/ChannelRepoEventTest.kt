@@ -1,7 +1,9 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.junit.*
 import org.junit.runner.RunWith
@@ -12,20 +14,15 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChatChannelControllerEventDomainTest: BaseDomainTest() {
+class ChatChannelControllerEventDomainTest: BaseIntegrationTest() {
 
     @Before
-    fun setup() {
+    override fun setup() {
 
         client = createClient()
         setupChatDomain(client, false)
     }
 
-    @After
-    fun tearDown() {
-        db.close()
-        client.disconnect()
-    }
 
     @Test
     fun eventWatcherCountUpdates() {

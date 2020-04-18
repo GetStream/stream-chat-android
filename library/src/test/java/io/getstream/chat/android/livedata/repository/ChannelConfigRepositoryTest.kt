@@ -15,17 +15,6 @@ import org.junit.runner.RunWith
 class ChannelConfigRepositoryTest: BaseDomainTest() {
     val repo by lazy { chatDomain.repos.configs }
 
-    @Before
-    fun setup() {
-        client = createDisconnectedMockClient()
-        setupChatDomain(client, false)
-    }
-
-    @After
-    fun tearDown() {
-        chatDomain.disconnect()
-        db.close()
-    }
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {

@@ -194,12 +194,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
 
-    fun loadNewerMessages(limit: Int = 30) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _loadNewerMessages(limit)
-        }
-    }
-
     /** stores the mapping from cid to channelRepository */
     var activeThreadMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
 
@@ -208,12 +202,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
         return messageMap.values.sortedBy { it.createdAt }
-    }
-
-    fun threadLoadOlderMessages(threadId: String, limit: Int = 30) {
-        GlobalScope.launch(Dispatchers.IO) {
-            loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
-        }
     }
 
     // TODO: test me
@@ -249,14 +237,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
 
     }
 
-
-    fun watch(limit: Int = 30) {
-        scope.launch(Dispatchers.IO) {
-            _watch(limit)
-        }
-    }
-
-    suspend fun _watch(limit: Int = 30) {
+    suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value == true) {
             logger.logI("Another request to watch this channel is in progress. Ignoring this request.")
@@ -468,7 +449,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             }
             val result = domain.runAndRetry(runnable)
             if (result.isSuccess) {
-                return Result(result.data() as Reaction, result.error())
+                return Result(result.data() as Reaction, null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus=SyncStatus.SYNC_FAILED
@@ -486,7 +467,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
 
-    suspend fun deleteReaction(reaction: Reaction): Result<Reaction> {
+    suspend fun deleteReaction(reaction: Reaction): Result<Message> {
         reaction.user = domain.currentUser
         reaction.syncStatus = SyncStatus.SYNC_NEEDED
 
@@ -498,8 +479,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
-            it.ownReactions = it.ownReactions.filter { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
-            it.latestReactions = it.latestReactions.filter { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
+            it.ownReactions = it.ownReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
+            it.latestReactions = it.latestReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
             upsertMessage(it)
         }
 
@@ -515,12 +496,12 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             }
             val result = domain.runAndRetry(runnable)
             if (result.isSuccess) {
-                return Result(result.data() as Reaction, null)
+                return Result(result.data() as Message, null)
             } else {
                 return Result(null, result.error())
             }
         }
-        return Result(reaction, null)
+        return Result(currentMessage, null)
     }
 
     fun setWatcherCount(watcherCount: Int) {

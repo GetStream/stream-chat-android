@@ -33,6 +33,8 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.mockito.Mockito
 
@@ -50,6 +52,18 @@ open class BaseDomainTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
+
+    @Before
+    open fun setup() {
+        client = createDisconnectedMockClient()
+        setupChatDomain(client, false)
+    }
+
+    @After
+    open fun tearDown() {
+        chatDomain.disconnect()
+        db.close()
+    }
 
     fun createClient(): ChatClient {
         val client = ChatClient.Builder(data.apiKey, getApplicationContext())

@@ -14,18 +14,6 @@ import org.junit.runner.RunWith
 class UserRepositoryTest: BaseDomainTest() {
     val repo by lazy { chatDomain.repos.users }
 
-    @Before
-    fun setup() {
-        client = createDisconnectedMockClient()
-        setupChatDomain(client, false)
-    }
-
-    @After
-    fun tearDown() {
-        chatDomain.disconnect()
-        db.close()
-    }
-
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insertManyUsers(listOf(data.user1))

@@ -21,13 +21,7 @@ class ThreadController(var threadId: String, var channelController: ChannelContr
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
     val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
 
-    fun loadOlderMessages(limit: Int = 30) {
-        GlobalScope.launch(Dispatchers.IO) {
-            _loadOlderMessages(limit)
-        }
-    }
-
-    suspend fun _loadOlderMessages(limit: Int = 30) {
+    suspend fun loadOlderMessages(limit: Int = 30) {
         if (_loadingOlderMessages.value == true) {
             logger.logI("already loading messages for this thread, ignoring the load more requests.")
             return

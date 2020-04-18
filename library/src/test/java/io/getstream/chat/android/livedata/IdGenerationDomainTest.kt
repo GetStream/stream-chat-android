@@ -13,18 +13,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class IdGenerationDomainTest: BaseDomainTest() {
 
-
-    @Before
-    fun setup() {
-        client = createClient()
-        setupChatDomain(client, false)
-    }
-
-    @After
-    fun tearDown() {
-        db.close()
-        client.disconnect()
-    }
     @Test
     fun messageIdGeneration() {
         val messageId = chatDomain.generateMessageId()

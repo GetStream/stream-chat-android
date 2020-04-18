@@ -15,19 +15,7 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatDomainEventDomainTest: BaseDomainTest() {
-
-    @Before
-    fun setup() {
-        client = createClient()
-        setupChatDomain(client, false)
-    }
-
-    @After
-    fun tearDown() {
-        db.close()
-        client.disconnect()
-    }
+class ChatDomainEventDomainTest: BaseIntegrationTest() {
 
 
     @Test

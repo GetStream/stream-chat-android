@@ -15,18 +15,6 @@ import org.junit.runner.RunWith
 class ReactionRepositoryTest: BaseDomainTest() {
     val repo by lazy { chatDomain.repos.reactions }
 
-    @Before
-    fun setup() {
-        client = createDisconnectedMockClient()
-        setupChatDomain(client, false)
-    }
-
-    @After
-    fun tearDown() {
-        chatDomain.disconnect()
-        db.close()
-    }
-
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insertReaction(data.reaction1)

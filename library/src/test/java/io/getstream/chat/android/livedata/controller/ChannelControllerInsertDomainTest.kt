@@ -1,9 +1,11 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -14,31 +16,8 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerInsertDomainTest: BaseDomainTest() {
+class ChannelControllerInsertDomainTest: BaseIntegrationTest() {
 
-    @Before
-    fun setup() {
-        client = createClient()
-        setupChatDomain(client, true)
-        val handler = CoroutineExceptionHandler { _, exception ->
-            println("Caught $exception")
-        }
-    }
-
-    @After
-    fun tearDown() {
-        //ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
-        client.disconnect()
-        db.close()
-
-
-    }
-
-    @Test
-    fun sendMessageUseCase() = runBlocking(Dispatchers.IO) {
-        val call = chatDomain.useCases.sendMessage(data.message1)
-        val result = call.execute()
-    }
 
 
 
@@ -50,8 +29,6 @@ class ChannelControllerInsertDomainTest: BaseDomainTest() {
         val results = chatDomain.repos.reactions.retryReactions()
         Truth.assertThat(results.size).isEqualTo(1)
     }
-
-    // TODO: converter/repo test suite
 
     @Test
     fun sendReaction() = runBlocking(Dispatchers.IO) {

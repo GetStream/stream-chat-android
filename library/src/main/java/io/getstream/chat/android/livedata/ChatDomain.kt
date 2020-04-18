@@ -180,11 +180,15 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
                 channelController.watch() as Call<Any>
             }
             val result = runAndRetry(runnable)
-            if (result.isSuccess) {
+            return if (result.isSuccess) {
                 c.syncStatus = SyncStatus.SYNCED
                 repos.channels.insertChannel(c)
+                Result(result.data() as Channel, null)
+            } else {
+                Result(null, result.error())
             }
-            return Result(result.data() as Channel, result.error())
+
+
         } else {
             return Result(c, null)
         }
@@ -409,13 +413,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             retryFailedEntities()
         }
     }
-
-
-
-
-
-
-
 
     suspend fun retryFailedEntities() {
         // retry channels, messages and reactions in that order..

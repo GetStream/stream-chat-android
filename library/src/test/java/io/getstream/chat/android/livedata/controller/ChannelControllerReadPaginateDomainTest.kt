@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
@@ -9,7 +9,8 @@ import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -21,43 +22,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
-
-    @Before
-    fun setup() {
-        client = createClient()
-        setupChatDomain(client, true)
-    }
-
-    @After
-    fun tearDown() {
-        chatDomain.disconnect()
-        db.close()
-    }
-
-    @Test
-    fun watchChannelUseCase() = runBlocking(Dispatchers.IO) {
-        // use case style syntax
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        var messages = channelState.messages.getOrAwaitValue()
-        var reads = channelState.reads.getOrAwaitValue()
-        Truth.assertThat(messages.size).isGreaterThan(0)
-        var message = chatDomain.useCases.sendMessage(data.message1).execute()
-
-        // alternative syntax (channel level use cases)
-//        var channelController = chatController.channel(data.channel1.cid)
-//        channelControler.useCases.watchChannel(10)
-//
-//
-
-//        // direct access syntax
-//        channelState = chatController.channel(data.channel1.cid)
-//        channelState.watch(10)
-//        messages = channelState.messages.getOrAwaitValue()
-//        reads = channelState.reads.getOrAwaitValue()
-//        Truth.assertThat(messages.size).isGreaterThan(0)
-//        message = channelState.sendMessage(data.message1).execute().data()
-    }
+class ChannelControllerReadPaginateDomainTest: BaseIntegrationTest() {
 
     @Test
     @Ignore
@@ -105,7 +70,7 @@ class ChannelControllerReadPaginateDomainTest: BaseDomainTest() {
             )
 
         // run watch while we're offline
-        channelController._watch()
+        channelController.watch()
 
         // the message should still show up
         val messages = channelController.messages.getOrAwaitValue()

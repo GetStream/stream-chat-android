@@ -1,7 +1,9 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -13,19 +15,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsControllerDomainTest: BaseDomainTest() {
+class QueryChannelsControllerDomainTest: BaseIntegrationTest() {
 
-    @Before
-    fun setup() {
-        client = createClient()
-        setupChatDomain(client, true)
-    }
-
-    @After
-    fun tearDown() {
-        db.close()
-        client.disconnect()
-    }
     @Test
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {
         // TODO: mock the server response for the queryChannels...
