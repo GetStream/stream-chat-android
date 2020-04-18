@@ -1,13 +1,18 @@
 package io.getstream.chat.android.livedata.usecase
 
-data class UseCaseHelper(
-    var createChannel: CreateChannel,
-    var deleteMessage: DeleteMessage,
-    var deleteReaction: DeleteReaction,
-    var editMessage: EditMessage,
-    var keystroke: Keystroke,
-    var sendMessage: SendMessage,
-    var sendReaction: SendReaction,
-    var stopTyping: StopTyping,
-    var watchChannel: WatchChannel
-)
+import io.getstream.chat.android.livedata.ChatDomain
+
+data class UseCaseHelper(var chatDomain: ChatDomain) {
+    var getTotalUnreadCount = GetTotalUnreadCount(chatDomain)
+    var getUnreadChannelCount = GetUnreadChannelCount(chatDomain)
+    var createChannel = CreateChannel(chatDomain)
+    var deleteMessage = DeleteMessage(chatDomain)
+    var deleteReaction = DeleteReaction(chatDomain)
+    var editMessage = EditMessage(chatDomain)
+    var keystroke = Keystroke(chatDomain)
+    var sendMessage = SendMessage(chatDomain)
+    var sendReaction = SendReaction(chatDomain)
+    var stopTyping =  StopTyping(chatDomain)
+    var watchChannel = WatchChannel(chatDomain)
+
+}

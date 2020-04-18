@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -81,17 +82,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             repos.configs.load()
         }
 
-        useCases = UseCaseHelper(
-            CreateChannel(this),
-            DeleteMessage(this),
-            DeleteReaction(this),
-            EditMessage(this),
-            Keystroke(this),
-            SendMessage(this),
-            SendReaction(this),
-            StopTyping(this),
-            WatchChannel(this)
-        )
+        useCases = UseCaseHelper(this)
 
         // verify that you're not connecting 2 different users
         if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
@@ -177,7 +168,11 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // make the API call and follow retry policy
         if (isOnline()) {
             val runnable = {
-                channelController.watch() as Call<Any>
+                // TODO: LLC is a bit broken when it comes to creating channels
+                // update this when it's fixed
+                val watchChannelRequest = WatchChannelRequest()
+                watchChannelRequest.withData(c.extraData)
+                channelController.watch(watchChannelRequest) as Call<Any>
             }
             val result = runAndRetry(runnable)
             return if (result.isSuccess) {

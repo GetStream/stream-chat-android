@@ -168,7 +168,11 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             lastStartTypingEvent = null
             lastKeystrokeAt = null
             val result = client.sendEvent(EventType.TYPING_STOP, channelType, channelId).execute()
-            return Result(result.isSuccess, result.error())
+            return if (result.isSuccess) {
+                Result(result.isSuccess, null)
+            } else {
+                Result(null, result.error())
+            }
         }
         return Result(false, null)
     }
@@ -461,10 +465,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         return Result(reaction, null)
     }
 
-    // TODO: move to llc
-    private fun ChatError.isPermanent(): Boolean {
-        return true
-    }
+
 
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> {
@@ -739,7 +740,21 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 client.updateMessage(message) as Call<Any>
             }
             val result = domain.runAndRetry(runnable)
-            return Result(result.data() as Message, result.error())
+            if (result.isSuccess) {
+                message.syncStatus = SyncStatus.SYNCED
+                upsertMessage(message)
+                domain.repos.messages.insertMessage(message)
+
+                return Result(result.data() as Message, null)
+            } else {
+                if (result.error().isPermanent()) {
+                    message.syncStatus = SyncStatus.SYNC_FAILED
+                    upsertMessage(message)
+                    domain.repos.messages.insertMessage(message)
+                }
+                return Result(null, result.error())
+            }
+
         }
         return Result(message, null)
     }
@@ -760,7 +775,20 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 client.deleteMessage(message.id) as Call<Any>
             }
             val result = domain.runAndRetry(runnable)
-            return Result(result.data() as Message, result.error())
+            if (result.isSuccess) {
+                message.syncStatus = SyncStatus.SYNCED
+                upsertMessage(message)
+                domain.repos.messages.insertMessage(message)
+                return Result(result.data() as Message, null)
+            } else {
+                if (result.error().isPermanent()) {
+                    upsertMessage(message)
+                    domain.repos.messages.insertMessage(message)
+                    message.syncStatus = SyncStatus.SYNC_FAILED
+                }
+                return Result(null, result.error())
+            }
+
         }
         return Result(message, null)
     }
@@ -783,4 +811,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
 
+}
+
+
+// TODO: move to llc
+fun ChatError.isPermanent(): Boolean {
+    return false
 }

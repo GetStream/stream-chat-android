@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.controller.isPermanent
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.security.InvalidParameterException
@@ -77,7 +78,3 @@ class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, va
 
 }
 
-// TODO: move to llc
-fun ChatError.isPermanent(): Boolean {
-    return true
-}
