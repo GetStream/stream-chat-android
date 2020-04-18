@@ -360,14 +360,16 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     ): QueryChannelsController {
         // mark this query as active
         val queryChannelsEntity = QueryChannelsEntity(filter, sort)
-        val queryRepo =
-            QueryChannelsController(
-                queryChannelsEntity,
-                client,
-                this
-            )
-        activeQueryMap[queryChannelsEntity] = queryRepo
-        return queryRepo
+        if (!activeQueryMap.containsKey(queryChannelsEntity)) {
+            val queryRepo =
+                QueryChannelsController(
+                    queryChannelsEntity,
+                    client,
+                    this
+                )
+            activeQueryMap[queryChannelsEntity] = queryRepo
+        }
+        return activeQueryMap[queryChannelsEntity]!!
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {

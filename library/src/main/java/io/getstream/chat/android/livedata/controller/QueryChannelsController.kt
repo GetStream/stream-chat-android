@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -13,6 +14,8 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.Call2
+import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -78,12 +81,6 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
     private val _loadingMore = MutableLiveData<Boolean>(false)
     val loadingMore: LiveData<Boolean> = _loadingMore
 
-    fun loadMore(limit: Int = 30, messageLimit: Int = 10) {
-        GlobalScope.launch(Dispatchers.IO) {
-            val pagination = loadMoreRequest(limit, messageLimit)
-            runQuery(pagination)
-        }
-    }
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
@@ -132,10 +129,27 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
     /**
      * Run the given queryChannels request and update the channels livedata object
      */
-    fun query(limit: Int = 30, messageLimit: Int = 10) {
-        GlobalScope.launch(Dispatchers.IO) {
-            runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
+    fun query(limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>> {
+        val runnable = suspend {
+            _query(limit, messageLimit)
         }
+        return CallImpl2<List<Channel>>(runnable)
+    }
+
+    fun loadMore(limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>> {
+        val runnable = suspend {
+            _loadMore(limit, messageLimit)
+        }
+        return CallImpl2<List<Channel>>(runnable)
+    }
+
+    suspend fun _loadMore(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
+        val pagination = loadMoreRequest(limit, messageLimit)
+        return runQuery(pagination)
+    }
+
+    suspend fun _query(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
+        return runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
     }
 
     fun paginateChannelIds(channelIds: SortedSet<String>, pagination: QueryChannelsPaginationRequest): List<String> {
@@ -145,10 +159,10 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
             max = channelIds.size - 1
         }
 
-        if (min > channelIds.size - 1) {
-            return listOf()
+        return if (min > channelIds.size - 1) {
+            listOf()
         } else {
-            return channelIds.toList().slice(IntRange(min, max))
+            channelIds.toList().slice(IntRange(min, max))
         }
     }
 
@@ -166,6 +180,19 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
                 channelRepo.updateLiveDataFromChannel(c)
             }
             logger.logI("found ${channels.size} channels in offline storage")
+        }
+
+        if (channels != null) {
+            for (c in channels) {
+                val channelRepo = domain.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
+            }
+            // first page replaces the results, second page adds to them
+            if (pagination.isFirstPage()) {
+                setChannels(channels)
+            } else {
+                addChannels(channels)
+            }
         }
         return channels
     }
@@ -211,7 +238,7 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
         return response
     }
 
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest) {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val loader = if (pagination.isFirstPage()) {
             _loading
         } else {
@@ -219,36 +246,30 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
         }
         if (loader.value == true) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
-            return
+            return Result(null, ChatError("Another query channels request is in progress. Ignoring this request."))
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
 
         val channels = runQueryOffline(pagination)
 
-        if (channels != null) {
-            for (c in channels) {
-                val channelRepo = domain.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
-            }
-            // first page replaces the results, second page adds to them
-            if (pagination.isFirstPage()) {
-                setChannels(channels)
-            } else {
-                addChannels(channels)
-            }
-        }
-
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
-        val online = domain.isOnline()
-        if (online) {
-            runQueryOnline(pagination)
-
+        val output: Result<List<Channel>>
+        if (domain.isOnline()) {
+            val result = runQueryOnline(pagination)
+            output = if (result.isSuccess) {
+                Result(result.data() as List<Channel>, null)
+            } else {
+                Result(null, result.error())
+            }
         } else {
             recoveryNeeded = true
+            output = Result(channels, null)
         }
         loader.postValue(false)
+        return output
+
     }
 
     private fun addChannels(channelsResponse: List<Channel>, onTop: Boolean =false) {

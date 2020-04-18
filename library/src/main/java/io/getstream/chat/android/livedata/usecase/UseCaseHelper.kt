@@ -6,6 +6,8 @@ data class UseCaseHelper(var chatDomain: ChatDomain) {
     var getTotalUnreadCount = GetTotalUnreadCount(chatDomain)
     var getUnreadChannelCount = GetUnreadChannelCount(chatDomain)
     var createChannel = CreateChannel(chatDomain)
+    var queryChannels = QueryChannels(chatDomain)
+    val queryChannelsLoadMore = QueryChannelsLoadMore(chatDomain)
     var deleteMessage = DeleteMessage(chatDomain)
     var deleteReaction = DeleteReaction(chatDomain)
     var editMessage = EditMessage(chatDomain)
