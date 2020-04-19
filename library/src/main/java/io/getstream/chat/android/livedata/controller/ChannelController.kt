@@ -135,12 +135,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                     threadId,
                     this
                 )
-            activeThreadMap.put(threadId, channelRepo)
+            activeThreadMap[threadId] = channelRepo
         }
         return activeThreadMap.getValue(threadId)
     }
-
-
 
     fun getConfig(): Config {
         return domain.getChannelConfig(channelType)
@@ -158,7 +156,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 Result(result.isSuccess, null)
             }
         }
-        return return Result(false, null)
+        return Result(false, null)
     }
 
 
@@ -364,7 +362,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
      * - If the request fails we retry according to the retry policy set on the repo
      */
     suspend fun sendMessage(message: Message): Result<Message> {
-        var result : Result<Message>
         // set defaults for id, cid and created at
         if (message.id.isEmpty()) {
             message.id = domain.generateMessageId()
@@ -526,8 +523,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
 
     fun getMessage(messageId: String): Message? {
         val copy = _messages.value ?: mutableMapOf()
-        val message = copy.get(messageId)
-        return message
+        return copy[messageId]
     }
 
     fun upsertMessages(messages: List<Message>) {
@@ -542,9 +538,9 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                     threadMessages = _threads[parentId]!!.value!!
                 } else {
                     val parent = getMessage(parentId)
-                    parent?.let { threadMessages.set(it.id, it) }
+                    parent?.let { threadMessages[it.id] = it }
                 }
-                threadMessages.set(message.id, message)
+                threadMessages[message.id] = message
                 _threads[parentId] = MutableLiveData(threadMessages)
             }
         }

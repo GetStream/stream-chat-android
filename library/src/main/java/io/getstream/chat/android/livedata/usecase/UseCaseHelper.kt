@@ -8,6 +8,7 @@ data class UseCaseHelper(var chatDomain: ChatDomain) {
     var createChannel = CreateChannel(chatDomain)
     var queryChannels = QueryChannels(chatDomain)
     val queryChannelsLoadMore = QueryChannelsLoadMore(chatDomain)
+    val getThread = GetThread(chatDomain)
     var deleteMessage = DeleteMessage(chatDomain)
     var deleteReaction = DeleteReaction(chatDomain)
     var editMessage = EditMessage(chatDomain)
@@ -16,5 +17,6 @@ data class UseCaseHelper(var chatDomain: ChatDomain) {
     var sendReaction = SendReaction(chatDomain)
     var stopTyping =  StopTyping(chatDomain)
     var watchChannel = WatchChannel(chatDomain)
+    var threadLoadMore = ThreadLoadMore(chatDomain)
 
 }
