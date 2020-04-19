@@ -20,7 +20,7 @@ data class Message(
     var isToday: Boolean = false,
     var date: String = "",
     var time: String = "",
-    var commandInfo: Map<String, String>? = null,
+    var commandInfo: Map<String, String> = mutableMapOf(),
     var attachments: MutableList<Attachment> = mutableListOf(),
     @SerializedName("mentioned_users")
     var mentionedUsers: MutableList<User> = mutableListOf()
