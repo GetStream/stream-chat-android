@@ -89,6 +89,10 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
         }
 
+        if (client.isSocketConnected()) {
+            setOnline()
+        }
+
         // start listening for events
         eventHandler = EventHandlerImpl(this)
         startListening()

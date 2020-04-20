@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.BaseIntegrationTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -9,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class StopTypingTest: BaseIntegrationTest() {
+class StopTypingTest: BaseConnectedIntegrationTest() {
 
     @Test
     fun stopTyping() = runBlocking(Dispatchers.IO) {

@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +14,7 @@ import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
-class KeystrokeTest: BaseIntegrationTest() {
+class KeystrokeTest: BaseConnectedIntegrationTest() {
 
     @Test
     fun keystroke() = runBlocking(Dispatchers.IO) {

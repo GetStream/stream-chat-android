@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -16,7 +17,7 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerInsertDomainTest: BaseIntegrationTest() {
+class ChannelControllerInsertDomainTest: BaseConnectedIntegrationTest() {
 
 
 

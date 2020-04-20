@@ -2,12 +2,15 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
+
+import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -15,7 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsControllerDomainTest: BaseIntegrationTest() {
+class QueryChannelsControllerDomainTest: BaseConnectedIntegrationTest() {
 
     @Test
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {
@@ -51,12 +54,14 @@ class QueryChannelsControllerDomainTest: BaseIntegrationTest() {
     @Test
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(0, 2)
-        queryController.runQuery(paginate)
+        val result = queryController.runQuery(paginate)
+        assertSuccess(result as Result<Any>)
         var channels = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(2)
         val request = queryController.loadMoreRequest(1)
         Truth.assertThat(request.channelOffset).isEqualTo(2)
-        queryController.runQuery(request)
+        val result2 = queryController.runQuery(request)
+        assertSuccess(result2 as Result<Any>)
         channels = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
 

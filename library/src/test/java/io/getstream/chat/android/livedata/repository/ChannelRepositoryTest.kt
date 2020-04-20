@@ -25,6 +25,10 @@ class ChannelRepositoryTest: BaseDomainTest() {
         repo.insertChannel(data.channel1)
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
+        channel.config = data.channel1.config
+        channel.watchers = data.channel1.watchers
+        channel.watcherCount = data.channel1.watcherCount
+
         Truth.assertThat(channel).isEqualTo(data.channel1)
     }
 
@@ -34,6 +38,11 @@ class ChannelRepositoryTest: BaseDomainTest() {
         repo.insertChannel(data.channel1Updated)
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
+
+        // ignore these 3 fields
+        channel.config = data.channel1.config
+        channel.watchers = data.channel1Updated.watchers
+        channel.watcherCount = data.channel1Updated.watcherCount
         Truth.assertThat(channel).isEqualTo(data.channel1Updated)
     }
 

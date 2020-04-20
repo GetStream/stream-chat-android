@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import com.google.common.truth.Truth
+import io.getstream.chat.android.client.utils.Result
+
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -48,6 +50,13 @@ open class BaseDomainTest {
     lateinit var query: QueryChannelsEntity
     lateinit var filter: FilterObject
 
+
+    fun assertSuccess(result: Result<Any>) {
+        if (result.isError) {
+            Truth.assertWithMessage(result.error().toString()).that(result.isSuccess).isTrue()
+        }
+    }
+
     var data = TestDataHelper()
 
     @get:Rule
@@ -74,9 +83,6 @@ open class BaseDomainTest {
     }
 
     fun createDisconnectedMockClient(): ChatClient {
-
-
-
 
         val connectedEvent = DisconnectedEvent().apply {
         }

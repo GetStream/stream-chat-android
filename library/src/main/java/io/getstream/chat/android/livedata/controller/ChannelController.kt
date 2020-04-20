@@ -272,43 +272,47 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
 
-    suspend fun loadOlderMessages(limit: Int = 30) {
+    suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
         if (_loadingOlderMessages.value == true) {
             logger.logI("Another request to load older messages is in progress. Ignoring this request.")
-            return
+            return Result(null, ChatError("Another request to load older messages is in progress. Ignoring this request."))
         }
         _loadingOlderMessages.postValue(true)
         val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
-        runChannelQuery(pagination)
+        val result = runChannelQuery(pagination)
         _loadingOlderMessages.postValue(false)
+        return result
     }
 
-    suspend fun _loadNewerMessages(limit: Int = 30) {
+    suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
         if (_loadingNewerMessages.value == true) {
             logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
-            return
+            return Result(null, ChatError("Another request to load newer messages is in progress. Ignoring this request."))
         }
         _loadingNewerMessages.value = true
         val pagination = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
-        runChannelQuery(pagination)
+        val result = runChannelQuery(pagination)
         _loadingNewerMessages.value = false
+        return result
     }
 
-    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest) {
+    suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        runChannelQueryOffline(pagination)
+        val channel = runChannelQueryOffline(pagination)
 
         // if we are online we we run the actual API call
-        if (domain.isOnline()) {
 
+        var result = if (domain.isOnline()) {
             runChannelQueryOnline(pagination)
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
+            Result(channel, null)
         }
+        return result
     }
 
-    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest) {
+    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
         val channel = domain.selectAndEnrichChannel(cid, pagination)
 
         channel?.let {
@@ -324,12 +328,12 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         // for pagination we cant use channel.messages, so discourage that
         if (channel != null) {
             // TODO: having a channel data concept which only has a subset of the channel fields would prevent coding errors
-            channel.messages = emptyList()
             _channel.postValue(channel)
         }
+        return channel
     }
 
-    suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest) {
+    suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val request = pagination.toQueryChannelRequest(domain.userPresence)
         val response = channelController.watch(request).execute()
 
@@ -353,6 +357,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             recoveryNeeded = true
             domain.addError(response.error())
         }
+        return response
     }
 
     /**

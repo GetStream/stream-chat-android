@@ -1,6 +1,6 @@
 include ':library'
 rootProject.name='stream-chat-android-livedata'
 
-include ':client'
+//include ':client'
 
-project(":client").projectDir=new File("/Users/thierry/workspace/stream-chat-android-client/library")
+//project(":client").projectDir=new File("/Users/thierry/workspace/stream-chat-android-client/library")

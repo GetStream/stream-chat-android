@@ -12,8 +12,10 @@ class WatchChannel(var domain: ChatDomain) {
     operator fun invoke (cid: String, messageLimit: Int): Call2<ChannelController> {
         val channelRepo = domain.channel(cid)
 
-        channelRepo.scope.launch {
-            channelRepo.watch(messageLimit)
+        if (messageLimit>0) {
+            channelRepo.scope.launch {
+                channelRepo.watch(messageLimit)
+            }
         }
 
         var runnable = suspend {

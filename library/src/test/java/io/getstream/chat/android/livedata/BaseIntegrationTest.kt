@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import org.junit.After
 import org.junit.Before
+import org.junit.BeforeClass
 
 open class BaseIntegrationTest: BaseDomainTest() {
 

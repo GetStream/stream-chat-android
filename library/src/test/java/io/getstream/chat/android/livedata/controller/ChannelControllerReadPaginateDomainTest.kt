@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
@@ -22,7 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerReadPaginateDomainTest: BaseIntegrationTest() {
+class ChannelControllerReadPaginateDomainTest: BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore
