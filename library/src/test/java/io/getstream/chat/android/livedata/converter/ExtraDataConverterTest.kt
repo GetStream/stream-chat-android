@@ -5,16 +5,15 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ExtraDataConverterTest: BaseTest() {
+class ExtraDataConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {
         val converter = ExtraDataConverter()
         val output = converter.mapToString(null)
         val converted = converter.stringToMap(output)
-        Truth.assertThat(converted).isEqualTo(mutableMapOf<String,Any>())
+        Truth.assertThat(converted).isEqualTo(mutableMapOf<String, Any>())
     }
 
     @Test
@@ -22,7 +21,7 @@ class ExtraDataConverterTest: BaseTest() {
         val converter = ExtraDataConverter()
         val output = converter.mapToString(data.extraData1)
         val converted = converter.stringToMap(output)
-        Truth.assertThat(converted!!).isEqualTo(data.extraData1)
+        Truth.assertThat(converted).isEqualTo(data.extraData1)
     }
 
 }

@@ -3,9 +3,8 @@ package io.getstream.chat.android.livedata.converter
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
-import java.util.*
 
-class ConfigConverterTest: BaseTest() {
+class ConfigConverterTest : BaseTest() {
 
     @Test
     fun testSortEncoding() {

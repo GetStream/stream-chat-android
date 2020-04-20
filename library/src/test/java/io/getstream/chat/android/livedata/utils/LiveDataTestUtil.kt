@@ -45,11 +45,11 @@ fun <T> LiveData<T>.getOrAwaitValue(
 }
 
 fun waitForSetUser(
-        client: ChatClient,
-        user: User,
-        token: String,
-        time: Long = 4,
-        timeUnit: TimeUnit = TimeUnit.SECONDS
+    client: ChatClient,
+    user: User,
+    token: String,
+    time: Long = 4,
+    timeUnit: TimeUnit = TimeUnit.SECONDS
 ) {
     val latch = CountDownLatch(1)
     client.events().subscribe {
@@ -60,7 +60,7 @@ fun waitForSetUser(
     }
     client.setUser(user, token)
     Thread.sleep(1000)
-    ShadowLooper.runUiThreadTasksIncludingDelayedTasks();
+    ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
     if (!latch.await(time, timeUnit)) {
         throw TimeoutException("setUser never completed")
     }

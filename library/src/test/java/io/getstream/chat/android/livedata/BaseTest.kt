@@ -1,11 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import org.junit.Rule
-import org.junit.runner.RunWith
 
 open class BaseTest {
 

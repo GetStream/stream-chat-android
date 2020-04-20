@@ -7,10 +7,9 @@ import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ListConverterTest: BaseTest() {
+class ListConverterTest : BaseTest() {
     val converter = ListConverter()
 
     @Test
@@ -22,7 +21,7 @@ class ListConverterTest: BaseTest() {
 
     @Test
     fun stringList() {
-        val input = listOf("a","b")
+        val input = listOf("a", "b")
         val output = converter.stringListToString(input)
         val converted = converter.stringToStringList(output)
         Truth.assertThat(converted!!).isEqualTo(input)
@@ -40,7 +39,7 @@ class ListConverterTest: BaseTest() {
         val input = listOf(data.attachment1)
         val output = converter.attachmentListToString(input)
         val converted = converter.stringToAttachmentList(output)
-        Truth.assertThat(converted!!).isEqualTo(input)
+        Truth.assertThat(converted).isEqualTo(input)
     }
 
     @Test

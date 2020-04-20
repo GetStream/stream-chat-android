@@ -6,11 +6,10 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
-class SyncStatusConverterTest: BaseTest() {
+class SyncStatusConverterTest : BaseTest() {
     @Test
     fun testEncoding() {
         val options = listOf(SyncStatus.SYNC_NEEDED, SyncStatus.SYNC_FAILED, SyncStatus.SYNCED)

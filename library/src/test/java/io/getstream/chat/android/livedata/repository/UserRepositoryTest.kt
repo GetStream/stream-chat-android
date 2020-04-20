@@ -5,13 +5,11 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDomainTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class UserRepositoryTest: BaseDomainTest() {
+class UserRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.users }
 
     @Test

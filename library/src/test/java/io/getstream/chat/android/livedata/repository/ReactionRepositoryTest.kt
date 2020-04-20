@@ -6,19 +6,18 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ReactionRepositoryTest: BaseDomainTest() {
+class ReactionRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.reactions }
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insertReaction(data.reaction1)
-        val entity = repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+        val entity =
+            repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         val reaction = entity!!.toReaction(data.userMap)
         Truth.assertThat(reaction).isEqualTo(data.reaction1)
     }
@@ -26,7 +25,8 @@ class ReactionRepositoryTest: BaseDomainTest() {
     @Test
     fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
         data.reaction1.syncStatus = SyncStatus.SYNC_FAILED
-        val reaction2 = data.reaction1.copy().apply { type="love"; syncStatus=SyncStatus.SYNC_NEEDED }
+        val reaction2 =
+            data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
         repo.insertManyReactions(listOf(data.reaction1, reaction2))
         var reactions = repo.selectSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(1)
@@ -42,14 +42,15 @@ class ReactionRepositoryTest: BaseDomainTest() {
 
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
-        val reaction1Updated = data.reaction1.copy().apply { extraData= mutableMapOf("theanswer" to 42) }
+        val reaction1Updated =
+            data.reaction1.copy().apply { extraData = mutableMapOf("theanswer" to 42) }
         repo.insertReaction(data.reaction1)
         repo.insertReaction(reaction1Updated)
 
-        val entity = repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
+        val entity =
+            repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         val reaction = entity!!.toReaction(data.userMap)
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
-
 
 
     }

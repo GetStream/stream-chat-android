@@ -5,13 +5,11 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IdGenerationDomainTest: BaseDomainTest() {
+class IdGenerationDomainTest : BaseDomainTest() {
 
     @Test
     fun messageIdGeneration() {

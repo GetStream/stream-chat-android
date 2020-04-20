@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.converter
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -10,7 +9,7 @@ import java.util.*
 
 
 @RunWith(AndroidJUnit4::class)
-class DateConverterTest: BaseTest() {
+class DateConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {
         val converter = DateConverter()

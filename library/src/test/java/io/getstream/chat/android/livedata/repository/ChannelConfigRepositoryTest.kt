@@ -3,16 +3,13 @@ package io.getstream.chat.android.livedata.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDomainTest
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelConfigRepositoryTest: BaseDomainTest() {
+class ChannelConfigRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.configs }
 
 

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -381,12 +382,13 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         message.syncStatus = SyncStatus.SYNC_NEEDED
 
         val messageEntity = MessageEntity(message)
+        // TODO: perhaps we need a fourth sync state, only allowing recovery after we are offline or the API call failed
 
         // Update livedata
         upsertMessage(message)
         setLastMessage(message)
 
-        // Update Room State
+        // we insert early to ensure we don't lose messages
         domain.repos.messages.insertMessage(message)
 
         val channelStateEntity = domain.repos.channels.select(message.channel.cid)
@@ -397,6 +399,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         }
 
         if (domain.isOnline()) {
+            logger.logI("Starting to send message with id ${message.id} and text ${message.text}")
+
             val runnable = {
                 val result = channelController.sendMessage(message)
                 result as Call<Any>
@@ -409,9 +413,15 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 domain.repos.messages.insert(messageEntity)
                 return Result(result.data() as Message?, null)
             } else {
-
+                if(result.error().isPermanent()) {
+                    messageEntity.syncStatus = SyncStatus.SYNC_FAILED
+                    domain.repos.messages.insert(messageEntity)
+                }
                 return Result(null, result.error())
             }
+        } else {
+            logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
+
         }
         return Result(message, null)
     }

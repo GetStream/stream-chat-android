@@ -4,16 +4,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class EditMessageUseCase: BaseConnectedIntegrationTest() {
+class EditMessageUseCase : BaseConnectedIntegrationTest() {
 
     @Test
     fun editMessageUseCase() = runBlocking(Dispatchers.IO) {
@@ -24,7 +22,7 @@ class EditMessageUseCase: BaseConnectedIntegrationTest() {
 
         var messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)
-        message1.extraData= mutableMapOf("plaid" to true)
+        message1.extraData = mutableMapOf("plaid" to true)
         var result2 = chatDomain.useCases.editMessage(message1).execute()
         assertSuccess(result2 as Result<Any>)
         messages = channelState.messages.getOrAwaitValue()

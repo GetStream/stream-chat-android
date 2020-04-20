@@ -5,7 +5,7 @@ import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 
 
-class SetConverterTest: BaseTest() {
+class SetConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {
         val converter = SetConverter()

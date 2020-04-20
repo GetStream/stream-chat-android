@@ -1,9 +1,8 @@
 package io.getstream.chat.android.livedata.utils
 
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Subscription
-
-import io.getstream.chat.android.client.events.ChatEvent
 
 class JustObservable(private val event: ChatEvent) : ChatObservable {
 

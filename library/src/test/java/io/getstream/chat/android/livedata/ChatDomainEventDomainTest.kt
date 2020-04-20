@@ -5,8 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,13 +13,13 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatDomainEventDomainTest: BaseIntegrationTest() {
+class ChatDomainEventDomainTest : BaseConnectedIntegrationTest() {
 
 
     @Test
     fun newMessageEvent() {
         // new messages should be stored in room
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.newMessageEvent) }
         val message = runBlocking(Dispatchers.IO) {
             chatDomain.repos.messages.select(data.newMessageEvent.message.id)
         }
@@ -30,30 +28,30 @@ class ChatDomainEventDomainTest: BaseIntegrationTest() {
 
     @Test
     fun initializeAndConnect() {
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.connectedEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.connectedEvent) }
         Truth.assertThat(chatDomain.initialized.getOrAwaitValue()).isTrue()
         Truth.assertThat(chatDomain.online.getOrAwaitValue()).isTrue()
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.disconnectedEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.disconnectedEvent) }
         Truth.assertThat(chatDomain.initialized.getOrAwaitValue()).isTrue()
         Truth.assertThat(chatDomain.online.getOrAwaitValue()).isFalse()
     }
 
     @Test
     fun unreadCounts() {
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.connectedEvent2)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.connectedEvent2) }
         Truth.assertThat(chatDomain.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)
         Truth.assertThat(chatDomain.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
     }
 
     @Test
     fun messageRead() {
-        runBlocking(Dispatchers.IO) {chatDomain.repos.channels.insertChannel(data.channel1)}
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.readEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.repos.channels.insertChannel(data.channel1) }
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.readEvent) }
         // check channel level read info
         val cid = data.readEvent.cid!!
         val channel = runBlocking(Dispatchers.IO) { chatDomain.repos.channels.select(cid) }
         Truth.assertThat(channel!!.reads.size).isEqualTo(1)
-        val read = channel!!.reads.values.first()
+        val read = channel.reads.values.first()
         Truth.assertThat(read.userId).isEqualTo(data.readEvent.user!!.id)
     }
 
@@ -61,11 +59,11 @@ class ChatDomainEventDomainTest: BaseIntegrationTest() {
     fun reactionEvent() {
         // add the message
         val messageId = data.newMessageEvent.message.id
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.newMessageEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.newMessageEvent) }
         // add the reaction
         val secondId = data.reactionEvent.reaction!!.messageId
         Truth.assertThat(secondId).isEqualTo(messageId)
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.reactionEvent) }
         // fetch the message
         var message = runBlocking(Dispatchers.IO) {
             chatDomain.repos.messages.select(messageId)!!
@@ -76,7 +74,7 @@ class ChatDomainEventDomainTest: BaseIntegrationTest() {
         Truth.assertThat(message.ownReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
 
         // add a reaction from a different user, it should not go into own reaction
-        runBlocking(Dispatchers.IO) {chatDomain.eventHandler.handleEvent(data.reactionEvent2)}
+        runBlocking(Dispatchers.IO) { chatDomain.eventHandler.handleEvent(data.reactionEvent2) }
         message = runBlocking(Dispatchers.IO) {
             chatDomain.repos.messages.select(messageId)!!
         }

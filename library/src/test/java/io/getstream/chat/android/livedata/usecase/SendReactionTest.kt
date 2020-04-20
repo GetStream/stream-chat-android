@@ -4,15 +4,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class SendReactionTest: BaseConnectedIntegrationTest() {
+class SendReactionTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking(Dispatchers.IO) {
@@ -26,7 +24,7 @@ class SendReactionTest: BaseConnectedIntegrationTest() {
         Truth.assertThat(result2.isSuccess).isTrue()
         val msg = channelState.getMessage(message1.id)
         Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
-        Truth.assertThat(msg!!.latestReactions.last()).isEqualTo(data.reaction1)
-        Truth.assertThat(msg!!.ownReactions.last()).isEqualTo(data.reaction1)
+        Truth.assertThat(msg.latestReactions.last()).isEqualTo(data.reaction1)
+        Truth.assertThat(msg.ownReactions.last()).isEqualTo(data.reaction1)
     }
 }

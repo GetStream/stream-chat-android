@@ -4,15 +4,13 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class DeleteReactionTest: BaseConnectedIntegrationTest() {
+class DeleteReactionTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking(Dispatchers.IO) {
@@ -23,12 +21,13 @@ class DeleteReactionTest: BaseConnectedIntegrationTest() {
         data.reaction1.messageId = result.data().id
         val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
         assertSuccess(result2 as Result<Any>)
-        val result3 = chatDomain.useCases.deleteReaction(data.channel1.cid, data.reaction1).execute()
+        val result3 =
+            chatDomain.useCases.deleteReaction(data.channel1.cid, data.reaction1).execute()
         assertSuccess(result3 as Result<Any>)
         val msg = channelState.getMessage(message1.id)
         Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
-        Truth.assertThat(msg!!.latestReactions.size).isEqualTo(0)
-        Truth.assertThat(msg!!.ownReactions.size).isEqualTo(0)
+        Truth.assertThat(msg.latestReactions.size).isEqualTo(0)
+        Truth.assertThat(msg.ownReactions.size).isEqualTo(0)
 
     }
 }

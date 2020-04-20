@@ -30,6 +30,7 @@ import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.usecase.*
 import kotlinx.coroutines.*
+import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -103,7 +104,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         job.cancelChildren()
         stopListening()
         stopClean()
-        client.disconnect()
     }
 
     private fun stopClean() {
@@ -134,7 +134,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         while (true) {
             result = runnable().execute()
             if (result.isSuccess) {
-                return result
+                break
             } else {
                 // retry logic
                 val shouldRetry = retryPolicy.shouldRetry(client, attempt, result.error())
@@ -416,6 +416,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     }
 
     suspend fun retryFailedEntities() {
+        sleep(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messageEntities = repos.messages.retryMessages()

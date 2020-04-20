@@ -2,10 +2,10 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
+import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import org.junit.*
+import org.junit.Ignore
+import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
@@ -14,14 +14,7 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChatChannelControllerEventDomainTest: BaseIntegrationTest() {
-
-    @Before
-    override fun setup() {
-
-        client = createClient()
-        setupChatDomain(client, false)
-    }
+class ChatChannelControllerEventDomainTest : BaseDisconnectedIntegrationTest() {
 
 
     @Test
@@ -36,7 +29,8 @@ class ChatChannelControllerEventDomainTest: BaseIntegrationTest() {
     @Test
     fun eventNewMessage() {
         channelController.handleEvent(data.newMessageEvent)
-        Truth.assertThat(channelController.messages.getOrAwaitValue()).isEqualTo(listOf(data.newMessageEvent.message))
+        Truth.assertThat(channelController.messages.getOrAwaitValue())
+            .isEqualTo(listOf(data.newMessageEvent.message))
     }
 
     @Test
@@ -59,7 +53,8 @@ class ChatChannelControllerEventDomainTest: BaseIntegrationTest() {
         channelController.handleEvent(data.user1UpdatedEvent)
         val message = channelController.getMessage(data.message1.id)
         Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
-        Truth.assertThat(message!!.latestReactions.first().user!!.extraData["color"]).isEqualTo("green")
+        Truth.assertThat(message.latestReactions.first().user!!.extraData["color"])
+            .isEqualTo("green")
 
     }
 
@@ -99,7 +94,7 @@ class ChatChannelControllerEventDomainTest: BaseIntegrationTest() {
         val parentId = data.newMessageWithThreadEvent.message.parentId!!
 
         val messages = channelController.getThreadMessages(parentId).getOrAwaitValue()
-        Truth.assertThat(messages?.size).isEqualTo(2)
+        Truth.assertThat(messages.size).isEqualTo(2)
     }
 
     @Test

@@ -5,15 +5,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.utils.Result
-
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -21,15 +17,11 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
-import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.UuidGeneratorImpl
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.*
@@ -38,7 +30,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import org.mockito.Mockito
 
 open class BaseDomainTest {
     lateinit var database: ChatDatabase
@@ -89,16 +80,32 @@ open class BaseDomainTest {
 
 
         val result = Result(listOf(data.channel1), null)
-        val channelMock =  mock<ChannelController> {
-            on { sendMessage(any())} doReturn ChatCallTestImpl<Message>(Result(data.message1, null))
+        val channelMock = mock<ChannelController> {
+            on { sendMessage(any()) } doReturn ChatCallTestImpl<Message>(
+                Result(
+                    data.message1,
+                    null
+                )
+            )
         }
         val client = mock<ChatClient> {
             on { events() } doReturn JustObservable(connectedEvent)
-            on { queryChannels(any())} doReturn ChatCallTestImpl(result)
-            on { channel(any(), any())} doReturn channelMock
-            on { channel(any())} doReturn channelMock
-            on { createChannel(any<String>(), any<String>(), any<Map<String, Any>>())} doReturn ChatCallTestImpl<Channel>(Result(data.channel1, null))
-            on { sendReaction(any())} doReturn ChatCallTestImpl<Reaction>(Result(data.reaction1, null))
+            on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
+            on { channel(any(), any()) } doReturn channelMock
+            on { channel(any()) } doReturn channelMock
+            on {
+                createChannel(
+                    any<String>(),
+                    any<String>(),
+                    any<Map<String, Any>>()
+                )
+            } doReturn ChatCallTestImpl<Channel>(Result(data.channel1, null))
+            on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
+                Result(
+                    data.reaction1,
+                    null
+                )
+            )
         }
 
 
@@ -118,7 +125,6 @@ open class BaseDomainTest {
         )
 
 
-
         val connectedEvent = ConnectedEvent().apply {
             me = data.user1
             connectionId = data.connection1
@@ -126,14 +132,19 @@ open class BaseDomainTest {
 
 
         val result = Result(listOf(data.channel1), null)
-        val channelMock =  mock<ChannelController> {
+        val channelMock = mock<ChannelController> {
 
         }
         val client = mock<ChatClient> {
             on { events() } doReturn JustObservable(connectedEvent)
-            on { queryChannels(any())} doReturn ChatCallTestImpl(result)
-            on { channel(any(), any())} doReturn channelMock
-            on { sendReaction(any())} doReturn ChatCallTestImpl<Reaction>(Result(data.reaction1, null))
+            on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
+            on { channel(any(), any()) } doReturn channelMock
+            on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
+                Result(
+                    data.reaction1,
+                    null
+                )
+            )
 
         }
 
@@ -161,9 +172,10 @@ open class BaseDomainTest {
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
-        chatDomain = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled().userPresenceEnabled().build()
+        chatDomain = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
+            .userPresenceEnabled().build()
         chatDomain.eventHandler = EventHandlerImpl(chatDomain, true)
-        chatDomain.retryPolicy = object: RetryPolicy {
+        chatDomain.retryPolicy = object : RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
                 return false
             }
@@ -178,7 +190,7 @@ open class BaseDomainTest {
             System.out.println("error event$it")
         })
 
-        runBlocking(Dispatchers.IO) {chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))}
+        runBlocking(Dispatchers.IO) { chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
         channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
         channelController.updateChannel(data.channel1)
 

@@ -1,13 +1,12 @@
 package io.getstream.chat.android.livedata.converter
 
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.livedata.BaseTest
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import org.junit.Test
 
-class MapConverterTest: BaseTest() {
+class MapConverterTest : BaseTest() {
     // read maps
     @Test
     fun testNullEncoding() {
@@ -25,6 +24,7 @@ class MapConverterTest: BaseTest() {
         val converted = converter.stringToReadMap(output)
         Truth.assertThat(converted).isEqualTo(readMap)
     }
+
     // member maps
     @Test
     fun testNullMemberEncoding() {
@@ -42,6 +42,7 @@ class MapConverterTest: BaseTest() {
         val converted = converter.stringToMemberMap(output)
         Truth.assertThat(converted).isEqualTo(memberMap)
     }
+
     // string,int map
     @Test
     fun intMapNull() {
@@ -54,7 +55,7 @@ class MapConverterTest: BaseTest() {
     @Test
     fun intMapRegular() {
         val converter = MapConverter()
-        val input = mapOf<String,Int>("score" to 1)
+        val input = mapOf<String, Int>("score" to 1)
         val output = converter.mapToString(input)
         val converted = converter.stringToMap(output)
         Truth.assertThat(converted).isEqualTo(input)
@@ -72,7 +73,7 @@ class MapConverterTest: BaseTest() {
     @Test
     fun testStringRegularEncoding() {
         val converter = MapConverter()
-        val input = mutableMapOf<String,String>("color" to "green")
+        val input = mutableMapOf<String, String>("color" to "green")
         val output = converter.stringMapToString(input)
         val converted = converter.stringToStringMap(output)
         Truth.assertThat(converted).isEqualTo(input)

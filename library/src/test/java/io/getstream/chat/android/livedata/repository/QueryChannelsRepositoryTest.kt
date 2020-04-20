@@ -6,14 +6,12 @@ import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsRepositoryTest: BaseDomainTest() {
+class QueryChannelsRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.queryChannels }
 
     @Test
@@ -36,7 +34,6 @@ class QueryChannelsRepositoryTest: BaseDomainTest() {
 
         val entity = repo.select(queryChannelsEntity.id)
         Truth.assertThat(entity).isEqualTo(queryChannelsEntity)
-
 
 
     }

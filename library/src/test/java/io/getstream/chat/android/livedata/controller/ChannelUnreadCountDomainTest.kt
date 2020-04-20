@@ -5,26 +5,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
+import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ChannelUnreadCountDomainTest: BaseIntegrationTest() {
-
-
-    @Before
-    override fun setup() {
-        client = createClient()
-        setupChatDomain(client, false)
-    }
-
+class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun testUnreadCount() {

@@ -4,16 +4,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.BaseIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class GetThreadTest: BaseConnectedIntegrationTest() {
+class GetThreadTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun getThread() = runBlocking(Dispatchers.IO) {
@@ -23,7 +21,7 @@ class GetThreadTest: BaseConnectedIntegrationTest() {
         var result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result as Result<Any>)
         var parentId = result.data().id
-        val message2 = data.createMessage().apply { this.parentId=parentId }
+        val message2 = data.createMessage().apply { this.parentId = parentId }
         var result2 = chatDomain.useCases.sendMessage(message2).execute()
         assertSuccess(result2 as Result<Any>)
         val parentMessage = channelState.getMessage(parentId)!!

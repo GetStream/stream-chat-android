@@ -2,21 +2,16 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4::class)
-class ChannelRepositoryTest: BaseDomainTest() {
+class ChannelRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.channels }
 
 

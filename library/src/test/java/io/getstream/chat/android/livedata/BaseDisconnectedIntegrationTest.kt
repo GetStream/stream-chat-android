@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -16,10 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.runner.RunWith
 
-
-open class BaseConnectedIntegrationTest : BaseDomainTest() {
+open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
     companion object {
 
         var data = TestDataHelper()
@@ -72,12 +69,7 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
             // doing this here since context is not available in before all
             // see https://github.com/android/android-test/issues/409
             Companion.client = Companion.createClient()
-            waitForSetUser(
-                Companion.client!!,
-                Companion.data.user1,
-                Companion.data.user1Token
-            )
-            Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
+            Truth.assertThat(Companion.client!!.isSocketConnected()).isFalse()
         }
 
         client = Companion.client!!
@@ -94,9 +86,9 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
         queryController = chatDomain.queryChannels(data.filter1)
 
-        Truth.assertThat(client.isSocketConnected()).isTrue()
+        Truth.assertThat(client.isSocketConnected()).isFalse()
 
-        Truth.assertThat(chatDomain.isOnline()).isTrue()
+        Truth.assertThat(chatDomain.isOnline()).isFalse()
     }
 
     @After
@@ -105,5 +97,4 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         System.out.println("tearDown")
         chatDomain.disconnect()
     }
-
 }
