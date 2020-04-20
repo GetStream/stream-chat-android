@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.*;
-import io.getstream.chat.android.livedata.ChatRepo;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;

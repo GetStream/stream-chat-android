@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.utils;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
+import com.getstream.sdk.chat.model.ModelType;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +12,6 @@ import java.util.List;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ModelType;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 
 class UploadManager {

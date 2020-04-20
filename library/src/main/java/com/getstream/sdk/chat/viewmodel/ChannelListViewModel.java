@@ -35,11 +35,9 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
-import io.getstream.chat.android.livedata.ChannelRepo;
-import io.getstream.chat.android.livedata.ChatRepo;
-import io.getstream.chat.android.livedata.QueryChannelsRepo;
+import io.getstream.chat.android.livedata.ChatDomain;
+import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity;
-import io.getstream.chat.android.livedata.requests.QueryChannelsPaginationRequest;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -55,16 +53,16 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     protected FilterObject filter;
     protected QuerySort sort;
 
-    private boolean reachedEndOfPagination;
     protected AtomicBoolean initialized;
     protected AtomicBoolean isLoading;
     protected AtomicBoolean isLoadingMore;
     protected boolean queryChannelDone;
     protected int pageSize;
     protected Handler retryLooper;
-    protected ChatRepo repo;
-    protected QueryChannelsRepo queryRepo;
+    protected ChatDomain chatDomain;
+    protected QueryChannelsController queryChannelsController;
     private LiveData<List<Channel>> channels;
+    private LiveData<Boolean> reachedEndOfPagination;
 
 
     public ChannelListViewModel(@NonNull Application application) {
@@ -72,13 +70,12 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         logger.logI("instance created");
 
-        repo = ChatRepo.instance();
+        chatDomain = ChatDomain.instance();
 
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
         initialized = new AtomicBoolean(false);
 
-        reachedEndOfPagination = false;
         pageSize = 25;
 
         loading = new MutableLiveData<>(true);
@@ -96,16 +93,18 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public void setQuery(FilterObject filter, QuerySort sort) {
         this.filter = filter;
         this.sort = sort;
-        this.queryRepo = repo.queryChannels(filter, sort);
+        Result<QueryChannelsController> result = chatDomain.useCases.getQueryChannels().invoke(filter, sort, 30, 10).execute();
+        this.queryChannelsController = result.data();
         if (initialized.get()) {
             logger.logI("setChannelFilter on an already initialized channel will reload the view model");
             reload();
         }
 
         // connect the livedata objects
-        this.channels = queryRepo.getChannels();
-        this.loading = queryRepo.getLoading();
-        this.loadingMore = queryRepo.getLoadingMore();
+        this.channels = queryChannelsController.getChannels();
+        this.loading = queryChannelsController.getLoading();
+        this.loadingMore = queryChannelsController.getLoadingMore();
+        this.reachedEndOfPagination = queryChannelsController.getEndOfChannels();
         this.queryChannels();
     }
 
@@ -175,7 +174,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * query channels
      */
     public void queryChannels() {
-        queryRepo.query(pageSize, 20);
+        chatDomain.useCases.getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
     }
 
     /**
@@ -187,18 +186,17 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         if (loadingMore.getValue() || loading.getValue()) {
             return;
         }
-        if (reachedEndOfPagination) {
+        if (reachedEndOfPagination.getValue()) {
             return;
         }
 
-        queryRepo.loadMore(pageSize, 20);
+        chatDomain.useCases.getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
 
     }
 
     protected void clean() {
         retryLooper.removeCallbacksAndMessages(null);
         initialized.set(true);
-        reachedEndOfPagination = false;
     }
 
     /**

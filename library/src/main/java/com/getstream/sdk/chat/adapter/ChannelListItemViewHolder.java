@@ -26,7 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 import io.getstream.chat.android.client.models.*;
-import io.getstream.chat.android.livedata.ChatRepo;
+
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 

@@ -22,7 +22,6 @@ import java.util.List;
 
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.livedata.ChannelRepo;
 
 
 public class ChannelListView extends RecyclerView {
