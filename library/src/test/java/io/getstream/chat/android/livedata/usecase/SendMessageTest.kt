@@ -7,6 +7,7 @@ import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -15,7 +16,7 @@ class SendMessageTest : BaseConnectedIntegrationTest() {
 
 
     @Test
-    fun sendMessageUseCase() = runBlocking(Dispatchers.IO) {
+    fun sendMessageUseCase() = runBlocking(Dispatchers.Main) {
         val message1 = data.createMessage()
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         var result = chatDomain.useCases.sendMessage(message1).execute()

@@ -60,7 +60,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domain.job + job)
 
-    private val logger = ChatLogger.get("ChannelRepo")
+    private val logger = ChatLogger.get("ChannelController")
 
     private val _messages = MutableLiveData<MutableMap<String, Message>>()
     /** LiveData object with the messages */
@@ -177,8 +177,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
 
-    fun markRead(): Boolean {
-        if (!getConfig().isReadEvents) return false
+    fun markRead(): Result<Boolean> {
+        if (!getConfig().isReadEvents) return Result(false, null)
         // throttle the mark read
         val messages = sortedMessages()
         if (messages.isNotEmpty()) {
@@ -190,10 +190,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 val userRead = ChannelUserRead(domain.currentUser).apply { lastRead = last.createdAt }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
-                return true
+                return Result(true, null)
             }
         }
-        return false
+        return Result(false, null)
     }
 
 
@@ -367,7 +367,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
      * - If we're online do the send message request
      * - If the request fails we retry according to the retry policy set on the repo
      */
-    suspend fun sendMessage(message: Message): Result<Message> {
+
+    suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
+        var output: Result<Message>
+
         // set defaults for id, cid and created at
         if (message.id.isEmpty()) {
             message.id = domain.generateMessageId()
@@ -411,19 +414,20 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 messageEntity.syncStatus = SyncStatus.SYNCED
                 messageEntity.sendMessageCompletedAt = Date()
                 domain.repos.messages.insert(messageEntity)
-                return Result(result.data() as Message?, null)
+                output= Result(result.data() as Message?, null)
             } else {
                 if(result.error().isPermanent()) {
                     messageEntity.syncStatus = SyncStatus.SYNC_FAILED
                     domain.repos.messages.insert(messageEntity)
                 }
-                return Result(null, result.error())
+                output= Result(null, result.error())
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-
+            output= Result(message, null)
         }
-        return Result(message, null)
+
+        output
     }
 
     private fun setLastMessage(message: Message) {

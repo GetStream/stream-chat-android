@@ -15,6 +15,6 @@ class Keystroke(var domain: ChatDomain) {
             val channelRepo = domain.channel(cid)
             channelRepo.keystroke()
         }
-        return CallImpl2<Boolean>(runnable)
+        return CallImpl2<Boolean>(runnable, domain.scope)
     }
 }

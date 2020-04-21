@@ -105,7 +105,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     constructor(m: Message) : this(m.id, m.cid, m.user.id) {
         text = m.text
         attachments = m.attachments
-        syncStatus = m.syncStatus
+        syncStatus = m.syncStatus ?: SyncStatus.SYNCED
         type = m.type
         replyCount = m.replyCount
         createdAt = m.createdAt
@@ -115,7 +115,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         command = m.command
         commandInfo = m.commandInfo
         extraData = m.extraData
-        reactionCounts = m.reactionCounts
+        reactionCounts = m.reactionCounts ?: mutableMapOf()
         if (cid.isNullOrEmpty() && m.channel!= null) {
             cid = m.channel.cid
         }
@@ -145,8 +145,8 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.command = command
         m.commandInfo = commandInfo ?: emptyMap()
         m.extraData = extraData
-        m.reactionCounts = reactionCounts
-        m.syncStatus = syncStatus
+        m.reactionCounts = reactionCounts ?: mutableMapOf()
+        m.syncStatus = syncStatus ?: SyncStatus.SYNCED
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()

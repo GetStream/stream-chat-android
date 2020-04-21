@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 
 class ThreadController(var threadId: String, var channelController: ChannelController) {
-    private val logger = ChatLogger.get("ThreadRepo")
+    private val logger = ChatLogger.get("ThreadController")
     val messages = channelController.getThreadMessages(threadId)
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)

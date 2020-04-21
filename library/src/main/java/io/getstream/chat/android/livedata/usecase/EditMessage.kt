@@ -8,18 +8,19 @@ import java.security.InvalidParameterException
 
 class EditMessage(var domain: ChatDomain) {
     operator fun invoke (message: Message): Call2<Message> {
-        var runnable = suspend {
-            var cid = message.cid
-            if (cid.isEmpty()) {
-                cid = message.channel.cid
-            }
-            if (cid.isEmpty()) {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
+        var cid = message.cid
+        if (cid.isEmpty()) {
+            cid = message.channel.cid
+        }
+        if (cid.isEmpty()) {
+            throw InvalidParameterException("message.cid cant be empty")
+        }
 
-            val channelRepo = domain.channel(cid)
+        val channelRepo = domain.channel(cid)
+
+        var runnable = suspend {
             channelRepo.editMessage(message)
         }
-        return CallImpl2<Message>(runnable)
+        return CallImpl2<Message>(runnable, channelRepo.scope)
     }
 }

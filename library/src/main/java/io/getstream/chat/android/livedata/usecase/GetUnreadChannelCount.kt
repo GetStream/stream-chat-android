@@ -11,6 +11,6 @@ class GetUnreadChannelCount(var domain: ChatDomain) {
         var runnable = suspend {
             Result(domain.channelUnreadCount, null)
         }
-        return CallImpl2<LiveData<Int>>(runnable)
+        return CallImpl2<LiveData<Int>>(runnable, domain.scope)
     }
 }

@@ -26,12 +26,12 @@ class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineSc
     }
 
     override fun execute(): Result<T> {
-        val result = runBlocking { runnable() }
+        val result = runBlocking(scope.coroutineContext) { runnable() }
         return result
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
-        scope.launch(Dispatchers.IO) {
+        scope.launch(scope.coroutineContext) {
             if (!canceled) {
                 val result = runnable()
                 callback(result)

@@ -5,7 +5,7 @@ import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
-class StopTyping(var domain: ChatDomain) {
+class MarkRead(var domain: ChatDomain) {
     operator fun invoke (cid: String): Call2<Boolean> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
@@ -15,7 +15,7 @@ class StopTyping(var domain: ChatDomain) {
 
         var runnable = suspend {
 
-            channelRepo.stopTyping()
+            channelRepo.markRead()
         }
         return CallImpl2<Boolean>(runnable, channelRepo.scope)
     }

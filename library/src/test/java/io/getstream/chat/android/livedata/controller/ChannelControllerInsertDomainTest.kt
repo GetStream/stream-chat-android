@@ -168,8 +168,8 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
     fun markRead() = runBlocking(Dispatchers.IO) {
         // ensure there is at least one message
         channelController.upsertMessage(data.message1)
-        Truth.assertThat(channelController.markRead()).isTrue()
-        Truth.assertThat(channelController.markRead()).isFalse()
+        Truth.assertThat(channelController.markRead().data()).isTrue()
+        Truth.assertThat(channelController.markRead().data()).isFalse()
 
     }
 

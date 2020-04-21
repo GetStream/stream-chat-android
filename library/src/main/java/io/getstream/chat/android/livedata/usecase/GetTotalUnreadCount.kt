@@ -12,6 +12,6 @@ class GetTotalUnreadCount(var domain: ChatDomain) {
         var runnable = suspend {
             Result(domain.totalUnreadCount, null)
         }
-        return CallImpl2<LiveData<Int>>(runnable)
+        return CallImpl2<LiveData<Int>>(runnable, domain.scope)
     }
 }

@@ -19,6 +19,6 @@ class QueryChannels(var domain: ChatDomain) {
             }
             Result(queryChannelsController, null)
         }
-        return CallImpl2<QueryChannelsController>(runnable)
+        return CallImpl2<QueryChannelsController>(runnable, domain.scope)
     }
 }

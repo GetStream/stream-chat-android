@@ -10,6 +10,6 @@ class CreateChannel(var domain: ChatDomain) {
         var runnable = suspend {
             domain.createChannel(channel)
         }
-        return CallImpl2<Channel>(runnable)
+        return CallImpl2<Channel>(runnable, domain.scope)
     }
 }

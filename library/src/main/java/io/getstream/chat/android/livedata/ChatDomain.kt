@@ -57,7 +57,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     internal lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
     private var baseLogger: ChatLogger = ChatLogger.instance
-    private var logger = ChatLogger.get("Repo")
+    private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
         override fun run() {
             clean()
@@ -142,13 +142,13 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
 
                 if (shouldRetry) {
                     // temporary failure, continue
-                    logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds")
+                    logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds. Error was ${result.error()}")
                     if (timeout != null) {
                         delay(timeout.toLong())
                     }
                     attempt += 1
                 } else {
-                    logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers.")
+                    logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
                     break
                 }
             }

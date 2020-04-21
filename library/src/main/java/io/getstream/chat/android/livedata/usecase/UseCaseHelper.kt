@@ -19,5 +19,6 @@ data class UseCaseHelper(var chatDomain: ChatDomain) {
     var stopTyping =  StopTyping(chatDomain)
     var watchChannel = WatchChannel(chatDomain)
     var threadLoadMore = ThreadLoadMore(chatDomain)
+    var markRead = MarkRead(chatDomain)
 
 }

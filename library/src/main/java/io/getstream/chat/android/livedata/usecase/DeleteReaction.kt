@@ -9,14 +9,16 @@ import java.security.InvalidParameterException
 
 class DeleteReaction(var domain: ChatDomain) {
     operator fun invoke (cid: String, reaction: Reaction): Call2<Message> {
-        var runnable = suspend {
-            if (cid.isEmpty()) {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
+        if (cid.isEmpty()) {
+            throw InvalidParameterException("message.cid cant be empty")
+        }
 
-            val channelRepo = domain.channel(cid)
+        val channelRepo = domain.channel(cid)
+
+        var runnable = suspend {
+
             channelRepo.deleteReaction(reaction)
         }
-        return CallImpl2(runnable)
+        return CallImpl2(runnable, channelRepo.scope)
     }
 }
