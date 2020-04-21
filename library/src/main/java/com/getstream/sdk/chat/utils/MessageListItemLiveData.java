@@ -96,7 +96,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                     continue;
                 }
                 // skip message owner as reader
-                if (userRead.getUserId().equals(e.getMessage().getUserId())) {
+                if (userRead.getUserId().equals(e.getMessage().getUser().getId())) {
                     continue;
                 }
                 if (userRead.getLastRead().after(e.getMessage().getCreatedAt())) {

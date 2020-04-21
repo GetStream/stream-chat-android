@@ -325,9 +325,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void loadMore() {
 
         if (isThread()) {
-            channelRepo.threadLoadOlderMessages(activeThread.getValue().getId(), 30);
+            chatDomain.useCases.getThreadLoadMore().invoke(cid, activeThread.getValue().getId(), 30).execute();
         } else {
-            channelRepo.loadOlderMessages(Constant.DEFAULT_LIMIT);
+            chatDomain.useCases.getLoadOlderMessages().invoke(cid, Constant.DEFAULT_LIMIT).execute();
         }
     }
 
@@ -340,7 +340,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         stopTyping();
 
-        channelRepo.sendMessage(message);
+        message.setChannel(getChannel());
+        chatDomain.useCases.getSendMessage().invoke(message).execute();
 
     }
 
@@ -352,7 +353,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public void editMessage(Message message) {
         stopTyping();
-        channelRepo.editMessage(message);
+        chatDomain.useCases.getEditMessage().invoke(message).execute();
     }
 
     /**
@@ -371,7 +372,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 map.put("image_action", ModelType.action_shuffle);
                 break;
             case CANCEL:
-                channelRepo.upsertMessage(message);
+                channelController.upsertMessage(message);
 
                 return;
         }
@@ -386,7 +387,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
             if (result.isSuccess()) {
                 Message actionMessage = result.data();
-                channelRepo.upsertMessage(actionMessage);
+                channelController.upsertMessage(actionMessage);
             }
 
             return null;
@@ -400,7 +401,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public synchronized void keystroke() {
         if (isThread()) return;
 
-        channelRepo.keystroke();
+        chatDomain.useCases.getKeystroke().invoke(cid).execute();
     }
 
     /**
@@ -410,7 +411,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void stopTyping() {
         if (isThread()) return;
 
-        channelRepo.stopTyping();
+        chatDomain.useCases.getStopTyping().invoke(cid).execute();
     }
 
     public MutableLiveData<String> getMessageInputText() {
@@ -422,7 +423,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     public void markLastMessageRead() {
-        channelRepo.markRead();
+        chatDomain.useCases.getMarkRead().invoke(cid).execute();
+
     }
 
 

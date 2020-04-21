@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.livedata.ChatDomain;
 
 
 public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAdapter.ReactionViewHolder> {
@@ -128,8 +129,8 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             clickListener.onClick(view);
 
 
-            Reaction reaction = new Reaction(message.getId(), type, 1);
-            ChatRepo.instance().channel(message.getCid()).sendReaction(reaction);
+            Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
+            ChatDomain.instance().useCases.getSendReaction().invoke(message.getCid(), reaction).execute();
 
         }
 
@@ -137,9 +138,8 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
             clickListener.onClick(view);
 
-            Reaction reaction = new Reaction(message.getId(), type, 1);
-            ChatRepo.instance().channel(message.getCid()).deleteReaction(reaction);
-
+            Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
+            ChatDomain.instance().useCases.getDeleteReaction().invoke(message.getCid(), reaction).execute();
         }
 
     }

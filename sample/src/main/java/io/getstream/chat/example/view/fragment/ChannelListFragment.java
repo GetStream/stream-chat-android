@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.crashlytics.android.Crashlytics;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
 
@@ -28,7 +29,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
@@ -36,7 +37,7 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.android.livedata.ChatRepo;
+import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.example.App;
 import io.getstream.chat.example.ChannelMoreActionDialog;
 import io.getstream.chat.example.HomeActivity;
@@ -57,7 +58,7 @@ public class ChannelListFragment extends Fragment {
     //private final Boolean offlineEnabled = false;
     private ChannelListViewModel viewModel;
     private ChatClient client;
-    private ChatRepo repo;
+    private ChatDomain chatDomain;
 
     // establish a websocket connection to stream
     private void configureStreamClient() {
@@ -76,10 +77,11 @@ public class ChannelListFragment extends Fragment {
         extraData.put("name", USER_NAME);
         extraData.put("image", USER_IMAGE);
 
-        User user = new User(USER_ID);
+        User user = new User();
+        user.setId(USER_ID);
         user.setExtraData(extraData);
 
-        repo = new ChatRepo.Builder(getContext().getApplicationContext(), Chat.getInstance().getClient(), user).offlineEnabled().userPresenceEnabled().build();
+        chatDomain = new ChatDomain.Builder(getContext().getApplicationContext(), Chat.getInstance().getClient(), user).offlineEnabled().userPresenceEnabled().build();
 
         client.setUser(user, USER_TOKEN, new InitConnectionListener(){
             @Override
@@ -240,7 +242,7 @@ public class ChannelListFragment extends Fragment {
 
         String channelId = name.replaceAll(" ", "-").toLowerCase();
 
-        ChannelQueryRequest request = new ChannelQueryRequest().withData(extraData);
+        QueryChannelRequest request = new QueryChannelRequest().withData(extraData);
 
         client.queryChannel(ModelType.channel_messaging, channelId, request).enqueue(new Function1<Result<io.getstream.chat.android.client.models.Channel>, Unit>() {
             @Override

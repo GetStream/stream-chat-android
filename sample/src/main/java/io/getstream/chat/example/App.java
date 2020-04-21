@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener;
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
-import io.getstream.chat.android.livedata.ChatRepo;
 import io.getstream.chat.example.utils.AppConfig;
 
 

@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.livedata.ChatDomain;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
@@ -247,7 +248,7 @@ public class LlcMigrationUtils {
 
             boolean dates = readA.getLastRead().equals(readB.getLastRead());
             if (!dates) return false;
-            boolean users = readA.user.getId().equals(readB.getUser().getId());
+            boolean users = readA.getUser().getId().equals(readB.getUser().getId());
             if (!users) return false;
 
         }
@@ -290,7 +291,7 @@ public class LlcMigrationUtils {
 
             if (currentUser != null) {
                 String id = currentUser.getId();
-                String readUserId = channelUserRead.user.getId();
+                String readUserId = channelUserRead.getUser().getId();
 
                 if (!id.equals(readUserId)) {
                     lastReadUser = channelUserRead.getUser();
@@ -304,9 +305,7 @@ public class LlcMigrationUtils {
     public static void updateReadState(Channel channel, User user, Date date) {
 
         int indexOfRead = indexOfRead(channel, user.getId());
-        ChannelUserRead read = new ChannelUserRead();
-        read.setUser(user);
-        read.setLastRead(date);
+        ChannelUserRead read = new ChannelUserRead(user, date);
 
         if (indexOfRead == -1) {
             channel.getRead().add(read);
@@ -317,7 +316,7 @@ public class LlcMigrationUtils {
 
     public static int indexOfRead(Channel channel, String userId) {
         for (int i = 0; i < channel.getRead().size(); i++)
-            if (channel.getRead().get(i).user.getId().equals(userId))
+            if (channel.getRead().get(i).getUser().getId().equals(userId))
                 return i;
 
         return -1;
@@ -614,6 +613,6 @@ public class LlcMigrationUtils {
     }
     
     public static User getCurrentUser(){
-        return ChatRepo.instance().getCurrentUser();
+        return ChatDomain.instance().getCurrentUser();
     }
 }

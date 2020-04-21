@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import io.getstream.chat.android.client.api.models.ChannelQueryRequest;
+
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.Filters;
@@ -69,7 +71,7 @@ public class MessageSearchVM extends AndroidViewModel {
     void loadChannel() {
         String type = cid.split(":")[0];
         String id = cid.split(":")[1];
-        Chat.getInstance().getClient().queryChannel(type, id, new ChannelQueryRequest()).enqueue(result -> {
+        Chat.getInstance().getClient().queryChannel(type, id, new QueryChannelRequest()).enqueue(result -> {
             if (result.isSuccess()) {
                 channelResult.setValue(result.data());
             } else {

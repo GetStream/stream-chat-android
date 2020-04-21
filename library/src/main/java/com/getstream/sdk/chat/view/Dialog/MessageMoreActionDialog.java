@@ -88,7 +88,7 @@ public class MessageMoreActionDialog extends Dialog {
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
         User currentUser = Chat.getInstance().getClient().getCurrentUser();
         String id = currentUser.getId();
-        if (!message.getUserId().equals(id)) {
+        if (!message.getUser().getId().equals(id)) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
