@@ -60,7 +60,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domain.job + job)
 
-    private val logger = ChatLogger.get("ChannelController")
+    private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val _messages = MutableLiveData<MutableMap<String, Message>>()
     /** LiveData object with the messages */
@@ -454,6 +454,9 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         currentMessage?.let {
             it.ownReactions.add(reaction)
             it.latestReactions.add(reaction)
+            it.reactionCounts = it.reactionCounts ?: mutableMapOf()
+            val currentCount = it.reactionCounts.getOrElse(reaction.type) { 0 }
+            it.reactionCounts[reaction.type] = currentCount + 1
             upsertMessage(it)
         }
         // update the message in the local storage

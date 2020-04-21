@@ -73,7 +73,7 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
     // Ensure we don't lose the sort in the channel
     var channels: LiveData<List<Channel>> = Transformations.map(_channels) { it.values.toList().filter { queryEntity.channelCIDs.contains(it.cid) }.sortedBy { queryEntity.channelCIDs.indexOf(it.cid) } }
 
-    private val logger = ChatLogger.get("QueryChannelsController")
+    private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
     private val _loading = MutableLiveData<Boolean>(false)
     val loading: LiveData<Boolean> = _loading
