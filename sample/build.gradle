@@ -30,6 +30,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
+    }
+
     signingConfigs {
         release {
             if (checkSigningEnvVars()) {
@@ -95,9 +107,9 @@ dependencies {
 
     implementation project(':library')
 
-    //implementation 'com.github.getstream:stream-chat-android-livedata:latest'
-    implementation project(':livedata')
-    implementation 'com.github.getstream:stream-chat-android-client:1.0.13-alpha01'
+    implementation 'com.github.getstream:stream-chat-android-livedata:0.2.1'
+    //implementation project(':livedata')
+    //implementation 'com.github.getstream:stream-chat-android-client:1.2.0'
 
 
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
