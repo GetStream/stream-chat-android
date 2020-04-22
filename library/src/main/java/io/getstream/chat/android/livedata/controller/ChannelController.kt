@@ -521,6 +521,9 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         currentMessage?.let {
             it.ownReactions = it.ownReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
             it.latestReactions = it.latestReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
+            it.reactionCounts = it.reactionCounts ?: mutableMapOf()
+            val currentCount = it.reactionCounts.getOrElse(reaction.type) { 0 }
+            it.reactionCounts[reaction.type] = currentCount - 1
             upsertMessage(it)
         }
 
@@ -575,6 +578,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         }
         // second pass for threads
         for (message in messages) {
+            // prevent issues with missing cids
+            message.cid = cid
             // handle threads
             val parentId = message.parentId ?: ""
             if (message.replyCount != 0) {
