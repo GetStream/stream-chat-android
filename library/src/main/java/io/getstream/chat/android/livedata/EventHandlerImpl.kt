@@ -80,8 +80,10 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent, is MessageDeletedEvent, is MessageUpdatedEvent -> {
-                    messages[event.message.id] = MessageEntity(event.message)
-                    users.putAll(event.message.users().map{UserEntity(it)}.associateBy { it.id })
+                    val message = event.message
+                    message.cid = event.cid!!
+                    messages[message.id] = MessageEntity(message)
+                    users.putAll(message.users().map{UserEntity(it)}.associateBy { it.id })
                 }
                 is NotificationMessageNew -> {
                     messages[event.message.id] = MessageEntity(event.message)

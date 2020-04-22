@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -15,11 +16,17 @@ import kotlinx.coroutines.launch
 
 class ThreadController(var threadId: String, var channelController: ChannelController) {
     private val logger = ChatLogger.get("ThreadController")
-    val messages = channelController.getThreadMessages(threadId)
+    private val _messages = channelController.getThreadMessages(threadId)
+    val messages = Transformations.map(_messages) { it.values.sortedBy { m -> m.createdAt } }
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
 
+    fun getMessagesSorted(): List<Message> {
+        val messageMap = _messages.value ?: mutableMapOf()
+        val messages = messageMap.values.sortedBy { m -> m.createdAt }
+        return messages
+    }
 
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
     val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages

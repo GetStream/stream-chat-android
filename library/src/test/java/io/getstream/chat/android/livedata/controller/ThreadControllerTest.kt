@@ -44,5 +44,41 @@ class ThreadControllerTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(messages.size).isEqualTo(2)
     }
 
+    @Test
+    fun newThread() = runBlocking(Dispatchers.IO) {
+        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val message = data.createMessage()
+        message.id = "theparent"
+        channelRepo.upsertMessages(listOf(message))
+        // note there is no reply count or parent, so we don't know this is a thread
+        // calling getThread should initialize the thread
+        val threadController = channelRepo.getThread(message.id)
+        val messages = threadController.messages.getOrAwaitValue()
+        Truth.assertThat(messages.size).isEqualTo(1)
+    }
+
+    @Test
+    fun newThreadAndMessage() = runBlocking(Dispatchers.IO) {
+        val channelRepo = chatDomain.channel("messaging", "testabc")
+        channelRepo.updateChannel(data.channel1)
+        val message = data.createMessage()
+        message.id = "theparent"
+        channelRepo.upsertMessages(listOf(message))
+        // note there is no reply count or parent, so we don't know this is a thread
+        // calling getThread should initialize the thread
+        val threadController = channelRepo.getThread(message.id)
+        var messages = threadController.messages.getOrAwaitValue()
+        Truth.assertThat(messages.size).isEqualTo(1)
+
+        // sending a message should add to the thread
+        val message2 = data.createMessage()
+
+        message2.parentId = message.id
+        channelRepo.sendMessage(message2)
+
+        messages = threadController.messages.getOrAwaitValue()
+        Truth.assertThat(messages.size).isEqualTo(2)
+    }
+
 
 }

@@ -113,10 +113,10 @@ class TestDataHelper {
     val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2 }
 
     val disconnectedEvent = DisconnectedEvent()
-    val newMessageEvent = NewMessageEvent().apply { message = message1 }
+    val newMessageEvent = NewMessageEvent().apply { message = message1; cid=channel1.cid }
     val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
-    val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1 }
+    val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid=channel1.cid }
     val reactionEvent2 = ReactionNewEvent().apply { reaction = reaction2 }
 
     val newMessageWithThreadEvent = NewMessageEvent().apply { message = messageThread }
