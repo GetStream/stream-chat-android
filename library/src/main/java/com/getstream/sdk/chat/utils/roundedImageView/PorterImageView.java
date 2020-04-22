@@ -10,11 +10,14 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.appcompat.widget.AppCompatImageView;
 
 import com.getstream.sdk.chat.StreamChat;
+import com.getstream.sdk.chat.utils.ChatBitmapUtils;
+
+import static com.getstream.sdk.chat.utils.ChatBitmapUtils.createSafeBitmap;
+import static com.getstream.sdk.chat.utils.ChatBitmapUtils.recycleIfNeeded;
 
 
 @SuppressWarnings("WeakerAccess")
@@ -80,14 +83,19 @@ public abstract class PorterImageView extends AppCompatImageView {
         boolean isValid = width > 0 && height > 0;
         if (isValid && (maskCanvas == null || sizeChanged)) {
             maskCanvas = new Canvas();
-            maskBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+            recycleIfNeeded(maskBitmap);
+            maskBitmap = createSafeBitmap(width, height, Bitmap.Config.ARGB_4444);
+            if(maskBitmap == null) return;
             maskCanvas.setBitmap(maskBitmap);
 
             maskPaint.reset();
             paintMaskCanvas(maskCanvas, maskPaint, width, height);
 
+            recycleIfNeeded(drawableBitmap);
+            drawableBitmap = createSafeBitmap(width, height, Bitmap.Config.ARGB_4444);
+            if(drawableBitmap == null) return;
             drawableCanvas = new Canvas();
-            drawableBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
             drawableCanvas.setBitmap(drawableBitmap);
             drawablePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             invalidated = true;
