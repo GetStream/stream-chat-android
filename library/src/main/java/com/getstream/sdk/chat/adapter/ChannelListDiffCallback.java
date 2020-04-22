@@ -85,7 +85,7 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
         }
 
         diff.name = !equalsName(newChannel, oldChannel);
-        diff.avatarView = !equalsUserLists(getOtherUsers(oldChannel), getOtherUsers(newChannel));
+        diff.avatarView = !equalsUserLists(getOtherUsers(oldChannel.getMembers()), getOtherUsers(newChannel.getMembers()));
         diff.readState = currentUserRead(oldChannel, newChannel);
         diff.lastMessageDate = !equalsLastMessageDate(oldChannel, newChannel);
 

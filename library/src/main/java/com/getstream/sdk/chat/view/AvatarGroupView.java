@@ -52,6 +52,13 @@ public class AvatarGroupView<STYLE extends BaseStyle> extends RelativeLayout {
         this.context = context;
     }
 
+    public void setLastActiveUsers(List<User> lastActiveUsers, @NonNull STYLE style) {
+        this.lastActiveUsers = lastActiveUsers;
+        this.user = null;
+        this.style = style;
+        configUIs();
+    }
+
     public void setChannelAndLastActiveUsers(Channel channel, List<User> lastActiveUsers, @NonNull STYLE style) {
         this.channel = channel;
         this.lastActiveUsers = lastActiveUsers;

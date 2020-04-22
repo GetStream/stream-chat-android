@@ -137,32 +137,20 @@ public class LlcMigrationUtils {
         return readLastMessage;
     }
 
-    public static Date getLastActive(Channel channel) {
+    public static Date getLastActive(List<Member> members) {
+        Date lastActive = new Date();
+        for (Member member: members) {
+            if (member.getUser().getId() != ChatDomain.instance().getCurrentUser().getId()) {
+                if (member.getUser().getLastActive()!= null) {
+                    lastActive = member.getUser().getLastActive();
+                }
 
-        //TODO: llc add logic from cache
-        return new Date();
+            }
+        }
 
-//        Date lastActive = channel.getCreatedAt();
-//        if (lastActive == null) lastActive = new Date();
-//
-//        if (getLastKnownActiveWatcher().after(lastActive)) {
-//            lastActive = getLastKnownActiveWatcher();
-//        }
-//        Message message = getLastMessageFromOtherUser();
-//        if (message != null) {
-//            if (message.getCreatedAt().after(lastActive)) {
-//                lastActive = message.getCreatedAt();
-//            }
-//        }
-////        for (Watcher watcher : getWatchers()) {
-////            if (watcher.getUser() == null || watcher.getUser().getLastActive() == null)
-////                continue;
-////            if (lastActive.before(watcher.getUser().getLastActive())) {
-////                if (channel.getClient().fromCurrentUser(watcher)) continue;
-////                lastActive = watcher.getUser().getLastActive();
-////            }
-////        }
-//        return lastActive;
+        //TODO: return the right date
+        return lastActive;
+
     }
 
     public static String getChannelNameOrMembers(Channel channel) {
@@ -173,7 +161,7 @@ public class LlcMigrationUtils {
         if (!TextUtils.isEmpty(name)) {
             channelName = name;
         } else {
-            List<User> users = getOtherUsers(channel);
+            List<User> users = getOtherUsers(channel.getMembers());
             List<User> top3 = users.subList(0, Math.min(3, users.size()));
             List<String> usernames = new ArrayList<>();
             for (User u : top3) {
@@ -337,12 +325,10 @@ public class LlcMigrationUtils {
         return true;
     }
 
-    public static List<User> getOtherUsers(Channel channel) {
+    public static List<User> getOtherUsers( List<Member> members) {
 
         List<User> result = new ArrayList<>();
 
-        List<Member> members = channel.getMembers();
-        List<Watcher> watchers = channel.getWatchers();
 
         for (Member m : members) {
             String memberId = m.getUserId();
@@ -350,16 +336,6 @@ public class LlcMigrationUtils {
             if (!isFromCurrentUser) {
                 User user = m.getUser();
                 if (user != null) result.add(user);
-            }
-        }
-
-        for (Watcher w : watchers) {
-            String watcherId = w.getUserId();
-            boolean isFromCurrentUser = isFromCurrentUser(watcherId);
-            if (!isFromCurrentUser) {
-                User user = w.getUser();
-                if (user != null && !result.contains(user))
-                    result.add(user);
             }
         }
 

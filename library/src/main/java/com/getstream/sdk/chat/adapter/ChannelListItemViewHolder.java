@@ -108,7 +108,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void configAvatarView(Channel channel) {
-        List<User> otherUsers = LlcMigrationUtils.getOtherUsers(channel);
+        List<User> otherUsers = LlcMigrationUtils.getOtherUsers(channel.getMembers());
         avatarGroupView.setChannelAndLastActiveUsers(channel, otherUsers, style);
         // click listeners
         avatarGroupView.setOnClickListener(view -> {

@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
@@ -17,7 +18,6 @@ import java.util.*;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import io.getstream.chat.android.client.api.models.SendActionRequest;
@@ -36,6 +36,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();
     private final String cid;
+    private final LiveData<List<Member>> members;
     LiveData<Integer> unreadCount;
 
     /**
@@ -66,7 +67,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     protected LiveData<Boolean> online = new MutableLiveData<>(false);
     protected MutableLiveData<Message> activeThread = new MutableLiveData<>(null);
-    private MediatorLiveData<List<Message>> threadMessages;
+    private LiveData<List<Message>> threadMessages;
     private LiveData<Boolean> threadLoadingMore;
     private ThreadController threadController;
 
@@ -117,13 +118,14 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         watcherCount = channelController.getWatcherCount();
         typingUsers = channelController.getTyping();
         reads = channelController.getReads();
+        members = channelController.getMembers();
         typingUsers = channelController.getTyping();
         messages = channelController.getMessages();
         loading = channelController.getLoading();
         loadingMore = channelController.getLoadingOlderMessages();
         reachedEndOfPagination = channelController.getEndOfOlderMessages();
         unreadCount = channelController.getUnreadCount();
-        threadMessages = new MediatorLiveData<>();
+        threadMessages = new MutableLiveData<>();
 
 
         logger.logI("instance created");
@@ -149,10 +151,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     public LiveData<Boolean> getInitialized() {
         return initialized;
-    }
-
-    public LiveData<Channel> getChannelState() {
-        return channelState;
     }
 
     public LiveData<List<Message>> getMessages() {
@@ -226,7 +224,13 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         Result<ThreadController> result = chatDomain.useCases.getGetThread().invoke(cid, parentId).execute();
         threadController = result.data();
-        threadMessages.addSource(threadController.getMessages(), value -> threadMessages.setValue(value));
+        threadMessages = threadController.getMessages();
+        threadMessages.observeForever((messages) -> {
+            Log.i("ChatDomain", "Transform worked " + messages.toString());
+        });
+        // swap the thread messages instead of creating a new object
+        entities.setThreadMessages(threadMessages);
+
         reachedEndOfPaginationThread = threadController.getEndOfOlderMessages();
         threadLoadingMore = threadController.getLoadingOlderMessages();
 
@@ -252,10 +256,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         Message thread = activeThread.getValue();
         if (thread!= null) {
             activeThread.postValue(null);
-            threadMessages.removeSource(threadController.getMessages());
+            threadMessages = new MutableLiveData<>();
         }
 
-        // TODO; use a similar mediator approach
         reachedEndOfPaginationThread = new MutableLiveData<Boolean>(false);
         threadLoadingMore= new MutableLiveData<Boolean>(false);
 
@@ -427,5 +430,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
     }
 
+
+    public LiveData<List<Member>> getMembers() {
+        return members;
+    }
 
 }

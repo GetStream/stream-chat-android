@@ -13,10 +13,12 @@ import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.Member;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
@@ -64,9 +66,11 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setLifecycleOwner(lifecycleOwner);
         binding.setViewModel(viewModel);
 
-        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
-        viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderLastActive);
-        viewModel.getChannelState().observe(lifecycleOwner, this::configHeaderAvatar);
+        // TODO: update this once we cleanly handle channel vs channel data
+        setHeaderTitle(viewModel.getChannel());
+        //viewModel.getChannelState().observe(lifecycleOwner, this::setHeaderTitle);
+        viewModel.getMembers().observe(lifecycleOwner, this::setHeaderLastActive);
+        viewModel.getMembers().observe(lifecycleOwner, this::configHeaderAvatar);
     }
 
     protected void setHeaderTitle(Channel channel) {
@@ -74,8 +78,8 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setChannelName(!TextUtils.isEmpty(channelName)? channelName : style.getChannelWithoutNameText());
     }
 
-    protected void setHeaderLastActive(Channel channel) {
-        Date lastActive = LlcMigrationUtils.getLastActive(channel);
+    protected void setHeaderLastActive(List<Member> members) {
+        Date lastActive = LlcMigrationUtils.getLastActive(members);
         Date now = new Date();
         String timeAgo = getRelativeTimeSpanString(lastActive.getTime()).toString();
 
@@ -86,9 +90,9 @@ public class ChannelHeaderView extends RelativeLayout {
         binding.setChannelLastActive(String.format(getContext().getString(R.string.stream_channel_header_active), timeAgo));
     }
 
-    protected void configHeaderAvatar(Channel channel) {
+    protected void configHeaderAvatar(List<Member> members) {
         AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
-        avatarGroupView.setChannelAndLastActiveUsers(channel, LlcMigrationUtils.getOtherUsers(channel), style);
+        avatarGroupView.setLastActiveUsers(LlcMigrationUtils.getOtherUsers(members), style);
     }
 
     private StreamViewChannelHeaderBinding initBinding(Context context) {

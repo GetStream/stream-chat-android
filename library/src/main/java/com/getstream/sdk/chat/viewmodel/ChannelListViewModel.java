@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.viewmodel;
 
 import android.app.Application;
 import android.os.Handler;
+import android.util.Log;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
@@ -81,8 +82,6 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
         loading = new MutableLiveData<>(true);
         loadingMore = new MutableLiveData<>(false);
 
-        //channels = new LazyQueryChannelLiveData<>();
-        //channels.viewModel = this;
         sort = new QuerySort().desc("last_message_at");
 
         new StreamLifecycleObserver(this);
@@ -102,6 +101,9 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         // connect the livedata objects
         this.channels = queryChannelsController.getChannels();
+        this.channels.observeForever((channels) -> {
+            Log.i("ChatDomain", "ChatDomain: The channels changed");
+        });
         this.loading = queryChannelsController.getLoading();
         this.loadingMore = queryChannelsController.getLoadingMore();
         this.reachedEndOfPagination = queryChannelsController.getEndOfChannels();

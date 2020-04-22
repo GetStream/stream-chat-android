@@ -17,6 +17,9 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+
+import org.jetbrains.annotations.NotNull;
+
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.ChannelUserRead;
@@ -42,6 +45,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean isLoadingMore;
     private Boolean hasNewMessages;
     private String lastMessageID;
+    private LifecycleOwner owner;
 
 
     public MessageListItemLiveData(User currentUser,
@@ -138,6 +142,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
+        this.owner=owner;
 
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;
@@ -234,5 +239,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public Boolean getHasNewMessages() {
         return hasNewMessages;
+    }
+
+    public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {
+        // remove the old observer
+        this.threadMessages.removeObserver(this::progressMessages);
+
+        // setup the new observer
+        this.threadMessages = threadMessages;
+        threadMessages.observe(owner, this::progressMessages);
+
+        // trigger an update
+        progressMessages(threadMessages.getValue());
+
     }
 }

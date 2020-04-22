@@ -327,11 +327,6 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener(this.messageClickListener);
         } else {
             adapter.setMessageClickListener((message, position) -> {
-                //TODO: llc check sync cache
-//                if (message.getSyncStatus() == Sync.LOCAL_FAILED) {
-//                    viewModel.sendMessage(message);
-//                } else
-
                 if (message.getReplyCount() > 0) {
                     viewModel.setActiveThread(message);
                 }else{
