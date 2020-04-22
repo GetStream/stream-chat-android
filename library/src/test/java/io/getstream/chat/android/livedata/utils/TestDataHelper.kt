@@ -12,6 +12,8 @@ class TestDataHelper {
 
     val connection1 = "test-connection"
     val user1 = User("broad-lake-3")
+    val user3 = User("user-3")
+
     val user1Token =
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
     val user2 = User("test-user-2")
@@ -122,6 +124,8 @@ class TestDataHelper {
         ChannelUpdatedEvent().apply { channel = channel1Updated; cid = channel1Updated.cid }
     val user1TypingStarted = TypingStartEvent().apply { user = user1 }
     val user1TypingStartedOld = TypingStartEvent().apply { user = user1; receivedAt = getOldDate() }
+    val user3TypingStartedOld = TypingStartEvent().apply { user = user3; receivedAt = getOldDate() }
+
 
     val user2TypingStarted = TypingStartEvent().apply { user = user2; receivedAt = Date() }
     val user1TypingStop = TypingStopEvent().apply { user = user1 }

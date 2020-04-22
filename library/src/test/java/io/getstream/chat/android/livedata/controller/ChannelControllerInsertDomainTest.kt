@@ -117,7 +117,7 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
     @Test
     fun clean() {
         // clean should remove old typing indicators
-        channelController.setTyping(data.user1.id, data.user1TypingStartedOld)
+        channelController.setTyping(data.user3.id, data.user3TypingStartedOld)
         channelController.setTyping(data.user2.id, data.user2TypingStarted)
 
         Truth.assertThat(channelController.typing.getOrAwaitValue().size).isEqualTo(2)

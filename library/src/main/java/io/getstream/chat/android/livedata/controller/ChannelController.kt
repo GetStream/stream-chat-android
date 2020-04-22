@@ -567,6 +567,9 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         for (message in messages) {
             // handle threads
             val parentId = message.parentId ?: ""
+            if (message.text.startsWith("In recent years")) {
+                logger.logI("interesting")
+            }
             if (message.replyCount != 0) {
                 var threadMessages = mutableMapOf<String, Message>()
                 if (_threads.containsKey(message.id)) {
