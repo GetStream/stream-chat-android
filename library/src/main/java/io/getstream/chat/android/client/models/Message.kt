@@ -23,12 +23,23 @@ data class Message(
     var commandInfo: Map<String, String> = mutableMapOf(),
     var attachments: MutableList<Attachment> = mutableListOf(),
     @SerializedName("mentioned_users")
-    var mentionedUsers: MutableList<User> = mutableListOf()
-) {
+    var mentionedUsers: MutableList<User> = mutableListOf(),
+
+    @IgnoreSerialisation
+    @SerializedName("reply_count")
+    var replyCount: Int = 0,
+
+    @SerializedName("reaction_counts")
+    @IgnoreSerialisation
+    var reactionCounts: MutableMap<String, Int> = mutableMapOf<String, Int>(),
 
     /** if the message has been synced to the servers */
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED
+
+) {
+
+
 
     @IgnoreSerialisation
     var type: String = ""
@@ -38,9 +49,7 @@ data class Message(
     @IgnoreSerialisation
     @SerializedName("own_reactions")
     var ownReactions = mutableListOf<Reaction>()
-    @IgnoreSerialisation
-    @SerializedName("reply_count")
-    var replyCount = 0
+
 
     @IgnoreSerialisation
     @SerializedName("created_at")
@@ -52,9 +61,7 @@ data class Message(
     @SerializedName("deleted_at")
     var deletedAt: Date? = null
 
-    @SerializedName("reaction_counts")
-    @IgnoreSerialisation
-    var reactionCounts = mutableMapOf<String, Int>()
+
 
     @IgnoreSerialisation
     lateinit var user: User

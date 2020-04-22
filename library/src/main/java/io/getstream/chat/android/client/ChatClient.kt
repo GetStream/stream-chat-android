@@ -214,7 +214,7 @@ interface ChatClient {
         private var cdnUrl: String = baseUrl
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
-        private var logLevel = ChatLogLevel.NOTHING
+        private var logLevel = ChatLogLevel.ALL
         private var loggerHandler: ChatLoggerHandler? = null
         private lateinit var notificationsConfig: ChatNotificationConfig
 
