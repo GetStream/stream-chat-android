@@ -31,11 +31,7 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
                     .logLevel(
                         ChatLogLevel.ALL
                     ).loggerHandler(TestLoggerHandler()).build()
-            client.events().subscribe {
-                if (it is ConnectedEvent) {
-                    System.out.println("connceted")
-                }
-            }
+
             return client
         }
 

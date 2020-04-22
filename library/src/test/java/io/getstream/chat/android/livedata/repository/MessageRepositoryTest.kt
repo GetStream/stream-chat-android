@@ -3,12 +3,14 @@ package io.getstream.chat.android.livedata.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -22,6 +24,19 @@ class MessageRepositoryTest : BaseDomainTest() {
         val entity = repo.select(data.message1.id)
         val message = entity!!.toMessage(data.userMap)
         Truth.assertThat(message).isEqualTo(data.message1)
+    }
+
+    @Test
+    @Ignore("LLC issues")
+    fun testMessageObject() = runBlocking(Dispatchers.IO) {
+        val messagea = Message(text="hi").apply { reactionCounts= mutableMapOf("like" to 10) }
+        val messageb = Message(text="hi")
+        Truth.assertThat(messagea).isNotEqualTo(messageb)
+
+        val message1 = data.createMessage()
+        val message2 = message1.copy()
+        Truth.assertThat(message1).isEqualTo(message2)
+
     }
 
     @Test

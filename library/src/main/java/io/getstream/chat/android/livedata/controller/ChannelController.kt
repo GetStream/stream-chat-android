@@ -13,6 +13,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.Call2
+import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -361,6 +363,14 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         return response
     }
 
+    // alternative way to provide a call, not relying on use cases
+    fun sendMessageCall(message: Message): Call2<Message> {
+        var runnable = suspend {
+            sendMessage(message)
+        }
+        return CallImpl2<Message>(runnable, scope)
+    }
+
     /**
      * - Generate an ID
      * - Insert the message into offline storage with sync status set to Sync Needed
@@ -552,20 +562,33 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         val copy = _messages.value ?: mutableMapOf()
         for (message in messages) {
             copy[message.id] = message
+        }
+        // second pass for threads
+        for (message in messages) {
             // handle threads
             val parentId = message.parentId ?: ""
-            if (!parentId.isEmpty()) {
+            if (message.replyCount != 0) {
+                var threadMessages = mutableMapOf<String, Message>()
+                if (_threads.containsKey(message.id)) {
+                    threadMessages = _threads[message.id]!!.value!!
+                }
+                threadMessages[message.id] = message
+                _threads[message.id] = MutableLiveData(threadMessages)
+                Log.i("ChatDomain", "Message is a thread starter " + message.id)
+            } else if (parentId.isNotEmpty()) {
                 var threadMessages = mutableMapOf<String, Message>()
                 if (_threads.containsKey(parentId)) {
                     threadMessages = _threads[parentId]!!.value!!
                 } else {
-                    val parent = getMessage(parentId)
+                    val parent = copy.get(parentId)
                     parent?.let { threadMessages[it.id] = it }
                 }
                 threadMessages[message.id] = message
                 _threads[parentId] = MutableLiveData(threadMessages)
             }
         }
+
+
         _messages.postValue(copy)
     }
 
@@ -600,6 +623,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         } else {
             copy[userId] = event
         }
+        copy.remove(domain.currentUser.id)
         _typing.postValue(copy)
     }
 
