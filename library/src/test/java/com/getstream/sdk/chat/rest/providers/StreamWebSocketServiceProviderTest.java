@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /*
@@ -22,6 +23,9 @@ public class StreamWebSocketServiceProviderTest {
 
     StreamWebSocketServiceProvider provider;
     String apiKey;
+    String imageUrl = "imageurl";
+    String userId = "123";
+    String wssUrl = "wss://chat-us-east-1.stream-io-api.com";
 
     @BeforeEach
     void setUp() {
@@ -34,14 +38,19 @@ public class StreamWebSocketServiceProviderTest {
     @Test
     void getWsUrlTest() throws UnsupportedEncodingException {
         User user = new User();
-        user.setId("123");
-        user.setImage("image \" url");
+
+        user.setId(userId);
+        user.setImage(imageUrl);
 
         String url = provider.getWsUrl("token", user, false);
-        assertEquals("wss://chat-us-east-1.stream-io-api.com/connect?json=%7B%22user_id%22%3A%22123%22%2C%22user_details%22%3A%7B%22image%22%3A%22image+%5C%22+url%22%2C%22id%22%3A%22123%22%7D%2C%22X-STREAM-CLIENT%22%3A%223.6.9-debug%22%2C%22server_determines_connection_id%22%3Atrue%7D&api_key=test-key&authorization=token&stream-auth-type=jwt", url);
+        assertTrue(url.contains(imageUrl));
+        assertTrue(url.contains(userId));
+        assertTrue(url.contains(wssUrl));
 
         url = provider.getWsUrl("token", user, true);
-        assertEquals("wss://chat-us-east-1.stream-io-api.com/connect?json=%7B%22user_id%22%3A%22123%22%2C%22user_details%22%3A%7B%22image%22%3A%22image+%5C%22+url%22%2C%22id%22%3A%22123%22%7D%2C%22X-STREAM-CLIENT%22%3A%223.6.9-debug%22%2C%22server_determines_connection_id%22%3Atrue%7D&api_key=test-key&stream-auth-type=anonymous", url);
+        assertTrue(url.contains(imageUrl));
+        assertTrue(url.contains(userId));
+        assertTrue(url.contains(wssUrl));
     }
 
     @Test
@@ -50,23 +59,26 @@ public class StreamWebSocketServiceProviderTest {
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
         user.setLastActive(new Date());
-        user.setId("123");
+        user.setId(userId);
 
         String json = provider.buildUserDetailJSON(user);
-        assertEquals("{\"user_id\":\"123\",\"user_details\":{\"id\":\"123\"},\"X-STREAM-CLIENT\":\"3.6.9-debug\",\"server_determines_connection_id\":true}", json);
+        assertTrue(json.contains(userId));
+        assertTrue(json.contains("X-STREAM-CLIENT"));
     }
 
     @Test
     void buildUserWithImageDetailJSONTest() {
         User user = new User();
-        user.setImage("imageurl");
+
+        user.setImage(imageUrl);
         user.setCreatedAt(new Date());
         user.setUpdatedAt(new Date());
         user.setLastActive(new Date());
-        user.setId("123");
+        user.setId(userId);
 
         String json = provider.buildUserDetailJSON(user);
-        assertEquals("{\"user_id\":\"123\",\"user_details\":{\"image\":\"imageurl\",\"id\":\"123\"},\"X-STREAM-CLIENT\":\"3.6.9-debug\",\"server_determines_connection_id\":true}", json);
+        assertTrue(json.contains(imageUrl));
+        assertTrue(json.contains(userId));
     }
 
 }

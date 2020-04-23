@@ -93,7 +93,7 @@ public abstract class PorterImageView extends AppCompatImageView {
             paintMaskCanvas(maskCanvas, maskPaint, width, height);
 
             recycleIfNeeded(drawableBitmap);
-            drawableBitmap = createSafeBitmap(width, height, Bitmap.Config.ARGB_4444);
+            drawableBitmap = createSafeBitmap(width, height, Bitmap.Config.ARGB_8888);
             if(drawableBitmap == null) return;
             drawableCanvas = new Canvas();
             drawableCanvas.setBitmap(drawableBitmap);
