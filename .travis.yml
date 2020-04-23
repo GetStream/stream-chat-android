@@ -25,21 +25,28 @@ script:
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
-before_deploy:
-  - ./gradlew clean
-  - ./gradlew :library:createFullJarRelease
-  - ./gradlew :library:bundleReleaseAar
-  - ./gradlew :library:copyJar
-  - export NAME="v$(./gradlew version -q)"
-  - git tag $NAME
+# Deployment is disabled for now as it fails and implemented incorrectly
+#  0.01s$ git tag $NAME
+#  fatal: too many params
+#    The command "git tag $NAME" failed and exited with 128 during .
+#
+#https://travis-ci:com/github/GetStream/stream-chat-android/builds/161543630:
 
-deploy:
-  - provider: releases
-    api_key: "$GITHUB_TOKEN_TEMP"
-    file_glob: true
-    file: "attachments/*"
-    skip_cleanup: true
-    name: $NAME
-    on:
-        tags: true
-        branch: feature/jar
+#before_deploy:
+#  - ./gradlew clean
+#  - ./gradlew :library:createFullJarRelease
+#  - ./gradlew :library:bundleReleaseAar
+#  - ./gradlew :library:copyJar
+#  - export NAME="v$(./gradlew version -q)"
+#  - git tag $NAME
+
+#deploy:
+#  - provider: releases
+#    api_key: "$GITHUB_TOKEN_TEMP"
+#    file_glob: true
+#    file: "attachments/*"
+#    skip_cleanup: true
+#    name: $NAME
+#    on:
+#        tags: true
+#        branch: feature/jar
