@@ -1,5 +1,13 @@
 ## Upcoming
 
+## April 23rd, 2020 - 3.6.12
+
+- fix memory leak with not unsubscribed MessageInputView from keyboard events
+
+## April 23rd, 2020 - 3.6.11
+
+- fix OOM crash on creating bitmap mask for image message
+
 ## March 16th, 2020 - 3.6.9
 
 - fix no filter in case connection recovered in ChannelListViewModel
