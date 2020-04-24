@@ -1,3 +1,8 @@
+![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-livedata.svg)
+[![Build Status](https://travis-ci.com/GetStream/stream-chat-android-livedata.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-livedata)
+[![codecov](https://codecov.io/gh/GetStream/stream-chat-android-livedata/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-android-livedata)
+
+
 # Stream Chat Livedata & Offline
 
 This repo adds offline support and livedata support to Stream's Chat SDK.
