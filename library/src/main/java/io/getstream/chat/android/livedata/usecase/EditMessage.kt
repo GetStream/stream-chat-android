@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
 class EditMessage(var domain: ChatDomain) {
-    operator fun invoke (message: Message): Call2<Message> {
+    operator fun invoke(message: Message): Call2<Message> {
         var cid = message.cid
         if (cid.isEmpty()) {
             cid = message.channel.cid

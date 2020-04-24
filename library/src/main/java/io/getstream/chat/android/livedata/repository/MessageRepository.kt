@@ -35,7 +35,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
     }
 
     suspend fun select(messageId: String): MessageEntity? {
-        return select(listOf(messageId)).getOrElse(0) {null}
+        return select(listOf(messageId)).getOrElse(0) { null }
     }
     suspend fun select(messageIds: List<String>): List<MessageEntity> {
         val cachedMessages: MutableList<MessageEntity> = mutableListOf()
@@ -50,7 +50,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
         return dbMessages
     }
 
-    suspend fun insert(messageEntities: List<MessageEntity>, cache: Boolean=false) {
+    suspend fun insert(messageEntities: List<MessageEntity>, cache: Boolean = false) {
         if (messageEntities.isEmpty()) return
         for (messageEntity in messageEntities) {
             if (messageEntity.cid == "") {
@@ -58,24 +58,24 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
             }
         }
         for (m in messageEntities) {
-            if (messageCache.get(m.id) !=null || cache) {
+            if (messageCache.get(m.id) != null || cache) {
                 messageCache.put(m.id, m)
             }
         }
         messageDao.insertMany(messageEntities)
     }
 
-    suspend fun insertMessages(messages: List<Message>, cache: Boolean=false) {
+    suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
         val messageEntities = messages.map { MessageEntity(it) }
         insert(messageEntities, cache)
     }
 
-    suspend fun insertMessage(message: Message, cache: Boolean=false) {
+    suspend fun insertMessage(message: Message, cache: Boolean = false) {
         val messageEntity = MessageEntity(message)
         insert(listOf(messageEntity), cache)
     }
 
-    suspend fun insert(messageEntity: MessageEntity, cache: Boolean=false) {
+    suspend fun insert(messageEntity: MessageEntity, cache: Boolean = false) {
         insert(listOf(messageEntity), cache)
     }
 
@@ -116,5 +116,4 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
 
         return messageEntities
     }
-
 }

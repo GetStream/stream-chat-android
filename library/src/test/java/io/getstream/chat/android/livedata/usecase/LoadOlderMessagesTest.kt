@@ -26,7 +26,5 @@ class LoadOlderMessagesTest : BaseConnectedIntegrationTest() {
         assertSuccess(result2 as Result<Any>)
         messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)
-
     }
-
 }

@@ -28,7 +28,5 @@ class EditMessageUseCase : BaseConnectedIntegrationTest() {
         messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last().id).isEqualTo(result.data().id)
         Truth.assertThat(messages.last().extraData.get("plaid")).isEqualTo(true)
-
     }
-
 }

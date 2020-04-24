@@ -4,7 +4,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import java.util.*
 
-
 /**
  * Efficiently store the member data
  */
@@ -25,7 +24,6 @@ data class MemberEntity(var userId: String) {
 
     /** the date the invite was rejected */
     var inviteRejectedAt: Date? = null
-
 
     /** creates a memberEntity from the member */
     constructor(r: Member) : this(r.getUserId()) {
@@ -48,6 +46,5 @@ data class MemberEntity(var userId: String) {
         r.inviteRejectedAt = inviteRejectedAt
 
         return r
-
     }
 }

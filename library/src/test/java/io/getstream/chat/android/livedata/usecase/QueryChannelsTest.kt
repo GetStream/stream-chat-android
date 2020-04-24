@@ -22,5 +22,4 @@ class QueryChannelsTest : BaseConnectedIntegrationTest() {
         val channels = queryChannelsController.channels.getOrAwaitValue()
         Truth.assertThat(channels).isNotEmpty()
     }
-
 }

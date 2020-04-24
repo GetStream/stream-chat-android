@@ -15,4 +15,3 @@ class SyncStatusConverter {
         return syncStatus.status
     }
 }
-

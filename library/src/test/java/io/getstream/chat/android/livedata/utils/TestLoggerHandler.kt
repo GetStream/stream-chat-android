@@ -30,5 +30,4 @@ class TestLoggerHandler : ChatLoggerHandler {
     override fun logE(tag: Any, message: String, throwable: Throwable) {
         System.out.println("logE: $tag $message $throwable")
     }
-
 }

@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
 class SendReaction(var domain: ChatDomain) {
-    operator fun invoke (cid: String, reaction: Reaction): Call2<Reaction> {
+    operator fun invoke(cid: String, reaction: Reaction): Call2<Reaction> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("message.cid cant be empty")
         }

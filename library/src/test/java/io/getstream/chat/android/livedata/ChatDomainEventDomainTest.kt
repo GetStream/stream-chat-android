@@ -8,13 +8,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 /**
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
 class ChatDomainEventDomainTest : BaseConnectedIntegrationTest() {
-
 
     @Test
     fun newMessageEvent() {
@@ -102,5 +100,4 @@ class ChatDomainEventDomainTest : BaseConnectedIntegrationTest() {
         val channel = chatDomain.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
     }
-
 }

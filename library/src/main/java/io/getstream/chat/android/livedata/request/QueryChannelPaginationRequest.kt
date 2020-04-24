@@ -4,7 +4,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 
-
 class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
 
     var messageFilterDirection: Pagination? = null
@@ -40,13 +39,11 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRe
         var request = WatchChannelRequest().withMessages(messageLimit)
         if (userPresence) {
             // TODO: reenable me once LLC is fixed
-            //request = request.withPresence()
+            // request = request.withPresence()
         }
         if (hasFilter()) {
             request.withMessages(messageFilterDirection!!, messageFilterValue, messageLimit)
         }
         return request
     }
-
-
 }

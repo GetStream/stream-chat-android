@@ -14,8 +14,7 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChatChannelControllerEventDomainTest : BaseDisconnectedIntegrationTest() {
-
+class ChannelControllerEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun eventWatcherCountUpdates() {
@@ -55,7 +54,6 @@ class ChatChannelControllerEventDomainTest : BaseDisconnectedIntegrationTest() {
         Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
         Truth.assertThat(message.latestReactions.first().user!!.extraData["color"])
             .isEqualTo("green")
-
     }
 
     @Test

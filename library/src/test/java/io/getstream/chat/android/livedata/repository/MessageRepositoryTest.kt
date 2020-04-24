@@ -29,14 +29,13 @@ class MessageRepositoryTest : BaseDomainTest() {
     @Test
     @Ignore("LLC issues")
     fun testMessageObject() = runBlocking(Dispatchers.IO) {
-        val messagea = Message(text="hi").apply { reactionCounts= mutableMapOf("like" to 10) }
-        val messageb = Message(text="hi")
+        val messagea = Message(text = "hi").apply { reactionCounts = mutableMapOf("like" to 10) }
+        val messageb = Message(text = "hi")
         Truth.assertThat(messagea).isNotEqualTo(messageb)
 
         val message1 = data.createMessage()
         val message2 = message1.copy()
         Truth.assertThat(message1).isEqualTo(message2)
-
     }
 
     @Test
@@ -98,5 +97,4 @@ class MessageRepositoryTest : BaseDomainTest() {
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
     }
-
 }

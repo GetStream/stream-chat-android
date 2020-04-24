@@ -26,7 +26,5 @@ class QueryChannelsLoadMoreTest : BaseConnectedIntegrationTest() {
 
         var channels = queryChannelsController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(1)
-
     }
-
 }

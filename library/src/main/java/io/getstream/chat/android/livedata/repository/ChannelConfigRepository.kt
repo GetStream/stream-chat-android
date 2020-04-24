@@ -23,7 +23,7 @@ class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
     }
 
     fun select(channelType: String): Config? {
-        return channelConfigs.getOrElse(channelType) {null}
+        return channelConfigs.getOrElse(channelType) { null }
     }
 
     suspend fun insert(configEntities: List<ChannelConfigEntity>) {
@@ -35,13 +35,11 @@ class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
 
         // insert into room db
         channelConfigDao.insertMany(configEntities)
-
     }
 
     suspend fun insertConfigs(configs: MutableMap<String, Config>) {
-        val configEntities = configs.map {ChannelConfigEntity(it.key, it.value)}
+        val configEntities = configs.map { ChannelConfigEntity(it.key, it.value) }
 
         insert(configEntities)
-
     }
 }

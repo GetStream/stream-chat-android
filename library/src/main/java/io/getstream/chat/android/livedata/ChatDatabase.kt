@@ -40,7 +40,6 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
 
-
     companion object {
         @Volatile
         private var INSTANCES: MutableMap<String, ChatDatabase?> = mutableMapOf()
@@ -54,11 +53,9 @@ abstract class ChatDatabase : RoomDatabase() {
                             "stream_chat_database_$userId"
                     ).fallbackToDestructiveMigration().build()
                     INSTANCES[userId] = db
-
                 }
             }
             return INSTANCES[userId] ?: error("DB not created")
-
         }
     }
 }

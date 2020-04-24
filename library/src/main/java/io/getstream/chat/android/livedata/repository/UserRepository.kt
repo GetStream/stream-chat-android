@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.UserDao
 import io.getstream.chat.android.livedata.entity.UserEntity
@@ -37,7 +36,7 @@ class UserRepository(
     }
 
     suspend fun select(userId: String): UserEntity? {
-        return select(listOf(userId)).getOrElse(0) {null}
+        return select(listOf(userId)).getOrElse(0) { null }
     }
 
     suspend fun select(userIds: List<String>): List<UserEntity> {

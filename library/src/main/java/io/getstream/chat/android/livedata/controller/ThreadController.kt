@@ -8,11 +8,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.controller.ChannelController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-
 
 class ThreadController(var threadId: String, var channelController: ChannelController) {
     private val logger = ChatLogger.get("ThreadController")
@@ -47,5 +42,4 @@ class ThreadController(var threadId: String, var channelController: ChannelContr
 
         return response
     }
-
 }

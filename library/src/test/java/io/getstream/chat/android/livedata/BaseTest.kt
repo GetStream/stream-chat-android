@@ -10,6 +10,4 @@ open class BaseTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
-
-
 }

@@ -1,13 +1,8 @@
 package io.getstream.chat.android.livedata.converter
 
-import android.util.ArrayMap
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
-import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.gson
 import java.util.*
@@ -15,7 +10,7 @@ import java.util.*
 class ListConverter {
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return emptyList()
         }
         val listType = object :
@@ -26,7 +21,6 @@ class ListConverter {
         )
     }
 
-
     @TypeConverter
     fun stringListToString(someObjects: List<String>?): String? {
         return gson.toJson(someObjects)
@@ -34,7 +28,7 @@ class ListConverter {
 
     @TypeConverter
     fun stringToAttachmentList(data: String?): List<Attachment> {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return emptyList()
         }
         val listType = object :
@@ -50,10 +44,9 @@ class ListConverter {
         return gson.toJson(someObjects)
     }
 
-
     @TypeConverter
     fun stringToReactionList(data: String?): List<ReactionEntity>? {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return emptyList()
         }
         val listType = object :

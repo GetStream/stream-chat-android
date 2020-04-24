@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomain
 
 class CreateChannel(var domain: ChatDomain) {
-    operator fun invoke (channel: Channel): Call2<Channel> {
+    operator fun invoke(channel: Channel): Call2<Channel> {
         var runnable = suspend {
             domain.createChannel(channel)
         }

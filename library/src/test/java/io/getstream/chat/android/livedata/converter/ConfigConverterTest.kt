@@ -13,5 +13,4 @@ class ConfigConverterTest : BaseTest() {
         val converted = converter.stringToChannelConfig(output)
         Truth.assertThat(converted!!).isEqualTo(converted)
     }
-
 }

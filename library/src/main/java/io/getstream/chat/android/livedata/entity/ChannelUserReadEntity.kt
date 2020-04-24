@@ -22,6 +22,5 @@ data class ChannelUserReadEntity(var userId: String) {
                 ?: error("userMap doesnt contain the user $userId for the channel read")
 
         return ChannelUserRead(user, lastRead)
-
     }
 }

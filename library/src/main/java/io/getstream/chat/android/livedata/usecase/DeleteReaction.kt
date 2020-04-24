@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
 class DeleteReaction(var domain: ChatDomain) {
-    operator fun invoke (cid: String, reaction: Reaction): Call2<Message> {
+    operator fun invoke(cid: String, reaction: Reaction): Call2<Message> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
         }

@@ -22,5 +22,4 @@ class GetUnreadChannelCountTest : BaseConnectedIntegrationTest() {
         val count = result.data().getOrAwaitValue()
         Truth.assertThat(count).isEqualTo(2)
     }
-
 }

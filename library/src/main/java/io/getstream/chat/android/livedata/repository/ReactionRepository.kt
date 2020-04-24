@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -74,7 +73,4 @@ class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, va
         }
         return reactionEntities
     }
-
-
 }
-

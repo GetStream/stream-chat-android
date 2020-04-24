@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 
-
 interface RetryPolicy {
     /**
      * Should Retry evaluates if we should retry the failure
@@ -15,9 +14,9 @@ interface RetryPolicy {
      * @return
      */
     fun shouldRetry(
-            client: ChatClient,
-            attempt: Int,
-            error: ChatError
+        client: ChatClient,
+        attempt: Int,
+        error: ChatError
     ): Boolean
 
     /**
@@ -31,8 +30,8 @@ interface RetryPolicy {
      * @return
      */
     fun retryTimeout(
-            client: ChatClient,
-            attempt: Int,
-            error: ChatError
+        client: ChatClient,
+        attempt: Int,
+        error: ChatError
     ): Int?
 }

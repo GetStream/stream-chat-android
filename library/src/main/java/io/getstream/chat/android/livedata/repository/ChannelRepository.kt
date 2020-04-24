@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -40,10 +39,8 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
         updateCache(channelEntities)
     }
 
-
-
     suspend fun select(cid: String): ChannelEntity? {
-        return select(listOf(cid)).getOrElse(0) {null}
+        return select(listOf(cid)).getOrElse(0) { null }
     }
 
     suspend fun select(channelCIDs: List<String>): List<ChannelEntity> {
@@ -58,7 +55,6 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
         dbChannels.addAll(cachedChannels)
         return dbChannels
     }
-
 
     suspend fun selectSyncNeeded(): List<ChannelEntity> {
         return channelDao.selectSyncNeeded()
@@ -80,7 +76,6 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
                 insert(channelEntity)
             }
             // TODO: 1.1 support hiding channels
-
         }
         return channelEntities
     }

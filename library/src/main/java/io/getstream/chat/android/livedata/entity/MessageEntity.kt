@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
-
 /**
  * The Message Entity. Text and attachments are the most commonly used fields.
  *
@@ -116,7 +115,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         commandInfo = m.commandInfo
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
-        if (cid.isNullOrEmpty() && m.channel!= null) {
+        if (cid.isNullOrEmpty() && m.channel != null) {
             cid = m.channel.cid
         }
 
@@ -124,7 +123,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
         ownReactions = (m.ownReactions.map { ReactionEntity(it) }).toMutableList()
         mentionedUsersId = (m.mentionedUsers.map { it.id }).toMutableList()
-
     }
 
     /** converts a message entity into a message object */
@@ -153,8 +151,5 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.mentionedUsers = mentionedUsersId.map { userMap[it] } as MutableList<User>
 
         return m
-
     }
-
-
 }

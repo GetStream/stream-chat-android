@@ -23,5 +23,4 @@ class ExtraDataConverterTest : BaseTest() {
         val converted = converter.stringToMap(output)
         Truth.assertThat(converted).isEqualTo(data.extraData1)
     }
-
 }

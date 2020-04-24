@@ -34,8 +34,5 @@ class GetThreadTest : BaseConnectedIntegrationTest() {
 
         val messages = threadController.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(2)
-
     }
-
-
 }

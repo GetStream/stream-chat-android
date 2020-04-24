@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import java.util.*
 
-
 @Dao
 interface MessageDao {
 
@@ -27,7 +26,6 @@ interface MessageDao {
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt ASC LIMIT :limit")
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
-
     @Query(
             "SELECT * FROM stream_chat_message " +
                     "WHERE stream_chat_message.id IN (:ids)"
@@ -45,6 +43,4 @@ interface MessageDao {
                     "WHERE stream_chat_message.syncStatus IN (:syncStatus)"
     )
     suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<MessageEntity>
-
-
 }

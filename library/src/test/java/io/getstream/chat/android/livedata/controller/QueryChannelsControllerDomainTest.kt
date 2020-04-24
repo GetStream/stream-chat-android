@@ -59,7 +59,6 @@ class QueryChannelsControllerDomainTest : BaseConnectedIntegrationTest() {
         assertSuccess(result2 as Result<Any>)
         channels = queryController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(3)
-
     }
 
     @Test
@@ -88,6 +87,4 @@ class QueryChannelsControllerDomainTest : BaseConnectedIntegrationTest() {
         // should return 1 since only 1 is stored in offline storage
         Truth.assertThat(channels.size).isEqualTo(1)
     }
-
-
 }

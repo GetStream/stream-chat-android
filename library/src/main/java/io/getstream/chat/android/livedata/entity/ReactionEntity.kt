@@ -26,7 +26,6 @@ import java.util.*
 ))
 data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
 
-
     /** the score, used if you want to allow users to clap/like etc multiple times */
     var score: Int = 1
     /** when the reaction was created */
@@ -60,6 +59,5 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         r.syncStatus = syncStatus ?: SyncStatus.SYNCED
 
         return r
-
     }
 }

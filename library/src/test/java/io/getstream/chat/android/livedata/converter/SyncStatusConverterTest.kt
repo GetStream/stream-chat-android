@@ -7,7 +7,6 @@ import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 class SyncStatusConverterTest : BaseTest() {
     @Test
@@ -21,5 +20,4 @@ class SyncStatusConverterTest : BaseTest() {
             Truth.assertThat(converted).isEqualTo(option)
         }
     }
-
 }

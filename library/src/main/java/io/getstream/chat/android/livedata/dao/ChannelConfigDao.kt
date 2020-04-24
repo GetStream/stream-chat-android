@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 
-
 @Dao
 interface ChannelConfigDao {
 
@@ -20,5 +19,4 @@ interface ChannelConfigDao {
             "SELECT * FROM stream_chat_channel_config LIMIT 100"
     )
     suspend fun selectAll(): List<ChannelConfigEntity>
-
 }

@@ -51,9 +51,5 @@ class ReactionRepositoryTest : BaseDomainTest() {
             repo.select(data.reaction1.messageId, data.reaction1.user!!.id, data.reaction1.type)
         val reaction = entity!!.toReaction(data.userMap)
         Truth.assertThat(reaction).isEqualTo(reaction1Updated)
-
-
     }
-
-
 }

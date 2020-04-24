@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomain
 
 class GetUnreadChannelCount(var domain: ChatDomain) {
-    operator fun invoke (): Call2<LiveData<Int>> {
+    operator fun invoke(): Call2<LiveData<Int>> {
         var runnable = suspend {
             Result(domain.channelUnreadCount, null)
         }

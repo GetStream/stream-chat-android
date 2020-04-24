@@ -2,16 +2,12 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-
 
 @RunWith(AndroidJUnit4::class)
 class ThreadControllerTest : BaseConnectedIntegrationTest() {
@@ -79,6 +75,4 @@ class ThreadControllerTest : BaseConnectedIntegrationTest() {
         messages = threadController.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(2)
     }
-
-
 }

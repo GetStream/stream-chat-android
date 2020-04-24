@@ -37,7 +37,5 @@ class ThreadLoadMoreTest : BaseConnectedIntegrationTest() {
         assertSuccess(result4 as Result<Any>)
         val endReached = threadController.endOfOlderMessages.getOrAwaitValue()
         Truth.assertThat(endReached).isTrue()
-
     }
-
 }

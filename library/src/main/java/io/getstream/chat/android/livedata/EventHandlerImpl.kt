@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import kotlinx.coroutines.*
 
-class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain, var runAsync: Boolean=true) {
+class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain, var runAsync: Boolean = true) {
     fun handleEvents(events: List<ChatEvent>) {
         if (runAsync) {
             domain.scope.launch(Dispatchers.IO) {
@@ -56,15 +56,14 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
             }
         }
         // actually fetch the data
-        val channelMap = domain.repos.channels.select(channelsToFetch.toList()).associateBy{it.cid}
-        val messageMap = domain.repos.messages.select(messagesToFetch.toList()).associateBy{it.id}
-
+        val channelMap = domain.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
+        val messageMap = domain.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
 
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
             // any event can have channel and unread count information
-            event.unreadChannels?.let { unreadChannels=it }
-            event.totalUnreadCount?.let { totalUnreadCount=it }
+            event.unreadChannels?.let { unreadChannels = it }
+            event.totalUnreadCount?.let { totalUnreadCount = it }
 
             event.user?.let {
                 users[it.id] = UserEntity(it)
@@ -83,13 +82,13 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
                     val message = event.message
                     message.cid = event.cid!!
                     messages[message.id] = MessageEntity(message)
-                    users.putAll(message.users().map{UserEntity(it)}.associateBy { it.id })
+                    users.putAll(message.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is NotificationMessageNew -> {
                     messages[event.message.id] = MessageEntity(event.message)
                     channels[event.channel!!.id] = ChannelEntity(event.channel!!)
-                    users.putAll(event.message.users().map{UserEntity(it)}.associateBy { it.id })
-                    users.putAll(event.channel!!.users().map{UserEntity(it)}.associateBy { it.id })
+                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
@@ -135,9 +134,8 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
                         channels[channelEntity.cid] = channelEntity
                     }
                     event.channel?.let { c ->
-                        users.putAll(c.users().map{UserEntity(it)}.associateBy { it.id })
+                        users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
                     }
-
                 }
                 is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
@@ -145,7 +143,7 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
                         channels[it.cid] = ChannelEntity(it)
                     }
                     event.channel?.let { c ->
-                        users.putAll(c.users().map{UserEntity(it)}.associateBy { it.id })
+                        users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
                     }
                 }
             }
@@ -188,8 +186,6 @@ class EventHandlerImpl(var domain: io.getstream.chat.android.livedata.ChatDomain
             for (queryRepo in domain.getActiveQueries()) {
                 queryRepo.handleEvents(events)
             }
-
         }
-
     }
 }

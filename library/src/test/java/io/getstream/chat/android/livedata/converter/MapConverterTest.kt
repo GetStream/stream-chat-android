@@ -78,5 +78,4 @@ class MapConverterTest : BaseTest() {
         val converted = converter.stringToStringMap(output)
         Truth.assertThat(converted).isEqualTo(input)
     }
-
 }

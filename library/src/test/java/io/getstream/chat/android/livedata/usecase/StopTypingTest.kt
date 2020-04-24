@@ -23,5 +23,4 @@ class StopTypingTest : BaseConnectedIntegrationTest() {
         val result3 = chatDomain.useCases.stopTyping(data.channel1.cid).execute()
         Truth.assertThat(result3.data()).isFalse()
     }
-
 }

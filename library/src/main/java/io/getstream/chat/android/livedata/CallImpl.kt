@@ -17,9 +17,8 @@ interface Call2<T> {
     fun cancel()
 }
 
-
-class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope=GlobalScope) : Call2<T> {
-    var canceled : Boolean = false
+class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) : Call2<T> {
+    var canceled: Boolean = false
 
     override fun cancel() {
         canceled = true

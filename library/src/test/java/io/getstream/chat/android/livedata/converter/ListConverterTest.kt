@@ -56,6 +56,4 @@ class ListConverterTest : BaseTest() {
         val converted = converter.stringToReactionList(output)
         Truth.assertThat(converted!!).isEqualTo(input)
     }
-
-
 }

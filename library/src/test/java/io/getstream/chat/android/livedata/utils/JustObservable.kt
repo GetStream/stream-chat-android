@@ -28,7 +28,6 @@ class JustObservable(private val event: ChatEvent) : ChatObservable {
     }
 
     override fun unsubscribe(subscription: Subscription) {
-
     }
 
     override fun ignoreInitState(): ChatObservable {

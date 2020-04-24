@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.converter
 
-import android.util.ArrayMap
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
@@ -15,7 +14,7 @@ class MapConverter {
 
     @TypeConverter
     fun stringToReadMap(data: String?): MutableMap<String, ChannelUserReadEntity> {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
         val listType = object :
@@ -26,7 +25,6 @@ class MapConverter {
         )
     }
 
-
     @TypeConverter
     fun memberMapToString(someObjects: Map<String, MemberEntity>?): String? {
         return gson.toJson(someObjects)
@@ -34,7 +32,7 @@ class MapConverter {
 
     @TypeConverter
     fun stringToMemberMap(data: String?): Map<String, MemberEntity>? {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return emptyMap()
         }
         val listType = object :
@@ -45,10 +43,9 @@ class MapConverter {
         )
     }
 
-
     @TypeConverter
     fun stringToMap(data: String?): Map<String, Int> {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
         val mapType = object :
@@ -68,7 +65,7 @@ class MapConverter {
 
     @TypeConverter
     fun stringToStringMap(data: String?): Map<String, String>? {
-        if (data.isNullOrEmpty() || data=="null") {
+        if (data.isNullOrEmpty() || data == "null") {
             return mutableMapOf()
         }
         val mapType = object :
@@ -85,5 +82,4 @@ class MapConverter {
             someObjects
         )
     }
-
 }

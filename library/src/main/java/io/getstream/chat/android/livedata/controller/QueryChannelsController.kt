@@ -20,9 +20,9 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.*
 
 // TODO: move these to the LLC at some point
 fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
@@ -61,13 +61,11 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
      * A livedata object with the channels matching this query.
      */
 
-
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domain.job + job)
 
     private val _endOfChannels = MutableLiveData<Boolean>(false)
     val endOfChannels: LiveData<Boolean> = _endOfChannels
-
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
     // Ensure we don't lose the sort in the channel
@@ -81,14 +79,12 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
     private val _loadingMore = MutableLiveData<Boolean>(false)
     val loadingMore: LiveData<Boolean> = _loadingMore
 
-
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
         var request = QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
 
         return request
     }
-
 
     // TODO 1.1: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
@@ -205,7 +201,6 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
         if (response.isSuccess) {
             recoveryNeeded = false
 
-
             // store the results in the database
             val channelsResponse = response.data()
             if (channelsResponse.size < pagination.channelLimit) {
@@ -215,7 +210,6 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
             val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
             domain.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
-
 
             // initialize channel repos for all of these channels
             for (c in channelsResponse) {
@@ -269,10 +263,9 @@ class QueryChannelsController(var queryEntity: QueryChannelsEntity, var client: 
         }
         loader.postValue(false)
         return output
-
     }
 
-    private fun addChannels(channelsResponse: List<Channel>, onTop: Boolean =false) {
+    private fun addChannels(channelsResponse: List<Channel>, onTop: Boolean = false) {
         // second page adds to the list of channels
         if (onTop) {
             val channelIds = channelsResponse.map { it.cid }.toSortedSet()

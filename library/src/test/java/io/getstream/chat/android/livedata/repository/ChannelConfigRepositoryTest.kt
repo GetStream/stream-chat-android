@@ -12,7 +12,6 @@ import org.junit.runner.RunWith
 class ChannelConfigRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.configs }
 
-
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insertConfigs(mutableMapOf("messaging" to data.config1))
@@ -44,5 +43,4 @@ class ChannelConfigRepositoryTest : BaseDomainTest() {
         Truth.assertThat(config).isEqualTo(data.config1)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }
-
 }

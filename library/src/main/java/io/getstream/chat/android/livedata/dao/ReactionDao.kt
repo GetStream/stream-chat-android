@@ -7,7 +7,6 @@ import androidx.room.Query
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 
-
 @Dao
 interface ReactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,6 +26,4 @@ interface ReactionDao {
                     "WHERE stream_chat_reaction.messageid = :messageId AND userId = :userId AND type = :type"
     )
     suspend fun select(messageId: String, userId: String, type: String): ReactionEntity?
-
-
 }

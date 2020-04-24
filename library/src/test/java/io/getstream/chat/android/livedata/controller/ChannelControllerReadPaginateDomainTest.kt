@@ -15,7 +15,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
 
-
     /**
      * test that a message added only to the local storage is picked up
      */
@@ -85,7 +84,6 @@ class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 
-
     @Test
     fun loadOlderMessages() = runBlocking(Dispatchers.IO) {
         val channelRepo = chatDomain.channel("messaging", "testabc")
@@ -102,6 +100,4 @@ class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
         val result = channelRepo.runChannelQueryOnline(request)
         // TODO: Mock the call to query channel
     }
-
-
 }

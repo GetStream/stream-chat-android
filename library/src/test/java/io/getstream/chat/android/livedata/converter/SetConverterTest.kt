@@ -4,7 +4,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 
-
 class SetConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {

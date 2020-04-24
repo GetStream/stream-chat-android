@@ -28,7 +28,6 @@ internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
         return messageFilterDirection == null
     }
 
-
     fun isFilteringNewerMessages(): Boolean {
         return (messageFilterDirection != null && (messageFilterDirection == Pagination.GREATER_THAN_OR_EQUAL || messageFilterDirection == Pagination.GREATER_THAN))
     }

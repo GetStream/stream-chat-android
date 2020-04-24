@@ -7,13 +7,11 @@ import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SendMessageTest : BaseConnectedIntegrationTest() {
-
 
     @Test
     fun sendMessageUseCase() = runBlocking(Dispatchers.Main) {
@@ -25,5 +23,4 @@ class SendMessageTest : BaseConnectedIntegrationTest() {
         var messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)
     }
-
 }

@@ -26,5 +26,4 @@ interface UserDao {
                     "WHERE stream_chat_user.id IN (:id)"
     )
     suspend fun select(id: String): UserEntity?
-
 }

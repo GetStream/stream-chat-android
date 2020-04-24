@@ -2,11 +2,9 @@ package io.getstream.chat.android.livedata
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
@@ -16,8 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
-import org.junit.runner.RunWith
-
 
 open class BaseConnectedIntegrationTest : BaseDomainTest() {
     companion object {
@@ -34,7 +30,6 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
             return client
         }
-
     }
 
     fun setupChatDomain(client: ChatClient): ChatDomain {
@@ -81,7 +76,6 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         chatDomain = setupChatDomain(client)
         System.out.println("setup")
 
-
         // setup channel controller and query controllers for tests
         runBlocking(Dispatchers.IO) { chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
         channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
@@ -101,5 +95,4 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         System.out.println("tearDown")
         chatDomain.disconnect()
     }
-
 }

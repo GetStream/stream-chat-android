@@ -29,11 +29,10 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.usecase.*
-import kotlinx.coroutines.*
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-
+import kotlinx.coroutines.*
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
@@ -75,8 +74,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
         val chatDatabase = db ?: createDatabase()
-        repos = RepositoryHelper( client, currentUser, chatDatabase)
-
+        repos = RepositoryHelper(client, currentUser, chatDatabase)
 
         // load channel configs from Room into memory
         scope.launch(Dispatchers.IO) {
@@ -142,13 +140,13 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
 
                 if (shouldRetry) {
                     // temporary failure, continue
-                    logger.logI("API call failed (attempt ${attempt}), retrying in ${timeout} seconds. Error was ${result.error()}")
+                    logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")
                     if (timeout != null) {
                         delay(timeout.toLong())
                     }
                     attempt += 1
                 } else {
-                    logger.logI("API call failed (attempt ${attempt}). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
+                    logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
                     break
                 }
             }
@@ -186,15 +184,10 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             } else {
                 Result(null, result.error())
             }
-
-
         } else {
             return Result(c, null)
         }
-
     }
-
-
 
     private val _initialized = MutableLiveData<Boolean>(false)
     val initialized: LiveData<Boolean> = _initialized
@@ -237,12 +230,10 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         _errorEvent.postValue(io.getstream.chat.android.livedata.Event(error))
     }
 
-
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
     /** stores the mapping from cid to channelRepository */
     var activeChannelMap: ConcurrentHashMap<String, ChannelController> = ConcurrentHashMap()
-
 
     /** stores the mapping from cid to channelRepository */
     var activeQueryMap: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsController> = ConcurrentHashMap()
@@ -290,7 +281,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
 
     fun channel(cid: String): ChannelController {
         val parts = cid.split(":")
-        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got ${cid}" }
+        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got $cid" }
         return channel(parts[0], parts[1])
     }
 
@@ -298,8 +289,8 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
      * repo.channel("messaging", "12") return a ChatChannelRepository
      */
     fun channel(
-            channelType: String,
-            channelId: String
+        channelType: String,
+        channelId: String
     ): ChannelController {
         val cid = "%s:%s".format(channelType, channelId)
         if (!activeChannelMap.containsKey(cid)) {
@@ -352,15 +343,14 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         return activeQueryMap.values.toList()
     }
 
-
     /**
      * queryChannels
      * - first read the current results from Room
      * - if we are online make the API call to update results
      */
     fun queryChannels(
-            filter: FilterObject,
-            sort: QuerySort? = null
+        filter: FilterObject,
+        sort: QuerySort? = null
     ): QueryChannelsController {
         // mark this query as active
         val queryChannelsEntity = QueryChannelsEntity(filter, sort)
@@ -382,7 +372,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
          */
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry =  activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        val queriesToRetry = activeQueryMap.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
             if (response.isSuccess) {
@@ -393,7 +383,7 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         // exclude ones we just updated
         val cids = activeChannelMap.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
-        logger.logI("connection established: recoveryNeeded= ${recoveryNeeded}, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
+        logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
         if (cids.isNotEmpty()) {
             val filter = `in`("cid", cids)
@@ -444,7 +434,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
             }
 
             messages.addAll(channel.messages)
-
         }
 
         // store the channel configs
@@ -470,15 +459,15 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     }
 
     suspend fun selectAndEnrichChannels(
-            channelIds: List<String>,
-            pagination: QueryChannelsPaginationRequest
+        channelIds: List<String>,
+        pagination: QueryChannelsPaginationRequest
     ): List<Channel> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     internal suspend fun selectAndEnrichChannels(
-            channelIds: List<String>,
-            pagination: AnyChannelPaginationRequest
+        channelIds: List<String>,
+        pagination: AnyChannelPaginationRequest
     ): List<Channel> {
 
         // fetch the channel entities from room
@@ -528,8 +517,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         return channels.toList()
     }
 
-
-
     fun clean() {
         for (channelRepo in activeChannelMap.values.toList()) {
             channelRepo.clean()
@@ -547,7 +534,9 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
     }
 
     data class Builder(
-            private var appContext: Context, private var client: ChatClient, private var user: User
+        private var appContext: Context,
+        private var client: ChatClient,
+        private var user: User
     ) {
 
         private var database: ChatDatabase? = null
@@ -597,8 +586,6 @@ class ChatDomain private constructor(var context: Context, var client: ChatClien
         fun instance(): ChatDomain {
             return instance
         }
-
-
     }
 }
 

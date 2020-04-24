@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.Result
 class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
 
     override fun cancel() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
@@ -19,7 +19,7 @@ class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
     }
 
     override fun <K> map(mapper: (T) -> K): Call<K> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onError(handler: (ChatError) -> Unit): Call<T> {
@@ -27,14 +27,14 @@ class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
     }
 
     override fun onSuccess(handler: (T) -> Unit): Call<T> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 }

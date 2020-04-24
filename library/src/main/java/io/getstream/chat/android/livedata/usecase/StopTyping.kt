@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 import java.security.InvalidParameterException
 
 class StopTyping(var domain: ChatDomain) {
-    operator fun invoke (cid: String): Call2<Boolean> {
+    operator fun invoke(cid: String): Call2<Boolean> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
         }

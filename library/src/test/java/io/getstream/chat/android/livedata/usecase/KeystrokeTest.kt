@@ -8,7 +8,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 class KeystrokeTest : BaseConnectedIntegrationTest() {
 
@@ -20,5 +19,4 @@ class KeystrokeTest : BaseConnectedIntegrationTest() {
         val result2 = chatDomain.useCases.keystroke(data.channel1.cid).execute()
         Truth.assertThat(result2.data()).isFalse()
     }
-
 }

@@ -25,5 +25,4 @@ class QuerySortConverterTest : BaseTest() {
         val converted = converter.stringToObject(output)
         Truth.assertThat(converted!!).isEqualTo(sort)
     }
-
 }

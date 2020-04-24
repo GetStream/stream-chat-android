@@ -15,7 +15,7 @@ class QuerySortConverter {
             return null
         }
         val listType = object : TypeToken<QuerySort>() {}.type
-        val sort: QuerySort =  gson.fromJson(data, listType)
+        val sort: QuerySort = gson.fromJson(data, listType)
         val newData: MutableList<Map<String, Any>> = mutableListOf()
         for (map in sort.data) {
             // cast floats to ints

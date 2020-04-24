@@ -17,5 +17,4 @@ class CreateChannelTest : BaseConnectedIntegrationTest() {
         var channel = chatDomain.useCases.createChannel(data.channel1).execute()
         Truth.assertThat(channel.isSuccess).isTrue()
     }
-
 }

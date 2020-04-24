@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.gson
 import java.lang.reflect.Type
 
-
 class FilterObjectConverter {
     @TypeConverter
     fun stringToObject(data: String?): FilterObject {
@@ -20,10 +19,8 @@ class FilterObjectConverter {
 
     @TypeConverter
     fun objectToString(someObjects: FilterObject?): String {
-        if (someObjects==null) return ""
+        if (someObjects == null) return ""
 
         return gson.toJson(someObjects.toMap())
     }
 }
-
-

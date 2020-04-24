@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.*
 
-
 /**
  * ChannelStateEntity stores both the channel information as well as references
  * to all of the channel's state
@@ -118,8 +117,5 @@ data class ChannelEntity(var type: String, var channelId: String) {
         } else {
             members.set(userId, MemberEntity(member))
         }
-
     }
-
-
 }

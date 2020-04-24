@@ -26,7 +26,5 @@ class DeleteMessageTest : BaseConnectedIntegrationTest() {
         messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last().id).isEqualTo(result.data().id)
         Truth.assertThat(messages.last().deletedAt).isNotNull()
-
     }
-
 }

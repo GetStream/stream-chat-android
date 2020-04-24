@@ -4,9 +4,7 @@ import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import java.util.*
 
-
 class TestDataHelper {
-
 
     val apiKey = "b67pax5b2wdq"
 
@@ -51,7 +49,6 @@ class TestDataHelper {
         members = listOf(member1)
         config = config1
     }
-
 
     val channel1Updated = Channel().apply {
         type = "messaging"
@@ -108,15 +105,14 @@ class TestDataHelper {
         calendar(2019, 1, 1)
     }
 
-
     val connectedEvent = ConnectedEvent()
     val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2 }
 
     val disconnectedEvent = DisconnectedEvent()
-    val newMessageEvent = NewMessageEvent().apply { message = message1; cid=channel1.cid }
+    val newMessageEvent = NewMessageEvent().apply { message = message1; cid = channel1.cid }
     val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
-    val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid=channel1.cid }
+    val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid = channel1.cid }
     val reactionEvent2 = ReactionNewEvent().apply { reaction = reaction2 }
 
     val newMessageWithThreadEvent = NewMessageEvent().apply { message = messageThread }
@@ -126,12 +122,11 @@ class TestDataHelper {
     val user1TypingStartedOld = TypingStartEvent().apply { user = user1; receivedAt = getOldDate() }
     val user3TypingStartedOld = TypingStartEvent().apply { user = user3; receivedAt = getOldDate() }
 
-
     val user2TypingStarted = TypingStartEvent().apply { user = user2; receivedAt = Date() }
     val user1TypingStop = TypingStopEvent().apply { user = user1 }
     val user2TypingStop = TypingStopEvent().apply { user = user2 }
     val readEvent = MessageReadEvent().apply {
-        message = message1;user = user1;cid = channel1.cid; createdAt = Date()
+        message = message1; user = user1; cid = channel1.cid; createdAt = Date()
     }
 
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
@@ -142,7 +137,6 @@ class TestDataHelper {
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel1 }
 
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
-
 }
 
 fun calendar(

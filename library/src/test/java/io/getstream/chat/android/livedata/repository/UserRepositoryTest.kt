@@ -22,7 +22,5 @@ class UserRepositoryTest : BaseDomainTest() {
         val userMap = repo.selectUserMap(listOf(data.user1.id, "missing"))
         Truth.assertThat(userMap[data.user1.id]).isEqualTo(data.user1)
         Truth.assertThat(userMap["missing"]).isNull()
-
     }
-
 }

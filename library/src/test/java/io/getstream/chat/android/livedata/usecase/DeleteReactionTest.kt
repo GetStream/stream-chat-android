@@ -28,6 +28,5 @@ class DeleteReactionTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
         Truth.assertThat(msg.latestReactions.size).isEqualTo(0)
         Truth.assertThat(msg.ownReactions.size).isEqualTo(0)
-
     }
 }

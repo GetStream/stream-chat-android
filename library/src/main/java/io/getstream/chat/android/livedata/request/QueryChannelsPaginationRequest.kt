@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.request
 
-
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.utils.FilterObject
@@ -11,9 +10,9 @@ import io.getstream.chat.android.client.utils.FilterObject
  * Since those are provided by the QueryChannelsRepo
  */
 data class QueryChannelsPaginationRequest(
-        var channelOffset: Int = 0,
-        var channelLimit: Int = 30,
-        var messageLimit: Int = 10
+    var channelOffset: Int = 0,
+    var channelLimit: Int = 30,
+    var messageLimit: Int = 10
 ) {
 
     fun isFirstPage(): Boolean {
@@ -38,6 +37,4 @@ data class QueryChannelsPaginationRequest(
         }
         return request.withWatch()
     }
-
-
 }

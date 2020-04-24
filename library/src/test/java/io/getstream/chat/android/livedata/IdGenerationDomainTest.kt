@@ -27,7 +27,6 @@ class IdGenerationDomainTest : BaseDomainTest() {
             Truth.assertThat(idMap).doesNotContain(messageId)
             idMap.add(messageId)
         }
-
     }
 
     @Test
@@ -62,5 +61,4 @@ class IdGenerationDomainTest : BaseDomainTest() {
         Truth.assertThat(query2.id).isNotEqualTo(query3.id)
         Truth.assertThat(query2.id).isNotEqualTo(query4.id)
     }
-
 }

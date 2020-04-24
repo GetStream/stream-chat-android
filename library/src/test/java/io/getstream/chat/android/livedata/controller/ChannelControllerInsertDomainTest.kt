@@ -10,16 +10,15 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import java.lang.Thread.sleep
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
-
 
     @Test
     fun reactionStorage() = runBlocking(Dispatchers.IO) {
@@ -53,7 +52,6 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
         reactionEntity = chatDomain.repos.reactions.select(message1.id, data.user1.id, "like")
         Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
-
     }
 
     @Test
@@ -111,7 +109,6 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
         liveMessages = channelController.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
-
     }
 
     @Test
@@ -152,7 +149,6 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(reactionConverted).isEqualTo(data.reaction1)
     }
 
-
     @Test
     fun typing() = runBlocking(Dispatchers.IO) {
         // second typing keystroke after each other should not resend the typing event
@@ -170,8 +166,5 @@ class ChannelControllerInsertDomainTest : BaseConnectedIntegrationTest() {
         channelController.upsertMessage(data.message1)
         Truth.assertThat(channelController.markRead().data()).isTrue()
         Truth.assertThat(channelController.markRead().data()).isFalse()
-
     }
-
-
 }

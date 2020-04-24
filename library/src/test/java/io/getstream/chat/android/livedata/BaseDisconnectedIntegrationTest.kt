@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
-import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -35,7 +34,6 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
             }
             return client
         }
-
     }
 
     fun setupChatDomain(client: ChatClient): ChatDomain {
@@ -76,7 +74,6 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
         // start from a clean db everytime
         chatDomain = setupChatDomain(client)
         System.out.println("setup")
-
 
         // setup channel controller and query controllers for tests
         runBlocking(Dispatchers.IO) { chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }

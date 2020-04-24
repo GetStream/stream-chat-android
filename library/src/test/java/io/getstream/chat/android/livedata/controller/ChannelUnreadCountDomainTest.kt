@@ -8,9 +8,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import java.util.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {

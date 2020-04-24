@@ -9,11 +9,9 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class)
 class ChannelRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomain.repos.channels }
-
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
@@ -59,5 +57,4 @@ class ChannelRepositoryTest : BaseDomainTest() {
         channels = repo.selectSyncNeeded()
         Truth.assertThat(channels.size).isEqualTo(0)
     }
-
 }
