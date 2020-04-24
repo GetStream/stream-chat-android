@@ -554,7 +554,7 @@ class ChannelControllerImpl(
     }
 
     // This one needs to be public for flows such as running a message action
-    fun upsertMessage(message: Message) {
+    override fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 

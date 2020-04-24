@@ -46,4 +46,7 @@ interface ChannelController {
     fun clean()
     fun toChannel(): Channel
     fun getMessage(messageId: String): Message?
+    // This one needs to be public for flows such as running a message action
+    // TODO: this is for handling actions, think we should expose this in a different way
+    fun upsertMessage(message: Message)
 }

@@ -112,4 +112,6 @@ interface ChatDomain {
             return instance
         }
     }
+
+    fun getVersion(): String
 }

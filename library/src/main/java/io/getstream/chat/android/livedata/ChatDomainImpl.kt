@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.Room
 import com.google.gson.Gson
+import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -65,6 +66,8 @@ class ChatDomainImpl private constructor(
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<io.getstream.chat.android.livedata.Event<ChatError>>()
 
+
+
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
 
@@ -120,6 +123,8 @@ class ChatDomainImpl private constructor(
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
+        logger.logI("Initializing ChatDomain with version " + getVersion())
+
         val chatDatabase = db ?: createDatabase()
         repos = RepositoryHelper(client, currentUser, chatDatabase)
 
@@ -149,6 +154,10 @@ class ChatDomainImpl private constructor(
         job.cancelChildren()
         stopListening()
         stopClean()
+    }
+
+    override fun getVersion(): String {
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE;
     }
 
     private fun stopClean() {
