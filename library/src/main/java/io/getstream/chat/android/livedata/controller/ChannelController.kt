@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -21,10 +20,13 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import kotlinx.coroutines.*
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.withContext
 
 /**
  * The Channel Repo exposes convenient livedata objects to build your chat interface
@@ -45,12 +47,73 @@ import java.util.concurrent.ConcurrentHashMap
  *
  */
 class ChannelController(var channelType: String, var channelId: String, var client: ChatClient, var domain: ChatDomain) {
-
+    private val _messages = MutableLiveData<MutableMap<String, Message>>()
+    private val _watcherCount = MutableLiveData<Int>()
+    private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
+    private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
+    private val _read = MutableLiveData<ChannelUserRead>()
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
-    val endOfNewerMessages: LiveData<Boolean> = _endOfNewerMessages
-
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
+    private val _loading = MutableLiveData<Boolean>(false)
+    private val _watchers = MutableLiveData<MutableMap<String, User>>()
+    private val _members = MutableLiveData<MutableMap<String, Member>>()
+    private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
+    private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
+
+    /** a list of messages sorted by message.createdAt */
+    val messages: LiveData<List<Message>> = Transformations.map(_messages) {
+        it.values.sortedBy { it.createdAt }
+    }
+
+    /** the number of people currently watching the channel */
+    val watcherCount: LiveData<Int> = _watcherCount
+    /** the list of users currently watching this channel */
+    val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
+        it.values.sortedBy { it.createdAt }
+    }
+
+    /** who is currently typing (current user is excluded from this) */
+    val typing: LiveData<List<User>> = Transformations.map(_typing) {
+        it.values.sortedBy { it.receivedAt }.map { it.user!! }
+    }
+
+    /** how far every user in this channel has read */
+    val reads: LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
+        it.values.sortedBy { it.lastRead }
+    }
+
+    /** read status for the current user */
+    val read: LiveData<ChannelUserRead> = _read
+
+    /**
+     * unread count for this channel, calculated based on read state (this works even if you're offline)
+     */
+    val unreadCount: LiveData<Int> =
+        ChannelUnreadCountLiveData(
+            domain.currentUser,
+            read,
+            messages
+        )
+
+    /** the list of members of this channel */
+    val members: LiveData<List<Member>> = Transformations.map(_members) {
+        it.values.sortedBy { it.createdAt }
+    }
+
+    /** if we are currently loading */
+    val loading: LiveData<Boolean> = _loading
+
+    /** if we are currently loading older messages */
+    val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
+
+    /** if we are currently loading newer messages */
+    val loadingNewerMessages: LiveData<Boolean> = _loadingNewerMessages
+
+    /** set to true if there are no more older messages to load */
     val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
+
+    /** set to true if there are no more newer messages to load */
+    val endOfNewerMessages: LiveData<Boolean> = _endOfNewerMessages
 
     var recoveryNeeded: Boolean = false
     private var lastMarkReadEvent: Date? = null
@@ -64,65 +127,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    private val _messages = MutableLiveData<MutableMap<String, Message>>()
-    /** LiveData object with the messages */
-
-    // TODO 1.1: we could make this more efficient by using a data structure that keeps the sort
-    val messages: LiveData<List<Message>> = Transformations.map(_messages) {
-        it.values.sortedBy { it.createdAt }
-    }
-
+    // TODO: we need a channel data concept
     private val _channel = MutableLiveData<Channel>()
     /** LiveData object with the channel information (members, data etc.) */
     val channel: LiveData<Channel> = _channel
-
-    private val _watcherCount = MutableLiveData<Int>()
-    val watcherCount: LiveData<Int> = _watcherCount
-
-    private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
-    val typing: LiveData<List<User>> = Transformations.map(_typing) {
-        it.values.sortedBy { it.receivedAt }.map { it.user!! }
-    }
-
-    private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
-    val reads: LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
-        it.values.sortedBy { it.lastRead }
-    }
-
-    private val _read = MutableLiveData<ChannelUserRead>()
-    val read: LiveData<ChannelUserRead> = _read
-
-
-    private val _unreadCount = MutableLiveData<Int>()
-    /**
-     * unread count for this channel
-     */
-    val unreadCount: LiveData<Int> =
-        ChannelUnreadCountLiveData(
-            domain.currentUser,
-            read,
-            messages
-        )
-
-    private val _watchers = MutableLiveData<MutableMap<String, User>>()
-    val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
-        it.values.sortedBy { it.createdAt }
-    }
-
-    private val _members = MutableLiveData<MutableMap<String, Member>>()
-    val members: LiveData<List<Member>> = Transformations.map(_members) {
-        it.values.sortedBy { it.createdAt }
-    }
-
-    private val _loading = MutableLiveData<Boolean>(false)
-    val loading: LiveData<Boolean> = _loading
-
-    private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
-    val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
-
-    private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
-    val loadingNewerMessages: LiveData<Boolean> = _loadingNewerMessages
-
 
     val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
@@ -170,7 +178,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         return Result(false, null)
     }
 
-
     fun stopTyping(): Result<Boolean> {
         if (!getConfig().isTypingEvents) return Result(false, null)
         if (lastStartTypingEvent != null) {
@@ -185,7 +192,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         }
         return Result(false, null)
     }
-
 
     fun markRead(): Result<Boolean> {
         if (!getConfig().isReadEvents) return Result(false, null)
@@ -206,10 +212,8 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         return Result(false, null)
     }
 
-
     /** stores the mapping from cid to channelRepository */
     var activeThreadMap: ConcurrentHashMap<String, ThreadController> = ConcurrentHashMap()
-
 
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
@@ -247,8 +251,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             domain.addError(response.error())
         }
         return response
-
-
     }
 
     suspend fun watch(limit: Int = 30) {
@@ -277,12 +279,10 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 }
             }
             request = request.apply { messageFilterDirection = direction; messageFilterValue = messageId }
-
         }
 
         return request
     }
-
 
     suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
         if (_loadingOlderMessages.value == true) {
@@ -334,7 +334,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 upsertMessages(it.messages)
             }
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
-
         }
 
         // for pagination we cant use channel.messages, so discourage that
@@ -364,7 +363,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
             domain.repos.configs.insert(listOf(configEntities))
             updateLiveDataFromChannel(channelResponse)
             domain.storeStateForChannel(channelResponse)
-
         } else {
             recoveryNeeded = true
             domain.addError(response.error())
@@ -434,17 +432,17 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 messageEntity.syncStatus = SyncStatus.SYNCED
                 messageEntity.sendMessageCompletedAt = Date()
                 domain.repos.messages.insert(messageEntity)
-                output= Result(result.data() as Message?, null)
+                output = Result(result.data() as Message?, null)
             } else {
-                if(result.error().isPermanent()) {
+                if (result.error().isPermanent()) {
                     messageEntity.syncStatus = SyncStatus.SYNC_FAILED
                     domain.repos.messages.insert(messageEntity)
                 }
-                output= Result(null, result.error())
+                output = Result(null, result.error())
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            output= Result(message, null)
+            output = Result(message, null)
         }
 
         output
@@ -455,7 +453,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         copy.lastMessageAt = message.createdAt
         _channel.postValue(copy)
     }
-
 
     /**
      * sendReaction posts the reaction on local storage
@@ -495,7 +492,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 return Result(result.data() as Reaction, null)
             } else {
                 if (result.error().isPermanent()) {
-                    reaction.syncStatus=SyncStatus.SYNC_FAILED
+                    reaction.syncStatus = SyncStatus.SYNC_FAILED
                     domain.repos.reactions.insertReaction(reaction)
                 }
                 return Result(null, result.error())
@@ -503,9 +500,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         }
         return Result(reaction, null)
     }
-
-
-
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> {
         reaction.user = domain.currentUser
@@ -607,7 +601,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 _threads[parentId]!!.postValue(threadMessages)
             }
         }
-
 
         _messages.postValue(copy)
     }
@@ -730,7 +723,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
     fun updateReads(
-            reads: List<ChannelUserRead>
+        reads: List<ChannelUserRead>
     ) {
         val currentUser = domain.currentUser
         val copy = _reads.value ?: mutableMapOf()
@@ -745,7 +738,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     }
 
     fun updateRead(
-            read: ChannelUserRead
+        read: ChannelUserRead
     ) {
         updateReads(listOf(read))
     }
@@ -760,8 +753,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
         upsertMessages(c.messages)
-
-
     }
 
     private fun setMembers(members: List<Member>) {
@@ -816,11 +807,9 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 }
                 return Result(null, result.error())
             }
-
         }
         return Result(message, null)
     }
-
 
     suspend fun deleteMessage(message: Message): Result<Message> {
         message.deletedAt = Date()
@@ -850,7 +839,6 @@ class ChannelController(var channelType: String, var channelId: String, var clie
                 }
                 return Result(null, result.error())
             }
-
         }
         return Result(message, null)
     }
@@ -858,7 +846,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
     fun toChannel(): Channel {
         // recreate a channel object from the various observables.
         val channel = _channel.value
-                ?: Channel().apply { this.type = channelType; this.id = channelId; this.cid = "${channelType}:${channelId}" }
+                ?: Channel().apply { this.type = channelType; this.id = channelId; this.cid = "$channelType:$channelId" }
         val messages = sortedMessages()
         val members = (_members.value ?: mutableMapOf()).values.toList()
         val watchers = (_watchers.value ?: mutableMapOf()).values.toList()
@@ -871,10 +859,7 @@ class ChannelController(var channelType: String, var channelId: String, var clie
         channel.read = reads
         return channel
     }
-
-
 }
-
 
 // TODO: move to llc
 fun ChatError.isPermanent(): Boolean {

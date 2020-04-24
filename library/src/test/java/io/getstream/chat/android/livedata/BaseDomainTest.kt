@@ -41,7 +41,6 @@ open class BaseDomainTest {
     lateinit var query: QueryChannelsEntity
     lateinit var filter: FilterObject
 
-
     fun assertSuccess(result: Result<Any>) {
         if (result.isError) {
             Truth.assertWithMessage(result.error().toString()).that(result.isSuccess).isTrue()
@@ -78,7 +77,6 @@ open class BaseDomainTest {
         val connectedEvent = DisconnectedEvent().apply {
         }
 
-
         val result = Result(listOf(data.channel1), null)
         val channelMock = mock<ChannelController> {
             on { sendMessage(any()) } doReturn ChatCallTestImpl<Message>(
@@ -108,7 +106,6 @@ open class BaseDomainTest {
             )
         }
 
-
         return client
     }
 
@@ -124,16 +121,13 @@ open class BaseDomainTest {
             ChatNotificationConfig(getApplicationContext())
         )
 
-
         val connectedEvent = ConnectedEvent().apply {
             me = data.user1
             connectionId = data.connection1
         }
 
-
         val result = Result(listOf(data.channel1), null)
         val channelMock = mock<ChannelController> {
-
         }
         val client = mock<ChatClient> {
             on { events() } doReturn JustObservable(connectedEvent)
@@ -145,9 +139,7 @@ open class BaseDomainTest {
                     null
                 )
             )
-
         }
-
 
         return client
     }
@@ -160,7 +152,6 @@ open class BaseDomainTest {
     }
 
     fun setupChatDomain(client: ChatClient, setUser: Boolean) {
-
 
         if (setUser) {
             waitForSetUser(
@@ -183,7 +174,6 @@ open class BaseDomainTest {
             override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int? {
                 return 1000
             }
-
         }
 
         chatDomain.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
@@ -194,11 +184,8 @@ open class BaseDomainTest {
         channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
         channelController.updateChannel(data.channel1)
 
-
         query = QueryChannelsEntity(data.filter1, null)
 
         queryController = chatDomain.queryChannels(data.filter1)
     }
-
-
 }

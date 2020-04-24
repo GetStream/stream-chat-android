@@ -12,7 +12,6 @@ data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort? = 
     var id: String
 
     init {
-        // TODO: remove this ugly hack once FilterObject has correct equality implementation
         // ugly hack to cleanup the filter object to prevent issues with filter object equality
         filter = FilterObject(filter.toMap())
         id = (Objects.hash(filter.toMap()) + Objects.hash(sort?.data)).toString()

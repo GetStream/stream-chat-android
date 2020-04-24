@@ -17,16 +17,15 @@ class WatchChannelTest : BaseConnectedIntegrationTest() {
     fun watchChannelUseCase() = runBlocking(Dispatchers.IO) {
         // use case style syntax
         val message1 = data.createMessage()
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
+        val result0 = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute()
+        var channelController = result0.data()
         val result = chatDomain.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
         assertSuccess(result as Result<Any>)
-        var messages = channelState.messages.getOrAwaitValue()
+        var messages = channelController.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
         var result2 = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result2 as Result<Any>)
-        messages = channelState.messages.getOrAwaitValue()
+        messages = channelController.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)
-
     }
-
 }
