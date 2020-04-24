@@ -66,8 +66,6 @@ class ChatDomainImpl private constructor(
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<io.getstream.chat.android.livedata.Event<ChatError>>()
 
-
-
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
 
@@ -157,7 +155,7 @@ class ChatDomainImpl private constructor(
     }
 
     override fun getVersion(): String {
-        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE;
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE
     }
 
     private fun stopClean() {
