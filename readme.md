@@ -44,6 +44,7 @@ To prevent race conditions caused by offline being ready before the client is in
 Chat.getInstance().getClient().getCurrentUser()
 ```
 
+
 With
 
 ```kotlin
