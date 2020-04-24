@@ -49,3 +49,10 @@ With
 ```kotlin
 ChatRepo.instance().getCurrentUser();
 ```
+
+## Dev Tips
+
+Run the jacoco task and have a look at coverage here:
+```
+open library/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html
+```

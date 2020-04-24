@@ -6,9 +6,24 @@ apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'jacoco-android'
 
+//https://github.com/arturdm/jacoco-android-gradle-plugin
+
 group='com.github.GetStream'
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
 
+jacoco {
+    toolVersion = "0.8.4"
+}
 
+jacocoAndroidUnitTestReport {
+    csv.enabled false
+    html.enabled true
+    xml.enabled true
+    excludes += ['**/*_Impl.java',
+                 '**/*JavascriptBridge.class']
+}
 
 android {
     compileSdkVersion 28
