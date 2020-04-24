@@ -3,10 +3,10 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
-class SendMessage(var domain: ChatDomain) {
+class SendMessage(var domainImpl: ChatDomainImpl) {
     operator fun invoke(message: Message): Call2<Message> {
         var cid = message.cid
         if (cid.isEmpty()) {
@@ -16,7 +16,7 @@ class SendMessage(var domain: ChatDomain) {
             throw InvalidParameterException("message.cid cant be empty")
         }
 
-        val channelRepo = domain.channel(cid)
+        val channelRepo = domainImpl.channel(cid)
 
         var runnable = suspend {
             channelRepo.sendMessage(message)

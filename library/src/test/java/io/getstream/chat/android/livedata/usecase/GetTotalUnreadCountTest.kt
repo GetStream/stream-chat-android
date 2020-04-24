@@ -18,7 +18,7 @@ class GetTotalUnreadCountTest : BaseConnectedIntegrationTest() {
         // use case style syntax
         var result = chatDomain.useCases.getTotalUnreadCount().execute()
         assertSuccess(result as Result<Any>)
-        chatDomain.eventHandler.handleEvent(data.connectedEvent2)
+        chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2)
         val count = result.data().getOrAwaitValue()
         Truth.assertThat(count).isEqualTo(3)
     }

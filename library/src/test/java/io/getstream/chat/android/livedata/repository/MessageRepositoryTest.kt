@@ -16,7 +16,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MessageRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomain.repos.messages }
+    val repo by lazy { chatDomainImpl.repos.messages }
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {

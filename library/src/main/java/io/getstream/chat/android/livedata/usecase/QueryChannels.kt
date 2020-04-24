@@ -5,19 +5,20 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import kotlinx.coroutines.launch
 
-class QueryChannels(var domain: ChatDomain) {
+class QueryChannels(var domainImpl: ChatDomainImpl) {
     operator fun invoke(filter: FilterObject, sort: QuerySort? = null, limit: Int = 30, messageLimit: Int = 10): Call2<QueryChannelsController> {
+        val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
+        val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl
         var runnable = suspend {
-            val queryChannelsController = domain.queryChannels(filter, sort)
             if (limit > 0) {
-                domain.scope.launch { queryChannelsController._query(limit, messageLimit) }
+                queryChannelsControllerImpl.scope.launch { queryChannelsControllerImpl._query(limit, messageLimit) }
             }
             Result(queryChannelsController, null)
         }
-        return CallImpl2<QueryChannelsController>(runnable, domain.scope)
+        return CallImpl2(runnable, queryChannelsControllerImpl.scope)
     }
 }

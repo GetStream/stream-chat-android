@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class QueryChannelsRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomain.repos.queryChannels }
+    val repo by lazy { chatDomainImpl.repos.queryChannels }
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {

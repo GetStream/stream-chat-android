@@ -5,14 +5,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.ChatDomainImpl
 
-class QueryChannelsLoadMore(var domain: ChatDomain) {
+class QueryChannelsLoadMore(var domainImpl: ChatDomainImpl) {
     operator fun invoke(filter: FilterObject, sort: QuerySort?, limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>> {
         var runnable = suspend {
-            val queryChannelsController = domain.queryChannels(filter, sort)
+            val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController._loadMore(limit, messageLimit)
         }
-        return CallImpl2<List<Channel>>(runnable, domain.scope)
+        return CallImpl2<List<Channel>>(runnable, domainImpl.scope)
     }
 }

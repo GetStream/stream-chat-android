@@ -10,11 +10,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ThreadControllerTest : BaseConnectedIntegrationTest() {
+class ThreadControllerImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun threads() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
         val message = data.createMessage()
         message.id = "thisisaparent"
         message.replyCount = 1
@@ -27,7 +27,7 @@ class ThreadControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun threads2() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
         val message = data.createMessage()
         val message2 = data.createMessage()
         message.id = "theparent"
@@ -42,7 +42,7 @@ class ThreadControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun newThread() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
         val message = data.createMessage()
         message.id = "theparent"
         channelRepo.upsertMessages(listOf(message))
@@ -55,7 +55,7 @@ class ThreadControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun newThreadAndMessage() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
         channelRepo.updateChannel(data.channel1)
         val message = data.createMessage()
         message.id = "theparent"

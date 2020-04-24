@@ -13,7 +13,7 @@ class IdGenerationDomainTest : BaseDomainTest() {
 
     @Test
     fun messageIdGeneration() {
-        val messageId = chatDomain.generateMessageId()
+        val messageId = chatDomainImpl.generateMessageId()
 
         Truth.assertThat(messageId).isNotNull()
         Truth.assertThat(messageId).isNotEmpty()
@@ -23,7 +23,7 @@ class IdGenerationDomainTest : BaseDomainTest() {
     fun messageIdGenerationIsUnique() {
         val idMap = sortedSetOf<String>()
         for (x in 0..100) {
-            val messageId = chatDomain.generateMessageId()
+            val messageId = chatDomainImpl.generateMessageId()
             Truth.assertThat(idMap).doesNotContain(messageId)
             idMap.add(messageId)
         }

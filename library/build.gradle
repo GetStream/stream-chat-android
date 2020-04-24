@@ -47,6 +47,9 @@ android {
     testOptions.unitTests {
         includeAndroidResources = true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -108,3 +111,4 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+

@@ -36,15 +36,15 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
         }
     }
 
-    fun setupChatDomain(client: ChatClient): ChatDomain {
+    fun setupChatDomain(client: ChatClient): ChatDomainImpl {
         db = createRoomDb()
 
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomain = ChatDomain.Builder(context, client, data.user1).database(
+        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(
             db
-        ).offlineEnabled().userPresenceEnabled().build()
-        chatDomain.eventHandler = EventHandlerImpl(chatDomain, true)
-        chatDomain.retryPolicy = object : RetryPolicy {
+        ).offlineEnabled().userPresenceEnabled().buildImpl()
+        chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
+        chatDomainImpl.retryPolicy = object : RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
                 return false
             }
@@ -54,10 +54,10 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
             }
         }
 
-        chatDomain.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
+        chatDomainImpl.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
-        return chatDomain
+        return chatDomainImpl
     }
 
     @Before
@@ -72,26 +72,26 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
 
         client = Companion.client!!
         // start from a clean db everytime
-        chatDomain = setupChatDomain(client)
+        chatDomainImpl = setupChatDomain(client)
         System.out.println("setup")
 
         // setup channel controller and query controllers for tests
-        runBlocking(Dispatchers.IO) { chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
-        channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
-        channelController.updateChannel(data.channel1)
+        runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+        channelControllerImpl.updateChannel(data.channel1)
         query = QueryChannelsEntity(data.filter1, null)
 
-        queryController = chatDomain.queryChannels(data.filter1)
+        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1)
 
         Truth.assertThat(client.isSocketConnected()).isFalse()
 
-        Truth.assertThat(chatDomain.isOnline()).isFalse()
+        Truth.assertThat(chatDomainImpl.isOnline()).isFalse()
     }
 
     @After
     override fun tearDown() {
         // things to do after each test
         System.out.println("tearDown")
-        chatDomain.disconnect()
+        chatDomainImpl.disconnect()
     }
 }

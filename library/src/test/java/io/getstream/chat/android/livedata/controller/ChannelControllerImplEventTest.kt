@@ -14,32 +14,32 @@ import org.junit.runner.RunWith
  * Note that we don't rely on Room's livedata mechanism as this library needs to work without room enabled as well
  */
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerEventTest : BaseDisconnectedIntegrationTest() {
+class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun eventWatcherCountUpdates() {
         val event = data.userStartWatchingEvent
-        channelController.handleEvent(event)
-        Truth.assertThat(channelController.watcherCount.getOrAwaitValue()).isEqualTo(100)
+        channelControllerImpl.handleEvent(event)
+        Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(100)
         val users = event.channel?.watchers!!.map { it.user }
-        Truth.assertThat(channelController.watchers.getOrAwaitValue()).isEqualTo(users)
+        Truth.assertThat(channelControllerImpl.watchers.getOrAwaitValue()).isEqualTo(users)
     }
 
     @Test
     fun eventNewMessage() {
-        channelController.handleEvent(data.newMessageEvent)
-        Truth.assertThat(channelController.messages.getOrAwaitValue())
+        channelControllerImpl.handleEvent(data.newMessageEvent)
+        Truth.assertThat(channelControllerImpl.messages.getOrAwaitValue())
             .isEqualTo(listOf(data.newMessageEvent.message))
     }
 
     @Test
     fun eventUpdatedMessage() {
 
-        channelController.handleEvent(data.newMessageEvent)
+        channelControllerImpl.handleEvent(data.newMessageEvent)
         val event = data.messageUpdatedEvent
-        channelController.handleEvent(event)
+        channelControllerImpl.handleEvent(event)
 
-        val messages = channelController.messages.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages).isEqualTo(listOf(event.message))
     }
@@ -47,10 +47,10 @@ class ChannelControllerEventTest : BaseDisconnectedIntegrationTest() {
     @Test
     @Ignore
     fun userChangesFavoriteColor() {
-        channelController.handleEvent(data.newMessageEvent)
-        channelController.handleEvent(data.reactionEvent)
-        channelController.handleEvent(data.user1UpdatedEvent)
-        val message = channelController.getMessage(data.message1.id)
+        channelControllerImpl.handleEvent(data.newMessageEvent)
+        channelControllerImpl.handleEvent(data.reactionEvent)
+        channelControllerImpl.handleEvent(data.user1UpdatedEvent)
+        val message = channelControllerImpl.getMessage(data.message1.id)
         Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
         Truth.assertThat(message.latestReactions.first().user!!.extraData["color"])
             .isEqualTo("green")
@@ -59,53 +59,53 @@ class ChannelControllerEventTest : BaseDisconnectedIntegrationTest() {
     @Test
     fun memberAddedEvent() {
         // ensure the channel data is initialized:
-        channelController.upsertMember(data.channel1.members[0])
-        var members = channelController.members.getOrAwaitValue()
+        channelControllerImpl.upsertMember(data.channel1.members[0])
+        var members = channelControllerImpl.members.getOrAwaitValue()
         Truth.assertThat(members.size).isEqualTo(1)
         // add a member, we should go from list size 1 to 2
-        channelController.handleEvent(data.memberAddedToChannelEvent)
-        members = channelController.members.getOrAwaitValue()
+        channelControllerImpl.handleEvent(data.memberAddedToChannelEvent)
+        members = channelControllerImpl.members.getOrAwaitValue()
         Truth.assertThat(members.size).isEqualTo(2)
     }
 
     @Test
     fun typingEvents() {
-        channelController.handleEvent(data.user1TypingStarted)
-        channelController.handleEvent(data.user2TypingStarted)
-        channelController.handleEvent(data.user1TypingStop)
-        val typing = channelController.typing.getOrAwaitValue()
+        channelControllerImpl.handleEvent(data.user1TypingStarted)
+        channelControllerImpl.handleEvent(data.user2TypingStarted)
+        channelControllerImpl.handleEvent(data.user1TypingStop)
+        val typing = channelControllerImpl.typing.getOrAwaitValue()
         Truth.assertThat(typing).isEqualTo(listOf(data.user2))
     }
 
     @Test
     fun readEvents() {
-        channelController.handleEvent(data.user1Read)
-        val reads = channelController.reads.getOrAwaitValue()
+        channelControllerImpl.handleEvent(data.user1Read)
+        val reads = channelControllerImpl.reads.getOrAwaitValue()
         Truth.assertThat(reads.size).isEqualTo(1)
         Truth.assertThat(reads[0].user.id).isEqualTo(data.user1.id)
     }
 
     @Test
     fun eventMessageWithThread() {
-        channelController.handleEvent(data.newMessageEvent)
-        channelController.handleEvent(data.newMessageWithThreadEvent)
+        channelControllerImpl.handleEvent(data.newMessageEvent)
+        channelControllerImpl.handleEvent(data.newMessageWithThreadEvent)
         val parentId = data.newMessageWithThreadEvent.message.parentId!!
 
-        val messages = channelController.getThreadMessages(parentId).getOrAwaitValue()
+        val messages = channelControllerImpl.getThreadMessages(parentId).getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(2)
     }
 
     @Test
     fun eventUpdatedChannel() {
-        channelController.handleEvent(data.channelUpdatedEvent)
-        val channel = channelController.channel.getOrAwaitValue()
+        channelControllerImpl.handleEvent(data.channelUpdatedEvent)
+        val channel = channelControllerImpl.channel.getOrAwaitValue()
         Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
     }
 
     @Test
     fun eventReaction() {
-        channelController.handleEvent(data.reactionEvent)
-        val messages = channelController.messages.getOrAwaitValue()
+        channelControllerImpl.handleEvent(data.reactionEvent)
+        val messages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages[0]).isEqualTo(data.reactionEvent.message)
     }

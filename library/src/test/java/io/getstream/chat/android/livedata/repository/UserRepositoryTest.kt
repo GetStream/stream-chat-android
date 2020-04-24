@@ -10,7 +10,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class UserRepositoryTest : BaseDomainTest() {
-    val repo by lazy { chatDomain.repos.users }
+    val repo by lazy { chatDomainImpl.repos.users }
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {

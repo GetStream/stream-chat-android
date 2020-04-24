@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
@@ -33,11 +33,12 @@ import org.junit.Rule
 
 open class BaseDomainTest {
     lateinit var database: ChatDatabase
+    lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
     lateinit var client: ChatClient
-    lateinit var channelController: io.getstream.chat.android.livedata.controller.ChannelController
+    lateinit var channelControllerImpl: io.getstream.chat.android.livedata.controller.ChannelControllerImpl
     lateinit var db: ChatDatabase
-    lateinit var queryController: QueryChannelsController
+    lateinit var queryControllerImpl: QueryChannelsControllerImpl
     lateinit var query: QueryChannelsEntity
     lateinit var filter: FilterObject
 
@@ -60,7 +61,7 @@ open class BaseDomainTest {
 
     @After
     open fun tearDown() {
-        chatDomain.disconnect()
+        chatDomainImpl.disconnect()
         db.close()
     }
 
@@ -163,10 +164,11 @@ open class BaseDomainTest {
 
         db = createRoomDb()
         val context = getApplicationContext() as Context
-        chatDomain = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
-            .userPresenceEnabled().build()
-        chatDomain.eventHandler = EventHandlerImpl(chatDomain, true)
-        chatDomain.retryPolicy = object : RetryPolicy {
+        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
+            .userPresenceEnabled().buildImpl()
+
+        chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
+        chatDomainImpl.retryPolicy = object : RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
                 return false
             }
@@ -175,17 +177,18 @@ open class BaseDomainTest {
                 return 1000
             }
         }
+        chatDomain = chatDomainImpl
 
-        chatDomain.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
+        chatDomainImpl.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
             System.out.println("error event$it")
         })
 
-        runBlocking(Dispatchers.IO) { chatDomain.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
-        channelController = chatDomain.channel(data.channel1.type, data.channel1.id)
-        channelController.updateChannel(data.channel1)
+        runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+        channelControllerImpl.updateChannel(data.channel1)
 
         query = QueryChannelsEntity(data.filter1, null)
 
-        queryController = chatDomain.queryChannels(data.filter1)
+        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1)
     }
 }

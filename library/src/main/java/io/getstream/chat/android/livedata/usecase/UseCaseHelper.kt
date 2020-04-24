@@ -1,31 +1,31 @@
 package io.getstream.chat.android.livedata.usecase
 
-import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.ChatDomainImpl
 
-data class UseCaseHelper(var chatDomain: ChatDomain) {
+data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
 
     // getting controllers
-    var watchChannel = WatchChannel(chatDomain)
-    var queryChannels = QueryChannels(chatDomain)
-    val getThread = GetThread(chatDomain)
+    var watchChannel = WatchChannel(chatDomainImpl)
+    var queryChannels = QueryChannels(chatDomainImpl)
+    val getThread = GetThread(chatDomainImpl)
 
     // unread counts
-    var getTotalUnreadCount = GetTotalUnreadCount(chatDomain)
-    var getUnreadChannelCount = GetUnreadChannelCount(chatDomain)
+    var getTotalUnreadCount = GetTotalUnreadCount(chatDomainImpl)
+    var getUnreadChannelCount = GetUnreadChannelCount(chatDomainImpl)
 
     // loading more
-    var loadOlderMessages = LoadOlderMessages(chatDomain)
-    val queryChannelsLoadMore = QueryChannelsLoadMore(chatDomain)
-    var threadLoadMore = ThreadLoadMore(chatDomain)
+    var loadOlderMessages = LoadOlderMessages(chatDomainImpl)
+    val queryChannelsLoadMore = QueryChannelsLoadMore(chatDomainImpl)
+    var threadLoadMore = ThreadLoadMore(chatDomainImpl)
 
     // updating channel data
-    var createChannel = CreateChannel(chatDomain)
-    var sendMessage = SendMessage(chatDomain)
-    var editMessage = EditMessage(chatDomain)
-    var deleteMessage = DeleteMessage(chatDomain)
-    var sendReaction = SendReaction(chatDomain)
-    var deleteReaction = DeleteReaction(chatDomain)
-    var keystroke = Keystroke(chatDomain)
-    var stopTyping = StopTyping(chatDomain)
-    var markRead = MarkRead(chatDomain)
+    var createChannel = CreateChannel(chatDomainImpl)
+    var sendMessage = SendMessage(chatDomainImpl)
+    var editMessage = EditMessage(chatDomainImpl)
+    var deleteMessage = DeleteMessage(chatDomainImpl)
+    var sendReaction = SendReaction(chatDomainImpl)
+    var deleteReaction = DeleteReaction(chatDomainImpl)
+    var keystroke = Keystroke(chatDomainImpl)
+    var stopTyping = StopTyping(chatDomainImpl)
+    var markRead = MarkRead(chatDomainImpl)
 }

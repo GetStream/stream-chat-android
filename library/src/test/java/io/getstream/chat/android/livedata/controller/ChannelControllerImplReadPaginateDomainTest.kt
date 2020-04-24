@@ -13,34 +13,34 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
+class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest() {
 
     /**
      * test that a message added only to the local storage is picked up
      */
     @Test
     fun watchSetsMessagesAndChannelOffline() = runBlocking(Dispatchers.IO) {
-        chatDomain.setOffline()
+        chatDomainImpl.setOffline()
         // add a message to local storage
-        chatDomain.repos.users.insertUser(data.user1)
-        chatDomain.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.repos.users.insertUser(data.user1)
+        chatDomainImpl.repos.channels.insertChannel(data.channel1)
         val message1 = data.createMessage()
-        channelController.sendMessage(message1)
+        channelControllerImpl.sendMessage(message1)
         // remove the livedata
-        channelController =
-            ChannelController(
+        channelControllerImpl =
+            ChannelControllerImpl(
                 data.channel1.type,
                 data.channel1.id,
-                chatDomain.client,
-                chatDomain
+                chatDomainImpl.client,
+                chatDomainImpl
             )
 
         // run watch while we're offline
-        channelController.watch()
+        channelControllerImpl.watch()
 
         // the message should still show up
-        val messages = channelController.messages.getOrAwaitValue()
-        val channel = channelController.channel.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val channel = channelControllerImpl.channel.getOrAwaitValue()
 
         Truth.assertThat(messages).isNotEmpty()
         Truth.assertThat(channel).isNotNull()
@@ -52,15 +52,15 @@ class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
      */
     @Test
     fun watchSetsMessagesAndChannelOnline() = runBlocking(Dispatchers.IO) {
-        chatDomain.setOnline()
+        chatDomainImpl.setOnline()
         // setup an online message
         val message = Message()
         message.syncStatus = SyncStatus.SYNC_NEEDED
         // write a message
-        channelController.sendMessage(message)
+        channelControllerImpl.sendMessage(message)
 
-        val messages = channelController.messages.getOrAwaitValue()
-        val channel = channelController.channel.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val channel = channelControllerImpl.channel.getOrAwaitValue()
 
         Truth.assertThat(messages.size).isGreaterThan(0)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
@@ -71,22 +71,22 @@ class ChannelControllerReadPaginateDomainTest : BaseConnectedIntegrationTest() {
     @Test
     fun recovery() = runBlocking(Dispatchers.IO) {
         // running recover should trigger channels to show up for active queries and channels
-        chatDomain.connectionRecovered(true)
+        chatDomainImpl.connectionRecovered(true)
 
         // verify channel data is loaded
-        val channelRepos = queryController.channels.getOrAwaitValue()
+        val channelRepos = queryControllerImpl.channels.getOrAwaitValue()
         Truth.assertThat(channelRepos.size).isGreaterThan(0)
 
         // verify we have messages as well
         val channelId = channelRepos.first().cid
 
-        val messages = chatDomain.channel(channelId).messages.getOrAwaitValue()
+        val messages = chatDomainImpl.channel(channelId).messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 
     @Test
     fun loadOlderMessages() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomain.channel("messaging", "testabc")
+        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
         Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
         channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
         // verify we sort correctly
