@@ -2,8 +2,6 @@
 
 This repo adds offline support and livedata support to Stream's Chat SDK.
 
-Status: Experimental/Not ready
-
 ## Offline
 
 Offline support is essential for a good chat user experience. Mobile networks tend to lose connection frequently.
@@ -28,55 +26,10 @@ Stream's Chat SDKs for Android consist of 3 libraries:
 - Livedata & offline support (this library)
 - The Chat Views and Sample app
 
-# Using this library
+# Docs
 
-Here are the most common ways to use the library
+[Docs are here](https://getstream.io/chat/docs/livedata/?language=kotlin)
 
-## Create a chat repo
-
-```kotlin
-val repo = ChatRepo.Builder(context, client, data.user1).offlineEnabled().userPresenceEnabled().build()
-```
-
-## Unread counts
-
-```kotlin
-repo.totalUnreadCount.observe
-repo.channelUnreadCount.observe
-```
-
-## Messages for a channel
-
-This shows how to fetch messages and other common channel level livedata objects
-
-```kotlin
-val channelRepo = repo.channel("messaging", "test123")
-channelRepo.watch()
-channelRepo.messages.observe
-channelRepo.getThread("parent-id").observe
-channelRepo.reads.observe
-channelRepo.typing.observe
-channelRepo.loading.observe
-```
-
-## Sending a message
-
-Messages are immediately stored in local storage and your livedata objects.
-Afterwards they are retried using the retry policy.
-
-```kotlin
-channelRepo.sendMessage(Message(user, "hello world"))
-```
-
-## Querying channels
-
-```kotlin
-val filter = and(eq("type", "messaging"), `in`("members", listOf(user.id)))
-val sort : QuerySort? = null
-queryRepo = repo.queryChannels(filter, sort)
-
-queryRepo.query(QueryChannelsPaginationRequest(0, 30))
-```
 
 ## Tips
 
@@ -91,8 +44,3 @@ With
 ```kotlin
 ChatRepo.instance().getCurrentUser();
 ```
-
-# Development
-
-* Each user has it's own Room DB. Some of our API responses are user specific. One example is own_reactions on a message. so if you switch users we need to use a different database/storage for the results
-* Suspend functions are only used on private methods. Public ones expose livedata objects.
