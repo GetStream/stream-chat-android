@@ -47,7 +47,10 @@ import kotlinx.coroutines.withContext
  *
  */
 class ChannelControllerImpl(
-    override var channelType: String, override var channelId: String, var client: ChatClient, var domainImpl: ChatDomainImpl
+    override var channelType: String,
+    override var channelId: String,
+    var client: ChatClient,
+    var domainImpl: ChatDomainImpl
 ) :
     ChannelController {
     private val _messages = MutableLiveData<MutableMap<String, Message>>()

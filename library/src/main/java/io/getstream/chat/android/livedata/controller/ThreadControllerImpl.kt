@@ -9,9 +9,9 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 
-
 class ThreadControllerImpl(
-    override var threadId: String, var channelControllerImpl: ChannelControllerImpl
+    override var threadId: String,
+    var channelControllerImpl: ChannelControllerImpl
 ) :
     ThreadController {
     private val logger = ChatLogger.get("ThreadController")

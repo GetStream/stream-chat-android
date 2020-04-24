@@ -54,8 +54,6 @@ interface ChatDomain {
     fun clean()
     fun getChannelConfig(channelType: String): Config
 
-
-
     data class Builder(
         private var appContext: Context,
         private var client: ChatClient,
@@ -103,7 +101,6 @@ interface ChatDomain {
             val chatDomain: ChatDomain = chatDomainImpl
             return chatDomain
         }
-
     }
 
     companion object {

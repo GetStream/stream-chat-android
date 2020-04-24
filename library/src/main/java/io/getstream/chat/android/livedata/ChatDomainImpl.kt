@@ -87,7 +87,6 @@ class ChatDomainImpl private constructor(
      */
     override val channelUnreadCount: LiveData<Int> = _channelUnreadCount
 
-
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
      * The following example shows how to observe these errors
@@ -100,7 +99,6 @@ class ChatDomainImpl private constructor(
     override val errorEvents: LiveData<io.getstream.chat.android.livedata.Event<ChatError>> = _errorEvent
 
     // TODO 1.1: We should accelerate online/offline detection
-
 
     internal lateinit var eventHandler: EventHandlerImpl
     private lateinit var mainHandler: Handler
@@ -237,12 +235,6 @@ class ChatDomainImpl private constructor(
             return Result(c, null)
         }
     }
-
-
-
-
-
-
 
     fun addError(error: ChatError) {
         _errorEvent.postValue(io.getstream.chat.android.livedata.Event(error))
@@ -550,8 +542,6 @@ class ChatDomainImpl private constructor(
     fun postInitialized() {
         _initialized.postValue(true)
     }
-
-
 }
 
 var gson = Gson()
