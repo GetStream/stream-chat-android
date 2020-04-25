@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -46,7 +47,7 @@ data class ChannelData(var type: String, var channelId: String) {
     }
 
     /** convert a channelEntity into a channel object */
-    fun toChannel(userMap: Map<String, User>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
+    fun toChannel(messages: List<Message>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
         val c = Channel()
         c.type = type
         c.id = channelId

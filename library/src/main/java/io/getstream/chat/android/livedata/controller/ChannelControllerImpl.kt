@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.Call2
 import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -65,6 +66,7 @@ class ChannelControllerImpl(
     private val _members = MutableLiveData<MutableMap<String, Member>>()
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
+    private val _channelData = MutableLiveData<ChannelData>()
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
@@ -106,6 +108,9 @@ class ChannelControllerImpl(
         it.values.sortedBy { it.createdAt }
     }
 
+    /** LiveData object with the channel data */
+    override val channelData: LiveData<ChannelData> = _channelData
+
     /** if we are currently loading */
     override val loading: LiveData<Boolean> = _loading
 
@@ -133,10 +138,7 @@ class ChannelControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    // TODO: we need a channel data concept
-    private val _channel = MutableLiveData<Channel>()
-    /** LiveData object with the channel information (members, data etc.) */
-    override val channel: LiveData<Channel> = _channel
+
 
     val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
@@ -342,10 +344,9 @@ class ChannelControllerImpl(
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-        // for pagination we cant use channel.messages, so discourage that
         if (channel != null) {
-            // TODO: having a channel data concept which only has a subset of the channel fields would prevent coding errors
-            _channel.postValue(channel)
+            val channelData = ChannelData(channel)
+            _channelData.postValue(channelData)
         }
         return channel
     }
@@ -401,8 +402,9 @@ class ChannelControllerImpl(
         if (message.cid.isEmpty()) {
             message.cid = cid
         }
-        val channel = checkNotNull(_channel.value) { "Channel needs to be set before sending a message" }
-        message.channel = channel
+        val channel = checkNotNull(_channelData.value) { "Channel needs to be set before sending a message" }
+        // TODO: why do we need the channel object on a message?
+        message.channel = toChannel()
 
         message.user = domainImpl.currentUser
         message.createdAt = message.createdAt ?: Date()
@@ -455,9 +457,12 @@ class ChannelControllerImpl(
     }
 
     private fun setLastMessage(message: Message) {
-        val copy = _channel.value!!
-        copy.lastMessageAt = message.createdAt
-        _channel.postValue(copy)
+        val copy = _channelData.value!!
+        if (copy != null) {
+            copy.addMessage(MessageEntity(message))
+            _channelData.postValue(copy)
+        }
+
     }
 
     /**
@@ -704,8 +709,7 @@ class ChannelControllerImpl(
                 deleteWatcher(event.user!!)
             }
             is ChannelUpdatedEvent -> {
-                // TODO: this shouldn't update members and watchers since we can have more than 100 of those and they won't be in the return object
-                event.channel?.let { updateChannel(it) }
+                event.channel?.let { updateChannelData(it) }
             }
             is TypingStopEvent -> {
                 setTyping(event.user?.id!!, null)
@@ -740,10 +744,10 @@ class ChannelControllerImpl(
         upsertUserPresence(user)
         // channels have users
         val userId = user.id
-        val channel = _channel.value
-        if (channel != null) {
-            if (channel.createdBy.id == userId) {
-                channel.createdBy = user
+        val channelData = _channelData.value
+        if (channelData != null) {
+            if (channelData.createdBy.id == userId) {
+                channelData.createdBy = user
             }
         }
 
@@ -822,11 +826,11 @@ class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    suspend fun updateLiveDataFromChannel(c: Channel) {
+    fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         // TODO: there are some issues here when you have more than 100 members, watchers
 
-        updateChannel(c)
+        updateChannelData(c)
         setMembers(c.members)
         setWatchers(c.watchers)
         setWatcherCount(c.watcherCount)
@@ -842,8 +846,8 @@ class ChannelControllerImpl(
         _members.postValue(copy)
     }
 
-    fun updateChannel(channel: Channel) {
-        _channel.postValue(channel)
+    fun updateChannelData(channel: Channel) {
+        _channelData.postValue(ChannelData(channel))
     }
 
     fun setWatchers(watchers: List<Watcher>) {
@@ -924,18 +928,17 @@ class ChannelControllerImpl(
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channel = _channel.value
-                ?: Channel().apply { this.type = channelType; this.id = channelId; this.cid = "$channelType:$channelId" }
+        val channelData = _channelData.value ?: ChannelData(channelType, channelId)
+
         val messages = sortedMessages()
         val members = (_members.value ?: mutableMapOf()).values.toList()
         val watchers = (_watchers.value ?: mutableMapOf()).values.toList()
         val reads = (_reads.value ?: mutableMapOf()).values.toList()
-        channel.messages = messages
-        channel.members = members
+        val watcherCount = _watcherCount.value ?: 0
+
+        val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
-        // our event system is a bit weird when it comes to watchers
-        channel.watchers = watchers.map { Watcher(it.id, it, null) }
-        channel.read = reads
+
         return channel
     }
 }

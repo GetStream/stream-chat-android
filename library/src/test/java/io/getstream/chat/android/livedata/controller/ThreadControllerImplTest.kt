@@ -56,7 +56,7 @@ class ThreadControllerImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun newThreadAndMessage() = runBlocking(Dispatchers.IO) {
         val channelRepo = chatDomainImpl.channel("messaging", "testabc")
-        channelRepo.updateChannel(data.channel1)
+        channelRepo.updateLiveDataFromChannel(data.channel1)
         val message = data.createMessage()
         message.id = "theparent"
         channelRepo.upsertMessages(listOf(message))

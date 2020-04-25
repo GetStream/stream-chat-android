@@ -215,7 +215,7 @@ class ChatDomainImpl private constructor(
 
         // update livedata
         val channelRepo = channel(c.cid)
-        channelRepo.updateChannel(c)
+        channelRepo.updateLiveDataFromChannel(c)
         val channelController = client.channel(c.type, c.id)
 
         // Update Room State

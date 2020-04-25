@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChannelData
 
 interface ChannelController {
     var channelType: String
@@ -40,8 +41,8 @@ interface ChannelController {
     val endOfNewerMessages: LiveData<Boolean>
     var recoveryNeeded: Boolean
     val cid: String
-    /** LiveData object with the channel information (members, data etc.) */
-    val channel: LiveData<Channel>
+    /** LiveData object with the channel data */
+    val channelData: LiveData<ChannelData>
 
     fun clean()
     fun toChannel(): Channel

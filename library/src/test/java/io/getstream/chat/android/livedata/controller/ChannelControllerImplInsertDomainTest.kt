@@ -80,7 +80,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         channelControllerImpl.sendMessage(message1)
         // get the message and channel state both live and offline versions
         var roomChannel = chatDomainImpl.repos.channels.select(message1.channel.cid)
-        var liveChannel = channelControllerImpl.channel.getOrAwaitValue()
+        var liveChannel = channelControllerImpl.channelData.getOrAwaitValue()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.channel.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 })

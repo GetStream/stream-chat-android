@@ -40,10 +40,11 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
 
         // the message should still show up
         val messages = channelControllerImpl.messages.getOrAwaitValue()
-        val channel = channelControllerImpl.channel.getOrAwaitValue()
+        val channelData = channelControllerImpl.channelData.getOrAwaitValue()
+        val channel = channelControllerImpl.toChannel()
 
         Truth.assertThat(messages).isNotEmpty()
-        Truth.assertThat(channel).isNotNull()
+        Truth.assertThat(channelData).isNotNull()
         Truth.assertThat(channel.config).isNotNull()
     }
 
@@ -60,7 +61,7 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
         channelControllerImpl.sendMessage(message)
 
         val messages = channelControllerImpl.messages.getOrAwaitValue()
-        val channel = channelControllerImpl.channel.getOrAwaitValue()
+        val channel = channelControllerImpl.toChannel()
 
         Truth.assertThat(messages.size).isGreaterThan(0)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
