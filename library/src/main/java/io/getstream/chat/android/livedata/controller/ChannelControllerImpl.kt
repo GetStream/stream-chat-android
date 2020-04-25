@@ -138,8 +138,6 @@ class ChannelControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-
-
     val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
     fun getThreadMessages(threadId: String): MutableLiveData<MutableMap<String, Message>> {
@@ -462,7 +460,6 @@ class ChannelControllerImpl(
             copy.addMessage(MessageEntity(message))
             _channelData.postValue(copy)
         }
-
     }
 
     /**
