@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 

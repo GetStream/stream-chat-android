@@ -14,7 +14,7 @@ class ChatErrorTest : BaseConnectedIntegrationTest() {
     @Ignore("error parsing in LLC is broken")
     fun checkIsPermanent() {
         // TODO: add more test cases when possible
-        val message = Message(text="hi", id="thesame")
+        val message = Message(text = "hi", id = "thesame")
         val result1 = client.sendMessage("messaging", data.channel1.id, message).execute()
         // this will always fail since the id is the same
         val result2 = client.sendMessage("messaging", data.channel1.id, message).execute()
