@@ -21,7 +21,6 @@ class SendReactionImplTest : BaseConnectedIntegrationTest() {
         var result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result as Result<Any>)
         data.reaction1.messageId = result.data().id
-        // TODO: events should check message.updated_at? perhaps?
         val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
         assertSuccess(result2 as Result<Any>)
         Truth.assertThat(result2.isSuccess).isTrue()

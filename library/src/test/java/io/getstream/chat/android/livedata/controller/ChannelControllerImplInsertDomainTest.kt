@@ -31,8 +31,6 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun sendReaction() = runBlocking(Dispatchers.IO) {
-
-        // TODO: Mock socket and mock client
         // ensure the message exists
         chatDomainImpl.createChannel(data.channel1)
         val message1 = data.createMessage()

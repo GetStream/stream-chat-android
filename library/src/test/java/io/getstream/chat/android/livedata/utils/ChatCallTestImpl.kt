@@ -5,9 +5,10 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
 class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
+    var cancelled = false;
 
     override fun cancel() {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        cancelled = true
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
@@ -19,15 +20,15 @@ class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
     }
 
     override fun <K> map(mapper: (T) -> K): Call<K> {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onError(handler: (ChatError) -> Unit): Call<T> {
         TODO("not implemented")
     }
 
+    override fun onError(handler: (ChatError) -> Unit): Call<T> {
+        return this
+    }
+
     override fun onSuccess(handler: (T) -> Unit): Call<T> {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
+        return this
     }
 
     override fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>> {

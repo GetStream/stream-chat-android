@@ -99,6 +99,5 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
         Truth.assertThat(request.messageFilterValue).isEqualTo(data.message2Older.id)
         // verify that running the query doesn't error
         val result = channelRepo.runChannelQueryOnline(request)
-        // TODO: Mock the call to query channel
     }
 }

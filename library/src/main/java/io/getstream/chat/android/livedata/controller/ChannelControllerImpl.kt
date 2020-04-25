@@ -825,13 +825,14 @@ class ChannelControllerImpl(
 
     fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
-        // TODO: there are some issues here when you have more than 100 members, watchers
-
         updateChannelData(c)
-        setMembers(c.members)
-        setWatchers(c.watchers)
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
+
+        // TODO: there are some issues here when you have more than 100 members, watchers
+        setMembers(c.members)
+        setWatchers(c.watchers)
+
         upsertMessages(c.messages)
     }
 

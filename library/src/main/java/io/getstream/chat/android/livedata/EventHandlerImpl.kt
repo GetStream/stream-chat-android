@@ -78,15 +78,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 channelEvents[event.cid!!]!!.add(event)
             }
 
-            // TODO: remove me
-            // try {
-            //     event.message?.let {
-            //         logger.logI("2332 ${events.size} event ${event.type} has a message ${it.id} ${it.updatedAt!!.time} with latest reactions ${it.latestReactions}")
-            //     }
-            // }catch (e: Exception) {
-            //
-            // }
-
             when (event) {
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
