@@ -45,11 +45,13 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
     }
 
     @Test
-    @Ignore
     fun userChangesFavoriteColor() {
         channelControllerImpl.handleEvent(data.newMessageEvent)
         channelControllerImpl.handleEvent(data.reactionEvent)
         channelControllerImpl.handleEvent(data.user1UpdatedEvent)
+        val channel = channelControllerImpl.toChannel()
+        Truth.assertThat(channel.createdBy.extraData.get("color")).isEqualTo("green")
+
         val message = channelControllerImpl.getMessage(data.message1.id)
         Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
         Truth.assertThat(message.latestReactions.first().user!!.extraData["color"])

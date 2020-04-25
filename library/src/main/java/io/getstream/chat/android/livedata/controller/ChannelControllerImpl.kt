@@ -673,8 +673,12 @@ class ChannelControllerImpl(
                 upsertMember(event.member!!)
             }
 
-            is UserPresenceChanged, is UserUpdated -> {
-                upsertUser(event.user)
+            is UserPresenceChanged -> {
+                upsertUserPresence(event.user!!)
+            }
+
+            is UserUpdated -> {
+                upsertUser(event.user!!)
             }
 
             is UserStartWatchingEvent -> {
@@ -700,8 +704,61 @@ class ChannelControllerImpl(
         }
     }
 
-    private fun upsertUser(user: User?) {
-        // TODO: 1.1 add support for updating users
+    private fun upsertUserPresence(user: User) {
+        val userId = user.id
+        // members and watchers have users
+        val members = _members.value ?: mutableMapOf()
+        val watchers = _watchers.value ?: mutableMapOf()
+        val member = members[userId]
+        val watcher = watchers[userId]
+        if (member != null) {
+            member.user = user
+            upsertMember(member)
+        }
+        if (watcher != null) {
+            upsertWatcher(user)
+        }
+    }
+
+    private fun upsertUser(user: User) {
+        upsertUserPresence(user)
+        // channels have users
+        val userId = user.id
+        val channel = _channel.value
+        if (channel != null) {
+            if (channel.createdBy.id == userId) {
+                channel.createdBy = user
+            }
+        }
+
+        // updating messages is harder
+        // user updates don't happen frequently, it's probably ok for this update to be sluggish
+        // if it turns out to be slow we can do a simple reverse index from user -> message
+        val messages = _messages.value ?: mutableMapOf()
+        val changedMessages = mutableListOf<Message>()
+        for (message in messages.values) {
+            var changed = false
+            if (message.user.id == userId) {
+                message.user = user
+                changed = true
+            }
+            for (reaction in message.ownReactions) {
+                if (reaction.user!!.id == userId) {
+                    reaction.user = user
+                    changed = true
+                }
+            }
+            for (reaction in message.latestReactions) {
+                if (reaction.user!!.id == userId) {
+                    reaction.user = user
+                    changed = true
+                }
+            }
+            if (changed) changedMessages.add(message)
+        }
+        if (changedMessages.isNotEmpty()) {
+            upsertMessages(changedMessages)
+        }
     }
 
     private fun deleteWatcher(user: User) {
