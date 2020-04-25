@@ -14,7 +14,8 @@ class DeleteReactionImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking(Dispatchers.IO) {
-        var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        var channelController =
+            chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
         var result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result as Result<Any>)

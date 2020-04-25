@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.livedata.controller.isChannelEvent
 import io.getstream.chat.android.livedata.controller.users
@@ -10,6 +11,8 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 import kotlinx.coroutines.*
 
 class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDomainImpl, var runAsync: Boolean = true) {
+    private val logger = ChatLogger.get("ChatDomain EventHandler")
+
     fun handleEvents(events: List<ChatEvent>) {
         if (runAsync) {
             domainImpl.scope.launch(Dispatchers.IO) {
@@ -74,6 +77,15 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 }
                 channelEvents[event.cid!!]!!.add(event)
             }
+
+            // TODO: remove me
+            // try {
+            //     event.message?.let {
+            //         logger.logI("2332 ${events.size} event ${event.type} has a message ${it.id} ${it.updatedAt!!.time} with latest reactions ${it.latestReactions}")
+            //     }
+            // }catch (e: Exception) {
+            //
+            // }
 
             when (event) {
                 // keep the data in Room updated based on the various events..

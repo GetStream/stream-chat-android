@@ -12,7 +12,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SendMessageImplTest : BaseConnectedIntegrationTest() {
-
     @Test
     fun sendMessageUseCase() = runBlocking(Dispatchers.Main) {
         val message1 = data.createMessage()

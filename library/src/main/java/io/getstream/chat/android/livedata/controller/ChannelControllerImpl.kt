@@ -573,11 +573,27 @@ class ChannelControllerImpl(
 
     fun upsertMessages(messages: List<Message>) {
         val copy = _messages.value ?: mutableMapOf()
+        // filter out old events
+        val freshMessages = mutableListOf<Message>()
         for (message in messages) {
+            val oldMessage = copy[message.id]
+            var outdated = false
+            if (oldMessage != null) {
+                val oldTime = oldMessage.updatedAt?.time ?: 0
+                val newTime = message.updatedAt?.time ?: 0
+                outdated = oldTime > newTime
+            }
+            if (!outdated) {
+                freshMessages.add(message)
+            }
+        }
+
+        // update all the fresh messages
+        for (message in freshMessages) {
             copy[message.id] = message
         }
         // second pass for threads
-        for (message in messages) {
+        for (message in freshMessages) {
             // prevent issues with missing cids
             message.cid = cid
             // handle threads
