@@ -48,7 +48,6 @@ fun Channel.users(): List<User> {
     return users
 }
 
-
 class QueryChannelsControllerImpl(
     override var queryEntity: QueryChannelsEntity,
     internal var client: ChatClient,

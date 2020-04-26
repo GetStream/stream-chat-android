@@ -29,7 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
 
-
 class ChannelControllerImpl(
     override var channelType: String,
     override var channelId: String,

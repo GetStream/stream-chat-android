@@ -61,7 +61,8 @@ android {
     }
     dokka {
         outputFormat = 'html'
-        outputDirectory = "$projectDir/api-docs"
+        outputDirectory = "$rootDir/docs"
+
     }
 }
 

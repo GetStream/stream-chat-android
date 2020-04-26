@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
 
-
 /**
  * The Channel Controller exposes convenient livedata objects to build your chat interface
  * It automatically handles the incoming events and keeps users, messages, reactions, channel information up to date automatically
