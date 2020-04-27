@@ -12,8 +12,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.ChatDomainImpl
@@ -44,6 +42,8 @@ class ChannelControllerImpl(
     private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
     private val _loading = MutableLiveData<Boolean>(false)
+    private val _hidden = MutableLiveData<Boolean>(false)
+    private val _muted = MutableLiveData<Boolean>(false)
     private val _watchers = MutableLiveData<MutableMap<String, User>>()
     private val _members = MutableLiveData<MutableMap<String, Member>>()
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
@@ -92,6 +92,12 @@ class ChannelControllerImpl(
 
     /** LiveData object with the channel data */
     override val channelData: LiveData<ChannelData> = _channelData
+
+    /** if the channel is currently hidden */
+    override val hidden: LiveData<Boolean> = _hidden
+
+    /** if the channel is currently muted */
+    override val muted: LiveData<Boolean> = _muted
 
     /** if we are currently loading */
     override val loading: LiveData<Boolean> = _loading
@@ -240,6 +246,21 @@ class ChannelControllerImpl(
         return response
     }
 
+    fun hide(clearHistory: Boolean): Result<Unit> {
+        setHidden(true)
+        return channelController.hide(clearHistory).execute()
+    }
+
+    fun show(): Result<Unit> {
+        setHidden(false)
+        return channelController.show().execute()
+    }
+
+    fun mute(expirationInSeconds: Int) {
+        // TODO: LLC support
+
+    }
+
     suspend fun watch(limit: Int = 30) {
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (_loading.value == true) {
@@ -354,14 +375,6 @@ class ChannelControllerImpl(
             domainImpl.addError(response.error())
         }
         return response
-    }
-
-    // alternative way to provide a call, not relying on use cases
-    fun sendMessageCall(message: Message): Call2<Message> {
-        var runnable = suspend {
-            sendMessage(message)
-        }
-        return CallImpl2<Message>(runnable, scope)
     }
 
     /**
@@ -645,6 +658,12 @@ class ChannelControllerImpl(
         _typing.postValue(copy)
     }
 
+    private fun setHidden(hidden: Boolean) {
+        if (_hidden.value != hidden) {
+            _hidden.postValue(hidden)
+        }
+    }
+
     fun handleEvents(events: List<ChatEvent>) {
         // livedata actually batches many frequent updates after each other
         // we might not need a more optimized handleEvents implementation.. TBD.
@@ -652,6 +671,8 @@ class ChannelControllerImpl(
             handleEvent(event)
         }
     }
+
+
 
     fun handleEvent(event: ChatEvent) {
         event.channel?.watcherCount?.let {
@@ -688,6 +709,13 @@ class ChannelControllerImpl(
             }
             is ChannelUpdatedEvent -> {
                 event.channel?.let { updateChannelData(it) }
+            }
+            is ChannelHiddenEvent -> {
+                event.channel?.let { setHidden(true) }
+            }
+            is ChannelVisible -> {
+                event.channel?.let { setHidden(false) }
+
             }
             is TypingStopEvent -> {
                 setTyping(event.user?.id!!, null)

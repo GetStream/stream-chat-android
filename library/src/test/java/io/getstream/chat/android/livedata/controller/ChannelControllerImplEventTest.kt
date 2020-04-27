@@ -79,6 +79,23 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
     }
 
     @Test
+    fun hideEvent() {
+        channelControllerImpl.handleEvent(data.channelHiddenEvent)
+        val hidden = channelControllerImpl.hidden.getOrAwaitValue()
+        Truth.assertThat(hidden).isTrue()
+
+    }
+
+    @Test
+    fun showEvent() {
+        channelControllerImpl.handleEvent(data.channelHiddenEvent)
+        channelControllerImpl.handleEvent(data.channelVisibleEvent)
+        val hidden = channelControllerImpl.hidden.getOrAwaitValue()
+        Truth.assertThat(hidden).isFalse()
+
+    }
+
+    @Test
     fun readEvents() {
         channelControllerImpl.handleEvent(data.user1Read)
         val reads = channelControllerImpl.reads.getOrAwaitValue()

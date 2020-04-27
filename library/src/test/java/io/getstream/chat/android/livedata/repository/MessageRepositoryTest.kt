@@ -110,6 +110,5 @@ class MessageRepositoryTest : BaseDomainTest() {
         messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message2.id)
-
     }
 }

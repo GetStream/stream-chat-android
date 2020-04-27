@@ -64,4 +64,7 @@ interface ChannelController {
     // This one needs to be public for flows such as running a message action
     // TODO: this is for handling actions, think we should expose this in a different way
     fun upsertMessage(message: Message)
+
+    val hidden: LiveData<Boolean>
+    val muted: LiveData<Boolean>
 }

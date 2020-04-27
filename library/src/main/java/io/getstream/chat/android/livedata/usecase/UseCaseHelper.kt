@@ -28,4 +28,6 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
     var keystroke: Keystroke = KeystrokeImpl(chatDomainImpl)
     var stopTyping: StopTyping = StopTypingImpl(chatDomainImpl)
     var markRead: MarkRead = MarkReadImpl(chatDomainImpl)
+    var hideChannel: HideChannel = HideChannelImpl(chatDomainImpl)
+    var showChannel: ShowChannel = ShowChannelImpl(chatDomainImpl)
 }

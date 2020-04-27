@@ -42,7 +42,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
             when (event) {
-                is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
+                is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent,  is ChannelVisible -> {
                     // get the channel, update reads, write the channel
                     channelsToFetch.add(event.cid!!)
                 }
@@ -92,6 +92,17 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     channels[event.channel!!.id] = ChannelEntity(event.channel!!)
                     users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
+                }
+                is ChannelHiddenEvent -> {
+                    val channelEntity = ChannelEntity(event.channel!!)
+                    channelEntity.hidden = true
+                    channels[event.channel!!.id] = channelEntity
+                }
+                is ChannelVisible -> {
+                    val channelEntity = ChannelEntity(event.channel!!)
+                    // TODO: this approach is not so nice since it's overwritten by other data
+                    channelEntity.hidden = false
+                    channels[event.channel!!.id] = channelEntity
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel

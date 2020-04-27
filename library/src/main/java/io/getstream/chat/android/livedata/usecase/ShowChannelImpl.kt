@@ -5,20 +5,20 @@ import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
-interface Keystroke {
-    operator fun invoke(cid: String): Call2<Boolean>
+interface ShowChannel {
+    operator fun invoke(cid: String): Call2<Unit>
 }
 
-class KeystrokeImpl(var domainImpl: ChatDomainImpl) : Keystroke {
-    override operator fun invoke(cid: String): Call2<Boolean> {
+class ShowChannelImpl(var domainImpl: ChatDomainImpl) : ShowChannel {
+    override operator fun invoke(cid: String): Call2<Unit> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
         }
         val channelController = domainImpl.channel(cid)
 
         var runnable = suspend {
-            channelController.keystroke()
+            channelController.show()
         }
-        return CallImpl2<Boolean>(runnable, channelController.scope)
+        return CallImpl2<Unit>(runnable, channelController.scope)
     }
 }

@@ -30,6 +30,12 @@ data class ChannelEntity(var type: String, var channelId: String) {
     /** if the channel is frozen or not (new messages wont be allowed) */
     var frozen: Boolean = false
 
+    /** if the channel is hidden (new messages will cause to reappear) */
+    var hidden: Boolean = false
+
+    /** till when the channel is muted */
+    var mutedTill: Date? = null
+
     /** list of the channel members, can be regular members, moderators or admins */
     var members: MutableMap<String, MemberEntity> = mutableMapOf()
 

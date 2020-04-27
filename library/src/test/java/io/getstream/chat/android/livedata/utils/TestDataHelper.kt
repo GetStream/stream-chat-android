@@ -122,6 +122,9 @@ class TestDataHelper {
     val user1TypingStartedOld = TypingStartEvent().apply { user = user1; receivedAt = getOldDate() }
     val user3TypingStartedOld = TypingStartEvent().apply { user = user3; receivedAt = getOldDate() }
 
+    val channelHiddenEvent = ChannelHiddenEvent().apply { user = user1; channel=channel2 }
+    val channelVisibleEvent = ChannelVisible().apply { user = user1; channel=channel2 }
+
     val user2TypingStarted = TypingStartEvent().apply { user = user2; receivedAt = Date() }
     val user1TypingStop = TypingStopEvent().apply { user = user1 }
     val user2TypingStop = TypingStopEvent().apply { user = user2 }
