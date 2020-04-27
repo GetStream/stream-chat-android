@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -21,14 +22,25 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
         pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
         if (pagination.hasFilter()) {
-            // TODO: this doesn't support the difference between gte vs gt
+            // handle the differences between gt, gte, lt and lte
             val message = messageDao.select(pagination.messageFilterValue)
-            if (message?.createdAt == null) {
-                return listOf()
-            } else if (pagination.isFilteringNewerMessages()) {
-                return messageDao.messagesForChannelNewerThan(cid, pagination.messageLimit, message.createdAt!!)
-            } else if (pagination.isFilteringOlderMessages()) {
-                return messageDao.messagesForChannelOlderThan(cid, pagination.messageLimit, message.createdAt!!)
+            if (message?.createdAt == null) return listOf()
+            val messageLimit = pagination.messageLimit
+            val messageTime = message.createdAt!!
+
+            when (pagination.messageFilterDirection) {
+                Pagination.GREATER_THAN_OR_EQUAL -> {
+                    return messageDao.messagesForChannelEqualOrNewerThan(cid, messageLimit, messageTime)
+                }
+                Pagination.GREATER_THAN -> {
+                    return messageDao.messagesForChannelNewerThan(cid, messageLimit, messageTime)
+                }
+                Pagination.LESS_THAN_OR_EQUAL -> {
+                    return messageDao.messagesForChannelEqualOrOlderThan(cid, messageLimit, messageTime)
+                }
+                Pagination.LESS_THAN -> {
+                    return messageDao.messagesForChannelOlderThan(cid, messageLimit, messageTime)
+                }
             }
         }
         return messageDao.messagesForChannel(cid, pagination.messageLimit)

@@ -20,8 +20,14 @@ interface MessageDao {
     @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt > :dateFilter ORDER BY createdAt ASC LIMIT :limit")
     suspend fun messagesForChannelNewerThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
 
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt >= :dateFilter ORDER BY createdAt ASC LIMIT :limit")
+    suspend fun messagesForChannelEqualOrNewerThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
+
     @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt < :dateFilter ORDER BY createdAt ASC LIMIT :limit")
     suspend fun messagesForChannelOlderThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
+
+    @Query("SELECT * from stream_chat_message WHERE cid = :cid AND createdAt <= :dateFilter ORDER BY createdAt ASC LIMIT :limit")
+    suspend fun messagesForChannelEqualOrOlderThan(cid: String, limit: Int = 100, dateFilter: Date): List<MessageEntity>
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt ASC LIMIT :limit")
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>

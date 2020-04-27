@@ -72,15 +72,15 @@ class MessageRepositoryTest : BaseDomainTest() {
     @Test
     fun testSelectMessagesForChannel() = runBlocking(Dispatchers.IO) {
         val message1 = data.createMessage().apply {
-            text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =
+            id = "testSelectMessagesForChannel1"; text = "message1"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =
             calendar(2019, 11, 1)
         }
         val message2 = data.createMessage().apply {
-            id = "helloworld"; text = "hi123"; syncStatus = SyncStatus.SYNC_FAILED; user =
+            id = "testSelectMessagesForChannel2"; text = "hi123"; syncStatus = SyncStatus.SYNC_FAILED; user =
             data.user1; createdAt = calendar(2019, 10, 1)
         }
         val message3 = data.createMessage().apply {
-            id = "helloworl123d"; text = "hi123123"; syncStatus = SyncStatus.SYNC_FAILED; user =
+            id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.SYNC_FAILED; user =
             data.user1; createdAt = calendar(2019, 9, 1)
         }
         repo.insertMessages(listOf(message1, message2, message3), true)
@@ -96,5 +96,20 @@ class MessageRepositoryTest : BaseDomainTest() {
         messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
+
+        // verify that LTE & GTE also work
+        pagination.messageLimit = 2
+        // filter on 2 and older
+        pagination.setFilter(Pagination.LESS_THAN_OR_EQUAL, message2.id)
+        // should return message 2 and message 3, with message 3 (the oldest message as the first element)
+        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        Truth.assertThat(messages.size).isEqualTo(2)
+        Truth.assertThat(messages.first().id).isEqualTo(message3.id)
+        // request 2 and newer, message 2 (the oldest) should be first
+        pagination.setFilter(Pagination.GREATER_THAN_OR_EQUAL, message2.id)
+        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        Truth.assertThat(messages.size).isEqualTo(2)
+        Truth.assertThat(messages.first().id).isEqualTo(message2.id)
+
     }
 }
