@@ -1,0 +1,88 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChannelConfigRepository - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.repository</a>&nbsp;/&nbsp;<a href="./index.html">ChannelConfigRepository</a><br/>
+<br/>
+<h1>ChannelConfigRepository</h1>
+<code><span class="keyword">class </span><span class="identifier">ChannelConfigRepository</span></code>
+<p>The channel config repository stores all channel configs in room as well as in memory
+Call channelConfigRepository.load to load all configs into memory</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>The channel config repository stores all channel configs in room as well as in memory
+Call channelConfigRepository.load to load all configs into memory</p>
+<code><span class="identifier">ChannelConfigRepository</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelConfigRepository$<init>(io.getstream.chat.android.livedata.dao.ChannelConfigDao)/channelConfigDao">channelConfigDao</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.dao/-channel-config-dao/index.html"><span class="identifier">ChannelConfigDao</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="channel-config-dao.html">channelConfigDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelConfigDao</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-channel-config-dao/index.html"><span class="identifier">ChannelConfigDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-configs.html">channelConfigs</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelConfigs</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">Config</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="clear-cache.html">clearCache</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clearCache</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert.html">insert</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insert</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelConfigRepository$insert(kotlin.collections.List((io.getstream.chat.android.livedata.entity.ChannelConfigEntity)))/configEntities">configEntities</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-config-entity/index.html"><span class="identifier">ChannelConfigEntity</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert-configs.html">insertConfigs</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertConfigs</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelConfigRepository$insertConfigs(kotlin.collections.MutableMap((kotlin.String, io.getstream.chat.android.client.models.Config)))/configs">configs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">Config</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load.html">load</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">load</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select.html">select</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">select</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelConfigRepository$select(kotlin.String)/channelType">channelType</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Config</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
