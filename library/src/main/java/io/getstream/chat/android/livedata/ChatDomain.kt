@@ -9,6 +9,11 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 
+/**
+ * The ChatDomain is the main entry point for all livedata & offline operations on chat
+ *
+ * Use cases are exposed via chatDomain.useCases
+ */
 interface ChatDomain {
     /** The current user object */
     var currentUser: User

@@ -20,7 +20,9 @@ class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
     }
 
     override fun <K> map(mapper: (T) -> K): Call<K> {
-        TODO("not implemented")
+        val mapped: K = mapper(result.data())
+        val newResult = Result<K>(mapped, null)
+        return ChatCallTestImpl(newResult)
     }
 
     override fun onError(handler: (ChatError) -> Unit): Call<T> {

@@ -5,7 +5,6 @@ import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.*
 
-// TODO: find common ground between LLC and this approach
 interface Call2<T> {
 
     @WorkerThread

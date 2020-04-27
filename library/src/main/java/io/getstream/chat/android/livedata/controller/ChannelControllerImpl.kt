@@ -209,7 +209,6 @@ class ChannelControllerImpl(
         return messageMap.values.sortedBy { it.createdAt }
     }
 
-    // TODO: test me
     suspend fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination): Result<List<Message>> {
         val thread = getThreadMessages(threadId)
 
@@ -383,8 +382,8 @@ class ChannelControllerImpl(
             message.cid = cid
         }
         val channel = checkNotNull(_channelData.value) { "Channel needs to be set before sending a message" }
-        // TODO: why do we need the channel object on a message?
-        message.channel = toChannel()
+        // best not to expose the channel object on a message
+        // message.channel = toChannel()
 
         message.user = domainImpl.currentUser
         message.createdAt = message.createdAt ?: Date()
@@ -400,7 +399,7 @@ class ChannelControllerImpl(
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insertMessage(message)
 
-        val channelStateEntity = domainImpl.repos.channels.select(message.channel.cid)
+        val channelStateEntity = domainImpl.repos.channels.select(message.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.addMessage(messageEntity)
@@ -811,10 +810,10 @@ class ChannelControllerImpl(
         setWatcherCount(c.watcherCount)
         updateReads(c.read)
 
-        // TODO: there are some issues here when you have more than 100 members, watchers
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
         setMembers(c.members)
         setWatchers(c.watchers)
-
         upsertMessages(c.messages)
     }
 
