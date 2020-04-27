@@ -35,6 +35,8 @@ Stream's Chat SDKs for Android consist of 3 libraries:
 
 [Docs are here](https://getstream.io/chat/docs/livedata/?language=kotlin)
 
+And API reference (generated using Dokka) is available [here](https://getstream.github.io/stream-chat-android-livedata/library/)
+
 
 ## Tips
 
