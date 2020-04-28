@@ -248,7 +248,6 @@ class ChannelControllerImpl(
         return response
     }
 
-
     fun removeMessagesBefore(t: Date) {
         val copy = _messages.value ?: mutableMapOf()
         // start off empty

@@ -14,8 +14,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -117,8 +115,6 @@ class QueryChannelsControllerImpl(
         copy[c.id] = c
         _channels.postValue(copy)
     }
-
-
 
     suspend fun loadMore(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
         val pagination = loadMoreRequest(limit, messageLimit)

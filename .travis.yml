@@ -32,7 +32,7 @@ install:
   - true
 
 script:
-  - ./gradlew test -i
+  - ./gradlew test --stacktrace
   - ./gradlew jacocoTestReport
 
 after_success:
