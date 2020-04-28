@@ -32,7 +32,7 @@ install:
   - true
 
 script:
-  - ./gradlew test --console verbose -i
+  - ./gradlew test -i
   - ./gradlew jacocoTestReport
 
 after_success:
