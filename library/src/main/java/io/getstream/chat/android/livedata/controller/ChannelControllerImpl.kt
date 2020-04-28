@@ -16,6 +16,7 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
+import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -127,7 +128,7 @@ class ChannelControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
+    private val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
 
     fun getThreadMessages(threadId: String): MutableLiveData<MutableMap<String, Message>> {
         val threadMessageMap = _threads.getOrElse(threadId) { MutableLiveData(mutableMapOf()) }
@@ -247,6 +248,16 @@ class ChannelControllerImpl(
         return response
     }
 
+
+    fun removeMessagesBefore(t: Date) {
+        val copy = _messages.value ?: mutableMapOf()
+        // start off empty
+        _messages.postValue(mutableMapOf())
+        // call upsert with the messages that are recent
+        val recentMessages = copy.values.filter { it.createdAt!! > t }
+        upsertMessages(recentMessages)
+    }
+
     suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
         val result = channelController.hide(clearHistory).execute()
@@ -255,8 +266,12 @@ class ChannelControllerImpl(
             channelEntity?.let {
                 it.hidden = true
                 if (clearHistory) {
-                    it.hideMessagesBefore = Date()
-                    hideMessagesBefore = it.hideMessagesBefore
+                    val now = Date()
+                    // TODO: perhaps actively hide messages to prevent bugs
+                    it.hideMessagesBefore = now
+                    hideMessagesBefore = now
+                    removeMessagesBefore(now)
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(cid, now)
                 }
                 domainImpl.repos.channels.insert(it)
             }
@@ -353,22 +368,18 @@ class ChannelControllerImpl(
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
-        val channel = domainImpl.selectAndEnrichChannel(cid, pagination)
+        val channelPair = domainImpl.selectAndEnrichChannel(cid, pagination)
 
-        channel?.let {
-            it.config = domainImpl.getChannelConfig(it.type)
+        channelPair?.let {
+            val channel = it.channel
+            it.channel.config = domainImpl.getChannelConfig(it.channel.type)
             _loading.postValue(false)
-            if (it.messages.isNotEmpty()) {
-                upsertMessages(it.messages)
-            }
+
+            updateLiveDataFromChannelEntityPair(it)
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-        if (channel != null) {
-            val channelData = ChannelData(channel)
-            _channelData.postValue(channelData)
-        }
-        return channel
+        return channelPair?.channel
     }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
@@ -862,6 +873,12 @@ class ChannelControllerImpl(
         read: ChannelUserRead
     ) {
         updateReads(listOf(read))
+    }
+
+    fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
+        setHidden(c.entity.hidden)
+        hideMessagesBefore = c.entity.hideMessagesBefore
+        updateLiveDataFromChannel(c.channel)
     }
 
     fun updateLiveDataFromChannel(c: Channel) {

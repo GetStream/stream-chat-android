@@ -465,12 +465,13 @@ class ChatDomainImpl private constructor(
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): Channel? {
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
+        // TODO: perhaps return a pair here
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): Channel? {
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): ChannelEntityPair? {
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
@@ -478,14 +479,14 @@ class ChatDomainImpl private constructor(
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: QueryChannelsPaginationRequest
-    ): List<Channel> {
+    ): List<ChannelEntityPair> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     internal suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
-    ): List<Channel> {
+    ): List<ChannelEntityPair> {
 
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
@@ -517,7 +518,7 @@ class ChatDomainImpl private constructor(
         val userMap = repos.users.selectUserMap(userIds.toList())
 
         // convert the channels
-        val channels = mutableListOf<Channel>()
+        val channelPairs = mutableListOf<ChannelEntityPair>()
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
             // get the config we have stored offline
@@ -529,9 +530,11 @@ class ChatDomainImpl private constructor(
                 channel.messages = messages
             }
 
-            channels.add(channel)
+            val channelPair = ChannelEntityPair(channel, channelEntity)
+
+            channelPairs.add(channelPair)
         }
-        return channels.toList()
+        return channelPairs.toList()
     }
 
     override fun clean() {

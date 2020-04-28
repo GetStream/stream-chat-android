@@ -118,29 +118,14 @@ class QueryChannelsControllerImpl(
         _channels.postValue(copy)
     }
 
-    /**
-     * Run the given queryChannels request and update the channels livedata object
-     */
-    fun query(limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>> {
-        val runnable = suspend {
-            _query(limit, messageLimit)
-        }
-        return CallImpl2<List<Channel>>(runnable)
-    }
 
-    fun loadMore(limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>> {
-        val runnable = suspend {
-            _loadMore(limit, messageLimit)
-        }
-        return CallImpl2<List<Channel>>(runnable)
-    }
 
-    suspend fun _loadMore(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
+    suspend fun loadMore(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
         val pagination = loadMoreRequest(limit, messageLimit)
         return runQuery(pagination)
     }
 
-    suspend fun _query(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
+    suspend fun query(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
         return runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
     }
 
@@ -166,19 +151,16 @@ class QueryChannelsControllerImpl(
 
             var channelIds = paginateChannelIds(queryEntity.channelCIDs, pagination)
 
-            channels = domainImpl.selectAndEnrichChannels(channelIds, pagination)
-            for (c in channels) {
-                val channelRepo = domainImpl.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
+            val channelPairs = domainImpl.selectAndEnrichChannels(channelIds, pagination)
+            for (p in channelPairs) {
+                val channelRepo = domainImpl.channel(p.channel)
+                channelRepo.updateLiveDataFromChannelEntityPair(p)
             }
-            logger.logI("found ${channels.size} channels in offline storage")
+            channels = channelPairs.map { it.channel }
+            logger.logI("found ${channelPairs.size} channels in offline storage")
         }
 
         if (channels != null) {
-            for (c in channels) {
-                val channelRepo = domainImpl.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
-            }
             // first page replaces the results, second page adds to them
             if (pagination.isFirstPage()) {
                 setChannels(channels)

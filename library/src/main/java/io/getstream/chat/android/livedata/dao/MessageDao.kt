@@ -32,6 +32,10 @@ interface MessageDao {
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt ASC LIMIT :limit")
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
+    @Query("DELETE from stream_chat_message WHERE cid = :cid AND createdAt < :deleteMessagesBefore")
+    suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
+
+
     @Query(
             "SELECT * FROM stream_chat_message " +
                     "WHERE stream_chat_message.id IN (:ids)"

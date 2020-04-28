@@ -128,4 +128,8 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
 
         return messageEntities
     }
+
+    suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
+        messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
+    }
 }

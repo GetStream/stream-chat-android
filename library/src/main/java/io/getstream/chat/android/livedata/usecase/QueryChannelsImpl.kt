@@ -19,7 +19,7 @@ class QueryChannelsImpl(var domainImpl: ChatDomainImpl) : QueryChannels {
         val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl
         var runnable = suspend {
             if (limit > 0) {
-                queryChannelsControllerImpl.scope.launch { queryChannelsControllerImpl._query(limit, messageLimit) }
+                queryChannelsControllerImpl.scope.launch { queryChannelsControllerImpl.query(limit, messageLimit) }
             }
             Result(queryChannelsController, null)
         }

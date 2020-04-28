@@ -15,7 +15,7 @@ class QueryChannelsLoadMoreImpl(var domainImpl: ChatDomainImpl) : QueryChannelsL
     override operator fun invoke(filter: FilterObject, sort: QuerySort?, limit: Int, messageLimit: Int): Call2<List<Channel>> {
         var runnable = suspend {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
-            queryChannelsController._loadMore(limit, messageLimit)
+            queryChannelsController.loadMore(limit, messageLimit)
         }
         return CallImpl2<List<Channel>>(runnable, domainImpl.scope)
     }

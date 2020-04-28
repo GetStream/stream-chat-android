@@ -1,15 +1,15 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.utils.Result
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class MarkReadImplTest : BaseConnectedIntegrationTest() {
@@ -28,7 +28,5 @@ class MarkReadImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
         unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
         Truth.assertThat(unreadCount).isEqualTo(0)
-
-
     }
 }
