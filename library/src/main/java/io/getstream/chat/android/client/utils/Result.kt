@@ -1,12 +1,14 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
-import java.lang.IllegalStateException
 
 data class Result<T>(
     private val data: T?,
     private val error: ChatError?
 ) {
+
+    constructor(data: T) : this(data, null)
+    constructor(error: ChatError) : this(null, error)
 
     val isSuccess: Boolean
         get() = data != null
