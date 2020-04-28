@@ -1,0 +1,9 @@
+# Upcoming
+
+🚨 Breaking changes:
+- fields of models are moved to constructors: `io.getstream.chat.android.client.models`
+- field of Device `push_provider` renamed to `pushProvider` and moved to constructor
+
+✅ Other changes
+- added local error codes with descriptions: `io.getstream.chat.android.client.errors.ChatErrorCode`
+- fix uncaught java.lang.ExceptionInInitializerError while parsing custom object

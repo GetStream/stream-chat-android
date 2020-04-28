@@ -1,6 +1,9 @@
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
 import retrofit2.Response
@@ -46,15 +49,21 @@ class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : Cha
     }
 
     private fun failedResult(t: Throwable): Result<T> {
-        return Result(null, failedError(t))
+        return Result(failedError(t))
     }
 
-    private fun failedError(t: Throwable): ChatNetworkError {
-
-        var statusCode = -1
-        var streamCode = -1
-
-        return ChatNetworkError(t.message.toString(), t, streamCode, statusCode)
+    private fun failedError(t: Throwable): ChatError {
+        return when (t) {
+            is ChatError -> {
+                t
+            }
+            is ChatRequestError -> {
+                ChatNetworkError.create(t.streamCode, t.message.toString(), t.statusCode, t.cause)
+            }
+            else -> {
+                ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t)
+            }
+        }
     }
 
     private fun getResult(retroCall: retrofit2.Call<T>): Result<T> {
@@ -69,7 +78,7 @@ class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : Cha
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
 
         var data: T? = null
-        var error: ChatNetworkError? = null
+        var error: ChatError? = null
 
         if (retrofitResponse.isSuccessful) {
             try {

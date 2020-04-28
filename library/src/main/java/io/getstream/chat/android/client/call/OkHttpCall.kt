@@ -1,6 +1,9 @@
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.utils.Result
 import okhttp3.Call
 import okhttp3.Callback
@@ -53,12 +56,18 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
         return Result(null, failedError(t))
     }
 
-    private fun failedError(t: Throwable): ChatNetworkError {
-
-        var statusCode = -1
-        var streamCode = -1
-
-        return ChatNetworkError(t.message.toString(), t, streamCode, statusCode)
+    private fun failedError(t: Throwable): ChatError {
+        return when (t) {
+            is ChatError -> {
+                t
+            }
+            is ChatRequestError -> {
+                ChatNetworkError.create(t.streamCode, t.message.toString(), t.statusCode, t.cause)
+            }
+            else -> {
+                ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t)
+            }
+        }
     }
 
     private fun getResult(retroCall: Call): Result<T> {
@@ -73,7 +82,7 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
     private fun getResult(response: okhttp3.Response): Result<T> {
 
         var data: T? = null
-        var error: ChatNetworkError? = null
+        var error: ChatError? = null
 
         if (response.isSuccessful) {
             try {
@@ -84,7 +93,7 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
             }
         } else {
             val code = response.code
-            error = ChatNetworkError("Response is failed: code: $code", null, -1, code)
+            error = ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, null, code)
         }
 
         return Result(data, error)
