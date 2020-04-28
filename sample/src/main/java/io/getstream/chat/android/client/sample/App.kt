@@ -5,7 +5,6 @@ import android.content.Intent
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -35,10 +34,14 @@ class App : Application() {
         private const val EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE"
         private const val EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID"
         private const val EXTRA_MESSAGE_ID = "io.getstream.chat.example.MESSAGE_ID"
+
+        lateinit var instance: App
     }
 
     override fun onCreate() {
         super.onCreate()
+
+        instance = this
 
         Stetho.initializeWithDefaults(this)
 

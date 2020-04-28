@@ -31,5 +31,9 @@ class HomeActivity : AppCompatActivity() {
         btnTestUsersApis.setOnClickListener {
             startActivity(Intent(this, TestUsersApiMethodsActivity::class.java))
         }
+
+        btnTestPush.setOnClickListener {
+            startActivity(Intent(this, PushActivity::class.java))
+        }
     }
 }
