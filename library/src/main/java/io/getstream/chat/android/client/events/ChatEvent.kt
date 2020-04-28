@@ -28,6 +28,9 @@ open class ChatEvent(val type: String = "") {
 
     var channel: Channel? = null
 
+    @SerializedName("clear_history")
+    var clearHistory: Boolean? = null
+
     fun isFrom(cid: String): Boolean {
         return this.cid == cid
     }

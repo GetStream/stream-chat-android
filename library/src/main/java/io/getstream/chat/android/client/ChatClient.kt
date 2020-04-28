@@ -228,6 +228,11 @@ interface ChatClient {
             return this
         }
 
+        fun logLevel(level: String): Builder {
+            logLevel = ChatLogLevel.valueOf(level)
+            return this
+        }
+
         fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
             return this
