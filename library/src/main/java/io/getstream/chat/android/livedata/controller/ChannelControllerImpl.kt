@@ -49,11 +49,11 @@ class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
-    internal var hideMessagesBefore : Date? = null
+    internal var hideMessagesBefore: Date? = null
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
-        it.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore  }
+        it.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
     }
 
     /** the number of people currently watching the channel */
