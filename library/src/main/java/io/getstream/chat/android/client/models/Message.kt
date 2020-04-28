@@ -60,10 +60,10 @@ data class Message(
     var deletedAt: Date? = null,
 
     @IgnoreSerialisation
-    var user: User = Undefined.USER,
+    var user: User = User(),
 
     @IgnoreSerialisation
-    var channel: Channel = Undefined.CHANNEL,
+    var channel: Channel = Channel(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

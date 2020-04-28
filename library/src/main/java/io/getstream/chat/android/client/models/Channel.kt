@@ -33,8 +33,8 @@ data class Channel(
     var members: List<Member> = mutableListOf(),
     var watchers: List<Watcher> = mutableListOf(),
     var read: List<ChannelUserRead> = mutableListOf(),
-    var config: Config = Undefined.CONFIG,
-    var createdBy: User = Undefined.USER,
+    var config: Config = Config(),
+    var createdBy: User = User(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
