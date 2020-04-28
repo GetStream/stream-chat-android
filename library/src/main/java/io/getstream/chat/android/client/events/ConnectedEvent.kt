@@ -16,8 +16,6 @@ class ConnectedEvent : ChatEvent() {
     var clientId: String = ""
     @SerializedName("watcher_count")
     val watcherCount: Number = 0
-    @SerializedName("clear_history")
-    var clearHistory: Boolean = false
 
     val isChannelEvent: Boolean
         get() = cid != "*"
