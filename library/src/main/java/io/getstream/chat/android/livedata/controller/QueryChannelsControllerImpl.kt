@@ -66,7 +66,7 @@ class QueryChannelsControllerImpl(
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
     // Ensure we don't lose the sort in the channel
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { it.values.toList().filter { queryEntity.channelCIDs.contains(it.cid) }.sortedBy { queryEntity.channelCIDs.indexOf(it.cid) } }
+    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> queryEntity.channelCIDs.mapNotNull { cMap[it] } }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 

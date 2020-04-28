@@ -258,7 +258,6 @@ class ChannelControllerImpl(
 
     fun mute(expirationInSeconds: Int) {
         // TODO: LLC support
-
     }
 
     suspend fun watch(limit: Int = 30) {
@@ -672,8 +671,6 @@ class ChannelControllerImpl(
         }
     }
 
-
-
     fun handleEvent(event: ChatEvent) {
         event.channel?.watcherCount?.let {
             setWatcherCount(it)
@@ -715,7 +712,6 @@ class ChannelControllerImpl(
             }
             is ChannelVisible -> {
                 event.channel?.let { setHidden(false) }
-
             }
             is TypingStopEvent -> {
                 setTyping(event.user?.id!!, null)
