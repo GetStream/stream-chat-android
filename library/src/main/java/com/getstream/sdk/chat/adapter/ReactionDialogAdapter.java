@@ -130,7 +130,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
 
             Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
-            ChatDomain.instance().useCases.getSendReaction().invoke(message.getCid(), reaction).execute();
+            ChatDomain.instance().getUseCases().getSendReaction().invoke(message.getCid(), reaction).execute();
 
         }
 
@@ -139,7 +139,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             clickListener.onClick(view);
 
             Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
-            ChatDomain.instance().useCases.getDeleteReaction().invoke(message.getCid(), reaction).execute();
+            ChatDomain.instance().getUseCases().getDeleteReaction().invoke(message.getCid(), reaction).execute();
         }
 
     }

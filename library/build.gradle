@@ -115,8 +115,8 @@ dependencies {
 
 
     api 'com.github.getstream:stream-chat-android-client:1.2.0'
-    //implementation project(path: ':livedata')
-    implementation 'com.github.GetStream:stream-chat-android-livedata:0.2.1'
+    api project(path: ':livedata')
+    //api 'com.github.GetStream:stream-chat-android-livedata:0.2.1'
 
 }
 

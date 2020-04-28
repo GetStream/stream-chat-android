@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.LifecycleHandler;
 import com.getstream.sdk.chat.StreamLifecycleObserver;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
-import com.getstream.sdk.chat.utils.RetryPolicy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,10 +20,14 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.call.Call;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.MessageReadEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
@@ -37,6 +40,7 @@ import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
 import io.getstream.chat.android.livedata.ChatDomain;
+import io.getstream.chat.android.livedata.RetryPolicy;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity;
 import kotlin.Unit;
@@ -73,6 +77,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
 
         chatDomain = ChatDomain.instance();
 
+
         isLoading = new AtomicBoolean(false);
         isLoadingMore = new AtomicBoolean(false);
         initialized = new AtomicBoolean(false);
@@ -92,7 +97,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
     public void setQuery(FilterObject filter, QuerySort sort) {
         this.filter = filter;
         this.sort = sort;
-        Result<QueryChannelsController> result = chatDomain.useCases.getQueryChannels().invoke(filter, sort, 30, 10).execute();
+        Result<QueryChannelsController> result = chatDomain.getUseCases().getQueryChannels().invoke(filter, sort, 30, 10).execute();
         this.queryChannelsController = result.data();
         if (initialized.get()) {
             logger.logI("setChannelFilter on an already initialized channel will reload the view model");
@@ -176,7 +181,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * query channels
      */
     public void queryChannels() {
-        chatDomain.useCases.getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
+        chatDomain.getUseCases().getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
     }
 
     /**
@@ -192,7 +197,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
             return;
         }
 
-        chatDomain.useCases.getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
+        chatDomain.getUseCases().getQueryChannelsLoadMore().invoke(filter, sort, pageSize,20);
 
     }
 

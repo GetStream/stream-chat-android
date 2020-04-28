@@ -108,7 +108,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         chatDomain = ChatDomain.instance();
 
-        Result<ChannelController> result = chatDomain.useCases.getWatchChannel().invoke(this.cid, 30).execute();
+        Result<ChannelController> result = chatDomain.getUseCases().getWatchChannel().invoke(this.cid, 30).execute();
 
         channelController = result.data();
 
@@ -222,7 +222,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         activeThread.postValue(parentMessage);
         String parentId = parentMessage.getId();
 
-        Result<ThreadController> result = chatDomain.useCases.getGetThread().invoke(cid, parentId).execute();
+        Result<ThreadController> result = chatDomain.getUseCases().getGetThread().invoke(cid, parentId).execute();
         threadController = result.data();
         threadMessages = threadController.getMessages();
         threadMessages.observeForever((messages) -> {
@@ -234,7 +234,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         reachedEndOfPaginationThread = threadController.getEndOfOlderMessages();
         threadLoadingMore = threadController.getLoadingOlderMessages();
 
-        chatDomain.useCases.getThreadLoadMore().invoke(cid, parentId, 30).execute();
+        chatDomain.getUseCases().getThreadLoadMore().invoke(cid, parentId, 30).execute();
 
     }
 
@@ -328,9 +328,9 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void loadMore() {
 
         if (isThread()) {
-            chatDomain.useCases.getThreadLoadMore().invoke(cid, activeThread.getValue().getId(), 30).execute();
+            chatDomain.getUseCases().getThreadLoadMore().invoke(cid, activeThread.getValue().getId(), 30).execute();
         } else {
-            chatDomain.useCases.getLoadOlderMessages().invoke(cid, Constant.DEFAULT_LIMIT).execute();
+            chatDomain.getUseCases().getLoadOlderMessages().invoke(cid, Constant.DEFAULT_LIMIT).execute();
         }
     }
 
@@ -344,7 +344,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         stopTyping();
 
         message.setChannel(getChannel());
-        chatDomain.useCases.getSendMessage().invoke(message).execute();
+        chatDomain.getUseCases().getSendMessage().invoke(message).execute();
 
     }
 
@@ -356,7 +356,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public void editMessage(Message message) {
         stopTyping();
-        chatDomain.useCases.getEditMessage().invoke(message).execute();
+        chatDomain.getUseCases().getEditMessage().invoke(message).execute();
     }
 
     /**
@@ -404,7 +404,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public synchronized void keystroke() {
         if (isThread()) return;
 
-        chatDomain.useCases.getKeystroke().invoke(cid).execute();
+        chatDomain.getUseCases().getKeystroke().invoke(cid).execute();
     }
 
     /**
@@ -414,7 +414,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public void stopTyping() {
         if (isThread()) return;
 
-        chatDomain.useCases.getStopTyping().invoke(cid).execute();
+        chatDomain.getUseCases().getStopTyping().invoke(cid).execute();
     }
 
     public MutableLiveData<String> getMessageInputText() {
@@ -426,7 +426,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     }
 
     public void markLastMessageRead() {
-        chatDomain.useCases.getMarkRead().invoke(cid).execute();
+        chatDomain.getUseCases().getMarkRead().invoke(cid).execute();
 
     }
 

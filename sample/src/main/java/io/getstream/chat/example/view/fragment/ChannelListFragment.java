@@ -140,7 +140,9 @@ public class ChannelListFragment extends Fragment {
         // most the business logic for chat is handled in the ChannelListViewModel view model
         viewModel = ViewModelProviders.of(this).get(ChannelListViewModel.class);
         // just get all channels
-        FilterObject filter = Filters.INSTANCE.eq("type", "messaging");
+        FilterObject filter = Filters.eq("type", "messaging");
+
+
 
         // ChannelViewHolderFactory factory = new ChannelViewHolderFactory();
         //binding.channelList.setViewHolderFactory(factory);
