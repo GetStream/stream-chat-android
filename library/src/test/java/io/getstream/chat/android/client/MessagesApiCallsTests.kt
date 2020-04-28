@@ -52,9 +52,7 @@ class MessagesApiCallsTests {
             mock.retrofitApi
                 .getMessage(messageId, mock.apiKey, mock.userId, mock.connectionId)
         ).thenReturn(
-            RetroError(
-                mock.serverErrorCode
-            )
+            RetroError(mock.serverErrorCode)
         )
 
         val result = client.getMessage(messageId).execute()
@@ -177,8 +175,7 @@ class MessagesApiCallsTests {
     fun sendMessageError() {
 
         val messageText = "message-a"
-        val message = Message()
-            .apply { text = messageText }
+        val message = Message().apply { text = messageText }
 
         Mockito.`when`(
             mock.retrofitApi
