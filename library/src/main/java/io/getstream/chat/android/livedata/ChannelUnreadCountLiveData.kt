@@ -48,7 +48,7 @@ class ChannelUnreadCountLiveData(
     @Synchronized
     fun calculateUnreadCount(): Int? {
         var unreadMessageCount: Int? = null
-        if (messages != null && read != null) {
+        if (messages != null) {
             unreadMessageCount = 0
             val lastRead = read?.lastRead
             val lastReadTime = lastRead?.time ?: 0

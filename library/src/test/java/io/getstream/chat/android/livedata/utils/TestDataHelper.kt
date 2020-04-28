@@ -104,6 +104,10 @@ class TestDataHelper {
         this.channel = channel1; text = "message2"; id = "message-2"; user = user1; createdAt =
         calendar(2019, 1, 1)
     }
+    val messageFromUser2 = Message().apply {
+        this.channel = channel1; text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
+        calendar(2020, 1, 1)
+    }
 
     val connectedEvent = ConnectedEvent()
     val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2 }
@@ -111,6 +115,8 @@ class TestDataHelper {
     val disconnectedEvent = DisconnectedEvent()
     val newMessageEvent = NewMessageEvent().apply { message = message1; cid = channel1.cid }
     val newMessageEvent2 = NewMessageEvent().apply { message = message2Older; cid = channel1.cid }
+    val newMessageFromUser2 = NewMessageEvent().apply { message = messageFromUser2; cid = channel1.cid }
+
     val newMessageEventNotification = NotificationMessageNew().apply { message = message1; cid = channel1.cid }
 
     val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated }
