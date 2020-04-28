@@ -66,9 +66,10 @@ open class BaseDomainTest {
     }
 
     fun createClient(): ChatClient {
+        val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
         val client = ChatClient.Builder(data.apiKey, getApplicationContext())
             .logLevel(
-                ChatLogLevel.ALL
+                logLevel
             ).loggerHandler(TestLoggerHandler()).build()
         return client
     }
