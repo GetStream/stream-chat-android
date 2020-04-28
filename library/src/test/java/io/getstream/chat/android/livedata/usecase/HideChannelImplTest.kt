@@ -10,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class HideChannelImplTest : BaseConnectedIntegrationTest() {
