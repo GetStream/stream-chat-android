@@ -5,8 +5,8 @@ import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
@@ -70,18 +70,16 @@ class ChatParserImpl : ChatParser {
 
     override fun toError(okHttpResponse: Response): ChatNetworkError {
 
-        val statusCode: Int
+        val statusCode: Int = okHttpResponse.code
 
         return try {
-
-            statusCode = okHttpResponse.code
-
+            // Try to parse default Stream error body
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
             val error = toError(body)
             ChatNetworkError.create(error.code, error.message, statusCode)
         } catch (t: Throwable) {
             ChatLogger.instance.logE(TAG, t)
-            ChatNetworkError.create(ChatErrorCode.PARSER_ERROR, t)
+            ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
         }
     }
 
