@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.*
-import io.getstream.chat.android.client.api.RetrofitApi
-import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
