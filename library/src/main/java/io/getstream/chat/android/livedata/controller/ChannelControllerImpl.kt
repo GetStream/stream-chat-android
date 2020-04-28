@@ -49,10 +49,11 @@ class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
+    internal var hideMessagesBefore : Date? = null
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
-        it.values.sortedBy { it.createdAt }
+        it.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore  }
     }
 
     /** the number of people currently watching the channel */
@@ -212,7 +213,7 @@ class ChannelControllerImpl(
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
-        return messageMap.values.sortedBy { it.createdAt }
+        return messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
     }
 
     suspend fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination): Result<List<Message>> {
@@ -246,14 +247,34 @@ class ChannelControllerImpl(
         return response
     }
 
-    fun hide(clearHistory: Boolean): Result<Unit> {
+    suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
-        return channelController.hide(clearHistory).execute()
+        val result = channelController.hide(clearHistory).execute()
+        if (result.isSuccess) {
+            val channelEntity = domainImpl.repos.channels.select(cid)
+            channelEntity?.let {
+                it.hidden = true
+                if (clearHistory) {
+                    it.hideMessagesBefore = Date()
+                    hideMessagesBefore = it.hideMessagesBefore
+                }
+                domainImpl.repos.channels.insert(it)
+            }
+        }
+        return result
     }
 
-    fun show(): Result<Unit> {
+    suspend fun show(): Result<Unit> {
         setHidden(false)
-        return channelController.show().execute()
+        val result = channelController.show().execute()
+        if (result.isSuccess) {
+            val channelEntity = domainImpl.repos.channels.select(cid)
+            channelEntity?.let {
+                it.hidden = false
+                domainImpl.repos.channels.insert(it)
+            }
+        }
+        return result
     }
 
     fun mute(expirationInSeconds: Int) {
@@ -563,7 +584,14 @@ class ChannelControllerImpl(
 
     override fun getMessage(messageId: String): Message? {
         val copy = _messages.value ?: mutableMapOf()
-        return copy[messageId]
+        var message = copy[messageId]
+
+        if (hideMessagesBefore != null) {
+            if (message != null && message.createdAt!! <= hideMessagesBefore) {
+                message = null
+            }
+        }
+        return message
     }
 
     fun upsertMessages(messages: List<Message>) {
@@ -671,13 +699,21 @@ class ChannelControllerImpl(
         }
     }
 
+    fun isHidden(): Boolean {
+        return _hidden.value ?: false
+    }
+
     fun handleEvent(event: ChatEvent) {
         event.channel?.watcherCount?.let {
             setWatcherCount(it)
         }
         when (event) {
-            is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent -> {
+            is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent, is NotificationMessageNew -> {
                 upsertEventMessage(event.message)
+                // unhide the channel
+                if (isHidden()) {
+                    setHidden(false)
+                }
             }
             is ReactionNewEvent, is ReactionDeletedEvent -> {
                 upsertEventMessage(event.message)

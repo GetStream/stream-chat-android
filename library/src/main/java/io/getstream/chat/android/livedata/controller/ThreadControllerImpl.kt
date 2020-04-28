@@ -16,7 +16,7 @@ class ThreadControllerImpl(
     ThreadController {
     private val logger = ChatLogger.get("ThreadController")
     private val _messages = channelControllerImpl.getThreadMessages(threadId)
-    override val messages = Transformations.map(_messages) { it.values.sortedBy { m -> m.createdAt } }
+    override val messages = Transformations.map(_messages) { it.values.sortedBy { m -> m.createdAt }.filter { channelControllerImpl.hideMessagesBefore == null || it.createdAt!! > channelControllerImpl.hideMessagesBefore } }
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     override val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages

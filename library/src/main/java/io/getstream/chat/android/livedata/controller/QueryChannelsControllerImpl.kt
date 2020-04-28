@@ -78,9 +78,8 @@ class QueryChannelsControllerImpl(
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
-        var request = QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
 
-        return request
+        return QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
     }
 
     // TODO 1.1: handleMessageNotification should be configurable

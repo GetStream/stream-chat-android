@@ -10,13 +10,14 @@ interface HideChannel {
 }
 
 class HideChannelImpl(var domainImpl: ChatDomainImpl) : HideChannel {
-    override operator fun invoke(cid: String, clearHistory: Boolean): Call2<Unit> {
+    override operator fun invoke(cid: String, keepHistory: Boolean): Call2<Unit> {
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
         }
         val channelController = domainImpl.channel(cid)
 
         var runnable = suspend {
+            val clearHistory = !keepHistory
             channelController.hide(clearHistory)
         }
         return CallImpl2<Unit>(runnable, channelController.scope)

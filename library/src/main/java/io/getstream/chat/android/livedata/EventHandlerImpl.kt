@@ -96,6 +96,9 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 is ChannelHiddenEvent -> {
                     val channelEntity = ChannelEntity(event.channel!!)
                     channelEntity.hidden = true
+                    if (event.clearHistory != null && event.clearHistory!!) {
+                        channelEntity.hideMessagesBefore = event.createdAt
+                    }
                     channels[event.channel!!.id] = channelEntity
                 }
                 is ChannelVisible -> {

@@ -33,6 +33,9 @@ data class ChannelEntity(var type: String, var channelId: String) {
     /** if the channel is hidden (new messages will cause to reappear) */
     var hidden: Boolean = false
 
+    /** hide messages before this date */
+    var hideMessagesBefore: Date? = null
+
     /** till when the channel is muted */
     var mutedTill: Date? = null
 
