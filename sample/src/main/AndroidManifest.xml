@@ -14,6 +14,7 @@
         <activity android:name=".common.SocketTestActivity" />
         <activity android:name=".common.TestChannelsApiMethodsActivity" />
         <activity android:name=".common.TestUsersApiMethodsActivity" />
+        <activity android:name=".common.PushActivity"/>
 
         <service
             android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"

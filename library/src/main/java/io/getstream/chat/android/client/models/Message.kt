@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.api.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -31,45 +32,41 @@ data class Message(
 
     @SerializedName("reaction_counts")
     @IgnoreSerialisation
-    var reactionCounts: MutableMap<String, Int> = mutableMapOf<String, Int>(),
+    var reactionCounts: MutableMap<String, Int> = mutableMapOf(),
 
     /** if the message has been synced to the servers */
     @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED
-
-) {
-
-
+    var syncStatus: SyncStatus = SyncStatus.SYNCED,
 
     @IgnoreSerialisation
-    var type: String = ""
+    var type: String = "",
+
     @IgnoreSerialisation
     @SerializedName("latest_reactions")
-    var latestReactions = mutableListOf<Reaction>()
+    var latestReactions: MutableList<Reaction> = mutableListOf(),
+
     @IgnoreSerialisation
     @SerializedName("own_reactions")
-    var ownReactions = mutableListOf<Reaction>()
-
+    var ownReactions: MutableList<Reaction> = mutableListOf(),
 
     @IgnoreSerialisation
     @SerializedName("created_at")
-    var createdAt: Date? = null
+    var createdAt: Date? = null,
     @IgnoreSerialisation
     @SerializedName("updated_at")
-    var updatedAt: Date? = null
+    var updatedAt: Date? = null,
     @IgnoreSerialisation
     @SerializedName("deleted_at")
-    var deletedAt: Date? = null
-
-
+    var deletedAt: Date? = null,
 
     @IgnoreSerialisation
-    lateinit var user: User
+    var user: User = User(),
 
     @IgnoreSerialisation
-    lateinit var channel: Channel
+    var channel: Channel = Channel(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    var extraData = mutableMapOf<String, Any>()
-}
+    override var extraData: MutableMap<String, Any> = mutableMapOf()
+
+) : CustomObject

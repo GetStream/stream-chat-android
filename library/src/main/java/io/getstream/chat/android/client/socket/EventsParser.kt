@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -43,14 +44,14 @@ class EventsParser(
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         // Treat as failure and reconnect, socket shouldn't be closed by server
-        onFailure(webSocket, ChatNetworkError("server closed connection"), null)
+        onFailure(webSocket, ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED), null)
     }
 
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         logger.logE("onFailure", t)
         // Called when socket is disconnected by client also (client.disconnect())
         // See issue here https://stream-io.atlassian.net/browse/CAS-88
-        service.onSocketError(ChatNetworkError("listener.onFailure error. reconnecting", t))
+        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
     private fun handleEvent(text: String) {
@@ -67,7 +68,7 @@ class EventsParser(
                     service.onConnectionResolved(connection.data())
                 } else {
                     service.onSocketError(
-                        ChatNetworkError("unable to parse connection event", connection.error())
+                        ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
                     )
                 }
 
@@ -79,17 +80,14 @@ class EventsParser(
 
         } else {
             service.onSocketError(
-                ChatNetworkError("Unable to parse message: $text")
+                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventMessage.error())
             )
         }
     }
 
     private fun handleErrorEvent(error: ErrorResponse) {
         service.onSocketError(
-            ChatNetworkError(
-                "Error code: ${error.code}. Message: ${error.message}",
-                streamCode = error.code
-            )
+            ChatNetworkError.create(error.code, error.message, error.statusCode)
         )
     }
 
