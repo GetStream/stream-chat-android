@@ -17,13 +17,12 @@ data class Reaction(
     @SerializedName("user_id")
     var userId: String = "",
     @SerializedName("created_at")
-    var createdAt: Date? = null
-) : CustomObject {
+    var createdAt: Date? = null,
 
     @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED
+    var syncStatus: SyncStatus = SyncStatus.SYNCED,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData = mutableMapOf<String, Any>()
-}
+    override var extraData: MutableMap<String, Any> = mutableMapOf()
+) : CustomObject

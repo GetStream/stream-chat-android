@@ -5,8 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Device(
     @SerializedName("id")
-    val id: String
-) {
+    val id: String,
     @SerializedName("push_provider")
-    var push_provider: String = ""
-}
+    var pushProvider: String = ""
+)

@@ -45,12 +45,12 @@ data class User(
 
     @IgnoreSerialisation
     @SerializedName("channel_mutes")
-    var mutes: List<Mute> = mutableListOf()
+    var mutes: List<Mute> = mutableListOf(),
     //endregion
-) : CustomObject {
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData = mutableMapOf<String, Any>()
+    override var extraData: MutableMap<String, Any> = mutableMapOf()
 
-}
+) : CustomObject
+

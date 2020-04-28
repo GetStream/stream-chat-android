@@ -24,27 +24,20 @@ data class Channel(
     @SerializedName("updated_at")
     var updatedAt: Date? = null,
 
+    @IgnoreSerialisation
+    var syncStatus: SyncStatus = SyncStatus.SYNCED,
+
     @SerializedName("member_count")
     val memberCount: Int = 0,
     var messages: List<Message> = mutableListOf(),
     var members: List<Member> = mutableListOf(),
     var watchers: List<Watcher> = mutableListOf(),
-    var read: List<ChannelUserRead> = mutableListOf()
-) : CustomObject {
-
-    lateinit var config: Config
-
-    @SerializedName("created_by")
-    lateinit var createdBy: User
-
-    @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED
+    var read: List<ChannelUserRead> = mutableListOf(),
+    var config: Config = Undefined.CONFIG,
+    var createdBy: User = Undefined.USER,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData = mutableMapOf<String, Any>()
+    override var extraData: MutableMap<String, Any> = mutableMapOf()
 
-    override fun toString(): String {
-        return "Channel(cid='$cid')"
-    }
-}
+) : CustomObject

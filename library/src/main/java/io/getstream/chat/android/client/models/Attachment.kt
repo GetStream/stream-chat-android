@@ -30,11 +30,10 @@ data class Attachment(
     var image: String? = null,
     var url: String? = null,
     var name: String? = null,
-    var fallback: String? = null
-
-) : CustomObject {
+    var fallback: String? = null,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData = mutableMapOf<String, Any>()
-}
+    override var extraData: MutableMap<String, Any> = mutableMapOf()
+
+) : CustomObject
