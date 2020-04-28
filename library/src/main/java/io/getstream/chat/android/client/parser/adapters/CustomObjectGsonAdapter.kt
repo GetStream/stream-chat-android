@@ -43,7 +43,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
 
                 gson.getAdapter(HashMap::class.java).write(writer, result)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw ChatParsingError("custom object serialisation error of $clazz", e)
         }
 
@@ -89,7 +89,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
             result.extraData = map
 
             return result
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw ChatParsingError("custom object deserialisation error of $clazz", e)
         }
     }
