@@ -215,7 +215,8 @@ class ChannelControllerImpl(
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
-        return messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+        val messages =  messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+        return messages
     }
 
     suspend fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination): Result<List<Message>> {
@@ -994,6 +995,10 @@ class ChannelControllerImpl(
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
+        if (messages.isNotEmpty()) {
+            channel.lastMessageAt = messages.last().createdAt
+        }
+
 
         return channel
     }

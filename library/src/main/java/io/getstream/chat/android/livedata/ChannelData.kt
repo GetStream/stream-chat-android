@@ -60,6 +60,7 @@ data class ChannelData(var type: String, var channelId: String) {
         c.lastMessageAt = lastMessageAt
         c.createdBy = createdBy!!
 
+        c.messages = messages
         c.members = members
         c.watchers = watchers.map { Watcher(it.id, it, null) }
         c.watcherCount = watcherCount

@@ -59,7 +59,7 @@ class TestDataHelper {
         watchers = listOf(watcher1)
         members = listOf(member1)
         extraData = mutableMapOf("color" to "green")
-        config=config1
+        config = config1
     }
 
     val channel2 = Channel().apply {

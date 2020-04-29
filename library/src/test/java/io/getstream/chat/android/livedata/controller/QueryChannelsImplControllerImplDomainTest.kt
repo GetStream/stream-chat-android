@@ -67,11 +67,14 @@ class QueryChannelsImplControllerImplDomainTest : BaseConnectedIntegrationTest()
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCIDs = sortedSetOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
+        chatDomainImpl.repos.messages.insertMessage(data.message1)
         chatDomainImpl.storeStateForChannel(data.channel1)
         chatDomainImpl.setOffline()
         val channels = queryControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(0, 2))
         // should return 1 since only 1 is stored in offline storage
         Truth.assertThat(channels?.size).isEqualTo(1)
+        // verify we load messages correctly
+        Truth.assertThat(channels!!.first().messages.size).isEqualTo(1)
     }
 
     @Test
