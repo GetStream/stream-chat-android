@@ -1,93 +1,49 @@
 # Push messages
 
-By default channel name is the title of the notification. The message text is content of the notification.
-Users photo is the large photo on notification. On click on notification will be opened the default launcher activity of the application.
-
-To customize notifications you need to pass the configuration to ChatClient builder.
-
+To customize notifications instance of `ChatNotificationConfig` should be created and passed to `ChatClient.Builder`:
 ```kotlin
-val notificationConfig = NotificationsManager.Builder()
-            .setNotificationOptions(provideNotificationOptions())
-            .setRegisterListener(provideDeviceRegisteredListener())
-            .setNotificationMessageLoadListener(provideNotificationMessageLoadListener())
-            .build()
+val notificationsConfig = object : ChatNotificationConfig(context) {
 
-client = ChatClient.init(
-            ChatClient.Builder()
-                .config(config)
-                .logger(logger)
-                .notification(**notificationConfig**)
-        )
+}
+client = ChatClient.Builder("api-key", context)
+    .notifications(notificationsConfig)
+    .build()
 ```
-
-Set up notifications requires calling setNotificationOptions
+`ChatNotificationConfig` is an open class with predefined default implementation. There're several ways to customise notification by overriding default implementation.
+## Building your own Notification
 ```kotlin
-fun provideNotificationOptions() = StreamNotificationOptions().apply {
-        setNotificationIntentProvider(
-            object : NotificationIntentProvider {
-                override fun getIntentForFirebaseMessage(
-                    context: Context,
-                    remoteMessage: RemoteMessage
-                ): PendingIntent {
-                    val payload = remoteMessage.data
-                    val intent = Intent(context, <TARGET_ACTIVITY>::class.java)
-                    intent.apply {
-                        putExtra(
-                            EXTRA_CHANNEL_TYPE,
-                            payload[StreamNotificationsManager.CHANNEL_TYPE_KEY]
-                        )
-                        putExtra(
-                            EXTRA_CHANNEL_ID,
-                            payload[StreamNotificationsManager.CHANNEL_ID_KEY]
-                        )
-                    }
-                    return PendingIntent.getActivity(
-                        context, 999,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                }
-
-                override fun getIntentForWebSocketEvent(
-                    context: Context,
-                    event: ChatEvent
-                ): PendingIntent {
-                    val intent = Intent(context, <TARGET_ACTIVITY>::class.java)
-                    intent.apply {
-                        putExtra(EXTRA_CHANNEL_TYPE, event.message.type)
-                        putExtra(EXTRA_CHANNEL_ID, event.message.id)
-                    }
-                    return PendingIntent.getActivity(
-                        context, 999,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                }
-            }
-        )
+val notificationsConfig = object : ChatNotificationConfig(context) {
+    override fun buildNotification(
+        notificationId: Int,
+        channelName: String,
+        messageText: String,
+        messageId: String,
+        channelType: String,
+        channelId: String
+    ): Notification {
+        // defining pending intents
+        // defining notification behaviour with NotificationCompat.Builder
+        // adding actions
+        // etc
+    }
 }
 ```
-
-DeviceRegisteredListener - interface through which a device registration callback is received to receive push notifications
+## Intercepting Firebase remote message
 ```kotlin
-private fun provideDeviceRegisteredListener() = object : DeviceRegisteredListener {
-        override fun onDeviceRegisteredSuccess() { // Device successfully registered on server
-            logger.logI(this, "Device registered successfully")
-        }
-
-        override fun onDeviceRegisteredError(error: ChatError) {
-            logger.logE(this, "onDeviceRegisteredError: ${error.message}")
-        }
+val notificationsConfig = object : ChatNotificationConfig(context) {
+    override fun onFirebaseMessage(message: RemoteMessage): Boolean {
+        return true // to override default implementation
+    }
 }
 ```
-NotificationMessageLoadListener - interface through which a callback is received to retrieve a received message
+## Create new message intent
 ```kotlin
-private fun provideNotificationMessageLoadListener() =
-        object : NotificationMessageLoadListener {
-            override fun onLoadMessageSuccess(message: Message) {
-                logger.logD(this, "On message loaded. Message:$message")
-            }
-
-            override fun onLoadMessageFail(messageId: String) {
-                logger.logD(this, "Message from notification load fails. MessageId:$messageId")
-            }
-        }
+val notificationsConfig = object : ChatNotificationConfig(context) {
+    override fun getNewMessageIntent(messageId: String, channelType: String, channelId: String): Intent {
+        val result = Intent(context, Activity::class.java)
+        result.putExtra("channel-type", channelType)
+        result.putExtra("channel-id", channelId)
+        return result
+    }
+}
 ```
