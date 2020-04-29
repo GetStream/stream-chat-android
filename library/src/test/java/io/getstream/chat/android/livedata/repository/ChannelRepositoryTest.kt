@@ -32,8 +32,9 @@ class ChannelRepositoryTest : BaseDomainTest() {
         val entity = repo.select(data.channel1.cid)
         val channel = entity!!.toChannel(data.userMap)
 
-        // ignore these 3 fields
+        // ignore these 4 fields
         channel.config = data.channel1.config
+        channel.createdBy = data.channel1.createdBy
         channel.watchers = data.channel1Updated.watchers
         channel.watcherCount = data.channel1Updated.watcherCount
         Truth.assertThat(channel).isEqualTo(data.channel1Updated)

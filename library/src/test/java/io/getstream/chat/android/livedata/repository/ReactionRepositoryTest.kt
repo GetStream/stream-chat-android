@@ -43,7 +43,7 @@ class ReactionRepositoryTest : BaseDomainTest() {
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
         val reaction1Updated =
-            data.reaction1.copy().apply { extraData = mutableMapOf("theanswer" to 42) }
+            data.reaction1.copy().apply { extraData = mutableMapOf("theanswer" to 42.0) }
         repo.insertReaction(data.reaction1)
         repo.insertReaction(reaction1Updated)
 

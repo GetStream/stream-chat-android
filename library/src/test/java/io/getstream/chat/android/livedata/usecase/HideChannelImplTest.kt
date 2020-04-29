@@ -64,7 +64,7 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         // verify it's now hidden
         Truth.assertThat(channelController.hidden.getOrAwaitValue()).isTrue()
         // verify that it's no longer showing up in query channels
-        // TODO LLC channel doesn't expose hidden state just yet
+        // TODO: Pending decision on API about channel.hidden
 
         // verify that receiving a new message unhides it
         channelControllerImpl.handleEvent(data.newMessageEventNotification)

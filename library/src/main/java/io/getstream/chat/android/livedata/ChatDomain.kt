@@ -104,6 +104,7 @@ interface ChatDomain {
         fun build(): ChatDomain {
             val chatDomainImpl = buildImpl()
             val chatDomain: ChatDomain = chatDomainImpl
+            instance = chatDomain
             return chatDomain
         }
     }

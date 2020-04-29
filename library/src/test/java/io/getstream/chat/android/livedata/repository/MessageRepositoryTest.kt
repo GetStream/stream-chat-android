@@ -23,6 +23,8 @@ class MessageRepositoryTest : BaseDomainTest() {
         repo.insertMessage(data.message1)
         val entity = repo.select(data.message1.id)
         val message = entity!!.toMessage(data.userMap)
+        // ignore the channel field, we don't have that information at the message repository level
+        message.channel = data.message1.channel
         Truth.assertThat(message).isEqualTo(data.message1)
     }
 
@@ -45,6 +47,7 @@ class MessageRepositoryTest : BaseDomainTest() {
 
         val entity = repo.select(data.message1Updated.id)
         val message = entity!!.toMessage(data.userMap)
+        message.channel = data.message1Updated.channel
         Truth.assertThat(message).isEqualTo(data.message1Updated)
         Truth.assertThat(repo.messageCache.size()).isEqualTo(1)
     }
