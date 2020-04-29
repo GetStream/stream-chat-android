@@ -47,6 +47,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.livedata.ChatDomain;
 
 import static java.util.UUID.randomUUID;
 
@@ -394,7 +395,7 @@ public class MessageInputView extends RelativeLayout {
     protected Message prepareNewMessage(Message message) {
         // Check file uploading
         if (messageInputController.isUploadingFile()) {
-            message.user = Chat.getInstance().getClient().getCurrentUser();
+           // message.user = ChatDomain.instance().getCurrentUser();
             String clientSideID = generateMessageID();
             message.setId(clientSideID);
             message.setCreatedAt(new Date());

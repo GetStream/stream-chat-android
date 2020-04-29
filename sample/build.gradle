@@ -107,9 +107,9 @@ dependencies {
 
     implementation project(':library')
 
-    implementation 'com.github.GetStream:stream-chat-android-livedata:0.2.1'
+    //implementation 'com.github.GetStream:stream-chat-android-livedata:0.2.1'
     //implementation project(':livedata')
-    implementation 'com.github.GetStream:stream-chat-android-client:1.2.0'
+    //implementation 'com.github.GetStream:stream-chat-android-client:1.2.0'
 
 
     implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"

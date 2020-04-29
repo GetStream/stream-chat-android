@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
+import android.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.utils.SyncStatus;
 import io.getstream.chat.android.livedata.ChatDomain;
 
 
@@ -127,9 +130,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
 
             // TODO: this seems like it should be handled by the viewModel, not here
             clickListener.onClick(view);
-
-
-            Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
+            Reaction reaction = new Reaction();
+            reaction.setMessageId(message.getId());
+            reaction.setType(type);
             ChatDomain.instance().getUseCases().getSendReaction().invoke(message.getCid(), reaction).execute();
 
         }
@@ -137,8 +140,9 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         private void deleteReaction(final View view, String type) {
 
             clickListener.onClick(view);
-
-            Reaction reaction = new Reaction(message.getId(), type, 1, null, "", null);
+            Reaction reaction = new Reaction();
+            reaction.setMessageId(message.getId());
+            reaction.setType(type);
             ChatDomain.instance().getUseCases().getDeleteReaction().invoke(message.getCid(), reaction).execute();
         }
 
