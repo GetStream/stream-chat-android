@@ -1,5 +1,6 @@
 ![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-client.svg)
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android-client.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-client)
+[![codecov](https://codecov.io/gh/GetStream/stream-chat-android-client/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-android-client)
 
 # Stream Chat Client
 
