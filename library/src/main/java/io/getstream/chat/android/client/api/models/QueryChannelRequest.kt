@@ -18,6 +18,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     open fun withMembers(limit: Int, offset: Int): QueryChannelRequest {
+        state = true
         val members: MutableMap<String, Any> = HashMap()
         members["limit"] = limit
         members["offset"] = offset
@@ -34,15 +35,15 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     open fun withMessages(limit: Int): QueryChannelRequest {
+        state = true
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
         this.messages.putAll(messages)
         return this
     }
 
-
-
     open fun withMessages(direction: Pagination, messageId: String, limit: Int): QueryChannelRequest {
+        state = true
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
         messages[direction.toString()] = messageId
