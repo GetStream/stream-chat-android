@@ -31,12 +31,12 @@ class TestTokenManager {
             listenerB.called(it.data())
         }
 
-        assertThat(listenerA.isCalledWith(token)).isTrue()
-        assertThat(listenerB.isCalledWith(token)).isTrue()
+        await().atMost(2, SECONDS).until {listenerA.isCalledWith(token)}
+        await().atMost(2, SECONDS).until {listenerB.isCalledWith(token)}
 
-        await().atMost(1, SECONDS).until { manager.hasTokenProvider() }
-        await().atMost(1, SECONDS).until { manager.hasToken() }
-        await().atMost(1, SECONDS).until { manager.getToken() == token }
+        await().atMost(2, SECONDS).until { manager.hasTokenProvider() }
+        await().atMost(2, SECONDS).until { manager.hasToken() }
+        await().atMost(2, SECONDS).until { manager.getToken() == token }
     }
 
     @Test
@@ -75,8 +75,8 @@ class TestTokenManager {
             listener.called(it.error().cause!!)
         }
 
-        await().atMost(1, SECONDS).until { !manager.hasToken() }
-        await().atMost(1, SECONDS).until { listener.isCalledWith(error) }
+        await().atMost(2, SECONDS).until { !manager.hasToken() }
+        await().atMost(2, SECONDS).until { listener.isCalledWith(error) }
     }
 
     @Test
@@ -89,7 +89,7 @@ class TestTokenManager {
 
         manager.loadAsync()
 
-        await().atMost(1, SECONDS).until { manager.getToken() == tokenA }
+        await().atMost(2, SECONDS).until { manager.getToken() == tokenA }
 
         manager.expireToken()
 
@@ -97,7 +97,7 @@ class TestTokenManager {
 
         manager.loadAsync()
 
-        await().atMost(1, SECONDS).until { manager.getToken() == tokenB }
+        await().atMost(2, SECONDS).until { manager.getToken() == tokenB }
     }
 
 
