@@ -186,6 +186,7 @@ client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
 - [Push messages](docs/push-messages.md)
 - [Logging](docs/logging.md)
 - [Token Provider](docs/token-provider.md)
+- [Unread messages](docs/unread-messages.md)
 - SDK architecture
 
 ## Examples
