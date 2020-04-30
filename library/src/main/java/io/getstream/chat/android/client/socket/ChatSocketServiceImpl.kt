@@ -3,12 +3,15 @@ package io.getstream.chat.android.client.socket
 import android.os.Message
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.socket.ChatSocketService.State
+import io.getstream.chat.android.client.token.TokenManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -18,13 +21,15 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 
-class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
+internal class ChatSocketServiceImpl(
+    val chatParser: ChatParser,
+    val tokenManager: TokenManager
+) : ChatSocketService {
 
     private val logger = ChatLogger.get("SocketService")
 
     private var endpoint: String = ""
     private var apiKey: String = ""
-    private var userToken: String? = ""
     private var user: User? = null
     private val eventsParser = EventsParser(this, chatParser)
     private var httpClient = OkHttpClient()
@@ -43,11 +48,25 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
 
     fun onSocketError(error: ChatError) {
 
-        if (state is State.Connected || state is State.Connecting) {
+        if (error is ChatNetworkError && error.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
             updateState(State.Error(error))
-            updateState(State.Disconnected(true))
-            clearState()
-            healthMonitor.onError()
+            tokenManager.expireToken()
+            tokenManager.loadSync()
+
+            //check if it's still in the current state
+            if (state is State.Error) {
+                updateState(State.Disconnected(true))
+                clearState()
+                healthMonitor.onError()
+            }
+
+        } else {
+            if (state is State.Connected || state is State.Connecting) {
+                updateState(State.Error(error))
+                updateState(State.Disconnected(true))
+                clearState()
+                healthMonitor.onError()
+            }
         }
     }
 
@@ -66,8 +85,7 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
     override fun connect(
         endpoint: String,
         apiKey: String,
-        user: User?,
-        userToken: String?
+        user: User?
     ) {
         logger.logI("connect")
 
@@ -79,7 +97,6 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
         this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
-        this.userToken = userToken
         this.connectionId = 0
         this.healthMonitor.reset()
 
@@ -174,7 +191,8 @@ class ChatSocketServiceImpl(val chatParser: ChatParser) : ChatSocketService {
             if (user == null) {
                 "$baseWsUrl&stream-auth-type=anonymous"
             } else {
-                "$baseWsUrl&authorization=$userToken&stream-auth-type=jwt"
+                val token = tokenManager.getToken()
+                "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
             }
         } catch (throwable: Throwable) {
             throw UnsupportedEncodingException("Unable to encode user details json: $json")
