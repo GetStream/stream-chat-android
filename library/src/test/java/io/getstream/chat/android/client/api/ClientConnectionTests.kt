@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
@@ -33,7 +34,8 @@ internal class ClientConnectionTests {
         1000,
         1000,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
-        ChatNotificationConfig(context)
+        ChatNotificationConfig(context),
+        FakeTokenManager(token)
     )
 
     val connectedEvent = ConnectedEvent().apply {
