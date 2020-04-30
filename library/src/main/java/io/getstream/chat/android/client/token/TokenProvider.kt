@@ -1,9 +1,8 @@
 package io.getstream.chat.android.client.token
 
-interface TokenProvider {
-    fun getToken(listener: TokenProviderListener)
+import androidx.annotation.WorkerThread
 
-    interface TokenProviderListener {
-        fun onSuccess(token: String)
-    }
+interface TokenProvider {
+    @WorkerThread
+    fun loadToken(): String
 }
