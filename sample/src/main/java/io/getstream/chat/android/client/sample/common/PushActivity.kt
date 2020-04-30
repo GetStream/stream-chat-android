@@ -48,22 +48,6 @@ class PushActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun addDevice() {
-        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
-
-            val token = it.token
-
-            App.client.addDevice(token).enqueue { resp ->
-                if (resp.isSuccess)
-                    UtilsMessages.show("device set successfully")
-                else
-                    UtilsMessages.show("device set error: " + resp.error())
-            }
-        }
-
-        queryFirstChannel()
-    }
-
     private fun queryFirstChannel() {
         val filter = FilterObject("type", "messaging")
         val sort = QuerySort().asc("created_at")
