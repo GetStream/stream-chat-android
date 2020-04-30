@@ -179,9 +179,9 @@ class ChatDomainImpl private constructor(
         return database
     }
 
-    suspend fun runAndRetry(runnable: () -> Call<Any>): Result<Any> {
+    suspend fun runAndRetry(runnable: () -> Call<*>): Result<*> {
         var attempt = 1
-        var result: Result<Any>
+        var result: Result<*>
 
         while (true) {
             result = runnable().execute()
@@ -228,7 +228,7 @@ class ChatDomainImpl private constructor(
                 // update this when it's fixed
                 val watchChannelRequest = WatchChannelRequest()
                 watchChannelRequest.withData(c.extraData)
-                channelController.watch(watchChannelRequest) as Call<Any>
+                channelController.watch(watchChannelRequest)
             }
             val result = runAndRetry(runnable)
             return if (result.isSuccess) {

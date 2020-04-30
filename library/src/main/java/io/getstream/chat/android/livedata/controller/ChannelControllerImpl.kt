@@ -449,7 +449,7 @@ class ChannelControllerImpl(
 
             val runnable = {
                 val result = channelController.sendMessage(message)
-                result as Call<Any>
+                result
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
@@ -510,7 +510,7 @@ class ChannelControllerImpl(
         val online = domainImpl.isOnline()
         if (online) {
             val runnable = {
-                client.sendReaction(reaction) as Call<Any>
+                client.sendReaction(reaction)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
@@ -554,7 +554,7 @@ class ChannelControllerImpl(
         val online = domainImpl.isOnline()
         if (online) {
             val runnable = {
-                client.deleteReaction(reaction.messageId, reaction.type) as Call<Any>
+                client.deleteReaction(reaction.messageId, reaction.type)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
@@ -921,7 +921,7 @@ class ChannelControllerImpl(
 
         if (domainImpl.isOnline()) {
             val runnable = {
-                client.updateMessage(message) as Call<Any>
+                client.updateMessage(message)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
@@ -954,7 +954,7 @@ class ChannelControllerImpl(
 
         if (domainImpl.isOnline()) {
             val runnable = {
-                client.deleteMessage(message.id) as Call<Any>
+                client.deleteMessage(message.id)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
