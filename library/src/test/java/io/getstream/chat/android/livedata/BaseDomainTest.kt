@@ -112,16 +112,6 @@ open class BaseDomainTest {
     }
 
     fun createConnectedMockClient(): ChatClient {
-        val config = ChatClientConfig(
-            data.apiKey,
-            "hello.http",
-            "cdn.http",
-            "socket.url",
-            1000,
-            1000,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationConfig(getApplicationContext())
-        )
 
         val connectedEvent = ConnectedEvent().apply {
             me = data.user1

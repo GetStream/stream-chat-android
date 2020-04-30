@@ -132,7 +132,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     // get the message, update the reaction data, update the message
                     val message = messageMap[event.reaction!!.messageId]
                     message?.let {
-                        val userId = event.reaction!!.user!!.id
                         it.removeReaction(event.reaction!!, false)
                         it.reactionCounts = event.message.reactionCounts
                         messages[it.id] = it
@@ -154,7 +153,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
                     }
                 }
-                is ChannelUpdatedEvent, is ChannelHiddenEvent, is ChannelDeletedEvent -> {
+                is ChannelUpdatedEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
                     event.channel?.let {
                         channels[it.cid] = ChannelEntity(it)
@@ -180,10 +179,10 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 }
             }
 
-            for (event in events) {
+            for (chatEvent in events) {
 
                 // connection events are never send on the recovery endpoint, so handle them 1 by 1
-                when (event) {
+                when (chatEvent) {
                     is DisconnectedEvent -> {
                         domainImpl.postOffline()
                     }

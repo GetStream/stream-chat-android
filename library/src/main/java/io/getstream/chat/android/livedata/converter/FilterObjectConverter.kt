@@ -13,8 +13,8 @@ class FilterObjectConverter {
             return FilterObject()
         }
         val hashType: Type = object : TypeToken<HashMap<String, Any>?>() {}.type
-        val data: HashMap<String, Any> = gson.fromJson(data, hashType)
-        return FilterObject(data)
+        val dataMap: HashMap<String, Any> = gson.fromJson(data, hashType)
+        return FilterObject(dataMap)
     }
 
     @TypeConverter

@@ -215,7 +215,7 @@ class ChannelControllerImpl(
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
-        val messages =  messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+        val messages = messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
         return messages
     }
 
@@ -291,10 +291,6 @@ class ChannelControllerImpl(
             }
         }
         return result
-    }
-
-    fun mute(expirationInSeconds: Int) {
-        // TODO: LLC support
     }
 
     suspend fun watch(limit: Int = 30) {
@@ -426,9 +422,6 @@ class ChannelControllerImpl(
         if (message.cid.isEmpty()) {
             message.cid = cid
         }
-        val channel = checkNotNull(_channelData.value) { "Channel needs to be set before sending a message" }
-        // best not to expose the channel object on a message
-        // message.channel = toChannel()
 
         message.user = domainImpl.currentUser
         message.createdAt = message.createdAt ?: Date()
@@ -481,11 +474,9 @@ class ChannelControllerImpl(
     }
 
     private fun setLastMessage(message: Message) {
-        val copy = _channelData.value!!
-        if (copy != null) {
-            copy.addMessage(MessageEntity(message))
-            _channelData.postValue(copy)
-        }
+        val copy = _channelData.value ?: ChannelData(channelType, channelId)
+        copy.addMessage(MessageEntity(message))
+        _channelData.postValue(copy)
     }
 
     /**
@@ -910,7 +901,7 @@ class ChannelControllerImpl(
     fun setWatchers(watchers: List<Watcher>) {
         val copy = _watchers.value ?: mutableMapOf()
         for (watcher in watchers) {
-            watcher.user?.let {
+            watcher.user.let {
                 copy[it.id] = it
             }
         }
@@ -998,7 +989,6 @@ class ChannelControllerImpl(
         if (messages.isNotEmpty()) {
             channel.lastMessageAt = messages.last().createdAt
         }
-
 
         return channel
     }

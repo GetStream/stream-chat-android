@@ -115,7 +115,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         commandInfo = m.commandInfo
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
-        if (cid.isNullOrEmpty() && m.channel != null) {
+        if (cid.isEmpty()) {
             cid = m.channel.cid
         }
 

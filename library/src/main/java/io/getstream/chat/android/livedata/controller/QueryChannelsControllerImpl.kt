@@ -226,11 +226,7 @@ class QueryChannelsControllerImpl(
         val output: Result<List<Channel>>
         if (domainImpl.isOnline()) {
             val result = runQueryOnline(pagination)
-            output = if (result.isSuccess) {
-                Result(result.data() as List<Channel>, null)
-            } else {
-                Result(null, result.error())
-            }
+            output = result
         } else {
             recoveryNeeded = true
             output = Result(channels, null)
@@ -250,7 +246,7 @@ class QueryChannelsControllerImpl(
         }
         val copy = _channels.value ?: ConcurrentHashMap()
 
-        val missingChannels = channelsResponse.filterNot { it.cid in copy }.map { domainImpl.channel(it.cid).toChannel() }
+        val missingChannels = channelsResponse.filterNot { copy.containsKey(it.cid) }.map { domainImpl.channel(it.cid).toChannel() }
         for (channel in missingChannels) {
             copy[channel.cid] = channel
         }

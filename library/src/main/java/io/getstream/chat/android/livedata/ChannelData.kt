@@ -58,7 +58,7 @@ data class ChannelData(var type: String, var channelId: String) {
         c.deletedAt = deletedAt
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
-        c.createdBy = createdBy!!
+        c.createdBy = createdBy
 
         c.messages = messages
         c.members = members
