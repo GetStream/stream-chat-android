@@ -1,4 +1,13 @@
-# Upcoming
+# 1.3.0 - Wed 30 Apr 2020
+
+🚨 Breaking changes:
+- `TokenProvider` signature enforces async execution
+- make socket related classes internal
+
+✅ Other changes
+- fix endlessly hanging request in case setUser is not called
+- fix expired token case on socket connection
+- fix client crash if TokenProvider throws an exception
 
 # 1.2.2 - Wed 29 Apr 2020
 
