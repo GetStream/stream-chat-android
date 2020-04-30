@@ -9,7 +9,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-class HealthMonitor(val socket: ChatSocketServiceImpl) {
+internal class HealthMonitor(val socket: ChatSocketServiceImpl) {
 
     private val delayHandler = Handler()
     private val healthCheckInterval = 30 * 1000L

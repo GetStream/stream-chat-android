@@ -12,7 +12,7 @@ enum class ChatErrorCode(val code: Int, val description: String) {
     CANT_PARSE_CONNECTION_EVENT(1004, "Unable to parse connection event"),
     CANT_PARSE_EVENT(1005, "Unable to parse event"),
     INVALID_TOKEN(1006, "Invalid token"),
-    UNDEFINED_TOKEN(1007, "No defined token. Check if client.setUser was called"),
+    UNDEFINED_TOKEN(1007, "No defined token. Check if client.setUser was called and finished"),
 
 
     /**

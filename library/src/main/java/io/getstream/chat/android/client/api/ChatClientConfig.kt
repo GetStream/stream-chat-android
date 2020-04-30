@@ -2,11 +2,11 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
-import io.getstream.chat.android.client.token.CachedTokenProvider
-import io.getstream.chat.android.client.token.CachedTokenProviderImpl
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.token.TokenManagerImpl
 
 
-class ChatClientConfig(
+internal class ChatClientConfig(
     val apiKey: String,
     var httpUrl: String,
     var cdnHttpUrl: String,
@@ -17,6 +17,6 @@ class ChatClientConfig(
     val notificationsConfig: ChatNotificationConfig
 ) {
 
-    val tokenProvider: CachedTokenProvider = CachedTokenProviderImpl()
+    val tokenManager: TokenManager = TokenManagerImpl()
     var isAnonymous: Boolean = false
 }

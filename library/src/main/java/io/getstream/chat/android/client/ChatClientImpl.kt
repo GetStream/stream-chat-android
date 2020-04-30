@@ -72,24 +72,30 @@ internal class ChatClientImpl(
     override fun setUser(user: User, token: String, listener: InitConnectionListener?) {
         connectionListener = listener
         config.isAnonymous = false
-        config.tokenProvider.setTokenProvider(ImmediateTokenProvider(token))
+        config.tokenManager.setTokenProvider(ImmediateTokenProvider(token))
         notifications.onSetUser()
-        socket.connect(user)
+        getTokenAndConnect {
+            socket.connect(user)
+        }
     }
 
     override fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener?) {
         connectionListener = listener
         config.isAnonymous = false
-        config.tokenProvider.setTokenProvider(tokenProvider)
+        config.tokenManager.setTokenProvider(tokenProvider)
         notifications.onSetUser()
-        socket.connect(user)
+        getTokenAndConnect {
+            socket.connect(user)
+        }
     }
 
     override fun setAnonymousUser(listener: InitConnectionListener?) {
         connectionListener = listener
         config.isAnonymous = true
         notifications.onSetUser()
-        socket.connectAnonymously()
+        getTokenAndConnect {
+            socket.connectAnonymously()
+        }
     }
 
     override fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
@@ -461,5 +467,11 @@ internal class ChatClientImpl(
         }
 
         connectionListener = null
+    }
+
+    private fun getTokenAndConnect(connect: () -> Unit) {
+        config.tokenManager.loadAsync {
+            connect()
+        }
     }
 }

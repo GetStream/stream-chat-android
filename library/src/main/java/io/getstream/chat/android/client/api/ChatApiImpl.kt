@@ -145,12 +145,8 @@ class ChatApiImpl(
 
     override fun deleteDevice(firebaseToken: String): Call<Unit> {
         return callMapper.map(
-            retrofitApi.deleteDevice(
-                firebaseToken, apiKey, userId, connectionId
-            )
-        ).map {
-            Unit
-        }
+            retrofitApi.deleteDevice(firebaseToken, apiKey, userId, connectionId)
+        ).map { Unit }
     }
 
     override fun getDevices(): Call<List<Device>> {
