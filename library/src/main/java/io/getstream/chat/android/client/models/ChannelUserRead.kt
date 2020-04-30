@@ -7,5 +7,7 @@ import java.util.*
 data class ChannelUserRead(
     override var user: User,
     @SerializedName("last_read")
-    var lastRead: Date? = null
+    var lastRead: Date? = null,
+    @SerializedName("unread_messages")
+    var unreadMessages: Int = 0
 ) : UserEntity
