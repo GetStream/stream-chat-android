@@ -33,7 +33,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
     val filter = FilterObject("type", "messaging")
     val sort = QuerySort().asc("created_at")
-    val request = QueryChannelRequest().withWatch()
+    val request = QueryChannelRequest().withWatch().withMessages(10)
 
     val chType = "messaging"
     val chId = "x-test"
@@ -120,6 +120,14 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
             client.stopWatching(chType, chId).enqueue { stopWatchResult ->
                 UtilsMessages.show("stopped", "not stopped:", stopWatchResult)
+            }
+        }
+
+        btnUpdateChannel.setOnClickListener {
+            val data = mutableMapOf<String, Any>()
+            data["name"] = chId
+            client.updateChannel(chType, chId, Message("update-msg"), data).enqueue {
+                UtilsMessages.show("updated", "not updated:", it)
             }
         }
 

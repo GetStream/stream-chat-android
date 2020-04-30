@@ -64,4 +64,11 @@
             android:id="@+id/btnStopWatchingChannel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="Update channel"
+            android:id="@+id/btnUpdateChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>
