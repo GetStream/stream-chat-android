@@ -11,7 +11,7 @@ import okhttp3.WebSocket
 import java.util.*
 
 
-class EventsParser(
+internal class EventsParser(
     private val service: ChatSocketServiceImpl,
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {

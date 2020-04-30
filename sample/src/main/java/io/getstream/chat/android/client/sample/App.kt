@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.sample.common.KeyValue
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryLive
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
+import io.getstream.chat.android.client.token.TokenProvider
 import kotlin.time.ExperimentalTime
 
 class App : Application() {

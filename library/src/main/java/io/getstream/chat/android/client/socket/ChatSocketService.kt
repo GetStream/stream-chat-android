@@ -8,12 +8,7 @@ interface ChatSocketService {
 
     var state: State
 
-    fun connect(
-        endpoint: String,
-        apiKey: String,
-        user: User?,
-        userToken: String?
-    )
+    fun connect(endpoint: String, apiKey: String, user: User?)
 
     fun disconnect()
 

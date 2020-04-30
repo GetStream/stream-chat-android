@@ -2,36 +2,29 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.token.CachedTokenProvider
-import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
-class ChatSocketImpl(
+internal class ChatSocketImpl(
     private val apiKey: String,
     private val wssUrl: String,
-    private val cachedTokenProvider: CachedTokenProvider,
+    private val tokenManager: TokenManager,
     private val chatParser: ChatParser
 ) : ChatSocket {
 
-    private val service = ChatSocketServiceImpl(chatParser)
+    private val service = ChatSocketServiceImpl(chatParser, tokenManager)
 
     override fun connectAnonymously() {
-        connect(null, null)
+        service.connect(wssUrl, apiKey, null)
     }
 
     override fun connect(user: User) {
-        cachedTokenProvider.getToken(object : TokenProvider.TokenProviderListener {
-            override fun onSuccess(token: String) {
-                connect(user, token)
-            }
-        })
+        service.connect(wssUrl, apiKey, user)
     }
 
     override fun events(): ChatObservable {
-        return ChatObservableImpl(
-            service
-        )
+        return ChatObservableImpl(service)
     }
 
     override fun disconnect() {
@@ -44,10 +37,6 @@ class ChatSocketImpl(
 
     override fun removeListener(listener: SocketListener) {
         service.removeListener(listener)
-    }
-
-    private fun connect(user: User?, userToken: String?) {
-        service.connect(wssUrl, apiKey, user, userToken)
     }
 
 }

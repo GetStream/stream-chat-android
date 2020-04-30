@@ -74,7 +74,10 @@ internal open class ChatModules(val config: ChatClientConfig) {
             // interceptors
             .addInterceptor(HeadersInterceptor(config))
             .addInterceptor(HttpLoggingInterceptor())
-            .addInterceptor(TokenAuthInterceptor(config, parser))
+            .addInterceptor(TokenAuthInterceptor(
+                config.tokenManager,
+                parser
+            ) {config.isAnonymous})
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
@@ -90,7 +93,7 @@ internal open class ChatModules(val config: ChatClientConfig) {
         return ChatSocketImpl(
             chatConfig.apiKey,
             chatConfig.wssUrl,
-            chatConfig.tokenProvider,
+            chatConfig.tokenManager,
             parser
         )
     }

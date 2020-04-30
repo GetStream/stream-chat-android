@@ -9,16 +9,16 @@ class FakeSocketService() : ChatSocketService {
 
     override var state: ChatSocketService.State = ChatSocketService.State.Disconnected(false)
 
+    override fun connect(endpoint: String, apiKey: String, user: User?) {
+
+    }
+
     private val listeners = mutableListOf<SocketListener>()
 
     fun sendEvent(event: ChatEvent) {
         listeners.forEach {
             it.onEvent(event)
         }
-    }
-
-    override fun connect(endpoint: String, apiKey: String, user: User?, userToken: String?) {
-
     }
 
     override fun disconnect() {

@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.sample.utils
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.google.firebase.iid.FirebaseInstanceId
@@ -16,6 +17,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
@@ -48,15 +50,13 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         request.withData(data)
 
+        val notificationsConfig = object : ChatNotificationConfig(context) {
+            override fun onFirebaseMessage(message: RemoteMessage): Boolean {
+                return true
+            }
+        }
         client = ChatClient.Builder(config.apiKey, App.instance)
-            .notifications(object : ChatNotificationConfig(context) {
-                override fun onFirebaseMessage(message: RemoteMessage): Boolean {
-
-                    textPush.text = "Received: ${message.hashCode()}"
-
-                    return super.onFirebaseMessage(message)
-                }
-            })
+            .notifications(notificationsConfig)
             .build()
 
         subs.add(client.events()
@@ -65,16 +65,19 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             .filter(ConnectingEvent::class.java)
             .subscribe { event ->
                 textStatus.text = event.type
-
-                if(event is ConnectingEvent){
-                    //
-                }
+                Log.d("connection-events", event::class.java.simpleName)
             })
 
         textUserId.text = "UserId: ${config.userId}"
 
         btnConnect.setOnClickListener {
-            client.setUser(config.getUser(), config.token)
+
+            client.setUser(config.getUser(), object : TokenProvider {
+                override fun loadToken(): String {
+                    Thread.sleep(1000)
+                    return config.token
+                }
+            })
         }
 
         btnDisconnect.setOnClickListener {
@@ -87,9 +90,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 val token = it.token
 
                 client.addDevice(token).enqueue { addDeviceResult ->
-                    if (addDeviceResult.isSuccess) {
-
-                    }
+                    UtilsMessages.show("device added", "device not added: ", addDeviceResult)
                 }
             }
         }
@@ -99,10 +100,8 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
 
                 val token = it.token
-                client.deleteDevice(token).enqueue { result ->
-                    if (result.isSuccess) {
-
-                    }
+                client.deleteDevice(token).enqueue { deleteDeviceResult ->
+                    UtilsMessages.show("removed", "not removed: ", deleteDeviceResult)
                 }
             }
 
@@ -113,26 +112,20 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
 
             client.queryChannel(chType, chId, request).enqueue { watchResult ->
-                if (watchResult.isSuccess) {
-
-                }
+                UtilsMessages.show("started", "not not started:", watchResult)
             }
         }
 
         btnStopWatchingChannel.setOnClickListener {
 
             client.stopWatching(chType, chId).enqueue { stopWatchResult ->
-                if (stopWatchResult.isSuccess) {
-
-                }
+                UtilsMessages.show("stopped", "not stopped:", stopWatchResult)
             }
         }
 
         btnSendMessage.setOnClickListener {
             client.sendMessage(chType, chId, Message(text = "SSS")).enqueue { messageResult ->
-                if (messageResult.isSuccess) {
-
-                }
+                UtilsMessages.show("sent", "not sent:", messageResult)
             }
         }
     }

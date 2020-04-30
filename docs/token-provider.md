@@ -4,16 +4,17 @@
 
 	```kotlin
 	val token = "token"
-	client.setUser(ChatUser(), token)
+	client.setUser(User("id"), token)
 	```
 
 2. For tokens with expiration
 
-	```
-	val tokenProvider = object: TokenProvider() {
-		fun getToken(listener:(String) -> Unit) {
-			//call api and call listener to provide token
-			//listener("token")
-		}
-	} 
-	```
+    ```
+    val tokenProvider = object: TokenProvider() {
+        // Executed in background thread   
+        override fun loadToken(): String {
+            return api.getChatToken().execute()
+        }
+    }
+    client.setUser(User("id"), tokenProvider)
+    ```

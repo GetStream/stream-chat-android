@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
+import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
@@ -291,9 +292,9 @@ public class DocumentationSamplesJava {
             }
 
             static void tokenExpiration() {
-                client.setUser(user, listener -> {
+                client.setUser(user, () -> {
                     String newToken = "fetch a new token from your backend";
-                    listener.onSuccess(newToken);
+                    return newToken;
                 }, null);
             }
 
