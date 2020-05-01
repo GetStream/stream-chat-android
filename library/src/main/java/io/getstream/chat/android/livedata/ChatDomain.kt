@@ -69,6 +69,7 @@ interface ChatDomain {
 
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
+        private var recoveryEnabled: Boolean = true
 
         fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -85,6 +86,16 @@ interface ChatDomain {
             return this
         }
 
+        fun recoveryEnabled(): Builder {
+            this.recoveryEnabled = true
+            return this
+        }
+
+        fun recoveryDisabled(): Builder {
+            this.recoveryEnabled = false
+            return this
+        }
+
         fun userPresenceEnabled(): Builder {
             this.userPresence = true
             return this
@@ -96,7 +107,7 @@ interface ChatDomain {
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            val chatDomain = ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, database)
+            val chatDomain = ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
 
             return chatDomain
         }

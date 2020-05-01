@@ -53,6 +53,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    @Ignore("This test is not stable due to usage of setOffline")
     fun deleteReaction() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.setOffline()
 

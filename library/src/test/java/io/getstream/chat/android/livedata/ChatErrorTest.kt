@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.isPermanent
 import org.junit.Ignore
 import org.junit.Test

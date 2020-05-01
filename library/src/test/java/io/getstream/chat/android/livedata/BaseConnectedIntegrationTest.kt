@@ -35,7 +35,7 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(
             db
-        ).offlineEnabled().userPresenceEnabled().buildImpl()
+        ).offlineEnabled().userPresenceEnabled().recoveryDisabled().buildImpl()
         chatDomain = chatDomainImpl
         chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
         chatDomainImpl.retryPolicy = object : RetryPolicy {

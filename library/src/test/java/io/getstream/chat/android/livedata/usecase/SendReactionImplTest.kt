@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

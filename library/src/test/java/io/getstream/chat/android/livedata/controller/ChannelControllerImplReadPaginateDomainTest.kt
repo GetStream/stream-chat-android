@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
@@ -84,5 +83,4 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
         val messages = chatDomainImpl.channel(channelId).messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
-
 }

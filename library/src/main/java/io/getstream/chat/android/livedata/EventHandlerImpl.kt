@@ -190,7 +190,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         val recovered = domainImpl.isInitialized()
                         domainImpl.postOnline()
                         domainImpl.postInitialized()
-                        if (recovered) {
+                        if (recovered && domainImpl.recoveryEnabled) {
                             domainImpl.connectionRecovered(true)
                         } else {
                             domainImpl.connectionRecovered(false)

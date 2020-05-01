@@ -58,6 +58,7 @@ class ChatDomainImpl private constructor(
     internal var client: ChatClient,
     override var currentUser: User,
     override var offlineEnabled: Boolean = false,
+    internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false
 ) :
     ChatDomain {
@@ -121,7 +122,7 @@ class ChatDomainImpl private constructor(
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
 
-    internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence) {
+    internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, recoveryEnabled: Boolean=true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         val chatDatabase = db ?: createDatabase()
@@ -213,7 +214,7 @@ class ChatDomainImpl private constructor(
     suspend fun createChannel(c: Channel): Result<Channel> {
         val online = isOnline()
         c.createdAt = c.createdAt ?: Date()
-        c.syncStatus = if (online) {SyncStatus.IN_PROGRESS} else { SyncStatus.SYNC_NEEDED }
+        c.syncStatus = if (online) { SyncStatus.IN_PROGRESS } else { SyncStatus.SYNC_NEEDED }
 
         // update livedata
         val channelRepo = channel(c.cid)
@@ -230,7 +231,7 @@ class ChatDomainImpl private constructor(
                 // update this when it's fixed
                 val watchChannelRequest = WatchChannelRequest()
                 watchChannelRequest.withData(c.extraData)
-                //watchChannelRequest.withMembers(c.members)
+                // watchChannelRequest.withMembers(c.members)
                 channelController.watch(watchChannelRequest)
             }
             val result = runAndRetry(runnable)
@@ -396,6 +397,7 @@ class ChatDomainImpl private constructor(
         /*
          * client.recoverEvents(channelIDs, {limit: 100, since: last_time_online, [offset: $offset_returned_by_previous_call ]})
          */
+
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)

@@ -2,16 +2,14 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
-import java.util.*
 import io.github.cdimascio.dotenv.dotenv
-
+import java.util.*
 
 class TestDataHelper {
     val dotenv = dotenv()
 
-    val apiKey = checkNotNull(dotenv["STREAM_API_KEY"]) {"Be sure to specify the STREAM_API_KEY environment variable"}
-    val logLevel = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) {"Be sure to specify the STREAM_LOG_LEVEL environment variable"}
-
+    val apiKey = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }
+    val logLevel = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) { "Be sure to specify the STREAM_LOG_LEVEL environment variable" }
 
     val connection1 = "test-connection"
     val user1 = User("broad-lake-3")
