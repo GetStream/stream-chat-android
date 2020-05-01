@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.isChannelEvent
 import io.getstream.chat.android.livedata.controller.users
 import io.getstream.chat.android.livedata.entity.ChannelEntity
@@ -32,6 +33,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         events.sortedBy { it.createdAt }
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
+        var me: User? = null
 
         val messages: MutableMap<String, MessageEntity> = mutableMapOf()
         var unreadChannels: Int? = null
@@ -109,6 +111,14 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     channelEntity.hidden = false
                     channels[event.channel!!.id] = channelEntity
                 }
+                is NotificationMutesUpdated -> {
+                    val muteEvent: NotificationMutesUpdated = event
+                    me = muteEvent.me
+                }
+                is ConnectedEvent -> {
+                    val connectedEvent: ConnectedEvent = event
+                    me = connectedEvent.me
+                }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
                     val channel = channelMap[event.cid]
@@ -170,6 +180,9 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
             domainImpl.repos.channels.insert(channels.values.toList())
             // we only cache messages for which we're receiving events
             domainImpl.repos.messages.insert(messages.values.toList(), true)
+            if (me != null) {
+                domainImpl.updateCurrentUser(me)
+            }
 
             unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
             totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
@@ -191,11 +204,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     is ConnectedEvent -> {
                         val connectedEvent: ConnectedEvent = chatEvent
                         val recovered = domainImpl.isInitialized()
-                        if (connectedEvent.me.id != domainImpl.currentUser.id) {
-                            throw InputMismatchException("received connect event for user with id ${connectedEvent.me.id} while chat domain is configured for user with id ${domainImpl.currentUser.id}. create a new chatdomain when connecting a different user.")
-                        }
-                        domainImpl.currentUser = connectedEvent.me
-                        domainImpl.repos.users.insertMe(connectedEvent.me)
+
                         domainImpl.postOnline()
                         domainImpl.postInitialized()
                         if (recovered && domainImpl.recoveryEnabled) {
@@ -210,6 +219,8 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
             for (queryRepo in domainImpl.getActiveQueries()) {
                 queryRepo.handleEvents(events)
             }
+
+
         }
     }
 }

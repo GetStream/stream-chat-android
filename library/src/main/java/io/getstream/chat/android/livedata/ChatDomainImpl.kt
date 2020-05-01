@@ -70,6 +70,7 @@ class ChatDomainImpl private constructor(
     private val _totalUnreadCount = MutableLiveData<Int>()
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
+    private val _mutedUsers = MutableLiveData<List<Mute>>()
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
@@ -92,6 +93,12 @@ class ChatDomainImpl private constructor(
      * the number of unread channels for the current user
      */
     override val channelUnreadCount: LiveData<Int> = _channelUnreadCount
+
+    /**
+     * list of users that you've muted
+     */
+    override val mutedUsers: LiveData<List<Mute>> = _mutedUsers
+
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -137,10 +144,10 @@ class ChatDomainImpl private constructor(
         scope.launch(scope.coroutineContext) {
             repos.configs.load()
             // load the current user from the db
-            val me = repos.users.select("me")
+            val me = repos.users.selectMe()
             me?.let {
                 if (it.updatedAt!! > currentUser.updatedAt) {
-                    chatDomainImpl.currentUser = it.toUser()
+                    updateCurrentUser(it)
                 }
             }
         }
@@ -160,6 +167,15 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
+    }
+
+    internal suspend fun updateCurrentUser(me: User) {
+        if (me.id != currentUser.id) {
+            throw InputMismatchException("received connect event for user with id ${me.id} while chat domain is configured for user with id ${currentUser.id}. create a new chatdomain when connecting a different user.")
+        }
+        currentUser = me
+        repos.users.insertMe(me)
+        _mutedUsers.postValue(me.mutes)
     }
 
     override fun disconnect() {

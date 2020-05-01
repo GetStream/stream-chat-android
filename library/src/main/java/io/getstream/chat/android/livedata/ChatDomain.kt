@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
@@ -133,4 +134,5 @@ interface ChatDomain {
     }
 
     fun getVersion(): String
+    val mutedUsers: LiveData<List<Mute>>
 }
