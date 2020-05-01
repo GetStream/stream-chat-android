@@ -24,6 +24,5 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         for (channel in channels) {
             Truth.assertThat(channel.unreadCount).isNotNull()
         }
-
     }
 }

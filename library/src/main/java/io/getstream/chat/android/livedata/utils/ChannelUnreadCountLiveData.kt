@@ -50,4 +50,3 @@ class ChannelUnreadCountLiveData(
         return computeUnreadCount(currentUser, read, messages)
     }
 }
-

@@ -13,13 +13,13 @@ import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
-import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import java.util.Calendar
 import java.util.Date

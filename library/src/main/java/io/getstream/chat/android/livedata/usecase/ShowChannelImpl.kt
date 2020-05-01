@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
 interface ShowChannel {

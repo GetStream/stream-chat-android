@@ -3,10 +3,10 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.utils.Call2
-import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import kotlinx.coroutines.launch
 
 interface QueryChannels {
