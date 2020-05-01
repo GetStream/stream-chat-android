@@ -9,6 +9,7 @@ import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import kotlinx.coroutines.*
+import java.util.InputMismatchException
 
 class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDomainImpl, var runAsync: Boolean = true) {
     private val logger = ChatLogger.get("ChatDomain EventHandler")
@@ -28,6 +29,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
     }
 
     internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+        events.sortedBy { it.createdAt }
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
 
@@ -187,7 +189,13 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         domainImpl.postOffline()
                     }
                     is ConnectedEvent -> {
+                        val connectedEvent: ConnectedEvent = chatEvent
                         val recovered = domainImpl.isInitialized()
+                        if (connectedEvent.me.id != domainImpl.currentUser.id) {
+                            throw InputMismatchException("received connect event for user with id ${connectedEvent.me.id} while chat domain is configured for user with id ${domainImpl.currentUser.id}. create a new chatdomain when connecting a different user.")
+                        }
+                        domainImpl.currentUser = connectedEvent.me
+                        domainImpl.repos.users.insertMe(connectedEvent.me)
                         domainImpl.postOnline()
                         domainImpl.postInitialized()
                         if (recovered && domainImpl.recoveryEnabled) {

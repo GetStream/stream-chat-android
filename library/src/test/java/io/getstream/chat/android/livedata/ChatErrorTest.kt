@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.controller.isPermanent
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 

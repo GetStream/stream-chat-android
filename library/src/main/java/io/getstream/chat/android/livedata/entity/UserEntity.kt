@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import java.util.*
 
@@ -15,11 +16,10 @@ import java.util.*
  * userEntity.toUser()
  */
 @Entity(tableName = "stream_chat_user")
-data class UserEntity(@PrimaryKey val id: String) {
-//    /** the name of the user. this field is used by our UI libraries. */
-//    var name: String = ""
-//    /** the image of the user. this field is used by our UI libraries. */
-//    var image: String = ""
+data class UserEntity(@PrimaryKey var id: String) {
+    /** used for storing the current user */
+    var originalId: String = ""
+
     /** the user's role */
     var role: String = ""
     /** when the user was created */
@@ -31,26 +31,28 @@ data class UserEntity(@PrimaryKey val id: String) {
 
     /** only provided for the current user, invisible marks the user as offline for other users */
     var invisible: Boolean = false
+
+    /** only provided for the current user, list of users you've muted */
+    var mutes: List<String> = mutableListOf()
+
     /** all the custom data provided for this user */
     var extraData = mutableMapOf<String, Any>()
 
     /** create a userEntity from a user object */
     constructor(user: User) : this(user.id) {
-//        name = user.name
-//        image = user.image
         role = user.role
         createdAt = user.createdAt
         updatedAt = user.updatedAt
         lastActive = user.lastActive
         invisible = user.invisible
         extraData = user.extraData
+        val muteList = user.mutes ?: mutableListOf()
+        mutes = muteList.map { it.target.id }
     }
 
     /** converts a user entity into a user */
     fun toUser(): User {
         val u = User(id = this.id)
-//        u.name = name
-//        u.image = image
         u.role = role
         u.createdAt = createdAt
         u.updatedAt = updatedAt

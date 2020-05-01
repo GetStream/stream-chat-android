@@ -35,6 +35,15 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    fun loadMe() = runBlocking(Dispatchers.IO) {
+        data.user1.extraData = mutableMapOf("snack" to "icecream")
+        chatDomainImpl.repos.users.insertMe(data.user1)
+        val me = chatDomainImpl.repos.users.selectMe()
+        Truth.assertThat(me).isNotNull()
+        Truth.assertThat(me?.id).isEqualTo("broad-lake-3")
+    }
+
+    @Test
     fun unreadCounts() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2) }
         Truth.assertThat(chatDomainImpl.channelUnreadCount.getOrAwaitValue()).isEqualTo(2)

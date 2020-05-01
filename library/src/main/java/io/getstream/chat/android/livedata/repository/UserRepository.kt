@@ -35,6 +35,22 @@ class UserRepository(
         insert(listOf(userEntity))
     }
 
+    suspend fun insertMe(user: User) {
+        val userEntity = UserEntity(user)
+        userEntity.originalId = user.id
+        userEntity.id = "me"
+        insert(listOf(userEntity))
+    }
+
+    suspend fun selectMe(): User? {
+        val userEntity = select("me")
+        if (userEntity != null) {
+            userEntity.id = userEntity.originalId
+            return userEntity.toUser()
+        }
+        return null
+    }
+
     suspend fun select(userId: String): UserEntity? {
         return select(listOf(userId)).getOrElse(0) { null }
     }

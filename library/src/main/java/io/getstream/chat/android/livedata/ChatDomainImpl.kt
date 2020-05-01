@@ -133,8 +133,16 @@ class ChatDomainImpl private constructor(
         repos = RepositoryHelper(client, currentUser, chatDatabase)
 
         // load channel configs from Room into memory
-        scope.launch(Dispatchers.IO) {
+        val chatDomainImpl = this
+        scope.launch(scope.coroutineContext) {
             repos.configs.load()
+            // load the current user from the db
+            val me = repos.users.select("me")
+            me?.let {
+                if (it.updatedAt!! > currentUser.updatedAt) {
+                    chatDomainImpl.currentUser = it.toUser()
+                }
+            }
         }
 
         useCases = UseCaseHelper(this)

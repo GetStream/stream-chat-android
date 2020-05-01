@@ -113,8 +113,8 @@ class TestDataHelper {
         calendar(2020, 1, 1)
     }
 
-    val connectedEvent = ConnectedEvent()
-    val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2 }
+    val connectedEvent = ConnectedEvent().apply { me=user1 }
+    val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2; me=user1 }
 
     val disconnectedEvent = DisconnectedEvent()
     val newMessageEvent = NewMessageEvent().apply { message = message1; cid = channel1.cid }
