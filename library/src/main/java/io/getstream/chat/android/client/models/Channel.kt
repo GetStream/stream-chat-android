@@ -25,7 +25,7 @@ data class Channel(
     var updatedAt: Date? = null,
 
     @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED,
+    var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @SerializedName("member_count")
     val memberCount: Int = 0,
@@ -38,6 +38,13 @@ data class Channel(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
+    var unreadCount: Int? = null,
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 
+
+
 ) : CustomObject
+
