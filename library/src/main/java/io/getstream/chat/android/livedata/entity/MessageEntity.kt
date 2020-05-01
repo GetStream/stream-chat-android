@@ -148,7 +148,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
-        m.mentionedUsers = mentionedUsersId.map { userMap[it] } as MutableList<User>
+        m.mentionedUsers = mentionedUsersId.mapNotNull { userMap[it] }.toMutableList()
 
         return m
     }

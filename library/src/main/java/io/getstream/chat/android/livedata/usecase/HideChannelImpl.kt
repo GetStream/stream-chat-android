@@ -20,6 +20,6 @@ class HideChannelImpl(var domainImpl: ChatDomainImpl) : HideChannel {
             val clearHistory = !keepHistory
             channelController.hide(clearHistory)
         }
-        return CallImpl2<Unit>(runnable, channelController.scope)
+        return CallImpl2(runnable, channelController.scope)
     }
 }

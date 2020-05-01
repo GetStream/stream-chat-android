@@ -15,8 +15,8 @@ class TestDataHelper {
     val user1 = User("broad-lake-3")
     val user3 = User("user-3")
 
-    val user1Token =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJvYWQtbGFrZS0zIn0.SIb263bpikToka22ofV-9AakJhXzfeF8pU9cstvzInE"
+    val user1Token =checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
+
     val user2 = User("test-user-2")
     val userMap = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)
     val user1updated = User("broad-lake-3").apply { extraData = mutableMapOf("color" to "green") }
