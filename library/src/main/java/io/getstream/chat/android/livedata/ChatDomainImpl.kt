@@ -99,7 +99,6 @@ class ChatDomainImpl private constructor(
      */
     override val mutedUsers: LiveData<List<Mute>> = _mutedUsers
 
-
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
      * The following example shows how to observe these errors

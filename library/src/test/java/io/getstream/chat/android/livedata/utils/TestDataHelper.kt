@@ -16,7 +16,7 @@ class TestDataHelper {
     val user3 = User("user-3")
     val userEvil = User("user-evil")
     val mute1 = Mute(user1, userEvil, Date(), Date())
-    val me1 = User("broad-lake-3").apply { mutes=listOf(mute1) }
+    val me1 = User("broad-lake-3").apply { mutes = listOf(mute1) }
 
     val user1Token = checkNotNull(dotenv["STREAM_USER_1_TOKEN"]) { "Be sure to specify the STREAM_USER_1_TOKEN environment variable" }
 
@@ -148,7 +148,7 @@ class TestDataHelper {
         message = message1; user = user1; cid = channel1.cid; createdAt = Date()
     }
 
-    val notificationMutesUpdated = NotificationMutesUpdated().apply { me=me1 }
+    val notificationMutesUpdated = NotificationMutesUpdated().apply { me = me1 }
 
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =
