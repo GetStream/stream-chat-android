@@ -11,7 +11,7 @@ fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List
         val lastRead = read?.lastRead
         val lastReadTime = lastRead?.time ?: 0
         val currentUserId = currentUser.id
-        for (m in messages!!.reversed()) {
+        for (m in messages.reversed()) {
             if (m.user.id == currentUserId) continue
             if (m.deletedAt != null) continue
             if (m.extraData.getOrElse("silent") { false } == true) continue

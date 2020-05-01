@@ -17,7 +17,7 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     fun filter() = runBlocking(Dispatchers.IO) {
         // use case style syntax
         var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
-        assertSuccess(queryChannelResult as Result<Any>)
+        assertSuccess(queryChannelResult)
         val queryChannelsController = queryChannelResult.data()
         val channels = queryChannelsController.channels.getOrAwaitValue()
         Truth.assertThat(channels).isNotEmpty()

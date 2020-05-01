@@ -16,14 +16,13 @@ class MarkReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun read() = runBlocking(Dispatchers.IO) {
-        val before = Date()
         var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         channelControllerImpl.handleEvent(data.newMessageFromUser2)
         var unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
         Truth.assertThat(unreadCount).isEqualTo(1)
 
         var result = chatDomain.useCases.markRead(data.channel1.cid).execute()
-        assertSuccess(result as Result<Any>)
+        assertSuccess(result)
         val lastRead = channelControllerImpl.read.getOrAwaitValue().lastRead
         Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
         unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
