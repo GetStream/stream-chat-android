@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
@@ -21,6 +21,9 @@ class MarkReadImpl(var domainImpl: ChatDomainImpl) : MarkRead {
 
             channelRepo.markRead()
         }
-        return CallImpl2<Boolean>(runnable, channelRepo.scope)
+        return CallImpl2<Boolean>(
+            runnable,
+            channelRepo.scope
+        )
     }
 }

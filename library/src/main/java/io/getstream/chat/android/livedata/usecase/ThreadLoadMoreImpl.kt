@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
@@ -25,6 +25,9 @@ class ThreadLoadMoreImpl(var domainImpl: ChatDomainImpl) : ThreadLoadMore {
         val runnable = suspend {
             threadController.loadOlderMessages(messageLimit)
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CallImpl2(
+            runnable,
+            channelController.scope
+        )
     }
 }

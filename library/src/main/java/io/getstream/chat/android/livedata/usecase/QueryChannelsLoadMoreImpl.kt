@@ -3,8 +3,8 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
 interface QueryChannelsLoadMore {
@@ -17,6 +17,9 @@ class QueryChannelsLoadMoreImpl(var domainImpl: ChatDomainImpl) : QueryChannelsL
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)
         }
-        return CallImpl2<List<Channel>>(runnable, domainImpl.scope)
+        return CallImpl2<List<Channel>>(
+            runnable,
+            domainImpl.scope
+        )
     }
 }

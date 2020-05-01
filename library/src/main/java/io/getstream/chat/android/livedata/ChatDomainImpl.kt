@@ -31,6 +31,9 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.usecase.*
+import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
+import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.livedata.utils.RetryPolicy
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -66,7 +69,7 @@ class ChatDomainImpl private constructor(
     private val _online = MutableLiveData<Boolean>(false)
     private val _totalUnreadCount = MutableLiveData<Int>()
     private val _channelUnreadCount = MutableLiveData<Int>()
-    private val _errorEvent = MutableLiveData<io.getstream.chat.android.livedata.Event<ChatError>>()
+    private val _errorEvent = MutableLiveData<Event<ChatError>>()
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
@@ -99,7 +102,7 @@ class ChatDomainImpl private constructor(
      *   })
      *
      */
-    override val errorEvents: LiveData<io.getstream.chat.android.livedata.Event<ChatError>> = _errorEvent
+    override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
 
     // TODO 1.1: We should accelerate online/offline detection
 
@@ -120,7 +123,8 @@ class ChatDomainImpl private constructor(
     internal lateinit var repos: RepositoryHelper
 
     /** The retry policy for retrying failed requests */
-    override var retryPolicy: RetryPolicy = DefaultRetryPolicy()
+    override var retryPolicy: RetryPolicy =
+        DefaultRetryPolicy()
 
     internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, recoveryEnabled: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
@@ -254,7 +258,11 @@ class ChatDomainImpl private constructor(
     }
 
     fun addError(error: ChatError) {
-        _errorEvent.postValue(io.getstream.chat.android.livedata.Event(error))
+        _errorEvent.postValue(
+            Event(
+                error
+            )
+        )
     }
 
     /** the event subscription, cancel using repo.stopListening */

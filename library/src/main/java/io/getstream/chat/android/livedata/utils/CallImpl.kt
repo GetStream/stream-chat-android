@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.utils
 
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
@@ -16,7 +16,8 @@ interface Call2<T> {
     fun cancel()
 }
 
-class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) : Call2<T> {
+class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) :
+    Call2<T> {
     var canceled: Boolean = false
 
     override fun cancel() {

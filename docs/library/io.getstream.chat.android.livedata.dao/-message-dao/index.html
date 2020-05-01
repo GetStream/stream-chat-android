@@ -14,6 +14,13 @@
 <tbody>
 <tr>
 <td>
+<h4><a href="delete-channel-messages-before.html">deleteChannelMessagesBefore</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">deleteChannelMessagesBefore</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$deleteChannelMessagesBefore(kotlin.String, java.util.Date)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$deleteChannelMessagesBefore(kotlin.String, java.util.Date)/deleteMessagesBefore">deleteMessagesBefore</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="insert.html">insert</a></h4>
 </td>
 <td>
@@ -32,6 +39,20 @@
 </td>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">messagesForChannel</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannel(kotlin.String, kotlin.Int)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannel(kotlin.String, kotlin.Int)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-message-entity/index.html"><span class="identifier">MessageEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="messages-for-channel-equal-or-newer-than.html">messagesForChannelEqualOrNewerThan</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">messagesForChannelEqualOrNewerThan</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrNewerThan(kotlin.String, kotlin.Int, java.util.Date)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrNewerThan(kotlin.String, kotlin.Int, java.util.Date)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrNewerThan(kotlin.String, kotlin.Int, java.util.Date)/dateFilter">dateFilter</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-message-entity/index.html"><span class="identifier">MessageEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="messages-for-channel-equal-or-older-than.html">messagesForChannelEqualOrOlderThan</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">messagesForChannelEqualOrOlderThan</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrOlderThan(kotlin.String, kotlin.Int, java.util.Date)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrOlderThan(kotlin.String, kotlin.Int, java.util.Date)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.dao.MessageDao$messagesForChannelEqualOrOlderThan(kotlin.String, kotlin.Int, java.util.Date)/dateFilter">dateFilter</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-message-entity/index.html"><span class="identifier">MessageEntity</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>

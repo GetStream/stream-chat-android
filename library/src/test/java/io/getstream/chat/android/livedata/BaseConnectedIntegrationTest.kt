@@ -6,6 +6,8 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
@@ -38,7 +40,8 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         ).offlineEnabled().userPresenceEnabled().recoveryDisabled().buildImpl()
         chatDomain = chatDomainImpl
         chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
-        chatDomainImpl.retryPolicy = object : RetryPolicy {
+        chatDomainImpl.retryPolicy = object :
+            RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
                 return false
             }
@@ -48,7 +51,7 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
             }
         }
 
-        chatDomainImpl.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
+        chatDomainImpl.errorEvents.observeForever(EventObserver {
             System.out.println("error event$it")
         })
         return chatDomainImpl

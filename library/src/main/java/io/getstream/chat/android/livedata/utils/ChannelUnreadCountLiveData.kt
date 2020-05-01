@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.utils
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
@@ -47,19 +47,7 @@ class ChannelUnreadCountLiveData(
 
     @Synchronized
     fun calculateUnreadCount(): Int? {
-        var unreadMessageCount: Int? = null
-        if (messages != null) {
-            unreadMessageCount = 0
-            val lastRead = read?.lastRead
-            val lastReadTime = lastRead?.time ?: 0
-            val currentUserId = currentUser.id
-            for (m in messages!!.reversed()) {
-                if (m.user.id == currentUserId) continue
-                if (m.deletedAt != null) continue
-                if (m.extraData.getOrElse("silent") { false } == true) continue
-                if (m.createdAt!!.time > lastReadTime) unreadMessageCount++
-            }
-        }
-        return unreadMessageCount
+        return computeUnreadCount(currentUser, read, messages)
     }
 }
+

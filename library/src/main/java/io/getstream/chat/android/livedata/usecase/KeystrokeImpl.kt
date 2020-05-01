@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
@@ -19,6 +19,9 @@ class KeystrokeImpl(var domainImpl: ChatDomainImpl) : Keystroke {
         var runnable = suspend {
             channelController.keystroke()
         }
-        return CallImpl2<Boolean>(runnable, channelController.scope)
+        return CallImpl2<Boolean>(
+            runnable,
+            channelController.scope
+        )
     }
 }

@@ -2,8 +2,8 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
 interface GetTotalUnreadCount {
@@ -15,6 +15,9 @@ class GetTotalUnreadCountImpl(var domainImpl: ChatDomainImpl) : GetTotalUnreadCo
         var runnable = suspend {
             Result(domainImpl.totalUnreadCount, null)
         }
-        return CallImpl2<LiveData<Int>>(runnable, domainImpl.scope)
+        return CallImpl2<LiveData<Int>>(
+            runnable,
+            domainImpl.scope
+        )
     }
 }

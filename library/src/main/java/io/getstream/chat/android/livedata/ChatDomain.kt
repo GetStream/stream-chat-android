@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
+import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.livedata.utils.RetryPolicy
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat

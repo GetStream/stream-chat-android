@@ -9,6 +9,8 @@
 <br/>
 <h1>ChatDomain</h1>
 <code><span class="keyword">interface </span><span class="identifier">ChatDomain</span></code>
+<p>The ChatDomain is the main entry point for all livedata &amp; offline operations on chat</p>
+<p>Use cases are exposed via chatDomain.useCases</p>
 <h3>Types</h3>
 <table>
 <tbody>
@@ -47,7 +49,7 @@
 <td>
 <p>The error event livedata object is triggered when errors in the underlying components occure.
 The following example shows how to observe these errors</p>
-<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">errorEvents</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="../-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><span class="identifier">ChatError</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">errorEvents</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.utils/-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><span class="identifier">ChatError</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -79,7 +81,7 @@ The following example shows how to observe these errors</p>
 </td>
 <td>
 <p>The retry policy for retrying failed requests</p>
-<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">retryPolicy</span><span class="symbol">: </span><a href="../-retry-policy/index.html"><span class="identifier">RetryPolicy</span></a></code></td>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">retryPolicy</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.utils/-retry-policy/index.html"><span class="identifier">RetryPolicy</span></a></code></td>
 </tr>
 <tr>
 <td>

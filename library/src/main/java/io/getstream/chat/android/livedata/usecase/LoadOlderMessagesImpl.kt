@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 
 interface LoadOlderMessages {
@@ -15,6 +15,9 @@ class LoadOlderMessagesImpl(var domainImpl: ChatDomainImpl) : LoadOlderMessages 
         var runnable = suspend {
             channelRepo.loadOlderMessages(messageLimit)
         }
-        return CallImpl2<Channel>(runnable, channelRepo.scope)
+        return CallImpl2<Channel>(
+            runnable,
+            channelRepo.scope
+        )
     }
 }

@@ -28,5 +28,6 @@ class MarkReadImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(lastRead).isEqualTo(data.messageFromUser2.createdAt)
         unreadCount = channelControllerImpl.unreadCount.getOrAwaitValue()
         Truth.assertThat(unreadCount).isEqualTo(0)
+        Truth.assertThat(channelControllerImpl.toChannel().unreadCount).isEqualTo(0)
     }
 }

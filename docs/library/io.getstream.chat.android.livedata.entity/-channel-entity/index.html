@@ -89,6 +89,22 @@ to all of the channel's state</p>
 </tr>
 <tr>
 <td>
+<h4><a href="hidden.html">hidden</a></h4>
+</td>
+<td>
+<p>if the channel is hidden (new messages will cause to reappear)</p>
+<code><span class="keyword">var </span><span class="identifier">hidden</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="hide-messages-before.html">hideMessagesBefore</a></h4>
+</td>
+<td>
+<p>hide messages before this date</p>
+<code><span class="keyword">var </span><span class="identifier">hideMessagesBefore</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="last-message-at.html">lastMessageAt</a></h4>
 </td>
 <td>
@@ -102,6 +118,14 @@ to all of the channel's state</p>
 <td>
 <p>list of the channel members, can be regular members, moderators or admins</p>
 <code><span class="keyword">var </span><span class="identifier">members</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../-member-entity/index.html"><span class="identifier">MemberEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="muted-till.html">mutedTill</a></h4>
+</td>
+<td>
+<p>till when the channel is muted</p>
+<code><span class="keyword">var </span><span class="identifier">mutedTill</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
 </tr>
 <tr>
 <td>

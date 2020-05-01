@@ -155,7 +155,8 @@ open class BaseDomainTest {
             .userPresenceEnabled().buildImpl()
 
         chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
-        chatDomainImpl.retryPolicy = object : RetryPolicy {
+        chatDomainImpl.retryPolicy = object :
+            RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
                 return false
             }
@@ -166,7 +167,7 @@ open class BaseDomainTest {
         }
         chatDomain = chatDomainImpl
 
-        chatDomainImpl.errorEvents.observeForever(io.getstream.chat.android.livedata.EventObserver {
+        chatDomainImpl.errorEvents.observeForever(EventObserver {
             System.out.println("error event$it")
         })
 

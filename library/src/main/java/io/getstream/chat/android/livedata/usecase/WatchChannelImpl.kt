@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelController
 import kotlinx.coroutines.launch
@@ -25,6 +25,9 @@ class WatchChannelImpl(var domainImpl: ChatDomainImpl) : WatchChannel {
         var runnable = suspend {
             Result(channelControllerI, null)
         }
-        return CallImpl2<ChannelController>(runnable, channelControllerImpl.scope)
+        return CallImpl2<ChannelController>(
+            runnable,
+            channelControllerImpl.scope
+        )
     }
 }

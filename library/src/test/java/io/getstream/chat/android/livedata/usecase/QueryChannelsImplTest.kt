@@ -21,5 +21,9 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         val queryChannelsController = queryChannelResult.data()
         val channels = queryChannelsController.channels.getOrAwaitValue()
         Truth.assertThat(channels).isNotEmpty()
+        for (channel in channels) {
+            Truth.assertThat(channel.unreadCount).isNotNull()
+        }
+
     }
 }

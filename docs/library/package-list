@@ -12,3 +12,4 @@ io.getstream.chat.android.livedata.entity
 io.getstream.chat.android.livedata.repository
 io.getstream.chat.android.livedata.request
 io.getstream.chat.android.livedata.usecase
+io.getstream.chat.android.livedata.utils

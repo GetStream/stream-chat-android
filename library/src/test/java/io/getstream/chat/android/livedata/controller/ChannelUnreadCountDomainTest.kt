@@ -6,7 +6,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
-import io.getstream.chat.android.livedata.ChannelUnreadCountLiveData
+import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import java.util.*
 import org.junit.Test

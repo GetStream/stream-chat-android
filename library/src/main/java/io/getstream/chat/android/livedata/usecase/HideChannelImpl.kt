@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
-import io.getstream.chat.android.livedata.Call2
-import io.getstream.chat.android.livedata.CallImpl2
+import io.getstream.chat.android.livedata.utils.Call2
+import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import java.security.InvalidParameterException
 
@@ -20,6 +20,9 @@ class HideChannelImpl(var domainImpl: ChatDomainImpl) : HideChannel {
             val clearHistory = !keepHistory
             channelController.hide(clearHistory)
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CallImpl2(
+            runnable,
+            channelController.scope
+        )
     }
 }
