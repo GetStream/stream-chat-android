@@ -19,17 +19,14 @@ class SendReactionImplTest : BaseConnectedIntegrationTest() {
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
         var result = chatDomain.useCases.sendMessage(message1).execute()
-        assertSuccess(result as Result<Any>)
+        assertSuccess(result)
         data.reaction1.messageId = result.data().id
         val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
-        assertSuccess(result2 as Result<Any>)
+        assertSuccess(result2)
         Truth.assertThat(result2.isSuccess).isTrue()
         val msg = channelState.getMessage(message1.id)
         Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
         Truth.assertThat(msg.latestReactions.last()).isEqualTo(data.reaction1)
         Truth.assertThat(msg.ownReactions.last()).isEqualTo(data.reaction1)
-        // sleep(1000)
-        // ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-        // sleep(10000)
     }
 }

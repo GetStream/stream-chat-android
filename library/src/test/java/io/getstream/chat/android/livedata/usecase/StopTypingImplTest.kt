@@ -13,7 +13,7 @@ class StopTypingImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun stopTyping() = runBlocking(Dispatchers.IO) {
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute()
         val result = chatDomain.useCases.keystroke(data.channel1.cid).execute()
         Truth.assertThat(result.data()).isTrue()
         val result2 = chatDomain.useCases.stopTyping(data.channel1.cid).execute()

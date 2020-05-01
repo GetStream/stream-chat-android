@@ -18,13 +18,13 @@ class DeleteReactionImplTest : BaseConnectedIntegrationTest() {
             chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
         var result = chatDomain.useCases.sendMessage(message1).execute()
-        assertSuccess(result as Result<Any>)
+        assertSuccess(result)
         data.reaction1.messageId = result.data().id
         val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
-        assertSuccess(result2 as Result<Any>)
+        assertSuccess(result2)
         val result3 =
             chatDomain.useCases.deleteReaction(data.channel1.cid, data.reaction1).execute()
-        assertSuccess(result3 as Result<Any>)
+        assertSuccess(result3)
         val msg = channelController.getMessage(message1.id)
         Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
         Truth.assertThat(msg.latestReactions.size).isEqualTo(0)

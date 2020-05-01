@@ -38,7 +38,7 @@ open class BaseDomainTest {
     lateinit var query: QueryChannelsEntity
     lateinit var filter: FilterObject
 
-    fun assertSuccess(result: Result<Any>) {
+    fun assertSuccess(result: Result<*>) {
         if (result.isError) {
             Truth.assertWithMessage(result.error().toString()).that(result.isSuccess).isTrue()
         }

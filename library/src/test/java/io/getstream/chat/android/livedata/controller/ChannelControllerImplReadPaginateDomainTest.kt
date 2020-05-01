@@ -85,19 +85,4 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 
-    @Test
-    fun loadOlderMessages() = runBlocking(Dispatchers.IO) {
-        val channelRepo = chatDomainImpl.channel("messaging", "testabc")
-        Truth.assertThat(channelRepo.loading.getOrAwaitValue()).isFalse()
-        channelRepo.upsertMessages(listOf(data.message1, data.message2Older))
-        // verify we sort correctly
-        val messages = channelRepo.sortedMessages()
-        Truth.assertThat(messages[0].createdAt!!.before(messages[1].createdAt)).isTrue()
-        // verify we generate the right request
-        val request = channelRepo.loadMoreMessagesRequest(10, Pagination.LESS_THAN)
-        // message 2 is older, we should use message 2 for getting older messages
-        Truth.assertThat(request.messageFilterValue).isEqualTo(data.message2Older.id)
-        // verify that running the query doesn't error
-        val result = channelRepo.runChannelQueryOnline(request)
-    }
 }

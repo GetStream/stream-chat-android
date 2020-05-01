@@ -49,7 +49,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         val reactionEntities = chatDomainImpl.repos.reactions.retryReactions()
         Truth.assertThat(reactionEntities.size).isEqualTo(1)
         reactionEntity = chatDomainImpl.repos.reactions.select(message1.id, data.user1.id, "like")
-        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.SYNCED)
+        Truth.assertThat(reactionEntity!!.syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }
 
     @Test
@@ -105,8 +105,8 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
             message1.channel.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 })
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
-        Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
-        Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.SYNCED)
+        Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
+        Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }
 
     @Test

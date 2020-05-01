@@ -268,7 +268,6 @@ class ChannelControllerImpl(
                 it.hidden = true
                 if (clearHistory) {
                     val now = Date()
-                    // TODO: perhaps actively hide messages to prevent bugs
                     it.hideMessagesBefore = now
                     hideMessagesBefore = now
                     removeMessagesBefore(now)
@@ -414,6 +413,7 @@ class ChannelControllerImpl(
 
     suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
         var output: Result<Message>
+        val online = domainImpl.isOnline()
 
         // set defaults for id, cid and created at
         if (message.id.isEmpty()) {
@@ -425,10 +425,12 @@ class ChannelControllerImpl(
 
         message.user = domainImpl.currentUser
         message.createdAt = message.createdAt ?: Date()
-        message.syncStatus = SyncStatus.SYNC_NEEDED
+        message.syncStatus = SyncStatus.IN_PROGRESS
+        if (!online) {
+            message.syncStatus = SyncStatus.SYNC_NEEDED
+        }
 
         val messageEntity = MessageEntity(message)
-        // TODO: perhaps we need a fourth sync state, only allowing recovery after we are offline or the API call failed
 
         // Update livedata
         upsertMessage(message)
@@ -444,7 +446,7 @@ class ChannelControllerImpl(
             domainImpl.repos.channels.insert(it)
         }
 
-        if (domainImpl.isOnline()) {
+        if (online) {
             logger.logI("Starting to send message with id ${message.id} and text ${message.text}")
 
             val runnable = {
@@ -454,15 +456,17 @@ class ChannelControllerImpl(
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
                 // set sendMessageCompletedAt so we know when to edit vs call sendMessage
-                messageEntity.syncStatus = SyncStatus.SYNCED
+                messageEntity.syncStatus = SyncStatus.COMPLETED
                 messageEntity.sendMessageCompletedAt = Date()
                 domainImpl.repos.messages.insert(messageEntity)
                 output = Result(result.data() as Message?, null)
             } else {
                 if (result.error().isPermanent()) {
-                    messageEntity.syncStatus = SyncStatus.SYNC_FAILED
-                    domainImpl.repos.messages.insert(messageEntity)
+                    messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
                 }
+                domainImpl.repos.messages.insert(messageEntity)
                 output = Result(null, result.error())
             }
         } else {
@@ -488,8 +492,13 @@ class ChannelControllerImpl(
      */
     suspend fun sendReaction(reaction: Reaction): Result<Reaction> {
         reaction.user = domainImpl.currentUser
+        val online = domainImpl.isOnline()
         // insert the message into local storage
-        reaction.syncStatus = SyncStatus.SYNC_NEEDED
+
+        reaction.syncStatus = SyncStatus.IN_PROGRESS
+        if (!online) {
+            reaction.syncStatus = SyncStatus.SYNC_NEEDED
+        }
         domainImpl.repos.reactions.insertReaction(reaction)
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
@@ -507,19 +516,23 @@ class ChannelControllerImpl(
             it.addReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
             domainImpl.repos.messages.insert(it)
         }
-        val online = domainImpl.isOnline()
+
         if (online) {
             val runnable = {
                 client.sendReaction(reaction)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
+                reaction.syncStatus = SyncStatus.COMPLETED
+                domainImpl.repos.reactions.insertReaction(reaction)
                 return Result(result.data() as Reaction, null)
             } else {
                 if (result.error().isPermanent()) {
-                    reaction.syncStatus = SyncStatus.SYNC_FAILED
-                    domainImpl.repos.reactions.insertReaction(reaction)
+                    reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
+                domainImpl.repos.reactions.insertReaction(reaction)
                 return Result(null, result.error())
             }
         }
@@ -527,12 +540,15 @@ class ChannelControllerImpl(
     }
 
     suspend fun deleteReaction(reaction: Reaction): Result<Message> {
+        val online = domainImpl.isOnline()
         reaction.user = domainImpl.currentUser
-        reaction.syncStatus = SyncStatus.SYNC_NEEDED
+        reaction.syncStatus = SyncStatus.IN_PROGRESS
+        if (!online) {
+            reaction.syncStatus = SyncStatus.SYNC_NEEDED
+        }
 
         val reactionEntity = ReactionEntity(reaction)
         reactionEntity.deletedAt = Date()
-        reactionEntity.syncStatus = SyncStatus.SYNC_NEEDED
         domainImpl.repos.reactions.insert(reactionEntity)
 
         // update livedata
@@ -551,15 +567,23 @@ class ChannelControllerImpl(
             it.removeReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
             domainImpl.repos.messages.insert(it)
         }
-        val online = domainImpl.isOnline()
+
         if (online) {
             val runnable = {
                 client.deleteReaction(reaction.messageId, reaction.type)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
+                reaction.syncStatus = SyncStatus.COMPLETED
+                domainImpl.repos.reactions.insertReaction(reaction)
                 return Result(result.data() as Message, null)
             } else {
+                if (result.error().isPermanent()) {
+                    reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    reaction.syncStatus = SyncStatus.SYNC_NEEDED
+                }
+                domainImpl.repos.reactions.insertReaction(reaction)
                 return Result(null, result.error())
             }
         }
@@ -910,8 +934,12 @@ class ChannelControllerImpl(
     }
 
     suspend fun editMessage(message: Message): Result<Message> {
+        val online = domainImpl.isOnline()
         message.updatedAt = Date()
-        message.syncStatus = SyncStatus.SYNC_NEEDED
+        message.syncStatus = SyncStatus.IN_PROGRESS
+        if (!online) {
+            message.syncStatus = SyncStatus.SYNC_NEEDED
+        }
 
         // Update livedata
         upsertMessage(message)
@@ -919,23 +947,26 @@ class ChannelControllerImpl(
         // Update Room State
         domainImpl.repos.messages.insertMessage(message)
 
-        if (domainImpl.isOnline()) {
+        if (online) {
             val runnable = {
                 client.updateMessage(message)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.SYNCED
+                message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
 
                 return Result(result.data() as Message, null)
             } else {
                 if (result.error().isPermanent()) {
-                    message.syncStatus = SyncStatus.SYNC_FAILED
-                    upsertMessage(message)
-                    domainImpl.repos.messages.insertMessage(message)
+                    message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    message.syncStatus = SyncStatus.SYNC_NEEDED
                 }
+
+                upsertMessage(message)
+                domainImpl.repos.messages.insertMessage(message)
                 return Result(null, result.error())
             }
         }
@@ -943,8 +974,12 @@ class ChannelControllerImpl(
     }
 
     suspend fun deleteMessage(message: Message): Result<Message> {
+        val online = domainImpl.isOnline()
         message.deletedAt = Date()
-        message.syncStatus = SyncStatus.SYNC_NEEDED
+        message.syncStatus = SyncStatus.IN_PROGRESS
+        if (!online) {
+            message.syncStatus = SyncStatus.SYNC_NEEDED
+        }
 
         // Update livedata
         upsertMessage(message)
@@ -952,22 +987,25 @@ class ChannelControllerImpl(
         // Update Room State
         domainImpl.repos.messages.insertMessage(message)
 
-        if (domainImpl.isOnline()) {
+        if (online) {
             val runnable = {
                 client.deleteMessage(message.id)
             }
             val result = domainImpl.runAndRetry(runnable)
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.SYNCED
+                message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
                 return Result(result.data() as Message, null)
             } else {
                 if (result.error().isPermanent()) {
-                    upsertMessage(message)
-                    domainImpl.repos.messages.insertMessage(message)
-                    message.syncStatus = SyncStatus.SYNC_FAILED
+                    message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    message.syncStatus = SyncStatus.SYNC_NEEDED
                 }
+
+                upsertMessage(message)
+                domainImpl.repos.messages.insertMessage(message)
                 return Result(null, result.error())
             }
         }

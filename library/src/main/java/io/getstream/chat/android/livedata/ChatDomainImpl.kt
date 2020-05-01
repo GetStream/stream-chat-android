@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.controller.isPermanent
 import io.getstream.chat.android.livedata.controller.users
 import io.getstream.chat.android.livedata.entity.*
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
@@ -210,8 +211,9 @@ class ChatDomainImpl private constructor(
     }
 
     suspend fun createChannel(c: Channel): Result<Channel> {
+        val online = isOnline()
         c.createdAt = c.createdAt ?: Date()
-        c.syncStatus = SyncStatus.SYNC_NEEDED
+        c.syncStatus = if (online) {SyncStatus.IN_PROGRESS} else { SyncStatus.SYNC_NEEDED }
 
         // update livedata
         val channelRepo = channel(c.cid)
@@ -222,20 +224,27 @@ class ChatDomainImpl private constructor(
         repos.channels.insertChannel(c)
 
         // make the API call and follow retry policy
-        if (isOnline()) {
+        if (online) {
             val runnable = {
                 // TODO: LLC is a bit broken when it comes to creating channels
                 // update this when it's fixed
                 val watchChannelRequest = WatchChannelRequest()
                 watchChannelRequest.withData(c.extraData)
+                //watchChannelRequest.withMembers(c.members)
                 channelController.watch(watchChannelRequest)
             }
             val result = runAndRetry(runnable)
             return if (result.isSuccess) {
-                c.syncStatus = SyncStatus.SYNCED
+                c.syncStatus = SyncStatus.COMPLETED
                 repos.channels.insertChannel(c)
                 Result(result.data() as Channel, null)
             } else {
+                if (result.error().isPermanent()) {
+                    c.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                } else {
+                    c.syncStatus = SyncStatus.SYNC_NEEDED
+                }
+                repos.channels.insertChannel(c)
                 Result(null, result.error())
             }
         } else {

@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class HideChannelImplTest : BaseConnectedIntegrationTest() {
     /*
-    Few things don't work yet
+    TODO
     - queryChannelsController.channels should indicate which channels are hidden (hidden is not returned on channels though)
 
      */
@@ -45,12 +45,11 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         chatDomainImpl.repos.queryChannels.insert(query)
 
         // setup the query channel controller
-        var queryChannelsController = chatDomain.useCases.queryChannels(data.filter1, null, 0, 10).execute().data()
+        chatDomain.useCases.queryChannels(data.filter1, null, 0, 10).execute()
         var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, null)
         queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest())
 
         // verify we have 1 channel in the result list and that it's hidden
-        val channels = queryChannelsController.channels.getOrAwaitValue()
         val channelController = chatDomainImpl.channel(data.channel1)
         Truth.assertThat(channelController.hidden.getOrAwaitValue()).isTrue()
     }
@@ -61,6 +60,7 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, true).execute()
+        assertSuccess(result)
         // verify it's now hidden
         Truth.assertThat(channelController.hidden.getOrAwaitValue()).isTrue()
         // verify that it's no longer showing up in query channels
@@ -74,7 +74,6 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun show() = runBlocking(Dispatchers.IO) {
         var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         chatDomain.useCases.hideChannel(data.channel1.cid, true).execute()
         chatDomain.useCases.showChannel(data.channel1.cid).execute()
 
@@ -82,18 +81,19 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun keepHistory() = runBlocking(Dispatchers.IO) {
-        var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
+    fun clearHistory() = runBlocking(Dispatchers.IO) {
+        val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         // add a message that should no longer be visible afterwards
         chatDomainImpl.repos.messages.insertMessage(data.message2Older)
         channelControllerImpl.handleEvent(data.newMessageEvent2)
         // keep history = false, so messages should go bye bye
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, false).execute()
-        assertSuccess(result as Result<Any>)
+        assertSuccess(result)
         // verify it's now hidden
         Truth.assertThat(channelController.hidden.getOrAwaitValue()).isTrue()
         // verify that old messages are gone...
         val oldMessage = channelControllerImpl.getMessage(data.message2Older.id)
+        Truth.assertThat(oldMessage).isNull()
     }
 }

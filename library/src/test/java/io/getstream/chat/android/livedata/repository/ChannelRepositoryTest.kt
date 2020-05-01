@@ -43,7 +43,7 @@ class ChannelRepositoryTest : BaseDomainTest() {
     @Test
     fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
         data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
-        data.channel2.syncStatus = SyncStatus.SYNCED
+        data.channel2.syncStatus = SyncStatus.COMPLETED
 
         repo.insertChannel(listOf(data.channel1, data.channel2))
 
@@ -53,7 +53,7 @@ class ChannelRepositoryTest : BaseDomainTest() {
 
         channels = repo.retryChannels()
         Truth.assertThat(channels.size).isEqualTo(1)
-        Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.SYNCED)
+        Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
         channels = repo.selectSyncNeeded()
         Truth.assertThat(channels.size).isEqualTo(0)

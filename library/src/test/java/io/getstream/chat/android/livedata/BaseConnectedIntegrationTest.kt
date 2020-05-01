@@ -21,14 +21,11 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         var client: ChatClient? = null
 
         fun createClient(): ChatClient {
-            val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
-            val client =
-                ChatClient.Builder(data.apiKey, ApplicationProvider.getApplicationContext())
-                    .logLevel(
-                        logLevel
-                    ).loggerHandler(TestLoggerHandler()).build()
 
-            return client
+            return ChatClient.Builder(data.apiKey, ApplicationProvider.getApplicationContext())
+                .logLevel(
+                    data.logLevel
+                ).loggerHandler(TestLoggerHandler()).build()
         }
     }
 

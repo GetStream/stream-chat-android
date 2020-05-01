@@ -57,7 +57,7 @@ class MessageRepositoryTest : BaseDomainTest() {
         val message1 =
             data.createMessage().apply { text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED }
         val message2 = data.createMessage()
-            .apply { id = "helloworld"; text = "hi123"; syncStatus = SyncStatus.SYNC_FAILED }
+            .apply { id = "helloworld"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY }
         repo.insertMessages(listOf(message1, message2), true)
 
         var messages = repo.selectSyncNeeded()
@@ -66,7 +66,7 @@ class MessageRepositoryTest : BaseDomainTest() {
 
         messages = repo.retryMessages()
         Truth.assertThat(messages.size).isEqualTo(1)
-        Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.SYNCED)
+        Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
         messages = repo.selectSyncNeeded()
         Truth.assertThat(messages.size).isEqualTo(0)
@@ -79,11 +79,11 @@ class MessageRepositoryTest : BaseDomainTest() {
             calendar(2019, 11, 1)
         }
         val message2 = data.createMessage().apply {
-            id = "testSelectMessagesForChannel2"; text = "hi123"; syncStatus = SyncStatus.SYNC_FAILED; user =
+            id = "testSelectMessagesForChannel2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
             data.user1; createdAt = calendar(2019, 10, 1)
         }
         val message3 = data.createMessage().apply {
-            id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.SYNC_FAILED; user =
+            id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
             data.user1; createdAt = calendar(2019, 9, 1)
         }
         repo.insertMessages(listOf(message1, message2, message3), true)

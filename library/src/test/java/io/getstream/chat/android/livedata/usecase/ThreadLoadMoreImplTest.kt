@@ -19,22 +19,22 @@ class ThreadLoadMoreImplTest : BaseConnectedIntegrationTest() {
         val message1 = data.createMessage()
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         var result = chatDomain.useCases.sendMessage(message1).execute()
-        assertSuccess(result as Result<Any>)
+        assertSuccess(result)
         var parentId = result.data().id
         val message2 = data.createMessage().copy().apply { this.parentId = parentId }
         var result2 = chatDomain.useCases.sendMessage(message2).execute()
-        assertSuccess(result2 as Result<Any>)
+        assertSuccess(result2)
         val parentMessage = channelState.getMessage(parentId)!!
         Truth.assertThat(parentMessage.id).isEqualTo(parentId)
 
         // get the thread
         val result3 = chatDomain.useCases.getThread(data.channel1.cid, parentId).execute()
-        assertSuccess(result3 as Result<Any>)
+        assertSuccess(result3)
         val threadController = result3.data()
 
         // ask for more results than we have
         val result4 = chatDomain.useCases.threadLoadMore(data.channel1.cid, parentId, 100).execute()
-        assertSuccess(result4 as Result<Any>)
+        assertSuccess(result4)
         val endReached = threadController.endOfOlderMessages.getOrAwaitValue()
         Truth.assertThat(endReached).isTrue()
     }

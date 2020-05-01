@@ -58,7 +58,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
     var extraData = mutableMapOf<String, Any>()
 
     /** if the channel has been synced to the servers */
-    var syncStatus: SyncStatus = SyncStatus.SYNCED
+    var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** create a ChannelStateEntity from a Channel object */
     constructor(c: Channel) : this(c.type, c.id) {

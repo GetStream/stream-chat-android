@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 class SyncStatusConverterTest : BaseTest() {
     @Test
     fun testEncoding() {
-        val options = listOf(SyncStatus.SYNC_NEEDED, SyncStatus.SYNC_FAILED, SyncStatus.SYNCED)
+        val options = listOf(SyncStatus.SYNC_NEEDED, SyncStatus.FAILED_PERMANENTLY, SyncStatus.COMPLETED)
 
         for (option in options) {
             val converter = SyncStatusConverter()

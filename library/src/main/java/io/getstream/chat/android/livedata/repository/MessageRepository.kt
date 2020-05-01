@@ -116,12 +116,12 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
 
             if (result.isSuccess) {
                 // TODO: 1.1 image upload support
-                messageEntity.syncStatus = SyncStatus.SYNCED
+                messageEntity.syncStatus = SyncStatus.COMPLETED
                 messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
                     ?: Date()
                 insert(messageEntity)
             } else if (result.isError && result.error().isPermanent()) {
-                messageEntity.syncStatus = SyncStatus.SYNC_FAILED
+                messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 insert(messageEntity)
             }
         }

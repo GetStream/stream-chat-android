@@ -24,7 +24,7 @@ class ReactionRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
-        data.reaction1.syncStatus = SyncStatus.SYNC_FAILED
+        data.reaction1.syncStatus = SyncStatus.FAILED_PERMANENTLY
         val reaction2 =
             data.reaction1.copy().apply { type = "love"; syncStatus = SyncStatus.SYNC_NEEDED }
         repo.insertManyReactions(listOf(data.reaction1, reaction2))
@@ -34,7 +34,7 @@ class ReactionRepositoryTest : BaseDomainTest() {
 
         reactions = repo.retryReactions()
         Truth.assertThat(reactions.size).isEqualTo(1)
-        Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.SYNCED)
+        Truth.assertThat(reactions.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
         reactions = repo.selectSyncNeeded()
         Truth.assertThat(reactions.size).isEqualTo(0)

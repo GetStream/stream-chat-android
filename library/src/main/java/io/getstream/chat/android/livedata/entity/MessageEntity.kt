@@ -30,7 +30,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     var type: String = ""
 
     /** if the message has been synced to the servers, default is synced */
-    var syncStatus: SyncStatus = SyncStatus.SYNCED
+    var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** tracks when send message was completed */
     var sendMessageCompletedAt: Date? = null
@@ -104,7 +104,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     constructor(m: Message) : this(m.id, m.cid, m.user.id) {
         text = m.text
         attachments = m.attachments
-        syncStatus = m.syncStatus ?: SyncStatus.SYNCED
+        syncStatus = m.syncStatus ?: SyncStatus.COMPLETED
         type = m.type
         replyCount = m.replyCount
         createdAt = m.createdAt
@@ -144,7 +144,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.commandInfo = commandInfo ?: emptyMap()
         m.extraData = extraData
         m.reactionCounts = reactionCounts ?: mutableMapOf()
-        m.syncStatus = syncStatus ?: SyncStatus.SYNCED
+        m.syncStatus = syncStatus ?: SyncStatus.COMPLETED
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()

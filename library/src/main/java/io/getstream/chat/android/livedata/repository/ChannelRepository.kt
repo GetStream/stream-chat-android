@@ -69,10 +69,10 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
             // TODO: what about channel.members
             val result = client.createChannel(channel.type, channel.id, channel.extraData).execute()
             if (result.isSuccess) {
-                channelEntity.syncStatus = SyncStatus.SYNCED
+                channelEntity.syncStatus = SyncStatus.COMPLETED
                 insert(channelEntity)
             } else if (result.isError && result.error().isPermanent()) {
-                channelEntity.syncStatus = SyncStatus.SYNC_FAILED
+                channelEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 insert(channelEntity)
             }
             // TODO: 1.1 support hiding channels

@@ -64,10 +64,10 @@ class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, va
             }
 
             if (result.isSuccess) {
-                reactionEntity.syncStatus = SyncStatus.SYNCED
+                reactionEntity.syncStatus = SyncStatus.COMPLETED
                 insert(reactionEntity)
             } else if (result.error().isPermanent()) {
-                reactionEntity.syncStatus = SyncStatus.SYNC_FAILED
+                reactionEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 insert(reactionEntity)
             }
         }
