@@ -8,8 +8,8 @@ import io.getstream.chat.android.livedata.controller.users
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
-import kotlinx.coroutines.*
 import java.util.InputMismatchException
+import kotlinx.coroutines.*
 
 class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDomainImpl, var runAsync: Boolean = true) {
     private val logger = ChatLogger.get("ChatDomain EventHandler")
