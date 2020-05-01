@@ -36,7 +36,7 @@ data class Message(
 
     /** if the message has been synced to the servers */
     @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED,
+    var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @IgnoreSerialisation
     var type: String = "",
