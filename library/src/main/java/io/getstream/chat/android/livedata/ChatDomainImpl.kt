@@ -145,7 +145,7 @@ class ChatDomainImpl private constructor(
             // load the current user from the db
             val me = repos.users.selectMe()
             me?.let {
-                if (it.updatedAt!! > currentUser.updatedAt) {
+                if (currentUser.updatedAt == null || currentUser.updatedAt!! < it.updatedAt) {
                     updateCurrentUser(it)
                 }
             }
