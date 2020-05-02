@@ -55,7 +55,10 @@ ChatRepo.instance().getCurrentUser();
 
 ## Dev Tips
 
-Run the jacoco task and have a look at coverage here:
+To run the test suite create a file called `library/.env` and fill in the following environment variables:
+
 ```
-open library/build/reports/jacoco/jacocoTestDebugUnitTestReport/html/index.html
+STREAM_LOG_LEVEL=ALL
+STREAM_API_KEY=yourapikeyhere
+STREAM_USER_1_TOKEN=validTokenForUser1
 ```
