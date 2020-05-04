@@ -49,6 +49,8 @@ import io.getstream.chat.example.utils.AppConfig;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
+import static java.lang.Thread.sleep;
+
 public class ChannelListFragment extends Fragment {
 
     private static final String TAG = ChannelListFragment.class.getSimpleName();
@@ -86,11 +88,13 @@ public class ChannelListFragment extends Fragment {
         client.setUser(user, USER_TOKEN, new InitConnectionListener(){
             @Override
             public void onError(@NotNull ChatError error) {
+
                 super.onError(error);
             }
 
             @Override
             public void onSuccess(@NotNull ConnectionData data) {
+
                 super.onSuccess(data);
             }
         });

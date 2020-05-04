@@ -293,7 +293,7 @@ public class LlcMigrationUtils {
     public static void updateReadState(Channel channel, User user, Date date) {
 
         int indexOfRead = indexOfRead(channel, user.getId());
-        ChannelUserRead read = new ChannelUserRead(user, date);
+        ChannelUserRead read = new ChannelUserRead(user, date, 0);
 
         if (indexOfRead == -1) {
             channel.getRead().add(read);

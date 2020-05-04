@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
 import io.getstream.chat.android.livedata.ChatDomain;
-import io.getstream.chat.android.livedata.RetryPolicy;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity;
 import kotlin.Unit;

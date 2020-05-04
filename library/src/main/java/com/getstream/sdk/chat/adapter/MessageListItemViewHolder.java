@@ -766,7 +766,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
     protected boolean isFailedMessage() {
 
-        return message.getSyncStatus() == SyncStatus.SYNC_FAILED || message.getType().equals(ModelType.message_error) || message.getSyncStatus() == SyncStatus.SYNC_NEEDED;
+        return message.getSyncStatus() == SyncStatus.FAILED_PERMANENTLY || message.getType().equals(ModelType.message_error);
     }
 
     protected boolean isThread() {

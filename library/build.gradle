@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 
-        versionName "4.0.14"
+        versionName "4.2.1"
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
@@ -114,9 +114,9 @@ dependencies {
     testImplementation "org.json:json:20190722"
 
 
-    api 'com.github.getstream:stream-chat-android-client:1.2.2'
+    api 'com.github.getstream:stream-chat-android-client:1.4.1'
     //api project(path: ':livedata')
-    api 'com.github.GetStream:stream-chat-android-livedata:0.3.0'
+    api 'com.github.GetStream:stream-chat-android-livedata:0.3.3'
 
 }
 
