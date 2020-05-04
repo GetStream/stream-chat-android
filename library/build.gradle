@@ -90,6 +90,7 @@ dependencies {
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation "io.github.cdimascio:java-dotenv:5.1.4"
+    testImplementation "androidx.recyclerview:recyclerview:1.1.0"
 
 
     testImplementation 'junit:junit:4.13'

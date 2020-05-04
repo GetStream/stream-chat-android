@@ -47,7 +47,7 @@ fun waitForSetUser(
     client: ChatClient,
     user: User,
     token: String,
-    time: Long = 4,
+    time: Long = 10,
     timeUnit: TimeUnit = TimeUnit.SECONDS
 ) {
     val latch = CountDownLatch(1)
