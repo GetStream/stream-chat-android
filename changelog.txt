@@ -1,6 +1,8 @@
 # 1.4.2 - Mon 4 May 2020
 
 - add `reactionScores` to `Message`
+- fix null write crash of CustomObject nullable field
+- fix extraData duplicated fields
 
 # 1.4.0 - Fri 1 May 2020
 
