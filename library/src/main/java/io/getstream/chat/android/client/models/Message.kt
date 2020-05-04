@@ -34,6 +34,10 @@ data class Message(
     @IgnoreSerialisation
     var reactionCounts: MutableMap<String, Int> = mutableMapOf(),
 
+    @SerializedName("reaction_scores")
+    @IgnoreSerialisation
+    var reactionScores: MutableMap<String, Int> = mutableMapOf(),
+
     /** if the message has been synced to the servers */
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.SYNCED,
