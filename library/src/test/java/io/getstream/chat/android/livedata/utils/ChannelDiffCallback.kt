@@ -30,5 +30,4 @@ data class ChannelDiffCallback(
     ): Boolean {
         return oldChannels[oldItemPosition] == newChannels[newItemPosition]
     }
-
 }
