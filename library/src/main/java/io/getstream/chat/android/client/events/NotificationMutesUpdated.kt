@@ -1,3 +1,7 @@
 package io.getstream.chat.android.client.events
 
-class NotificationMutesUpdated: ChatEvent()
+import io.getstream.chat.android.client.models.User
+
+class NotificationMutesUpdated: ChatEvent() {
+    lateinit var me: User
+}
