@@ -21,7 +21,7 @@ data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
     // cleanup references to prevent serialization issues
     fun normalizeValue(value: Any): Any {
         return if (value is FilterObject) {
-            (value as FilterObject).toMap()
+            value.toMap()
         } else if (value is Array<*> && value.isArrayOf<FilterObject>()) {
             value.map { (it as FilterObject).toMap() }
         } else {

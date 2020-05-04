@@ -5,7 +5,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.getstream.chat.android.client.api.models.CustomObject
+import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.errors.ChatParsingError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
@@ -24,7 +24,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
             if (obj == null) {
                 gson.getAdapter(HashMap::class.java).write(writer, null)
             } else {
-                val result = HashMap<String, Any>()
+                val result = HashMap<String, Any?>()
                 obj.extraData.map { result[it.key] = it.value }
 
                 for (field in clazz.declaredFields) {
@@ -32,7 +32,11 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                     if (field.getAnnotation(IgnoreSerialisation::class.java) != null) continue
 
                     field.isAccessible = true
-                    val name = field.name
+
+                    var name = field.name
+                    val serializedName = field.getAnnotation(SerializedName::class.java)
+                    if (serializedName != null) name = serializedName.value
+
                     val value = field.get(obj)
                     try {
                         result[name] = value

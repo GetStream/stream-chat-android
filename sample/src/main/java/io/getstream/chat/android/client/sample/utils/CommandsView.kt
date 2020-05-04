@@ -132,9 +132,28 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnSendMessage.setOnClickListener {
-            client.sendMessage(chType, chId, Message(text = "SSS")).enqueue { messageResult ->
+            val messageOut = Message(text = "SSS")
+            messageOut.extraData["test"] = "zed"
+            client.sendMessage(chType, chId, messageOut).enqueue { messageResult ->
+                if (messageResult.isSuccess) {
+                    val messageIn = messageResult.data()
+                }
+
                 UtilsMessages.show("sent", "not sent:", messageResult)
+
             }
+        }
+
+        btnGetMessages.setOnClickListener {
+            val queryChannelRequest = QueryChannelRequest()
+                .withMessages(5)
+
+
+            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+
+            }
+
+
         }
     }
 
