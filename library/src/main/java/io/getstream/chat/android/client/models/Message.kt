@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.api.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -23,6 +22,8 @@ data class Message(
     var time: String = "",
     var commandInfo: Map<String, String> = mutableMapOf(),
     var attachments: MutableList<Attachment> = mutableListOf(),
+
+    @IgnoreSerialisation
     @SerializedName("mentioned_users")
     var mentionedUsers: MutableList<User> = mutableListOf(),
 
