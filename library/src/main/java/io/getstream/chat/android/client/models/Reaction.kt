@@ -20,7 +20,7 @@ data class Reaction(
     var createdAt: Date? = null,
 
     @IgnoreSerialisation
-    var syncStatus: SyncStatus = SyncStatus.SYNCED,
+    var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

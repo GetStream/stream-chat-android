@@ -44,7 +44,7 @@ data class User(
     var unreadCount: Int = 0,
 
     @IgnoreSerialisation
-    @SerializedName("channel_mutes")
+    @SerializedName("mutes")
     var mutes: List<Mute> = mutableListOf(),
     //endregion
 
