@@ -61,5 +61,3 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
         return r
     }
 }
-
-

@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
@@ -15,11 +14,12 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.addReaction
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.addReaction
+import io.getstream.chat.android.livedata.isPermanent
 import io.getstream.chat.android.livedata.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
@@ -1029,24 +1029,3 @@ class ChannelControllerImpl(
     }
 }
 
-// TODO: move to llc
-/**
- * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
- */
-fun ChatError.isPermanent(): Boolean {
-    // errors without a networkError.streamCode should always be considered temporary
-    // errors with networkError.statusCode 429 should be considered temporary
-    // everything else is a permanent error
-    var isPermanent = true
-    if (this is ChatNetworkError) {
-        val networkError: ChatNetworkError = this
-        if (networkError.statusCode == 429) {
-            isPermanent = false
-        } else if (networkError.streamCode == 0) {
-            isPermanent = false
-        }
-    } else {
-        isPermanent = false
-    }
-    return isPermanent
-}

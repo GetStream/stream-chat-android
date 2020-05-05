@@ -16,7 +16,6 @@ class QueryChannelsImplControllerImplDomainTest : BaseConnectedIntegrationTest()
 
     @Test
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {
-        // TODO: mock the server response for the queryChannels...
         val request = QueryChannelsPaginationRequest()
         queryControllerImpl.runQuery(request)
         var channels = queryControllerImpl.channels.getOrAwaitValue()

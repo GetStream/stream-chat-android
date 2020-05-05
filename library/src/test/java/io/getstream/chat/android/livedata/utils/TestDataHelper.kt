@@ -79,7 +79,7 @@ class TestDataHelper {
         config = config1
     }
 
-    val reaction1 = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score=10 }
+    val reaction1 = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user = user2 }
 
     val message1 = Message().apply {
@@ -101,7 +101,7 @@ class TestDataHelper {
         user1; createdAt = calendar(2020, 1, 1)
     }
     val reactionMessage = Message().apply {
-        channel = channel1; text = "im update now"; id = "message-1"; user = user1;
+        channel = channel1; text = "im update now"; id = "message-1"; user = user1
         reactionScores = mutableMapOf("like" to 10)
         reactionCounts = mutableMapOf("like" to 1); ownReactions =
         mutableListOf(reaction1); latestReactions = mutableListOf(reaction1)

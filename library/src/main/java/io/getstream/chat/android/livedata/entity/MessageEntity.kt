@@ -163,4 +163,3 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         return m
     }
 }
-

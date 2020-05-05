@@ -15,11 +15,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class HideChannelImplTest : BaseConnectedIntegrationTest() {
-    /*
-    TODO
-    - queryChannelsController.channels should indicate which channels are hidden (hidden is not returned on channels though)
-
-     */
 
     @Test
     fun loadHidden() = runBlocking(Dispatchers.IO) {
