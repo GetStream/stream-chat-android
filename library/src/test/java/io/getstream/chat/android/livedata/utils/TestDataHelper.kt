@@ -126,7 +126,7 @@ class TestDataHelper {
 
     val newMessageEventNotification = NotificationMessageNew().apply { message = message1; cid = channel1.cid }
 
-    val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid=channel1.cid }
+    val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid = channel1.cid }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
     val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid = channel1.cid }
     val reactionEvent2 = ReactionNewEvent().apply { reaction = reaction2 }

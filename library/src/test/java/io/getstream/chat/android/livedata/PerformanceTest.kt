@@ -9,7 +9,6 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.ChannelDiffCallback
 import io.getstream.chat.android.livedata.utils.LiveDiffCounter
 import io.getstream.chat.android.livedata.utils.MessageDiffCallback
-import java.lang.Thread.sleep
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -22,7 +21,6 @@ class PerformanceTest : BaseConnectedMockedTest() {
         var channelControllerImpl = chatDomainImpl.channel(data.channel1)
         val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1)
 
-
         var counter = LiveDiffCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
         }
@@ -33,7 +31,7 @@ class PerformanceTest : BaseConnectedMockedTest() {
             counter.onEvent(channels)
         }
         // Insert a query, channel and message into offline storage
-        val query = QueryChannelsEntity(data.filter1, null).apply { channelCIDs= sortedSetOf(data.channel1.cid) }
+        val query = QueryChannelsEntity(data.filter1, null).apply { channelCIDs = sortedSetOf(data.channel1.cid) }
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.repos.messages.insertMessage(data.message1)
         chatDomainImpl.repos.queryChannels.insert(query)
@@ -54,7 +52,6 @@ class PerformanceTest : BaseConnectedMockedTest() {
 
         Truth.assertThat(counter.counts).isEqualTo(mutableMapOf("events" to 5, "changed" to 1, "moved" to 0, "inserted" to 1, "removed" to 0))
     }
-
 
     @Test
     fun messages() = runBlocking(Dispatchers.IO) {

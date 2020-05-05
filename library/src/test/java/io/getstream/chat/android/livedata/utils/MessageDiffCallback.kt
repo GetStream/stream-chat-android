@@ -22,7 +22,7 @@ data class MessageDiffCallback(
         newItemPosition: Int
     ): Boolean {
         val sameId = old[oldItemPosition].id == new[newItemPosition].id
-        //println("${old[oldItemPosition].id} areItemsTheSame ${new[newItemPosition].id} ${sameId}")
+        // println("${old[oldItemPosition].id} areItemsTheSame ${new[newItemPosition].id} ${sameId}")
         return sameId
     }
 
@@ -31,9 +31,8 @@ data class MessageDiffCallback(
         newItemPosition: Int
     ): Boolean {
         val same = old[oldItemPosition] == new[newItemPosition]
-        //println("${old[oldItemPosition].id} areContentsTheSame ${new[newItemPosition].id} $same")
+        // println("${old[oldItemPosition].id} areContentsTheSame ${new[newItemPosition].id} $same")
 
         return same
     }
-
 }
