@@ -98,7 +98,7 @@ class TestDataHelper {
 
     val message1Updated = Message().apply {
         channel = channel1; cid = channel1.cid; text = "im update now"; id = "message-1"; user =
-        user1
+        user1; createdAt = calendar(2020, 1, 1)
     }
     val reactionMessage = Message().apply {
         channel = channel1; text = "im update now"; id = "message-1"; user = user1
@@ -113,7 +113,7 @@ class TestDataHelper {
     }
     val messageFromUser2 = Message().apply {
         this.channel = channel1; text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
-        calendar(2020, 1, 1)
+        calendar(2020, 2, 1)
     }
 
     val connectedEvent = ConnectedEvent().apply { me = user1 }
@@ -126,7 +126,7 @@ class TestDataHelper {
 
     val newMessageEventNotification = NotificationMessageNew().apply { message = message1; cid = channel1.cid }
 
-    val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated }
+    val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid=channel1.cid }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
     val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid = channel1.cid }
     val reactionEvent2 = ReactionNewEvent().apply { reaction = reaction2 }
@@ -156,7 +156,8 @@ class TestDataHelper {
 
     val notificationAddedToChannelEvent =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel1 }
-
+    val notificationAddedToChannel2Event =
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2 }
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
 }
 

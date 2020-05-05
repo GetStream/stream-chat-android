@@ -21,7 +21,7 @@ data class ChannelDiffCallback(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return oldChannels[oldItemPosition].id === newChannels[newItemPosition].id
+        return oldChannels[oldItemPosition].id == newChannels[newItemPosition].id
     }
 
     override fun areContentsTheSame(

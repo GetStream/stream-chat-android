@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -116,6 +117,18 @@ open class BaseDomainTest {
 
         val result = Result(listOf(data.channel1), null)
         val channelMock = mock<ChannelController> {
+            on { query(any()) } doReturn ChatCallTestImpl<Channel>(
+                Result(
+                    data.channel1,
+                    null
+                )
+            )
+            on { watch(any<WatchChannelRequest>()) } doReturn ChatCallTestImpl<Channel>(
+                Result(
+                    data.channel1,
+                    null
+                )
+            )
         }
         val client = mock<ChatClient> {
             on { events() } doReturn JustObservable(connectedEvent)

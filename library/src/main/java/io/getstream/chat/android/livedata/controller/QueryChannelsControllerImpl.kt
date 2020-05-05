@@ -83,6 +83,8 @@ class QueryChannelsControllerImpl(
     // TODO 1.1: handleMessageNotification should be configurable
     fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
         event.channel?.let {
+            val channelControllerImpl = domainImpl.channel(it)
+            channelControllerImpl.updateLiveDataFromChannel(it)
             addChannels(listOf(it), true)
         }
     }

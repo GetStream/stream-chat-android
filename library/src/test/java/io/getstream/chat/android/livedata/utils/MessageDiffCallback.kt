@@ -21,13 +21,19 @@ data class MessageDiffCallback(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return old[oldItemPosition].id === new[newItemPosition].id
+        val sameId = old[oldItemPosition].id == new[newItemPosition].id
+        //println("${old[oldItemPosition].id} areItemsTheSame ${new[newItemPosition].id} ${sameId}")
+        return sameId
     }
 
     override fun areContentsTheSame(
         oldItemPosition: Int,
         newItemPosition: Int
     ): Boolean {
-        return old[oldItemPosition] == new[newItemPosition]
+        val same = old[oldItemPosition] == new[newItemPosition]
+        //println("${old[oldItemPosition].id} areContentsTheSame ${new[newItemPosition].id} $same")
+
+        return same
     }
+
 }
