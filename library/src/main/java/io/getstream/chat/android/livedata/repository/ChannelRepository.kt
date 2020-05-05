@@ -5,9 +5,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.isPermanent
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.isPermanent
 
 class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
     // the channel cache is simple, just keeps the last 100 users in memory

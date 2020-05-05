@@ -4,9 +4,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.isPermanent
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.isPermanent
 import java.security.InvalidParameterException
 
 /**

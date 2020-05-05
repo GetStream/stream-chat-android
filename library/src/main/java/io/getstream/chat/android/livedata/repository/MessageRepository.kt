@@ -6,9 +6,9 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.isPermanent
 import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.isPermanent
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 import java.util.*
