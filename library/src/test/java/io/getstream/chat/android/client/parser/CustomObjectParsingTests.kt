@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import org.assertj.core.api.Assertions.assertThat
+import org.json.JSONObject
 import org.junit.Test
 
 class CustomObjectParsingTests {
@@ -32,21 +33,30 @@ class CustomObjectParsingTests {
 
     @Test
     fun verifyCustomDataReadAndWrite() {
-        customObjectImplementations.forEach { clazz ->
-            var verified = false
-            clazz.constructors.forEach { constructor ->
-                if (constructor.parameters.isEmpty()) {
-                    val instance = constructor.newInstance()
-                    verifyCustomDataReadAndWrite(instance as CustomObject)
-                    verified = true
-                }
-            }
+        verifyAllImplementations { obj -> verifyCustomDataReadAndWrite(obj) }
+    }
 
-            if (!verified) {
-                throw RuntimeException("No default(empty) constructor for custom object: $clazz")
-            }
+    @Test
+    fun verifyRawJsonWrite() {
+        verifyAllImplementations { obj -> verifyRawJson(obj) }
+    }
 
-        }
+
+    private fun verifyRawJson(customObject: CustomObject) {
+
+        val keyA = "key-a"
+        val valueA = "value-a"
+        val keyB = "key-b"
+        val valueB = "value-b"
+
+        customObject.putExtraValue(keyA, valueA)
+        customObject.putExtraValue(keyB, valueB)
+
+        val rawJson = parser.toJson(customObject)
+        val jsonObject = JSONObject(rawJson)
+
+        assertThat(jsonObject.getString(keyA)).isEqualTo(valueA)
+        assertThat(jsonObject.getString(keyB)).isEqualTo(valueB)
     }
 
     private fun verifyCustomDataReadAndWrite(customObject: CustomObject) {
@@ -64,6 +74,24 @@ class CustomObjectParsingTests {
     private fun verifyAdapter(clazz: Class<*>) {
         val adapter = typeAdapterFactory.create(gson, TypeToken.get(clazz))
         assertThat(adapter).isInstanceOf(CustomObjectGsonAdapter::class.java)
+    }
+
+    private fun verifyAllImplementations(verify: (CustomObject) -> Unit) {
+        customObjectImplementations.forEach { clazz ->
+            var verified = false
+            clazz.constructors.forEach { constructor ->
+                if (constructor.parameters.isEmpty()) {
+                    val instance = constructor.newInstance()
+                    verify(instance as CustomObject)
+                    verified = true
+                }
+            }
+
+            if (!verified) {
+                throw RuntimeException("No default(empty) constructor for custom object: $clazz")
+            }
+
+        }
     }
 
 
