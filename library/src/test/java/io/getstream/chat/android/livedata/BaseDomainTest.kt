@@ -57,7 +57,7 @@ open class BaseDomainTest {
     }
 
     @After
-    open fun tearDown() {
+    open fun tearDown() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.disconnect()
         db.close()
     }

@@ -1,5 +1,7 @@
 package io.getstream.chat.android.livedata
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 
@@ -14,7 +16,7 @@ open class BaseConnectedMockedTest : BaseDomainTest() {
     }
 
     @After
-    override fun tearDown() {
+    override fun tearDown() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.disconnect()
         db.close()
     }

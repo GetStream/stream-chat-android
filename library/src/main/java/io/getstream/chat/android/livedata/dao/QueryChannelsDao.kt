@@ -21,4 +21,10 @@ interface QueryChannelsDao {
                     "WHERE stream_channel_query.id=:id"
     )
     suspend fun select(id: String): QueryChannelsEntity?
+
+    @Query(
+        "SELECT * FROM stream_channel_query " +
+            "WHERE stream_channel_query.id IN (:ids)"
+    )
+    suspend fun select(ids: List<String>): List<QueryChannelsEntity>
 }

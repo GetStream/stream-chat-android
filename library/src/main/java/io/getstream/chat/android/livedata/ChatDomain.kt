@@ -54,7 +54,7 @@ interface ChatDomain {
     /** a helper object which lists all the initialized use cases for the chat domain */
     var useCases: UseCaseHelper
 
-    fun disconnect()
+    suspend fun disconnect()
     fun isOnline(): Boolean
     fun isOffline(): Boolean
     fun isInitialized(): Boolean

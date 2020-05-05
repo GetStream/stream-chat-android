@@ -10,4 +10,7 @@ class QueryChannelsRepository(var queryChannelsDao: QueryChannelsDao) {
     suspend fun select(id: String): QueryChannelsEntity? {
         return queryChannelsDao.select(id)
     }
+    suspend fun select(ids: List<String>): List<QueryChannelsEntity> {
+        return queryChannelsDao.select(ids)
+    }
 }

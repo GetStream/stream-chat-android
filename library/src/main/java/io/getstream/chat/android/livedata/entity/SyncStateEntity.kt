@@ -1,0 +1,15 @@
+package io.getstream.chat.android.livedata.entity
+
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Relation
+import java.util.Date
+
+@Entity(tableName = "stream_sync_state")
+data class SyncStateEntity(
+    @PrimaryKey var userId: String,
+    var activeChannelIds: List<String> = mutableListOf(),
+    var activeQueryIds: List<String> = mutableListOf(),
+    var lastSyncedAt: Date? = null
+)

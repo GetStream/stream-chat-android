@@ -13,6 +13,8 @@ class RepositoryHelper(var client: ChatClient, var currentUser: User, var databa
     private var messageDao: MessageDao = database.messageDao()
     private var channelDao: ChannelDao = database.channelStateDao()
     private var channelConfigDao: ChannelConfigDao = database.channelConfigDao()
+    private var syncStateDao: SyncStateDao = database.syncStateDao()
+
 
     var users: UserRepository
     var configs: ChannelConfigRepository
@@ -20,6 +22,7 @@ class RepositoryHelper(var client: ChatClient, var currentUser: User, var databa
     var queryChannels: QueryChannelsRepository
     var messages: MessageRepository
     var reactions: ReactionRepository
+    var syncState: SyncStateRepository
 
     init {
         users = UserRepository(userDao, 100, currentUser)
@@ -28,5 +31,6 @@ class RepositoryHelper(var client: ChatClient, var currentUser: User, var databa
         queryChannels = QueryChannelsRepository(queryChannelsDao)
         messages = MessageRepository(messageDao, 100, currentUser, client)
         reactions = ReactionRepository(reactionDao, currentUser, client)
+        syncState = SyncStateRepository(syncStateDao)
     }
 }

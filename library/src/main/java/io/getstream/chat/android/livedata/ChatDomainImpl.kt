@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
@@ -125,6 +126,8 @@ class ChatDomainImpl private constructor(
     internal val scope = CoroutineScope(Dispatchers.IO + job)
 
     internal lateinit var repos: RepositoryHelper
+    internal lateinit var syncState: SyncStateEntity
+    internal lateinit var initJob: Job
 
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy =
@@ -138,14 +141,23 @@ class ChatDomainImpl private constructor(
 
         // load channel configs from Room into memory
         val chatDomainImpl = this
-        scope.launch(scope.coroutineContext) {
+        initJob = scope.launch(scope.coroutineContext) {
+            // fetch the configs for channels
             repos.configs.load()
-            // load the current user from the db
+
             val me = repos.users.selectMe()
-            me?.let {
-                if (currentUser.updatedAt == null || currentUser.updatedAt!! < it.updatedAt) {
-                    updateCurrentUser(it)
-                }
+            me?.let { updateCurrentUser(it) }
+            // load the current user from the db
+            val initialSyncState = SyncStateEntity(currentUser.id)
+            syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
+            // set active channels and recover
+            for (channelId in syncState.activeChannelIds) {
+                channel(channelId)
+            }
+            // queries
+            val queries = repos.queryChannels.select(syncState.activeQueryIds)
+            for (queryEntity in queries) {
+                queryChannels(queryEntity.filter, queryEntity.sort)
             }
         }
 
@@ -175,7 +187,15 @@ class ChatDomainImpl private constructor(
         _mutedUsers.postValue(me.mutes)
     }
 
-    override fun disconnect() {
+    internal suspend fun storeSyncState(): SyncStateEntity {
+        syncState.activeChannelIds = activeChannelMapImpl.keys().toList()
+        syncState.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
+        repos.syncState.insert(syncState)
+        return syncState
+    }
+
+    override suspend fun disconnect() {
+        storeSyncState()
         job.cancelChildren()
         stopListening()
         stopClean()
@@ -422,10 +442,41 @@ class ChatDomainImpl private constructor(
         return activeQueryMapImpl[queryChannelsEntity]!!
     }
 
-    suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
+    suspend fun queryEvents(cids: List<String>): List<ChatEvent> {
         /*
          * client.recoverEvents(channelIDs, {limit: 100, since: last_time_online, [offset: $offset_returned_by_previous_call ]})
          */
+        return mutableListOf()
+    }
+
+    /**
+     * replay events for all active channels
+     * ensures that the cid you provide is active
+     *
+     * @param cid ensures that the channel with this id is active
+     */
+    suspend fun replayEventsForActiveChannels(cid: String?=null): List<ChatEvent> {
+        // wait for the active channel info to load
+        initJob.join()
+        // make a list of all channel ids
+        val cids = activeChannelMapImpl.keys().toList().toMutableList()
+        cid?.let {
+            channel(it)
+            cids.add(it)
+        }
+
+        val now = Date()
+        val events = queryEvents(cids)
+        eventHandler.handleEvents(events)
+
+        syncState.lastSyncedAt = now
+
+        return events
+    }
+
+    suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
+        // 0 ensure load is complete
+        initJob.join()
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
@@ -460,6 +511,13 @@ class ChatDomainImpl private constructor(
         if (isOnline()) {
             retryFailedEntities()
         }
+
+        // 4 recover events
+        if (isOnline()) {
+            replayEventsForActiveChannels()
+        }
+
+
     }
 
     suspend fun retryFailedEntities() {
@@ -521,6 +579,8 @@ class ChatDomainImpl private constructor(
     ): List<ChannelEntityPair> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
+
+
 
     internal suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
@@ -591,6 +651,8 @@ class ChatDomainImpl private constructor(
     fun postInitialized() {
         _initialized.postValue(true)
     }
+
+
 }
 
 var gson = Gson()

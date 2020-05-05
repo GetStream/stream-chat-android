@@ -2,9 +2,11 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -35,7 +37,7 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun loadMe() = runBlocking(Dispatchers.IO) {
+    fun loadAndState() = runBlocking(Dispatchers.IO) {
         data.user1.extraData = mutableMapOf("snack" to "icecream")
         chatDomainImpl.repos.users.insertMe(data.user1)
         val me = chatDomainImpl.repos.users.selectMe()

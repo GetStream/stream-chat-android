@@ -16,9 +16,10 @@ import io.getstream.chat.android.livedata.entity.*
             UserEntity::class,
             ReactionEntity::class,
             ChannelEntity::class,
-            ChannelConfigEntity::class
+            ChannelConfigEntity::class,
+            SyncStateEntity::class
         ],
-        version = 11,
+        version = 12,
         exportSchema = false
 )
 
@@ -31,6 +32,7 @@ import io.getstream.chat.android.livedata.entity.*
         SetConverter::class,
         ConfigConverter::class,
         SyncStatusConverter::class,
+        UserEntityConverter::class,
         DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): QueryChannelsDao
@@ -39,6 +41,7 @@ abstract class ChatDatabase : RoomDatabase() {
     abstract fun messageDao(): MessageDao
     abstract fun channelStateDao(): ChannelDao
     abstract fun channelConfigDao(): ChannelConfigDao
+    abstract fun syncStateDao(): SyncStateDao
 
     companion object {
         @Volatile
