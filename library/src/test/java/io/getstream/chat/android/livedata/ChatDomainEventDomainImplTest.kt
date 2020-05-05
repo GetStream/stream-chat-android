@@ -83,6 +83,8 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         }
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(1)
+        Truth.assertThat(message.reactionScores.get("like")).isEqualTo(10)
+
         Truth.assertThat(message.latestReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
         Truth.assertThat(message.ownReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
 

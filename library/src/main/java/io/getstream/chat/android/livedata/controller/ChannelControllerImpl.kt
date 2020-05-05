@@ -19,6 +19,8 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.addReaction
+import io.getstream.chat.android.livedata.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
@@ -505,11 +507,7 @@ class ChannelControllerImpl(
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
-            it.ownReactions.add(reaction)
-            it.latestReactions.add(reaction)
-            it.reactionCounts = it.reactionCounts ?: mutableMapOf()
-            val currentCount = it.reactionCounts.getOrElse(reaction.type) { 0 }
-            it.reactionCounts[reaction.type] = currentCount + 1
+            it.addReaction(reaction, true)
             upsertMessage(it)
         }
         // update the message in the local storage
@@ -556,11 +554,7 @@ class ChannelControllerImpl(
         // update livedata
         val currentMessage = getMessage(reaction.messageId)
         currentMessage?.let {
-            it.ownReactions = it.ownReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
-            it.latestReactions = it.latestReactions.filterNot { it.user!!.id == reaction.userId && it.type == reaction.type }.toMutableList()
-            it.reactionCounts = it.reactionCounts ?: mutableMapOf()
-            val currentCount = it.reactionCounts.getOrElse(reaction.type) { 0 }
-            it.reactionCounts[reaction.type] = currentCount - 1
+            it.removeReaction(reaction, true)
             upsertMessage(it)
         }
 

@@ -57,6 +57,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
     var reactionCounts: MutableMap<String, Int> = mutableMapOf()
 
+    /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
+    var reactionScores: MutableMap<String, Int> = mutableMapOf()
+
     /** parent id, used for threads */
     var parentId: String? = null
 
@@ -83,7 +86,10 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
         // update the count
         val currentCount = reactionCounts.getOrElse(reaction.type) { 0 }
-        reactionCounts.set(reaction.type, currentCount + 1)
+        reactionCounts[reaction.type] = currentCount + 1
+        // update the score
+        val currentScore = reactionScores.getOrElse(reaction.type) { 0 }
+        reactionScores[reaction.type] = currentScore + reaction.score
     }
 
     // removes this reaction and update the counts
@@ -96,6 +102,8 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
             if (shouldDecrement) {
                 val currentCount = reactionCounts.getOrElse(reaction.type) { 1 }
                 reactionCounts[reaction.type] = currentCount - 1
+                val currentScore = reactionScores.getOrElse(reaction.type) { 1 }
+                reactionScores[reaction.type] = currentScore - reaction.score
             }
         }
     }
@@ -115,6 +123,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         commandInfo = m.commandInfo
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
+        reactionScores = m.reactionScores ?: mutableMapOf()
         if (cid.isEmpty()) {
             cid = m.channel.cid
         }
@@ -144,6 +153,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.commandInfo = commandInfo ?: emptyMap()
         m.extraData = extraData
         m.reactionCounts = reactionCounts ?: mutableMapOf()
+        m.reactionScores = reactionScores ?: mutableMapOf()
         m.syncStatus = syncStatus ?: SyncStatus.COMPLETED
 
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
@@ -153,3 +163,4 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         return m
     }
 }
+
