@@ -1,13 +1,18 @@
-# stream-chat-android
+# Official Android SDK for [Stream Chat](https://getstream.io/chat/)
+
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
 
-![](https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png) 
+<p align="center">
+  <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png" width="60%" /></a>
+</p>
 
-🚨 SDK is in transition period between: 
+🚨 SDK is in the transition period between: 
 - Stable version: [3.x.x](https://github.com/GetStream/stream-chat-android/tree/ver/3.x.x)
 - Beta version: [4.x.x](https://github.com/GetStream/stream-chat-android)
 
-[stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low level chat SDK and a set of reusable UI components. Most users start out with the UI components, and fall back to the lower level API when they want to customize things.
+[stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
+
+<img align="right" src="https://getstream.imgix.net/images/chat-android/android_chat_art@1x.png?auto=format,enhance" width="50%" />
 
 **Quick Links**
 
@@ -21,7 +26,7 @@
 
 ## Java/Kotlin Chat Tutorial
 
-The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make common changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
+The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
 ## Clone the Github Example App
 
@@ -31,26 +36,26 @@ This repo includes a fully functional example app. To run the example app:
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Open the project in Android Studio. Setup your emulator (we're using Pixel 3, API 29 at the moment). Note that the gradle sync process can take some time when you first open the project. 
+Open the project in Android Studio and set up your emulator (we're using Pixel 3, API 29 at the moment). Note that the Gradle sync process can take some time when you first open the project. 
 
 ## Docs
 
 This library provides:
 
-- A low level client for making API calls and receiving chat events
+- A low-level client for making API calls and receiving chat events
 - `ViewModel` for list of channels and `ViewModel` for channel
-- 4 reusable chat views:
+- Four reusable chat views:
     - [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
     - [Message Input](https://getstream.io/chat/docs/message_input_view/?language=kotlin)
     - [Channel Header](https://getstream.io/chat/docs/channel_header_view/?language=kotlin)
 
-The documentation for livedata and the custom views is available here:
+The documentation for LiveData and the custom views is available here:
 [https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
 
 ### Chat API
 
-The low level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+The low-level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
 
 ## Supported features
 
@@ -60,8 +65,8 @@ The low level Chat API docs are available for both [Kotlin](https://getstream.io
 - Link preview
 - Images, Videos and Files attachments
 - Edit and Delete message
-- Typing Inditicators
-- Read Inditicators
+- Typing Indicators
+- Read Indicators
 - Push Notifications
 - Image gallery
 - GIF support
@@ -97,7 +102,7 @@ android {
     dataBinding {
         enabled = true
     }
-	
+    
     compileOptions {
         
         //for java projects
@@ -115,7 +120,7 @@ dependencies {
 
 ## Proguard/R8
 
-If you're using Proguard/R8 you'll want to have a look at the [proguard file we use for the sample](https://github.com/GetStream/stream-chat-android/blob/master/sample/proguard-rules.pro).
+If you're using Proguard/R8, you'll want to have a look at the [proguard file we use for the sample](https://github.com/GetStream/stream-chat-android/blob/master/sample/proguard-rules.pro).
 
 ## Setup Stream Chat
 
@@ -132,17 +137,17 @@ public class App extends Application {
 }
 ```
 
-With this you will be able to retrieve Chat instance from any part of your application using `Chat.getInstance()`. Here's an example:
+With this, you will be able to retrieve Chat instance from any part of your application using `Chat.getInstance()`. Here's an example:
 
 ```java
 public class MainActivity extends AppCompatActivity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		Chat chat = Chat.getInstance();
-		...
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Chat chat = Chat.getInstance();
+        ...
+    }
 ```
 
 ## Online status
@@ -178,7 +183,7 @@ Chat chat = new Chat.Builder(apiKey, this)
 ## Debug and development
 
 ### Logging
-By default logging is disabled. You enable logs and set log level when initialising `Chat`:
+By default, logging is disabled. You enable logs and set log level when initializing `Chat`:
 ```java
 Chat chat = new Chat.Builder("api-key", context).logLevel(ChatLogLevel.ALL).build()
 ```
@@ -200,7 +205,7 @@ Chat chat = new Chat.Builder("api-key", context)
 
 This guide assumes that you're working on your own project in the `project` folder and clone the chat SDK library in a separate folder.
 
-1. First of all you'll want to clone this repo
+1. First of all, you'll want to clone this repo
 
 ```
 git clone git@github.com:GetStream/stream-chat-android.git
@@ -223,7 +228,7 @@ implementation project(':chat')
 
 4. Next open up `project/build.gradle`. 
 
-Add the following to the buildscript {} entry
+Add the following to the buildscript {} entry.
 
 ```
 
@@ -244,19 +249,19 @@ buildscript {
 
 ```
 
-Next in the dependencies setup these libraries. (They are needed to compile stream-chat-android
+Next, set up these libraries in the dependencies. (They are needed to compile stream-chat-android)
 
 ```
 buildscript {
-	dependecies {
-	....
-	
-	classpath "com.android.tools.build:gradle:$gradleVersion"
+    dependecies {
+    ....
+    
+    classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
         classpath "com.google.gms:google-services:$googleServiceVersion"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
         classpath "com.dicedmelon.gradle:jacoco-android:$jacocoVersion"
-	}
+    }
 }
 ```
 
@@ -269,7 +274,7 @@ Hit build/clean project in android studio and build your app.
 
 ### Channel List loading icons spins forever
 
-Not setting the lifecycle owner on a data binding can cause the channel list loading icon to spin forever
+Not setting the lifecycle owner on a data binding can cause the channel list loading icon to spin forever.
 
 ```
 mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
@@ -290,7 +295,7 @@ In most cases you can try to see the reason in logcat with tag `Glide`. One of t
 And update your `Manifest`:
 ```xml
 <application
-	android:networkSecurityConfig="@xml/network_security_config"/>
+    android:networkSecurityConfig="@xml/network_security_config"/>
 ```
 ### Localize the UI with Translations
 You can translate all [strings](https://github.com/GetStream/stream-chat-android/blob/master/library/src/main/res/values/strings.xml) of SDK by overriding string keys.<br/>
