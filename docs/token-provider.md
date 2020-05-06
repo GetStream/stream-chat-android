@@ -9,7 +9,7 @@
 
 2. For tokens with expiration
 
-    ```
+    ```kotlin
     val tokenProvider = object: TokenProvider() {
         // Executed in background thread   
         override fun loadToken(): String {
