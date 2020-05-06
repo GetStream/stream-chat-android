@@ -2,11 +2,9 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 

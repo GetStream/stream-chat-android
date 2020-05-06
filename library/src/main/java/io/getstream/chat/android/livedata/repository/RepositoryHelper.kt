@@ -15,7 +15,6 @@ class RepositoryHelper(var client: ChatClient, var currentUser: User, var databa
     private var channelConfigDao: ChannelConfigDao = database.channelConfigDao()
     private var syncStateDao: SyncStateDao = database.syncStateDao()
 
-
     var users: UserRepository
     var configs: ChannelConfigRepository
     var channels: ChannelRepository

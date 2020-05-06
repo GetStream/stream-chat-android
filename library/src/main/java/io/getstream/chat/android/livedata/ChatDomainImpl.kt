@@ -126,8 +126,8 @@ class ChatDomainImpl private constructor(
     internal val scope = CoroutineScope(Dispatchers.IO + job)
 
     internal lateinit var repos: RepositoryHelper
-    internal lateinit var syncState: SyncStateEntity
-    internal lateinit var initJob: Job
+    internal var syncState: SyncStateEntity? = null
+    internal lateinit var initJob: Deferred<SyncStateEntity?>
 
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy =
@@ -141,7 +141,7 @@ class ChatDomainImpl private constructor(
 
         // load channel configs from Room into memory
         val chatDomainImpl = this
-        initJob = scope.launch(scope.coroutineContext) {
+        initJob = scope.async(scope.coroutineContext) {
             // fetch the configs for channels
             repos.configs.load()
 
@@ -151,14 +151,17 @@ class ChatDomainImpl private constructor(
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
             // set active channels and recover
-            for (channelId in syncState.activeChannelIds) {
-                channel(channelId)
+            syncState?.let {
+                for (channelId in it.activeChannelIds) {
+                    channel(channelId)
+                }
+                // queries
+                val queries = repos.queryChannels.select(it.activeQueryIds)
+                for (queryEntity in queries) {
+                    queryChannels(queryEntity.filter, queryEntity.sort)
+                }
             }
-            // queries
-            val queries = repos.queryChannels.select(syncState.activeQueryIds)
-            for (queryEntity in queries) {
-                queryChannels(queryEntity.filter, queryEntity.sort)
-            }
+            syncState
         }
 
         useCases = UseCaseHelper(this)
@@ -187,10 +190,13 @@ class ChatDomainImpl private constructor(
         _mutedUsers.postValue(me.mutes)
     }
 
-    internal suspend fun storeSyncState(): SyncStateEntity {
-        syncState.activeChannelIds = activeChannelMapImpl.keys().toList()
-        syncState.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
-        repos.syncState.insert(syncState)
+    internal suspend fun storeSyncState(): SyncStateEntity? {
+        syncState?.let {
+            it.activeChannelIds = activeChannelMapImpl.keys().toList()
+            it.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
+            repos.syncState.insert(it)
+        }
+
         return syncState
     }
 
@@ -455,7 +461,7 @@ class ChatDomainImpl private constructor(
      *
      * @param cid ensures that the channel with this id is active
      */
-    suspend fun replayEventsForActiveChannels(cid: String?=null): List<ChatEvent> {
+    suspend fun replayEventsForActiveChannels(cid: String? = null): List<ChatEvent> {
         // wait for the active channel info to load
         initJob.join()
         // make a list of all channel ids
@@ -469,7 +475,7 @@ class ChatDomainImpl private constructor(
         val events = queryEvents(cids)
         eventHandler.handleEvents(events)
 
-        syncState.lastSyncedAt = now
+        syncState?.let { it.lastSyncedAt= now }
 
         return events
     }
@@ -516,8 +522,6 @@ class ChatDomainImpl private constructor(
         if (isOnline()) {
             replayEventsForActiveChannels()
         }
-
-
     }
 
     suspend fun retryFailedEntities() {
@@ -579,8 +583,6 @@ class ChatDomainImpl private constructor(
     ): List<ChannelEntityPair> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
-
-
 
     internal suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
@@ -651,8 +653,6 @@ class ChatDomainImpl private constructor(
     fun postInitialized() {
         _initialized.postValue(true)
     }
-
-
 }
 
 var gson = Gson()

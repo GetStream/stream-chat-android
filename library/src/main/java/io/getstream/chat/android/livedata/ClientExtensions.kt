@@ -32,7 +32,6 @@ fun Channel.users(): List<User> {
     return users
 }
 
-
 fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
     // add to own reactions
     if (isMine) {

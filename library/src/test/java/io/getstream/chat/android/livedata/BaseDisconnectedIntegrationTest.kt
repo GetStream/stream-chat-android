@@ -93,7 +93,7 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
     }
 
     @After
-    override fun tearDown() = runBlocking {
+    override fun tearDown() = runBlocking(Dispatchers.IO) {
         // things to do after each test
         System.out.println("tearDown")
         chatDomainImpl.disconnect()

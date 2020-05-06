@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 
-
 @Dao
 interface SyncStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

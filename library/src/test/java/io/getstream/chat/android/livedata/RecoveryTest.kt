@@ -3,12 +3,15 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class RecoveryTest: BaseConnectedIntegrationTest() {
+class RecoveryTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun replayEventsForActiveChannels() = runBlocking {
@@ -22,9 +25,10 @@ class RecoveryTest: BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun storeSyncState() = runBlocking {
+    fun storeSyncState() = runBlocking(Dispatchers.IO) {
         val cid = "messaging:myspecialchannel"
         chatDomainImpl.channel(cid)
+        chatDomainImpl.initJob.await()
         val syncState1 = chatDomainImpl.storeSyncState()
         val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
         Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
