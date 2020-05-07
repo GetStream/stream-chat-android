@@ -113,8 +113,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                     UtilsMessages.show("removed", "not removed: ", deleteDeviceResult)
                 }
             }
-
-
         }
 
         btnStartWatchingChannel.setOnClickListener {
@@ -155,12 +153,9 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnGetMessages.setOnClickListener {
-            val queryChannelRequest = QueryChannelRequest()
-                .withMessages(5)
-
-
+            val queryChannelRequest = QueryChannelRequest().withMessages(5)
             client.queryChannel(chType, channelId, queryChannelRequest).enqueue {
-
+                UtilsMessages.show("messages success", "messages error", it)
             }
         }
 
