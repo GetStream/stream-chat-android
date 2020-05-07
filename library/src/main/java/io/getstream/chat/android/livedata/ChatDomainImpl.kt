@@ -535,7 +535,7 @@ class ChatDomainImpl private constructor(
         // 4 recover events
         if (isOnline()) {
             // TODO: reenable this when the endpoint goes live
-            //replayEventsForActiveChannels()
+            // replayEventsForActiveChannels()
         }
     }
 
