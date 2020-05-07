@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.sample.utils.UserConfig
-import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_push.*
 
 class OneToOneActivity : AppCompatActivity() {

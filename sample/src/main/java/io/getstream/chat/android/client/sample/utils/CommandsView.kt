@@ -37,11 +37,11 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     val request = QueryChannelRequest().withWatch().withMessages(10)
 
     val chType = "messaging"
-    val chId = "x-test"
+
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false) {
+    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false, channelId: String = "x-test") {
 
         this.config = config
         this.members = members
@@ -120,30 +120,31 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         btnStartWatchingChannel.setOnClickListener {
 
 
-            client.queryChannel(chType, chId, request).enqueue { watchResult ->
+            client.queryChannel(chType, channelId, request).enqueue { watchResult ->
                 UtilsMessages.show("started", "not not started:", watchResult)
             }
         }
 
         btnStopWatchingChannel.setOnClickListener {
 
-            client.stopWatching(chType, chId).enqueue { stopWatchResult ->
+            client.stopWatching(chType, channelId).enqueue { stopWatchResult ->
                 UtilsMessages.show("stopped", "not stopped:", stopWatchResult)
             }
         }
 
         btnUpdateChannel.setOnClickListener {
             val data = mutableMapOf<String, Any>()
-            data["name"] = chId
-            client.updateChannel(chType, chId, Message("update-msg"), data).enqueue {
+            data["name"] = channelId
+            client.updateChannel(chType, channelId, Message("update-msg"), data).enqueue {
                 UtilsMessages.show("updated", "not updated:", it)
             }
         }
 
         btnSendMessage.setOnClickListener {
-            val messageOut = Message(text = "SSS")
-            messageOut.extraData["test"] = "zed"
-            client.sendMessage(chType, chId, messageOut).enqueue { messageResult ->
+            val currentTime = System.currentTimeMillis() / 1000
+            val messageOut = Message(text = "Test messages: $currentTime")
+            messageOut.extraData["test-data"] = "zed: $currentTime"
+            client.sendMessage(chType, channelId, messageOut).enqueue { messageResult ->
                 if (messageResult.isSuccess) {
                     val messageIn = messageResult.data()
                 }
@@ -158,7 +159,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 .withMessages(5)
 
 
-            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+            client.queryChannel(chType, channelId, queryChannelRequest).enqueue {
 
             }
         }
@@ -166,9 +167,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         btnGetOrCreateChannel.setOnClickListener {
 
             val queryChannelRequest = QueryChannelRequest()
+                .withData(mapOf("name" to channelId))
                 .withMessages(5)
 
-            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+            client.queryChannel(chType, channelId, queryChannelRequest).enqueue {
 
                 if (it.isError) {
                     it.error().printStackTrace()
@@ -180,11 +182,9 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnGetSyncHistory.setOnClickListener {
 
-            val before = 10 * 60 * 1000
-            val t = System.currentTimeMillis()
             val lastSyncAt = Date(0)
 
-            client.getSyncHistory(listOf("$chType:$chId"), lastSyncAt).enqueue {
+            client.getSyncHistory(listOf("$chType:$channelId"), lastSyncAt).enqueue {
                 UtilsMessages.show("History received", "History not received", it)
             }
 
