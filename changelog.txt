@@ -1,3 +1,7 @@
+# 1.4.3 - Thu 7 May 2020
+
+- fix type erasure of parsed collections: `LinkedTreeMap`, but not `List<Reaction>`
+
 # 1.4.2 - Mon 4 May 2020
 
 - add `reactionScores` to `Message`
