@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
+import java.util.Date
 
 interface ChatClient {
 
@@ -85,6 +86,8 @@ interface ChatClient {
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
+
+    fun replayEvents(channelIds: List<String>, since: Date?, limit: Int = 100, offset: Int = 0): Call<List<ChatEvent>>
 
     //endregion
 
