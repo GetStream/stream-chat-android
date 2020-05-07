@@ -33,5 +33,5 @@ interface RetryPolicy {
         client: ChatClient,
         attempt: Int,
         error: ChatError
-    ): Int?
+    ): Int
 }

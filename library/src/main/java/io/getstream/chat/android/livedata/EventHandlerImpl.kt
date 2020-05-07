@@ -218,7 +218,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     domainImpl.postOffline()
                 }
                 is ConnectedEvent -> {
-                    val connectedEvent: ConnectedEvent = event
                     val recovered = domainImpl.isInitialized()
 
                     domainImpl.postOnline()

@@ -19,7 +19,7 @@ class DefaultRetryPolicy : RetryPolicy {
         client: ChatClient,
         attempt: Int,
         error: ChatError
-    ): Int? {
+    ): Int {
         return attempt * 1000
     }
 }

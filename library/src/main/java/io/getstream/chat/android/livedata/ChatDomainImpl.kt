@@ -140,7 +140,6 @@ class ChatDomainImpl private constructor(
         repos = RepositoryHelper(client, currentUser, chatDatabase)
 
         // load channel configs from Room into memory
-        val chatDomainImpl = this
         initJob = scope.async(scope.coroutineContext) {
             // fetch the configs for channels
             repos.configs.load()
@@ -248,9 +247,7 @@ class ChatDomainImpl private constructor(
                 if (shouldRetry) {
                     // temporary failure, continue
                     logger.logI("API call failed (attempt $attempt), retrying in $timeout seconds. Error was ${result.error()}")
-                    if (timeout != null) {
-                        delay(timeout.toLong())
-                    }
+                    delay(timeout.toLong())
                     attempt += 1
                 } else {
                     logger.logI("API call failed (attempt $attempt). Giving up for now, will retry when connection recovers. Error was ${result.error()}")
@@ -537,7 +534,8 @@ class ChatDomainImpl private constructor(
 
         // 4 recover events
         if (isOnline()) {
-            replayEventsForActiveChannels()
+            // TODO: reenable this when the endpoint goes live
+            //replayEventsForActiveChannels()
         }
     }
 

@@ -46,7 +46,7 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
                 return false
             }
 
-            override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int? {
+            override fun retryTimeout(client: ChatClient, attempt: Int, error: ChatError): Int {
                 return 1000
             }
         }
