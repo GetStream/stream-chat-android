@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
+import java.util.*
 
 interface ChatClient {
 
@@ -203,6 +204,8 @@ interface ChatClient {
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
+
+    fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>>
 
     fun getVersion(): String
 

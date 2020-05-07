@@ -1,26 +1,35 @@
 package io.getstream.chat.android.client.parser
 
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.CustomObject
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.utils.Result
 import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 
 class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
-    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+
+    class KKK<T:CustomObject>: JsonDeserializer<T>{
+        override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): T {
+
+        }
+    }
 
     private val gson: Gson by lazy {
         GsonBuilder()
+            .registerTypeAdapter(TypeToken)
             .registerTypeAdapterFactory(TypeAdapterFactory())
             .setDateFormat(defaultDateFormat)
             .addSerializationExclusionStrategy(object : ExclusionStrategy {
@@ -76,7 +85,14 @@ class ChatParserImpl : ChatParser {
             // Try to parse default Stream error body
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
             val error = toError(body)
-            ChatNetworkError.create(error.code, error.message, statusCode)
+
+            if (error == null) {
+                ChatNetworkError.create(-1, body, statusCode)
+            } else {
+                ChatNetworkError.create(error.code, error.message, statusCode)
+            }
+
+
         } catch (t: Throwable) {
             ChatLogger.instance.logE(TAG, t)
             ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
@@ -89,17 +105,14 @@ class ChatParserImpl : ChatParser {
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
-    private fun toError(body: String?): ErrorResponse {
+    private fun toError(body: String?): ErrorResponse? {
 
         if (body == null) return ErrorResponse(message = "Body is null")
 
         return try {
             fromJson(body, ErrorResponse::class.java)
         } catch (t: Throwable) {
-            ChatLogger.instance.logE(TAG, t)
-            ErrorResponse().apply {
-                message = t.message.toString() + " from body: " + body
-            }
+            return null
         }
     }
 }

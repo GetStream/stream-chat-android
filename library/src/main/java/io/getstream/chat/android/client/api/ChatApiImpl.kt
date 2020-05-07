@@ -671,8 +671,27 @@ class ChatApiImpl(
         }
     }
 
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>> {
+        return callMapper.map(
+            retrofitApi.getSyncHistory(
+                GetSyncHistory(channelIds, lastSyncAt),
+                apiKey,
+                userId,
+                connectionId
+            )
+        ).map {
+            flattenChannels(it.channels)
+        }
+    }
+
     private fun <T> noConnectionIdError(): ErrorCall<T> {
         return ErrorCall(ChatError("setUser is either not called or not finished"))
+    }
+
+    private fun flattenChannels(response: Map<String, ChannelResponse>): Map<String, Channel> {
+        return response.entries.associate {
+            it.key to flattenChannel(it.value)
+        }
     }
 
     private fun flattenChannels(responses: List<ChannelResponse>): List<Channel> {
@@ -687,6 +706,8 @@ class ChatApiImpl(
         response.channel.members = response.members.orEmpty()
         response.channel.messages = response.messages.orEmpty()
         response.channel.watchers = response.watchers.orEmpty()
+        response.channel.hidden = response.hidden
+        response.channel.hiddenMessagesBefore = response.hide_messages_before
         return response.channel
     }
 

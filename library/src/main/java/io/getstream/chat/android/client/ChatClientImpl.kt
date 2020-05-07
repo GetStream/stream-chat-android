@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
+import java.util.*
 
 
 internal class ChatClientImpl(
@@ -455,6 +456,10 @@ internal class ChatClientImpl(
 
     override fun createChannel(channelType: String, members: List<String>): Call<Channel> {
         return createChannel(channelType, "", members)
+    }
+
+    override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>> {
+        return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {

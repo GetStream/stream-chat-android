@@ -3,22 +3,24 @@ package io.getstream.chat.android.client.parser.adapters
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.errors.ChatParsingError
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import java.lang.reflect.ParameterizedType
 
 
-class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter<CustomObject>() {
+class CustomObjectGsonAdapter<T : CustomObject>(val gson: Gson, val clazz: Class<*>) : TypeAdapter<T>() {
 
     companion object {
         val TAG = CustomObjectGsonAdapter::class.java.simpleName
     }
 
-    override fun write(writer: JsonWriter, obj: CustomObject?) {
+    override fun write(writer: JsonWriter, obj: T?) {
 
         try {
             if (obj == null) {
@@ -55,10 +57,10 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun read(reader: JsonReader): CustomObject? {
+    override fun read(reader: JsonReader): T? {
 
         try {
-            val result = clazz.newInstance() as CustomObject
+            val result = clazz.newInstance() as T
             val read = gson.getAdapter(HashMap::class.java).read(reader)
 
             if (read == null) {
@@ -82,7 +84,12 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                 if (map.containsKey(name)) {
                     field.isAccessible = true
                     val rawValue = gson.toJson(map.remove(name))
-                    val value = gson.getAdapter(field.type).fromJson(rawValue)
+                    val fieldType = field.type
+
+                    val get = TypeToken.get(fieldType)
+                    val adapter2 = gson.getAdapter(get)
+                    val adapter = gson.getAdapter(fieldType)
+                    val value = adapter.fromJson(rawValue)
                     try {
                         field.set(result, value)
                     } catch (e: Exception) {

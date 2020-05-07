@@ -342,4 +342,12 @@ interface RetrofitApi {
     ): Call<CompletableResponse>
 
     // endregion
+
+    @POST("/sync")
+    fun getSyncHistory(
+        @Body body: GetSyncHistory,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String
+    ): Call<GetSyncHistoryResponse>
 }

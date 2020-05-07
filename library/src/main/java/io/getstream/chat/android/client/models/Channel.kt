@@ -41,9 +41,15 @@ data class Channel(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var hidden: Boolean? = null,
 
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var hiddenMessagesBefore: Date? = null
 
 ) : CustomObject
 
