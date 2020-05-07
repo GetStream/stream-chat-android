@@ -8,7 +8,9 @@ import io.github.cdimascio.dotenv.dotenv
 import java.util.*
 
 class TestDataHelper {
-    val dotenv = dotenv()
+    val dotenv = dotenv {
+        ignoreIfMissing=true
+    }
 
     val apiKey = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }
     val logLevel = checkNotNull(dotenv["STREAM_LOG_LEVEL"]) { "Be sure to specify the STREAM_LOG_LEVEL environment variable" }
