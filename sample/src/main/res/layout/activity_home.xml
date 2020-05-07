@@ -29,9 +29,9 @@
             android:text="Test Users APIs"/>
 
     <Button
-            android:id="@+id/btnTestPush"
+            android:id="@+id/btnOneToOne"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test push"/>
+            android:text="One to one"/>
 
 </LinearLayout>

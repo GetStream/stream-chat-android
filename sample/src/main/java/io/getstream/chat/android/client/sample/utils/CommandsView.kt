@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
+import java.util.*
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     init {
@@ -40,7 +41,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>) {
+    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false) {
 
         this.config = config
         this.members = members
@@ -55,9 +56,17 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 return true
             }
         }
-        client = ChatClient.Builder(config.apiKey, App.instance)
-            .notifications(notificationsConfig)
-            .build()
+
+        client = if (useStaging) {
+            ChatClient.Builder(config.apiKey, App.instance)
+                .baseUrl("chat-us-east-staging.stream-io-api.com")
+                .notifications(notificationsConfig)
+                .build()
+        } else {
+            ChatClient.Builder(config.apiKey, App.instance)
+                .notifications(notificationsConfig)
+                .build()
+        }
 
         subs.add(client.events()
             .filter(ConnectedEvent::class.java)
@@ -152,7 +161,32 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
 
             }
+        }
 
+        btnGetOrCreateChannel.setOnClickListener {
+
+            val queryChannelRequest = QueryChannelRequest()
+                .withMessages(5)
+
+            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+
+                if (it.isError) {
+                    it.error().printStackTrace()
+                }
+
+                UtilsMessages.show("query success", "query error", it)
+            }
+        }
+
+        btnGetSyncHistory.setOnClickListener {
+
+            val before = 10 * 60 * 1000
+            val t = System.currentTimeMillis()
+            val lastSyncAt = Date(0)
+
+            client.getSyncHistory(listOf("$chType:$chId"), lastSyncAt).enqueue {
+                UtilsMessages.show("History received", "History not received", it)
+            }
 
         }
     }

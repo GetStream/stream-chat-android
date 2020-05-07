@@ -1,7 +1,9 @@
 package io.getstream.chat.android.client.sample
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.os.Bundle
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
@@ -15,7 +17,6 @@ import io.getstream.chat.android.client.sample.common.KeyValue
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryLive
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
-import io.getstream.chat.android.client.token.TokenProvider
 import kotlin.time.ExperimentalTime
 
 class App : Application() {
@@ -37,6 +38,14 @@ class App : Application() {
         private const val EXTRA_MESSAGE_ID = "io.getstream.chat.example.MESSAGE_ID"
 
         lateinit var instance: App
+
+        var activities = mutableListOf<Activity>()
+
+        fun runWithActivity(call: (Activity) -> Unit) {
+            if (activities.isNotEmpty()) {
+                call(activities[0])
+            }
+        }
     }
 
     override fun onCreate() {
@@ -55,6 +64,7 @@ class App : Application() {
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
         client = ChatClient.Builder(apiKey, this)
+            .baseUrl("chat-us-east-staging.stream-io-api.com")
             .notifications(provideNotificationConfig())
             .loggerHandler(object : ChatLoggerHandler {
                 override fun logT(throwable: Throwable) {
@@ -109,6 +119,37 @@ class App : Application() {
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
+
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityPaused(activity: Activity) {
+
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+                activities.remove(activity)
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                activities.add(activity)
+            }
+
+        })
     }
 
 

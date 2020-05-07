@@ -13,7 +13,11 @@ object UtilsMessages {
     }
 
     fun show(msg: String) {
-        Toast.makeText(App.instance, msg, Toast.LENGTH_SHORT).show()
+        App.runWithActivity {
+            it.runOnUiThread {
+                Toast.makeText(App.instance, msg, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     fun show(success: String, error: String, result: Result<*>) {
