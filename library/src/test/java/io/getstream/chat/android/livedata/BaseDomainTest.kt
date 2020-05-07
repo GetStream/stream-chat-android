@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
@@ -90,6 +91,7 @@ open class BaseDomainTest {
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
+            on { replayEvents(any(), anyOrNull(), any(), any())} doReturn ChatCallTestImpl(data.replayEventsResult)
             on {
                 createChannel(
                     any<String>(),
@@ -134,6 +136,7 @@ open class BaseDomainTest {
             on { events() } doReturn JustObservable(connectedEvent)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
+            on { replayEvents(any(), anyOrNull(), any(), any())} doReturn ChatCallTestImpl(data.replayEventsResult)
             on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
                 Result(
                     data.reaction1,

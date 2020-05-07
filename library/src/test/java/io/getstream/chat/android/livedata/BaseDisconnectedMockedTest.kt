@@ -12,7 +12,7 @@ open class BaseDisconnectedMockedTest : BaseDomainTest() {
     @Before
     override fun setup() {
         client = createDisconnectedMockClient()
-        setupChatDomain(client, true)
+        setupChatDomain(client, false)
     }
 
     @After

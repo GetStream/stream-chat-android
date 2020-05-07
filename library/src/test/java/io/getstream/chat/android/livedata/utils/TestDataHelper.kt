@@ -3,6 +3,9 @@ package io.getstream.chat.android.livedata.utils
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import io.github.cdimascio.dotenv.dotenv
+
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import java.util.*
 
 class TestDataHelper {
@@ -26,6 +29,8 @@ class TestDataHelper {
 
     val filter1 =
         Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
+
+    val query1 = QueryChannelsEntity(filter1, null)
 
     val attachment1 =
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
@@ -160,6 +165,8 @@ class TestDataHelper {
     val notificationAddedToChannel2Event =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel2 }
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
+    val replayEventsResult : Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
+
 }
 
 fun calendar(

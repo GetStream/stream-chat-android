@@ -14,7 +14,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
     fun handleEvents(events: List<ChatEvent>) {
         if (runAsync) {
-            domainImpl.scope.launch(Dispatchers.IO) {
+            domainImpl.scope.launch(domainImpl.scope.coroutineContext) {
                 handleEventsInternal(events)
             }
         } else {
@@ -26,7 +26,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         handleEventsInternal(listOf(event))
     }
 
-    internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+    internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy { it.createdAt }
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
@@ -35,7 +35,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         val messages: MutableMap<String, MessageEntity> = mutableMapOf()
         var unreadChannels: Int? = null
         var totalUnreadCount: Int? = null
-        var channelEvents: MutableMap<String, MutableList<ChatEvent>> = mutableMapOf()
+
 
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
@@ -72,12 +72,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
             event.user?.let {
                 users[it.id] = UserEntity(it)
             }
-            if (event.isChannelEvent()) {
-                if (!channelEvents.containsKey(event.cid!!)) {
-                    channelEvents[event.cid!!] = mutableListOf()
-                }
-                channelEvents[event.cid!!]!!.add(event)
-            }
+
 
             when (event) {
                 // keep the data in Room updated based on the various events..
@@ -92,6 +87,10 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     messages[event.message.id] = MessageEntity(event.message)
                     channels[event.channel!!.id] = ChannelEntity(event.channel!!)
                     users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
+                }
+                is NotificationAddedToChannelEvent -> {
+                    channels[event.channel!!.id] = ChannelEntity(event.channel!!)
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is ChannelHiddenEvent -> {
@@ -172,50 +171,70 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     }
                 }
             }
-            // actually insert the data
-            domainImpl.repos.users.insert(users.values.toList())
-            domainImpl.repos.channels.insert(channels.values.toList())
-            // we only cache messages for which we're receiving events
-            domainImpl.repos.messages.insert(messages.values.toList(), true)
-            if (me != null) {
-                domainImpl.updateCurrentUser(me)
-            }
+        }
+        // actually insert the data
+        domainImpl.repos.users.insert(users.values.toList())
+        domainImpl.repos.channels.insert(channels.values.toList())
+        // we only cache messages for which we're receiving events
+        domainImpl.repos.messages.insert(messages.values.toList(), true)
+        if (me != null) {
+            domainImpl.updateCurrentUser(me)
+        }
 
-            unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
-            totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
+        unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
+        totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
 
-            // step 3 - forward the events to the active queries and channels
-            for ((cid, cEvents) in channelEvents) {
-                if (domainImpl.isActiveChannel(cid)) {
-                    domainImpl.channel(cid).handleEvents(cEvents)
+    }
+
+    internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
+        events.sortedBy { it.createdAt }
+        updateOfflineStorageFromEvents(events)
+
+        // step 3 - forward the events to the active queries and channels
+
+        var channelEvents: MutableMap<String, MutableList<ChatEvent>> = mutableMapOf()
+        for (event in events) {
+            if (event.isChannelEvent()) {
+                if (!channelEvents.containsKey(event.cid!!)) {
+                    channelEvents[event.cid!!] = mutableListOf()
                 }
-            }
-
-            for (chatEvent in events) {
-
-                // connection events are never send on the recovery endpoint, so handle them 1 by 1
-                when (chatEvent) {
-                    is DisconnectedEvent -> {
-                        domainImpl.postOffline()
-                    }
-                    is ConnectedEvent -> {
-                        val connectedEvent: ConnectedEvent = chatEvent
-                        val recovered = domainImpl.isInitialized()
-
-                        domainImpl.postOnline()
-                        domainImpl.postInitialized()
-                        if (recovered && domainImpl.recoveryEnabled) {
-                            domainImpl.connectionRecovered(true)
-                        } else {
-                            domainImpl.connectionRecovered(false)
-                        }
-                    }
-                }
-            }
-            // queryRepo mainly monitors for the notification added to channel event
-            for (queryRepo in domainImpl.getActiveQueries()) {
-                queryRepo.handleEvents(events)
+                channelEvents[event.cid!!]!!.add(event)
             }
         }
+
+        for ((cid, cEvents) in channelEvents) {
+            if (domainImpl.isActiveChannel(cid)) {
+                domainImpl.channel(cid).handleEvents(cEvents)
+            }
+        }
+        // queryRepo mainly monitors for the notification added to channel event
+        for (queryRepo in domainImpl.getActiveQueries()) {
+            queryRepo.handleEvents(events)
+        }
+
+        // send out the connect events
+        for (event in events) {
+
+            // connection events are never send on the recovery endpoint, so handle them 1 by 1
+            when (event) {
+                is DisconnectedEvent -> {
+                    domainImpl.postOffline()
+                }
+                is ConnectedEvent -> {
+                    val connectedEvent: ConnectedEvent = event
+                    val recovered = domainImpl.isInitialized()
+
+                    domainImpl.postOnline()
+                    domainImpl.postInitialized()
+                    if (recovered && domainImpl.recoveryEnabled) {
+                        domainImpl.connectionRecovered(true)
+                    } else {
+                        domainImpl.connectionRecovered(false)
+                    }
+                }
+            }
+        }
+
     }
+
 }

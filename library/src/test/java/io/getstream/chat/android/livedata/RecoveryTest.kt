@@ -2,27 +2,46 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
+import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
+import io.getstream.chat.android.livedata.utils.JustObservable
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class RecoveryTest : BaseConnectedIntegrationTest() {
+class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 
     @Test
-    fun replayEventsForActiveChannels() = runBlocking {
+    fun replayEventsForActiveChannels() = runBlocking(Dispatchers.IO) {
         // - when you receive a push notification you want to sync all data for the specific channel you received the push on
         // - alternatively we could sync all channels you are interested in
         // - in theory (new channel) you could not be watching the channel yet
         // - your client is typically not connected when running this recover flow
         // - you don't want to watch the channel
-        val cid = "messaging:123"
-        val events = chatDomainImpl.replayEventsForActiveChannels(cid)
+
+        val events = chatDomainImpl.replayEventsForActiveChannels(data.channel1.cid)
+
+        // verify we now have 2 message in offline storage
+        val channelState = chatDomainImpl.selectAndEnrichChannel(
+            data.channel1.cid,
+            QueryChannelPaginationRequest()
+        )
+        Truth.assertThat(channelState!!.channel.messages.size).isEqualTo(2)
+
     }
+}
+
+@RunWith(AndroidJUnit4::class)
+class ConnectedRecoveryTest : BaseConnectedMockedTest() {
 
     @Test
     fun storeSyncState() = runBlocking(Dispatchers.IO) {

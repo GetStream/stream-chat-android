@@ -449,10 +449,28 @@ class ChatDomainImpl private constructor(
     }
 
     suspend fun queryEvents(cids: List<String>): List<ChatEvent> {
-        /*
-         * client.recoverEvents(channelIDs, {limit: 100, since: last_time_online, [offset: $offset_returned_by_previous_call ]})
-         */
-        return mutableListOf()
+        val limit = 100
+        var offset = 0
+        val maxEvents = 500
+        val allEvents = mutableListOf<ChatEvent>()
+
+
+        while (true) {
+            val call =  client.replayEvents(cids, syncState?.lastSyncedAt, limit, offset)
+            val response = call.execute()
+            if (response.isError) {
+                // TODO: what is the best error type for this?
+                throw Error(response.error())
+            }
+            val events = response.data()
+            allEvents.addAll(events)
+            if (events.size <= limit || offset >= maxEvents) {
+                break
+            }
+            offset += limit
+        }
+
+        return allEvents
     }
 
     /**
@@ -473,9 +491,9 @@ class ChatDomainImpl private constructor(
 
         val now = Date()
         val events = queryEvents(cids)
-        eventHandler.handleEvents(events)
+        eventHandler.updateOfflineStorageFromEvents(events)
 
-        syncState?.let { it.lastSyncedAt= now }
+        syncState?.let { it.lastSyncedAt = now }
 
         return events
     }

@@ -19,7 +19,7 @@ import io.getstream.chat.android.livedata.entity.*
             ChannelConfigEntity::class,
             SyncStateEntity::class
         ],
-        version = 12,
+        version = 13,
         exportSchema = false
 )
 
@@ -32,7 +32,6 @@ import io.getstream.chat.android.livedata.entity.*
         SetConverter::class,
         ConfigConverter::class,
         SyncStatusConverter::class,
-        UserEntityConverter::class,
         DateConverter::class)
 abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): QueryChannelsDao
