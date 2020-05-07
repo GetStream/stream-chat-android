@@ -454,9 +454,8 @@ class ChatDomainImpl private constructor(
         val maxEvents = 500
         val allEvents = mutableListOf<ChatEvent>()
 
-
         while (true) {
-            val call =  client.replayEvents(cids, syncState?.lastSyncedAt, limit, offset)
+            val call = client.replayEvents(cids, syncState?.lastSyncedAt, limit, offset)
             val response = call.execute()
             if (response.isError) {
                 // TODO: what is the best error type for this?

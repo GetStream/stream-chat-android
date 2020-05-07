@@ -2,16 +2,7 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.anyOrNull
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
-import io.getstream.chat.android.livedata.utils.JustObservable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -36,7 +27,6 @@ class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
             QueryChannelPaginationRequest()
         )
         Truth.assertThat(channelState!!.channel.messages.size).isEqualTo(2)
-
     }
 }
 

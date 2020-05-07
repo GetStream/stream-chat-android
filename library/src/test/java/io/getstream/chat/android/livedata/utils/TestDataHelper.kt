@@ -2,10 +2,9 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
-import io.github.cdimascio.dotenv.dotenv
-
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.github.cdimascio.dotenv.dotenv
 import java.util.*
 
 class TestDataHelper {
@@ -165,8 +164,7 @@ class TestDataHelper {
     val notificationAddedToChannel2Event =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel2 }
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
-    val replayEventsResult : Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
-
+    val replayEventsResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
 }
 
 fun calendar(

@@ -36,7 +36,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         var unreadChannels: Int? = null
         var totalUnreadCount: Int? = null
 
-
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
 
@@ -72,7 +71,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
             event.user?.let {
                 users[it.id] = UserEntity(it)
             }
-
 
             when (event) {
                 // keep the data in Room updated based on the various events..
@@ -183,7 +181,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
         unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
         totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-
     }
 
     internal suspend fun handleEventsInternal(events: List<ChatEvent>) {
@@ -234,7 +231,5 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 }
             }
         }
-
     }
-
 }

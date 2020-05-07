@@ -91,7 +91,7 @@ open class BaseDomainTest {
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
-            on { replayEvents(any(), anyOrNull(), any(), any())} doReturn ChatCallTestImpl(data.replayEventsResult)
+            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on {
                 createChannel(
                     any<String>(),
@@ -136,7 +136,7 @@ open class BaseDomainTest {
             on { events() } doReturn JustObservable(connectedEvent)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
-            on { replayEvents(any(), anyOrNull(), any(), any())} doReturn ChatCallTestImpl(data.replayEventsResult)
+            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
                 Result(
                     data.reaction1,
