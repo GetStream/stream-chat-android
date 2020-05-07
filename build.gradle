@@ -5,7 +5,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 28
         googleServiceVersion = '4.3.2'
-        androidGradlePluginVersion = '3.5.3'
+        androidGradlePluginVersion = '3.6.3'
         gradlePluginVersion = '2.1'
         jacocoVersion = '0.1.4'
         mannodermausVersion = '1.5.1.0'
