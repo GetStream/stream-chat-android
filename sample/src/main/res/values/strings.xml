@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Chat Sample App</string>
+    <string name="login_screen_title">Select user</string>
 </resources>
