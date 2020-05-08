@@ -20,7 +20,6 @@ class LoginFragment: Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         usersList.adapter = adapter
-
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when(it) {
                 is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)

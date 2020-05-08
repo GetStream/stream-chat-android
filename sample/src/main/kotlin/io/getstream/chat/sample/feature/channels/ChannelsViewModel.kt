@@ -6,3 +6,7 @@ import io.getstream.chat.sample.data.user.UserRepository
 class ChannelsViewModel(val userRepository: UserRepository): ViewModel() {
 
 }
+
+sealed class State {
+
+}
