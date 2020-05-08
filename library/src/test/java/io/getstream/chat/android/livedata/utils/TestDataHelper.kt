@@ -9,7 +9,7 @@ import java.util.*
 
 class TestDataHelper {
     val dotenv = dotenv {
-        ignoreIfMissing=true
+        ignoreIfMissing = true
     }
 
     val apiKey = checkNotNull(dotenv["STREAM_API_KEY"]) { "Be sure to specify the STREAM_API_KEY environment variable" }
