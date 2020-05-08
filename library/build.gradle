@@ -46,6 +46,15 @@ android {
     }
     testOptions.unitTests {
         includeAndroidResources = true
+        all {
+            testLogging {
+                events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                showExceptions true
+                showCauses true
+                showStackTraces true
+                exceptionFormat 'full'
+            }
+        }
     }
     kotlinOptions {
         jvmTarget = '1.8'

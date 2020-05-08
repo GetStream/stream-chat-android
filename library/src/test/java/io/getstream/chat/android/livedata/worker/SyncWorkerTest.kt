@@ -7,12 +7,14 @@ import androidx.work.workDataOf
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDisconnectedMockedTest
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SyncWorkerTest : BaseDisconnectedMockedTest() {
     @Test
+    @Ignore("not finished yet")
     fun run() = runBlocking {
         setupWorkManager()
         val STREAM_CHANNEL_CID = "STREAM_CHANNEL_CID"
