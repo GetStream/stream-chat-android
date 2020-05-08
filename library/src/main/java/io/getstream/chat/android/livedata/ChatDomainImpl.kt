@@ -475,7 +475,7 @@ class ChatDomainImpl private constructor(
      *
      * @param cid ensures that the channel with this id is active
      */
-    suspend fun replayEventsForActiveChannels(cid: String? = null): List<ChatEvent> {
+    suspend fun replayEventsForActiveChannels(cid: String? = null): Result<List<ChatEvent>> {
         // wait for the active channel info to load
         initJob.join()
         // make a list of all channel ids
@@ -491,7 +491,7 @@ class ChatDomainImpl private constructor(
 
         syncState?.let { it.lastSyncedAt = now }
 
-        return events
+        return Result(events, null)
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {

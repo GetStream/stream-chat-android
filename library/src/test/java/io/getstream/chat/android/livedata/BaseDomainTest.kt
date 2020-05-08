@@ -1,9 +1,13 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.work.Configuration
+import androidx.work.testing.SynchronousExecutor
+import androidx.work.testing.WorkManagerTestInitHelper
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
@@ -50,6 +54,18 @@ open class BaseDomainTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()
+
+    fun setupWorkManager() {
+        val config = Configuration.Builder()
+            // Set log level to Log.DEBUG to make it easier to debug
+            .setMinimumLoggingLevel(Log.DEBUG)
+            // Use a SynchronousExecutor here to make it easier to write tests
+            .setExecutor(SynchronousExecutor())
+            .build()
+
+        // Initialize WorkManager for instrumentation tests.
+        WorkManagerTestInitHelper.initializeTestWorkManager(getApplicationContext(), config)
+    }
 
     @Before
     open fun setup() {

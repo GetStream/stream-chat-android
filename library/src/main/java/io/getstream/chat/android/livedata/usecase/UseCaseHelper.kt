@@ -4,6 +4,9 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 
 data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
 
+    // replaying events
+    var replayEventsForActiveChannels: ReplayEventsForActiveChannels = ReplayEventsForActiveChannelsImpl(chatDomainImpl)
+
     // getting controllers
     var watchChannel: WatchChannel = WatchChannelImpl(chatDomainImpl)
     var queryChannels: QueryChannels = QueryChannelsImpl(chatDomainImpl)
