@@ -13,9 +13,9 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
-import com.getstream.sdk.chat.view.AvatarGroupView;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
+import com.getstream.sdk.chat.view.NewAvatarGroupView;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
@@ -25,7 +25,11 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
-import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 
 
@@ -35,7 +39,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected TextView tv_name, tv_last_message, tv_date;
     protected ReadStateView<ChannelListViewStyle> read_state;
-    protected AvatarGroupView<ChannelListViewStyle> avatarGroupView;
+    protected NewAvatarGroupView avatarGroupView;
     protected ImageView iv_attachment_type;
     protected View click_area;
     protected Context context;
