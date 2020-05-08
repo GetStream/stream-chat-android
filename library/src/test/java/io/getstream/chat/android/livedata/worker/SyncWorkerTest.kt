@@ -2,8 +2,6 @@ package io.getstream.chat.android.livedata.worker
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.work.Constraints
-import androidx.work.NetworkType
 import androidx.work.testing.TestListenableWorkerBuilder
 import androidx.work.workDataOf
 import com.google.common.truth.Truth
@@ -18,7 +16,7 @@ class SyncWorkerTest : BaseDisconnectedMockedTest() {
     fun run() = runBlocking {
         setupWorkManager()
         val STREAM_CHANNEL_CID = "STREAM_CHANNEL_CID"
-        
+
         val data = workDataOf(STREAM_CHANNEL_CID to data.channel1.cid, "STREAM_USER_ID" to data.user1.id)
 
         val worker =
