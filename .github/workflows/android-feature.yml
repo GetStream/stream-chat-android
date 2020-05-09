@@ -1,11 +1,12 @@
-name: Android Feature Branch CI
+name: Android CI
 
 on:
+  pull_request:
+    branches:
+      - '*'
   push:
     branches:
       - '*'
-      - '!master'
-      - '!release*'
 
 jobs:
   test:
@@ -20,8 +21,13 @@ jobs:
         java-version: 1.8
     - name: Unit tests
       run: bash ./gradlew test --stacktrace
+    - name: Coverage
+      run: ./gradlew jacocoTestReport
+    - name: Upload Coverage
+      run: bash <(curl -s https://codecov.io/bash)
     - name: Upload Test Results
       uses: actions/upload-artifact@v1
+      if: failure()
       with:
         name: errors
         path: home/runner/work/stream-chat-android-livedata/stream-chat-android-livedata/library/build/reports/tests/testDebugUnitTest/index.html
