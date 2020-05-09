@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
-class ChannelItemPayloadDiff {
+public class ChannelItemPayloadDiff {
     boolean name = true;
     boolean avatarView = true;
     boolean lastMessage = true;
