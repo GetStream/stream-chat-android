@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 
-        versionName "4.2.2"
+        versionName "4.2.3"
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
