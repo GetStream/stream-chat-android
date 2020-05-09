@@ -48,7 +48,7 @@ android {
         includeAndroidResources = true
         all {
             testLogging {
-                events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                events 'failed', 'standardOut', 'standardError'
                 showExceptions true
                 showCauses true
                 showStackTraces true
