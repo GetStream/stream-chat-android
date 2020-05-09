@@ -1,5 +1,5 @@
 ![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-livedata.svg)
-[![Build Status](https://travis-ci.com/GetStream/stream-chat-android-livedata.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-livedata)
+![Android CI](https://github.com/GetStream/stream-chat-android-livedata/workflows/Android%20CI/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/GetStream/stream-chat-android-livedata/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-android-livedata)
 
 
