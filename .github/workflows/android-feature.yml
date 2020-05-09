@@ -20,3 +20,8 @@ jobs:
         java-version: 1.8
     - name: Unit tests
       run: bash ./gradlew test --stacktrace
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v1
+      with:
+        name: errors
+        path: /home/runner/work/stream-chat-android-livedata/stream-chat-android-livedata/library/build/reports/tests/testDebugUnitTest/index.html

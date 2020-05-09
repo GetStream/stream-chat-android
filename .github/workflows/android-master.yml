@@ -25,5 +25,5 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: errors
-          path: myfile.html
+          path: /home/runner/work/stream-chat-android-livedata/stream-chat-android-livedata/library/build/reports/tests/testDebugUnitTest/index.html
 
