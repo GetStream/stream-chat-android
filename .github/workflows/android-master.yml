@@ -22,7 +22,8 @@ jobs:
       - name: Unit tests
         run: bash ./gradlew test --stacktrace
       - name: Upload Test Results
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
+        if: failure()
         with:
           name: errors
           path: /home/runner/work/stream-chat-android-livedata/stream-chat-android-livedata/library/build/reports/tests/testDebugUnitTest/index.html
