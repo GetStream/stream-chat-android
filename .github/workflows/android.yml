@@ -30,4 +30,4 @@ jobs:
       if: failure()
       with:
         name: errors
-        path: home/runner/work/stream-chat-android-livedata/stream-chat-android-livedata/library/build/reports/tests/testDebugUnitTest/index.html
+        path: library/build/reports/tests/testDebugUnitTest/index.html
