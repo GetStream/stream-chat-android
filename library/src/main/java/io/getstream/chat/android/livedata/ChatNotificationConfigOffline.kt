@@ -7,10 +7,6 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationMessageNew
-import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.livedata.worker.SyncWorker
@@ -46,5 +42,4 @@ open class ChatNotificationConfigOffline(context: Context) : ChatNotificationCon
 
         return super.onFirebaseMessage(message)
     }
-
 }
