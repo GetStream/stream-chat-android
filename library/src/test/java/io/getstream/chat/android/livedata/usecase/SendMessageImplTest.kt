@@ -15,11 +15,16 @@ class SendMessageImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun sendMessageUseCase() = runBlocking(Dispatchers.Main) {
         val message1 = data.createMessage()
+        message1.extraData = mutableMapOf("location" to "Amsterdam")
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         var result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result as Result<Any>)
 
         var messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)
+
+        var message = client.getMessage(result.data().id).execute().data()
+        Truth.assertThat(message.id).isEqualTo(message1.id)
+        Truth.assertThat(message.extraData).isEqualTo(message1.extraData)
     }
 }
