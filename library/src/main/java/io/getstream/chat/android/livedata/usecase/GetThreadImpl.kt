@@ -8,11 +8,21 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import java.security.InvalidParameterException
 
 interface GetThread {
+    /**
+     * Returns a thread controller for the given channel and message id
+     *
+     * @param cid the full channel id. ie messaging:123
+     * @param parentId the message id for the parent of this thread
+
+     * @return A call object with ThreadController as the return type
+     * @see io.getstream.chat.android.livedata.controller.ThreadController
+     */
     operator fun invoke(cid: String, parentId: String): Call2<ThreadController>
 }
 
 class GetThreadImpl(var domainImpl: ChatDomainImpl) : GetThread {
     override operator fun invoke(cid: String, parentId: String): Call2<ThreadController> {
+        // TODO: validate channel id has the right format
         if (cid.isEmpty()) {
             throw InvalidParameterException("cid cant be empty")
         }

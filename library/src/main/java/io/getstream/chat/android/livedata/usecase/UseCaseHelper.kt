@@ -80,7 +80,6 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
      * Delete a reaction. This reaction is immediately marked as deleted in local storage.
      * The API call to delete a reaction is retried using the retry policy
      */
-    // TODO: confirm this
     var deleteReaction: DeleteReaction = DeleteReactionImpl(chatDomainImpl)
     /**
      * Keystroke should be called whenever the user enters something in the message input

@@ -8,6 +8,15 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import kotlinx.coroutines.launch
 
 interface WatchChannel {
+    /**
+     * Watches the given channel and returns a ChannelController
+     *
+     * @param cid the full channel id. ie messaging:123
+     * @param messageLimit how many messages to load on the first request
+
+     * @return A call object with ChannelController as the return type
+     * @see io.getstream.chat.android.livedata.controller.ChannelController
+     */
     operator fun invoke(cid: String, messageLimit: Int): Call2<ChannelController>
 }
 

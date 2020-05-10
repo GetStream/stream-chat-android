@@ -7,6 +7,13 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import java.security.InvalidParameterException
 
 interface EditMessage {
+    /**
+     * Edits the specified message. Local storage is updated immediately
+     * The API request is retried according to the retry policy specified on the chatDomain
+     * @param message the message to edit
+     * @return A call object with Message as the return type
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
     operator fun invoke(message: Message): Call2<Message>
 }
 

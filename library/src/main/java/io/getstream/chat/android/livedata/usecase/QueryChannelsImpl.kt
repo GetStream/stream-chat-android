@@ -10,6 +10,21 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import kotlinx.coroutines.launch
 
 interface QueryChannels {
+    /**
+     * Queries offline storage and the API for channels matching the filter
+     * Returns a queryChannelsController
+     *
+     * @param filter the filter object
+     * @param sort how to sort the channels (default is last_message_at)
+     * @param limit the number of channels to retrieve
+     * @param messageLimit how many messages to retrieve per channel
+     *
+     * @return A call object with QueryChannelsController as the return type
+     * @see io.getstream.chat.android.livedata.controller.QueryChannelsController
+     * @see io.getstream.chat.android.client.utils.FilterObject
+     * @see io.getstream.chat.android.client.api.models.QuerySort
+     * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
+     */
     operator fun invoke(filter: FilterObject, sort: QuerySort? = null, limit: Int = 30, messageLimit: Int = 10): Call2<QueryChannelsController>
 }
 
