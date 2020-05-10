@@ -8,7 +8,15 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
     var replayEventsForActiveChannels: ReplayEventsForActiveChannels = ReplayEventsForActiveChannelsImpl(chatDomainImpl)
 
     // getting controllers
+    /**
+     * Watch a channel/ Start listening for events on a channel
+     * Returns a channel controller object
+     */
     var watchChannel: WatchChannel = WatchChannelImpl(chatDomainImpl)
+    /**
+     * Query channels and start listening for changes using events
+     * Returns a QueryChannelsController object
+     */
     var queryChannels: QueryChannels = QueryChannelsImpl(chatDomainImpl)
     val getThread: GetThread = GetThreadImpl(chatDomainImpl)
 
@@ -18,10 +26,16 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
 
     // loading more
     var loadOlderMessages: LoadOlderMessages = LoadOlderMessagesImpl(chatDomainImpl)
+    /**
+     * Load more channels for the given query.
+     */
     val queryChannelsLoadMore: QueryChannelsLoadMore = QueryChannelsLoadMoreImpl(chatDomainImpl)
     var threadLoadMore: ThreadLoadMore = ThreadLoadMoreImpl(chatDomainImpl)
 
     // updating channel data
+    /**
+     * Create a channel and retry using the retry policy if the request fails
+     */
     var createChannel: CreateChannel = CreateChannelImpl(chatDomainImpl)
     var sendMessage: SendMessage = SendMessageImpl(chatDomainImpl)
     var editMessage: EditMessage = EditMessageImpl(chatDomainImpl)

@@ -38,8 +38,8 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRe
     fun toQueryChannelRequest(userPresence: Boolean): WatchChannelRequest {
         var request = WatchChannelRequest().withMessages(messageLimit)
         if (userPresence) {
-            // TODO: reenable me once LLC is fixed
-            // request = request.withPresence()
+            // TODO: clean up once LLC is fixed
+            request = request.withPresence() as WatchChannelRequest
         }
         if (hasFilter()) {
             request.withMessages(messageFilterDirection!!, messageFilterValue, messageLimit)
