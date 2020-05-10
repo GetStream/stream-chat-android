@@ -4,21 +4,27 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
-import java.security.InvalidParameterException
+import io.getstream.chat.android.livedata.utils.validateCid
 
 interface SendReaction {
+    /**
+     * Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
+     * API call to send the reaction is retried according to the retry policy specified on the chatDomain
+     * @param cid: the full channel id IE messaging:123
+     * @param reaction the reaction to add
+     * @return A call object with Reaction as the return type
+     * @see io.getstream.chat.android.livedata.utils.RetryPolicy
+     */
     operator fun invoke(cid: String, reaction: Reaction): Call2<Reaction>
 }
 
 class SendReactionImpl(var domainImpl: ChatDomainImpl) : SendReaction {
     override operator fun invoke(cid: String, reaction: Reaction): Call2<Reaction> {
-        if (cid.isEmpty()) {
-            throw InvalidParameterException("message.cid cant be empty")
-        }
+        validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)
 
-        var runnable = suspend {
+        val runnable = suspend {
 
             channelRepo.sendReaction(reaction)
         }

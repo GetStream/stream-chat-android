@@ -15,8 +15,8 @@
 <h5><a href="../io.getstream.chat.android.livedata.utils/-call-impl2/index.html">io.getstream.chat.android.livedata.utils.CallImpl2</a></h5>
 </tr>
 <tr>
- (extensions in package io.getstream.chat.android.livedata.controller)
-<h5><a href="../io.getstream.chat.android.livedata.controller/io.getstream.chat.android.client.models.-channel/index.html">io.getstream.chat.android.client.models.Channel</a></h5>
+ (extensions in package io.getstream.chat.android.livedata)
+<h5><a href="../io.getstream.chat.android.livedata/io.getstream.chat.android.client.models.-channel/index.html">io.getstream.chat.android.client.models.Channel</a></h5>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.dao/-channel-config-dao/index.html">io.getstream.chat.android.livedata.dao.ChannelConfigDao</a></h5>
@@ -78,12 +78,17 @@ It intercepts the various low level events to ensure data stays in sync.
 Offline storage is handled using Room</p>
 </tr>
 <tr>
- (extensions in package io.getstream.chat.android.livedata.controller)
-<h5><a href="../io.getstream.chat.android.livedata.controller/io.getstream.chat.android.client.errors.-chat-error/index.html">io.getstream.chat.android.client.errors.ChatError</a></h5>
+ (extensions in package io.getstream.chat.android.livedata)
+<h5><a href="../io.getstream.chat.android.livedata/io.getstream.chat.android.client.errors.-chat-error/index.html">io.getstream.chat.android.client.errors.ChatError</a></h5>
 </tr>
 <tr>
- (extensions in package io.getstream.chat.android.livedata.controller)
-<h5><a href="../io.getstream.chat.android.livedata.controller/io.getstream.chat.android.client.events.-chat-event/index.html">io.getstream.chat.android.client.events.ChatEvent</a></h5>
+ (extensions in package io.getstream.chat.android.livedata)
+<h5><a href="../io.getstream.chat.android.livedata/io.getstream.chat.android.client.events.-chat-event/index.html">io.getstream.chat.android.client.events.ChatEvent</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.getstream.chat.android.livedata/-chat-notification-config-offline/index.html">io.getstream.chat.android.livedata.ChatNotificationConfigOffline</a></h5>
+<p>Extend the ChatNotificationConfig to start the sync worker when receiving new messages
+This ensures that offline storage is up to date as soon as you open the app</p>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.converter/-config-converter/index.html">io.getstream.chat.android.livedata.converter.ConfigConverter</a></h5>
@@ -189,8 +194,8 @@ already been handled.</p>
 <p>Efficiently store the member data</p>
 </tr>
 <tr>
- (extensions in package io.getstream.chat.android.livedata.controller)
-<h5><a href="../io.getstream.chat.android.livedata.controller/io.getstream.chat.android.client.models.-message/index.html">io.getstream.chat.android.client.models.Message</a></h5>
+ (extensions in package io.getstream.chat.android.livedata)
+<h5><a href="../io.getstream.chat.android.livedata/io.getstream.chat.android.client.models.-message/index.html">io.getstream.chat.android.client.models.Message</a></h5>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.dao/-message-dao/index.html">io.getstream.chat.android.livedata.dao.MessageDao</a></h5>
@@ -255,10 +260,18 @@ Since those are provided by the QueryChannelsRepo</p>
 <p>We don't do any caching on reactions since usage is infrequent</p>
 </tr>
 <tr>
+<h5><a href="../io.getstream.chat.android.livedata.usecase/-replay-events-for-active-channels/index.html">io.getstream.chat.android.livedata.usecase.ReplayEventsForActiveChannels</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.getstream.chat.android.livedata.usecase/-replay-events-for-active-channels-impl/index.html">io.getstream.chat.android.livedata.usecase.ReplayEventsForActiveChannelsImpl</a></h5>
+</tr>
+<tr>
 <h5><a href="../io.getstream.chat.android.livedata.repository/-repository-helper/index.html">io.getstream.chat.android.livedata.repository.RepositoryHelper</a></h5>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.utils/-retry-policy/index.html">io.getstream.chat.android.livedata.utils.RetryPolicy</a></h5>
+<p>When creating a channel, adding a reaction or sending any temporary error will trigger the retry policy
+The retry policy interface exposes 2 methods</p>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.usecase/-send-message/index.html">io.getstream.chat.android.livedata.usecase.SendMessage</a></h5>
@@ -288,7 +301,19 @@ Since those are provided by the QueryChannelsRepo</p>
 <h5><a href="../io.getstream.chat.android.livedata.usecase/-stop-typing-impl/index.html">io.getstream.chat.android.livedata.usecase.StopTypingImpl</a></h5>
 </tr>
 <tr>
+<h5><a href="../io.getstream.chat.android.livedata.dao/-sync-state-dao/index.html">io.getstream.chat.android.livedata.dao.SyncStateDao</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.getstream.chat.android.livedata.entity/-sync-state-entity/index.html">io.getstream.chat.android.livedata.entity.SyncStateEntity</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.getstream.chat.android.livedata.repository/-sync-state-repository/index.html">io.getstream.chat.android.livedata.repository.SyncStateRepository</a></h5>
+</tr>
+<tr>
 <h5><a href="../io.getstream.chat.android.livedata.converter/-sync-status-converter/index.html">io.getstream.chat.android.livedata.converter.SyncStatusConverter</a></h5>
+</tr>
+<tr>
+<h5><a href="../io.getstream.chat.android.livedata.worker/-sync-worker/index.html">io.getstream.chat.android.livedata.worker.SyncWorker</a></h5>
 </tr>
 <tr>
 <h5><a href="../io.getstream.chat.android.livedata.controller/-thread-controller/index.html">io.getstream.chat.android.livedata.controller.ThreadController</a></h5>

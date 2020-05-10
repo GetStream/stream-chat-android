@@ -55,7 +55,7 @@ All other fields are optional and can be null</p>
 <h4><a href="id.html">id</a></h4>
 </td>
 <td>
-<code><span class="keyword">val </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+<code><span class="keyword">var </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -72,6 +72,22 @@ All other fields are optional and can be null</p>
 <td>
 <p>last active date</p>
 <code><span class="keyword">var </span><span class="identifier">lastActive</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mutes.html">mutes</a></h4>
+</td>
+<td>
+<p>only provided for the current user, list of users you've muted</p>
+<code><span class="keyword">var </span><span class="identifier">mutes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="original-id.html">originalId</a></h4>
+</td>
+<td>
+<p>used for storing the current user</p>
+<code><span class="keyword">var </span><span class="identifier">originalId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
 </tr>
 <tr>
 <td>

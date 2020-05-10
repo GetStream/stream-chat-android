@@ -74,6 +74,14 @@ The following example shows how to observe these errors</p>
 </tr>
 <tr>
 <td>
+<h4><a href="muted-users.html">mutedUsers</a></h4>
+</td>
+<td>
+<p>list of users that you've muted</p>
+<code><span class="keyword">val </span><span class="identifier">mutedUsers</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Mute</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="offline-enabled.html">offlineEnabled</a></h4>
 </td>
 <td>
@@ -169,7 +177,7 @@ Depending on your app you'll want to show this or the channelUnreadCount</p>
 <h4><a href="disconnect.html">disconnect</a></h4>
 </td>
 <td>
-<code><span class="keyword">fun </span><span class="identifier">disconnect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">disconnect</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>
@@ -255,6 +263,22 @@ Depending on your app you'll want to show this or the channelUnreadCount</p>
 <td>
 <p>queryChannels</p>
 <code><span class="keyword">fun </span><span class="identifier">queryChannels</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$queryChannels(io.getstream.chat.android.client.utils.FilterObject, io.getstream.chat.android.client.api.models.QuerySort)/filter">filter</span><span class="symbol">:</span>&nbsp;<span class="identifier">FilterObject</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$queryChannels(io.getstream.chat.android.client.utils.FilterObject, io.getstream.chat.android.client.api.models.QuerySort)/sort">sort</span><span class="symbol">:</span>&nbsp;<span class="identifier">QuerySort</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.controller/-query-channels-controller-impl/index.html"><span class="identifier">QueryChannelsControllerImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="query-events.html">queryEvents</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">queryEvents</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$queryEvents(kotlin.collections.List((kotlin.String)))/cids">cids</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">ChatEvent</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="replay-events-for-active-channels.html">replayEventsForActiveChannels</a></h4>
+</td>
+<td>
+<p>replay events for all active channels
+ensures that the cid you provide is active</p>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">replayEventsForActiveChannels</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$replayEventsForActiveChannels(kotlin.String)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">ChatEvent</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>

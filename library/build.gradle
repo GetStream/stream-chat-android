@@ -99,6 +99,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation "androidx.test:core:1.2.0"
 
+    implementation 'com.google.firebase:firebase-messaging:20.1.5'
 
 
 
