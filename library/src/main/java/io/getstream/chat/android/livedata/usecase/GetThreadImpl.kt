@@ -5,6 +5,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.validateCid
 import java.security.InvalidParameterException
 
 interface GetThread {
@@ -22,10 +23,7 @@ interface GetThread {
 
 class GetThreadImpl(var domainImpl: ChatDomainImpl) : GetThread {
     override operator fun invoke(cid: String, parentId: String): Call2<ThreadController> {
-        // TODO: validate channel id has the right format
-        if (cid.isEmpty()) {
-            throw InvalidParameterException("cid cant be empty")
-        }
+        validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
         val threadControllerImpl = channelController.getThread(parentId)

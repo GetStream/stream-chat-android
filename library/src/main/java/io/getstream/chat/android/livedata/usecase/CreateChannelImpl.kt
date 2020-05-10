@@ -18,7 +18,7 @@ interface CreateChannel {
 
 class CreateChannelImpl(var domainImpl: ChatDomainImpl) : CreateChannel {
     override operator fun invoke(channel: Channel): Call2<Channel> {
-        var runnable = suspend {
+        val runnable = suspend {
             domainImpl.createChannel(channel)
         }
         return CallImpl2<Channel>(

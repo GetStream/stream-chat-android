@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.validateCid
 import java.security.InvalidParameterException
 
 interface DeleteReaction {
@@ -20,13 +21,11 @@ interface DeleteReaction {
 
 class DeleteReactionImpl(var domainImpl: ChatDomainImpl) : DeleteReaction {
     override operator fun invoke(cid: String, reaction: Reaction): Call2<Message> {
-        if (cid.isEmpty()) {
-            throw InvalidParameterException("cid cant be empty")
-        }
+        validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)
 
-        var runnable = suspend {
+        val runnable = suspend {
 
             channelRepo.deleteReaction(reaction)
         }

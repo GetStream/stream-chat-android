@@ -24,7 +24,7 @@ interface QueryChannelsLoadMore {
 
 class QueryChannelsLoadMoreImpl(var domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
     override operator fun invoke(filter: FilterObject, sort: QuerySort?, limit: Int, messageLimit: Int): Call2<List<Channel>> {
-        var runnable = suspend {
+        val runnable = suspend {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)
         }

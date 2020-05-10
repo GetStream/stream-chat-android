@@ -32,7 +32,7 @@ class QueryChannelsImpl(var domainImpl: ChatDomainImpl) : QueryChannels {
     override operator fun invoke(filter: FilterObject, sort: QuerySort?, limit: Int, messageLimit: Int): Call2<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
         val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl
-        var runnable = suspend {
+        val runnable = suspend {
             if (limit > 0) {
                 queryChannelsControllerImpl.scope.launch { queryChannelsControllerImpl.query(limit, messageLimit) }
             }

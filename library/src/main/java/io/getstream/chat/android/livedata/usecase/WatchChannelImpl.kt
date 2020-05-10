@@ -5,6 +5,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.validateCid
 import kotlinx.coroutines.launch
 
 interface WatchChannel {
@@ -22,6 +23,7 @@ interface WatchChannel {
 
 class WatchChannelImpl(var domainImpl: ChatDomainImpl) : WatchChannel {
     override operator fun invoke(cid: String, messageLimit: Int): Call2<ChannelController> {
+        validateCid(cid)
         val channelControllerImpl = domainImpl.channel(cid)
         val channelControllerI: ChannelController = channelControllerImpl
 
