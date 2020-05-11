@@ -121,6 +121,7 @@ dependencies {
     api 'com.github.getstream:stream-chat-android-client:1.4.4'
     //api project(path: ':livedata')
     api 'com.github.GetStream:stream-chat-android-livedata:0.3.4'
+    implementation "io.coil-kt:coil:0.10.1"
 
 }
 
