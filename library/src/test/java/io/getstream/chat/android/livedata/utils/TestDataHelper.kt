@@ -85,6 +85,16 @@ class TestDataHelper {
         config = config1
     }
 
+    val channel3 = Channel().apply {
+        type = "messaging"
+        id = "333-testing"
+        cid = "messaging:333-testing"
+        watcherCount = 232
+        watchers = listOf(watcher1)
+        members = listOf(member1)
+        config = config1
+    }
+
     val reaction1 = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user = user2 }
 
@@ -133,6 +143,7 @@ class TestDataHelper {
 
     val newMessageEventNotification = NotificationMessageNew().apply { message = message1; cid = channel1.cid }
 
+
     val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid = channel1.cid }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
     val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid = channel1.cid }
@@ -165,6 +176,9 @@ class TestDataHelper {
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel1 }
     val notificationAddedToChannel2Event =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel2 }
+    // no created by
+    val notificationAddedToChannel3Event =
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel3 }
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
     val replayEventsResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
 }

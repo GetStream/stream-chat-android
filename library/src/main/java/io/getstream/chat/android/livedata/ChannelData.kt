@@ -17,7 +17,7 @@ data class ChannelData(var type: String, var channelId: String) {
     var cid: String = "%s:%s".format(type, channelId)
 
     /** created by user */
-    lateinit var createdBy: User
+    var createdBy: User = User()
 
     /** if the channel is frozen or not (new messages wont be allowed) */
     var frozen: Boolean = false

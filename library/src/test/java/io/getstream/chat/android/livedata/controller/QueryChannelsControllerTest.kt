@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsImplControllerImplDomainTest : BaseConnectedIntegrationTest() {
+class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {
@@ -21,10 +21,13 @@ class QueryChannelsImplControllerImplDomainTest : BaseConnectedIntegrationTest()
         var channels = queryControllerImpl.channels.getOrAwaitValue()
         val oldSize = channels.size
         // verify that a new channel is added to the list
-        queryControllerImpl.handleEvent(data.notificationAddedToChannelEvent)
+        val addedEvent = data.notificationAddedToChannel3Event
+        queryControllerImpl.handleEvent(addedEvent)
         channels = queryControllerImpl.channels.getOrAwaitValue()
         val newSize = channels.size
         Truth.assertThat(newSize - oldSize).isEqualTo(1)
+        val channelController = chatDomainImpl.channel(addedEvent.channel!!)
+        val channel = channelController.toChannel()
     }
 
     @Test

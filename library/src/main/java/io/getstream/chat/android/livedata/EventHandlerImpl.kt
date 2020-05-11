@@ -28,6 +28,18 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy { it.createdAt }
+        // TODO implement these less common events
+        // channel.truncated
+        // notification.channel_truncated
+        // notification.channel_deleted
+        // notification.invited
+        // notification.invite_accepted
+        // notification.mark_read
+        // notification.removed_from_channel
+        // user.banned
+        // user.unbanned
+
+
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
         var me: User? = null
@@ -122,6 +134,9 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         it.updateReads(read)
                         channels[it.cid] = it
                     }
+                }
+                is UserUpdated -> {
+                    event.user?.let { users[it.id] = UserEntity(it) }
                 }
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
