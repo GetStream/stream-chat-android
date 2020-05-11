@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
@@ -23,16 +24,18 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.*
 
 class QueryChannelsControllerImpl(
-    override var queryEntity: QueryChannelsEntity,
+    internal var queryEntity: QueryChannelsEntity,
+    override var filter: FilterObject,
+    override var sort: QuerySort?,
     internal var client: ChatClient,
     internal var domainImpl: ChatDomainImpl,
-    // TODO: come up with a better name
-    override var shouldChannelBeAdded : ((Channel, FilterObject) -> Boolean)? = null
+    override var newChannelEventFilter: ((Channel, FilterObject) -> Boolean)? = null
 ) : QueryChannelsController {
     override var recoveryNeeded: Boolean = false
     /**
      * A livedata object with the channels matching this query.
      */
+
 
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
@@ -68,8 +71,8 @@ class QueryChannelsControllerImpl(
             val channel = event.channel!!
             val filter = queryEntity.filter
 
-            val shouldBeAdded = if (shouldChannelBeAdded != null) {
-                shouldChannelBeAdded!!(channel, filter)
+            val shouldBeAdded = if (newChannelEventFilter != null) {
+                newChannelEventFilter!!(channel, filter)
             } else {
                 // default to always adding the channel
                 true

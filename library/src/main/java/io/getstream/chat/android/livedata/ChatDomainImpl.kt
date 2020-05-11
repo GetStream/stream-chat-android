@@ -438,6 +438,8 @@ class ChatDomainImpl private constructor(
             val queryRepo =
                 QueryChannelsControllerImpl(
                     queryChannelsEntity,
+                    queryChannelsEntity.filter,
+                    queryChannelsEntity.sort,
                     client,
                     this
                 )
