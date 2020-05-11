@@ -39,7 +39,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         // user.banned
         // user.unbanned
 
-
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
         var me: User? = null

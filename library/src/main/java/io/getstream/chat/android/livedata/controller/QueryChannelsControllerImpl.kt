@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -24,7 +25,9 @@ import kotlinx.coroutines.*
 class QueryChannelsControllerImpl(
     override var queryEntity: QueryChannelsEntity,
     internal var client: ChatClient,
-    internal var domainImpl: ChatDomainImpl
+    internal var domainImpl: ChatDomainImpl,
+    // TODO: come up with a better name
+    override var shouldChannelBeAdded : ((Channel, FilterObject) -> Boolean)? = null
 ) : QueryChannelsController {
     override var recoveryNeeded: Boolean = false
     /**
@@ -51,17 +54,7 @@ class QueryChannelsControllerImpl(
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
-
         return QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
-    }
-
-    // TODO 1.1: handleMessageNotification should be configurable
-    fun handleMessageNotification(event: NotificationAddedToChannelEvent) {
-        event.channel?.let {
-            val channelControllerImpl = domainImpl.channel(it)
-            channelControllerImpl.updateLiveDataFromChannel(it)
-            addChannels(listOf(it), true)
-        }
     }
 
     fun handleEvents(events: List<ChatEvent>) {
@@ -72,7 +65,20 @@ class QueryChannelsControllerImpl(
 
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
-            handleMessageNotification(event)
+            val channel = event.channel!!
+            val filter = queryEntity.filter
+
+            val shouldBeAdded = if (shouldChannelBeAdded != null) {
+                shouldChannelBeAdded!!(channel, filter)
+            } else {
+                // default to always adding the channel
+                true
+            }
+            if (shouldBeAdded) {
+                val channelControllerImpl = domainImpl.channel(channel)
+                channelControllerImpl.updateLiveDataFromChannel(channel)
+                addChannels(listOf(channel), true)
+            }
         }
         if (event.isChannelEvent()) {
             // skip events that are typically not impacting the query channels overview

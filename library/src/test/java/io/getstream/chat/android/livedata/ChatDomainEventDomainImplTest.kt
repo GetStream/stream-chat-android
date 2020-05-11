@@ -18,14 +18,14 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun newMessageEvent() = runBlocking(Dispatchers.IO) {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        val message= chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
         Truth.assertThat(message).isNotNull()
     }
 
     @Test
     fun addedToChannel() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        val channel= chatDomainImpl.repos.channels.select(data.notificationAddedToChannel2Event.channel!!.cid)
+        val channel = chatDomainImpl.repos.channels.select(data.notificationAddedToChannel2Event.channel!!.cid)
         Truth.assertThat(channel).isNotNull()
     }
 
