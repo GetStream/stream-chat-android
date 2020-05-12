@@ -12,6 +12,7 @@ import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -24,7 +25,14 @@ class AvatarView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
 	fun setLastActiveUsers(lastActiveUsers: List<User>, style: BaseStyle) {
-		configUIs(style) { AvatarDrawable(lastActiveUsers.mapNotNull { it.createBitmap() }) }
+		configUIs(style) { AvatarDrawable(lastActiveUsers.createBitmaps()) }
+	}
+
+	fun setChannelAndLastActiveUsers(channel: Channel?, lastActiveUsers: List<User>, style: BaseStyle) {
+		configUIs(style) {
+			AvatarDrawable(channel?.createBitmap()?.let { listOf(it) }
+					?: lastActiveUsers.createBitmaps())
+		}
 	}
 
 	fun setUser(user: User, style: BaseStyle) {
@@ -45,6 +53,13 @@ class AvatarView @JvmOverloads constructor(
 		ImageLoader.getBitmap(context,
 				getExtraValue("image", ""),
 				ImageLoader.ImageTransformation.Circle)
+
+	private suspend fun List<User>.createBitmaps(): List<Bitmap> = mapNotNull { it.createBitmap() }
+
+	private suspend fun Channel.createBitmap(): Bitmap? =
+			ImageLoader.getBitmap(context,
+					getExtraValue("image", ""),
+					ImageLoader.ImageTransformation.Circle)
 }
 
 private const val FACTOR = 1.7
