@@ -173,7 +173,6 @@ class TestDataHelper {
     val user1Banned = UserBanned().apply { user = user1 }
     val user1Unbanned = UserUnbanned().apply { user = user1 }
 
-
     val user1ReadNotification = NotificationMarkReadEvent().apply { user = user1; createdAt = Date() }
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =

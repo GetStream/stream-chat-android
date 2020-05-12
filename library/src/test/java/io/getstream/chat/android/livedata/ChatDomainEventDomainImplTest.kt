@@ -79,7 +79,6 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(chatDomainImpl.mutedUsers.getOrAwaitValue()).isEqualTo(data.notificationMutesUpdated.me.mutes)
     }
 
-
     @Test
     fun messageRead() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.channels.insertChannel(data.channel1) }

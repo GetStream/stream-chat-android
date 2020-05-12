@@ -73,7 +73,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
         val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
 
-
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
             // any event can have channel and unread count information
@@ -195,9 +194,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         domainImpl.repos.messages.insert(messages.values.toList(), true)
         me?.let {
             domainImpl.updateCurrentUser(it)
-
         }
-
 
         unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
         totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
