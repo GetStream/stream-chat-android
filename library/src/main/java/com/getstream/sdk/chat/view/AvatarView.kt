@@ -23,6 +23,10 @@ class AvatarView @JvmOverloads constructor(
 		defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
+	fun setLastActiveUsers(lastActiveUsers: List<User>, style: BaseStyle) {
+		configUIs(style) { AvatarDrawable(lastActiveUsers.mapNotNull { it.createBitmap() }) }
+	}
+
 	fun setUser(user: User, style: BaseStyle) {
 		configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap())) }
 	}
