@@ -39,6 +39,11 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
         updateCache(channelEntities)
     }
 
+    suspend fun delete(cid: String) {
+        channelCache.remove(cid)
+        channelDao.delete(cid)
+    }
+
     suspend fun select(cid: String): ChannelEntity? {
         return select(listOf(cid)).getOrElse(0) { null }
     }

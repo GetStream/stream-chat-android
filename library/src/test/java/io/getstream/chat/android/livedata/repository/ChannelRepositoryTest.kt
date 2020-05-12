@@ -26,6 +26,16 @@ class ChannelRepositoryTest : BaseDomainTest() {
     }
 
     @Test
+    fun testInsertAndDelete() = runBlocking(Dispatchers.IO) {
+        repo.insertChannel(data.channel1)
+        repo.delete(data.channel1.cid)
+        val entity = repo.select(data.channel1.cid)
+        
+        Truth.assertThat(entity).isNull()
+    }
+
+
+    @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
         repo.insertChannel(data.channel1)
         repo.insertChannel(data.channel1Updated)
