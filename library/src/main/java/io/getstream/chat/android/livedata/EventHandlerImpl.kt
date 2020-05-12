@@ -53,7 +53,10 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
             when (event) {
-                is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent, is ChannelVisible -> {
+                is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is NotificationRemovedFromChannel,
+                    is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent, is ChannelVisible,
+                    is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected
+                -> {
                     // get the channel, update reads, write the channel
                     channelsToFetch.add(event.cid!!)
                 }
@@ -94,12 +97,12 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 }
                 is NotificationMessageNew -> {
                     messages[event.message.id] = MessageEntity(event.message)
-                    channels[event.channel!!.id] = ChannelEntity(event.channel!!)
+                    channels[event.channel!!.cid] = ChannelEntity(event.channel!!)
                     users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected -> {
-                    channels[event.channel!!.id] = ChannelEntity(event.channel!!)
+                    channels[event.channel!!.cid] = ChannelEntity(event.channel!!)
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is ChannelHiddenEvent -> {
@@ -108,13 +111,13 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     if (event.clearHistory != null && event.clearHistory!!) {
                         channelEntity.hideMessagesBefore = event.createdAt
                     }
-                    channels[event.channel!!.id] = channelEntity
+                    channels[event.channel!!.cid] = channelEntity
                 }
                 is ChannelVisible -> {
                     val channelEntity = ChannelEntity(event.channel!!)
                     // TODO: this approach is not so nice since it's overwritten by other data
                     channelEntity.hidden = false
-                    channels[event.channel!!.id] = channelEntity
+                    channels[event.channel!!.cid] = channelEntity
                 }
                 is NotificationMutesUpdated -> {
                     val muteEvent: NotificationMutesUpdated = event
@@ -157,13 +160,13 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         messages[it.id] = it
                     }
                 }
-                is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent -> {
+                is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent, is NotificationRemovedFromChannel -> {
                     // get the channel, update members, write the channel
                     val channelEntity = channelMap.get(event.cid!!)
                     if (channelEntity != null) {
                         var member = event.member
                         val userId = event.member!!.user.id
-                        if (event is MemberRemovedEvent) {
+                        if (event is MemberRemovedEvent || event is NotificationRemovedFromChannel) {
                             member = null
                         }
                         channelEntity.setMember(userId, member)
@@ -203,7 +206,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
         // step 3 - forward the events to the active queries and channels
 
-        var channelEvents: MutableMap<String, MutableList<ChatEvent>> = mutableMapOf()
+        val channelEvents: MutableMap<String, MutableList<ChatEvent>> = mutableMapOf()
         for (event in events) {
             if (event.isChannelEvent()) {
                 if (!channelEvents.containsKey(event.cid!!)) {
