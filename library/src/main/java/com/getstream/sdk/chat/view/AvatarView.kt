@@ -58,7 +58,8 @@ class AvatarView @JvmOverloads constructor(
 				ImageLoader.ImageTransformation.Circle)
 				?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
 
-	private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> = mapNotNull { it.createBitmap(style) }
+	private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
+			take(3).mapNotNull { it.createBitmap(style) }
 
 	private suspend fun Channel.createBitmap(style: BaseStyle): Bitmap? =
 			ImageLoader.getBitmap(context,
