@@ -41,6 +41,14 @@ repo.errorEvents events for errors that happen while interacting with the chat</
 </tr>
 <tr>
 <td>
+<h4><a href="banned.html">banned</a></h4>
+</td>
+<td>
+<p>if the current user is banned or not</p>
+<code><span class="keyword">val </span><span class="identifier">banned</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
 <h4><a href="channel-unread-count.html">channelUnreadCount</a></h4>
 </td>
 <td>
@@ -74,11 +82,11 @@ The following example shows how to observe these errors</p>
 </tr>
 <tr>
 <td>
-<h4><a href="muted-users.html">mutedUsers</a></h4>
+<h4><a href="muted.html">muted</a></h4>
 </td>
 <td>
 <p>list of users that you've muted</p>
-<code><span class="keyword">val </span><span class="identifier">mutedUsers</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Mute</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+<code><span class="keyword">val </span><span class="identifier">muted</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Mute</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
@@ -308,6 +316,13 @@ ensures that the cid you provide is active</p>
 </td>
 <td>
 <code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">selectAndEnrichChannels</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$selectAndEnrichChannels(kotlin.collections.List((kotlin.String)), io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest)/channelIds">channelIds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$selectAndEnrichChannels(kotlin.collections.List((kotlin.String)), io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest)/pagination">pagination</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.request/-query-channels-pagination-request/index.html"><span class="identifier">QueryChannelsPaginationRequest</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity-pair/index.html"><span class="identifier">ChannelEntityPair</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-banned.html">setBanned</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setBanned</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDomainImpl$setBanned(kotlin.Boolean)/newBanned">newBanned</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
 </tr>
 <tr>
 <td>

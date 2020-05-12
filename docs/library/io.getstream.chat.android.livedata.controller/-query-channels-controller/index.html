@@ -22,6 +22,7 @@
 <h4><a href="channels.html">channels</a></h4>
 </td>
 <td>
+<p>The list of channels</p>
 <code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">channels</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
@@ -29,13 +30,23 @@
 <h4><a href="end-of-channels.html">endOfChannels</a></h4>
 </td>
 <td>
+<p>If we've reached the end of the channels</p>
 <code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">endOfChannels</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="filter.html">filter</a></h4>
+</td>
+<td>
+<p>The filter used for this query</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">filter</span><span class="symbol">: </span><span class="identifier">FilterObject</span></code></td>
 </tr>
 <tr>
 <td>
 <h4><a href="loading.html">loading</a></h4>
 </td>
 <td>
+<p>If we are currently loading channels</p>
 <code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">loading</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
@@ -43,21 +54,35 @@
 <h4><a href="loading-more.html">loadingMore</a></h4>
 </td>
 <td>
+<p>If we are currently loading more channels</p>
 <code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">loadingMore</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
 </tr>
 <tr>
 <td>
-<h4><a href="query-entity.html">queryEntity</a></h4>
+<h4><a href="new-channel-event-filter.html">newChannelEventFilter</a></h4>
 </td>
 <td>
-<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">queryEntity</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.entity/-query-channels-entity/index.html"><span class="identifier">QueryChannelsEntity</span></a></code></td>
+<p>When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
+determines if the channel should be added to the query or not.
+Return true to add the channel, return false to ignore it.
+By default it will simply add every channel for which this event is received</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">newChannelEventFilter</span><span class="symbol">: </span><span class="symbol">(</span><span class="symbol">(</span><span class="identifier">Channel</span><span class="symbol">,</span>&nbsp;<span class="identifier">FilterObject</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">?</span></code></td>
 </tr>
 <tr>
 <td>
 <h4><a href="recovery-needed.html">recoveryNeeded</a></h4>
 </td>
 <td>
+<p>If the API call failed and we need to rerun this query</p>
 <code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">recoveryNeeded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="sort.html">sort</a></h4>
+</td>
+<td>
+<p>The sort used for this query</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">sort</span><span class="symbol">: </span><span class="identifier">QuerySort</span><span class="symbol">?</span></code></td>
 </tr>
 </tbody>
 </table>
