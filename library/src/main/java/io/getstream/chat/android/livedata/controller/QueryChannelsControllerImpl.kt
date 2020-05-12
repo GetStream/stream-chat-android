@@ -36,7 +36,6 @@ class QueryChannelsControllerImpl(
      * A livedata object with the channels matching this query.
      */
 
-
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 

@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 
 /**
  * The QueryChannelsController is a small helper to show a list of channels

@@ -14,7 +14,7 @@ fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List
         for (m in messages.reversed()) {
             if (m.user.id == currentUserId) continue
             if (m.deletedAt != null) continue
-            if (m.extraData.getOrElse("silent") { false } == true) continue
+            if (m.silent) continue
             if (m.createdAt!!.time > lastReadTime) unreadMessageCount++
         }
     }
