@@ -52,7 +52,7 @@ interface ChatDomain {
     /**
      * list of users that you've muted
      */
-    val mutedUsers: LiveData<List<Mute>>
+    val muted: LiveData<List<Mute>>
     /**
      * if the current user is banned or not
      */

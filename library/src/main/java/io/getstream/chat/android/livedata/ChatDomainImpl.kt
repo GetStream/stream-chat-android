@@ -97,7 +97,7 @@ class ChatDomainImpl private constructor(
     /**
      * list of users that you've muted
      */
-    override val mutedUsers: LiveData<List<Mute>> = _mutedUsers
+    override val muted: LiveData<List<Mute>> = _mutedUsers
 
     /**
      * if the current user is banned or not
