@@ -22,9 +22,6 @@ data class ChannelData(var type: String, var channelId: String) {
     /** if the channel is frozen or not (new messages wont be allowed) */
     var frozen: Boolean = false
 
-    /** denormalize the last message date so we can sort on it */
-    var lastMessageAt: Date? = null
-
     /** when the channel was created */
     var createdAt: Date? = null
     /** when the channel was updated */
@@ -42,7 +39,6 @@ data class ChannelData(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
 
-        lastMessageAt = c.lastMessageAt
         createdBy = c.createdBy
     }
 
@@ -57,7 +53,9 @@ data class ChannelData(var type: String, var channelId: String) {
         c.updatedAt = updatedAt
         c.deletedAt = deletedAt
         c.extraData = extraData
-        c.lastMessageAt = lastMessageAt
+        if (messages.isNotEmpty()) {
+            c.lastMessageAt = messages.last().createdAt
+        }
         c.createdBy = createdBy
 
         c.messages = messages
@@ -70,12 +68,4 @@ data class ChannelData(var type: String, var channelId: String) {
         return c
     }
 
-    /** updates last message and lastmessagedate on this channel entity */
-    fun addMessage(messageEntity: MessageEntity) {
-        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
-
-        if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
-            lastMessageAt = messageEntity.createdAt
-        }
-    }
 }

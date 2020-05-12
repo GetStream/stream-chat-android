@@ -438,7 +438,6 @@ class ChannelControllerImpl(
 
         // Update livedata
         upsertMessage(message)
-        setLastMessage(message)
 
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insertMessage(message)
@@ -479,12 +478,6 @@ class ChannelControllerImpl(
         }
 
         output
-    }
-
-    private fun setLastMessage(message: Message) {
-        val copy = _channelData.value ?: ChannelData(channelType, channelId)
-        copy.addMessage(MessageEntity(message))
-        _channelData.postValue(copy)
     }
 
     /**
