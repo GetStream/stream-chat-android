@@ -11,6 +11,8 @@ import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
+import com.getstream.sdk.chat.ImageLoader
+import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,15 +23,24 @@ class AvatarView @JvmOverloads constructor(
 		defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-	private fun configUIs(style: BaseStyle) {
+	fun setUser(user: User, style: BaseStyle) {
+		configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap())) }
+	}
+
+	private fun configUIs(style: BaseStyle, generateAvatarDrawable: suspend () -> AvatarDrawable) {
 		layoutParams = layoutParams.apply {
 			width = style.getAvatarWidth()
 			height = style.getAvatarHeight()
 		}
 		GlobalScope.launch(Dispatchers.Main) {
-			setImageDrawable(AvatarDrawable(listOfNotNull()))
+			setImageDrawable(generateAvatarDrawable())
 		}
 	}
+
+	private suspend fun User.createBitmap(): Bitmap? =
+		ImageLoader.getBitmap(context,
+				getExtraValue("image", ""),
+				ImageLoader.ImageTransformation.Circle)
 }
 
 private const val FACTOR = 1.7
@@ -62,7 +73,7 @@ private class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
 				)
 		)
 	}
-
+	
 	private fun configureTripleAvatar(topLeftAvatarBitmap: Bitmap,
 	                                  topRightAvatarBitmap: Bitmap,
 	                                  bottomAvatarBitmap: Bitmap): List<AvatarItem> {
