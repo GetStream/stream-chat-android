@@ -69,6 +69,7 @@ class ChatDomainImpl private constructor(
     private val _totalUnreadCount = MutableLiveData<Int>()
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
+    private val _banned = MutableLiveData<Boolean>(false)
     private val _mutedUsers = MutableLiveData<List<Mute>>()
 
     /** a helper object which lists all the initialized use cases for the chat domain */
@@ -97,6 +98,11 @@ class ChatDomainImpl private constructor(
      * list of users that you've muted
      */
     override val mutedUsers: LiveData<List<Mute>> = _mutedUsers
+
+    /**
+     * if the current user is banned or not
+     */
+    override val banned: LiveData<Boolean> = _banned
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -187,6 +193,8 @@ class ChatDomainImpl private constructor(
         currentUser = me
         repos.users.insertMe(me)
         _mutedUsers.postValue(me.mutes)
+
+        setBanned(me.banned)
     }
 
     internal suspend fun storeSyncState(): SyncStateEntity? {
@@ -326,6 +334,13 @@ class ChatDomainImpl private constructor(
         val currentCount = _channelUnreadCount.value ?: 0
         if (currentCount != newCount) {
             _channelUnreadCount.postValue(newCount)
+        }
+    }
+
+    fun setBanned(newBanned: Boolean) {
+        val banned = _banned.value ?: false
+        if (newBanned != banned) {
+            _banned.postValue(newBanned)
         }
     }
 

@@ -56,10 +56,29 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun muteUsers() = runBlocking(Dispatchers.IO) {
+    fun banUserFlow() = runBlocking(Dispatchers.IO) {
+        // ensure we have the current user stored
+        chatDomainImpl.repos.users.insertMe(data.user1)
+        // ban flow
+        chatDomainImpl.eventHandler.handleEvent(data.user1Banned)
+        var banned = chatDomainImpl.banned.getOrAwaitValue()
+        var me = chatDomainImpl.repos.users.selectMe()
+        Truth.assertThat(banned).isTrue()
+        Truth.assertThat(me!!.banned).isTrue()
+        // unban flow
+        chatDomainImpl.eventHandler.handleEvent(data.user1Unbanned)
+        banned = chatDomainImpl.banned.getOrAwaitValue()
+        me = chatDomainImpl.repos.users.selectMe()
+        Truth.assertThat(banned).isFalse()
+        Truth.assertThat(me!!.banned).isFalse()
+    }
+
+    @Test
+    fun mutUsers() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.notificationMutesUpdated)
         Truth.assertThat(chatDomainImpl.mutedUsers.getOrAwaitValue()).isEqualTo(data.notificationMutesUpdated.me.mutes)
     }
+
 
     @Test
     fun messageRead() {

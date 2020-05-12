@@ -170,15 +170,19 @@ class TestDataHelper {
 
     val notificationMutesUpdated = NotificationMutesUpdated().apply { me = me1 }
 
+    val user1Banned = UserBanned().apply { user = user1 }
+    val user1Unbanned = UserUnbanned().apply { user = user1 }
+
+
     val user1ReadNotification = NotificationMarkReadEvent().apply { user = user1; createdAt = Date() }
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =
         MemberAddedEvent().apply { member = member2; cid = channel1.cid }
 
     val notificationAddedToChannelEvent =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel1; cid=channel1.cid}
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel1; cid = channel1.cid }
     val notificationAddedToChannel2Event =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2; cid=channel2.cid }
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2; cid = channel2.cid }
     // no created by
     val notificationAddedToChannel3Event =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel3 }

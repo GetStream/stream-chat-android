@@ -49,6 +49,14 @@ interface ChatDomain {
      *
      */
     val errorEvents: LiveData<Event<ChatError>>
+    /**
+     * list of users that you've muted
+     */
+    val mutedUsers: LiveData<List<Mute>>
+    /**
+     * if the current user is banned or not
+     */
+    val banned: LiveData<Boolean>
     /** The retry policy for retrying failed requests */
     var retryPolicy: RetryPolicy
     /** a helper object which lists all the initialized use cases for the chat domain */
@@ -134,5 +142,5 @@ interface ChatDomain {
     }
 
     fun getVersion(): String
-    val mutedUsers: LiveData<List<Mute>>
+
 }

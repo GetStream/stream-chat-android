@@ -31,6 +31,9 @@ data class UserEntity(@PrimaryKey var id: String) {
     /** only provided for the current user, invisible marks the user as offline for other users */
     var invisible: Boolean = false
 
+    /** if the current user id banned */
+    var banned: Boolean = false
+
     /** only provided for the current user, list of users you've muted */
     var mutes: List<String> = mutableListOf()
 
@@ -44,6 +47,7 @@ data class UserEntity(@PrimaryKey var id: String) {
         updatedAt = user.updatedAt
         lastActive = user.lastActive
         invisible = user.invisible
+        banned = user.banned
         extraData = user.extraData
         val muteList = user.mutes ?: mutableListOf()
         mutes = muteList.map { it.target.id }
@@ -58,6 +62,7 @@ data class UserEntity(@PrimaryKey var id: String) {
         u.lastActive = lastActive
         u.invisible = invisible
         u.extraData = extraData
+        u.banned = banned
         return u
     }
 }

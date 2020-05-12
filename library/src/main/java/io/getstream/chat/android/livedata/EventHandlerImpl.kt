@@ -32,12 +32,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         // channel.truncated
         // notification.channel_truncated
         // notification.channel_deleted
-        // notification.invited
-        // notification.invite_accepted
-        // notification.mark_read
-        // notification.removed_from_channel
-        // user.banned
-        // user.unbanned
 
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
@@ -70,11 +64,15 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     // get the message, update the reaction data, update the message
                     messagesToFetch.add(event.reaction!!.messageId)
                 }
+                is UserBanned, is UserUnbanned -> {
+                    me = domainImpl.repos.users.selectMe()
+                }
             }
         }
         // actually fetch the data
         val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
         val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
+
 
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
@@ -118,6 +116,9 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     // TODO: this approach is not so nice since it's overwritten by other data
                     channelEntity.hidden = false
                     channels[event.channel!!.cid] = channelEntity
+                }
+                is UserBanned, is UserUnbanned -> {
+                    me?.let { it.banned = event is UserBanned }
                 }
                 is NotificationMutesUpdated -> {
                     val muteEvent: NotificationMutesUpdated = event
@@ -192,9 +193,11 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         domainImpl.repos.channels.insert(channels.values.toList())
         // we only cache messages for which we're receiving events
         domainImpl.repos.messages.insert(messages.values.toList(), true)
-        if (me != null) {
-            domainImpl.updateCurrentUser(me)
+        me?.let {
+            domainImpl.updateCurrentUser(it)
+
         }
+
 
         unreadChannels?.let { domainImpl.setChannelUnreadCount(it) }
         totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
