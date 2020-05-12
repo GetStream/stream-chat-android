@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
-import com.getstream.sdk.chat.view.NewAvatarGroupView;
+import com.getstream.sdk.chat.view.AvatarView;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;
@@ -39,7 +39,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected TextView tv_name, tv_last_message, tv_date;
     protected ReadStateView<ChannelListViewStyle> read_state;
-    protected NewAvatarGroupView avatarGroupView;
+    protected AvatarView avatarView;
     protected ImageView iv_attachment_type;
     protected View click_area;
     protected Context context;
@@ -74,7 +74,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         tv_date = itemView.findViewById(R.id.tv_date);
 
         click_area = itemView.findViewById(R.id.click_area);
-        avatarGroupView = itemView.findViewById(R.id.avatar_group);
+        avatarView = itemView.findViewById(R.id.avatar_group);
         read_state = itemView.findViewById(R.id.read_state);
     }
 
@@ -113,9 +113,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
     protected void configAvatarView(Channel channel) {
         List<User> otherUsers = LlcMigrationUtils.getOtherUsers(channel.getMembers());
-        avatarGroupView.setChannelAndLastActiveUsers(channel, otherUsers, style);
+        avatarView.setChannelAndLastActiveUsers(channel, otherUsers, style);
         // click listeners
-        avatarGroupView.setOnClickListener(view -> {
+        avatarView.setOnClickListener(view -> {
             // if there is 1 user
             if (otherUsers.size() == 1 && this.userClickListener != null) {
                 this.userClickListener.onUserClick(otherUsers.get(0));
