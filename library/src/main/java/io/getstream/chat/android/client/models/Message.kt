@@ -72,6 +72,8 @@ data class Message(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
+
+    var silent: Boolean = false
 
 ) : CustomObject
