@@ -170,6 +170,7 @@ class TestDataHelper {
 
     val notificationMutesUpdated = NotificationMutesUpdated().apply { me = me1 }
 
+    val user1ReadNotification = NotificationMarkReadEvent().apply { user = user1; createdAt = Date() }
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =
         MemberAddedEvent().apply { member = member2; cid = channel1.cid }

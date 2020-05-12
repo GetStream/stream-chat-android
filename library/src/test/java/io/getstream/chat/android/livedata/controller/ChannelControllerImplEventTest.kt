@@ -95,6 +95,14 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun readEvents() {
+        channelControllerImpl.handleEvent(data.user1ReadNotification)
+        val reads = channelControllerImpl.reads.getOrAwaitValue()
+        Truth.assertThat(reads.size).isEqualTo(1)
+        Truth.assertThat(reads[0].user.id).isEqualTo(data.user1.id)
+    }
+
+    @Test
+    fun readEventNotification() {
         channelControllerImpl.handleEvent(data.user1Read)
         val reads = channelControllerImpl.reads.getOrAwaitValue()
         Truth.assertThat(reads.size).isEqualTo(1)

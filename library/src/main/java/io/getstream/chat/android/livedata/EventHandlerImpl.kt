@@ -98,7 +98,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
-                is NotificationAddedToChannelEvent -> {
+                is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected -> {
                     channels[event.channel!!.id] = ChannelEntity(event.channel!!)
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
@@ -124,7 +124,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     val connectedEvent: ConnectedEvent = event
                     me = connectedEvent.me
                 }
-                is MessageReadEvent -> {
+                is MessageReadEvent, is NotificationMarkReadEvent -> {
                     // get the channel, update reads, write the channel
                     val channel = channelMap[event.cid]
                     val read = ChannelUserRead(event.user!!)
