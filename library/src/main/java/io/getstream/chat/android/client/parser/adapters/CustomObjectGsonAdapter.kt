@@ -3,11 +3,12 @@ package io.getstream.chat.android.client.parser.adapters
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.annotations.SerializedName
+import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.errors.ChatParsingError
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 
@@ -79,10 +80,18 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                 val serializedName = field.getAnnotation(SerializedName::class.java)
                 if (serializedName != null) name = serializedName.value
 
+                if (name == "latest_reactions") {
+                    if (name == "x") {
+
+                    }
+                }
+
                 if (map.containsKey(name)) {
                     field.isAccessible = true
                     val rawValue = gson.toJson(map.remove(name))
-                    val value = gson.getAdapter(field.type).fromJson(rawValue)
+                    val typeToken = TypeToken.get(field.genericType)
+                    val adapter = gson.getAdapter(typeToken)
+                    val value = adapter.fromJson(rawValue)
                     try {
                         field.set(result, value)
                     } catch (e: Exception) {

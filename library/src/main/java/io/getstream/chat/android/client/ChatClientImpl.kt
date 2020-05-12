@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
-
+import java.util.Date
 
 internal class ChatClientImpl(
     private val config: ChatClientConfig,
@@ -142,6 +142,15 @@ internal class ChatClientImpl(
 
     override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteImage(channelType, channelId, url)
+    }
+
+    override fun replayEvents(
+        channelIds: List<String>,
+        since: Date?,
+        limit: Int,
+        offset: Int
+    ): Call<List<ChatEvent>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     //region Reactions
