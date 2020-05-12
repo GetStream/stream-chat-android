@@ -1,3 +1,8 @@
+# 1.4.5 - Tue 12 May 2020
+
+- add message.silent field
+- add extension properties `name` and `image` to `Channel` and `User`
+
 # 1.4.3 - Thu 7 May 2020
 
 - fix type erasure of parsed collections: `LinkedTreeMap`, but not `List<Reaction>`
