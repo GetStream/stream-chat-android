@@ -7,16 +7,19 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class AvatarView @JvmOverloads constructor(
 		context: Context,
@@ -25,18 +28,18 @@ class AvatarView @JvmOverloads constructor(
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
 	fun setLastActiveUsers(lastActiveUsers: List<User>, style: BaseStyle) {
-		configUIs(style) { AvatarDrawable(lastActiveUsers.createBitmaps()) }
+		configUIs(style) { AvatarDrawable(lastActiveUsers.createBitmaps(style)) }
 	}
 
 	fun setChannelAndLastActiveUsers(channel: Channel?, lastActiveUsers: List<User>, style: BaseStyle) {
 		configUIs(style) {
-			AvatarDrawable(channel?.createBitmap()?.let { listOf(it) }
-					?: lastActiveUsers.createBitmaps())
+			AvatarDrawable(channel?.createBitmap(style)?.let { listOf(it) }
+					?: lastActiveUsers.createBitmaps(style))
 		}
 	}
 
 	fun setUser(user: User, style: BaseStyle) {
-		configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap())) }
+		configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap(style))) }
 	}
 
 	private fun configUIs(style: BaseStyle, generateAvatarDrawable: suspend () -> AvatarDrawable) {
@@ -49,17 +52,46 @@ class AvatarView @JvmOverloads constructor(
 		}
 	}
 
-	private suspend fun User.createBitmap(): Bitmap? =
+	private suspend fun User.createBitmap(style: BaseStyle): Bitmap? =
 		ImageLoader.getBitmap(context,
 				getExtraValue("image", ""),
 				ImageLoader.ImageTransformation.Circle)
+				?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
 
-	private suspend fun List<User>.createBitmaps(): List<Bitmap> = mapNotNull { it.createBitmap() }
+	private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> = mapNotNull { it.createBitmap(style) }
 
-	private suspend fun Channel.createBitmap(): Bitmap? =
+	private suspend fun Channel.createBitmap(style: BaseStyle): Bitmap? =
 			ImageLoader.getBitmap(context,
 					getExtraValue("image", ""),
 					ImageLoader.ImageTransformation.Circle)
+					?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
+
+	private fun createImageRounded(initials: String, baseStyle: BaseStyle): Bitmap {
+		val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+			style = Paint.Style.FILL
+			typeface = baseStyle.avatarInitialText.font ?: Typeface.DEFAULT
+			textAlign = Paint.Align.CENTER
+			color = baseStyle.avatarInitialText.color
+			textSize = 72f
+		}
+		val paintCircle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+			isAntiAlias = true
+			style = Paint.Style.FILL
+			color = baseStyle.avatarBackGroundColor
+		}
+		val textBounds = Rect()
+		paintText.getTextBounds(initials, 0, initials.length, textBounds);
+		val radius = max(textBounds.width(), textBounds.height())
+		val bitmapSize = (radius * 2)
+		val output = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
+		val canvas = Canvas(output)
+		canvas.drawCircle(radius.toFloat(), radius.toFloat(), radius.toFloat(), paintCircle)
+		canvas.drawText(initials,
+				radius.toFloat(),
+				(radius + textBounds.height()/2).toFloat(),
+				paintText)
+		return output
+	}
 }
 
 private const val FACTOR = 1.7
