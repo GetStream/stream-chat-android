@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Watcher
-import io.getstream.chat.android.livedata.entity.MessageEntity
 import java.util.*
 
 /**
@@ -67,5 +66,4 @@ data class ChannelData(var type: String, var channelId: String) {
 
         return c
     }
-
 }

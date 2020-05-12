@@ -2,6 +2,8 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
@@ -28,6 +30,25 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(newSize - oldSize).isEqualTo(1)
         val channelController = chatDomainImpl.channel(addedEvent.channel!!)
         val channel = channelController.toChannel()
+    }
+
+    @Test
+    fun newChannelFiltered() = runBlocking(Dispatchers.IO) {
+        val request = QueryChannelsPaginationRequest()
+        val queryChannelsController = chatDomainImpl.queryChannels(data.filter2)
+        queryChannelsController.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
+            // ignore everything
+            false
+        }
+        queryChannelsController.runQuery(request)
+        var channels = queryChannelsController.channels.getOrAwaitValue()
+        val oldSize = channels.size
+        // verify that a new channel is NOT added to the list
+        val addedEvent = data.notificationAddedToChannel3Event
+        queryChannelsController.handleEvent(addedEvent)
+        channels = queryChannelsController.channels.getOrAwaitValue()
+        val newSize = channels.size
+        Truth.assertThat(newSize - oldSize).isEqualTo(0)
     }
 
     @Test

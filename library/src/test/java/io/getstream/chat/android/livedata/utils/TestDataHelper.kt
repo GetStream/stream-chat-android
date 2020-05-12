@@ -31,6 +31,9 @@ class TestDataHelper {
     val filter1 =
         Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
 
+    val filter2 =
+        Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", listOf(user1.id)))
+
     val query1 = QueryChannelsEntity(filter1, null)
 
     val attachment1 =
