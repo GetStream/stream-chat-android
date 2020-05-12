@@ -74,7 +74,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
 
         // step 2. second pass through the events, make a list of what we need to update
-        for (event in events) {
+        loop@ for (event in events) {
             // any event can have channel and unread count information
             event.unreadChannels?.let { unreadChannels = it }
             event.totalUnreadCount?.let { totalUnreadCount = it }
@@ -127,7 +127,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     val connectedEvent: ConnectedEvent = event
                     me = connectedEvent.me
                 }
-                is MessageReadEvent, is NotificationMarkReadEvent -> {
+                is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
                     val channel = channelMap[event.cid]
                     val read = ChannelUserRead(event.user!!)
