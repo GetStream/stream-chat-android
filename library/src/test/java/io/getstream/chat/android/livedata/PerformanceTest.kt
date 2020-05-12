@@ -50,7 +50,7 @@ class PerformanceTest : BaseConnectedMockedTest() {
         // updating a message should lead to a changed count increase
         chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
 
-        Truth.assertThat(counter.counts).isEqualTo(mutableMapOf("events" to 5, "changed" to 1, "moved" to 0, "inserted" to 1, "removed" to 0))
+        Truth.assertThat(counter.counts).isEqualTo(mutableMapOf("events" to 6, "changed" to 1, "moved" to 0, "inserted" to 1, "removed" to 0))
     }
 
     @Test
