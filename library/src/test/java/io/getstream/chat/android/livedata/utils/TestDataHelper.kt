@@ -178,10 +178,11 @@ class TestDataHelper {
     val memberAddedToChannelEvent =
         MemberAddedEvent().apply { member = member2; cid = channel1.cid }
 
+    // for whatever reason these events don't have event.cid
     val notificationAddedToChannelEvent =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel1; cid = channel1.cid }
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel1; }
     val notificationAddedToChannel2Event =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2; cid = channel2.cid }
+        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2; }
     // no created by
     val notificationAddedToChannel3Event =
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel3 }
