@@ -30,4 +30,4 @@ jobs:
       if: failure()
       with:
         name: errors
-        path: library/build/reports/tests/testDebugUnitTest/index.html
+        path: library/build/reports/tests/testDebugUnitTest

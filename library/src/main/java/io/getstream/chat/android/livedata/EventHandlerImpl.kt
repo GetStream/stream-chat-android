@@ -46,6 +46,8 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
+            val cid = event.cid ?: ""
+            logger.logI("Handling event of type ${event.type} for cid ${cid}, event batch size is ${events.size}")
             when (event) {
                 is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is NotificationRemovedFromChannel,
                     is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent, is ChannelVisible,
