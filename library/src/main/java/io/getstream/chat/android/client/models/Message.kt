@@ -67,8 +67,6 @@ data class Message(
     @IgnoreSerialisation
     var user: User = User(),
 
-    @IgnoreSerialisation
-    var channel: Channel = Channel(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
@@ -76,4 +74,7 @@ data class Message(
 
     var silent: Boolean = false
 
-) : CustomObject
+) : CustomObject {
+    @IgnoreSerialisation
+    var channel: Channel = Channel()
+}
