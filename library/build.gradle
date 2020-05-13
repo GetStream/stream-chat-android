@@ -122,6 +122,8 @@ dependencies {
     //api project(path: ':livedata')
     api 'com.github.GetStream:stream-chat-android-livedata:0.4.1'
 
+    implementation "io.coil-kt:coil:0.10.1"
+
 }
 
 task javadoc(type: Javadoc) {

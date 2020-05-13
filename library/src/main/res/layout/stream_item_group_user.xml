@@ -7,7 +7,7 @@
         android:layout_height="wrap_content"
         android:padding="5dp">
 
-        <com.getstream.sdk.chat.view.AvatarGroupView
+        <com.getstream.sdk.chat.view.AvatarView
             android:id="@+id/view_user_avator"
             android:layout_width="60dp"
             android:layout_height="60dp"

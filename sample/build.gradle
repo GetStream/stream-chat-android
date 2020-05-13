@@ -23,7 +23,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "io.getstream.chat.sdk"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 23
         versionName appVersion
