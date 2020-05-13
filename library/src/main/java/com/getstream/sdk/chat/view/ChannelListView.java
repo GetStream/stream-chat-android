@@ -7,17 +7,13 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
-import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
-import com.getstream.sdk.chat.viewmodel.ChannelListViewModel;
-
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Transformations;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.getstream.sdk.chat.adapter.ChannelListItemAdapter;
+import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
+
 import java.util.List;
 
 import io.getstream.chat.android.client.models.Channel;
@@ -29,10 +25,10 @@ public class ChannelListView extends RecyclerView {
 
     private ChannelListViewStyle style;
     // our connection to the channel scope
-    private ChannelListViewModel viewModel;
     private UserClickListener userClickListener;
     private ChannelClickListener channelClickListener;
     private ChannelClickListener channelLongClickListener;
+    private EndReachedListener endReachedListener;
     private ChannelListItemAdapter adapter;
     private ChannelViewHolderFactory viewHolderFactory;
 
@@ -43,6 +39,7 @@ public class ChannelListView extends RecyclerView {
         this.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(context);
         this.setLayoutManager(layoutManager);
+        init();
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs) {
@@ -51,7 +48,7 @@ public class ChannelListView extends RecyclerView {
         layoutManager = new LinearLayoutManager(context);
         this.setLayoutManager(layoutManager);
         this.parseAttr(context, attrs);
-
+        init();
     }
 
     public ChannelListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
@@ -60,6 +57,7 @@ public class ChannelListView extends RecyclerView {
         layoutManager = new LinearLayoutManager(context);
         this.setLayoutManager(layoutManager);
         this.parseAttr(context, attrs);
+        init();
     }
 
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
@@ -76,24 +74,12 @@ public class ChannelListView extends RecyclerView {
         }
     }
 
-    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner, ChannelListItemAdapter adapter) {
-        this.viewModel = viewModel;
-
-        // connect the adapter
-        this.adapter = adapter;
+    private void init() {
+        this.adapter = new ChannelListItemAdapter(getContext());
         this.setAdapterWithStyle(adapter);
-
-        // connect the viewHolder on click listener...
         adapter.setChannelClickListener(this.channelClickListener);
         setOnLongClickListener(this.channelLongClickListener);
         adapter.setUserClickListener(this.userClickListener);
-
-        viewModel.getChannels().observe(lifecycleOwner, channels -> {
-            adapter.replaceChannels(channels);
-            if (canScrollUpForChannelEvent())
-                layoutManager.scrollToPosition(0);
-        });
-
     }
 
     private boolean canScrollUpForChannelEvent(){
@@ -105,13 +91,6 @@ public class ChannelListView extends RecyclerView {
         if (this.adapter != null) {
             this.adapter.setViewHolderFactory(factory);
         }
-    }
-
-    public void setViewModel(ChannelListViewModel viewModel, LifecycleOwner lifecycleOwner) {
-        // default adapter...
-        adapter = new ChannelListItemAdapter(getContext());
-
-        this.setViewModel(viewModel, lifecycleOwner, adapter);
     }
 
     public void setOnUserClickListener(UserClickListener l) {
@@ -137,6 +116,14 @@ public class ChannelListView extends RecyclerView {
         }
     }
 
+    public void setOnEndReachedListener(EndReachedListener listener) {
+        this.endReachedListener = listener;
+    }
+
+    public void setChannels(final List<Channel> channels) {
+        adapter.replaceChannels(channels);
+    }
+
     @Override
     public void setAdapter(Adapter adapter) {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
@@ -158,18 +145,13 @@ public class ChannelListView extends RecyclerView {
         }
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-
                 if (linearLayoutManager != null) {
                     int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
                     boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
-                    // the viewmodel ensures that we only load once..
-                    if (reachedTheEnd) viewModel.loadMore();
+                    if (reachedTheEnd) endReachedListener.onEndReached(); // onScrolled may call it multiple times
                 }
             }
         });
@@ -181,5 +163,9 @@ public class ChannelListView extends RecyclerView {
 
     public interface ChannelClickListener {
         void onClick(Channel channel);
+    }
+
+    public interface EndReachedListener {
+        void onEndReached();
     }
 }
