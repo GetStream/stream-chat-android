@@ -3,20 +3,19 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.view.ChannelListView;
 import com.getstream.sdk.chat.view.ChannelListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Channel;
 
 public class ChannelListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final String TAG = ChannelListItemAdapter.class.getSimpleName();
-
     private Context context;
     private List<Channel> channels; // cached list of channels
     private ChannelListView.ChannelClickListener channelClickListener;
