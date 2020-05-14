@@ -18,6 +18,8 @@ interface ChannelController {
     val channelId: String
     val cid: String
 
+    fun create(extraData:Map<String, Any> = emptyMap()): Call<Channel>
+    fun create(members:List<String>, extraData:Map<String, Any> = emptyMap()): Call<Channel>
     fun query(request: QueryChannelRequest): Call<Channel>
     fun watch(request: WatchChannelRequest): Call<Channel>
     fun watch(): Call<Channel>
