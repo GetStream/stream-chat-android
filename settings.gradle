@@ -1,4 +1,4 @@
-include ':library'
+include ':livedata'
 rootProject.name='stream-chat-android-livedata'
 
 //include ':client'

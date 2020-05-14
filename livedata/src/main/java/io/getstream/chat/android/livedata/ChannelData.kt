@@ -15,7 +15,6 @@ import java.util.*
 data class ChannelData(var type: String, var channelId: String) {
     var cid: String = "%s:%s".format(type, channelId)
 
-
     /** created by user */
     var createdBy: User = User()
 
