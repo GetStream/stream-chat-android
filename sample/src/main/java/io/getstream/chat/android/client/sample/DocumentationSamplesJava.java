@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.*;
 import io.getstream.chat.android.client.models.*;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
-import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
@@ -802,9 +801,14 @@ public class DocumentationSamplesJava {
                 members.add("thierry");
                 members.add("tomasso");
 
-                client.createChannel("message", members).enqueue(result -> {
-                    Channel newChannel = result.data();
-                    return Unit.INSTANCE;
+                Map<String, Object> extraData = new HashMap<>();
+
+                channelController.create(members, extraData).enqueue(new Function1<Result<Channel>, Unit>() {
+                    @Override
+                    public Unit invoke(Result<Channel> result) {
+                        Channel newChannel = result.data();
+                        return Unit.INSTANCE;
+                    }
                 });
             }
         }

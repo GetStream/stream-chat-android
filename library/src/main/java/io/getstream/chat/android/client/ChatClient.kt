@@ -51,6 +51,10 @@ interface ChatClient {
 
     fun createChannel(channelType: String, members: List<String>): Call<Channel>
 
+    fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
+
+    fun createChannel(channelType: String, channelId: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
+
     fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
 
     fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
