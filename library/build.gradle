@@ -69,6 +69,10 @@ android {
         it.java.srcDir "src/$it.name/kotlin"
     }
 
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
 }
 
 final def markdown_version = '4.3.0'
@@ -121,7 +125,8 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.4.1'
-    testImplementation "org.mockito:mockito-core:2.23.0"
+    testImplementation "org.mockito:mockito-core:3.2.4"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation "org.json:json:20190722"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 
