@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.usecase.QueryChannels
+import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Call2
 import org.junit.Before
@@ -27,6 +28,7 @@ class ChannelListViewModelTest {
     private val chatDomain: ChatDomain = mock()
     private val useCases: UseCaseHelper = mock()
     private val queryChannels: QueryChannels = mock()
+    private val queryChannelsLoadMore: QueryChannelsLoadMore = mock()
     private val queryChannelsCall: Call2<QueryChannelsController> = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsController: QueryChannelsController = mock()
@@ -38,6 +40,7 @@ class ChannelListViewModelTest {
         whenever(queryChannels.invoke(ChannelsViewModel.DEFAULT_FILTER, ChannelsViewModel.DEFAULT_SORT)) doReturn queryChannelsCall
         whenever(queryChannelsCall.execute()) doReturn queryChannelsControllerResult
         whenever(queryChannelsControllerResult.data()) doReturn queryChannelsController
+        whenever(useCases.queryChannelsLoadMore) doReturn queryChannelsLoadMore
     }
 
     @Test
@@ -67,21 +70,15 @@ class ChannelListViewModelTest {
 
         // when
         viewModel.state.observeForever(mockObserver)
-        viewModel.onAction(ChannelsViewModel.Action.LoadMore)
+        viewModel.onAction(ChannelsViewModel.Action.ReachedEndOfList)
 
         // then
         verify(mockObserver).onChanged(ChannelsViewModel.State.Result(mockChannels))
-        verify(mockObserver).onChanged(ChannelsViewModel.State.Result(mockChannels + mockChannelsNextPage))
-    }
-
-    @Test
-    fun `Should inform there are no more channels left when scrolled to the end region and there are no more pages of results available`() {
-
+        verify(queryChannelsLoadMore).invoke(ChannelsViewModel.DEFAULT_FILTER, ChannelsViewModel.DEFAULT_SORT)
     }
 
     companion object {
         val mockChannels = listOf(Channel(cid = "1"), Channel(cid = "2"))
-        val mockChannelsNextPage = listOf(Channel(cid = "3"), Channel(cid = "4"))
     }
 
 }
