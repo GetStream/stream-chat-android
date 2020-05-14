@@ -5,8 +5,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,7 +84,7 @@ public class ChannelListView extends RecyclerView {
         adapter.setUserClickListener(this.userClickListener);
     }
 
-    private boolean canScrollUpForChannelEvent(){
+    private boolean canScrollUpForChannelEvent() {
         return layoutManager.findFirstVisibleItemPosition() < 3;
     }
 
@@ -118,6 +120,23 @@ public class ChannelListView extends RecyclerView {
 
     public void setOnEndReachedListener(EndReachedListener listener) {
         this.endReachedListener = listener;
+        observeListEndRegion();
+    }
+
+    private void observeListEndRegion() {
+        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
+        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                if (SCROLL_STATE_IDLE == newState) {
+                    final int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
+                    boolean reachedTheEnd = (adapter.getItemCount() - 1) == lastVisiblePosition;
+                    if (reachedTheEnd) {
+                        endReachedListener.onEndReached();
+                    }
+                }
+            }
+        });
     }
 
     public void setChannels(final List<Channel> channels) {
@@ -130,11 +149,12 @@ public class ChannelListView extends RecyclerView {
     }
 
     @Override
-    public void onVisibilityChanged(View view, int visibility){
+    public void onVisibilityChanged(View view, int visibility) {
         super.onVisibilityChanged(view, visibility);
         if (visibility == 0 && adapter != null)
             adapter.notifyDataSetChanged();
     }
+
     // set the adapter and apply the style.
     public void setAdapterWithStyle(ChannelListItemAdapter adapter) {
         super.setAdapter(adapter);
@@ -143,18 +163,6 @@ public class ChannelListView extends RecyclerView {
         if (viewHolderFactory != null) {
             adapter.setViewHolderFactory(viewHolderFactory);
         }
-
-        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (linearLayoutManager != null) {
-                    int lastVisible = linearLayoutManager.findLastVisibleItemPosition();
-                    boolean reachedTheEnd = lastVisible == adapter.getItemCount() - 1;
-                    if (reachedTheEnd) endReachedListener.onEndReached(); // onScrolled may call it multiple times
-                }
-            }
-        });
     }
 
     public interface UserClickListener {
