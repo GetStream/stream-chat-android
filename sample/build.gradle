@@ -1,33 +1,49 @@
-import com.google.gson.Gson
-import groovy.json.JsonSlurper
-
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
-def appVersion = "23.0"
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
     defaultConfig {
-        applicationId "io.getstream.chat.sdk"
+        applicationId "io.getstream.chat.sample"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 23
-        versionName appVersion
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        debug {
+            versionNameSuffix "-DEBUG"
+            applicationIdSuffix ".debug"
+            testCoverageEnabled true
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+
+    sourceSets.all {
+        it.java.srcDir "src/$it.name/kotlin"
+    }
+
+    lintOptions {
+        abortOnError false
+        xmlReport true
+        checkDependencies true
     }
 
     packagingOptions {
@@ -41,143 +57,50 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude("META-INF/*.kotlin_module")
     }
-
-    signingConfigs {
-        release {
-            if (checkSigningEnvVars()) {
-                storeFile file(System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH'))
-                storePassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
-                keyAlias System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
-                keyPassword System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
-            } else {
-                logger.warn('Release env vars are not defined')
-            }
-        }
-    }
-
-    buildTypes {
-
-        release {
-            minifyEnabled true
-            shrinkResources true
-            signingConfig signingConfigs.release
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            def usersConfig = loadJson(true)
-            buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
-        }
-
-        debug {
-            minifyEnabled false
-            shrinkResources false
-
-            def usersConfig = loadJson(false)
-            buildConfigField "String", "USERS_CONFIG", '"' + usersConfig + '"'
-        }
-
-        applicationVariants.all { variant ->
-            variant.outputs.all {
-                def buildType = variant.name
-                def version = variant.versionName
-
-                outputFileName = "chat-sample-[type-${buildType}]-[ver-${version}].apk"
-
-            }
-        }
-    }
-
-    dataBinding {
-        enabled = true
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    lintOptions {
-        checkReleaseBuilds false
-    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$rootProject.appCompatVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
-    implementation "androidx.legacy:legacy-support-v4:$rootProject.legacySupportVersion"
+    implementation project(":library")
 
-    implementation project(':library')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
-    //implementation 'com.github.GetStream:stream-chat-android-livedata:0.2.1'
-    //implementation project(':livedata')
-    //implementation 'com.github.GetStream:stream-chat-android-client:1.2.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.activity:activity-ktx:1.1.0'
+    implementation 'androidx.fragment:fragment-ktx:1.2.4'
+    implementation 'com.google.android.material:material:1.1.0'
 
+    def navigation_version = '2.2.2'
+    implementation "androidx.navigation:navigation-runtime-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
-    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerViewVersion"
-    implementation "com.google.firebase:firebase-messaging:$rootProject.firebaseMessagingVersion"
-    implementation "com.google.firebase:firebase-core:$rootProject.firebaseCoreVersion"
+    implementation "androidx.preference:preference-ktx:1.1.1"
 
-    implementation "com.google.android.material:material:$rootProject.materialVersion"
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
-    implementation("com.crashlytics.sdk.android:crashlytics:$rootProject.crashlyticsVersion")
-    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycleVersion"
+    def koinVersion = '2.1.5'
+    def koin = [
+            libs: [
+                    "org.koin:koin-core:$koinVersion",
+                    "org.koin:koin-core-ext:$koinVersion",
+                    "org.koin:koin-androidx-scope:$koinVersion",
+                    "org.koin:koin-androidx-viewmodel:$koinVersion",
+                    "org.koin:koin-androidx-ext:$koinVersion"
+            ],
+            test: [
+                    "org.koin:koin-test:$koinVersion"
+            ]
+    ]
+    implementation koin.libs
 
-    implementation "androidx.viewpager2:viewpager2:$rootProject.viewPagerVersion"
-    implementation "androidx.fragment:fragment-ktx:$rootProject.fragmentVersion"
-    // Testing dependencies
-    testImplementation "junit:junit:$rootProject.junitVersion"
-    androidTestImplementation "androidx.test:runner:$rootProject.runnerVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
+    implementation 'com.jakewharton.timber:timber:4.7.1'
 
-}
-apply plugin: 'com.google.gms.google-services'
+    def glideVersion = '4.9.0'
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 
-def checkSigningEnvVars() {
-    def storagePath = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_FILE_PATH')
-    def password = System.getenv('STREAM_CHAT_RELEASE_SIGNING_STORE_PASSWORD')
-    def keyAlias = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_ALIAS')
-    def keyPassword = System.getenv('STREAM_CHAT_RELEASE_SIGNING_KEY_PASSWORD')
-
-    return storagePath != null && password != null && keyAlias != null && keyPassword != null
-}
-
-def loadJson(useDefault) {
-    def defaultConfigPath = projectDir.getAbsolutePath() + "/app-config.json"
-    def customConfigPath = projectDir.getAbsolutePath() + "/app-config-custom.json"
-    def file = null
-
-    if (useDefault) {
-        file = new File(defaultConfigPath)
-    } else {
-        if (new File(customConfigPath).exists()) {
-            file = new File(customConfigPath)
-        } else {
-            file = new File(defaultConfigPath)
-        }
-    }
-
-
-    def json = new JsonSlurper().parseText(file.text)
-    println("App config: " + json)
-    return ecapse(new Gson().toJson(json))
-}
-
-def ecapse(jsString) {
-    return jsString.replace("\\", "\\\\")
-            .replace("\"", "\\\"")
-            .replace("\b", "\\b")
-            .replace("\f", "\\f")
-            .replace("\n", "\\n")
-            .replace("\r", "\\r")
-            .replace("\t", "\\t")
-}
-
-gradle.taskGraph.useFilter { task ->
-    /**
-     * Ignores release unit tests.
-     * As it's assembled with releaseSdkVersion, which might be outdated
-     */
-    return task.name != 'testReleaseUnitTest'
+    testImplementation 'junit:junit:4.12'
+    testImplementation koin.test
 }

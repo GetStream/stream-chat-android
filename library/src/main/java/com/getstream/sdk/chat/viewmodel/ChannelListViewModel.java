@@ -47,6 +47,7 @@ import kotlin.jvm.functions.Function1;
 
 import static com.getstream.sdk.chat.utils.Utils.removeIf;
 
+@Deprecated
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
 
     private TaggedLogger logger = ChatLogger.Companion.get("ChannelListViewModel");

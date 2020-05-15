@@ -1,44 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.getstream.chat.example">
+    package="io.getstream.chat.sample">
 
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".App"
-        android:allowBackup="true"
-        android:icon="@drawable/icon"
+        android:allowBackup="false"
+        android:name=".application.App"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/icon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/StreamChat.Themes.Dark">
-        <activity android:name=".LoginActivity">
+        android:theme="@style/AppTheme">
+        <activity android:name=".feature.HostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="OPEN_ACTIVITY_1" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity" />
-
-        <activity android:name=".search.MessageSearchActivity"
-            android:screenOrientation="portrait"/>
-
-        <activity
-            android:name=".ChannelActivity"
-            android:parentActivityName=".HomeActivity"
-            android:launchMode="singleInstance"/>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="2ae916eaa00e73d398864ff4e5f3e331e8d31d12" />
     </application>
 
 </manifest>
