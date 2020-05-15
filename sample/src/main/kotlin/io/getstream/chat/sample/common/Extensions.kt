@@ -1,6 +1,7 @@
 package io.getstream.chat.sample.common
 
 import android.app.Activity
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -33,4 +34,12 @@ fun EditText.hideKeyboard() {
     val imm: InputMethodManager =
         context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+fun View.visible(isVisible: Boolean) {
+    visibility = if (isVisible) {
+        View.VISIBLE
+    } else {
+        View.GONE
+    }
 }

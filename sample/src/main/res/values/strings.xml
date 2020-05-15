@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Chat Sample App</string>
     <string name="login_screen_title">Select user</string>
+    <string name="new_channel_button">New channel</string>
 </resources>
