@@ -22,4 +22,8 @@ public class StreamLifecycleObserver implements LifecycleObserver {
     public void onStopped() {
         handler.stopped();
     }
+
+    public void onCleared() {
+        ProcessLifecycleOwner.get().getLifecycle().removeObserver(this);
+    }
 }

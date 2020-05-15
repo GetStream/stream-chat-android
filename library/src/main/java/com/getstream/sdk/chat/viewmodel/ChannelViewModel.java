@@ -152,7 +152,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected MutableLiveData<InputType> inputType;
     protected MessageListItemLiveData entities;
     protected boolean enableMarkRead; // Used to prevent automatic mark reading messages.
-
+    private StreamLifecycleObserver streamLifecycleObserver;
 
 
     public ChannelViewModel(@NonNull Application application) {
@@ -212,7 +212,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         looper = new Looper(markRead);
         looper.start();
 
-        new StreamLifecycleObserver(this);
+        streamLifecycleObserver = new StreamLifecycleObserver(this);
 
         setupConnectionRecovery();
     }
@@ -801,6 +801,8 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         super.onCleared();
 
         StreamChat.getLogger().logD(this, "onCleared");
+
+        if(streamLifecycleObserver != null) streamLifecycleObserver.onCleared();
 
         if (looper != null) {
             looper.interrupt();

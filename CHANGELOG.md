@@ -1,4 +1,6 @@
-## Upcoming
+## May 15th, 2020 - 3.6.13
+
+- Fix memory leak with not unsubscribed `LifecycleObserver` at `ChannelViewModel`
 
 ## April 23rd, 2020 - 3.6.12
 
