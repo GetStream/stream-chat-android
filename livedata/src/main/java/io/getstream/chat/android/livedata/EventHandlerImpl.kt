@@ -206,7 +206,7 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(events)
 
-        // step 3 - forward the events to the active queries and channels
+        // step 3 - forward the events to the active chanenls
 
         val channelEvents: MutableMap<String, MutableList<ChatEvent>> = mutableMapOf()
         for (event in events) {
@@ -217,12 +217,12 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 channelEvents[event.cid!!]!!.add(event)
             }
         }
-
         for ((cid, cEvents) in channelEvents) {
             if (domainImpl.isActiveChannel(cid)) {
                 domainImpl.channel(cid).handleEvents(cEvents)
             }
         }
+        // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         for (queryRepo in domainImpl.getActiveQueries()) {
             queryRepo.handleEvents(events)
