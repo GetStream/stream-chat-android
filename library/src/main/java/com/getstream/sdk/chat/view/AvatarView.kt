@@ -56,7 +56,7 @@ class AvatarView @JvmOverloads constructor(
 		ImageLoader.getBitmap(context,
 				getExtraValue("image", ""),
 				ImageLoader.ImageTransformation.Circle)
-				?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
+				?: createImageRounded(LlcMigrationUtils.getInitials(this) ?: "", style)
 
 	private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
 			take(3).mapNotNull { it.createBitmap(style) }
@@ -65,7 +65,7 @@ class AvatarView @JvmOverloads constructor(
 			ImageLoader.getBitmap(context,
 					getExtraValue("image", ""),
 					ImageLoader.ImageTransformation.Circle)
-					?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
+					?: LlcMigrationUtils.getInitials(this)?.let { createImageRounded(it, style) }
 
 	private fun createImageRounded(initials: String, baseStyle: BaseStyle): Bitmap {
 		val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
