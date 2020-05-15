@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.view.AvatarGroupView;
+import com.getstream.sdk.chat.view.AvatarView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -46,7 +46,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
         int i = 0;
 
         for (User user : messageListItem.getUsers()) {
-            AvatarGroupView<MessageListViewStyle> avatarView = new AvatarGroupView<>(context);
+            AvatarView avatarView = new AvatarView(context);
             avatarView.setUser(user, style);
             int height = style.getAvatarHeight();
             int width = style.getAvatarWidth();

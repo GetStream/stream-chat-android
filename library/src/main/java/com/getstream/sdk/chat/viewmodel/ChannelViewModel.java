@@ -127,7 +127,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         unreadCount = channelController.getUnreadCount();
         threadMessages = new MutableLiveData<>();
 
-
         logger.logI("instance created");
 
         User currentUser = chatDomain.getCurrentUser();

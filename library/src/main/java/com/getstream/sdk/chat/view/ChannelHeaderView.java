@@ -91,7 +91,7 @@ public class ChannelHeaderView extends RelativeLayout {
     }
 
     protected void configHeaderAvatar(List<Member> members) {
-        AvatarGroupView<ChannelHeaderViewStyle> avatarGroupView = binding.avatarGroup;
+        AvatarView avatarGroupView = binding.avatarGroup;
         avatarGroupView.setLastActiveUsers(LlcMigrationUtils.getOtherUsers(members), style);
     }
 
