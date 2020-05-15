@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
@@ -11,12 +10,24 @@ import com.getstream.sdk.chat.model.ModelType;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Member;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
@@ -26,8 +37,8 @@ public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
 
+    @Nullable
     public static String getInitials(User user) {
-
         String name = (String) user.getExtraData().get("name");
 
         if (name == null) {
@@ -342,9 +353,8 @@ public class LlcMigrationUtils {
         return result;
     }
 
+    @Nullable
     public static String getInitials(Channel channel) {
-
-
         String name = (String) channel.getExtraData().get("name");
         if (name == null) {
             return "";
