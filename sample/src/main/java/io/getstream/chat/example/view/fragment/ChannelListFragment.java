@@ -128,10 +128,10 @@ public class ChannelListFragment extends Fragment {
         // setup the client
         configureStreamClient();
         // example for how to observe the unread counts
-        Chat.getInstance().getUnreadMessages().observe(this, (Number count) -> {
+        Chat.getInstance().getUnreadMessages().observe(getViewLifecycleOwner(), (Number count) -> {
             Log.i(TAG, String.format("Total unread message count is now %d", count));
         });
-        Chat.getInstance().getUnreadChannels().observe(this, (Number count) -> {
+        Chat.getInstance().getUnreadChannels().observe(getViewLifecycleOwner(), (Number count) -> {
             Log.i(TAG, String.format("There are %d channels with unread messages", count));
         });
 
@@ -164,7 +164,7 @@ public class ChannelListFragment extends Fragment {
         // set the viewModel data for the fragment_channel_list.xml layout
         binding.setViewModel(viewModel);
 
-        binding.channelList.setViewModel(viewModel, this);
+        binding.channelList.setViewModel(viewModel, getViewLifecycleOwner());
 
         // set your markdown
 //        MarkdownImpl.setMarkdownListener((TextView textView, String message)-> {
