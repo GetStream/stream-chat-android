@@ -15,7 +15,7 @@ import timber.log.Timber
 
 class App : Application() {
 
-    val appConfig: AppConfig by inject()
+    private val appConfig: AppConfig by inject()
 
     override fun onCreate() {
         super.onCreate()

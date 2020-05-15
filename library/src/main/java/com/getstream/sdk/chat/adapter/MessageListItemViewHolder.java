@@ -23,11 +23,14 @@ import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.navigation.destinations.WebLinkDestination;
-import com.getstream.sdk.chat.storage.Sync;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.view.*;
+import com.getstream.sdk.chat.view.AttachmentListView;
+import com.getstream.sdk.chat.view.AvatarView;
+import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
+import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +60,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     int avatarWidth;
     protected TextView tv_text;
     protected RecyclerView rv_reaction;
-    protected AvatarGroupView<MessageListViewStyle> avatar;
+    protected AvatarView avatar;
     protected ImageView iv_tail;
     protected Space space_reaction_tail, space_header, space_same_user, space_reaction, space_attachment;
     protected TextView tv_username, tv_messagedate;
