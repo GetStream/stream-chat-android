@@ -1,5 +1,15 @@
 ## Upcoming
 
+## May 15th, 2020 - 4.2.6
+
+- Fix Avatar crash if channel/user initials are empty
+
+## May 13th, 2020 - 4.2.5
+
+- Create new `AvatarView`
+- Glide Redirect issues resolved
+- Bugfix release for livedata, updated to 0.4.2
+
 ## March 11th, 2020 - 3.6.5
 
 - Fix reaction score parser casting exception
