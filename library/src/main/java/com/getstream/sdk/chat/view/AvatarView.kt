@@ -82,7 +82,7 @@ class AvatarView @JvmOverloads constructor(
 		}
 		val textBounds = Rect()
 		paintText.getTextBounds(initials, 0, initials.length, textBounds);
-		val radius = max(textBounds.width(), textBounds.height()).takeUnless { it <= 0 } ?: MIN_RADIO_SIZE
+		val radius = max(textBounds.width(), textBounds.height()).takeUnless { it <= 0 } ?: MIN_RADIUS_SIZE
 		val bitmapSize = (radius * 2)
 		val output = Bitmap.createBitmap(bitmapSize, bitmapSize, Bitmap.Config.ARGB_8888)
 		val canvas = Canvas(output)
@@ -95,7 +95,7 @@ class AvatarView @JvmOverloads constructor(
 	}
 }
 
-private const val MIN_RADIO_SIZE = 100
+private const val MIN_RADIUS_SIZE = 100
 private const val FACTOR = 1.7
 private class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
 	private val avatarBitmaps = bitmaps.take(3)
