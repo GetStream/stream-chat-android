@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -162,17 +163,22 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                         messages[it.id] = it
                     }
                 }
-                is MemberAddedEvent, is MemberRemovedEvent, is MemberUpdatedEvent, is NotificationRemovedFromChannel -> {
+                is MemberAddedEvent, is MemberUpdatedEvent -> {
+                    val channelEntity = channelMap[event.cid!!]
+                    channelEntity?.let {
+                        it.setMember(event.member!!.user.id, event.member!!)
+                        channels[it.cid] = it
+                    }
+                    event.channel?.let { c ->
+                        users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
+                    }
+                }
+                is MemberRemovedEvent, is NotificationRemovedFromChannel -> {
                     // get the channel, update members, write the channel
-                    val channelEntity = channelMap.get(event.cid!!)
-                    if (channelEntity != null) {
-                        var member = event.member
-                        val userId = event.member!!.user.id
-                        if (event is MemberRemovedEvent || event is NotificationRemovedFromChannel) {
-                            member = null
-                        }
-                        channelEntity.setMember(userId, member)
-                        channels[channelEntity.cid] = channelEntity
+                    val channelEntity = channelMap[event.cid!!]
+                    channelEntity?.let {
+                        it.setMember(event.user!!.id, null)
+                        channels[it.cid] = it
                     }
                     event.channel?.let { c ->
                         users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })

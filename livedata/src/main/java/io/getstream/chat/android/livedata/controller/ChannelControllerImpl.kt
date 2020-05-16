@@ -735,7 +735,7 @@ class ChannelControllerImpl(
                 upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
-                deleteMember(event.member!!)
+                deleteMember(event.user!!.id)
             }
             is MemberAddedEvent, is MemberUpdatedEvent, is NotificationAddedToChannelEvent -> {
                 // add /remove the members etc
@@ -847,9 +847,9 @@ class ChannelControllerImpl(
         _watchers.postValue(copy)
     }
 
-    private fun deleteMember(member: Member) {
+    private fun deleteMember(userId: String) {
         val copy = _members.value ?: mutableMapOf()
-        copy.remove(member.user.id)
+        copy.remove(userId)
         _members.postValue(copy)
     }
 

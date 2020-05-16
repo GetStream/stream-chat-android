@@ -9,7 +9,6 @@ import io.getstream.chat.android.livedata.utils.calendar
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -38,8 +37,8 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(channels).isNotEmpty()
         val channel = channels.first()
         val initialCount = channel.unreadCount!!
-        val message2 = Message().apply { text="it's a beautiful world"; cid=channel.cid; user=data.user2; createdAt=calendar(2020, 5, 14) }
-        val messageEvent = NewMessageEvent().apply { message=message2; cid=channel.cid;  }
+        val message2 = Message().apply { text = "it's a beautiful world"; cid = channel.cid; user = data.user2; createdAt = calendar(2020, 5, 14) }
+        val messageEvent = NewMessageEvent().apply { message = message2; cid = channel.cid; }
         val channelController = chatDomainImpl.channel(channel)
         chatDomainImpl.eventHandler.handleEvent(messageEvent)
         // new message should increase the count by 1
@@ -49,7 +48,5 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         channelController.markRead()
         Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(0)
         Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(0)
-
-
     }
 }

@@ -131,13 +131,17 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun memberEvent() = runBlocking(Dispatchers.IO) {
+    fun memberAddAndRemoveEvent() = runBlocking(Dispatchers.IO) {
         // add the member to the channel
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
         val cid = data.memberAddedToChannelEvent.cid!!
         // verify that user 2 is now part of the members
-        val channel = chatDomainImpl.repos.channels.select(cid)!!
+        var channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
+        chatDomainImpl.eventHandler.handleEvent(data.memberRemovedFromChannel)
+        channel = chatDomainImpl.repos.channels.select(cid)!!
+        Truth.assertThat(channel.members.size).isEqualTo(1)
+
     }
 }
