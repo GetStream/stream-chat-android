@@ -26,8 +26,8 @@ jobs:
     - name: Upload Coverage
       run: bash <(curl -s https://codecov.io/bash)
     - name: Upload Test Results
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       if: failure()
       with:
         name: errors
-        path: library/build/reports/tests/testDebugUnitTest
+        path: livedata/build/reports/tests/testDebugUnitTest
