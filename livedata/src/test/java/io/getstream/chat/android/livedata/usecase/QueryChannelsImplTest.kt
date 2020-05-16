@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.usecase
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -11,11 +12,14 @@ import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
+
 
     @Test
     fun filter() = runBlocking(Dispatchers.IO) {
@@ -31,7 +35,6 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    @Ignore("this is broken somehow")
     fun unreadCountNewMessage() = runBlocking(Dispatchers.IO) {
         val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
         assertSuccess(queryChannelResult)
@@ -40,7 +43,7 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(channels).isNotEmpty()
         val channel = channels.first()
         val initialCount = channel.unreadCount!!
-        val message2 = Message().apply { text = "it's a beautiful world"; cid = channel.cid; user = data.user2; createdAt = calendar(2020, 5, 14) }
+        val message2 = Message().apply { text = "it's a beautiful world"; cid = channel.cid; user = data.user2; createdAt = calendar(2021, 5, 14) }
         val messageEvent = NewMessageEvent().apply { message = message2; cid = channel.cid; }
         val channelController = chatDomainImpl.channel(channel)
         chatDomainImpl.eventHandler.handleEvent(messageEvent)
@@ -48,9 +51,10 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(initialCount + 1)
         Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(initialCount + 1)
         // mark read should set it to zero
-        val readEvent = MessageReadEvent().apply { message = message2; user = data.user1; cid = data.channel1.cid; createdAt = message2.createdAt }
+        val readEvent = MessageReadEvent().apply { message = message2; user = data.user1; cid = channel.cid; createdAt = message2.createdAt }
         chatDomainImpl.eventHandler.handleEvent(readEvent)
-
+        val read = channelController.read.getOrAwaitValue()
+        Truth.assertThat(read.lastRead).isEqualTo(readEvent.createdAt)
         Truth.assertThat(channelController.unreadCount.getOrAwaitValue()).isEqualTo(0)
         Truth.assertThat(queryChannelsController.channels.getOrAwaitValue().first().unreadCount).isEqualTo(0)
     }
