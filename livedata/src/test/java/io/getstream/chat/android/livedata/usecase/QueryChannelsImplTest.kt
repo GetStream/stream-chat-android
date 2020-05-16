@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.usecase
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -11,15 +10,11 @@ import io.getstream.chat.android.livedata.utils.calendar
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
-
 
     @Test
     fun filter() = runBlocking(Dispatchers.IO) {
