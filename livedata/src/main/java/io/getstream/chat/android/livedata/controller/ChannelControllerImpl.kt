@@ -862,12 +862,12 @@ class ChannelControllerImpl(
     fun updateReads(
         reads: List<ChannelUserRead>
     ) {
-        val currentUser = domainImpl.currentUser
+        val currentUserId = domainImpl.currentUser.id
         val copy = _reads.value ?: mutableMapOf()
         for (r in reads) {
             copy[r.getUserId()] = r
             // update read state for the current user
-            if (r.getUserId() == currentUser.id) {
+            if (r.getUserId() == currentUserId) {
                 _read.postValue(r)
             }
         }

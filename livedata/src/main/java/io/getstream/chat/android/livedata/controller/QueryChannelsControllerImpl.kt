@@ -97,7 +97,7 @@ class QueryChannelsControllerImpl(
 
     fun updateChannel(c: Channel) {
         val copy = _channels.value ?: ConcurrentHashMap()
-        copy[c.id] = c
+        copy[c.cid] = c
         _channels.postValue(copy)
     }
 

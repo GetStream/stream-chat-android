@@ -142,6 +142,5 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         chatDomainImpl.eventHandler.handleEvent(data.memberRemovedFromChannel)
         channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(1)
-
     }
 }
