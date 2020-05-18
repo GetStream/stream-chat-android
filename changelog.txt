@@ -1,3 +1,7 @@
+# 1.4.7 - Mon 18 May 2020
+
+- Add handling invalid event payload
+
 # 1.4.6 - Tue 14 May 2020
 
 - Move channel out of message constructor
