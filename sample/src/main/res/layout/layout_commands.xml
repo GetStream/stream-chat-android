@@ -77,4 +77,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="mark channel read"
+            android:id="@+id/btnMarkChannelRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="mark all read"
+            android:id="@+id/btnMarkAllRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>

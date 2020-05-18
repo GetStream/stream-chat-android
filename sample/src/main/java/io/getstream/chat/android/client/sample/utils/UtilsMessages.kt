@@ -16,6 +16,10 @@ object UtilsMessages {
         Toast.makeText(App.instance, msg, Toast.LENGTH_SHORT).show()
     }
 
+    fun show(result: Result<*>) {
+        show("success", "error", result)
+    }
+
     fun show(success: String, error: String, result: Result<*>) {
         if (result.isSuccess) {
             show(success)

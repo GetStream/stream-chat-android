@@ -4,6 +4,7 @@
     <application
             android:usesCleartextTraffic="true"
             android:name=".App"
+            android:label="Chat LLC"
             android:theme="@style/Theme.AppCompat">
         <activity android:name=".common.HomeActivity">
             <intent-filter>

@@ -152,9 +152,20 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
 
             }
-
-
         }
+
+        btnMarkAllRead.setOnClickListener {
+            client.markAllRead().enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnMarkChannelRead.setOnClickListener {
+            client.markAllRead().enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
     }
 
     fun destroy() {
