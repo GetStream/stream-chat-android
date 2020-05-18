@@ -91,7 +91,7 @@ interface ChatApi {
         request: UpdateChannelRequest
     ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun markRead(channelType: String, channelId: String, messageId: String = ""): Call<Unit>
     fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,

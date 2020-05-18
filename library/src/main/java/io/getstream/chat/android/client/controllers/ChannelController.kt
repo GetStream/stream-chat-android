@@ -31,7 +31,7 @@ interface ChannelController {
     fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>
     fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit>
     fun markMessageRead(messageId: String): Call<Unit>
-    fun markRead(): Call<ChatEvent>
+    fun markRead(): Call<Unit>
     fun delete(): Call<Channel>
     fun show(): Call<Unit>
     fun hide(clearHistory: Boolean = false): Call<Unit>

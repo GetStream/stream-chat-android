@@ -349,6 +349,10 @@ internal class ChatClientImpl(
         }
     }
 
+    override fun markRead(channelType: String, channelId: String): Call<Unit> {
+        return api.markRead(channelType, channelId)
+    }
+
     override fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)
     }

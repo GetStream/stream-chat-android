@@ -82,8 +82,8 @@ internal class ChannelControllerImpl(
         return client.markMessageRead(channelType, channelId, messageId)
     }
 
-    override fun markRead(): Call<ChatEvent> {
-        return client.markAllRead()
+    override fun markRead(): Call<Unit> {
+        return client.markRead(channelType, channelId)
     }
 
     override fun delete(): Call<Channel> {
