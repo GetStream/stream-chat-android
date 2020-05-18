@@ -67,14 +67,16 @@ android {
         }
     }
 
-    sourceSets.all {
-        it.java.srcDir "src/$it.name/kotlin"
+    sourceSets {
+        all {
+            it.java.srcDir "src/$it.name/kotlin"
+        }
+        main.java.srcDirs += 'src/main/kotlinX'
     }
 
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
 }
 
 final def markdown_version = '4.3.0'
