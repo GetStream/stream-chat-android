@@ -16,25 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
-import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.enums.MessageInputType;
-import com.getstream.sdk.chat.interfaces.MessageSendListener;
-import com.getstream.sdk.chat.model.AttachmentMetaData;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
-import com.getstream.sdk.chat.utils.*;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
-
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.os.BuildCompat;
@@ -44,10 +25,37 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
+import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.enums.MessageInputType;
+import com.getstream.sdk.chat.interfaces.MessageSendListener;
+import com.getstream.sdk.chat.model.AttachmentMetaData;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.navigation.destinations.CameraDestination;
+import com.getstream.sdk.chat.utils.CaptureController;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.GridSpacingItemDecoration;
+import com.getstream.sdk.chat.utils.LlcMigrationUtils;
+import com.getstream.sdk.chat.utils.MessageInputController;
+import com.getstream.sdk.chat.utils.PermissionChecker;
+import com.getstream.sdk.chat.utils.StringUtility;
+import com.getstream.sdk.chat.utils.TextViewUtils;
+import com.getstream.sdk.chat.utils.Utils;
+import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.livedata.ChatDomain;
 
 import static java.util.UUID.randomUUID;
 
@@ -566,7 +574,7 @@ public class MessageInputView extends RelativeLayout {
     }
 
     private String generateMessageID() {
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
+        User currentUser = ChatClient.instance().getCurrentUser();
         String id = currentUser.getId();
         return id + "-" + randomUUID().toString();
     }

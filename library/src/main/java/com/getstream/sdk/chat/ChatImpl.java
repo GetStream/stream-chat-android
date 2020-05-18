@@ -17,12 +17,11 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
+import io.getstream.chat.android.livedata.ChatDomain;
 
 class ChatImpl implements Chat {
-
-    private final ChatClient client;
-
     private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
     private MutableLiveData<Number> unreadMessages = new MutableLiveData<>();
     private MutableLiveData<Number> unreadChannels = new MutableLiveData<>();
@@ -34,14 +33,11 @@ class ChatImpl implements Chat {
     private final UrlSigner urlSigner;
     private final ChatMarkdown markdown;
 
-    ChatImpl(ChatClient client,
-             ChatFonts chatFonts,
+    ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
              ChatNavigationHandler navigationHandler,
              UrlSigner urlSigner,
              ChatMarkdown markdown) {
-
-        this.client = client;
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -50,11 +46,6 @@ class ChatImpl implements Chat {
         navigator.setHandler(navigationHandler);
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
-    }
-
-    @Override
-    public ChatClient getClient() {
-        return client;
     }
 
     @Override
@@ -109,8 +100,13 @@ class ChatImpl implements Chat {
         return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
     }
 
-    void init() {
+    @Override
+    public void setUser(@NotNull User user, @NotNull String token, @NotNull InitConnectionListener callbacks) {
+        ChatClient.instance().setUser(user, token, callbacks);
+        ChatDomain.instance().setCurrentUser(user);
+    }
 
+    void init() {
         initSocketListener();
         initLifecycle();
     }
@@ -119,18 +115,18 @@ class ChatImpl implements Chat {
         new StreamLifecycleObserver(new LifecycleHandler() {
             @Override
             public void resume() {
-                client.reconnectSocket();
+                client().reconnectSocket();
             }
 
             @Override
             public void stopped() {
-                client.disconnectSocket();
+                client().disconnectSocket();
             }
         });
     }
 
     private void initSocketListener() {
-        client.addSocketListener(new SocketListener() {
+        client().addSocketListener(new SocketListener() {
             @Override
             public void onConnected(@NotNull ConnectedEvent event) {
                 onlineStatus.postValue(OnlineStatus.CONNECTED);
@@ -164,6 +160,7 @@ class ChatImpl implements Chat {
         });
     }
 
-    static Chat instance;
-
+    private ChatClient client() {
+        return ChatClient.instance();
+    }
 }

@@ -18,6 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
@@ -35,14 +44,7 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.DimenRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
@@ -422,7 +424,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected void configMessageTextClickListener() {
         tv_text.setOnClickListener(view -> {
 
-            if (isFailedMessage() && !Chat.getInstance().getClient().isSocketConnected())
+            if (isFailedMessage() && !ChatClient.instance().isSocketConnected())
                 return;
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);

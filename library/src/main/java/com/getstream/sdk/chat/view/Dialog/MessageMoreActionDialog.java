@@ -12,7 +12,10 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.getstream.sdk.chat.Chat;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter;
 import com.getstream.sdk.chat.model.ModelType;
@@ -20,9 +23,7 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Flag;
 import io.getstream.chat.android.client.models.Message;
@@ -86,14 +87,13 @@ public class MessageMoreActionDialog extends Dialog {
 
         ll_thread.setVisibility(canThreadOnMessage() ? View.VISIBLE : View.GONE);
         ll_copy.setVisibility(canCopyonMessage() ? View.VISIBLE : View.GONE);
-        User currentUser = Chat.getInstance().getClient().getCurrentUser();
+        User currentUser = ChatClient.instance().getCurrentUser();
         String id = currentUser.getId();
         if (!message.getUser().getId().equals(id)) {
             ll_edit.setVisibility(View.GONE);
             ll_delete.setVisibility(View.GONE);
             ll_flag.setOnClickListener(view -> {
-
-                Chat.getInstance().getClient().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
+                ChatClient.instance().flag(message.getCid()).enqueue(new Function1<Result<Flag>, Unit>() {
                     @Override
                     public Unit invoke(Result<Flag> flagResponseResult) {
 
@@ -120,12 +120,9 @@ public class MessageMoreActionDialog extends Dialog {
             });
 
             ll_delete.setOnClickListener(view -> {
-
-
-                Chat.getInstance().getClient().deleteMessage(message.getId()).enqueue(new Function1<Result<Message>, Unit>() {
+                ChatClient.instance().deleteMessage(message.getId()).enqueue(new Function1<Result<Message>, Unit>() {
                     @Override
                     public Unit invoke(Result<Message> messageResult) {
-
                         if (messageResult.isSuccess()) {
                             Utils.showMessage(context, "Deleted Successfully");
                             if (TextUtils.isEmpty(message.getParentId()))
@@ -134,9 +131,7 @@ public class MessageMoreActionDialog extends Dialog {
                             ChatError error = messageResult.error();
                             Utils.showMessage(context, error.getMessage());
                         }
-
                         dismiss();
-
                         return null;
                     }
                 });

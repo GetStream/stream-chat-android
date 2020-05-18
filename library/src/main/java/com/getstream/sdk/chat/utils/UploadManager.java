@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.utils;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
@@ -68,9 +68,9 @@ class UploadManager {
         };
 
         if (data.isImage()) {
-            Chat.getInstance().getClient().sendImage(type, id, data.file, progressCallback);
+            ChatClient.instance().sendImage(type, id, data.file, progressCallback);
         } else {
-            Chat.getInstance().getClient().sendFile(type, id, data.file, progressCallback);
+            ChatClient.instance().sendFile(type, id, data.file, progressCallback);
         }
 
 

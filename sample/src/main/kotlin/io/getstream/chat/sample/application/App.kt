@@ -2,6 +2,9 @@ package io.getstream.chat.sample.application
 
 import android.app.Application
 import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
 import io.getstream.chat.sample.feature.channels.channelsModule
@@ -20,10 +23,20 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin()
-        Chat.Builder(appConfig.apiKey, this).build()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
+        val chatClient = ChatClient.Builder(appConfig.apiKey, this).build()
+        val emptyUser = User() // TODO: make user arg in ChatDomain.Builder default or remove it. Shouldn't the ChatDomain be getting user from ChatClient?
+        val chatDomain = ChatDomain.Builder(this, chatClient, emptyUser)
+                .offlineEnabled()
+                .userPresenceEnabled()
+                .build()
+
+        Chat.Builder(this)
+                .chatDomain(chatDomain)
+                .build()
     }
 
     private fun initKoin() {

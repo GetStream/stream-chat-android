@@ -10,7 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.getstream.sdk.chat.Chat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.UserGroupListAdapter;
 import com.getstream.sdk.chat.adapter.UserListItemAdapter;
@@ -22,11 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -221,7 +222,7 @@ public class UsersActivity extends AppCompatActivity {
         isCalling = true;
 
 
-        Chat.getInstance().getClient().queryUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
+        ChatClient.instance().queryUsers(getQueryUserRequest()).enqueue(new Function1<Result<List<User>>, Unit>() {
             @Override
             public Unit invoke(Result<List<User>> listResult) {
 

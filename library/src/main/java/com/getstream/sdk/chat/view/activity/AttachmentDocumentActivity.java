@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.Utils;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 
@@ -62,7 +64,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     public void loadDocument(String url) {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (Chat.getInstance().getClient().isSocketConnected()) {
+        if (ChatClient.instance().isSocketConnected()) {
             //TODO: llc: add signing
             webView.loadUrl("https://docs.google.com/gview?embedded=true&url=" + url);
         } else {
