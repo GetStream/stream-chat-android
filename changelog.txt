@@ -2,6 +2,10 @@
 
 - Add handling invalid event payload
 
+# 1.4.7 - Tue 14 May 2020
+
+- Add more channel creation signatures to `Client` and `ChannelController`
+
 # 1.4.6 - Tue 14 May 2020
 
 - Move channel out of message constructor

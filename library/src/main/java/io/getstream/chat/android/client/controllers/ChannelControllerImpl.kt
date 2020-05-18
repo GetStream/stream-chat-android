@@ -18,6 +18,14 @@ internal class ChannelControllerImpl(
 
     override val cid = "$channelType:$channelId"
 
+    override fun create(members: List<String>, extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(channelType, channelId, members, extraData)
+    }
+
+    override fun create(extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(channelType, channelId, emptyList())
+    }
+
     override fun events(): ChatObservable {
         return client.events().filter { event ->
             event.isFrom(cid)

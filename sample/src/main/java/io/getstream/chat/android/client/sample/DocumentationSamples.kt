@@ -4,7 +4,10 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
@@ -56,6 +59,18 @@ fun setUser() {
             error.printStackTrace()
         }
     })
+}
+
+/**
+ * https://getstream.io/nessy/docs/chat_docs/channels/channel_conversations
+ */
+internal object OneToOneConversations {
+    fun creatingConversations() {
+        val members = listOf("thierry", "tomasso")
+        channelController.create(members).enqueue {
+            val newChannel = it.data()
+        }
+    }
 }
 
 fun channel() {
