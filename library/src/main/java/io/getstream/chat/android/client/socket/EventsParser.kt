@@ -26,15 +26,18 @@ internal class EventsParser(
 
     override fun onMessage(webSocket: WebSocket, text: String) {
 
-        logger.logI("onMessage: $text")
+        try {
+            val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
+            val errorData = errorMessage.data()
 
-        val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
-        val errorData = errorMessage.data()
-
-        if (errorMessage.isSuccess && errorData.error != null) {
-            handleErrorEvent(errorData.error)
-        } else {
-            handleEvent(text)
+            if (errorMessage.isSuccess && errorData.error != null) {
+                handleErrorEvent(errorData.error)
+            } else {
+                handleEvent(text)
+            }
+        } catch (t: Throwable) {
+            logger.logE("onMessage", t)
+            service.onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
         }
     }
 

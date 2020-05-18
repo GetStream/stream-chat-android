@@ -13,10 +13,11 @@ enum class ChatErrorCode(val code: Int, val description: String) {
     CANT_PARSE_EVENT(1005, "Unable to parse event"),
     INVALID_TOKEN(1006, "Invalid token"),
     UNDEFINED_TOKEN(1007, "No defined token. Check if client.setUser was called and finished"),
-
+    UNABLE_TO_PARSE_SOCKET_EVENT(1008, "Socket event payload either invalid or null"),
 
     /**
      * Backend
      */
-    TOKEN_EXPIRED(40, "token expired, new one must be requested")
+    TOKEN_EXPIRED(40, "Token expired, new one must be requested."),
+    API_KEY_NOT_FOUND(2, "Api key is not found, verify it if it's correct or was created.")
 }
