@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-        <variable
-            name="viewModel"
-            type="com.getstream.sdk.chat.viewmodel.ChannelViewModel" />
-        <variable
-            name="channelLastActive"
-            type="String" />
-        <variable
-            name="channelName"
-            type="String" />
-        <variable
-            name="offlineText"
-            type="String" />
-    </data>
-
+    xmlns:tools="http://schemas.android.com/tools"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        tools:layout_height="56dp">
+        tools:layout_height="56dp"
+        >
 
         <Button
             android:id="@+id/btn_back"
@@ -33,7 +19,8 @@
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/tv_channel_name"
@@ -46,25 +33,25 @@
             android:gravity="center_horizontal"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="@{channelName}"
             app:layout_constraintBottom_toTopOf="@+id/tv_active"
             app:layout_constraintEnd_toStartOf="@+id/avatar_group"
             app:layout_constraintStart_toEndOf="@+id/btn_back"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            />
 
         <TextView
             android:id="@+id/tv_active"
             style="@style/text_s"
-            app:layout_constraintVertical_chainStyle="packed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text='@{viewModel.getOnline() ? channelLastActive : offlineText}'
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toEndOf="@+id/tv_channel_name"
             app:layout_constraintStart_toStartOf="@+id/tv_channel_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_channel_name" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_channel_name"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
 
         <com.getstream.sdk.chat.view.AvatarView
             android:id="@+id/avatar_group"
@@ -73,23 +60,25 @@
             android:layout_marginEnd="@dimen/stream_channel_header_avatar_margin_end"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toStartOf="@+id/btn_option"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <ImageView
             android:id="@+id/iv_active_badge"
             android:layout_width="@dimen/stream_channel_header_avatar_active"
             android:layout_height="@dimen/stream_channel_header_avatar_active"
-            android:background="@{(safeUnbox(viewModel.anyOtherUsersOnline) &amp;&amp; viewModel.getOnline()) ? @drawable/stream_circle_user_online : @drawable/stream_circle_user_offline}"
             app:layout_constraintEnd_toEndOf="@+id/avatar_group"
             app:layout_constraintStart_toEndOf="@+id/avatar_group"
-            app:layout_constraintTop_toTopOf="@+id/avatar_group" />
+            app:layout_constraintTop_toTopOf="@+id/avatar_group"
+            />
 
         <ImageView
             android:id="@+id/iv_separator"
             android:layout_width="match_parent"
             android:layout_height="@dimen/stream_channel_header_separator_height"
             android:background="@color/stream_gray"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
         <Button
             android:id="@+id/btn_option"
@@ -99,8 +88,7 @@
             android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/iv_separator"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </layout>
