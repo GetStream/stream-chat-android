@@ -60,6 +60,10 @@ internal class ChatSocketServiceImpl(
                 healthMonitor.onError()
             }
 
+        } else if (error is ChatNetworkError && error.streamCode == ChatErrorCode.API_KEY_NOT_FOUND.code) {
+            updateState(State.Error(error))
+            updateState(State.Disconnected(false))
+            clearState()
         } else {
             if (state is State.Connected || state is State.Connecting) {
                 updateState(State.Error(error))
