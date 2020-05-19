@@ -16,7 +16,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 interface ChannelsViewModel {
     val state: LiveData<State>
 
-    fun onAction(action: Action)
+    fun onEvent(event: Event)
 
     sealed class State {
         data class LoadingNextPage(val isLoading: Boolean) : State()
@@ -25,8 +25,9 @@ interface ChannelsViewModel {
         data class EndPageReached(val isEndPage: Boolean) : State()
     }
 
-    sealed class Action {
-        object ReachedEndOfList : Action()
+    sealed class Event {
+        object ReachedEndOfList : Event()
+        data class CreateNewChannel(val channelName: String) : Event()
     }
 
     companion object {
@@ -63,9 +64,9 @@ class ChannelsViewModelImpl(
         stateMerger.addSource(loadingMoreData) { state -> stateMerger.value = state }
     }
 
-    override fun onAction(action: ChannelsViewModel.Action) {
-        when (action) {
-            is ChannelsViewModel.Action.ReachedEndOfList -> requestMoreChannels()
+    override fun onEvent(event: ChannelsViewModel.Event) {
+        when (event) {
+            is ChannelsViewModel.Event.ReachedEndOfList -> requestMoreChannels()
         }
     }
 

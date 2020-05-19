@@ -46,13 +46,8 @@ class ChannelListViewModelTest {
     @Test
     fun `Should display channels when there are channels available`() {
         // given
-        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
-        whenever(queryChannelsController.loading) doReturn MutableLiveData()
-        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
-        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
+        mockChannels()
         val mockObserver: Observer<ChannelsViewModel.State> = mock()
-
-        // when
         viewModel.state.observeForever(mockObserver)
 
         // then
@@ -62,19 +57,23 @@ class ChannelListViewModelTest {
     @Test
     fun `Should load more channels when list is scrolled to the end region`() {
         // given
-        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
-        whenever(queryChannelsController.loading) doReturn MutableLiveData()
-        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
-        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
+        mockChannels()
         val mockObserver: Observer<ChannelsViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
 
         // when
-        viewModel.state.observeForever(mockObserver)
-        viewModel.onAction(ChannelsViewModel.Action.ReachedEndOfList)
+        viewModel.onEvent(ChannelsViewModel.Event.ReachedEndOfList)
 
         // then
         verify(mockObserver).onChanged(ChannelsViewModel.State.Result(mockChannels))
         verify(queryChannelsLoadMore).invoke(ChannelsViewModel.DEFAULT_FILTER, ChannelsViewModel.DEFAULT_SORT)
+    }
+
+    private fun mockChannels() {
+        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
+        whenever(queryChannelsController.loading) doReturn MutableLiveData()
+        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
+        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
     }
 
     companion object {

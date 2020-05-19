@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.view.ChannelListView
 import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
 
 fun ChannelsViewModel.bindView(view: ChannelListView, lifecycle: LifecycleOwner) {
-
     state.observe(lifecycle, Observer {
         Log.d("ChannelsViewModel", "ChannelsViewModel received state: ${it.javaClass}")
         when (it) {
@@ -20,6 +19,6 @@ fun ChannelsViewModel.bindView(view: ChannelListView, lifecycle: LifecycleOwner)
 
     view.setOnEndReachedListener {
         Log.d("ChannelsViewModel", "ChannelsViewModel binding: end region reached")
-        onAction(ChannelsViewModel.Action.ReachedEndOfList)
+        onEvent(ChannelsViewModel.Event.ReachedEndOfList)
     }
 }
