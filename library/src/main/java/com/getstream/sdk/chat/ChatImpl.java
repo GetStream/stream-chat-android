@@ -116,7 +116,7 @@ class ChatImpl implements Chat {
         });
     }
 
-    void init() {
+    protected void init() {
         initSocketListener();
         initLifecycle();
     }
