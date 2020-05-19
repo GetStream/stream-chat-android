@@ -13,7 +13,6 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import timber.log.Timber
 
 class App : Application() {
@@ -49,10 +48,7 @@ class App : Application() {
                     appModule,
                     dataModule,
                     loginModule,
-                    channelsModule,
-                    module {
-                        single { Chat.getInstance() }
-                    }
+                    channelsModule
             ))
         }
     }
