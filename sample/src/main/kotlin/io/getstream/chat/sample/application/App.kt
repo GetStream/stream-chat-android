@@ -33,9 +33,7 @@ class App : Application() {
                 .userPresenceEnabled()
                 .build()
 
-        Chat.Builder(this)
-                .chatDomain(chatDomain)
-                .build()
+        Chat.Builder(this, chatDomain).build()
     }
 
     private fun initKoin() {

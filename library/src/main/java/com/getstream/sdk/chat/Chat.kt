@@ -14,7 +14,6 @@ import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.livedata.ChatDomain
-import java.lang.IllegalStateException
 
 interface Chat {
     val navigator: ChatNavigator
@@ -30,29 +29,13 @@ interface Chat {
 
     fun setUser(user: User, token: String, callbacks: InitConnectionListener)
 
-    class Builder(private val context: Context) {
+    class Builder(private val context: Context, private val chatDomain: ChatDomain) {
         var navigationHandler: ChatNavigationHandler? = null
         var style: ChatStyle = ChatStyle.Builder().build()
         var urlSigner: UrlSigner = DefaultUrlSigner()
         var markdown: ChatMarkdown = ChatMarkdownImpl(context)
-        var chatDomain: ChatDomain? = null
-
-        fun chatDomain(chatDomain: ChatDomain): Builder = apply {
-            this.chatDomain = chatDomain
-        }
-
-        fun style(style: ChatStyle): Builder = apply {
-            this.style = style
-        }
-
-        fun navigationHandler(navigationHandler: ChatNavigationHandler) = apply {
-            this.navigationHandler = navigationHandler
-        }
 
         fun build(): Chat {
-            if (chatDomain == null) {
-                throw IllegalStateException("ChatDomain must be initialized before calling Chat.Builder::build()")
-            }
             return ChatImpl(ChatFontsImpl(style, context),
                     ChatStringsImpl(context),
                     navigationHandler,
@@ -69,8 +52,7 @@ interface Chat {
         private var instance: Chat? = null
 
         @JvmStatic
-        fun getInstance(): Chat = instance?.let {
-            return it
-        } ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
+        fun getInstance(): Chat = instance
+                ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
     }
 }
