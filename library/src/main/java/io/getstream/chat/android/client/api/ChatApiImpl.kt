@@ -540,10 +540,10 @@ class ChatApiImpl(
         members: List<String>
     ) = callMapper.map(
         retrofitApi.addMembers(
-            apiKey,
-            connectionId,
             channelType,
             channelId,
+            apiKey,
+            connectionId,
             AddMembersRequest(members)
         )
     ).map { flattenChannel(it) }

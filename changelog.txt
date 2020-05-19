@@ -1,3 +1,7 @@
+# 1.4.10 - Tue 19 May 2020
+
+- Fix add member invalid api key
+
 # 1.4.9 - Mon 18 May 2020
 
 🚨 Breaking change:
