@@ -26,14 +26,7 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
 
-        val chatClient = ChatClient.Builder(appConfig.apiKey, this).build()
-        val emptyUser = User() // TODO: make user arg in ChatDomain.Builder default or remove it. Shouldn't the ChatDomain be getting user from ChatClient?
-        val chatDomain = ChatDomain.Builder(this, chatClient, emptyUser)
-                .offlineEnabled()
-                .userPresenceEnabled()
-                .build()
-
-        Chat.Builder(this, chatDomain).build()
+        Chat.Builder(appConfig.apiKey, this).apply { offlineEnabled = true }.build()
     }
 
     private fun initKoin() {
