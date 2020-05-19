@@ -102,8 +102,18 @@ class ChatImpl implements Chat {
 
     @Override
     public void setUser(@NotNull User user, @NotNull String token, @NotNull InitConnectionListener callbacks) {
-        ChatClient.instance().setUser(user, token, callbacks);
-        ChatDomain.instance().setCurrentUser(user);
+        ChatClient.instance().setUser(user, token, new InitConnectionListener() {
+            @Override
+            public void onSuccess(@NotNull ConnectionData data) {
+                ChatDomain.instance().setCurrentUser(user);
+                callbacks.onSuccess(data);
+            }
+
+            @Override
+            public void onError(@NotNull ChatError error) {
+                callbacks.onError(error);
+            }
+        });
     }
 
     void init() {
