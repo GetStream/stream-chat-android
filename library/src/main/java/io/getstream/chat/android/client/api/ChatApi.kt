@@ -102,7 +102,7 @@ interface ChatApi {
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
-    fun markAllRead(): Call<EventResponse>
+    fun markAllRead(): Call<Unit>
 
     fun updateUsers(users: List<User>): Call<List<User>>
 
