@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.models.Channel
@@ -23,7 +22,7 @@ class ChannelHeaderViewModel(
 	init {
 		val channelController: ChannelController = chatDomain.useCases.watchChannel.invoke(cid, messageLimit).execute().data()
 		members = channelController.members
-		channelState = MutableLiveData(channelController.toChannel())
+		channelState = map(channelController.channelData) { channelController.toChannel() }
 		anyOtherUsersOnline = map(members) { members ->
 			members.asSequence()
 					.filter { it.user != chatDomain.currentUser }
