@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.binding.bindView
 import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
@@ -42,6 +43,10 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
         })
 
         viewModel.bindView(channelsList, this)
+
+        channelsList.setOnChannelClickListener {
+            findNavController().navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
+        }
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (it) {
