@@ -96,7 +96,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     protected MutableLiveData<Channel> channelState = new MutableLiveData<>();
 
 
-    protected LiveData<Boolean> anyOtherUsersOnline;
+    protected LiveData<Boolean> anyOtherUsersOnline = new MutableLiveData<>(false);
 
     protected MutableLiveData<Boolean> hasNewMessages = new MutableLiveData<>(false);
 
@@ -120,6 +120,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         Result<ChannelController> result = chatDomain.getUseCases().getWatchChannel().invoke(this.cid, 30).execute();
 
         channelController = result.data();
+        channelState.postValue(channelController.toChannel());
 
         // connect livedata objects
         initialized = chatDomain.getInitialized();
@@ -153,6 +154,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
         return currentUserUnreadMessageCount;
     }
 
+    @Deprecated
     public Channel getChannel() {
         return channelController.toChannel();
     }
@@ -351,7 +353,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
 
         stopTyping();
 
-        message.setChannel(getChannel());
+        message.setChannel(channelController.toChannel());
         chatDomain.getUseCases().getSendMessage().invoke(message).execute();
 
     }

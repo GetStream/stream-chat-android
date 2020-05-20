@@ -1,5 +1,10 @@
 package com.getstream.sdk.chat;
 
+import android.content.Context;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
@@ -9,8 +14,6 @@ import com.getstream.sdk.chat.utils.strings.ChatStrings;
 
 import org.jetbrains.annotations.NotNull;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.events.ChatEvent;
@@ -20,6 +23,11 @@ import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.livedata.ChatDomain;
+import kotlin.UninitializedPropertyAccessException;
+import kotlinx.coroutines.BuildersKt;
+import kotlinx.coroutines.CoroutineStart;
+import kotlinx.coroutines.Dispatchers;
+import kotlinx.coroutines.GlobalScope;
 
 class ChatImpl implements Chat {
     private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
@@ -32,16 +40,25 @@ class ChatImpl implements Chat {
     private final ChatFonts chatFonts;
     private final UrlSigner urlSigner;
     private final ChatMarkdown markdown;
+    private final String apiKey;
+    private final Context context;
+    private final boolean offlineEnabled;
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
              ChatNavigationHandler navigationHandler,
              UrlSigner urlSigner,
-             ChatMarkdown markdown) {
+             ChatMarkdown markdown,
+             String apiKey,
+             Context context,
+             boolean offlineEnabled) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
         this.markdown = markdown;
+        this.apiKey = apiKey;
+        this.context = context;
+        this.offlineEnabled = offlineEnabled;
 
         navigator.setHandler(navigationHandler);
 
@@ -101,11 +118,20 @@ class ChatImpl implements Chat {
     }
 
     @Override
-    public void setUser(@NotNull User user, @NotNull String token, @NotNull InitConnectionListener callbacks) {
-        ChatClient.instance().setUser(user, token, new InitConnectionListener() {
+    public void setUser(@NotNull User user,
+                        @NotNull String userToken,
+                        @NotNull InitConnectionListener callbacks) {
+        disconnectChatDomainIfAlreadyInitialized();
+        final ChatClient client = new ChatClient.Builder(this.apiKey, context).build();
+        final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
+        if (offlineEnabled) {
+            domainBuilder.offlineEnabled();
+        }
+        final ChatDomain chatDomain = domainBuilder.userPresenceEnabled().build();
+        client.setUser(user, userToken, new InitConnectionListener() {
             @Override
             public void onSuccess(@NotNull ConnectionData data) {
-                ChatDomain.instance().setCurrentUser(user);
+                chatDomain.setCurrentUser(user);
                 callbacks.onSuccess(data);
             }
 
@@ -114,6 +140,20 @@ class ChatImpl implements Chat {
                 callbacks.onError(error);
             }
         });
+
+        init();
+    }
+
+    private void disconnectChatDomainIfAlreadyInitialized() {
+        try {
+            final ChatDomain chatDomain = ChatDomain.instance();
+            BuildersKt.launch(GlobalScope.INSTANCE,
+                    Dispatchers.getIO(),
+                    CoroutineStart.DEFAULT,
+                    (scope, continuation) -> chatDomain.disconnect(continuation));
+        } catch(UninitializedPropertyAccessException e) {
+            ChatLogger.Companion.get("ChatImpl").logD("ChatDomain was not initialized yet. No need to disconnect.");
+        }
     }
 
     protected void init() {

@@ -13,7 +13,6 @@ import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.android.livedata.ChatDomain
 
 interface Chat {
     val navigator: ChatNavigator
@@ -27,22 +26,27 @@ interface Chat {
     val markdown: ChatMarkdown
     val version: String
 
-    fun setUser(user: User, token: String, callbacks: InitConnectionListener)
+    fun setUser(user: User,
+                token: String,
+                callbacks: InitConnectionListener = object : InitConnectionListener() {})
 
-    class Builder(private val context: Context, private val chatDomain: ChatDomain) {
+    class Builder(private val apiKey: String, private val context: Context) {
         var navigationHandler: ChatNavigationHandler? = null
         var style: ChatStyle = ChatStyle.Builder().build()
         var urlSigner: UrlSigner = DefaultUrlSigner()
         var markdown: ChatMarkdown = ChatMarkdownImpl(context)
+        var offlineEnabled: Boolean = false
 
         fun build(): Chat {
             return ChatImpl(ChatFontsImpl(style, context),
                     ChatStringsImpl(context),
                     navigationHandler,
                     urlSigner,
-                    markdown
+                    markdown,
+                    apiKey,
+                    context,
+                    offlineEnabled
             ).apply {
-                init()
                 instance = this
             }
         }
