@@ -27,7 +27,6 @@ interface ChannelsViewModel {
 
     sealed class Event {
         object ReachedEndOfList : Event()
-        data class CreateNewChannel(val channelName: String) : Event()
     }
 
     companion object {

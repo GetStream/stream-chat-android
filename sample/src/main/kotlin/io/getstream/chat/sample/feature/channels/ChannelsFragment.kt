@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.binding.bindView
 import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
@@ -53,5 +54,9 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
                 }
             }
         })
+
+        addNewChannelButton.setOnClickListener {
+            findNavController().navigate(R.id.action_to_create_channel)
+        }
     }
 }

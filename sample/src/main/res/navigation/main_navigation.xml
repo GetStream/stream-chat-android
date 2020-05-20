@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="io.getstream.chat.sample.feature.login.LoginFragment"
-        android:label="LoginFragment" >
+        android:label="LoginFragment">
         <action
             android:id="@+id/action_loginFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
@@ -15,17 +15,28 @@
     <fragment
         android:id="@+id/channelsFragment"
         android:name="io.getstream.chat.sample.feature.channels.ChannelsFragment"
-        android:label="ChannelsFragment" >
+        android:label="ChannelsFragment">
         <action
             android:id="@+id/action_channelsFragment_to_channelFragment"
             app:destination="@id/channelFragment" />
+        <action
+            android:id="@+id/action_to_create_channel"
+            app:destination="@id/createChannelFragment" />
     </fragment>
     <fragment
         android:id="@+id/channelFragment"
         android:name="io.getstream.chat.sample.feature.channel.ChannelFragment"
-        android:label="ChannelFragment" >
+        android:label="ChannelFragment">
         <action
             android:id="@+id/action_channelFragment_to_channelsFragment"
+            app:destination="@id/channelsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createChannelFragment"
+        android:name="io.getstream.chat.sample.feature.create_channel.CreateChannelFragment"
+        android:label="CreateChannelFragment">
+        <action
+            android:id="@+id/action_to_channels"
             app:destination="@id/channelsFragment" />
     </fragment>
 </navigation>
