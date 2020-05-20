@@ -1,7 +1,9 @@
 package io.getstream.chat.android.client.sample
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.os.Bundle
 import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
@@ -15,7 +17,6 @@ import io.getstream.chat.android.client.sample.common.KeyValue
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryLive
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
-import io.getstream.chat.android.client.token.TokenProvider
 import kotlin.time.ExperimentalTime
 
 class App : Application() {
@@ -43,6 +44,8 @@ class App : Application() {
         super.onCreate()
 
         instance = this
+
+        initActivityListener()
 
         Stetho.initializeWithDefaults(this)
 
@@ -111,6 +114,39 @@ class App : Application() {
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
     }
 
+    var latestResumed: Activity? = null
+
+    private fun initActivityListener() {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
+                latestResumed = activity
+            }
+
+            override fun onActivityPaused(activity: Activity) {
+
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+
+            }
+        })
+    }
 
     @UseExperimental(ExperimentalTime::class)
     private fun provideNotificationConfig() = object : ChatNotificationConfig(this) {

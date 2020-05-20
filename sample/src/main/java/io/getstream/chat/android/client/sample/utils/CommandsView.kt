@@ -145,12 +145,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnGetMessages.setOnClickListener {
-            val queryChannelRequest = QueryChannelRequest()
-                .withMessages(5)
-
+            val queryChannelRequest = QueryChannelRequest().withMessages(5)
 
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
-
+                UtilsMessages.show(it)
             }
         }
 
