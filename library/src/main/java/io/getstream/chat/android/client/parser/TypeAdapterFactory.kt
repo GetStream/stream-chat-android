@@ -1,12 +1,16 @@
 package io.getstream.chat.android.client.parser
 
+import android.util.JsonReader
+import android.util.JsonWriter
 import com.google.gson.Gson
+import com.google.gson.JsonParseException
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import io.getstream.chat.android.client.parser.adapters.QuerySortAdapter
 import io.getstream.chat.android.client.utils.FilterObject
+import kotlin.reflect.KClass
 
 class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
 
@@ -29,4 +33,5 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             }
         }
     }
+
 }
