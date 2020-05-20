@@ -26,7 +26,9 @@ interface Chat {
     val markdown: ChatMarkdown
     val version: String
 
-    fun setUser(user: User, token: String, callbacks: InitConnectionListener)
+    fun setUser(user: User,
+                token: String,
+                callbacks: InitConnectionListener = object : InitConnectionListener() {})
 
     class Builder(private val apiKey: String, private val context: Context) {
         var navigationHandler: ChatNavigationHandler? = null
