@@ -327,11 +327,11 @@ class ChannelsApiCallsTests {
                 mock.userId,
                 mock.connectionId
             )
-        ).thenReturn(RetroSuccess(EventResponse(event)))
+        ).thenReturn(RetroSuccess(CompletableResponse()))
 
         val result = client.markAllRead().execute()
 
-        verifySuccess(result, event)
+        verifySuccess(result, Unit)
     }
 
     @Test
