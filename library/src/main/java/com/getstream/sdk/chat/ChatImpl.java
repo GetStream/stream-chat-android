@@ -1,7 +1,9 @@
 package com.getstream.sdk.chat;
 
 import android.content.Context;
-import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
@@ -11,9 +13,6 @@ import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 
 import org.jetbrains.annotations.NotNull;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
@@ -153,7 +152,7 @@ class ChatImpl implements Chat {
                     CoroutineStart.DEFAULT,
                     (scope, continuation) -> chatDomain.disconnect(continuation));
         } catch(UninitializedPropertyAccessException e) {
-            Log.d("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
+            ChatLogger.Companion.get("ChatImpl").logD("ChatDomain was not initialized yet. No need to disconnect.");
         }
     }
 
