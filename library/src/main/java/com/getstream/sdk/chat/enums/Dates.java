@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.enums;
 
+import androidx.annotation.StringRes;
+
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
-
-import androidx.annotation.StringRes;
 
 public enum Dates {
     TODAY(R.string.stream_today),

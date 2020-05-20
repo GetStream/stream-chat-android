@@ -5,9 +5,9 @@ import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.getstream.sdk.chat.Chat;
-
 import androidx.annotation.Nullable;
+
+import com.getstream.sdk.chat.Chat;
 
 public class TextStyle {
 

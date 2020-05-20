@@ -2,6 +2,9 @@ package io.getstream.chat.sample.application
 
 import android.app.Application
 import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
 import io.getstream.chat.sample.feature.channels.channelsModule
@@ -10,7 +13,6 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import timber.log.Timber
 
 class App : Application() {
@@ -20,10 +22,11 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin()
-        Chat.Builder(appConfig.apiKey, this).build()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+
+        Chat.Builder(appConfig.apiKey, this).apply { offlineEnabled = true }.build()
     }
 
     private fun initKoin() {
@@ -36,10 +39,7 @@ class App : Application() {
                     appModule,
                     dataModule,
                     loginModule,
-                    channelsModule,
-                    module {
-                        single { Chat.getInstance() }
-                    }
+                    channelsModule
             ))
         }
     }

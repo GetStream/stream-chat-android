@@ -3,28 +3,37 @@ package com.getstream.sdk.chat.viewmodel;
 import android.app.Application;
 import android.util.Log;
 
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.StreamLifecycleObserver;
-import com.getstream.sdk.chat.enums.GiphyAction;
-import com.getstream.sdk.chat.enums.InputType;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.*;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.getstream.sdk.chat.LifecycleHandler;
+import com.getstream.sdk.chat.StreamLifecycleObserver;
+import com.getstream.sdk.chat.enums.GiphyAction;
+import com.getstream.sdk.chat.enums.InputType;
+import com.getstream.sdk.chat.model.ModelType;
+import com.getstream.sdk.chat.utils.Constant;
+import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.utils.ResultCallback;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.api.models.SendActionRequest;
 import io.getstream.chat.android.client.call.Call;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
-import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Member;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
 import io.getstream.chat.android.livedata.ChatDomain;
@@ -275,7 +284,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
     public Call<Unit> banUser(@NotNull String targetUserId, @Nullable String reason,
                               @Nullable Integer timeout) {
 
-        return Chat.getInstance().getClient().banUser(targetUserId, channelType, channelId, reason, timeout);
+        return ChatClient.instance().banUser(targetUserId, channelType, channelId, reason, timeout);
     }
 
     /**
@@ -286,7 +295,7 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     public Call<Unit> unBanUser(@NotNull String targetUserId, @Nullable ResultCallback<Void, String> callback) {
 
-        return Chat.getInstance().getClient().unBanUser(targetUserId, channelType, channelId);
+        return ChatClient.instance().unBanUser(targetUserId, channelType, channelId);
     }
 
 
@@ -377,7 +386,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 break;
             case CANCEL:
                 channelController.upsertMessage(message);
-
                 return;
         }
 
@@ -387,13 +395,11 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
                 ModelType.channel_messaging,
                 map);
 
-        Chat.getInstance().getClient().sendAction(request).enqueue(result -> {
-
+        ChatClient.instance().sendAction(request).enqueue(result -> {
             if (result.isSuccess()) {
                 Message actionMessage = result.data();
                 channelController.upsertMessage(actionMessage);
             }
-
             return null;
         });
     }
