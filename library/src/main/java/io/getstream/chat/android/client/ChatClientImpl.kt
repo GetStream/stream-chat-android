@@ -343,10 +343,8 @@ internal class ChatClientImpl(
         return api.acceptInvite(channelType, channelId, message)
     }
 
-    override fun markAllRead(): Call<ChatEvent> {
-        return api.markAllRead().map {
-            it.event
-        }
+    override fun markAllRead(): Call<Unit> {
+        return api.markAllRead()
     }
 
     override fun markRead(channelType: String, channelId: String): Call<Unit> {

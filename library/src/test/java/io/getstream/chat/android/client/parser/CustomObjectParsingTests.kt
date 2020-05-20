@@ -24,6 +24,27 @@ class CustomObjectParsingTests {
     )
 
     @Test
+    fun nullValuesRestoration() {
+        val json =
+            "{latest_reactions:null,silent:null,attachments:null,cid:null,reaction_counts:null, reply_count:null}"
+        val message = parser.fromJson(json, Message::class.java)
+
+        assertThat(message.latestReactions).isEmpty()
+        assertThat(message.reactionCounts).isEmpty()
+        assertThat(message.attachments).isEmpty()
+        assertThat(message.cid).isEmpty()
+        assertThat(message.silent).isFalse()
+
+        message.reactionCounts.put("like", 1)
+        message.latestReactions.add(Reaction("x"))
+        message.attachments.add(Attachment("author"))
+
+        assertThat(message.reactionCounts).isEqualTo(mapOf("like" to 1))
+        assertThat(message.latestReactions).isEqualTo(listOf(Reaction("x")))
+        assertThat(message.attachments).isEqualTo(listOf(Attachment("author")))
+    }
+
+    @Test
     fun verifyAdapter() {
         customObjectImplementations.forEach { clazz ->
             verifyAdapter(clazz)

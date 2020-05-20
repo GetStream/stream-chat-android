@@ -506,14 +506,14 @@ class ChatApiImpl(
         }
     }
 
-    override fun markAllRead(): Call<EventResponse> {
+    override fun markAllRead(): Call<Unit> {
         return callMapper.map(
             retrofitApi.markAllRead(
                 apiKey,
                 userId,
                 connectionId
             )
-        )
+        ).map { Unit }
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {

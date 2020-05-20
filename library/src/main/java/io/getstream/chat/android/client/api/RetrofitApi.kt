@@ -115,7 +115,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<EventResponse>
+    ): Call<CompletableResponse>
 
     @POST("/channels/{type}/{id}/event")
     fun sendEvent(

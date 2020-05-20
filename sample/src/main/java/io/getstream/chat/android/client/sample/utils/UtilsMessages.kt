@@ -13,7 +13,9 @@ object UtilsMessages {
     }
 
     fun show(msg: String) {
-        Toast.makeText(App.instance, msg, Toast.LENGTH_SHORT).show()
+        App.instance.latestResumed?.runOnUiThread {
+            Toast.makeText(App.instance, msg, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun show(result: Result<*>) {
