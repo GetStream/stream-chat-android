@@ -104,7 +104,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
     private fun setFieldOrError(field: Field, obj: Any, value: Any?, name: String) {
         try {
             field.set(obj, value)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             throw ChatParsingError("unable to set field $name with value $value")
         }
     }
