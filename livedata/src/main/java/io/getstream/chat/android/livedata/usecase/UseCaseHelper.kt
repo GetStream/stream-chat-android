@@ -41,6 +41,12 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
      * Loads older messages for the given channel
      */
     var loadOlderMessages: LoadOlderMessages = LoadOlderMessagesImpl(chatDomainImpl)
+
+    /**
+     * Loads newer messages for the given channel
+     */
+    var loadNewerMessages: LoadNewerMessages = LoadNewerMessagesImpl(chatDomainImpl)
+
     /**
      * Load more channels for the given query.
      */
