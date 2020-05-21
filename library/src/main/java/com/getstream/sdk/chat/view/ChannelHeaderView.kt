@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view
 
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -9,10 +8,8 @@ import android.widget.RelativeLayout
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewChannelHeaderBinding
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
-import com.getstream.sdk.chat.view.ChannelHeaderView
 import com.getstream.sdk.chat.view.MessageListView.HeaderAvatarGroupClickListener
 import com.getstream.sdk.chat.view.MessageListView.HeaderOptionsClickListener
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 
@@ -55,10 +52,6 @@ class ChannelHeaderView @JvmOverloads constructor(
 			StreamViewChannelHeaderBinding.inflate(LayoutInflater.from(context), this, true).apply {
 				btnBack.setOnClickListener { onBackClick() }
 			}
-
-	fun closeActivity() {
-		(context as? Activity)?.onBackPressed()
-	}
 
 	fun setHeaderOptionsClickListener(headerOptionsClickListener: HeaderOptionsClickListener) {
 		binding.btnOption.setOnClickListener {
