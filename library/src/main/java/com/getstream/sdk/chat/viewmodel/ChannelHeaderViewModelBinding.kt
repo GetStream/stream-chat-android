@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 import java.util.isInLastMinute
 
-fun ChannelViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
+fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
 	members.observe(lifecycleOwner, Observer { members ->
 		view.setHeaderLastActive(members.lastActive(view.context))
 		view.configHeaderAvatar(members)
@@ -22,13 +22,6 @@ fun ChannelViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: Lifecycle
 				?.let { view.setHeaderTitle(it) }
 	})
 	anyOtherUsersOnline.observe(lifecycleOwner, Observer { view.setActiveBadge(it) })
-	view.onBackClick = {
-		if (isThread) {
-			resetThread()
-		} else {
-			view.closeActivity()
-		}
-	}
 }
 
 private fun List<Member>.lastActive(context: Context): String = LlcMigrationUtils.getLastActive(this).let {

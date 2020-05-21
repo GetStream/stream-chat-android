@@ -44,6 +44,10 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
         viewModel.bindView(channelsList, this)
 
+        channelsList.setOnChannelClickListener {
+            findNavController().navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
+        }
+
         viewModel.state.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ChannelsViewModel.State.Loading -> {
