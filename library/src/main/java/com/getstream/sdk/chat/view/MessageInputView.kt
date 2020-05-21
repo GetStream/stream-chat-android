@@ -183,7 +183,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configSendButtonEnableState() {
-		val attachments = messageInputController !!.selectedAttachments
+		val attachments = messageInputController !!.getSelectedAttachments()
 		val hasAttachment = attachments != null && ! attachments.isEmpty()
 		val notEmptyMessage = ! StringUtility.isEmptyTextMessage(messageText) || ! messageInputController !!.isUploadingFile && hasAttachment
 		binding.activeMessageSend = notEmptyMessage
@@ -194,7 +194,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController = MessageInputController(context, binding, viewModel !!, style !!, label@ object : AttachmentListener {
 			override fun onAddAttachment(attachment: AttachmentMetaData?) {
 				if (binding.ivSend.isEnabled) return@label
-				for (attachment_ in messageInputController !!.selectedAttachments) if (! attachment_.isUploaded) return@label
+				for (attachment_ in messageInputController !!.getSelectedAttachments()) if (! attachment_.isUploaded) return@label
 				onSendMessage()
 			}
 		})
@@ -352,14 +352,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			//TODO: llc check sync
 			//message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
 		} else {
-			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController !!.selectedAttachments))
+			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController !!.getSelectedAttachments()))
 		}
 		return message
 	}
 
 	protected fun prepareEditMessage(message: Message): Message {
 		message.text = messageText !!
-		val newAttachments = messageInputController !!.selectedAttachments
+		val newAttachments = messageInputController !!.getSelectedAttachments()
 		message.attachments.addAll(LlcMigrationUtils.getAttachments(newAttachments))
 		return message
 	}
@@ -390,7 +390,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		attachment.titleLink = url
 		attachment.title = inputContentInfo.description.label.toString()
 		attachment.type = ModelType.attach_giphy
-		messageInputController !!.selectedAttachments = Arrays.asList(AttachmentMetaData(attachment))
+		messageInputController !!.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
 		binding.etMessage.setText("")
 		onSendMessage()
 		return true
