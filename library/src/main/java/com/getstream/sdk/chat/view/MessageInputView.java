@@ -16,15 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.os.BuildCompat;
-import androidx.core.view.inputmethod.InputConnectionCompat;
-import androidx.core.view.inputmethod.InputContentInfoCompat;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding;
@@ -43,7 +34,7 @@ import com.getstream.sdk.chat.utils.PermissionChecker;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.utils.TextViewUtils;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
@@ -52,6 +43,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.os.BuildCompat;
+import androidx.core.view.inputmethod.InputConnectionCompat;
+import androidx.core.view.inputmethod.InputContentInfoCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
@@ -95,7 +94,7 @@ public class MessageInputView extends RelativeLayout {
     /**
      * The viewModel for handling typing etc.
      */
-    protected ChannelViewModel viewModel;
+    protected MessageInputViewModel viewModel;
 
     private MessageInputController messageInputController;
 
@@ -118,7 +117,7 @@ public class MessageInputView extends RelativeLayout {
         style = new MessageInputStyle(context, attrs);
     }
 
-    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
+    public void setViewModel(MessageInputViewModel viewModel, LifecycleOwner lifecycleOwner) {
         this.viewModel = viewModel;
         binding.setLifecycleOwner(lifecycleOwner);
         init();

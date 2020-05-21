@@ -23,7 +23,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageInputView;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
+import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +46,7 @@ public class MessageInputController {
 
     private TaggedLogger logger = ChatLogger.Companion.get(MessageInputController.class.getSimpleName());
 
-    private ChannelViewModel viewModel;
+    private MessageInputViewModel viewModel;
     private Channel channel;
     private MessageInputStyle style;
     private MediaAttachmentAdapter mediaAttachmentAdapter;
@@ -68,7 +68,7 @@ public class MessageInputController {
 
     public MessageInputController(@NonNull Context context,
                                   @NonNull StreamViewMessageInputBinding binding,
-                                  @NonNull ChannelViewModel viewModel,
+                                  @NonNull MessageInputViewModel viewModel,
                                   @NonNull MessageInputStyle style,
                                   @Nullable MessageInputView.AttachmentListener attachmentListener) {
         this.context = context;
