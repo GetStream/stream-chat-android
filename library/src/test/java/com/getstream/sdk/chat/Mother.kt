@@ -1,10 +1,13 @@
 package com.getstream.sdk.chat
 
+import com.getstream.sdk.chat.model.AttachmentMetaData
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Channel
+import java.io.File
 import java.util.Date
 import java.util.concurrent.ThreadLocalRandom
 
@@ -60,3 +63,32 @@ fun createMembers(
 ): List<Member> = (1..size).map { creationFunction(it) }
 
 fun createChannel(cid: String): Channel = Channel(cid = cid)
+
+fun createAttachmentMetaDataWithFile(
+		file: File = createFile(),
+		forceMimeType: String? = null
+): AttachmentMetaData = AttachmentMetaData(file).apply { forceMimeType?.let { mimeType = it } }
+
+fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData = AttachmentMetaData(attachment)
+
+fun createFile(path: String = randomString()): File = File(path)
+
+fun createAttachment(
+		authorName: String? = randomString(),
+		titleLink: String? = randomString(),
+		thumbUrl: String? = randomString(),
+		imageUrl: String? = randomString(),
+		assetUrl: String? = randomString(),
+		ogUrl: String? = randomString(),
+		mimeType: String? = randomString(),
+		fileSize: Int = randomInt(),
+		title: String? = randomString(),
+		text: String? = randomString(),
+		type: String? = randomString(),
+		image: String? = randomString(),
+		url: String? = randomString(),
+		name: String? = randomString(),
+		fallback: String? = randomString(),
+		extraData: MutableMap<String, Any> = mutableMapOf()
+): Attachment = Attachment(authorName, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
+		fileSize, title, text, type, image, url, name, fallback, extraData)
