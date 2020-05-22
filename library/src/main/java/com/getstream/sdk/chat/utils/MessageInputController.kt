@@ -50,7 +50,7 @@ class MessageInputController(private val context: Context,
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
 	private val attachmentListener: AttachmentListener? = attachmentListener
 	private var attachmentData: List<AttachmentMetaData>? = null
-	private val uploadManager: UploadManager
+	private val uploadManager: UploadManager = UploadManager()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
 		return selectedAttachments
 	}
@@ -125,12 +125,12 @@ class MessageInputController(private val context: Context,
 
 	// endregion
 	// region Upload Attachment File
-	private fun configSelectAttachView(isMedia: Boolean) {
+	private fun configSelectAttachView(channel: Channel, isMedia: Boolean) {
 		binding.isAttachFile = ! isMedia
 		getAttachmentsFromLocal(isMedia)
 		(context as Activity).runOnUiThread {
 			if (selectedAttachments !!.isEmpty()) {
-				setAttachmentAdapters(isMedia)
+				setAttachmentAdapters(channel, isMedia)
 				if (attachmentData !!.isEmpty()) {
 					Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error))
 					onClickCloseBackGroundView()
@@ -152,15 +152,19 @@ class MessageInputController(private val context: Context,
 		attachmentData = Utils.getFileAttachments(Environment.getExternalStorageDirectory())
 	}
 
-	private fun setAttachmentAdapters(isMedia: Boolean) {
+	private fun setAttachmentAdapters(channel: Channel, isMedia: Boolean) {
 		if (isMedia) {
-			mediaAttachmentAdapter = MediaAttachmentAdapter(context, attachmentData, MediaAttachmentAdapter.OnItemClickListener { position: Int -> uploadOrCancelAttachment(attachmentData !![position], isMedia) }
-			)
+			mediaAttachmentAdapter = MediaAttachmentAdapter(context, attachmentData,
+					MediaAttachmentAdapter.OnItemClickListener { position: Int ->
+						uploadOrCancelAttachment(channel, attachmentData !![position], isMedia)
+					})
 			binding.rvMedia.adapter = mediaAttachmentAdapter
 		} else {
 			fileAttachmentAdapter = AttachmentListAdapter(context, attachmentData, true, true)
 			binding.lvFile.adapter = fileAttachmentAdapter
-			binding.lvFile.onItemClickListener = AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long -> uploadOrCancelAttachment(attachmentData !![position], isMedia) }
+			binding.lvFile.onItemClickListener = AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+				uploadOrCancelAttachment(channel, attachmentData !![position], isMedia)
+			}
 		}
 	}
 
@@ -174,10 +178,11 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun uploadOrCancelAttachment(attachment: AttachmentMetaData,
+	private fun uploadOrCancelAttachment(channel: Channel,
+	                                     attachment: AttachmentMetaData,
 	                                     isMedia: Boolean) {
 		if (! attachment.isSelected) {
-			uploadAttachment(attachment, true, isMedia)
+			uploadAttachment(channel, attachment, true, isMedia)
 		} else {
 			cancelAttachment(attachment, true, isMedia)
 		}
@@ -191,20 +196,20 @@ class MessageInputController(private val context: Context,
 		return false
 	}
 
-	private fun uploadAttachment(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
+	private fun uploadAttachment(channel: Channel, attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		val file = File(attachment.file.path)
 		if (isOverMaxUploadFileSize(file)) return
 		attachment.isSelected = true
 		selectedAttachments !!.add(attachment)
-		if (attachment.isUploaded) uploadedFileProgress(attachment) else uploadFile(attachment, fromGallery, isMedia)
+		if (attachment.isUploaded) uploadedFileProgress(attachment) else uploadFile(channel, attachment, fromGallery, isMedia)
 		showHideComposerAttachmentGalleryView(true, isMedia)
 		if (fromGallery) totalAttachmentAdapterChanged(attachment, isMedia)
 		selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia)
 		configSendButtonEnableState()
 	}
 
-	private fun uploadFile(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
-		uploadManager.uploadFile(attachment, object : ProgressCallback {
+	private fun uploadFile(channel: Channel, attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
+		uploadManager.uploadFile(channel.id, channel.type, attachment, object : ProgressCallback {
 			override fun onSuccess(s: String) {
 				selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia)
 				uploadedFileProgress(attachment)
@@ -248,14 +253,14 @@ class MessageInputController(private val context: Context,
 		if (isMedia) binding.rvComposer.visibility = if (show) View.VISIBLE else View.GONE else binding.lvComposer.visibility = if (show) View.VISIBLE else View.GONE
 	}
 
-	fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
+	fun onClickOpenSelectView(channel: Channel, editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
 		if (! PermissionChecker.isGrantedStoragePermissions(context)) {
 			PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message))
 			return
 		}
 		initAdapter()
 		if (editAttachments != null && ! editAttachments.isEmpty()) setSelectedAttachments(editAttachments)
-		AsyncTask.execute { configSelectAttachView(isMedia) }
+		AsyncTask.execute { configSelectAttachView(channel, isMedia) }
 		if (selectedAttachments !!.isEmpty()) {
 			binding.progressBarFileLoader.visibility = View.VISIBLE
 			onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
@@ -324,7 +329,7 @@ class MessageInputController(private val context: Context,
 
 	// endregion
 	// region Camera
-	fun progressCapturedMedia(file: File?, isImage: Boolean) {
+	fun progressCapturedMedia(channel: Channel, file: File?, isImage: Boolean) {
 		val attachment = AttachmentMetaData(file)
 		attachment.file = file
 		if (isImage) {
@@ -338,7 +343,7 @@ class MessageInputController(private val context: Context,
 			Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4)
 			retriever.release()
 		}
-		uploadAttachment(attachment, false, true)
+		uploadAttachment(channel, attachment, false, true)
 	}
 
 	// endregion
@@ -440,9 +445,4 @@ class MessageInputController(private val context: Context,
 			if (name.toLowerCase().contains(string.toLowerCase())) commands !!.add(user)
 		}
 	} // endregion
-
-	// region Attachment
-	init {
-		uploadManager = UploadManager(channel)
-	}
 }

@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
-import java.util.Arrays
 import java.util.Date
 import java.util.UUID
 
@@ -77,7 +76,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	/**
 	 * The viewModel for handling typing etc.
 	 */
-	private var viewModel: MessageInputViewModel? = null
+	private lateinit var viewModel: MessageInputViewModel
 	private var messageInputController: MessageInputController? = null
 
 	// endregion
@@ -91,7 +90,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		style = MessageInputStyle(context, attrs)
 	}
 
-	fun setViewModel(viewModel: MessageInputViewModel?, lifecycleOwner: LifecycleOwner?) {
+	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner?) {
 		this.viewModel = viewModel
 		binding.lifecycleOwner = lifecycleOwner
 		init()
@@ -213,7 +212,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				clearFocus()
 			}
 		}
-		binding.llMedia.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(null, true) }
+		binding.llMedia.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(viewModel.channel, null, true) }
 		binding.llCamera.setOnClickListener { v: View? ->
 			if (! PermissionChecker.isGrantedCameraPermissions(context)) {
 				PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_camera_permission_message))
@@ -226,7 +225,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			Utils.hideSoftKeyboard(context as Activity)
 			getInstance().navigator.navigate(CameraDestination(context as Activity))
 		}
-		binding.llFile.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(null, false) }
+		binding.llFile.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(viewModel.channel, null, false) }
 	}
 
 	private fun onBackPressed() {
@@ -419,12 +418,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		if (attachment.type == ModelType.attach_file) {
 			val fileType = attachment.mimeType
 			if (fileType == ModelType.attach_mime_mov || fileType == ModelType.attach_mime_mp4) {
-				messageInputController !!.onClickOpenSelectView(attachments, true)
+				messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, true)
 			} else {
-				messageInputController !!.onClickOpenSelectView(attachments, false)
+				messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, false)
 			}
 		} else {
-			messageInputController !!.onClickOpenSelectView(attachments, true)
+			messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, true)
 		}
 	}
 
@@ -440,10 +439,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				return
 			}
 			if (imageFile != null && imageFile.length() > 0) {
-				messageInputController !!.progressCapturedMedia(imageFile, true)
+				messageInputController !!.progressCapturedMedia(viewModel.channel, imageFile, true)
 				updateGallery(imageFile)
 			} else if (vieoFile != null && vieoFile.length() > 0) {
-				messageInputController !!.progressCapturedMedia(vieoFile, false)
+				messageInputController !!.progressCapturedMedia(viewModel.channel, vieoFile, false)
 				updateGallery(vieoFile)
 			} else Utils.showMessage(context, context.getString(R.string.stream_take_photo_failed))
 		}
