@@ -9,28 +9,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/add_new_channel_title"
-        app:navigationIcon="@drawable/ic_arrow_back" />
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:title="@string/add_new_channel_title" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/channelNameInput"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_medium"
         android:hint="@string/hint_enter_channel_name"
         android:lines="1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_margin="@dimen/padding_medium"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/submitButton"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/progressBar"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:src="@drawable/ic_done_black"
+        app:fabSize="mini"
+        android:layout_marginRight="@dimen/padding_medium"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toRightOf="@id/channelNameInput"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/channelNameInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

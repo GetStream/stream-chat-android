@@ -1,4 +1,5 @@
 package io.getstream.chat.sample.feature.create_channel
+
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -18,22 +19,15 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
     private val viewModel: CreateChannelViewModel by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        toolbar.setNavigationOnClickListener {
-            submitChannelName()
-        }
         channelNameInput.showKeyboard()
-        channelNameInput.setOnEditorActionListener { _, _, _ ->
-            submitChannelName()
-            true
-        }
+
+        toolbar.setNavigationOnClickListener { goBack() }
+        submitButton.setOnClickListener { submitChannelName() }
 
         viewModel.state.observe(viewLifecycleOwner, Observer {
             ChatLogger.instance.logD("CreateChannel", "Received state: $it")
             when (it) {
-                is CreateChannelViewModel.State.ChannelCreated -> {
-                    channelNameInput.hideKeyboard()
-                    findNavController().navigateUp()
-                }
+                is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
                 is CreateChannelViewModel.State.ValidationError -> {
                     renderValidationError()
                 }
@@ -42,6 +36,11 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
                 }
             }
         })
+    }
+
+    private fun goBack() {
+        channelNameInput.hideKeyboard()
+        findNavController().navigateUp()
     }
 
     private fun submitChannelName() {
