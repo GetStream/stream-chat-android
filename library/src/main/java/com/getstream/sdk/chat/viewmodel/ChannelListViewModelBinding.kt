@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.ChannelListView
-import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
 import io.getstream.chat.android.client.logger.ChatLogger
 
 fun ChannelsViewModel.bindView(view: ChannelListView, lifecycle: LifecycleOwner) {
