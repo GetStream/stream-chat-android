@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations.map
@@ -49,7 +48,6 @@ class ChannelsViewModelImpl(
     override val state: LiveData<ChannelsViewModel.State> = stateMerger
 
     init {
-        Log.d("ChannelsViewModel", "init")
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort).execute().data()
         queryChannelsController.run {
             channelsData = map(channels) { ChannelsViewModel.State.Result(it) }
