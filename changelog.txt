@@ -1,3 +1,8 @@
+# 1.4.13 - Fri 22 May 2020
+
+🚨 Breaking change:
+- Fields `role` and `isInvited` of ``Member` fields optional
+
 # 1.4.12 - Fri 22 May 2020
 
 🚨 Breaking change:
