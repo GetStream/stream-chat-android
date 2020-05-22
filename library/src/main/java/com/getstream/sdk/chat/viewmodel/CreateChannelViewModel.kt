@@ -21,7 +21,7 @@ class CreateChannelViewModel : ViewModel() {
             if (isValidName) {
                 createChannel(channelNameCandidate)
             } else {
-                stateMerger.postValue(State.Error)
+                stateMerger.postValue(State.ValidationError)
             }
         }
     }
@@ -44,7 +44,7 @@ class CreateChannelViewModel : ViewModel() {
                     stateMerger.postValue(State.ChannelCreated)
                 }
                 isError -> {
-                    stateMerger.postValue(State.Error)
+                    stateMerger.postValue(State.BackendError)
                 }
             }
         }
@@ -56,7 +56,8 @@ class CreateChannelViewModel : ViewModel() {
 
     sealed class State {
         object ChannelCreated : State()
-        object Error : State()
+        object BackendError : State()
+        object ValidationError : State()
     }
 
     sealed class Event {
