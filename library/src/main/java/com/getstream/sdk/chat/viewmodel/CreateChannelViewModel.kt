@@ -21,6 +21,7 @@ class CreateChannelViewModel(
             val channelNameCandidate = event.channelName
             val isValidName = validateChannelName(channelNameCandidate)
             if (isValidName) {
+                stateMerger.postValue(State.Loading)
                 queryChannel(channelNameCandidate)
             } else {
                 stateMerger.postValue(State.ValidationError)
@@ -41,7 +42,7 @@ class CreateChannelViewModel(
             this.members = members
         }
         domain.useCases.createChannel.invoke(channel).execute().run {
-            when  {
+            when {
                 isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
                 }
@@ -57,6 +58,7 @@ class CreateChannelViewModel(
     }
 
     sealed class State {
+        object Loading : State()
         object ChannelCreated : State()
         object BackendError : State()
         object ValidationError : State()

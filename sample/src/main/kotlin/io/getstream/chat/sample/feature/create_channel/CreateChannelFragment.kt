@@ -11,6 +11,7 @@ import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.hideKeyboard
 import io.getstream.chat.sample.common.showKeyboard
 import io.getstream.chat.sample.common.showToast
+import io.getstream.chat.sample.common.visible
 import kotlinx.android.synthetic.main.fragment_new_channel.*
 import org.koin.android.ext.android.inject
 
@@ -28,12 +29,9 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
             ChatLogger.instance.logD("CreateChannel", "Received state: $it")
             when (it) {
                 is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
-                is CreateChannelViewModel.State.ValidationError -> {
-                    renderValidationError()
-                }
-                is CreateChannelViewModel.State.BackendError -> {
-                    renderBackendError()
-                }
+                is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
+                is CreateChannelViewModel.State.BackendError -> { renderBackendError() }
+                is CreateChannelViewModel.State.Loading -> { progressBar.visible(true) }
             }
         })
     }
