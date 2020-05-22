@@ -9,8 +9,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 
-class CreateChannelViewModel : ViewModel() {
-    private val chatClient = ChatClient.instance()
+class CreateChannelViewModel(
+        private val chatDomain: ChatDomain = ChatDomain.instance(),
+        private val chatClient: ChatClient = ChatClient.instance()
+) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     val state: LiveData<State> = stateMerger
 
@@ -19,14 +21,14 @@ class CreateChannelViewModel : ViewModel() {
             val channelNameCandidate = event.channelName
             val isValidName = validateChannelName(channelNameCandidate)
             if (isValidName) {
-                createChannel(channelNameCandidate)
+                queryChannel(channelNameCandidate)
             } else {
                 stateMerger.postValue(State.ValidationError)
             }
         }
     }
 
-    private fun createChannel(channelName: String) {
+    private fun queryChannel(channelName: String) {
         val channelId: String = channelName.replace(" ".toRegex(), "-").toLowerCase()
         val members = chatClient.getCurrentUser()?.run {
             listOf(Member(this))
@@ -38,7 +40,7 @@ class CreateChannelViewModel : ViewModel() {
             this.name = channelName
             this.members = members
         }
-        ChatDomain.instance().useCases.createChannel.invoke(channel).execute().run {
+        chatDomain.useCases.createChannel.invoke(channel).execute().run {
             when  {
                 isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
