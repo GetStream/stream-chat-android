@@ -135,8 +135,6 @@ dependencies {
     testImplementation "org.json:json:20190722"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
 
-
-    api 'com.github.getstream:stream-chat-android-client:1.4.11'
     //api project(path: ':livedata')
     api 'com.github.GetStream:stream-chat-android-livedata:0.4.6'
 
