@@ -139,7 +139,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configInputEditText() {
 		binding.etMessage.onFocusChangeListener = OnFocusChangeListener { view: View?, hasFocus: Boolean ->
-			viewModel !!.setInputType(if (hasFocus) InputType.SELECT else InputType.DEFAULT)
+			viewModel.setInputType(if (hasFocus) InputType.SELECT else InputType.DEFAULT)
 			if (hasFocus) {
 				Utils.showSoftKeyboard(context as Activity)
 			} else Utils.hideSoftKeyboard(context as Activity)
@@ -149,7 +149,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun keyStroke(editable: Editable) {
-		if (editable.toString().length > 0) viewModel !!.keystroke()
+		if (editable.toString().length > 0) viewModel.keystroke()
 		val messageText = messageText !!
 		// detect commands
 		messageInputController !!.checkCommand(messageText)
@@ -159,12 +159,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configMessageInputBackground(lifecycleOwner: LifecycleOwner?) {
-		viewModel !!.getInputType().observe(lifecycleOwner !!, Observer { inputType: InputType? ->
+		viewModel.getInputType().observe(lifecycleOwner !!, Observer { inputType: InputType? ->
 			when (inputType) {
 				InputType.DEFAULT -> {
 					binding.llComposer.background = style !!.inputBackground
 					binding.ivOpenAttach.setImageDrawable(style !!.getAttachmentButtonIcon(false))
-					binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(viewModel !!.isEditing))
+					binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(viewModel.isEditing))
 				}
 				InputType.SELECT -> {
 					binding.llComposer.background = style !!.inputSelectedBackground
@@ -190,7 +190,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configAttachmentUI() {
 		// TODO: make the attachment UI into it's own view and allow you to change it.
-		messageInputController = MessageInputController(context, binding, viewModel !!, style !!, label@ object : AttachmentListener {
+		messageInputController = MessageInputController(context, binding, viewModel, style !!, label@ object : AttachmentListener {
 			override fun onAddAttachment(attachment: AttachmentMetaData?) {
 				if (binding.ivSend.isEnabled) return@label
 				for (attachment_ in messageInputController !!.getSelectedAttachments()) if (! attachment_.isUploaded) return@label
@@ -207,7 +207,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.btnClose.setOnClickListener { v: View? ->
 			messageInputController !!.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)
-			if (viewModel !!.isEditing) {
+			if (viewModel.isEditing) {
 				initSendMessage()
 				clearFocus()
 			}
@@ -233,12 +233,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		requestFocus()
 		setOnKeyListener { v: View?, keyCode: Int, event: KeyEvent ->
 			if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-				if (viewModel !!.isThread) {
-					viewModel !!.resetThread()
+				if (viewModel.isThread) {
+					viewModel.resetThread()
 					initSendMessage()
 					return@setOnKeyListener true
 				}
-				if (viewModel !!.isEditing) {
+				if (viewModel.isEditing) {
 					messageInputController !!.onClickCloseBackGroundView()
 					initSendMessage()
 					return@setOnKeyListener true
@@ -289,9 +289,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	// region observe
 	private fun observeUIs(lifecycleOwner: LifecycleOwner?) {
 		configMessageInputBackground(lifecycleOwner)
-		viewModel !!.getEditMessage().observe(lifecycleOwner !!, Observer { message: Message? -> editMessage(message) })
-		viewModel !!.getMessageListScrollUp().observe(lifecycleOwner, Observer { messageListScrollup: Boolean -> if (messageListScrollup) Utils.hideSoftKeyboard(context as Activity) })
-		viewModel !!.getActiveThread().observe(lifecycleOwner, Observer { threadParentMessage: Message? ->
+		viewModel.getEditMessage().observe(lifecycleOwner !!, Observer { message: Message? -> editMessage(message) })
+		viewModel.getMessageListScrollUp().observe(lifecycleOwner, Observer { messageListScrollup: Boolean -> if (messageListScrollup) Utils.hideSoftKeyboard(context as Activity) })
+		viewModel.getActiveThread().observe(lifecycleOwner, Observer { threadParentMessage: Message? ->
 			if (threadParentMessage == null) {
 				initSendMessage()
 				Utils.hideSoftKeyboard(context as Activity)
@@ -306,7 +306,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private fun onSendMessage(message: Message?) {
 		binding.ivSend.isEnabled = false
-		if (isEdit) viewModel !!.editMessage(message) else viewModel !!.sendMessage(message !!)
+		if (isEdit) viewModel.editMessage(message) else viewModel.sendMessage(message !!)
 		handleSentMessage()
 	}
 
@@ -332,7 +332,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun initSendMessage() {
 		messageInputController !!.initSendMessage()
-		viewModel !!.setEditMessage(null)
+		viewModel.setEditMessage(null)
 		binding.etMessage.setText("")
 		binding.ivSend.isEnabled = true
 	}
@@ -365,7 +365,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	protected val editMessage: Message?
 		protected get() {
-			val message = viewModel !!.getEditMessage().value
+			val message = viewModel.getEditMessage().value
 			message !!.text = messageText !!
 			return message
 		}
@@ -397,7 +397,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	// endregion
 	protected val isEdit: Boolean
-		protected get() = viewModel !!.isEditing
+		protected get() = viewModel.isEditing
 
 	// region edit message
 	protected fun editMessage(message: Message?) {
