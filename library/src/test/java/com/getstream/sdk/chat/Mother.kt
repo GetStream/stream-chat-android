@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.Channel
 import java.util.Date
 import java.util.concurrent.ThreadLocalRandom
 
@@ -57,3 +58,5 @@ fun createMembers(
 		size: Int = positveRandomInt(10),
 		creationFunction: (Int) -> Member = { createMember() }
 ): List<Member> = (1..size).map { creationFunction(it) }
+
+fun createChannel(cid: String): Channel = Channel(cid = cid)
