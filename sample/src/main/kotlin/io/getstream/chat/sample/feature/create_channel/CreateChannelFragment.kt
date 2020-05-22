@@ -13,18 +13,18 @@ import io.getstream.chat.sample.common.showKeyboard
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.common.visible
 import kotlinx.android.synthetic.main.fragment_new_channel.*
-import org.koin.android.ext.android.inject
 
 class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
 
-    private val viewModel: CreateChannelViewModel by inject()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         channelNameInput.showKeyboard()
-
         toolbar.setNavigationOnClickListener { goBack() }
-        submitButton.setOnClickListener { submitChannelName() }
 
+        val viewModel = CreateChannelViewModel()
+        submitButton.setOnClickListener {
+            val channelName = channelNameInput.text.toString()
+            viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelName))
+        }
         viewModel.state.observe(viewLifecycleOwner, Observer {
             ChatLogger.instance.logD("CreateChannel", "Received state: $it")
             when (it) {
@@ -39,11 +39,6 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
     private fun goBack() {
         channelNameInput.hideKeyboard()
         findNavController().navigateUp()
-    }
-
-    private fun submitChannelName() {
-        val channelName = channelNameInput.text.toString()
-        viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelName))
     }
 
     private fun renderValidationError() {
