@@ -56,12 +56,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 * Tag for logging purposes
 	 */
 	val TAG = MessageInputView::class.java.simpleName
-	private val binding: StreamViewMessageInputBinding
+	private val binding: StreamViewMessageInputBinding = StreamViewMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
 	/**
 	 * Styling class for the MessageInput
 	 */
-	private var style: MessageInputStyle? = null
+	private val style: MessageInputStyle = MessageInputStyle(context, attrs)
 
 	/**
 	 * Fired when a message is sent
@@ -77,17 +77,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 * The viewModel for handling typing etc.
 	 */
 	private lateinit var viewModel: MessageInputViewModel
-	private var messageInputController: MessageInputController? = null
-
-	// endregion
-	// region init
-	private fun initBinding(context: Context): StreamViewMessageInputBinding {
-		val inflater = LayoutInflater.from(context)
-		return StreamViewMessageInputBinding.inflate(inflater, this, true)
-	}
-
-	private fun parseAttr(context: Context, attrs: AttributeSet?) {
-		style = MessageInputStyle(context, attrs)
+	private val messageInputController: MessageInputController by lazy {
+		MessageInputController(context, binding, viewModel, style, object : AttachmentListener {
+			override fun onAddAttachment(attachment: AttachmentMetaData?) {
+				if (binding.ivSend.isEnabled) return
+				for (attachment_ in messageInputController.getSelectedAttachments()) if (! attachment_.isUploaded) return
+				onSendMessage()
+			}
+		})
 	}
 
 	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner?) {
@@ -108,32 +105,32 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun applyStyle() {
 		// Attachment Button
-		binding.ivOpenAttach.visibility = if (style !!.isShowAttachmentButton) View.VISIBLE else View.GONE
-		binding.ivOpenAttach.setImageDrawable(style !!.getAttachmentButtonIcon(false))
-		binding.ivOpenAttach.layoutParams.width = style !!.attachmentButtonWidth
-		binding.ivOpenAttach.layoutParams.height = style !!.attachmentButtonHeight
+		binding.ivOpenAttach.visibility = if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
+		binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
+		binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
+		binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
 		// Send Button
-		binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(false))
-		binding.ivSend.layoutParams.width = style !!.inputButtonWidth
-		binding.ivSend.layoutParams.height = style !!.inputButtonHeight
+		binding.ivSend.setImageDrawable(style.getInputButtonIcon(false))
+		binding.ivSend.layoutParams.width = style.inputButtonWidth
+		binding.ivSend.layoutParams.height = style.inputButtonHeight
 		// Input Background
-		binding.llComposer.background = style !!.inputBackground
+		binding.llComposer.background = style.inputBackground
 		// Input Text
-		style !!.inputText.apply(binding.etMessage)
-		style !!.inputBackgroundText.apply(binding.tvTitle)
-		style !!.inputBackgroundText.apply(binding.tvCommand)
-		style !!.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
-		style !!.inputBackgroundText.apply(binding.tvUploadFile)
-		style !!.inputBackgroundText.apply(binding.tvUploadCamera)
+		style.inputText.apply(binding.etMessage)
+		style.inputBackgroundText.apply(binding.tvTitle)
+		style.inputBackgroundText.apply(binding.tvCommand)
+		style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
+		style.inputBackgroundText.apply(binding.tvUploadFile)
+		style.inputBackgroundText.apply(binding.tvUploadCamera)
 	}
 
 	private fun configOnClickListener() {
 		binding.ivSend.setOnClickListener { view: View? -> onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
 			binding.isAttachFile = true
-			messageInputController !!.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
+			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
 			if (! PermissionChecker.isGrantedCameraPermissions(context)
-					&& permissionRequestListener != null && ! style !!.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
+					&& permissionRequestListener != null && ! style.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
 		}
 	}
 
@@ -152,7 +149,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		if (editable.toString().length > 0) viewModel.keystroke()
 		val messageText = messageText !!
 		// detect commands
-		messageInputController !!.checkCommand(messageText)
+		messageInputController.checkCommand(messageText)
 		val s_ = messageText.replace("\\s+".toRegex(), "")
 		if (TextUtils.isEmpty(s_)) binding.activeMessageSend = false else binding.activeMessageSend = messageText.length != 0
 		configSendButtonEnableState()
@@ -162,41 +159,34 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		viewModel.getInputType().observe(lifecycleOwner !!, Observer { inputType: InputType? ->
 			when (inputType) {
 				InputType.DEFAULT -> {
-					binding.llComposer.background = style !!.inputBackground
-					binding.ivOpenAttach.setImageDrawable(style !!.getAttachmentButtonIcon(false))
-					binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(viewModel.isEditing))
+					binding.llComposer.background = style.inputBackground
+					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
+					binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing))
 				}
 				InputType.SELECT -> {
-					binding.llComposer.background = style !!.inputSelectedBackground
-					binding.ivOpenAttach.setImageDrawable(style !!.getAttachmentButtonIcon(true))
-					binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(false))
+					binding.llComposer.background = style.inputSelectedBackground
+					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true))
+					binding.ivSend.setImageDrawable(style.getInputButtonIcon(false))
 				}
 				InputType.EDIT -> {
-					binding.llComposer.background = style !!.inputEditBackground
-					binding.ivOpenAttach.setImageDrawable(style !!.getAttachmentButtonIcon(true))
-					binding.ivSend.setImageDrawable(style !!.getInputButtonIcon(true))
-					messageInputController !!.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE)
+					binding.llComposer.background = style.inputEditBackground
+					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true))
+					binding.ivSend.setImageDrawable(style.getInputButtonIcon(true))
+					messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE)
 				}
 			}
 		})
 	}
 
 	private fun configSendButtonEnableState() {
-		val attachments = messageInputController !!.getSelectedAttachments()
+		val attachments = messageInputController.getSelectedAttachments()
 		val hasAttachment = attachments != null && ! attachments.isEmpty()
-		val notEmptyMessage = ! StringUtility.isEmptyTextMessage(messageText) || ! messageInputController !!.isUploadingFile && hasAttachment
+		val notEmptyMessage = ! StringUtility.isEmptyTextMessage(messageText) || ! messageInputController.isUploadingFile && hasAttachment
 		binding.activeMessageSend = notEmptyMessage
 	}
 
 	private fun configAttachmentUI() {
 		// TODO: make the attachment UI into it's own view and allow you to change it.
-		messageInputController = MessageInputController(context, binding, viewModel, style !!, label@ object : AttachmentListener {
-			override fun onAddAttachment(attachment: AttachmentMetaData?) {
-				if (binding.ivSend.isEnabled) return@label
-				for (attachment_ in messageInputController !!.getSelectedAttachments()) if (! attachment_.isUploaded) return@label
-				onSendMessage()
-			}
-		})
 		binding.rvMedia.layoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
 		binding.rvMedia.hasFixedSize()
 		binding.rvComposer.layoutManager = GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
@@ -205,27 +195,27 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		val includeEdge = false
 		binding.rvMedia.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, includeEdge))
 		binding.btnClose.setOnClickListener { v: View? ->
-			messageInputController !!.onClickCloseBackGroundView()
+			messageInputController.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)
 			if (viewModel.isEditing) {
 				initSendMessage()
 				clearFocus()
 			}
 		}
-		binding.llMedia.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(viewModel.channel, null, true) }
+		binding.llMedia.setOnClickListener { v: View? -> messageInputController.onClickOpenSelectView(viewModel.channel, null, true) }
 		binding.llCamera.setOnClickListener { v: View? ->
 			if (! PermissionChecker.isGrantedCameraPermissions(context)) {
 				PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_camera_permission_message))
 				return@setOnClickListener
 			}
 			Utils.setButtonDelayEnable(v)
-			messageInputController !!.onClickCloseBackGroundView()
+			messageInputController.onClickCloseBackGroundView()
 			val builder = VmPolicy.Builder()
 			StrictMode.setVmPolicy(builder.build())
 			Utils.hideSoftKeyboard(context as Activity)
 			getInstance().navigator.navigate(CameraDestination(context as Activity))
 		}
-		binding.llFile.setOnClickListener { v: View? -> messageInputController !!.onClickOpenSelectView(viewModel.channel, null, false) }
+		binding.llFile.setOnClickListener { v: View? -> messageInputController.onClickOpenSelectView(viewModel.channel, null, false) }
 	}
 
 	private fun onBackPressed() {
@@ -239,7 +229,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 					return@setOnKeyListener true
 				}
 				if (viewModel.isEditing) {
-					messageInputController !!.onClickCloseBackGroundView()
+					messageInputController.onClickCloseBackGroundView()
 					initSendMessage()
 					return@setOnKeyListener true
 				}
@@ -248,7 +238,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 					return@setOnKeyListener true
 				}
 				if (binding.clTitle.visibility == View.VISIBLE) {
-					messageInputController !!.onClickCloseBackGroundView()
+					messageInputController.onClickCloseBackGroundView()
 					initSendMessage()
 					return@setOnKeyListener true
 				}
@@ -331,7 +321,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun initSendMessage() {
-		messageInputController !!.initSendMessage()
+		messageInputController.initSendMessage()
 		viewModel.setEditMessage(null)
 		binding.etMessage.setText("")
 		binding.ivSend.isEnabled = true
@@ -343,7 +333,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	protected fun prepareNewMessage(message: Message): Message {
 		// Check file uploading
-		if (messageInputController !!.isUploadingFile) {
+		if (messageInputController.isUploadingFile) {
 			// message.user = ChatDomain.instance().getCurrentUser();
 			val clientSideID = generateMessageID()
 			message.id = clientSideID
@@ -351,14 +341,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			//TODO: llc check sync
 			//message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
 		} else {
-			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController !!.getSelectedAttachments()))
+			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController.getSelectedAttachments()))
 		}
 		return message
 	}
 
 	protected fun prepareEditMessage(message: Message): Message {
 		message.text = messageText !!
-		val newAttachments = messageInputController !!.getSelectedAttachments()
+		val newAttachments = messageInputController.getSelectedAttachments()
 		message.attachments.addAll(LlcMigrationUtils.getAttachments(newAttachments))
 		return message
 	}
@@ -389,7 +379,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		attachment.titleLink = url
 		attachment.title = inputContentInfo.description.label.toString()
 		attachment.type = ModelType.attach_giphy
-		messageInputController !!.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
+		messageInputController.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
 		binding.etMessage.setText("")
 		onSendMessage()
 		return true
@@ -418,12 +408,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		if (attachment.type == ModelType.attach_file) {
 			val fileType = attachment.mimeType
 			if (fileType == ModelType.attach_mime_mov || fileType == ModelType.attach_mime_mp4) {
-				messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, true)
+				messageInputController.onClickOpenSelectView(viewModel.channel, attachments, true)
 			} else {
-				messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, false)
+				messageInputController.onClickOpenSelectView(viewModel.channel, attachments, false)
 			}
 		} else {
-			messageInputController !!.onClickOpenSelectView(viewModel.channel, attachments, true)
+			messageInputController.onClickOpenSelectView(viewModel.channel, attachments, true)
 		}
 	}
 
@@ -439,10 +429,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				return
 			}
 			if (imageFile != null && imageFile.length() > 0) {
-				messageInputController !!.progressCapturedMedia(viewModel.channel, imageFile, true)
+				messageInputController.progressCapturedMedia(viewModel.channel, imageFile, true)
 				updateGallery(imageFile)
 			} else if (vieoFile != null && vieoFile.length() > 0) {
-				messageInputController !!.progressCapturedMedia(viewModel.channel, vieoFile, false)
+				messageInputController.progressCapturedMedia(viewModel.channel, vieoFile, false)
 				updateGallery(vieoFile)
 			} else Utils.showMessage(context, context.getString(R.string.stream_take_photo_failed))
 		}
@@ -474,22 +464,22 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				}
 			}
 			if (storageGranted && cameraGranted) {
-				messageInputController !!.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
-				style !!.setCheckPermissions(true)
+				messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
+				style.setCheckPermissions(true)
 			} else {
 				val message: String
 				message = if (! storageGranted && ! cameraGranted) {
 					context.getString(R.string.stream_both_permissions_message)
 				} else if (! cameraGranted) {
-					style !!.setCheckPermissions(true)
+					style.setCheckPermissions(true)
 					context.getString(R.string.stream_camera_permission_message)
 				} else {
-					style !!.setCheckPermissions(true)
+					style.setCheckPermissions(true)
 					context.getString(R.string.stream_storage_permission_message)
 				}
 				PermissionChecker.showPermissionSettingDialog(context, message)
 			}
-			messageInputController !!.configPermissions()
+			messageInputController.configPermissions()
 		}
 	}
 
@@ -525,8 +515,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	// region constructor
 	init {
-		parseAttr(context, attrs)
-		binding = initBinding(context)
 		applyStyle()
 	}
 }
