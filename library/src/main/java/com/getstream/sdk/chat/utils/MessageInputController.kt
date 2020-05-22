@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
@@ -50,6 +51,7 @@ class MessageInputController(private val context: Context,
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
 	private var attachmentData: List<AttachmentMetaData>? = null
 	private val uploadManager: UploadManager = UploadManager()
+	var members: List<Member> = listOf()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
 		return selectedAttachments
 	}
@@ -429,14 +431,9 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun setMentionUsers(string: String) {
-		if (commands == null) commands = ArrayList()
-		commands !!.clear()
-		val members = channel.members
-		for (i in members.indices) {
-			val (user) = members[i]
-			val name = user.getExtraValue("name", "")
-			if (name.toLowerCase().contains(string.toLowerCase())) commands !!.add(user)
-		}
-	} // endregion
+	private fun setMentionUsers(namePattern: String) {
+		commands = members.map { it.user }
+				.filter { it.getExtraValue("name", "").contains(namePattern, true) }
+				.toMutableList()
+	}
 }

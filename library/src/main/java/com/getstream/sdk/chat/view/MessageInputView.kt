@@ -46,6 +46,7 @@ import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import exhaustive
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
@@ -88,7 +89,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		})
 	}
 
-	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner?) {
+	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner) {
 		this.viewModel = viewModel
 		binding.lifecycleOwner = lifecycleOwner
 		init()
@@ -252,10 +253,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			binding.etMessage.setSelection(binding.etMessage.text.length)
 		}
 
-	// endregion
-	// region observe
-	private fun observeUIs(lifecycleOwner: LifecycleOwner?) {
-		viewModel.getEditMessage().observe(lifecycleOwner !!, Observer { message: Message? -> editMessage(message) })
+	private fun observeUIs(lifecycleOwner: LifecycleOwner) {
+		viewModel.getEditMessage().observe(lifecycleOwner , Observer { message: Message? -> editMessage(message) })
 		viewModel.getMessageListScrollUp().observe(lifecycleOwner, Observer { messageListScrollup: Boolean -> if (messageListScrollup) Utils.hideSoftKeyboard(context as Activity) })
 		viewModel.getActiveThread().observe(lifecycleOwner, Observer { threadParentMessage: Message? ->
 			if (threadParentMessage == null) {
@@ -263,9 +262,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				Utils.hideSoftKeyboard(context as Activity)
 			}
 		})
+		viewModel.members.observe(lifecycleOwner, Observer { messageInputController.members = it })
 	}
-	// endregion
-	// region send message
+
+	fun configureMembers(members: List<Member>) {
+		messageInputController.members = members
+	}
+
 	/**
 	 * Prepare message takes the message input string and returns a message object
 	 * You can overwrite this method in case you want to attach more custom properties to the message
