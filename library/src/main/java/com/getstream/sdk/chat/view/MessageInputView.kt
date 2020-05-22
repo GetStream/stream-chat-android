@@ -43,6 +43,7 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
+import exhaustive
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -78,7 +79,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private lateinit var viewModel: MessageInputViewModel
 	private val messageInputController: MessageInputController by lazy {
-		MessageInputController(context, binding, viewModel, style, object : AttachmentListener {
+		MessageInputController(context, binding, this, viewModel, style, object : AttachmentListener {
 			override fun onAddAttachment(attachment: AttachmentMetaData?) {
 				if (binding.ivSend.isEnabled) return
 				for (attachment_ in messageInputController.getSelectedAttachments()) if (! attachment_.isUploaded) return
@@ -136,7 +137,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configInputEditText() {
 		binding.etMessage.onFocusChangeListener = OnFocusChangeListener { view: View?, hasFocus: Boolean ->
-			viewModel.setInputType(if (hasFocus) InputType.SELECT else InputType.DEFAULT)
 			if (hasFocus) {
 				Utils.showSoftKeyboard(context as Activity)
 			} else Utils.hideSoftKeyboard(context as Activity)
@@ -153,29 +153,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		val s_ = messageText.replace("\\s+".toRegex(), "")
 		if (TextUtils.isEmpty(s_)) binding.activeMessageSend = false else binding.activeMessageSend = messageText.length != 0
 		configSendButtonEnableState()
-	}
-
-	private fun configMessageInputBackground(lifecycleOwner: LifecycleOwner?) {
-		viewModel.getInputType().observe(lifecycleOwner !!, Observer { inputType: InputType? ->
-			when (inputType) {
-				InputType.DEFAULT -> {
-					binding.llComposer.background = style.inputBackground
-					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
-					binding.ivSend.setImageDrawable(style.getInputButtonIcon(viewModel.isEditing))
-				}
-				InputType.SELECT -> {
-					binding.llComposer.background = style.inputSelectedBackground
-					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true))
-					binding.ivSend.setImageDrawable(style.getInputButtonIcon(false))
-				}
-				InputType.EDIT -> {
-					binding.llComposer.background = style.inputEditBackground
-					binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(true))
-					binding.ivSend.setImageDrawable(style.getInputButtonIcon(true))
-					messageInputController.onClickOpenBackGroundView(MessageInputType.EDIT_MESSAGE)
-				}
-			}
-		})
 	}
 
 	private fun configSendButtonEnableState() {
@@ -278,7 +255,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	// endregion
 	// region observe
 	private fun observeUIs(lifecycleOwner: LifecycleOwner?) {
-		configMessageInputBackground(lifecycleOwner)
 		viewModel.getEditMessage().observe(lifecycleOwner !!, Observer { message: Message? -> editMessage(message) })
 		viewModel.getMessageListScrollUp().observe(lifecycleOwner, Observer { messageListScrollup: Boolean -> if (messageListScrollup) Utils.hideSoftKeyboard(context as Activity) })
 		viewModel.getActiveThread().observe(lifecycleOwner, Observer { threadParentMessage: Message? ->

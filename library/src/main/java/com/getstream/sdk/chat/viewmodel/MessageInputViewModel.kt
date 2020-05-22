@@ -45,23 +45,12 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 	private var channelState = MutableLiveData<Channel>()
 
 	private var reads: LiveData<List<ChannelUserRead>> = MutableLiveData()
-	private var inputType = MutableLiveData(InputType.DEFAULT)
 	private var entities: MessageListItemLiveData
 	private val logger = get(MessageInputViewModel::class.java.name)
 
 	@get:Deprecated("")
 	val channel: Channel
 		get() = channelController.toChannel()
-
-	fun getInputType(): LiveData<InputType> = inputType
-
-	fun setInputType(inputType: InputType) {
-		if (inputType == InputType.SELECT && isEditing) {
-			this.inputType.postValue(InputType.EDIT)
-			return
-		}
-		this.inputType.postValue(inputType)
-	}
 
 	fun getEditMessage(): LiveData<Message?> {
 		return editMessage

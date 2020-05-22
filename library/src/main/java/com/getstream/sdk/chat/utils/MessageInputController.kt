@@ -16,11 +16,11 @@ import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
-import com.getstream.sdk.chat.enums.InputType
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageInputStyle
+import com.getstream.sdk.chat.view.MessageInputView
 import com.getstream.sdk.chat.view.MessageInputView.AttachmentListener
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.errors.ChatError
@@ -34,12 +34,12 @@ import java.util.ArrayList
 
 class MessageInputController(private val context: Context,
                              private val binding: StreamViewMessageInputBinding,
+                             private val view: MessageInputView,
                              private val viewModel: MessageInputViewModel,
-                             style: MessageInputStyle,
-                             attachmentListener: AttachmentListener?) {
+                             private val style: MessageInputStyle,
+                             private val attachmentListener: AttachmentListener?) {
 	private val logger = get(MessageInputController::class.java.simpleName)
 	private val channel: Channel = viewModel.channel
-	private val style: MessageInputStyle = style
 	private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
 	private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
 	private var fileAttachmentAdapter: AttachmentListAdapter? = null
@@ -48,7 +48,6 @@ class MessageInputController(private val context: Context,
 	private var commands: MutableList<Any>? = null
 	private var messageInputType: MessageInputType? = null
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
-	private val attachmentListener: AttachmentListener? = attachmentListener
 	private var attachmentData: List<AttachmentMetaData>? = null
 	private val uploadManager: UploadManager = UploadManager()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
@@ -299,12 +298,7 @@ class MessageInputController(private val context: Context,
 		if (! StringUtility.isEmptyTextMessage(binding.etMessage.text.toString())) {
 			binding.activeMessageSend = true
 		} else {
-			if (uploadManager.isUploadingFile || selectedAttachments !!.isEmpty()) {
-				viewModel.setInputType(InputType.DEFAULT)
-				binding.activeMessageSend = false
-			} else {
-				binding.activeMessageSend = true
-			}
+			binding.activeMessageSend = !(uploadManager.isUploadingFile || selectedAttachments.isEmpty())
 		}
 	}
 
