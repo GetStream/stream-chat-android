@@ -6,10 +6,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
-import com.getstream.sdk.chat.binding.bindView
+import com.getstream.sdk.chat.viewmodel.bindView
 import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.ChannelsViewModelImpl
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.R
@@ -35,7 +36,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
         Chat.getInstance().setUser(user, loggedInUser.token, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
-                Timber.d("Chat User set successfully")
+                ChatLogger.instance.logD("ChannelsList", "User set successfully")
             }
             override fun onError(error: ChatError) {
                 Timber.e(error)
