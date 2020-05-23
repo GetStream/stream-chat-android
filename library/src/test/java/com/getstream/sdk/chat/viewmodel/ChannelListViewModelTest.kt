@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.viewmodel
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.nhaarman.mockitokotlin2.doReturn
@@ -15,14 +15,12 @@ import io.getstream.chat.android.livedata.usecase.QueryChannels
 import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Call2
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(InstantExecutorExtension::class)
 class ChannelListViewModelTest {
-    @get:Rule
-    var liveDataRule = InstantTaskExecutorRule()
-
     private lateinit var viewModel: ChannelsViewModelImpl
 
     private val chatDomain: ChatDomain = mock()
@@ -33,7 +31,7 @@ class ChannelListViewModelTest {
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsController: QueryChannelsController = mock()
 
-    @Before
+    @BeforeEach
     fun setup() {
         whenever(chatDomain.useCases) doReturn useCases
         whenever(useCases.queryChannels) doReturn queryChannels
@@ -46,13 +44,8 @@ class ChannelListViewModelTest {
     @Test
     fun `Should display channels when there are channels available`() {
         // given
-        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
-        whenever(queryChannelsController.loading) doReturn MutableLiveData()
-        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
-        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
+        mockChannels()
         val mockObserver: Observer<ChannelsViewModel.State> = mock()
-
-        // when
         viewModel.state.observeForever(mockObserver)
 
         // then
@@ -62,19 +55,23 @@ class ChannelListViewModelTest {
     @Test
     fun `Should load more channels when list is scrolled to the end region`() {
         // given
-        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
-        whenever(queryChannelsController.loading) doReturn MutableLiveData()
-        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
-        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
+        mockChannels()
         val mockObserver: Observer<ChannelsViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
 
         // when
-        viewModel.state.observeForever(mockObserver)
-        viewModel.onAction(ChannelsViewModel.Action.ReachedEndOfList)
+        viewModel.onEvent(ChannelsViewModel.Event.ReachedEndOfList)
 
         // then
         verify(mockObserver).onChanged(ChannelsViewModel.State.Result(mockChannels))
         verify(queryChannelsLoadMore).invoke(ChannelsViewModel.DEFAULT_FILTER, ChannelsViewModel.DEFAULT_SORT)
+    }
+
+    private fun mockChannels() {
+        whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
+        whenever(queryChannelsController.loading) doReturn MutableLiveData()
+        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
+        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
     }
 
     companion object {
