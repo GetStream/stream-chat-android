@@ -42,11 +42,11 @@ internal class ChatSocketServiceImpl(
 
     override var state: State = State.Disconnected(false)
 
-    fun setLastEventDate(date: Date) {
+    override fun setLastEventDate(date: Date) {
         healthMonitor.lastEventDate = date
     }
 
-    fun onSocketError(error: ChatError) {
+    override fun onSocketError(error: ChatError) {
 
         if (error is ChatNetworkError && error.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
             updateState(State.Error(error))
@@ -112,12 +112,12 @@ internal class ChatSocketServiceImpl(
         clearState()
     }
 
-    fun onConnectionResolved(event: ConnectedEvent) {
+    override fun onConnectionResolved(event: ConnectedEvent) {
         updateState(State.Connected(event))
         startMonitor()
     }
 
-    fun onEvent(event: ChatEvent) {
+    override fun onEvent(event: ChatEvent) {
         val eventMsg = Message()
         eventMsg.obj = event
         eventHandler.sendMessage(eventMsg)

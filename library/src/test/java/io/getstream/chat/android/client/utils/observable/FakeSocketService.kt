@@ -1,11 +1,14 @@
 package io.getstream.chat.android.client.utils.observable
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
+import java.util.*
 
-class FakeSocketService() : ChatSocketService {
+class FakeSocketService(val eventsCollector: MutableList<ChatEvent> = mutableListOf()) : ChatSocketService {
 
     override var state: ChatSocketService.State = ChatSocketService.State.Disconnected(false)
 
@@ -31,6 +34,22 @@ class FakeSocketService() : ChatSocketService {
 
     override fun removeListener(listener: SocketListener) {
         listeners.remove(listener)
+    }
+
+    override fun onSocketError(error: ChatError) {
+
+    }
+
+    override fun onConnectionResolved(error: ConnectedEvent) {
+
+    }
+
+    override fun onEvent(event: ChatEvent) {
+        eventsCollector.add(event)
+    }
+
+    override fun setLastEventDate(date: Date) {
+
     }
 
 }
