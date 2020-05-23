@@ -11,6 +11,20 @@ import io.getstream.chat.android.client.models.User
 // TODO: move these to the LLC at some point
 fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
 
+/**
+ * cid is sometimes devent as event.cid other times as event.channel.cid
+ */
+fun ChatEvent.getCid(): String? {
+
+    var cid = this.cid
+
+    if (cid.isNullOrEmpty()) {
+        cid = this.channel?.cid
+    }
+
+    return cid
+}
+
 fun Message.users(): List<User> {
     val users = mutableListOf<User>()
     users.add(this.user)
@@ -84,3 +98,4 @@ fun ChatError.isPermanent(): Boolean {
     }
     return isPermanent
 }
+

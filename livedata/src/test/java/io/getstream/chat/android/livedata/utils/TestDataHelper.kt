@@ -178,8 +178,9 @@ class TestDataHelper {
     val memberAddedToChannelEvent =
         MemberAddedEvent().apply { member = member2; cid = channel1.cid }
 
+    // member removed doesn't have a cid
     val memberRemovedFromChannel =
-        MemberRemovedEvent().apply { member = null; user = member2.user; cid = channel1.cid }
+        MemberRemovedEvent().apply { member = null; user = member2.user; channel = channel1 }
 
     // for whatever reason these events don't have event.cid
     val notificationAddedToChannelEvent =

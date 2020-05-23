@@ -10,6 +10,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
+
+data class Person(var name: String)
+data class Animal(var name: String)
+
+
 @RunWith(AndroidJUnit4::class)
 class SendMessageImplTest : BaseConnectedIntegrationTest() {
     @Test
