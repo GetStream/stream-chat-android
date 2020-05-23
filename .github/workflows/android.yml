@@ -25,9 +25,16 @@ jobs:
       run: ./gradlew jacocoTestReport
     - name: Upload Coverage
       run: bash <(curl -s https://codecov.io/bash)
-    - name: Upload Test Results
+    - name: Upload testDebugUnitTest Results
       uses: actions/upload-artifact@v2
       if: failure()
       with:
-        name: errors
+        name: testDebugUnitTest
         path: livedata/build/reports/tests/testDebugUnitTest
+    - name: Upload testDebugUnitTest Results
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: testReleaseUnitTest
+        path: livedata/build/reports/tests/testReleaseUnitTest
+

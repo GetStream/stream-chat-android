@@ -27,10 +27,10 @@ data class MemberEntity(var userId: String) {
 
     /** creates a memberEntity from the member */
     constructor(r: Member) : this(r.getUserId()) {
-        role = r.role
+        role = r.role?: r.user.role
         createdAt = r.createdAt
         updatedAt = r.updatedAt
-        isInvited = r.isInvited
+        isInvited = r.isInvited?: false
         inviteAcceptedAt = r.inviteAcceptedAt
         inviteRejectedAt = r.inviteRejectedAt
     }

@@ -40,8 +40,8 @@ class TestDataHelper {
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
 
     val watcher1 = Watcher("test", user1, null)
-    val member1 = Member(user = user1, role = "user")
-    val member2 = Member(user = user2, role = "user")
+    val member1 = Member(user = user1, role = "user", isInvited = false)
+    val member2 = Member(user = user2, role = "user", isInvited = false)
 
     fun getOldDate(): Date {
         val cal = Calendar.getInstance()
