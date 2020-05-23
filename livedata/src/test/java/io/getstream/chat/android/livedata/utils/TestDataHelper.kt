@@ -106,6 +106,11 @@ class TestDataHelper {
         user1; createdAt = calendar(2020, 1, 1)
     }
 
+    val message1WithoutChannelAndCid = Message().apply {
+        text = "hi there"; id = "message-1"; user =
+        user1; createdAt = calendar(2020, 1, 1)
+    }
+
     fun createMessage(): Message {
         val text = "hi there " + UUID.randomUUID().toString()
         val message = Message().apply {
@@ -144,7 +149,7 @@ class TestDataHelper {
     val newMessageEvent2 = NewMessageEvent().apply { message = message2Older; cid = channel1.cid }
     val newMessageFromUser2 = NewMessageEvent().apply { message = messageFromUser2; cid = channel1.cid }
 
-    val newMessageEventNotification = NotificationMessageNew().apply { message = message1; cid = channel1.cid }
+    val newMessageEventNotification = NotificationMessageNew().apply { message = message1WithoutChannelAndCid; cid = channel1.cid; channel=channel1 }
 
     val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid = channel1.cid }
     val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }

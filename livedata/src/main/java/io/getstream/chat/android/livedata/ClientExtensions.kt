@@ -25,6 +25,20 @@ fun ChatEvent.getCid(): String? {
     return cid
 }
 
+/**
+ * cid is sometimes devent as message.cid other times as message.channel.cid
+ */
+fun Message.getCid(): String? {
+
+    var cid = this.cid
+
+    if (cid.isNullOrEmpty()) {
+        cid = this.channel?.cid
+    }
+
+    return cid
+}
+
 fun Message.users(): List<User> {
     val users = mutableListOf<User>()
     users.add(this.user)

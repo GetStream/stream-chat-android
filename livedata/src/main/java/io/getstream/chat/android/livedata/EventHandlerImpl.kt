@@ -95,9 +95,12 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                     users.putAll(message.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is NotificationMessageNew -> {
-                    messages[event.message.id] = MessageEntity(event.message)
+                    // add both the event and the channel
+                    val message = event.message
+                    message.cid = event.cid!!
+                    messages[message.id] = MessageEntity(message)
                     channels[event.channel!!.cid] = ChannelEntity(event.channel!!)
-                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(message.users().map { UserEntity(it) }.associateBy { it.id })
                     users.putAll(event.channel!!.users().map { UserEntity(it) }.associateBy { it.id })
                 }
                 is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected -> {
