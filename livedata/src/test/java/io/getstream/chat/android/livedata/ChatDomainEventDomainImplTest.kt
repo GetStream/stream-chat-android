@@ -30,8 +30,6 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(message).isNotNull()
     }
 
-
-
     @Test
     fun addedToChannel() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
