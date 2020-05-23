@@ -98,4 +98,3 @@ fun ChatError.isPermanent(): Boolean {
     }
     return isPermanent
 }
-
