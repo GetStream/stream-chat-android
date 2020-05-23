@@ -30,8 +30,11 @@ object EventType {
     val CHANNEL_HIDDEN = "channel.hidden"
     val CHANNEL_DELETED = "channel.deleted"
     val CHANNEL_VISIBLE = "channel.visible"
+    val CHANNEL_TRUNCATED = "channel.truncated"
     val HEALTH_CHECK = "health.check"
     val NOTIFICATION_MESSAGE_NEW = "notification.message_new"
+    val NOTIFICATION_CHANNEL_TRUNCATED = "notification.channel_truncated"
+    val NOTIFICATION_CHANNEL_DELETED = "notification.channel_deleted"
     val NOTIFICATION_MARK_READ = "notification.mark_read"
     val NOTIFICATION_INVITED = "notification.invited"
     val NOTIFICATION_INVITE_ACCEPTED = "notification.invite_accepted"
@@ -43,17 +46,9 @@ object EventType {
     /**
      * Local
      */
-    val CONNECTION_SOCKET_OPEN = "connection.socket.open"
-    val CONNECTION_SOCKET_CLOSING = "connection.socket.closing"
-    val CONNECTION_SOCKET_CLOSED = "connection.socket.closed"
-    val CONNECTION_SOCKET_FAILURE = "connection.socket.failure"
     val CONNECTION_CONNECTING = "connection.connecting"
-    val CONNECTION_RESOLVED = "connection.resolved"
-    val CONNECTION_CHANGED = "connection.changed"
-    val CONNECTION_RECOVERED = "connection.recovered"
     val CONNECTION_DISCONNECTED = "connection.disconnected"
     val CONNECTION_ERROR = "connection.error"
-    val TOKEN_EXPIRED = "token.expired"
     /**
      * Unknown
      */

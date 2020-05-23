@@ -12,7 +12,7 @@ import java.util.*
 
 
 internal class EventsParser(
-    private val service: ChatSocketServiceImpl,
+    private val service: ChatSocketService,
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
@@ -158,6 +158,10 @@ internal class EventsParser(
                 parser.fromJson(data, ChannelVisible::class.java)
             }
 
+            EventType.CHANNEL_TRUNCATED -> {
+                parser.fromJson(data, ChannelTruncated::class.java)
+            }
+
             //region Watching
 
             EventType.USER_WATCHING_START -> {
@@ -199,6 +203,14 @@ internal class EventsParser(
 
             EventType.NOTIFICATION_MUTES_UPDATED -> {
                 parser.fromJson(data, NotificationMutesUpdated::class.java)
+            }
+
+            EventType.NOTIFICATION_CHANNEL_DELETED -> {
+                parser.fromJson(data, NotificationChannelDeleted::class.java)
+            }
+
+            EventType.NOTIFICATION_CHANNEL_TRUNCATED -> {
+                parser.fromJson(data, NotificationChannelTruncated::class.java)
             }
 
             EventType.HEALTH_CHECK -> {
