@@ -49,4 +49,6 @@ interface QueryChannelsController {
      * If we are currently loading more channels
      */
     val loadingMore: LiveData<Boolean>
+
+    fun addChannelIfFilterMatches(channel: Channel)
 }

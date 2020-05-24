@@ -65,22 +65,27 @@ class QueryChannelsControllerImpl(
         }
     }
 
+    override fun addChannelIfFilterMatches(
+        channel: Channel
+    ) {
+        val shouldBeAdded = if (newChannelEventFilter != null) {
+            newChannelEventFilter!!(channel, queryEntity.filter)
+        } else {
+            // default to always adding the channel
+            true
+        }
+        if (shouldBeAdded) {
+            val channelControllerImpl = domainImpl.channel(channel)
+            channelControllerImpl.updateLiveDataFromChannel(channel)
+            addChannels(listOf(channel), true)
+        }
+    }
+
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             val channel = event.channel!!
-            val filter = queryEntity.filter
+            addChannelIfFilterMatches(channel)
 
-            val shouldBeAdded = if (newChannelEventFilter != null) {
-                newChannelEventFilter!!(channel, filter)
-            } else {
-                // default to always adding the channel
-                true
-            }
-            if (shouldBeAdded) {
-                val channelControllerImpl = domainImpl.channel(channel)
-                channelControllerImpl.updateLiveDataFromChannel(channel)
-                addChannels(listOf(channel), true)
-            }
         }
         if (event.isChannelEvent()) {
             // skip events that are typically not impacting the query channels overview

@@ -280,6 +280,11 @@ class ChatDomainImpl private constructor(
         // Update Room State
         repos.channels.insertChannel(c)
 
+        // Add to query controllers
+        for (query in activeQueryMapImpl.values) {
+            query.addChannelIfFilterMatches(c)
+        }
+
         // make the API call and follow retry policy
         if (online) {
             val runnable = {

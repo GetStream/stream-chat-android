@@ -60,7 +60,6 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
     /**
      * Create a channel and retry using the retry policy if the request fails
      */
-    // TODO: create channel needs more coverage. especially around immediately showing up in queryChannels
     var createChannel: CreateChannel = CreateChannelImpl(chatDomainImpl)
     /**
      * Send a message. This message is immediately added to local storage.
