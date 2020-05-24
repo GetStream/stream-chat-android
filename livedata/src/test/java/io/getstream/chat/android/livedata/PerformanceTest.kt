@@ -31,7 +31,7 @@ class PerformanceTest : BaseConnectedMockedTest() {
             counter.onEvent(channels)
         }
         // Insert a query, channel and message into offline storage
-        val query = QueryChannelsEntity(data.filter1, null).apply { channelCIDs = sortedSetOf(data.channel1.cid) }
+        val query = QueryChannelsEntity(data.filter1, null).apply { channelCids = sortedSetOf(data.channel1.cid) }
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.repos.messages.insertMessage(data.message1)
         chatDomainImpl.repos.queryChannels.insert(query)

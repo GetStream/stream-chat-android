@@ -126,7 +126,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         val filter = Filters.eq("type", "messaging")
         val sort = null
         val query = QueryChannelsEntity(filter, sort)
-        query.channelCIDs = sortedSetOf("messaging:123", "messaging:234")
+        query.channelCids = sortedSetOf("messaging:123", "messaging:234")
         chatDomainImpl.repos.queryChannels.insert(query)
     }
 

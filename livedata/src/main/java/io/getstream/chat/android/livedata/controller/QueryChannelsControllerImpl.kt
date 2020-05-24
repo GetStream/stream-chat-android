@@ -19,7 +19,6 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.isChannelEvent
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.*
 
@@ -44,7 +43,7 @@ class QueryChannelsControllerImpl(
 
     private val _channels = MutableLiveData<ConcurrentHashMap<String, Channel>>()
     // Ensure we don't lose the sort in the channel
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> queryEntity.channelCIDs.mapNotNull { cMap[it] } }
+    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> queryEntity.channelCids.mapNotNull { cMap[it] } }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -114,7 +113,7 @@ class QueryChannelsControllerImpl(
         return runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
     }
 
-    fun paginateChannelIds(channelIds: SortedSet<String>, pagination: QueryChannelsPaginationRequest): List<String> {
+    fun paginateChannelIds(channelIds: MutableSet<String>, pagination: QueryChannelsPaginationRequest): List<String> {
         var min = pagination.channelOffset
         var max = pagination.channelOffset + pagination.channelLimit
         if (max > channelIds.size - 1) {
@@ -134,7 +133,7 @@ class QueryChannelsControllerImpl(
 
         if (queryEntity != null) {
 
-            var channelIds = paginateChannelIds(queryEntity.channelCIDs, pagination)
+            var channelIds = paginateChannelIds(queryEntity.channelCids, pagination)
 
             val channelPairs = domainImpl.selectAndEnrichChannels(channelIds, pagination)
             for (p in channelPairs) {
@@ -224,18 +223,18 @@ class QueryChannelsControllerImpl(
         return output
     }
 
-    private fun addChannels(channelsResponse: List<Channel>, onTop: Boolean = false) {
+    private fun addChannels(newChannels: List<Channel>, onTop: Boolean = false) {
         // second page adds to the list of channels
         if (onTop) {
-            val channelIds = channelsResponse.map { it.cid }.toSortedSet()
-            channelIds.addAll(queryEntity.channelCIDs)
-            queryEntity.channelCIDs = channelIds
+            val channelIds = newChannels.map { it.cid }.toMutableSet()
+            channelIds.addAll(queryEntity.channelCids)
+            queryEntity.channelCids = channelIds
         } else {
-            queryEntity.channelCIDs.addAll(channelsResponse.map { it.cid }.toMutableList())
+            queryEntity.channelCids.addAll(newChannels.map { it.cid }.toMutableList())
         }
         val copy = _channels.value ?: ConcurrentHashMap()
 
-        val missingChannels = channelsResponse.filterNot { copy.containsKey(it.cid) }.map { domainImpl.channel(it.cid).toChannel() }
+        val missingChannels = newChannels.filterNot { copy.containsKey(it.cid) }.map { domainImpl.channel(it.cid).toChannel() }
         for (channel in missingChannels) {
             copy[channel.cid] = channel
         }
@@ -244,7 +243,7 @@ class QueryChannelsControllerImpl(
 
     private fun setChannels(channelsResponse: List<Channel>) {
         // first page sets the channels/overwrites..
-        queryEntity.channelCIDs = channelsResponse.map { it.cid }.toSortedSet()
+        queryEntity.channelCids = channelsResponse.map { it.cid }.toSortedSet()
         val channels = channelsResponse.map { domainImpl.channel(it.cid).toChannel() }
         val channelMap = channels.associateBy { it.cid }.toMutableMap()
         val safeMap = ConcurrentHashMap(channelMap)

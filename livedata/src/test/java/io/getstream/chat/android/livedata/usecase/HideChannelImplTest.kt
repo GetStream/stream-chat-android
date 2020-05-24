@@ -35,7 +35,7 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channelEntity = ChannelEntity(data.channel1)
         channelEntity.hidden = true
         chatDomainImpl.repos.channels.insert(channelEntity)
-        val query = QueryChannelsEntity(data.filter1, null).apply { channelCIDs = sortedSetOf<String>(data.channel1.cid) }
+        val query = QueryChannelsEntity(data.filter1, null).apply { channelCids = sortedSetOf<String>(data.channel1.cid) }
         chatDomainImpl.repos.queryChannels.insert(query)
 
         // setup the query channel controller

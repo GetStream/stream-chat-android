@@ -8,12 +8,12 @@ import java.util.*
 class SetConverter {
 
     @TypeConverter
-    fun stringToSortedSet(data: String?): SortedSet<String> {
+    fun stringToSortedSet(data: String?): MutableSet<String> {
         if (data.isNullOrEmpty() || data == "null") {
-            return sortedSetOf()
+            return mutableSetOf()
         }
         val sortedSetType = object :
-            TypeToken<SortedSet<String>>() {}.type
+            TypeToken<MutableSet<String>>() {}.type
         return gson.fromJson(
             data,
             sortedSetType
@@ -21,7 +21,7 @@ class SetConverter {
     }
 
     @TypeConverter
-    fun sortedSetToString(someObjects: SortedSet<String>?): String {
+    fun sortedSetToString(someObjects: MutableSet<String>?): String {
         return gson.toJson(someObjects)
     }
 }

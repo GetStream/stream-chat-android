@@ -16,7 +16,7 @@ class SetConverterTest : BaseTest() {
     @Test
     fun testSortEncoding() {
         val converter = SetConverter()
-        val colors = sortedSetOf("green", "blue")
+        val colors = mutableSetOf("green", "blue")
         val output = converter.sortedSetToString(colors)
         val converted = converter.stringToSortedSet(output)
         Truth.assertThat(converted).isEqualTo(colors)
