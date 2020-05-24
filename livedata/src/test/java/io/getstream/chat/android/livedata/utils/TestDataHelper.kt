@@ -197,6 +197,10 @@ class TestDataHelper {
         NotificationAddedToChannelEvent().apply { user = user1; channel = channel3 }
     val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
     val replayEventsResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
+
+    val channelTruncatedEvent = ChannelTruncated().apply { cid=channel1.cid; createdAt = Date() }
+    val notificationChannelTruncated = NotificationChannelTruncated().apply { cid=channel1.cid; createdAt = Date() }
+    val channelDeletedEvent = ChannelDeletedEvent().apply { cid=channel1.cid; createdAt = Date() }
 }
 
 fun calendar(

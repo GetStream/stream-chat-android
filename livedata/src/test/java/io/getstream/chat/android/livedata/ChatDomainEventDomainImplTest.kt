@@ -38,6 +38,43 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    fun truncate() = runBlocking(Dispatchers.IO) {
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
+        chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        Truth.assertThat(message).isNull()
+        val channelController = chatDomainImpl.channel(data.channel1)
+        val messages = channelController.messages.getOrAwaitValue()
+        Truth.assertThat(messages).isEmpty()
+    }
+
+    @Test
+    fun notificationTruncate() = runBlocking(Dispatchers.IO) {
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
+        chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        Truth.assertThat(message).isNull()
+        val channelController = chatDomainImpl.channel(data.channel1)
+        val messages = channelController.messages.getOrAwaitValue()
+        Truth.assertThat(messages).isEmpty()
+    }
+
+    @Test
+    fun channelDelete() = runBlocking(Dispatchers.IO) {
+        chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
+        chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val channel = chatDomainImpl.repos.channels.select(data.channel1.cid)
+        Truth.assertThat(message).isNull()
+        Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
+        val channelController = chatDomainImpl.channel(data.channel1)
+        val messages = channelController.messages.getOrAwaitValue()
+        val channelData = channelController.channelData.getOrAwaitValue()
+        Truth.assertThat(messages).isEmpty()
+        Truth.assertThat(channelData.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
+    }
+
+    @Test
     fun initializeAndConnect() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.connectedEvent) }
         Truth.assertThat(chatDomainImpl.initialized.getOrAwaitValue()).isTrue()

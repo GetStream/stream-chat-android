@@ -35,6 +35,5 @@ class CreateChannelImplTest : BaseConnectedIntegrationTest() {
         val messages = channelController.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
-
     }
 }

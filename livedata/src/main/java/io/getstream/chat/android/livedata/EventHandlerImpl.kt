@@ -28,10 +28,6 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
 
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy { it.createdAt }
-        // TODO implement these less common events
-        // channel.truncated
-        // notification.channel_truncated
-        // notification.channel_deleted
 
         val users: MutableMap<String, UserEntity> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
@@ -202,6 +198,24 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
         domainImpl.repos.channels.insert(channels.values.toList())
         // we only cache messages for which we're receiving events
         domainImpl.repos.messages.insert(messages.values.toList(), true)
+
+        // handle delete and truncate events
+        for (event in events) {
+            when (event) {
+                is NotificationChannelTruncated, is ChannelTruncated -> {
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.getCid()!!, event.createdAt!!)
+                }
+                is ChannelDeletedEvent -> {
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.getCid()!!, event.createdAt!!)
+                    val channel = domainImpl.repos.channels.select(event.getCid()!!)
+                    channel?.let {
+                        it.deletedAt = event.createdAt!!
+                        domainImpl.repos.channels.insert(it)
+                    }
+                }
+            }
+        }
+
         me?.let {
             domainImpl.updateCurrentUser(it)
         }

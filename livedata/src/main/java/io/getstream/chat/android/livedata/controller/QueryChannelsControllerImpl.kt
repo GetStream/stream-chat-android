@@ -85,7 +85,6 @@ class QueryChannelsControllerImpl(
         if (event is NotificationAddedToChannelEvent) {
             val channel = event.channel!!
             addChannelIfFilterMatches(channel)
-
         }
         if (event.isChannelEvent()) {
             // skip events that are typically not impacting the query channels overview

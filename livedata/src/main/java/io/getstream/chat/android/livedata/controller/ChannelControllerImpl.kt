@@ -765,6 +765,17 @@ class ChannelControllerImpl(
             is ChannelVisible -> {
                 event.channel?.let { setHidden(false) }
             }
+            is ChannelDeletedEvent -> {
+                removeMessagesBefore(event.createdAt!!)
+                val channelData = _channelData.value
+                channelData?.let {
+                    it.deletedAt = event.createdAt!!
+                    _channelData.postValue(it)
+                }
+            }
+            is ChannelTruncated, is NotificationChannelTruncated -> {
+                removeMessagesBefore(event.createdAt!!)
+            }
             is TypingStopEvent -> {
                 setTyping(event.user?.id!!, null)
             }

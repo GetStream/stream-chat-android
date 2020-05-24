@@ -130,6 +130,9 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
     }
 
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
+        // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
+        // wipe the cache
+        messageCache = LruCache<String, MessageEntity>(cacheSize)
     }
 }
