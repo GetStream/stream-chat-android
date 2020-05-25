@@ -7,15 +7,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.User;
 
@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.models.User;
 public class ReadUsersDialog extends Dialog {
 
     List<ChannelUserRead>reads;
-    ChannelViewModel viewModel;
     MessageListViewStyle style;
 
     public ReadUsersDialog(@NonNull Context context) {
@@ -43,12 +42,6 @@ public class ReadUsersDialog extends Dialog {
         return this;
     }
 
-    public ReadUsersDialog setChannelViewModel(ChannelViewModel viewModel) {
-        this.viewModel = viewModel;
-        init();
-        return this;
-    }
-
     public ReadUsersDialog setStyle(MessageListViewStyle style) {
         this.style = style;
         init();
@@ -57,7 +50,7 @@ public class ReadUsersDialog extends Dialog {
 
 
     public void init() {
-        if (viewModel == null || reads == null || style == null)
+        if (reads == null || style == null)
             return;
         setContentView(R.layout.stream_dialog_read_users);
         ListView lv_read_user = findViewById(R.id.lv_read_user);
