@@ -27,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
-import com.getstream.sdk.chat.enums.InputType
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.interfaces.MessageSendListener
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -80,7 +79,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private lateinit var viewModel: MessageInputViewModel
 	private val messageInputController: MessageInputController by lazy {
-		MessageInputController(context, binding, this, viewModel, style, object : AttachmentListener {
+		MessageInputController(context, binding, this, style, object : AttachmentListener {
 			override fun onAddAttachment(attachment: AttachmentMetaData?) {
 				if (binding.ivSend.isEnabled) return
 				for (attachment_ in messageInputController.getSelectedAttachments()) if (! attachment_.isUploaded) return

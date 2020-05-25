@@ -22,7 +22,6 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
 import com.getstream.sdk.chat.view.MessageInputView.AttachmentListener
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
 import io.getstream.chat.android.client.models.Channel
@@ -36,11 +35,9 @@ import java.util.ArrayList
 class MessageInputController(private val context: Context,
                              private val binding: StreamViewMessageInputBinding,
                              private val view: MessageInputView,
-                             private val viewModel: MessageInputViewModel,
                              private val style: MessageInputStyle,
                              private val attachmentListener: AttachmentListener?) {
 	private val logger = get(MessageInputController::class.java.simpleName)
-	private val channel: Channel = viewModel.channel
 	private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
 	private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
 	private var fileAttachmentAdapter: AttachmentListAdapter? = null
