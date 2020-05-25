@@ -6,12 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
-import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.view.BaseStyle;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -20,6 +17,7 @@ import java.util.List;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import io.getstream.chat.android.client.models.Command;
 import io.getstream.chat.android.client.models.User;
 
 public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends BaseAdapter {
