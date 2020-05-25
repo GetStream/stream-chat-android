@@ -10,7 +10,7 @@
 
         <variable
             name="command"
-            type="com.getstream.sdk.chat.model.Command" />
+            type="io.getstream.chat.android.client.models.Command" />
 
     </data>
 

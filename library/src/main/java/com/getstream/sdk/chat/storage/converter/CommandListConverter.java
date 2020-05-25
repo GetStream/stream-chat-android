@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.storage.converter;
 
-import com.getstream.sdk.chat.model.Command;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -9,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import androidx.room.TypeConverter;
+import io.getstream.chat.android.client.models.Command;
 
 public class CommandListConverter {
 
