@@ -2,12 +2,13 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.enums.InputType
 import com.getstream.sdk.chat.utils.MessageListItemLiveData
 import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -16,6 +17,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 
 class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 	val members: LiveData<List<Member>>
+	val commands: LiveData<List<Command>>
 	private var unreadCount: LiveData<Int>
 
 	/**
@@ -138,6 +140,7 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		typingUsers = channelController.typing
 		reads = channelController.reads
 		members = channelController.members
+		commands = map(channelState) { it.config.commands }
 		typingUsers = channelController.typing
 		loading = channelController.loading
 		loadingMore = channelController.loadingOlderMessages

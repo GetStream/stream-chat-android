@@ -52,6 +52,7 @@ class MessageInputController(private val context: Context,
 	private var attachmentData: List<AttachmentMetaData>? = null
 	private val uploadManager: UploadManager = UploadManager()
 	var members: List<Member> = listOf()
+	var channelCommands: List<Command> = listOf()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
 		return selectedAttachments
 	}
@@ -407,8 +408,7 @@ class MessageInputController(private val context: Context,
 		if (commands == null) commands = ArrayList()
 		commands !!.clear()
 		if (string.startsWith("/")) {
-			val commands = channel.config.commands
-			if (commands.isEmpty()) return
+			if (channelCommands.isEmpty()) return
 			val commandStr = string.replace("/", "")
 			setCommands(commandStr)
 			binding.tvCommand.text = commandStr
@@ -418,13 +418,8 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun setCommands(string: String) {
-		if (commands == null) commands = ArrayList()
-		commands !!.clear()
-		for (i in channel.config.commands.indices) {
-			val command = channel.config.commands[i]
-			if (command.name !!.contains(string)) commands !!.add(command)
-		}
+	private fun setCommands(commandPattern: String) {
+		commands = channelCommands.filter { it.name.contains(commandPattern) }.toMutableList()
 	}
 
 	private fun setMentionUsers(namePattern: String) {

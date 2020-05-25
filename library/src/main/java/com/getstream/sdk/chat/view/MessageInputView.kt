@@ -43,9 +43,9 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import exhaustive
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
@@ -263,10 +263,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			}
 		})
 		viewModel.members.observe(lifecycleOwner, Observer { messageInputController.members = it })
+		viewModel.commands.observe(lifecycleOwner, Observer { messageInputController.channelCommands = it })
 	}
 
 	fun configureMembers(members: List<Member>) {
 		messageInputController.members = members
+	}
+
+	fun configureCommands(commands: List<Command>) {
+		messageInputController.channelCommands = commands
 	}
 
 	/**
