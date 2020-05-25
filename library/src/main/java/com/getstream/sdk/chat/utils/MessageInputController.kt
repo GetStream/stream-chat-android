@@ -74,7 +74,7 @@ class MessageInputController(private val context: Context,
 			MessageInputType.EDIT_MESSAGE -> {
 			}
 			MessageInputType.ADD_FILE -> {
-				if (selectedAttachments != null && ! selectedAttachments !!.isEmpty()) return
+				if (selectedAttachments.isNotEmpty()) return
 				binding.clAddFile.visibility = View.VISIBLE
 			}
 			MessageInputType.UPLOAD_MEDIA, MessageInputType.UPLOAD_FILE -> {
@@ -130,7 +130,7 @@ class MessageInputController(private val context: Context,
 		binding.isAttachFile = ! isMedia
 		getAttachmentsFromLocal(isMedia)
 		(context as Activity).runOnUiThread {
-			if (selectedAttachments !!.isEmpty()) {
+			if (selectedAttachments.isEmpty()) {
 				setAttachmentAdapters(channel, isMedia)
 				if (attachmentData !!.isEmpty()) {
 					Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error))
@@ -201,7 +201,7 @@ class MessageInputController(private val context: Context,
 		val file = File(attachment.file.path)
 		if (isOverMaxUploadFileSize(file)) return
 		attachment.isSelected = true
-		selectedAttachments !!.add(attachment)
+		selectedAttachments.add(attachment)
 		if (attachment.isUploaded) uploadedFileProgress(attachment) else uploadFile(channel, attachment, fromGallery, isMedia)
 		showHideComposerAttachmentGalleryView(true, isMedia)
 		if (fromGallery) totalAttachmentAdapterChanged(attachment, isMedia)
@@ -237,12 +237,12 @@ class MessageInputController(private val context: Context,
 
 	private fun cancelAttachment(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		attachment.isSelected = false
-		selectedAttachments !!.remove(attachment)
+		selectedAttachments.remove(attachment)
 		uploadManager.removeFromQueue(attachment)
 		if (fromGallery) totalAttachmentAdapterChanged(null, isMedia)
 		selectedAttachmentAdapterChanged(null, fromGallery, isMedia)
 		configSendButtonEnableState()
-		if (selectedAttachments !!.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(true)
+		if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(true)
 	}
 
 	private fun configAttachmentButtonVisible(visible: Boolean) {
@@ -260,9 +260,9 @@ class MessageInputController(private val context: Context,
 			return
 		}
 		initAdapter()
-		if (editAttachments != null && ! editAttachments.isEmpty()) setSelectedAttachments(editAttachments)
+		if (editAttachments != null && editAttachments.isNotEmpty()) setSelectedAttachments(editAttachments)
 		AsyncTask.execute { configSelectAttachView(channel, isMedia) }
-		if (selectedAttachments !!.isEmpty()) {
+		if (selectedAttachments.isEmpty()) {
 			binding.progressBarFileLoader.visibility = View.VISIBLE
 			onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
 		}
@@ -288,7 +288,7 @@ class MessageInputController(private val context: Context,
 				selectedMediaAttachmentAdapter !!.notifyDataSetChanged()
 				return
 			}
-			val index = selectedAttachments !!.indexOf(attachment)
+			val index = selectedAttachments.indexOf(attachment)
 			if (index != - 1) selectedMediaAttachmentAdapter !!.notifyItemChanged(index)
 		} else {
 			if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(fromGallery, isMedia)
@@ -311,7 +311,7 @@ class MessageInputController(private val context: Context,
 	}
 
 	private fun initAdapter() {
-		selectedAttachments !!.clear()
+		selectedAttachments.clear()
 		uploadManager.resetQueue()
 		binding.lvComposer.removeAllViewsInLayout()
 		binding.rvComposer.removeAllViewsInLayout()
@@ -323,8 +323,6 @@ class MessageInputController(private val context: Context,
 		selectedFileAttachmentAdapter = null
 	}
 
-	// endregion
-	// region Camera
 	fun progressCapturedMedia(channel: Channel, file: File?, isImage: Boolean) {
 		val attachment = AttachmentMetaData(file)
 		attachment.file = file
@@ -342,8 +340,6 @@ class MessageInputController(private val context: Context,
 		uploadAttachment(channel, attachment, false, true)
 	}
 
-	// endregion
-	// region Cammand
 	private fun openCommandView() {
 		onClickOpenBackGroundView(MessageInputType.COMMAND)
 	}
@@ -354,7 +350,7 @@ class MessageInputController(private val context: Context,
 	}
 
 	private val isCommandOrMention: Boolean
-		private get() = messageInputType != null && (messageInputType == MessageInputType.COMMAND
+		get() = messageInputType != null && (messageInputType == MessageInputType.COMMAND
 				|| messageInputType == MessageInputType.MENTION)
 
 	fun checkCommand(text: String) {
@@ -367,7 +363,7 @@ class MessageInputController(private val context: Context,
 			onClickCommandViewOpen(false)
 		} else {
 			setCommandsMentionUsers(text)
-			if (! commands !!.isEmpty() && binding.clCommand.visibility != View.VISIBLE) openCommandView()
+			if (commands !!.isNotEmpty() && binding.clCommand.visibility != View.VISIBLE) openCommandView()
 			setCommandMentionListItemAdapter(text.startsWith("/"))
 		}
 		if (commands == null || commands !!.isEmpty()) closeCommandView()
@@ -412,13 +408,13 @@ class MessageInputController(private val context: Context,
 		commands !!.clear()
 		if (string.startsWith("/")) {
 			val commands = channel.config.commands
-			if (commands == null || commands.isEmpty()) return
+			if (commands.isEmpty()) return
 			val commandStr = string.replace("/", "")
 			setCommands(commandStr)
 			binding.tvCommand.text = commandStr
 		} else {
 			val names = string.split("@").toTypedArray()
-			if (names.size > 0) setMentionUsers(names[names.size - 1])
+			if (names.isNotEmpty()) setMentionUsers(names[names.size - 1])
 		}
 	}
 
