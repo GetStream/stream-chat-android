@@ -98,6 +98,16 @@ class TestDataHelper {
         config = config1
     }
 
+    val channel4 = Channel().apply {
+        type = "messaging"
+        id = "444-testing"
+        cid = "messaging:444-testing"
+        watcherCount = 444
+        watchers = listOf(watcher1)
+        members = listOf(member1, member2)
+        config = config1
+    }
+
     val reaction1 = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user = user2 }
 

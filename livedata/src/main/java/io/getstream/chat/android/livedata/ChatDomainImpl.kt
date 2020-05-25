@@ -288,13 +288,8 @@ class ChatDomainImpl private constructor(
         // make the API call and follow retry policy
         if (online) {
             val runnable = {
-                // TODO: LLC is a bit broken when it comes to creating channels
-                // this syntax is really confusing
-                val data = c.extraData.toMutableMap()
-                data["members"] = c.members
-                val watchChannelRequest = WatchChannelRequest()
-                watchChannelRequest.withData(c.extraData)
-                channelController.watch(watchChannelRequest)
+                val members = c.members.map { it.getUserId() }
+                client.createChannel(c.type, c.id, members, c.extraData)
             }
             val result = runAndRetry(runnable)
             return if (result.isSuccess) {

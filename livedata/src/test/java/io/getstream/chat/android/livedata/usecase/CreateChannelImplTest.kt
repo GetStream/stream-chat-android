@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,17 @@ class CreateChannelImplTest : BaseConnectedIntegrationTest() {
         // use case style syntax
         var channel = chatDomain.useCases.createChannel(data.channel1).execute()
         Truth.assertThat(channel.isSuccess).isTrue()
+    }
+
+    @Test
+    fun createChannelWithMembers() = runBlocking(Dispatchers.IO) {
+        var channelCreateResult = chatDomain.useCases.createChannel(data.channel4).execute()
+        assertSuccess(channelCreateResult)
+        val request = QueryChannelRequest().withMembers(10,0)
+        val channelRetrievedResult = client.queryChannel(data.channel4.type, data.channel4.id, request).execute()
+        assertSuccess(channelRetrievedResult)
+        val channelRetrieved = channelRetrievedResult.data()
+        Truth.assertThat(channelRetrieved.members.size).isEqualTo(2)
     }
 
     @Test
