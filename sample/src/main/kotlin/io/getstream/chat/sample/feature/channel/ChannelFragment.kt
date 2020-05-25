@@ -21,6 +21,6 @@ class ChannelFragment: Fragment(R.layout.fragment_channel) {
 				.bindView(channelHeaderView.apply {
 					onBackClick = { findNavController().navigateUp() }
 				}, this)
-		messageInputView.setViewModel(MessageInputViewModel(cid), this)
+		MessageInputViewModel(cid).bindView(messageInputView, this)
 	}
 }

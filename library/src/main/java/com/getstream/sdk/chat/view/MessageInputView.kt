@@ -261,8 +261,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				Utils.hideSoftKeyboard(context as Activity)
 			}
 		})
-		viewModel.members.observe(lifecycleOwner, Observer { messageInputController.members = it })
-		viewModel.commands.observe(lifecycleOwner, Observer { messageInputController.channelCommands = it })
 	}
 
 	fun configureMembers(members: List<Member>) {
