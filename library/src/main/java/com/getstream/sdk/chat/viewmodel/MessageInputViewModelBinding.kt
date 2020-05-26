@@ -9,6 +9,10 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 	view.onSendMessageListener = object : MessageInputView.OnSendMessageListener {
 		override fun onSendTextMessage(message: String) = sendMessage(message)
 	}
+	view.typeListener = object : MessageInputView.TypeListener {
+		override fun onKeystroke() = keystroke()
+		override fun onStopTyping() = stopTyping()
+	}
 	members.observe(lifecycleOwner, Observer { view.configureMembers(it) })
 	commands.observe(lifecycleOwner, Observer { view.configureCommands(it) })
 }
