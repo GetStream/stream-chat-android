@@ -6,9 +6,14 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
+import org.assertj.core.api.Assertions.assertThat
 import java.util.*
 
-class FakeSocketService(val eventsCollector: MutableList<ChatEvent> = mutableListOf()) : ChatSocketService {
+class FakeSocketService(
+    val eventsCollector: MutableList<ChatEvent> = mutableListOf()
+) : ChatSocketService {
+
+    private var connectionUserId: String? = null
 
     override var state: ChatSocketService.State = ChatSocketService.State.Disconnected(false)
 
@@ -40,8 +45,8 @@ class FakeSocketService(val eventsCollector: MutableList<ChatEvent> = mutableLis
 
     }
 
-    override fun onConnectionResolved(error: ConnectedEvent) {
-
+    override fun onConnectionResolved(event: ConnectedEvent) {
+        connectionUserId = event.me.id
     }
 
     override fun onEvent(event: ChatEvent) {
@@ -50,6 +55,14 @@ class FakeSocketService(val eventsCollector: MutableList<ChatEvent> = mutableLis
 
     override fun setLastEventDate(date: Date) {
 
+    }
+
+    fun verifyConnectionUserId(userId: String) {
+        assertThat(userId).isEqualTo(connectionUserId)
+    }
+
+    fun verifyNoConnectionUserId() {
+        assertThat(connectionUserId).isNull()
     }
 
 }

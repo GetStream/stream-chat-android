@@ -9,18 +9,45 @@ import io.getstream.chat.android.client.socket.EventsParser
 import io.getstream.chat.android.client.utils.observable.FakeSocketService
 import okhttp3.WebSocket
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
 class EventsParserTests {
+
+    val socket = Mockito.mock(WebSocket::class.java)
+    lateinit var eventsCollector: MutableList<ChatEvent>
+    lateinit var service: FakeSocketService
+    private lateinit var parser: EventsParser
+
+    val userId = "hello-user"
+    val eventType = EventType.HEALTH_CHECK
+
+    @Before
+    fun before() {
+        eventsCollector = mutableListOf()
+        service = FakeSocketService(eventsCollector)
+        parser = EventsParser(service, ChatParserImpl())
+    }
+
+    @Test
+    fun firstConnection() {
+        parser.onMessage(socket, "{me:{id:\"$userId\"}}")
+
+        service.verifyConnectionUserId(userId)
+    }
+
+    @Test
+    fun firstInvalidEvent() {
+        parser.onMessage(socket, "{type:\"$eventType\"}")
+
+        service.verifyNoConnectionUserId()
+    }
+
     @Test
     fun mapTypesToObjects() {
-        val socket = Mockito.mock(WebSocket::class.java)
-        val eventsCollector = mutableListOf<ChatEvent>()
-        val parser = EventsParser(FakeSocketService(eventsCollector), ChatParserImpl())
 
-
-        parser.onMessage(socket, "{type: ${EventType.HEALTH_CHECK}}")
+        parser.onMessage(socket, "{me:{id:\"hello\"}, type: ${EventType.HEALTH_CHECK}}")
 
         parser.onMessage(socket, "{type: ${EventType.CHANNEL_TRUNCATED}}")
         parser.onMessage(socket, "{type: ${EventType.NOTIFICATION_CHANNEL_TRUNCATED}}")
