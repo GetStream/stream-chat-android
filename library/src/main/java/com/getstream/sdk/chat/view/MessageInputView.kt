@@ -464,6 +464,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		fun onSendTextMessage(message: String)
 	}
 
+	interface TypeListener {
+		fun onKeystroke()
+		fun onStopTyping()
+	}
+
 	interface AttachmentListener {
 		fun onAddAttachment(attachment: AttachmentMetaData?)
 	}
