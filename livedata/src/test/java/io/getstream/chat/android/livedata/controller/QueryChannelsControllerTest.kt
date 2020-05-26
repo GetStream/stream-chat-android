@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -69,6 +70,7 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    @Ignore("mock me")
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(0, 2)
         val result = queryControllerImpl.runQuery(paginate)

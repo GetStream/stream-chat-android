@@ -174,8 +174,13 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 is MemberRemovedEvent, is NotificationRemovedFromChannel -> {
                     // get the channel, update members, write the channel
                     val channelEntity = channelMap[event.getCid()!!]
+                    var user = event.user
+                    // quite confusing but NotificationRemovedFromChannel is only fired for the current user
+                    if (event is NotificationRemovedFromChannel) {
+                        user = domainImpl.currentUser
+                    }
                     channelEntity?.let {
-                        it.setMember(event.user!!.id, null)
+                        it.setMember(user!!.id, null)
                         channels[it.cid] = it
                     }
                     event.channel?.let { c ->
