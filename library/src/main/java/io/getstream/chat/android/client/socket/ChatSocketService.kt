@@ -18,7 +18,7 @@ interface ChatSocketService {
     fun removeListener(listener: SocketListener)
 
     fun onSocketError(error: ChatError)
-    fun onConnectionResolved(error: ConnectedEvent)
+    fun onConnectionResolved(event: ConnectedEvent)
     fun onEvent(event: ChatEvent)
     fun setLastEventDate(date: Date)
 

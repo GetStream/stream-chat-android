@@ -200,6 +200,7 @@ internal class ChatClientImpl(
     }
 
     override fun disconnect() {
+        connectionListener = null
         socket.disconnect()
         state.reset()
     }
@@ -461,7 +462,7 @@ internal class ChatClientImpl(
     }
 
     override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> {
-        return createChannel(channelType, channelId, mapOf(Pair("members", members)))
+        return createChannel(channelType, channelId, mapOf(Pair(ModelFields.MEMBERS, members)))
     }
 
     override fun createChannel(channelType: String, members: List<String>): Call<Channel> {
@@ -478,7 +479,12 @@ internal class ChatClientImpl(
         members: List<String>,
         extraData: Map<String, Any>
     ): Call<Channel> {
-        return createChannel(channelType, channelId, members, extraData)
+
+        val dataWithMembers = extraData.toMutableMap()
+        dataWithMembers[ModelFields.MEMBERS] = members
+
+        val request = QueryChannelRequest().withData(dataWithMembers)
+        return queryChannel(channelType, channelId, request)
     }
 
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
@@ -489,7 +495,6 @@ internal class ChatClientImpl(
         } else if (error != null) {
             connectionListener?.onError(error)
         }
-
         connectionListener = null
     }
 
