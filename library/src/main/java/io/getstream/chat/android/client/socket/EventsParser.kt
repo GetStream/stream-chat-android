@@ -64,11 +64,13 @@ internal class EventsParser(
             val event = eventMessage.data()
 
             if (!firstMessageReceived) {
-                firstMessageReceived = true
-                val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
 
-                if (connection.isSuccess) {
-                    service.onConnectionResolved(connection.data())
+                val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
+                val data = connection.data()
+
+                if (connection.isSuccess && data.isValid()) {
+                    firstMessageReceived = true
+                    service.onConnectionResolved(data)
                 } else {
                     service.onSocketError(
                         ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())

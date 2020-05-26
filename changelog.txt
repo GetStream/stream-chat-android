@@ -1,3 +1,8 @@
+# 1.4.17 - Mon 26 May 2020
+
+- Fix loop on client.create
+- Fix crash when backend sends first event without me
+
 # 1.4.16 - Mon 25 May 2020
 
 Breaking change:
