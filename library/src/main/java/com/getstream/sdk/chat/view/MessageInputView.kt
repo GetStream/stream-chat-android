@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
+import java.lang.IllegalStateException
 import java.util.Date
 import java.util.UUID
 
@@ -73,6 +74,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 * Permission Request listener
 	 */
 	private var permissionRequestListener: PermissionRequestListener? = null
+
+	var onSendMessageListener: OnSendMessageListener = object : OnSendMessageListener {
+		override fun onSendTextMessage(message: String) {
+			throw IllegalStateException("MessageInputView#onSendMessageListener needs to be configured to send messages")
+		}
+	}
 
 	/**
 	 * The viewModel for handling typing etc.
@@ -126,7 +133,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configOnClickListener() {
-		binding.ivSend.setOnClickListener { view: View? -> onSendMessage() }
+		binding.ivSend.setOnClickListener { onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
 			binding.isAttachFile = true
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
@@ -243,7 +250,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.etMessage.clearFocus()
 	}
 
-	var messageText: String?
+	var messageText: String
 		get() = binding.etMessage.text.toString()
 		set(text) {
 			if (TextUtils.isEmpty(text)) return
@@ -271,29 +278,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController.channelCommands = commands
 	}
 
-	/**
-	 * Prepare message takes the message input string and returns a message object
-	 * You can overwrite this method in case you want to attach more custom properties to the message
-	 */
-	private fun onSendMessage(message: Message?) {
-		binding.ivSend.isEnabled = false
-		if (isEdit) viewModel.editMessage(message) else viewModel.sendMessage(message !!)
-		handleSentMessage()
-	}
-
-	private val newMessage: Message
-		private get() {
-			val message = Message()
-			message.text = messageText !!
-			return message
-		}
-
-	protected fun onSendMessage() {
-		// TODO: fix the horrible naming on the send message flows
-		val message = if (isEdit) editMessage else newMessage
-		onSendMessage(message)
-		handleSentMessage()
-		if (isEdit) Utils.hideSoftKeyboard(context as Activity)
+	private fun onSendMessage() {
+		when (isEdit) {
+			true -> viewModel.editMessage(editMessage)
+			false -> onSendMessageListener.onSendTextMessage(messageText)
+		}.also { handleSentMessage() }
 	}
 
 	private fun handleSentMessage() {
