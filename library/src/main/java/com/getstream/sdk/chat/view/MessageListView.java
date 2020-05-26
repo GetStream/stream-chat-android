@@ -7,11 +7,9 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -19,13 +17,14 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
+import com.getstream.sdk.chat.utils.MessageListItemWrapper;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
-import com.getstream.sdk.chat.viewmodel.ChannelViewModel;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
@@ -46,12 +45,11 @@ import io.getstream.chat.android.client.models.User;
 public class MessageListView extends RecyclerView {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
-    final String TAG = MessageListView.class.getSimpleName();
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     private LinearLayoutManager layoutManager;
     // our connection to the channel scope
-    private ChannelViewModel viewModel;
+//    private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
@@ -61,11 +59,23 @@ public class MessageListView extends RecyclerView {
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-    /** If you are allowed to scroll up or not */
+    private Channel channel;
+    private MessageMoreActionDialog.MessageActionDelegate messageActionDelegate;
+    private int threadParentPosition;
+    private boolean hasNewMessages;
+
+    private Callback endRegionReachedListener;
+    private Callback lastMessageReadListener;
+    private Listener<Message> threadModeSelectedListener;
+    private Callback messageListScrollUpListener;
+
+    /**
+     * If you are allowed to scroll up or not
+     */
     boolean lockScrollUp = true;
-    
+
     private TaggedLogger logger = ChatLogger.Companion.get("MessageListView");
-    
+
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -102,13 +112,6 @@ public class MessageListView extends RecyclerView {
         style = new MessageListViewStyle(context, attrs);
     }
 
-    private void init() {
-        try {
-            Fresco.initialize(getContext());
-        } catch (Exception e) {
-        }
-    }
-
     // set the adapter and apply the style.
     @Override
     public void setAdapter(Adapter adapter) {
@@ -116,9 +119,8 @@ public class MessageListView extends RecyclerView {
     }
 
     public void setAdapterWithStyle(MessageListItemAdapter adapter) {
-
         adapter.setStyle(style);
-        adapter.setGiphySendListener(viewModel::sendGiphy);
+        adapter.setGiphySendListener((Message message, GiphyAction action) -> { /* viewModel::sendGiphy */});
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
@@ -126,7 +128,7 @@ public class MessageListView extends RecyclerView {
         setUserClickListener(userClickListener);
         setReadStateClickListener(readStateClickListener);
         setMessageLongClickListener(messageLongClickListener);
-        adapter.setChannel(getChannel());
+        adapter.setChannel(channel);
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -139,27 +141,30 @@ public class MessageListView extends RecyclerView {
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
 
                     if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
-                        viewModel.loadMore();
+                        //viewModel.loadMore(); // TODO this is event
+                        endRegionReachedListener.invoke();
 
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     if (!hasScrolledUp) {
-                        viewModel.setHasNewMessages(false);
+                        hasNewMessages = false; // TODO this is UI thing
                     }
                     // delay of 100 milliseconds to prevent the effect when the keyboard is displayed.
                     postDelayed(() -> {
-                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition);
+                        // TODO this is event
+//                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition); // TODO this is UI thing
+                        messageListScrollUpListener.invoke();
                         lVPosition = currentLastVisible;
                     }, 100);
                     fVPosition = currentFirstVisible;
-                    viewModel.setThreadParentPosition(lVPosition);
+                    threadParentPosition = lVPosition;
                 }
             }
         });
 
         /*
-        * Lock for 500 milliseconds setMessageListScrollUp in here.
-        * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
-        */
+         * Lock for 500 milliseconds setMessageListScrollUp in here.
+         * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
+         */
 
         this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
                                         int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
@@ -171,11 +176,7 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
-    public void setViewModel(ChannelViewModel viewModel, LifecycleOwner lifecycleOwner) {
-        this.viewModel = viewModel;
-        init();
-
-
+    public void init() { // TODO call it internally
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
         adapter.setHasStableIds(true);
@@ -188,103 +189,100 @@ public class MessageListView extends RecyclerView {
             adapter.setBubbleHelper(bubbleHelper);
         }
 
-
-        // use livedata and observe
-        viewModel.getEntities().observe(lifecycleOwner, messageListItemWrapper -> {
-            List<MessageListItem> entities = messageListItemWrapper.getListEntities();
-            logger.logI("Observe found this many entities: " + entities.size());
-
-            // Adapter initialization for channel and thread swapping
-            boolean backFromThread = false;
-            if (adapter.isThread() != messageListItemWrapper.isThread()) {
-                adapter.setThread(messageListItemWrapper.isThread());
-                backFromThread = !messageListItemWrapper.isThread();
-            }
-
-            adapter.replaceEntities(entities);
-
-            // Scroll to origin position on return from thread
-            if (backFromThread) {
-                layoutManager.scrollToPosition(viewModel.getThreadParentPosition());
-                viewModel.markLastMessageRead();
-                return;
-            }
-
-            // Scroll to bottom position for typing indicator
-            if (messageListItemWrapper.isTyping() && scrolledBottom()) {
-                int newPosition = adapter.getItemCount() - 1;
-                layoutManager.scrollToPosition(newPosition);
-                return;
-            }
-            // check lastmessage update
-            if (!entities.isEmpty()) {
-                Message lastMessage = entities.get(entities.size() - 1).getMessage();
-                if (lastMessage != null
-                        && scrolledBottom()
-                        && justUpdated(lastMessage)) {
-                    int newPosition = adapter.getItemCount() - 1;
-                    logger.logI( String.format("just update last message"));
-
-                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
-
-                    return;
-                }
-            }
-
-            int oldSize = adapter.getItemCount();
-            int newSize = adapter.getItemCount();
-            int sizeGrewBy = newSize - oldSize;
-
-            if (!messageListItemWrapper.getHasNewMessages()) {
-                // we only touch scroll for new messages, we ignore
-                // read
-                // typing
-                // message updates
-                logger.logI( String.format("no Scroll no new message"));
-                return;
-            }
-
-            if (oldSize == 0 && newSize != 0) {
-                int newPosition = adapter.getItemCount() - 1;
-                layoutManager.scrollToPosition(newPosition);
-                logger.logI( String.format("Scroll: First load scrolling down to bottom %d", newPosition));
-            } else if (messageListItemWrapper.getLoadingMore()) {
-                // the load more behaviour is different, scroll positions starts out at 0
-                // to stay at the relative 0 we should go to 0 + size of new messages...
-
-                int newPosition;// = oldPosition + sizeGrewBy;
-                newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
-                layoutManager.scrollToPosition(newPosition);
-            } else {
-                if (newSize == 0) return;
-                // regular new message behaviour
-                // we scroll down all the way, unless you've scrolled up
-                // if you've scrolled up we set a variable on the viewmodel that there are new messages
-                int newPosition = adapter.getItemCount() - 1;
-                int layoutSize = layoutManager.getItemCount();
-                logger.logI( String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
-
-                if (hasScrolledUp) {
-                    // always scroll to bottom when current user posts a message
-                    if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
-                        layoutManager.scrollToPosition(newPosition);
-                    }
-                    viewModel.setHasNewMessages(true);
-                } else {
-                    layoutManager.scrollToPosition(newPosition);
-                    viewModel.setHasNewMessages(false);
-                }
-                // we want to mark read if there is a new message
-                // and this view is currently being displayed...
-                // we can't always run it since read and typing events also influence this list..
-                viewModel.markLastMessageRead();
-            }
-        });
-
-        viewModel.getActiveThread().observe(lifecycleOwner, message -> {
-        });
-
         this.setAdapterWithStyle(adapter);
+    }
+
+    public void displayNewMessage(MessageListItemWrapper listItem) {
+        List<MessageListItem> entities = listItem.getListEntities();
+        logger.logI("Observe found this many entities: " + entities.size());
+
+        // Adapter initialization for channel and thread swapping
+        boolean backFromThread = false;
+        if (adapter.isThread() != listItem.isThread()) {
+            adapter.setThread(listItem.isThread());
+            backFromThread = !listItem.isThread();
+        }
+
+        adapter.replaceEntities(entities);
+
+        // Scroll to origin position on return from thread
+        if (backFromThread) {
+            layoutManager.scrollToPosition(this.threadParentPosition);
+            //viewModel.markLastMessageRead(); // TODO this is event
+            lastMessageReadListener.invoke();
+            return;
+        }
+
+        // Scroll to bottom position for typing indicator
+        if (listItem.isTyping() && scrolledBottom()) {
+            int newPosition = adapter.getItemCount() - 1;
+            layoutManager.scrollToPosition(newPosition);
+            return;
+        }
+        // check lastmessage update
+        if (!entities.isEmpty()) {
+            Message lastMessage = entities.get(entities.size() - 1).getMessage();
+            if (lastMessage != null
+                    && scrolledBottom()
+                    && justUpdated(lastMessage)) {
+                int newPosition = adapter.getItemCount() - 1;
+                logger.logI(String.format("just update last message"));
+
+                postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
+
+                return;
+            }
+        }
+
+        int oldSize = adapter.getItemCount();
+        int newSize = adapter.getItemCount();
+        int sizeGrewBy = newSize - oldSize;
+
+        if (!listItem.getHasNewMessages()) {
+            // we only touch scroll for new messages, we ignore
+            // read
+            // typing
+            // message updates
+            logger.logI(String.format("no Scroll no new message"));
+            return;
+        }
+
+        if (oldSize == 0 && newSize != 0) {
+            int newPosition = adapter.getItemCount() - 1;
+            layoutManager.scrollToPosition(newPosition);
+            logger.logI(String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+        } else if (listItem.getLoadingMore()) {
+            // the load more behaviour is different, scroll positions starts out at 0
+            // to stay at the relative 0 we should go to 0 + size of new messages...
+
+            int newPosition;// = oldPosition + sizeGrewBy;
+            newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
+            layoutManager.scrollToPosition(newPosition);
+        } else {
+            if (newSize == 0) return;
+            // regular new message behaviour
+            // we scroll down all the way, unless you've scrolled up
+            // if you've scrolled up we set a variable on the viewmodel that there are new messages
+            int newPosition = adapter.getItemCount() - 1;
+            int layoutSize = layoutManager.getItemCount();
+            logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
+
+            if (hasScrolledUp) {
+                // always scroll to bottom when current user posts a message
+                if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
+                    layoutManager.scrollToPosition(newPosition);
+                }
+                hasNewMessages = true; // TODO this is UI thing
+            } else {
+                layoutManager.scrollToPosition(newPosition);
+                hasNewMessages = false; // TODO this is UI thing
+            }
+            // we want to mark read if there is a new message
+            // and this view is currently being displayed...
+            // we can't always run it since read and typing events also influence this list..
+            //viewModel.markLastMessageRead(); // TODO this is event
+            lastMessageReadListener.invoke();
+        }
     }
 
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
@@ -294,10 +292,12 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public Channel getChannel() {
-        if (viewModel != null)
-            return viewModel.getChannel();
-        return null;
+    public void setChannel(Channel channel) {
+        this.channel = channel;
+    }
+
+    public void setMessageActionDelegate(MessageMoreActionDialog.MessageActionDelegate delegate) {
+        this.messageActionDelegate = delegate;
     }
 
     public MessageListViewStyle getStyle() {
@@ -333,8 +333,9 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getReplyCount() > 0) {
-                    viewModel.setActiveThread(message);
-                }else{
+                    // viewModel.setActiveThread(message); // TODO this is event
+                    threadModeSelectedListener.invoke(message);
+                } else {
                     //viewModel.sendMessage(message);
                 }
             });
@@ -350,11 +351,10 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                new MessageMoreActionDialog(getContext())
-                        .setChannelViewModel(viewModel)
-                        .setMessage(message)
-                        .setStyle(style)
-                        .show());
+                    new MessageMoreActionDialog(getContext(), channel, messageActionDelegate)
+                            .setMessage(message)
+                            .setStyle(style)
+                            .show());
         }
     }
 
@@ -383,8 +383,7 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReactionViewClickListener(message -> {
                 Utils.hideSoftKeyboard((Activity) getContext());
-                new MessageMoreActionDialog(getContext())
-                        .setChannelViewModel(viewModel)
+                new MessageMoreActionDialog(getContext(), channel, messageActionDelegate)
                         .setMessage(message)
                         .setStyle(style)
                         .show();
@@ -413,7 +412,6 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReadStateClickListener(reads -> {
                 new ReadUsersDialog(getContext())
-                        .setChannelViewModel(viewModel)
                         .setReads(reads)
                         .setStyle(style)
                         .show();
@@ -428,7 +426,25 @@ public class MessageListView extends RecyclerView {
         }
     }
 
+    public void setHasNewMessages(boolean hasNewMessages) {
+        this.hasNewMessages = hasNewMessages;
+    }
 
+    public void setEndRegionReachedListener(Callback endRegionReachedListener) {
+        this.endRegionReachedListener = endRegionReachedListener;
+    }
+
+    public void setLastMessageReadListener(Callback lastMessageReadListener) {
+        this.lastMessageReadListener = lastMessageReadListener;
+    }
+
+    public void setThreadModeSelectedListener(Listener<Message> threadModeSelectedListener) {
+        this.threadModeSelectedListener = threadModeSelectedListener;
+    }
+
+    public void setMessageListScrollUpListener(Callback messageListScrollUpListener) {
+        this.messageListScrollUpListener = messageListScrollUpListener;
+    }
 
     public interface HeaderAvatarGroupClickListener {
         void onHeaderAvatarGroupClick(Channel channel);
@@ -464,6 +480,16 @@ public class MessageListView extends RecyclerView {
 
     public interface ReactionViewClickListener {
         void onReactionViewClick(Message message);
+    }
+
+    @FunctionalInterface
+    public interface Callback {
+        void invoke();
+    }
+
+    @FunctionalInterface
+    public interface Listener<T> {
+        void invoke(T param);
     }
 
     public interface BubbleHelper {
