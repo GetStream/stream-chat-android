@@ -39,6 +39,8 @@ data class Channel(
     @IgnoreDeserialisation
     var unreadCount: Int? = null,
 
+    val team:String = "",
+
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()

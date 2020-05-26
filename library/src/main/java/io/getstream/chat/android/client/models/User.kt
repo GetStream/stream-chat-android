@@ -47,6 +47,8 @@ data class User(
     var mutes: List<Mute> = mutableListOf(),
     //endregion
 
+    val teams:List<String> = listOf(),
+
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
