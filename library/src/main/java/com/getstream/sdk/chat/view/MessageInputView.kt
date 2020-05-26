@@ -28,7 +28,6 @@ import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
-import com.getstream.sdk.chat.interfaces.MessageSendListener
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.CameraDestination
@@ -66,11 +65,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 * Styling class for the MessageInput
 	 */
 	private val style: MessageInputStyle = MessageInputStyle(context, attrs)
-
-	/**
-	 * Fired when a message is sent
-	 */
-	private var messageSendListener: MessageSendListener? = null
 
 	/**
 	 * Permission Request listener
@@ -303,32 +297,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.ivSend.isEnabled = true
 	}
 
-	/**
-	 * Prepare message takes the message input string and returns a message object
-	 * You can overwrite this method in case you want to attach more custom properties to the message
-	 */
-	protected fun prepareNewMessage(message: Message): Message {
-		// Check file uploading
-		if (messageInputController.isUploadingFile) {
-			// message.user = ChatDomain.instance().getCurrentUser();
-			val clientSideID = generateMessageID()
-			message.id = clientSideID
-			message.createdAt = Date()
-			//TODO: llc check sync
-			//message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-		} else {
-			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController.getSelectedAttachments()))
-		}
-		return message
-	}
-
-	protected fun prepareEditMessage(message: Message): Message {
-		message.text = messageText !!
-		val newAttachments = messageInputController.getSelectedAttachments()
-		message.attachments.addAll(LlcMigrationUtils.getAttachments(newAttachments))
-		return message
-	}
-
 	protected val editMessage: Message?
 		protected get() {
 			val message = viewModel.getEditMessage().value
@@ -452,18 +420,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
-	protected fun setMessageSendListener(manager: MessageSendListener?) {
-		messageSendListener = manager
-	}
-
 	fun setPermissionRequestListener(l: PermissionRequestListener?) {
 		permissionRequestListener = l
-	}
-
-	private fun generateMessageID(): String {
-		val currentUser = ChatClient.instance().getCurrentUser()
-		val id = currentUser !!.id
-		return id + "-" + UUID.randomUUID().toString()
 	}
 
 	interface OnSendMessageListener {
