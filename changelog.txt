@@ -1,3 +1,12 @@
+# 1.5.0 - Mon 26 May 2020
+
+🚨 Breaking change:
+- Add new constructor field to `Channel`: `team`
+- Add new constructor field to `User`: `teams`
+
+✅ Other changes:
+- Add `Filter.contains`
+
 # 1.4.17 - Mon 26 May 2020
 
 - Fix loop on client.create
