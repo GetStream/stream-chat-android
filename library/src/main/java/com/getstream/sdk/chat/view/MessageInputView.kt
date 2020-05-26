@@ -341,8 +341,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			return message
 		}
 
-	// endregion
-	// region send giphy from keyboard
 	private fun sendGiphyFromKeyboard(inputContentInfo: InputContentInfoCompat,
 	                                  flags: Int, opts: Bundle): Boolean {
 		if (BuildCompat.isAtLeastQ()
@@ -366,11 +364,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		return true
 	}
 
-	// endregion
 	protected val isEdit: Boolean
 		protected get() = viewModel.isEditing
 
-	// region edit message
 	protected fun editMessage(message: Message?) {
 		if (message == null) return
 
@@ -398,8 +394,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
-	// endregion
-	// region permission check
 	fun captureMedia(requestCode: Int, resultCode: Int, data: Intent?) {
 		if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE
 				&& resultCode == Activity.RESULT_OK) {
@@ -426,7 +420,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		context.sendBroadcast(scanIntent)
 	}
 
-	/*Used for handling requestPermissionsResult*/
 	fun permissionResult(requestCode: Int,
 	                     permissions: Array<String>,
 	                     grantResults: IntArray) {
@@ -464,8 +457,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
-	// endregion
-	// region listeners
 	protected fun setMessageSendListener(manager: MessageSendListener?) {
 		messageSendListener = manager
 	}
@@ -480,21 +471,18 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		return id + "-" + UUID.randomUUID().toString()
 	}
 
-	/**
-	 * This interface is called when you add an attachment
-	 */
+	interface OnSendMessageListener {
+		fun onSendTextMessage(message: String)
+	}
+
 	interface AttachmentListener {
 		fun onAddAttachment(attachment: AttachmentMetaData?)
 	}
 
-	/**
-	 * Interface for Permission request
-	 */
 	interface PermissionRequestListener {
 		fun openPermissionRequest()
-	} // endregion
+	}
 
-	// region constructor
 	init {
 		applyStyle()
 	}
