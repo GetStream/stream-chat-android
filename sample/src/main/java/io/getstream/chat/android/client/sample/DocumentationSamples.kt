@@ -9,10 +9,13 @@ import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.sample.DocumentationSamplesJava
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import java.io.File
+import java.util.*
 
 
 val client = ChatClient.instance()
@@ -435,7 +438,28 @@ fun notificationEvents() {
 }
 
 fun createChannelController() {
+
+
     val channelController = client.channel(channelType, channelId)
+
+    val extraData = mutableMapOf<String, Any>()
+    val members: MutableList<String> = ArrayList()
+
+    extraData["name"] = "Founder Chat"
+    extraData["image"] = "http://bit.ly/2O35mws"
+
+    members.add("thierry")
+    members.add("tommaso")
+
+    channelController
+        .create(members, extraData)
+        .enqueue { result ->
+            if (result.isSuccess) {
+                val channel = result.data()
+            } else {
+                val error = result.error()
+            }
+        }
 }
 
 fun watch() {

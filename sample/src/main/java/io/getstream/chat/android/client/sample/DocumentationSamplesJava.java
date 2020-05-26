@@ -671,6 +671,24 @@ public class DocumentationSamplesJava {
         static class ChannelInitilization {
             {
                 ChannelController channelController = client.channel(channelType, channelId);
+
+                Map<String, Object> extraData = new HashMap<>();
+                List<String> members = new ArrayList<>();
+
+                extraData.put("name", "Founder Chat");
+                extraData.put("image", "http://bit.ly/2O35mws");
+
+                members.add("thierry");
+                members.add("tommaso");
+
+                channelController.create(members, extraData).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        Channel channel = result.data();
+                    } else {
+                        ChatError error = result.error();
+                    }
+                    return Unit.INSTANCE;
+                });
             }
         }
 
