@@ -48,6 +48,8 @@ import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import whenFalse
+import whenTrue
 import java.io.File
 import java.lang.IllegalStateException
 import java.util.Date
@@ -79,6 +81,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		override fun onSendTextMessage(message: String) {
 			throw IllegalStateException("MessageInputView#onSendMessageListener needs to be configured to send messages")
 		}
+	}
+
+	var typeListener: TypeListener = object : TypeListener {
+		override fun onKeystroke() { }
+		override fun onStopTyping() { }
 	}
 
 	/**
@@ -148,17 +155,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				Utils.showSoftKeyboard(context as Activity)
 			} else Utils.hideSoftKeyboard(context as Activity)
 		}
-		TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable) }
+		TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
 		binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle -> sendGiphyFromKeyboard(inputContentInfo, flags, opts) }
 	}
 
-	private fun keyStroke(editable: Editable) {
-		if (editable.toString().length > 0) viewModel.keystroke()
-		val messageText = messageText !!
-		// detect commands
+	private fun keyStroke(inputMessage: String) {
 		messageInputController.checkCommand(messageText)
-		val s_ = messageText.replace("\\s+".toRegex(), "")
-		if (TextUtils.isEmpty(s_)) binding.activeMessageSend = false else binding.activeMessageSend = messageText.length != 0
+		binding.activeMessageSend = inputMessage.isNotBlank()
+				.whenTrue { typeListener.onKeystroke() }
+				.whenFalse { typeListener.onStopTyping() }
 		configSendButtonEnableState()
 	}
 
@@ -286,6 +291,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun handleSentMessage() {
+		typeListener.onStopTyping()
 		initSendMessage()
 		if (isEdit) clearFocus()
 	}
