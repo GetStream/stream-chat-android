@@ -203,7 +203,4 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(1)
     }
-
-
-
 }
