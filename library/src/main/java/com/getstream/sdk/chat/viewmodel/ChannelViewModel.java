@@ -41,6 +41,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import kotlin.Unit;
 
+@Deprecated
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();
