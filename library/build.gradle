@@ -134,7 +134,7 @@ dependencies {
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     testImplementation "org.json:json:20190722"
     testImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation 'org.amshove.kluent:kluent-android:1.61'
+    testImplementation 'org.amshove.kluent:kluent:1.61'
 
     //api project(path: ':livedata')
     api 'com.github.GetStream:stream-chat-android-livedata:0.5.1'
