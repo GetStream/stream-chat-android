@@ -1,3 +1,7 @@
+# 1.5.1 - Wed 27 May 2020
+
+- Add filter contains with any value
+
 # 1.5.0 - Mon 26 May 2020
 
 🚨 Breaking change:
