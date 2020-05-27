@@ -41,7 +41,6 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
@@ -51,8 +50,6 @@ import whenFalse
 import whenTrue
 import java.io.File
 import java.lang.IllegalStateException
-import java.util.Date
-import java.util.UUID
 
 class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
 	/**
@@ -71,15 +68,17 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private var permissionRequestListener: PermissionRequestListener? = null
 
-	var onSendMessageListener: OnSendMessageListener = object : OnSendMessageListener {
-		override fun onSendTextMessage(message: String) {
-			throw IllegalStateException("MessageInputView#onSendMessageListener needs to be configured to send messages")
-		}
+	var messageSendHandler: (message: String) -> Unit = {
+		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 	}
 
-	var typeListener: TypeListener = object : TypeListener {
-		override fun onKeystroke() { }
-		override fun onStopTyping() { }
+	private var typeListeners: List<TypeListener> = listOf()
+	fun addTypeListener(typeListener: TypeListener) {
+		typeListeners = typeListeners + typeListener
+	}
+
+	fun removeTypeListener(typeListener: TypeListener) {
+		typeListeners = typeListeners - typeListener
 	}
 
 	/**
@@ -156,8 +155,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun keyStroke(inputMessage: String) {
 		messageInputController.checkCommand(messageText)
 		binding.activeMessageSend = inputMessage.isNotBlank()
-				.whenTrue { typeListener.onKeystroke() }
-				.whenFalse { typeListener.onStopTyping() }
+				.whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
+				.whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
 		configSendButtonEnableState()
 	}
 
@@ -280,12 +279,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun onSendMessage() {
 		when (isEdit) {
 			true -> viewModel.editMessage(editMessage)
-			false -> onSendMessageListener.onSendTextMessage(messageText)
+			false -> messageSendHandler(messageText)
 		}.also { handleSentMessage() }
 	}
 
 	private fun handleSentMessage() {
-		typeListener.onStopTyping()
+		typeListeners.forEach(TypeListener::onStopTyping)
 		initSendMessage()
 		if (isEdit) clearFocus()
 	}
@@ -422,10 +421,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	fun setPermissionRequestListener(l: PermissionRequestListener?) {
 		permissionRequestListener = l
-	}
-
-	interface OnSendMessageListener {
-		fun onSendTextMessage(message: String)
 	}
 
 	interface TypeListener {
