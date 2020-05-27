@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.getstream.chat.android.client.models.Filters.and;
+import static io.getstream.chat.android.client.models.Filters.eq;
+
 public class DocumentationSamplesJava {
 
     static ChatClient client = ChatClient.instance();
@@ -935,7 +938,7 @@ public class DocumentationSamplesJava {
                 int messageLimit = 0;
                 QuerySort sort = new QuerySort();
 
-                FilterObject mutedFiler = Filters.eq("muted", false);
+                FilterObject mutedFiler = eq("muted", false);
 
                 client.queryChannels(
                         new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
@@ -943,7 +946,7 @@ public class DocumentationSamplesJava {
 
                 // retrieve muted channels
 
-                FilterObject unmutedFilter = Filters.eq("muted", true);
+                FilterObject unmutedFilter = eq("muted", true);
 
                 client.queryChannels(
                         new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
@@ -1115,6 +1118,45 @@ public class DocumentationSamplesJava {
                 }
             }
 
+        }
+
+        static class MultiTenantAndTeams {
+            static void channelTeam() {
+                Map<String, Object> extraData = new HashMap<>();
+                extraData.put("team", "red");
+                client.createChannel("messaging", "red-general", extraData).enqueue(result -> {
+
+                    if (result.isSuccess()) {
+                        Channel channel = result.data();
+                    } else {
+                        ChatError error = result.error();
+                    }
+
+                    return Unit.INSTANCE;
+                });
+            }
+
+            static void userSearch() {
+
+                FilterObject filter = and(
+                        eq("name", "Jordan"),
+                        eq("teams", Filters.contains("red"))
+                );
+
+                int offset = 0;
+                int limit = 1;
+                QuerySort sort = null;
+                boolean presence = false;
+
+                client.queryUsers(new QueryUsersRequest(filter, offset, limit, sort, presence)).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        List<User> users = result.data();
+                    } else {
+                        ChatError error = result.error();
+                    }
+                    return Unit.INSTANCE;
+                });
+            }
         }
     }
 }

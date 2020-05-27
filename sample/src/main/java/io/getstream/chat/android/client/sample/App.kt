@@ -112,6 +112,8 @@ class App : Application() {
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
+
+        client.disconnect()
     }
 
     var latestResumed: Activity? = null
