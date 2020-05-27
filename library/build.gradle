@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
 
-        versionName "4.2.9-beta-1"
+        versionName "4.2.9-beta-2"
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
@@ -119,7 +119,7 @@ dependencies {
 
 
     //api project(path: ':livedata')
-    api 'com.github.GetStream:stream-chat-android-livedata:0.4.7'
+    api 'com.github.GetStream:stream-chat-android-livedata:0.6.0'
 
     implementation "io.coil-kt:coil:0.10.1"
 

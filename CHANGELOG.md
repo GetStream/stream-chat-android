@@ -1,3 +1,7 @@
+## May 15th, 2020 - 4.2.9-beta-2
+
+- Update to the latest livedata: 0.6.0
+
 ## May 15th, 2020 - 4.2.8-beta-1
 
 - Update to the latest livedata: 0.4.6
