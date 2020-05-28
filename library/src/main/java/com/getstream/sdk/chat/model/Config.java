@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import androidx.room.TypeConverters;
+import io.getstream.chat.android.client.models.Command;
 
 /**
  * A config
