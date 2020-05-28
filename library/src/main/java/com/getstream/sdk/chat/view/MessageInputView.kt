@@ -28,7 +28,6 @@ import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
-import com.getstream.sdk.chat.interfaces.MessageSendListener
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.CameraDestination
@@ -42,15 +41,15 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import whenFalse
+import whenTrue
 import java.io.File
-import java.util.Date
-import java.util.UUID
+import java.lang.IllegalStateException
 
 class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
 	/**
@@ -65,14 +64,22 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private val style: MessageInputStyle = MessageInputStyle(context, attrs)
 
 	/**
-	 * Fired when a message is sent
-	 */
-	private var messageSendListener: MessageSendListener? = null
-
-	/**
 	 * Permission Request listener
 	 */
 	private var permissionRequestListener: PermissionRequestListener? = null
+
+	var messageSendHandler: (message: String) -> Unit = {
+		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+	}
+
+	private var typeListeners: List<TypeListener> = listOf()
+	fun addTypeListener(typeListener: TypeListener) {
+		typeListeners = typeListeners + typeListener
+	}
+
+	fun removeTypeListener(typeListener: TypeListener) {
+		typeListeners = typeListeners - typeListener
+	}
 
 	/**
 	 * The viewModel for handling typing etc.
@@ -126,7 +133,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configOnClickListener() {
-		binding.ivSend.setOnClickListener { view: View? -> onSendMessage() }
+		binding.ivSend.setOnClickListener { onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
 			binding.isAttachFile = true
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
@@ -141,17 +148,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				Utils.showSoftKeyboard(context as Activity)
 			} else Utils.hideSoftKeyboard(context as Activity)
 		}
-		TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable) }
+		TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
 		binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle -> sendGiphyFromKeyboard(inputContentInfo, flags, opts) }
 	}
 
-	private fun keyStroke(editable: Editable) {
-		if (editable.toString().length > 0) viewModel.keystroke()
-		val messageText = messageText !!
-		// detect commands
+	private fun keyStroke(inputMessage: String) {
 		messageInputController.checkCommand(messageText)
-		val s_ = messageText.replace("\\s+".toRegex(), "")
-		if (TextUtils.isEmpty(s_)) binding.activeMessageSend = false else binding.activeMessageSend = messageText.length != 0
+		binding.activeMessageSend = inputMessage.isNotBlank()
+				.whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
+				.whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
 		configSendButtonEnableState()
 	}
 
@@ -243,7 +248,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.etMessage.clearFocus()
 	}
 
-	var messageText: String?
+	var messageText: String
 		get() = binding.etMessage.text.toString()
 		set(text) {
 			if (TextUtils.isEmpty(text)) return
@@ -271,32 +276,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController.channelCommands = commands
 	}
 
-	/**
-	 * Prepare message takes the message input string and returns a message object
-	 * You can overwrite this method in case you want to attach more custom properties to the message
-	 */
-	private fun onSendMessage(message: Message?) {
-		binding.ivSend.isEnabled = false
-		if (isEdit) viewModel.editMessage(message) else viewModel.sendMessage(message !!)
-		handleSentMessage()
-	}
-
-	private val newMessage: Message
-		private get() {
-			val message = Message()
-			message.text = messageText !!
-			return message
-		}
-
-	protected fun onSendMessage() {
-		// TODO: fix the horrible naming on the send message flows
-		val message = if (isEdit) editMessage else newMessage
-		onSendMessage(message)
-		handleSentMessage()
-		if (isEdit) Utils.hideSoftKeyboard(context as Activity)
+	private fun onSendMessage() {
+		when (isEdit) {
+			true -> viewModel.editMessage(editMessage)
+			false -> messageSendHandler(messageText)
+		}.also { handleSentMessage() }
 	}
 
 	private fun handleSentMessage() {
+		typeListeners.forEach(TypeListener::onStopTyping)
 		initSendMessage()
 		if (isEdit) clearFocus()
 	}
@@ -308,32 +296,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.ivSend.isEnabled = true
 	}
 
-	/**
-	 * Prepare message takes the message input string and returns a message object
-	 * You can overwrite this method in case you want to attach more custom properties to the message
-	 */
-	protected fun prepareNewMessage(message: Message): Message {
-		// Check file uploading
-		if (messageInputController.isUploadingFile) {
-			// message.user = ChatDomain.instance().getCurrentUser();
-			val clientSideID = generateMessageID()
-			message.id = clientSideID
-			message.createdAt = Date()
-			//TODO: llc check sync
-			//message.setSyncStatus(Sync.LOCAL_UPDATE_PENDING);
-		} else {
-			message.attachments.addAll(LlcMigrationUtils.getAttachments(messageInputController.getSelectedAttachments()))
-		}
-		return message
-	}
-
-	protected fun prepareEditMessage(message: Message): Message {
-		message.text = messageText !!
-		val newAttachments = messageInputController.getSelectedAttachments()
-		message.attachments.addAll(LlcMigrationUtils.getAttachments(newAttachments))
-		return message
-	}
-
 	protected val editMessage: Message?
 		protected get() {
 			val message = viewModel.getEditMessage().value
@@ -341,8 +303,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			return message
 		}
 
-	// endregion
-	// region send giphy from keyboard
 	private fun sendGiphyFromKeyboard(inputContentInfo: InputContentInfoCompat,
 	                                  flags: Int, opts: Bundle): Boolean {
 		if (BuildCompat.isAtLeastQ()
@@ -366,11 +326,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		return true
 	}
 
-	// endregion
 	protected val isEdit: Boolean
 		protected get() = viewModel.isEditing
 
-	// region edit message
 	protected fun editMessage(message: Message?) {
 		if (message == null) return
 
@@ -398,8 +356,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
-	// endregion
-	// region permission check
 	fun captureMedia(requestCode: Int, resultCode: Int, data: Intent?) {
 		if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE
 				&& resultCode == Activity.RESULT_OK) {
@@ -426,7 +382,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		context.sendBroadcast(scanIntent)
 	}
 
-	/*Used for handling requestPermissionsResult*/
 	fun permissionResult(requestCode: Int,
 	                     permissions: Array<String>,
 	                     grantResults: IntArray) {
@@ -464,37 +419,23 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
-	// endregion
-	// region listeners
-	protected fun setMessageSendListener(manager: MessageSendListener?) {
-		messageSendListener = manager
-	}
-
 	fun setPermissionRequestListener(l: PermissionRequestListener?) {
 		permissionRequestListener = l
 	}
 
-	private fun generateMessageID(): String {
-		val currentUser = ChatClient.instance().getCurrentUser()
-		val id = currentUser !!.id
-		return id + "-" + UUID.randomUUID().toString()
+	interface TypeListener {
+		fun onKeystroke()
+		fun onStopTyping()
 	}
 
-	/**
-	 * This interface is called when you add an attachment
-	 */
 	interface AttachmentListener {
 		fun onAddAttachment(attachment: AttachmentMetaData?)
 	}
 
-	/**
-	 * Interface for Permission request
-	 */
 	interface PermissionRequestListener {
 		fun openPermissionRequest()
-	} // endregion
+	}
 
-	// region constructor
 	init {
 		applyStyle()
 	}
