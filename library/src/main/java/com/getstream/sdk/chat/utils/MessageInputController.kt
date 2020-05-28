@@ -423,6 +423,14 @@ class MessageInputController(private val context: Context,
 				.filter { it.getExtraValue("name", "").contains(namePattern, true) }
 				.toMutableList()
 	}
+
+	fun onCommandSelected(command: Command) {
+		view.messageText = "/${command.name} "
+	}
+
+	fun onUserSelected(currentMessage: String, user: User) {
+		view.messageText = "${currentMessage.substringBeforeLast("@")}@${user.name} "
+	}
 }
 
 private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
