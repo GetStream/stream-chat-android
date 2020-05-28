@@ -24,7 +24,6 @@ import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
@@ -67,7 +66,6 @@ public class MessageListView extends RecyclerView {
     private Callback endRegionReachedListener;
     private Callback lastMessageReadListener;
     private Listener<Message> threadModeSelectedListener;
-    private Callback messageListScrollUpListener;
 
     /**
      * If you are allowed to scroll up or not
@@ -152,7 +150,7 @@ public class MessageListView extends RecyclerView {
                     postDelayed(() -> {
                         // TODO this is event
 //                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition); // TODO this is UI thing
-                        messageListScrollUpListener.invoke();
+//                        messageListScrollUpListener.invoke();
                         lVPosition = currentLastVisible;
                     }, 100);
                     fVPosition = currentFirstVisible;
@@ -440,10 +438,6 @@ public class MessageListView extends RecyclerView {
 
     public void setThreadModeSelectedListener(Listener<Message> threadModeSelectedListener) {
         this.threadModeSelectedListener = threadModeSelectedListener;
-    }
-
-    public void setMessageListScrollUpListener(Callback messageListScrollUpListener) {
-        this.messageListScrollUpListener = messageListScrollUpListener;
     }
 
     public interface HeaderAvatarGroupClickListener {
