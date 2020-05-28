@@ -7,12 +7,10 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
-import android.text.TextUtils
 import android.view.View
 import android.widget.AdapterView
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter
-import com.getstream.sdk.chat.adapter.CommandMentionListItemAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
@@ -46,8 +44,6 @@ class MessageInputController(private val context: Context,
 	private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
 	private var fileAttachmentAdapter: AttachmentListAdapter? = null
 	private var selectedFileAttachmentAdapter: AttachmentListAdapter? = null
-	private var commandMentionListItemAdapter: CommandMentionListItemAdapter<MessageInputStyle>? = null
-	private var commands: MutableList<Any>? = null
 	private var messageInputType: MessageInputType? = null
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
 	private var attachmentData: List<AttachmentMetaData>? = null
@@ -70,7 +66,6 @@ class MessageInputController(private val context: Context,
 		binding.clTitle.visibility = View.VISIBLE
 		binding.btnClose.visibility = View.VISIBLE
 		binding.clAddFile.visibility = View.GONE
-		binding.clCommand.visibility = View.GONE
 		binding.clSelectPhoto.visibility = View.GONE
 		when (type) {
 			MessageInputType.EDIT_MESSAGE -> {
@@ -85,7 +80,6 @@ class MessageInputController(private val context: Context,
 			}
 			MessageInputType.COMMAND, MessageInputType.MENTION -> {
 				binding.btnClose.visibility = View.GONE
-				binding.clCommand.visibility = View.VISIBLE
 			}
 		}
 		binding.tvTitle.text = type.getLabel(context)
@@ -119,15 +113,11 @@ class MessageInputController(private val context: Context,
 		binding.clTitle.visibility = View.GONE
 		binding.clAddFile.visibility = View.GONE
 		binding.clSelectPhoto.visibility = View.GONE
-		binding.clCommand.visibility = View.GONE
 		binding.root.setBackgroundResource(0)
 		messageInputType = null
-		commandMentionListItemAdapter = null
 		configAttachmentButtonVisible(true)
 	}
 
-	// endregion
-	// region Upload Attachment File
 	private fun configSelectAttachView(channel: Channel, isMedia: Boolean) {
 		binding.isAttachFile = ! isMedia
 		getAttachmentsFromLocal(isMedia)
@@ -342,86 +332,17 @@ class MessageInputController(private val context: Context,
 		uploadAttachment(channel, attachment, false, true)
 	}
 
-	private fun openCommandView() {
-		onClickOpenBackGroundView(MessageInputType.COMMAND)
-	}
-
-	private fun closeCommandView() {
-		if (isCommandOrMention) onClickCloseBackGroundView()
-		commands = null
-	}
-
-	private val isCommandOrMention: Boolean
-		get() = messageInputType != null && (messageInputType == MessageInputType.COMMAND
-				|| messageInputType == MessageInputType.MENTION)
-
 	fun checkCommandsOrMentions(inputMessage: String) {
 		when {
 			inputMessage.isCommandMessage() -> { view.showSuggestedCommand(channelCommands.matchName(inputMessage.removePrefix("/"))) }
 			inputMessage.isMentionMessage() -> { view.showSuggestedMentions(members.matchUserName(inputMessage.substringAfterLast("@"))) }
-			else -> {
-				view.showSuggestedMentions(listOf())
-				view.showSuggestedCommand(listOf())
-			}
+			else -> { cleanSuggestion() }
 		}
 	}
 
-	private fun onClickCommandViewOpen(isCommand: Boolean) {
-		if (isCommand) {
-			setCommands("")
-		} else {
-			setMentionUsers("")
-		}
-		val title = binding.tvTitle.context.resources.getString(if (isCommand) R.string.stream_input_type_command else R.string.stream_input_type_auto_mention)
-		binding.tvTitle.text = title
-		binding.tvCommand.text = ""
-		setCommandMentionListItemAdapter(isCommand)
-		openCommandView()
-		binding.lvCommand.onItemClickListener = AdapterView.OnItemClickListener { adapterView: AdapterView<*>?, view: View?, position: Int, l: Long ->
-			if (isCommand) binding.etMessage.setText("/" + (commands !![position] as Command).name + " ") else {
-				val messageStr = binding.etMessage.text.toString()
-				val userName = (commands !![position] as User).getExtraValue("name", "")
-				val converted = StringUtility.convertMentionedText(messageStr, userName)
-				binding.etMessage.setText(converted)
-			}
-			binding.etMessage.setSelection(binding.etMessage.text.length)
-			closeCommandView()
-		}
-	}
-
-	private fun setCommandMentionListItemAdapter(isCommand: Boolean) {
-		if (commandMentionListItemAdapter == null) {
-			commandMentionListItemAdapter = CommandMentionListItemAdapter<MessageInputStyle>(context, commands, style, isCommand)
-			binding.lvCommand.adapter = commandMentionListItemAdapter
-		} else {
-			commandMentionListItemAdapter !!.setCommand(isCommand)
-			commandMentionListItemAdapter !!.setCommands(commands)
-			commandMentionListItemAdapter !!.notifyDataSetChanged()
-		}
-	}
-
-	private fun setCommandsMentionUsers(string: String) {
-		if (commands == null) commands = ArrayList()
-		commands !!.clear()
-		if (string.startsWith("/")) {
-			if (channelCommands.isEmpty()) return
-			val commandStr = string.replace("/", "")
-			setCommands(commandStr)
-			binding.tvCommand.text = commandStr
-		} else {
-			val names = string.split("@").toTypedArray()
-			if (names.isNotEmpty()) setMentionUsers(names[names.size - 1])
-		}
-	}
-
-	private fun setCommands(commandPattern: String) {
-		commands = channelCommands.filter { it.name.contains(commandPattern) }.toMutableList()
-	}
-
-	private fun setMentionUsers(namePattern: String) {
-		commands = members.map { it.user }
-				.filter { it.getExtraValue("name", "").contains(namePattern, true) }
-				.toMutableList()
+	private fun cleanSuggestion() {
+		view.showSuggestedMentions(listOf())
+		view.showSuggestedCommand(listOf())
 	}
 
 	fun onCommandSelected(command: Command) {
