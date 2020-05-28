@@ -28,10 +28,14 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.ArrayList
+import java.util.regex.Pattern
 
+private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
+private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
 class MessageInputController(private val context: Context,
                              private val binding: StreamViewMessageInputBinding,
                              private val view: MessageInputView,
@@ -351,20 +355,15 @@ class MessageInputController(private val context: Context,
 		get() = messageInputType != null && (messageInputType == MessageInputType.COMMAND
 				|| messageInputType == MessageInputType.MENTION)
 
-	fun checkCommand(text: String) {
-		if (TextUtils.isEmpty(text)
-				|| ! text.startsWith("/") && ! text.contains("@")) {
-			closeCommandView()
-		} else if (text.length == 1) {
-			onClickCommandViewOpen(text.startsWith("/"))
-		} else if (text.endsWith("@")) {
-			onClickCommandViewOpen(false)
-		} else {
-			setCommandsMentionUsers(text)
-			if (commands !!.isNotEmpty() && binding.clCommand.visibility != View.VISIBLE) openCommandView()
-			setCommandMentionListItemAdapter(text.startsWith("/"))
+	fun checkCommandsOrMentions(inputMessage: String) {
+		when {
+			inputMessage.isCommandMessage() -> { view.showSuggestedCommand(channelCommands.matchName(inputMessage.removePrefix("/"))) }
+			inputMessage.isMentionMessage() -> { view.showSuggestedMentions(members.matchUserName(inputMessage.substringAfterLast("@"))) }
+			else -> {
+				view.showSuggestedMentions(listOf())
+				view.showSuggestedCommand(listOf())
+			}
 		}
-		if (commands == null || commands !!.isEmpty()) closeCommandView()
 	}
 
 	private fun onClickCommandViewOpen(isCommand: Boolean) {
@@ -425,3 +424,9 @@ class MessageInputController(private val context: Context,
 				.toMutableList()
 	}
 }
+
+private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
+private fun String.isMentionMessage() = MENTION_PATTERN.matcher(this).find()
+private fun List<Command>.matchName(namePattern: String) = filter { it.name.startsWith(namePattern) }
+private fun List<Member>.matchUserName(namePattern: String): List<User> = map { it.user }
+				.filter{ it.name.contains(namePattern, true) }

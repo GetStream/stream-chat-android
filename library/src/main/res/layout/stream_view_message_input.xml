@@ -19,6 +19,19 @@
         android:layout_height="wrap_content"
         >
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            android:background="@drawable/stream_round_thread_toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:listitem="@layout/stream_item_mention"
+            />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_title"
             android:layout_width="match_parent"
@@ -335,7 +348,6 @@
                     android:divider="@null"
                     android:visibility="gone" />
             </FrameLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
