@@ -75,7 +75,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	var messageSendHandler: (message: String) -> Unit = {
 		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 	}
-
+	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
+	private val mentionsAdapter = MentionsAdapter(style) {
+		messageInputController.onUserSelected(messageText, it)
+	}
 	private var typeListeners: List<TypeListener> = listOf()
 	fun addTypeListener(typeListener: TypeListener) {
 		typeListeners = typeListeners + typeListener

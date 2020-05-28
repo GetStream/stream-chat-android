@@ -14,7 +14,10 @@ import com.getstream.sdk.chat.view.BaseStyle
 import com.getstream.sdk.chat.view.MessageInputStyle
 import io.getstream.chat.android.client.models.Command
 
-class CommandsAdapter(private val style: BaseStyle) : ListAdapter<Command, CommandViewHolder>(
+class CommandsAdapter(
+		private val style: BaseStyle,
+		private val onCommandSelected: (Command) -> Unit
+) : ListAdapter<Command, CommandViewHolder>(
 		object : DiffUtil.ItemCallback<Command>() {
 			override fun areItemsTheSame(oldItem: Command, newItem: Command): Boolean = oldItem.name == newItem.name
 			override fun areContentsTheSame(oldItem: Command, newItem: Command): Boolean = oldItem == newItem
@@ -23,12 +26,17 @@ class CommandsAdapter(private val style: BaseStyle) : ListAdapter<Command, Comma
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder =
 			CommandViewHolder(
 					StreamItemCommandBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-					style)
+					style,
+					onCommandSelected
+			)
 	override fun onBindViewHolder(holder: CommandViewHolder, position: Int) = holder.bind(getItem(position))
 }
 
-class CommandViewHolder(private val binding: StreamItemCommandBinding, private val style: BaseStyle)
-	: RecyclerView.ViewHolder(binding.root) {
+class CommandViewHolder(
+		private val binding: StreamItemCommandBinding,
+		private val style: BaseStyle,
+		private val onCommandClicked: (Command) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
 
 	fun bind(command: Command) {
 		binding.command = command
@@ -37,5 +45,6 @@ class CommandViewHolder(private val binding: StreamItemCommandBinding, private v
 			it.apply(binding.tvDes)
 			it.apply(binding.tvArg)
 		}
+		binding.root.setOnClickListener { onCommandClicked(command) }
 	}
 }
