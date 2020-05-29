@@ -1,37 +1,41 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.utils.MessageListItemLiveData
 import com.getstream.sdk.chat.utils.MessageListItemWrapper
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.ChannelController
 
 private const val MESSAGES_LIMIT = 30
 class MessageListViewModel(private val cid: String,
                            private val domain: ChatDomain = ChatDomain.instance()) : ViewModel() {
     private val threadMessages: MutableLiveData<List<Message>> = MutableLiveData()
-    private val loading: MutableLiveData<State> = MutableLiveData()
-    private val stateMerger = MediatorLiveData<State>()
-    val state: LiveData<State> = stateMerger
+    private val channelController: ChannelController
+    val state: LiveData<State>
+    val channel: Channel
 
     init {
-        val channelController = domain.useCases.watchChannel(cid, MESSAGES_LIMIT).execute().data()
+        val result = domain.useCases.watchChannel.invoke(cid, MESSAGES_LIMIT).execute()
+        channelController = result.data()
+        channel = channelController.toChannel()
         val currentUser = domain.currentUser
-        val listItems = MessageListItemLiveData(
+        domain.useCases.loadOlderMessages.invoke(cid, MESSAGES_LIMIT).enqueue()
+
+        MessageListItemLiveData(
                 currentUser,
                 channelController.messages,
                 threadMessages,
                 channelController.typing,
                 channelController.reads
-        )
-        loading.postValue(State.Loading)
-        stateMerger.addSource(listItems) {
-            State.Result(it)
+        ).apply {
+            state = map(this) { State.Result(it) }
         }
-        stateMerger.addSource(loading) { stateMerger.postValue(it) }
     }
 
     fun onEvent(event: Event) {
@@ -66,3 +70,11 @@ class MessageListViewModel(private val cid: String,
         data class DeleteMessage(val message: Message) : Event()
     }
 }
+
+data class MessageListItemResult(
+        private var messageListItems: List<MessageListItem> = emptyList(),
+        private val isLoadingMore: Boolean = false,
+        private val hasNewMessages: Boolean = false,
+        private val isTyping: Boolean = false,
+        private val isThread: Boolean = false
+)

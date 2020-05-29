@@ -174,7 +174,7 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
-    public void init() { // TODO call it internally
+    public void initAdapter() { // TODO call it internally
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
         adapter.setHasStableIds(true);
@@ -292,6 +292,7 @@ public class MessageListView extends RecyclerView {
 
     public void setChannel(Channel channel) {
         this.channel = channel;
+        initAdapter();
     }
 
     public void setMessageActionDelegate(MessageMoreActionDialog.MessageActionDelegate delegate) {

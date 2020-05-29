@@ -9,6 +9,7 @@ fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: Lifecyc
     view.setLastMessageReadListener { onEvent(MessageListViewModel.Event.LastMessageRead) }
     view.setThreadModeSelectedListener { onEvent(MessageListViewModel.Event.ThreadModeEntered(it)) }
 
+    view.setChannel(channel)
     state.observe(lifecycleOwner, Observer {
         if (it is MessageListViewModel.State.Result) {
             view.displayNewMessage(it.messageListItem)
