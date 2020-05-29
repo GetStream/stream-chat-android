@@ -23,9 +23,9 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 
+import static androidx.lifecycle.Transformations.map;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
-
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
@@ -155,6 +155,37 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         threadMessages.observe(owner, this::progressMessages);
 
         this.typing.observe(owner, users -> {
+            if (isThread()) return;
+            // update
+            hasNewMessages = false;
+            List<MessageListItem> typingEntities = new ArrayList<>();
+            if (users.size() > 0) {
+                MessageListItem messageListItem = new MessageListItem(users);
+                typingEntities.add(messageListItem);
+            }
+            this.typingEntities = typingEntities;
+            logger.logI("broadcast because typing changed");
+            broadcastValue();
+        });
+    }
+
+    @Override
+    public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
+        super.observeForever(observer);
+        this.reads.observeForever(reads -> {
+            hasNewMessages = false;
+            logger.logI("broadcast because reads changed");
+            broadcastValue();
+        });
+
+        messages.observeForever(messages -> {
+            if (threadMessages.getValue() != null) return;
+            progressMessages(messages);
+        });
+
+        threadMessages.observeForever(this::progressMessages);
+
+        this.typing.observeForever(users -> {
             if (isThread()) return;
             // update
             hasNewMessages = false;
