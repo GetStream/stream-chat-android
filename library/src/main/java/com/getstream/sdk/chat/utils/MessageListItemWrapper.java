@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.utils;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.viewmodel.MessageListViewModel;
 
 import java.util.List;
 

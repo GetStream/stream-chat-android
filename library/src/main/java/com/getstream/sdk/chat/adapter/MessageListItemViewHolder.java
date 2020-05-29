@@ -56,8 +56,6 @@ import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
-
-    final String TAG = MessageListItemViewHolder.class.getSimpleName();
     @DimenRes
     int avatarWidth;
     protected TextView tv_text;
