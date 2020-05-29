@@ -1,3 +1,7 @@
+## May 29th, 2020 - 4.2.9-beta-3
+
+- Fix AttachmentViewHolder crash when user sends message with plain/no-media url
+
 ## May 15th, 2020 - 4.2.9-beta-2
 
 - Update to the latest livedata: 0.6.0
