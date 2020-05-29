@@ -102,6 +102,10 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		chatDomain.useCases.sendMessage.invoke(message).execute()
 	}
 
+	fun sendMessage(message: String) {
+		chatDomain.useCases.sendMessage(Message(cid = cid, text = message)).execute()
+	}
+
 	/**
 	 * Edit message
 	 *
