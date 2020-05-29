@@ -177,8 +177,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             }
         }
 
-        final Attachment attachment = attachments.get(0);
-        final String type = attachment.getType();
+        final String type = attachments.get(0).getType();
         String attachUrl = attachments.get(0).getImageUrl();
         if (type != null) {
             if (ModelType.attach_image.equals(type)) {
