@@ -79,14 +79,16 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configAttachment() {
-
         boolean hasFile = false;
         boolean hasMedia = false;
         for (Attachment attachment : message.getAttachments()) {
-            if (ModelType.attach_file.equals(attachment.getType())) {
-                hasFile = true;
-            } else {
-                hasMedia = true;
+            final String type = attachment.getType();
+            if (type != null) {
+                if (ModelType.attach_file.equals(type)) {
+                    hasFile = true;
+                } else {
+                    hasMedia = true;
+                }
             }
         }
 
@@ -175,18 +177,21 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
             }
         }
 
-        final String type = attachments.get(0).getType();
-
+        final Attachment attachment = attachments.get(0);
+        final String type = attachment.getType();
         String attachUrl = attachments.get(0).getImageUrl();
-        if (ModelType.attach_image.equals(attachments.get(0).getType())) {
-            attachUrl = attachments.get(0).getImageUrl();
-        } else if (ModelType.attach_giphy.equals(attachments.get(0).getType())) {
-            attachUrl = attachments.get(0).getThumbUrl();
-        } else if (ModelType.attach_video.equals(attachments.get(0).getType())) {
-            attachUrl = attachments.get(0).getThumbUrl();
-        } else {
-            if (attachUrl == null) attachUrl = attachments.get(0).getImage();
+        if (type != null) {
+            if (ModelType.attach_image.equals(type)) {
+                attachUrl = attachments.get(0).getImageUrl();
+            } else if (ModelType.attach_giphy.equals(type)) {
+                attachUrl = attachments.get(0).getThumbUrl();
+            } else if (ModelType.attach_video.equals(type)) {
+                attachUrl = attachments.get(0).getThumbUrl();
+            } else {
+                if (attachUrl == null) attachUrl = attachments.get(0).getImage();
+            }
         }
+
         if (TextUtils.isEmpty(attachUrl)) {
             cl_attachment_media.setVisibility(View.GONE);
             return;
