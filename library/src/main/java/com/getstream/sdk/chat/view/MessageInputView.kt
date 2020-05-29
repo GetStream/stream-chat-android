@@ -23,9 +23,12 @@ import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.MergeAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.CommandsAdapter
+import com.getstream.sdk.chat.adapter.MentionsAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -45,6 +48,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import whenFalse
 import whenTrue
@@ -71,7 +75,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	var messageSendHandler: (message: String) -> Unit = {
 		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 	}
-
+	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
+	private val mentionsAdapter = MentionsAdapter(style) {
+		messageInputController.onUserSelected(messageText, it)
+	}
 	private var typeListeners: List<TypeListener> = listOf()
 	fun addTypeListener(typeListener: TypeListener) {
 		typeListeners = typeListeners + typeListener
@@ -153,7 +160,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun keyStroke(inputMessage: String) {
-		messageInputController.checkCommand(messageText)
+		messageInputController.checkCommandsOrMentions(messageText)
 		binding.activeMessageSend = inputMessage.isNotBlank()
 				.whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
 				.whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
@@ -423,6 +430,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		permissionRequestListener = l
 	}
 
+	internal fun showSuggestedMentions(users: List<User>) {
+		mentionsAdapter.submitList(users)
+	}
+
+	internal fun showSuggestedCommand(commands: List<Command>) {
+		commandsAdapter.submitList(commands)
+	}
+
 	interface TypeListener {
 		fun onKeystroke()
 		fun onStopTyping()
@@ -438,5 +453,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	init {
 		applyStyle()
+		binding.rvSuggestions.adapter = MergeAdapter(commandsAdapter, mentionsAdapter)
 	}
 }

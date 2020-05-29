@@ -19,6 +19,19 @@
         android:layout_height="wrap_content"
         >
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            android:background="@drawable/stream_round_thread_toolbar"
+            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:listitem="@layout/stream_item_mention"
+            />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_title"
             android:layout_width="match_parent"
@@ -261,45 +274,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_command"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_title">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ListView
-                    android:id="@+id/lv_command"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@null"
-                    tools:listitem="@layout/stream_item_command" />
-
-                <ListView
-                    android:id="@+id/lv_mention"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@null"
-                    tools:listitem="@layout/stream_item_mention" />
-            </FrameLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <LinearLayout
             android:id="@+id/ll_composer"
             android:layout_width="match_parent"
@@ -335,7 +309,6 @@
                     android:divider="@null"
                     android:visibility="gone" />
             </FrameLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
