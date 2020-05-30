@@ -26,7 +26,7 @@ class CreateChannelImplTest : BaseConnectedIntegrationTest() {
     fun createChannelWithMembers() = runBlocking(Dispatchers.IO) {
         var channelCreateResult = chatDomain.useCases.createChannel(data.channel4).execute()
         assertSuccess(channelCreateResult)
-        val request = QueryChannelRequest().withMembers(10,0)
+        val request = QueryChannelRequest().withMembers(10, 0)
         val channelRetrievedResult = client.queryChannel(data.channel4.type, data.channel4.id, request).execute()
         assertSuccess(channelRetrievedResult)
         val channelRetrieved = channelRetrievedResult.data()
