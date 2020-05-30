@@ -15,6 +15,12 @@ import org.junit.runner.RunWith
 class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
 
     @Test
+    fun defaultConfig() = runBlocking(Dispatchers.IO) {
+        val config = chatDomainImpl.getChannelConfig("missing")
+        Truth.assertThat(config).isEqualTo((chatDomainImpl.defaultConfig))
+    }
+
+    @Test
     fun newMessageEvent() = runBlocking(Dispatchers.IO) {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
