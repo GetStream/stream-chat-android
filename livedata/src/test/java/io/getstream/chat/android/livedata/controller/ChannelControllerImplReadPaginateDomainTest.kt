@@ -8,6 +8,7 @@ import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -69,6 +70,7 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
     }
 
     @Test
+    @Ignore("mock me")
     fun recovery() = runBlocking(Dispatchers.IO) {
         // running recover should trigger channels to show up for active queries and channels
         chatDomainImpl.connectionRecovered(true)

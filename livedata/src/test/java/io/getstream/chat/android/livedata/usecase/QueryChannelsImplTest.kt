@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.utils.calendar
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,6 +18,7 @@ import org.junit.runner.RunWith
 class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
 
     @Test
+    @Ignore("mock me")
     fun filter() = runBlocking(Dispatchers.IO) {
         // use case style syntax
         var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
@@ -30,6 +32,7 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    @Ignore("mock me")
     fun unreadCountNewMessage() = runBlocking(Dispatchers.IO) {
         val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
         assertSuccess(queryChannelResult)

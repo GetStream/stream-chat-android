@@ -15,6 +15,12 @@ import org.junit.runner.RunWith
 class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
 
     @Test
+    fun defaultConfig() = runBlocking(Dispatchers.IO) {
+        val config = chatDomainImpl.getChannelConfig("missing")
+        Truth.assertThat(config).isEqualTo((chatDomainImpl.defaultConfig))
+    }
+
+    @Test
     fun newMessageEvent() = runBlocking(Dispatchers.IO) {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
@@ -185,6 +191,21 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         var channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
         chatDomainImpl.eventHandler.handleEvent(data.memberRemovedFromChannel)
+        channel = chatDomainImpl.repos.channels.select(cid)!!
+        Truth.assertThat(channel.members.size).isEqualTo(1)
+    }
+
+    @Test
+    fun memberAddAndNotificationRemoveEvent() = runBlocking(Dispatchers.IO) {
+        // add the member to the channel
+        chatDomainImpl.repos.channels.insertChannel(data.channel1)
+        chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
+        val cid = data.memberAddedToChannelEvent.cid!!
+        // verify that user 2 is now part of the members
+        var channel = chatDomainImpl.repos.channels.select(cid)!!
+        Truth.assertThat(channel.members.size).isEqualTo(2)
+        // remove user 1
+        chatDomainImpl.eventHandler.handleEvent(data.notificationRemovedFromChannel)
         channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(1)
     }

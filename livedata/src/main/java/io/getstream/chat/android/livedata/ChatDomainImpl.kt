@@ -75,6 +75,8 @@ class ChatDomainImpl private constructor(
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
 
+    var defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
+
     /** if the client connection has been initialized */
     override val initialized: LiveData<Boolean> = _initialized
 
@@ -678,8 +680,8 @@ class ChatDomainImpl private constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
-        val config = repos.configs.select(channelType)
-        checkNotNull(config) { "Missing channel config for channel type $channelType" }
+        val config = repos.configs.select(channelType) ?: defaultConfig
+        // checkNotNull(config) { "Missing channel config for channel type $channelType" }
         return config
     }
 
