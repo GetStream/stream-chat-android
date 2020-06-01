@@ -25,9 +25,13 @@
     <string name="stream_input_type_auto_mention">Searching for people</string>
     <string name="stream_input_camera_title">Capture Image or Video</string>
 
-    <string name="stream_camera_permission_message">needs camera and storage access so that you can take photos and videos. Please enable it in Settings.</string>
-    <string name="stream_storage_permission_message">needs storage access so that you can send and save photos, videos, music and the other files.\nPlease enable it in Settings.</string>
-    <string name="stream_both_permissions_message">needs camera and storage access so that you can take, send and save photos, videos music and the other files. Please enable it in Settings.</string>
+    <string name="stream_camera_permission_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
+    <string name="stream_storage_permission_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_camera_permission_title">Camera and Storage Access Permission</string>
+    <string name="stream_storage_permission_title">Storage Access Permissions</string>
+
+    <string name="stream_setting_message">Enable permissions on App Settings</string>
+    <string name="stream_setting_label">Settings</string>
 
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
