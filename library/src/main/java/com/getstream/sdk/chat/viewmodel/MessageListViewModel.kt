@@ -41,16 +41,22 @@ class MessageListViewModel(private val cid: String,
     fun onEvent(event: Event) {
         when (event) {
             is Event.EndRegionReached -> {
-                domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT)// limit was 50 previously
+                domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT)
             }
             is Event.ThreadEndRegionReached -> {
                 domain.useCases.threadLoadMore(cid, event.parentMessage.id, MESSAGES_LIMIT).execute()
             }
+            is Event.LastMessageRead -> {
+                domain.useCases.markRead.invoke(cid).execute()
+            }
             is Event.EditMessage -> {
+
             }
             is Event.ThreadModeEntered -> {
+
             }
             is Event.DeleteMessage -> {
+                domain.useCases.deleteMessage(event.message).execute()
             }
         }
     }
