@@ -1,3 +1,7 @@
+# 1.4.18 - Tue 2 June 2020
+
+- Fix `ConcurrentModificationException` on multithread access to socket listeners
+
 # 1.4.17 - Mon 26 May 2020
 
 - Fix loop on client.create
