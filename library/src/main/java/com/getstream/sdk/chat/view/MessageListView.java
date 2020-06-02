@@ -47,8 +47,6 @@ public class MessageListView extends RecyclerView {
     protected MessageListViewStyle style;
     private MessageListItemAdapter adapter;
     private LinearLayoutManager layoutManager;
-    // our connection to the channel scope
-//    private ChannelViewModel viewModel;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageClickListener messageClickListener;
     private MessageLongClickListener messageLongClickListener;
@@ -146,13 +144,6 @@ public class MessageListView extends RecyclerView {
                     if (!hasScrolledUp) {
                         hasNewMessages = false; // TODO this is UI thing
                     }
-                    // delay of 100 milliseconds to prevent the effect when the keyboard is displayed.
-                    postDelayed(() -> {
-                        // TODO this is event
-//                        viewModel.setMessageListScrollUp(!lockScrollUp && currentLastVisible + 1 < lVPosition); // TODO this is UI thing
-//                        messageListScrollUpListener.invoke();
-                        lVPosition = currentLastVisible;
-                    }, 100);
                     fVPosition = currentFirstVisible;
                     threadParentPosition = lVPosition;
                 }
@@ -192,7 +183,6 @@ public class MessageListView extends RecyclerView {
 
     public void displayNewMessage(MessageListItemWrapper listItem) {
         List<MessageListItem> entities = listItem.getListEntities();
-        logger.logI("Observe found this many entities: " + entities.size());
 
         // Adapter initialization for channel and thread swapping
         boolean backFromThread = false;
@@ -261,7 +251,7 @@ public class MessageListView extends RecyclerView {
             // regular new message behaviour
             // we scroll down all the way, unless you've scrolled up
             // if you've scrolled up we set a variable on the viewmodel that there are new messages
-            int newPosition = adapter.getItemCount() - 1;
+            int newPosition = adapter.getItemCount();
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 

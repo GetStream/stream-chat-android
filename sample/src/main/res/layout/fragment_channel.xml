@@ -14,12 +14,14 @@
 
     <com.getstream.sdk.chat.view.MessageListView
         android:id="@+id/messageListView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/messageInputView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/channelHeaderView" />
+        app:layout_constraintTop_toBottomOf="@+id/channelHeaderView"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/padding_medium" />
 
     <ProgressBar
         android:id="@+id/progressBar"
