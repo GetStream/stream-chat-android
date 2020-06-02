@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.socket.okhttp.OkHttpSocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
@@ -10,10 +11,16 @@ internal class ChatSocketImpl(
     private val apiKey: String,
     private val wssUrl: String,
     private val tokenManager: TokenManager,
-    private val chatParser: ChatParser
+    private val parser: ChatParser
 ) : ChatSocket {
 
-    private val service = ChatSocketServiceImpl(chatParser, tokenManager)
+    private val eventsParser = EventsParser(parser)
+
+    private val service = ChatSocketServiceImpl(
+        eventsParser,
+        tokenManager,
+        OkHttpSocketFactory(eventsParser, parser, tokenManager)
+    )
 
     override fun connectAnonymously() {
         service.connect(wssUrl, apiKey, null)

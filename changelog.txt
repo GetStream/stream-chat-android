@@ -1,3 +1,7 @@
+# 1.5.2 - Tue 2 June 2020
+
+- Fix `ConcurrentModificationException` on multithread access to socket listeners
+
 # 1.5.1 - Wed 27 May 2020
 
 - Add filter contains with any value

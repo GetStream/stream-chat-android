@@ -12,16 +12,21 @@ import java.util.*
 
 
 internal class EventsParser(
-    private val service: ChatSocketService,
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
-    private var firstMessageReceived = false
+    private var connectionEventReceived = false
     private val logger = ChatLogger.get("Events")
+
+    private lateinit var service: ChatSocketService
+
+    fun setSocketService(service: ChatSocketService){
+        this.service = service
+    }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         logger.logI("onOpen")
-        firstMessageReceived = false
+        connectionEventReceived = false
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
@@ -63,14 +68,14 @@ internal class EventsParser(
         if (eventMessage.isSuccess) {
             val event = eventMessage.data()
 
-            if (!firstMessageReceived) {
+            if (!connectionEventReceived) {
 
                 val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
-                val data = connection.data()
+                val connectionEvent = connection.data()
 
-                if (connection.isSuccess && data.isValid()) {
-                    firstMessageReceived = true
-                    service.onConnectionResolved(data)
+                if (connection.isSuccess && connectionEvent.isValid()) {
+                    connectionEventReceived = true
+                    service.onConnectionResolved(connectionEvent)
                 } else {
                     service.onSocketError(
                         ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
