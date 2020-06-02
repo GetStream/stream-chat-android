@@ -9,11 +9,12 @@ import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.sample.DocumentationSamplesJava
+import io.getstream.chat.android.client.models.Filters.and
+import io.getstream.chat.android.client.models.Filters.contains
+import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
 import java.io.File
 import java.util.*
 
@@ -749,5 +750,39 @@ fun channelPagination() {
     val request = QueryChannelsRequest(filter, offset, limit)
     client.queryChannels(request).enqueue {
         val channels = it.data()
+    }
+}
+
+class MultiTenantAndTeams {
+
+
+    fun channelTeam() {
+        val extraData = mutableMapOf<String, Any>()
+        extraData["team"] = "red"
+        client.createChannel("messaging", "red-general", extraData)
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    val channel = result.data()
+                } else {
+                    val error = result.error()
+                }
+            }
+    }
+
+    fun userSearch() {
+        val filter = and(
+            eq("name", "Jordan"),
+            eq("teams", contains("red"))
+        )
+        val offset = 0
+        val limit = 1
+        client.queryUsers(QueryUsersRequest(filter, offset, limit))
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    val users = result.data()
+                } else {
+                    val error = result.error()
+                }
+            }
     }
 }

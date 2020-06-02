@@ -5,6 +5,22 @@ import io.getstream.chat.android.client.utils.FilterObject
 object Filters {
 
     @JvmStatic
+    fun contains(value: Any): FilterObject {
+        return FilterObject(
+            "\$contains",
+            value
+        )
+    }
+
+    @JvmStatic
+    fun contains(vararg filters: FilterObject): FilterObject {
+        return FilterObject(
+            "\$contains",
+            filters
+        )
+    }
+
+    @JvmStatic
     fun and(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$and",
