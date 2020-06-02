@@ -27,7 +27,8 @@ class EventsParserTests {
     fun before() {
         eventsCollector = mutableListOf()
         service = FakeSocketService(eventsCollector)
-        parser = EventsParser(service, ChatParserImpl())
+        parser = EventsParser(ChatParserImpl())
+        parser.setSocketService(service)
     }
 
     @Test
