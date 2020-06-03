@@ -1,6 +1,8 @@
 # Push messages
 
-To receive push notifications you need to configure [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/android/client) and setup desirable payload at Stream `Dashboard`. You can also use `SDK` implementation of `FirebaseMessagingService`. To do it:
+To receive push notifications you need to configure [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/android/client) and setup desirable payload at Stream `Dashboard`. 
+
+You can also use `SDK` implementation of `FirebaseMessagingService`. To do it:
 
 1. Add `ChatFirebaseMessagingService` to your `Manifest`
 2. Set data template in Stream `Dashboard` of your app:  
