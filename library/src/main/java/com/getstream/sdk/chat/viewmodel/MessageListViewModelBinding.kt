@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.MessageListView
+import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.client.models.Message
 
 fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {

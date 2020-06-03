@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
