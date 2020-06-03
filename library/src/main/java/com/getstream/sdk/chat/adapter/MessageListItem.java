@@ -1,6 +1,8 @@
 package com.getstream.sdk.chat.adapter;
 
 
+import androidx.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +10,6 @@ import java.util.Objects;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
-import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
@@ -19,9 +20,6 @@ import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITE
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_TYPING;
 
 public class MessageListItem {
-
-    private static final String TAG = MessageListItem.class.getSimpleName();
-
     private int type;
     private Message message;
     private List<ChannelUserRead> messageReadBy;
