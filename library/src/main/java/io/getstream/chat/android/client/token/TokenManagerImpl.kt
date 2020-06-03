@@ -54,6 +54,7 @@ internal class TokenManagerImpl : TokenManager {
     }
 
     override fun setTokenProvider(provider: TokenProvider) {
+        this.token = ""
         this.provider = provider
     }
 
