@@ -43,11 +43,11 @@ class AvatarView @JvmOverloads constructor(
 	}
 
 	private fun configUIs(style: BaseStyle, generateAvatarDrawable: suspend () -> AvatarDrawable) {
-		layoutParams = layoutParams.apply {
-			width = style.getAvatarWidth()
-			height = style.getAvatarHeight()
-		}
 		GlobalScope.launch(Dispatchers.Main) {
+			layoutParams?.apply {
+				width = style.getAvatarWidth()
+				height = style.getAvatarHeight()
+			}
 			setImageDrawable(generateAvatarDrawable())
 		}
 	}

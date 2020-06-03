@@ -1,3 +1,11 @@
+## Jun 3rd, 2020 - 4.2.11-beta
+
+- Fix `AvatarView` crash when the view is not attached
+
+## May 15th, 2020 - 4.2.10-beta
+
+- Update to the latest livedata: 0.6.1
+
 ## May 29th, 2020 - 4.2.9-beta-3
 
 - Fix AttachmentViewHolder crash when user sends message with plain/no-media url
