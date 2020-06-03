@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
@@ -160,6 +161,20 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnMarkChannelRead.setOnClickListener {
             client.markAllRead().enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnQueryChannel.setOnClickListener {
+            client.queryChannel(chType, chId, request).enqueue {
+                if (it.isSuccess) {
+                    val channel = it.data()
+                    val totalUnread = channel.getUnreadMessagesCount()
+                    val unreadForCurrentUser = channel.getUnreadMessagesCount(config.userId)
+
+                    println(totalUnread)
+                    println(unreadForCurrentUser)
+                }
                 UtilsMessages.show(it)
             }
         }
