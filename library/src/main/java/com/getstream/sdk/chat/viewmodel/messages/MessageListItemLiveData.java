@@ -1,7 +1,4 @@
-package com.getstream.sdk.chat.utils;
-
-import android.os.Handler;
-import android.os.Looper;
+package com.getstream.sdk.chat.viewmodel.messages;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -23,7 +20,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 
-import static androidx.lifecycle.Transformations.map;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
 
@@ -111,19 +107,20 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
 
-        MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
-        // Typing
-        wrapper.setTyping(!typingEntities.isEmpty());
-        // Thread
-        wrapper.setThread(isThread());
+        final boolean isTyping = !typingEntities.isEmpty();
+        MessageListItemWrapper wrapper =
+                new MessageListItemWrapper(
+                        isLoadingMore,
+                        hasNewMessages,
+                        merged,
+                        isTyping,
+                        isThread()
+                );
 
-        // run setValue on main thread now that the whole computation is done
-        new Handler(Looper.getMainLooper()).post(() -> {
-            setValue(wrapper);
-            if (isLoadingMore) {
-                this.setIsLoadingMore(false);
-            }
-        });
+        postValue(wrapper);
+        if (isLoadingMore) {
+            this.setIsLoadingMore(false);
+        }
     }
 
     private boolean isSameDay(Message a, Message b) {
