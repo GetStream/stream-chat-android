@@ -7,7 +7,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Message
 import java.io.File
+import java.time.Instant
 import java.util.Date
 import java.util.concurrent.ThreadLocalRandom
 
@@ -92,3 +95,16 @@ fun createAttachment(
 		extraData: MutableMap<String, Any> = mutableMapOf()
 ): Attachment = Attachment(authorName, titleLink, thumbUrl, imageUrl, assetUrl, ogUrl, mimeType,
 		fileSize, title, text, type, image, url, name, fallback, extraData)
+
+fun createMessage(
+		id: String = randomString(),
+		cid: String = randomString(),
+		text: String = randomString(),
+		createdAt: Date? = Date.from(Instant.now())
+): Message = Message(id, cid, text, createdAt = createdAt)
+
+fun createMessageList(size: Int = 10) = (0..size).map { createMessage() }.toList()
+
+fun createChannelUserRead(user: User = createUser(),
+						  lastReadDate: Date = Date.from(Instant.now()),
+						  unreadMessages: Int = 0) = ChannelUserRead(user, lastReadDate, unreadMessages)
