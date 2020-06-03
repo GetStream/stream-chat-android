@@ -3,9 +3,15 @@ package io.getstream.chat.android.client.models
 internal const val EXTRA_IMAGE = "image"
 internal const val EXTRA_NAME = "name"
 
-fun Channel.getUnreadMessagesCount(): Int {
-    return read.sumBy {
-        it.unreadMessages
+fun Channel.getUnreadMessagesCount(forUserId: String = ""): Int {
+
+    return if (forUserId.isEmpty()) {
+        read
+            .sumBy { it.unreadMessages }
+    } else {
+        read
+            .filter { it.user.id == forUserId }
+            .sumBy { it.unreadMessages }
     }
 }
 

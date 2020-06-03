@@ -1,3 +1,7 @@
+# 1.5.4 - Wed 3 June 2020
+
+- Add optional `userId` parameter to `Channel.getUnreadMessagesCount` to filter out unread messages for the user
+
 # 1.5.3 - Wed 3 June 2020
 
 - Fix switching users issue: `disconnect` and `setUser` resulted in wrong user connection

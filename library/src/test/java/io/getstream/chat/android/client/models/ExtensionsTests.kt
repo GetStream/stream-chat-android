@@ -62,9 +62,12 @@ class ExtensionsTests {
     }
 
     @Test
-    fun unreadCountOfChannel() {
+    fun noUnread() {
         assertThat(Channel().getUnreadMessagesCount()).isEqualTo(0)
+    }
 
+    @Test
+    fun totalUnread() {
         assertThat(Channel(read = listOf(getRead(10))).getUnreadMessagesCount()).isEqualTo(10)
 
         assertThat(
@@ -76,6 +79,27 @@ class ExtensionsTests {
             ).getUnreadMessagesCount()
         ).isEqualTo(20)
     }
+
+    @Test
+    fun unreadByUsers() {
+
+        val userA = "user-a"
+        val userB = "user-b"
+        val unreadUserA = 10
+        val unreadUserB = 5
+
+        val channel = Channel(
+            read = listOf(
+                getRead(unreadUserA, userA),
+                getRead(unreadUserB, userB)
+            )
+        )
+
+        assertThat(channel.getUnreadMessagesCount()).isEqualTo(unreadUserA + unreadUserB)
+        assertThat(channel.getUnreadMessagesCount(userA)).isEqualTo(unreadUserA)
+        assertThat(channel.getUnreadMessagesCount(userB)).isEqualTo(unreadUserB)
+    }
+
 
     private fun getRead(unreadCount: Int, userId: String = ""): ChannelUserRead {
         return ChannelUserRead(User(id = userId), null, unreadCount)
