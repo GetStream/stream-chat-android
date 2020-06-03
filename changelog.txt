@@ -1,3 +1,7 @@
+# 1.5.3 - Wed 3 June 2020
+
+- Fix switching users issue: `disconnect` and `setUser` resulted in wrong user connection
+
 # 1.5.2 - Tue 2 June 2020
 
 - Fix `ConcurrentModificationException` on multithread access to socket listeners
