@@ -17,10 +17,10 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.utils.MessageListItemWrapper;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
 import java.util.Date;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.viewmodel.messages
+package com.getstream.sdk.chat.view.messages
 
 import com.getstream.sdk.chat.adapter.MessageListItem
 

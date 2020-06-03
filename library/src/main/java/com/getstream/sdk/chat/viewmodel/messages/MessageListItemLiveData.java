@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
 import org.jetbrains.annotations.NotNull;
 
