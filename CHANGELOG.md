@@ -1,3 +1,7 @@
+## Jun 4th, 2020 - 4.2.11-beta-4
+
+- Fix crash when command (`/`) is typed.
+
 ## Jun 3rd, 2020 - 4.2.11-beta
 
 - Fix `AvatarView` crash when the view is not attached

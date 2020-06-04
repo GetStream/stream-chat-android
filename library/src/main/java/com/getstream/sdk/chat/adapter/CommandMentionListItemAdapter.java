@@ -6,12 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
-import com.getstream.sdk.chat.model.Command;
-import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.view.BaseStyle;
 import com.getstream.sdk.chat.view.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -20,6 +17,7 @@ import java.util.List;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
+import io.getstream.chat.android.client.models.Command;
 import io.getstream.chat.android.client.models.User;
 
 public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends BaseAdapter {
@@ -66,18 +64,18 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
 
         if (isCommand) {
-            configCommands((StreamItemCommandBinding)binding, position);
+            configCommands((StreamItemCommandBinding) binding, position);
         } else {
-            configMentions((StreamItemMentionBinding)binding, position);
+            configMentions((StreamItemMentionBinding) binding, position);
         }
         return binding.getRoot();
     }
 
-    public void configCommands(StreamItemCommandBinding binding, int position){
+    public void configCommands(StreamItemCommandBinding binding, int position) {
         Command command = (Command) commands.get(position);
         binding.setCommand(command);
-        if (style instanceof MessageInputStyle){
-            MessageInputStyle style_ = (MessageInputStyle)style;
+        if (style instanceof MessageInputStyle) {
+            MessageInputStyle style_ = (MessageInputStyle) style;
 
             style_.inputBackgroundText.apply(binding.tvCommand);
             style_.inputBackgroundText.apply(binding.tvDes);
@@ -85,15 +83,15 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
     }
 
-    public void configMentions(StreamItemMentionBinding binding, int position){
+    public void configMentions(StreamItemMentionBinding binding, int position) {
         User user = (User) commands.get(position);
         binding.setUser(user);
         binding.avatar.setUser(user, style);
         if (style instanceof MessageInputStyle) {
-            MessageInputStyle style_ = (MessageInputStyle)style;
+            MessageInputStyle style_ = (MessageInputStyle) style;
             style_.inputBackgroundText.apply(binding.tvUsername);
             style_.inputBackgroundText.apply(binding.tvYou);
-        }else if (style instanceof MessageListViewStyle){
+        } else if (style instanceof MessageListViewStyle) {
 
         }
     }
