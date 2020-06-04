@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
@@ -12,32 +13,44 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 
-private const val MESSAGES_LIMIT = 30
-
 class MessageListViewModel(private val cid: String,
                            private val domain: ChatDomain = ChatDomain.instance(),
                            private val client: ChatClient = ChatClient.instance()) : ViewModel() {
     private val threadMessages: MutableLiveData<List<Message>> = MutableLiveData()
     private val channelController: ChannelController
+    private val loading = MutableLiveData<State>()
+    private val stateMerger = MediatorLiveData<State>()
 
-    val state: LiveData<State>
+    val state: LiveData<State> = stateMerger
     val channel: Channel
     val currentUser: User
 
     init {
+        loading.value = State.Loading
+
         val result = domain.useCases.watchChannel.invoke(cid, MESSAGES_LIMIT).execute()
         channelController = result.data()
         channel = channelController.toChannel()
         currentUser = domain.currentUser
 
-        MessageListItemLiveData(
+        val resultState = MessageListItemLiveData(
                 currentUser,
                 channelController.messages,
                 threadMessages,
                 channelController.typing,
                 channelController.reads
-        ).apply {
-            state = map(this) { State.Result(it) }
+        )
+        .run {
+            map(this) { State.Result(it) }
+        }
+
+        stateMerger.apply {
+            addSource(loading) {
+                value = it
+            }
+            addSource(resultState) {
+                value = it
+            }
         }
     }
 
@@ -76,5 +89,9 @@ class MessageListViewModel(private val cid: String,
         data class ThreadModeEntered(val parentMessage: Message) : Event()
         data class DeleteMessage(val message: Message) : Event()
         data class FlagMessage(val message: Message) : Event()
+    }
+
+    companion object {
+        internal const val MESSAGES_LIMIT = 30
     }
 }

@@ -1,9 +1,8 @@
-package com.getstream.sdk.chat.viewmodel
+package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.MessageListView
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
 fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     view.init(channel, currentUser)
