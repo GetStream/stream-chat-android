@@ -5,25 +5,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 
 private const val MESSAGES_LIMIT = 30
+
 class MessageListViewModel(private val cid: String,
-                           private val domain: ChatDomain = ChatDomain.instance()) : ViewModel() {
+                           private val domain: ChatDomain = ChatDomain.instance(),
+                           private val client: ChatClient = ChatClient.instance()) : ViewModel() {
     private val threadMessages: MutableLiveData<List<Message>> = MutableLiveData()
     private val channelController: ChannelController
 
     val state: LiveData<State>
     val channel: Channel
+    val currentUser: User
 
     init {
         val result = domain.useCases.watchChannel.invoke(cid, MESSAGES_LIMIT).execute()
         channelController = result.data()
         channel = channelController.toChannel()
-        val currentUser = domain.currentUser
+        currentUser = domain.currentUser
 
         MessageListItemLiveData(
                 currentUser,
@@ -53,20 +58,23 @@ class MessageListViewModel(private val cid: String,
             is Event.DeleteMessage -> {
                 domain.useCases.deleteMessage(event.message).execute()
             }
+            is Event.FlagMessage -> {
+                client.flag(event.message.user.id).enqueue()
+            }
         }
     }
 
     sealed class State {
         object Loading : State()
-        object LoadingMore : State()
         data class Result(val messageListItem: MessageListItemWrapper) : State()
     }
 
     sealed class Event {
         object EndRegionReached : Event()
-        data class ThreadEndRegionReached(val parentMessage: Message): Event()
+        data class ThreadEndRegionReached(val parentMessage: Message) : Event()
         object LastMessageRead : Event()
         data class ThreadModeEntered(val parentMessage: Message) : Event()
         data class DeleteMessage(val message: Message) : Event()
+        data class FlagMessage(val message: Message) : Event()
     }
 }
