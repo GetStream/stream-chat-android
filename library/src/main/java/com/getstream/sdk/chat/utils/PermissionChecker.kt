@@ -28,9 +28,9 @@ object PermissionChecker {
 	                            onPermissionGranted: () -> Unit) {
 		checkPermissions(
 				view,
-				view.context.getString(R.string.stream_storage_permission_title),
-				view.context.getString(R.string.stream_storage_permission_message),
-				view.context.getString(R.string.stream_setting_message),
+				view.context.getString(R.string.stream_permissions_storage_title),
+				view.context.getString(R.string.stream_permissions_storage_message),
+				view.context.getString(R.string.stream_permissions_setting_message),
 				listOf(Manifest.permission.READ_EXTERNAL_STORAGE),
 				onPermissionDenied,
 				onPermissionGranted)
@@ -41,9 +41,9 @@ object PermissionChecker {
 	                           onPermissionGranted: () -> Unit) {
 		checkPermissions(
 				view,
-				view.context.getString(R.string.stream_camera_permission_title),
-				view.context.getString(R.string.stream_camera_permission_message),
-				view.context.getString(R.string.stream_setting_message),
+				view.context.getString(R.string.stream_permissions_camera_title),
+				view.context.getString(R.string.stream_permissions_camera_message),
+				view.context.getString(R.string.stream_permissions_camera_message),
 				listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
 						Manifest.permission.CAMERA),
 				onPermissionDenied,
@@ -85,7 +85,7 @@ object PermissionChecker {
 	private fun snackbarPermissionsListener(view: View, snackbarMessage: String): SnackbarOnAnyDeniedMultiplePermissionsListener =
 			SnackbarOnAnyDeniedMultiplePermissionsListener.Builder
 					.with(view, snackbarMessage)
-					.withOpenSettingsButton(R.string.stream_setting_label)
+					.withOpenSettingsButton(R.string.stream_permissions_setting_button)
 					.build()
 
 	private fun dialogPermissionsListener(
