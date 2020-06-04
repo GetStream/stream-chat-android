@@ -18,8 +18,8 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.utils.Utils;
-import com.getstream.sdk.chat.view.Dialog.MessageMoreActionDialog;
-import com.getstream.sdk.chat.view.Dialog.ReadUsersDialog;
+import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
+import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
 import java.util.Date;
@@ -32,6 +32,9 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -56,15 +59,23 @@ public class MessageListView extends RecyclerView {
     private ReadStateClickListener readStateClickListener;
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
-    private Channel channel;
-    private MessageMoreActionDialog.MessageActionDelegate messageActionDelegate;
     private int threadParentPosition;
-    private boolean hasNewMessages;
-
-    private Callback endRegionReachedListener;
-    private Callback lastMessageReadListener;
-    private Listener<Message> threadModeSelectedListener;
-
+    private Function0<Unit> endRegionReachedListener = () -> Unit.INSTANCE;
+    private Function0<Unit> lastMessageReadListener = () -> Unit.INSTANCE;
+    private Function1<Message, Unit> onMessageEditHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageEditHandler must be set.");
+    };
+    private Function1<Message, Unit> onMessageDeleteHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageDeleteHandler must be set.");
+    };
+    private Function1<Message, Unit> onStartThreadHandler = (Message m) -> {
+        throw new IllegalStateException("onStartThreadHandler must be set.");
+    };
+    private Function1<Message, Unit> onMessageFlagHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageFlagHandler must be set.");
+    };
+    private Channel channel;
+    private User currentUser;
     /**
      * If you are allowed to scroll up or not
      */
@@ -100,7 +111,6 @@ public class MessageListView extends RecyclerView {
         setHasFixedSize(true);
         setItemViewCacheSize(20);
     }
-    // endregion
 
     // region Init
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
@@ -114,7 +124,7 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
     }
 
-    public void setAdapterWithStyle(MessageListItemAdapter adapter) {
+    private void setAdapterWithStyle(MessageListItemAdapter adapter) {
         adapter.setStyle(style);
         adapter.setGiphySendListener((Message message, GiphyAction action) -> { /* viewModel::sendGiphy */});
         setMessageClickListener(messageClickListener);
@@ -137,13 +147,9 @@ public class MessageListView extends RecyclerView {
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
 
                     if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
-                        //viewModel.loadMore(); // TODO this is event
                         endRegionReachedListener.invoke();
 
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
-                    if (!hasScrolledUp) {
-                        hasNewMessages = false; // TODO this is UI thing
-                    }
                     fVPosition = currentFirstVisible;
                     threadParentPosition = lVPosition;
                 }
@@ -165,7 +171,7 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
-    public void initAdapter() { // TODO call it internally
+    private void initAdapter() {
         // Setup a default adapter and pass the style
         adapter = new MessageListItemAdapter(getContext());
         adapter.setHasStableIds(true);
@@ -260,10 +266,8 @@ public class MessageListView extends RecyclerView {
                 if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
                     layoutManager.scrollToPosition(newPosition);
                 }
-                hasNewMessages = true; // TODO this is UI thing
             } else {
                 layoutManager.scrollToPosition(newPosition);
-                hasNewMessages = false; // TODO this is UI thing
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
@@ -278,15 +282,6 @@ public class MessageListView extends RecyclerView {
         if (adapter != null) {
             adapter.setFactory(factory);
         }
-    }
-
-    public void setChannel(Channel channel) {
-        this.channel = channel;
-        initAdapter();
-    }
-
-    public void setMessageActionDelegate(MessageMoreActionDialog.MessageActionDelegate delegate) {
-        this.messageActionDelegate = delegate;
     }
 
     public MessageListViewStyle getStyle() {
@@ -305,13 +300,7 @@ public class MessageListView extends RecyclerView {
         return message.getUpdatedAt() != null
                 && passedTime < 3000;
     }
-    // endregion
 
-    // region Thread
-
-    // endregion
-
-    // region Listener
     public void setMessageClickListener(MessageClickListener messageClickListener) {
         this.messageClickListener = messageClickListener;
 
@@ -323,7 +312,7 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getReplyCount() > 0) {
                     // viewModel.setActiveThread(message); // TODO this is event
-                    threadModeSelectedListener.invoke(message);
+                    onStartThreadHandler.invoke(message);
                 } else {
                     //viewModel.sendMessage(message);
                 }
@@ -340,10 +329,17 @@ public class MessageListView extends RecyclerView {
             adapter.setMessageLongClickListener(this.messageLongClickListener);
         } else {
             adapter.setMessageLongClickListener(message ->
-                    new MessageMoreActionDialog(getContext(), channel, messageActionDelegate)
-                            .setMessage(message)
-                            .setStyle(style)
-                            .show());
+                    new MessageMoreActionDialog(
+                            getContext(),
+                            channel,
+                            message,
+                            currentUser,
+                            style,
+                            onMessageEditHandler,
+                            onMessageDeleteHandler,
+                            onStartThreadHandler,
+                            onMessageFlagHandler
+                    ).show());
         }
     }
 
@@ -372,10 +368,17 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setReactionViewClickListener(message -> {
                 Utils.hideSoftKeyboard((Activity) getContext());
-                new MessageMoreActionDialog(getContext(), channel, messageActionDelegate)
-                        .setMessage(message)
-                        .setStyle(style)
-                        .show();
+                new MessageMoreActionDialog(
+                        getContext(),
+                        channel,
+                        message,
+                        currentUser,
+                        style,
+                        onMessageEditHandler,
+                        onMessageDeleteHandler,
+                        onStartThreadHandler,
+                        onMessageFlagHandler
+                ).show();
             });
         }
     }
@@ -387,8 +390,6 @@ public class MessageListView extends RecyclerView {
 
         if (this.userClickListener != null) {
             adapter.setUserClickListener(this.userClickListener);
-        } else {
-
         }
     }
 
@@ -415,20 +416,34 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public void setHasNewMessages(boolean hasNewMessages) {
-        this.hasNewMessages = hasNewMessages;
+    public void init(Channel channel, User currentUser) {
+        this.currentUser = currentUser;
+        this.channel = channel;
+        initAdapter();
     }
 
-    public void setEndRegionReachedListener(Callback endRegionReachedListener) {
+    public void setEndRegionReachedListener(Function0<Unit> endRegionReachedListener) {
         this.endRegionReachedListener = endRegionReachedListener;
     }
 
-    public void setLastMessageReadListener(Callback lastMessageReadListener) {
+    public void setLastMessageReadListener(Function0<Unit> lastMessageReadListener) {
         this.lastMessageReadListener = lastMessageReadListener;
     }
 
-    public void setThreadModeSelectedListener(Listener<Message> threadModeSelectedListener) {
-        this.threadModeSelectedListener = threadModeSelectedListener;
+    public void setOnMessageEditHandler(Function1<Message, Unit> onMessageEditHandler) {
+        this.onMessageEditHandler = onMessageEditHandler;
+    }
+
+    public void setOnMessageDeleteHandler(Function1<Message, Unit> onMessageDeleteHandler) {
+        this.onMessageDeleteHandler = onMessageDeleteHandler;
+    }
+
+    public void setOnStartThreadHandler(Function1<Message, Unit> onStartThreadHandler) {
+        this.onStartThreadHandler = onStartThreadHandler;
+    }
+
+    public void setOnMessageFlagHandler(Function1<Message, Unit> onMessageFlagHandler) {
+        this.onMessageFlagHandler = onMessageFlagHandler;
     }
 
     public interface HeaderAvatarGroupClickListener {
@@ -467,16 +482,6 @@ public class MessageListView extends RecyclerView {
         void onReactionViewClick(Message message);
     }
 
-    @FunctionalInterface
-    public interface Callback {
-        void invoke();
-    }
-
-    @FunctionalInterface
-    public interface Listener<T> {
-        void invoke(T param);
-    }
-
     public interface BubbleHelper {
         Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
 
@@ -484,5 +489,4 @@ public class MessageListView extends RecyclerView {
 
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
     }
-    // endregion
 }
