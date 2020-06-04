@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view.Dialog;
+package com.getstream.sdk.chat.view.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
