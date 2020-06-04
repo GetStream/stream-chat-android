@@ -27,10 +27,10 @@ class MessageMoreActionDialog(context: Context,
                               private val message: Message,
                               private val currentUser: User,
                               private val style: MessageListViewStyle,
-                              private val onMessageEditHandler: (message: Message) -> Unit = {},
-                              private val onMessageDeleteHandler: (message: Message) -> Unit = {},
-                              private val onStartThreadHandler: (message: Message) -> Unit = {},
-                              private val onMessageFlagHandler: (message: Message) -> Unit = {}
+                              private val onMessageEditHandler: (message: Message) -> Unit,
+                              private val onMessageDeleteHandler: (message: Message) -> Unit ,
+                              private val onStartThreadHandler: (message: Message) -> Unit,
+                              private val onMessageFlagHandler: (message: Message) -> Unit
 ) : Dialog(context, R.style.DialogTheme) {
     init {
         Utils.hideSoftKeyboard(context as Activity)
