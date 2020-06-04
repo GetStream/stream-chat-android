@@ -99,7 +99,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
 
-        rv_reaction = itemView.findViewById(R.id.rv_reaction);
+        rv_reaction = itemView.findViewById(R.id.reactionsRecyclerView);
         iv_tail = itemView.findViewById(R.id.iv_tail);
         space_reaction_tail = itemView.findViewById(R.id.space_reaction_tail);
 
@@ -630,8 +630,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.post(() -> {
             if (rv_reaction.getVisibility() == View.GONE) return;
             set.clone((ConstraintLayout) itemView);
-            set.clear(R.id.rv_reaction, ConstraintSet.START);
-            set.clear(R.id.rv_reaction, ConstraintSet.END);
+            set.clear(R.id.reactionsRecyclerView, ConstraintSet.START);
+            set.clear(R.id.reactionsRecyclerView, ConstraintSet.END);
             set.applyTo((ConstraintLayout) itemView);
 
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();

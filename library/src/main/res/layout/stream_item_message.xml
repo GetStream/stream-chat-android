@@ -34,11 +34,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/rv_reaction"
-        app:layout_constraintTop_toTopOf="@+id/rv_reaction" />
+        app:layout_constraintStart_toStartOf="@+id/reactionsRecyclerView"
+        app:layout_constraintTop_toTopOf="@+id/reactionsRecyclerView" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_reaction"
+        android:id="@+id/reactionsRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/stream_reaction_margin"
@@ -55,7 +55,7 @@
         android:layout_height="@dimen/stream_message_reaction_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rv_reaction" />
+        app:layout_constraintTop_toBottomOf="@+id/reactionsRecyclerView" />
 
     <com.getstream.sdk.chat.view.AttachmentListView
         android:id="@+id/attachmentview"
