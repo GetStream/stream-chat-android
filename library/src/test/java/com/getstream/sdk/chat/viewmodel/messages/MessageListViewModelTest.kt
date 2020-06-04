@@ -11,6 +11,7 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -39,6 +40,7 @@ class MessageListViewModelTest {
     private lateinit var viewModel: MessageListViewModel
 
     private val domain: ChatDomain = mock()
+    private val client: ChatClient = mock()
     private val useCases: UseCaseHelper = mock()
     private val watchChannel: WatchChannel = mock()
     private val watchChannelCall: Call2<ChannelController> = mock()
@@ -75,7 +77,7 @@ class MessageListViewModelTest {
 
     @Test
     fun `Should display messages`() {
-        val viewModel = MessageListViewModel(CID, domain)
+        val viewModel = MessageListViewModel(CID, domain, client)
 
         val stateList = viewModel.state.observeAll()
 
