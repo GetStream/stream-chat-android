@@ -257,7 +257,7 @@ public class MessageListView extends RecyclerView {
             // regular new message behaviour
             // we scroll down all the way, unless you've scrolled up
             // if you've scrolled up we set a variable on the viewmodel that there are new messages
-            int newPosition = adapter.getItemCount();
+            int newPosition = adapter.getItemCount() - 1;
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
