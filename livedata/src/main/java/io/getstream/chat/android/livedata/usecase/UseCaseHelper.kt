@@ -67,6 +67,10 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
      */
     var sendMessage: SendMessage = SendMessageImpl(chatDomainImpl)
     /**
+     * Send a message with attachments.
+     */
+    var sendMessageWithAttachments: SendMessageWithAttachments = SendMessageWithAttachmentsImpl(chatDomainImpl)
+    /**
      * Edit a message. This message is immediately updated in local storage.
      * The API call to edit the message is retried using the retry policy
      */
