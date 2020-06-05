@@ -60,8 +60,12 @@ public class MessageListView extends RecyclerView {
     private boolean hasScrolledUp;
     private BubbleHelper bubbleHelper;
     private int threadParentPosition;
-    private Function0<Unit> endRegionReachedListener = () -> Unit.INSTANCE;
-    private Function0<Unit> lastMessageReadListener = () -> Unit.INSTANCE;
+    private Function0<Unit> endRegionReachedHandler = () -> {
+        throw new IllegalStateException("endRegionReachedHandler must be set.");
+    };
+    private Function0<Unit> lastMessageReadHandler = () -> {
+        throw new IllegalStateException("lastMessageReadHandler must be set.");
+    };
     private Function1<Message, Unit> onMessageEditHandler = (Message m) -> {
         throw new IllegalStateException("onMessageEditHandler must be set.");
     };
@@ -147,7 +151,7 @@ public class MessageListView extends RecyclerView {
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
 
                     if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
-                        endRegionReachedListener.invoke();
+                        endRegionReachedHandler.invoke();
 
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
                     fVPosition = currentFirstVisible;
@@ -203,7 +207,7 @@ public class MessageListView extends RecyclerView {
         if (backFromThread) {
             layoutManager.scrollToPosition(this.threadParentPosition);
             //viewModel.markLastMessageRead(); // TODO this is event
-            lastMessageReadListener.invoke();
+            lastMessageReadHandler.invoke();
             return;
         }
 
@@ -273,7 +277,7 @@ public class MessageListView extends RecyclerView {
             // and this view is currently being displayed...
             // we can't always run it since read and typing events also influence this list..
             //viewModel.markLastMessageRead(); // TODO this is event
-            lastMessageReadListener.invoke();
+            lastMessageReadHandler.invoke();
         }
     }
 
@@ -422,12 +426,12 @@ public class MessageListView extends RecyclerView {
         initAdapter();
     }
 
-    public void setEndRegionReachedListener(Function0<Unit> endRegionReachedListener) {
-        this.endRegionReachedListener = endRegionReachedListener;
+    public void setEndRegionReachedHandler(Function0<Unit> endRegionReachedHandler) {
+        this.endRegionReachedHandler = endRegionReachedHandler;
     }
 
-    public void setLastMessageReadListener(Function0<Unit> lastMessageReadListener) {
-        this.lastMessageReadListener = lastMessageReadListener;
+    public void setLastMessageReadHandler(Function0<Unit> lastMessageReadHandler) {
+        this.lastMessageReadHandler = lastMessageReadHandler;
     }
 
     public void setOnMessageEditHandler(Function1<Message, Unit> onMessageEditHandler) {
