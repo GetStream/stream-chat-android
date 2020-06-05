@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.models.User;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -76,6 +77,9 @@ public class MessageListView extends RecyclerView {
         throw new IllegalStateException("onStartThreadHandler must be set.");
     };
     private Function1<Message, Unit> onMessageFlagHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageFlagHandler must be set.");
+    };
+    private Function2<Message, GiphyAction, Unit> onSendGiphyHandler = (Message m, GiphyAction a) -> {
         throw new IllegalStateException("onMessageFlagHandler must be set.");
     };
     private Channel channel;
@@ -130,7 +134,7 @@ public class MessageListView extends RecyclerView {
 
     private void setAdapterWithStyle(MessageListItemAdapter adapter) {
         adapter.setStyle(style);
-        adapter.setGiphySendListener((Message message, GiphyAction action) -> { /* viewModel::sendGiphy */});
+        adapter.setGiphySendListener((Message message, GiphyAction action) -> onSendGiphyHandler.invoke(message, action));
         setMessageClickListener(messageClickListener);
         setMessageLongClickListener(messageLongClickListener);
         setAttachmentClickListener(attachmentClickListener);
@@ -448,6 +452,10 @@ public class MessageListView extends RecyclerView {
 
     public void setOnMessageFlagHandler(Function1<Message, Unit> onMessageFlagHandler) {
         this.onMessageFlagHandler = onMessageFlagHandler;
+    }
+
+    public void setOnSendGiphyHandler(Function2<Message, GiphyAction, Unit> onSendGiphyHandler) {
+        this.onSendGiphyHandler = onSendGiphyHandler;
     }
 
     public interface HeaderAvatarGroupClickListener {
