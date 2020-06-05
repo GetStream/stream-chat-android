@@ -6,7 +6,7 @@
   <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png" width="60%" /></a>
 </p>
 
-# Beta or stable
+## Beta or Stable
 
 - Stable version: [3.x.x](https://github.com/GetStream/stream-chat-android/tree/ver/3.x.x)
 - Beta version: [4.x.x](https://github.com/GetStream/stream-chat-android)
