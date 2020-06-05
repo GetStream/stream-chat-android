@@ -15,7 +15,9 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
@@ -54,6 +56,10 @@ class MessageListViewModelTest {
     private val threadLoadMore: ThreadLoadMore = mock()
     private val loadOlderMessages: LoadOlderMessages = mock()
     private val deleteMessage: DeleteMessage = mock()
+    private val deleteMessageCall: Call2<Message> = mock()
+    private val flagCall: Call<Flag> = mock()
+    private val flagResult: Call<Flag> = mock()
+
     private val messages = MutableLiveData<List<Message>>()
     private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<List<User>>()
@@ -64,8 +70,6 @@ class MessageListViewModelTest {
     fun setup() {
         whenever(domain.useCases) doReturn useCases
         whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(useCases.threadLoadMore) doReturn threadLoadMore
-        whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
         whenever(watchChannel.invoke(any(), any())) doReturn watchChannelCall
         whenever(watchChannelCall.execute()) doReturn channelControllerResult
         whenever(channelControllerResult.data()) doReturn channelController
@@ -73,6 +77,11 @@ class MessageListViewModelTest {
         whenever(channelController.messages) doReturn messages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
+        whenever(useCases.threadLoadMore) doReturn threadLoadMore
+        whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
+        whenever(useCases.deleteMessage) doReturn deleteMessage
+        whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall
+        whenever(client.flag(any())) doReturn flagCall
 
         messages.value = MESSAGES
         reads.value = listOf(CHANNEL_USER_READ)
