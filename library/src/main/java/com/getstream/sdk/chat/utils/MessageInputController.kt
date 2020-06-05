@@ -248,7 +248,7 @@ class MessageInputController(private val context: Context,
 
 	fun onClickOpenSelectView(channel: Channel, editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
 		if (! PermissionChecker.isGrantedStoragePermissions(context)) {
-			PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_storage_permission_message))
+			PermissionChecker.checkStoragePermissions(view) { onClickOpenSelectView(channel, editAttachments, isMedia) }
 			return
 		}
 		initAdapter()
