@@ -80,7 +80,7 @@ public class MessageListView extends RecyclerView {
         throw new IllegalStateException("onMessageFlagHandler must be set.");
     };
     private Function2<Message, GiphyAction, Unit> onSendGiphyHandler = (Message m, GiphyAction a) -> {
-        throw new IllegalStateException("onMessageFlagHandler must be set.");
+        throw new IllegalStateException("onSendGiphyHandler must be set.");
     };
     private Channel channel;
     private User currentUser;
