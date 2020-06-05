@@ -1,24 +1,19 @@
-package com.getstream.sdk.chat.utils;
-
-import android.os.Handler;
-import android.os.Looper;
-
-import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package com.getstream.sdk.chat.viewmodel.messages;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.getstream.sdk.chat.adapter.MessageListItem;
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
@@ -28,7 +23,6 @@ import io.getstream.chat.android.client.models.User;
 
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
 import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
-
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
@@ -45,7 +39,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean isLoadingMore;
     private Boolean hasNewMessages;
     private String lastMessageID;
-    private LifecycleOwner owner;
+    private LifecycleOwner lifecycleOwner;
 
 
     public MessageListItemLiveData(User currentUser,
@@ -66,7 +60,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.hasNewMessages = false;
     }
 
-    public void setIsLoadingMore(Boolean loading) {
+    private void setIsLoadingMore(Boolean loading) {
         isLoadingMore = loading;
     }
 
@@ -114,19 +108,20 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         merged.addAll(typingEntities);
 
-        MessageListItemWrapper wrapper = new MessageListItemWrapper(isLoadingMore, hasNewMessages, merged);
-        // Typing
-        wrapper.setTyping(!typingEntities.isEmpty());
-        // Thread
-        wrapper.setThread(isThread());
+        final boolean isTyping = !typingEntities.isEmpty();
+        MessageListItemWrapper wrapper =
+                new MessageListItemWrapper(
+                        isLoadingMore,
+                        hasNewMessages,
+                        merged,
+                        isTyping,
+                        isThread()
+                );
 
-        // run setValue on main thread now that the whole computation is done
-        new Handler(Looper.getMainLooper()).post(() -> {
-            setValue(wrapper);
-            if (isLoadingMore) {
-                this.setIsLoadingMore(false);
-            }
-        });
+        postValue(wrapper);
+        if (isLoadingMore) {
+            this.setIsLoadingMore(false);
+        }
     }
 
     private boolean isSameDay(Message a, Message b) {
@@ -142,7 +137,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
-        this.owner=owner;
+        this.lifecycleOwner = owner;
 
         this.reads.observe(owner, reads -> {
             hasNewMessages = false;
@@ -172,7 +167,38 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         });
     }
 
-    public void progressMessages(List<Message> messages) {
+    @Override
+    public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
+        super.observeForever(observer);
+        this.reads.observeForever(reads -> {
+            hasNewMessages = false;
+            logger.logI("broadcast because reads changed");
+            broadcastValue();
+        });
+
+        messages.observeForever(messages -> {
+            if (threadMessages.getValue() != null) return;
+            progressMessages(messages);
+        });
+
+        threadMessages.observeForever(this::progressMessages);
+
+        this.typing.observeForever(users -> {
+            if (isThread()) return;
+            // update
+            hasNewMessages = false;
+            List<MessageListItem> typingEntities = new ArrayList<>();
+            if (users.size() > 0) {
+                MessageListItem messageListItem = new MessageListItem(users);
+                typingEntities.add(messageListItem);
+            }
+            this.typingEntities = typingEntities;
+            logger.logI("broadcast because typing changed");
+            broadcastValue();
+        });
+    }
+
+    private void progressMessages(List<Message> messages) {
         if (messages == null || messages.size() == 0) return;
         // update based on messages
         hasNewMessages = false;
@@ -247,7 +273,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // setup the new observer
         this.threadMessages = threadMessages;
-        threadMessages.observe(owner, this::progressMessages);
+        threadMessages.observe(lifecycleOwner, this::progressMessages);
 
         // trigger an update
         progressMessages(threadMessages.getValue());
