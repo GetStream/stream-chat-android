@@ -28,6 +28,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.utils.ProgressCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -119,9 +123,8 @@ class MessageInputController(private val context: Context,
 	}
 
 	private fun configSelectAttachView(channel: Channel, isMedia: Boolean) {
-		binding.isAttachFile = ! isMedia
-		getAttachmentsFromLocal(isMedia)
-		(context as Activity).runOnUiThread {
+		GlobalScope.launch(Dispatchers.Main) {
+			attachmentData = getAttachmentsFromLocal(isMedia)
 			if (selectedAttachments.isEmpty()) {
 				setAttachmentAdapters(channel, isMedia)
 				if (attachmentData.isEmpty()) {
@@ -136,14 +139,13 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun getAttachmentsFromLocal(isMedia: Boolean) {
-		if (isMedia) {
-			attachmentData = Utils.getMediaAttachments(context)
-			return
-		}
-		Utils.attachments = ArrayList()
-		attachmentData = Utils.getFileAttachments(Environment.getExternalStorageDirectory())
-	}
+	private suspend fun getAttachmentsFromLocal(isMedia: Boolean): List<AttachmentMetaData> =
+			withContext(Dispatchers.IO) {
+				when (isMedia) {
+					true -> Utils.getMediaAttachments(context)
+					false -> Utils.getFileAttachments(Environment.getExternalStorageDirectory())
+				}
+			}
 
 	private fun setAttachmentAdapters(channel: Channel, isMedia: Boolean) {
 		if (isMedia) {
@@ -250,7 +252,7 @@ class MessageInputController(private val context: Context,
 		}
 		initAdapter()
 		if (editAttachments != null && editAttachments.isNotEmpty()) setSelectedAttachments(editAttachments)
-		AsyncTask.execute { configSelectAttachView(channel, isMedia) }
+		configSelectAttachView(channel, isMedia)
 		if (selectedAttachments.isEmpty()) {
 			binding.progressBarFileLoader.visibility = View.VISIBLE
 			onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)

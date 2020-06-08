@@ -133,7 +133,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun configOnClickListener() {
 		binding.sendButton.setOnClickListener { onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
-			binding.isAttachFile = true
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
 			if (! PermissionChecker.isGrantedCameraPermissions(context)
 					&& permissionRequestListener != null && ! style.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
