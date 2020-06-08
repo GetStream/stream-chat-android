@@ -766,17 +766,43 @@ public class DocumentationSamplesJava {
         }
 
         static class ChannelPagination {
+
+            static int pageSize = 10;
+
             {
-                FilterObject filter = Filters.lessThanEquals("cid", cid);
-                int offset = 0;
-                int limit = 10;
-                int messageLimit = 10;
-                QuerySort sort = new QuerySort();
+                loadFirstPage();
+            }
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
+            static void loadFirstPage() {
+                QueryChannelRequest firstPage = new QueryChannelRequest().withMessages(pageSize);
 
-                client.queryChannels(request).enqueue(result -> {
-                    List<Channel> channels = result.data();
+
+                client.queryChannel(channelType, channelId, firstPage).enqueue(result -> {
+
+                    List<Message> messages = result.data().getMessages();
+
+                    if (!messages.isEmpty() && messages.size() == pageSize) {
+                        Message lastMessage = messages.get(messages.size() - 1);
+                        loadSecondPage(lastMessage.getId());
+                    }
+
+                    return Unit.INSTANCE;
+                });
+            }
+
+            static void loadSecondPage(String lastMessageId) {
+                QueryChannelRequest firstPage = new QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize);
+
+                client.queryChannel(channelType, channelId, firstPage).enqueue(result -> {
+
+                    List<Message> messages = result.data().getMessages();
+
+                    if (messages.size() < pageSize) {
+                        //all messages loaded
+                    } else {
+                        //load another page
+                    }
+
                     return Unit.INSTANCE;
                 });
             }

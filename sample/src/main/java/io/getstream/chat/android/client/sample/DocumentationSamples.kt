@@ -741,16 +741,42 @@ fun updateUsers() {
     }
 }
 
-fun channelPagination() {
+internal class ChannelPagination {
 
-    val filter = Filters.lessThanEquals("cid", cid)
-    val offset = 0
-    val limit = 10
-
-    val request = QueryChannelsRequest(filter, offset, limit)
-    client.queryChannels(request).enqueue {
-        val channels = it.data()
+    init {
+        loadFirstPage()
     }
+
+    companion object {
+
+        var pageSize = 10
+
+        fun loadFirstPage() {
+            val firstPage = QueryChannelRequest().withMessages(pageSize)
+            client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
+                val messages: List<Message> = result.data().messages
+                if (messages.isNotEmpty() && messages.size == pageSize) {
+                    loadSecondPage(messages.last().id)
+                } else {
+                    //all messages loaded
+                }
+            }
+        }
+
+        fun loadSecondPage(lastMessageId: String) {
+            val firstPage = QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
+            client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
+                val messages: List<Message> = result.data().messages
+                if (messages.size < pageSize) {
+                    //all messages loaded
+                } else {
+                    //load another page
+                }
+            }
+        }
+    }
+
+
 }
 
 class MultiTenantAndTeams {
