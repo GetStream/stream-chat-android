@@ -72,7 +72,10 @@ data class Message(
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
-    var silent: Boolean = false
+    var silent: Boolean = false,
+
+    @IgnoreSerialisation
+    val i18n: Map<String, String> = mapOf()
 
 ) : CustomObject {
     @IgnoreSerialisation

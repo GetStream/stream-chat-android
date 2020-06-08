@@ -396,6 +396,8 @@ internal class ChatClientImpl(
 
     override fun flag(targetId: String) = api.flag(targetId)
 
+    override fun translate(messageId: String, language: String) = api.translate(messageId, language)
+
     override fun banUser(
         targetId: String,
         channelType: String,

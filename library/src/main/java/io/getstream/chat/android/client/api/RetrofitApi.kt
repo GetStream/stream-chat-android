@@ -342,4 +342,13 @@ interface RetrofitApi {
     ): Call<CompletableResponse>
 
     // endregion
+
+    @POST("/messages/{messageId}/translate")
+    fun translate(
+        @Path("messageId") messageId: String,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @Body request: TranslateMessageRequest
+    ): Call<MessageResponse>
 }

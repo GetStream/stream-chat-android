@@ -3,6 +3,13 @@ package io.getstream.chat.android.client.models
 internal const val EXTRA_IMAGE = "image"
 internal const val EXTRA_NAME = "name"
 
+fun Message.getTranslation(language: String): String {
+    return i18n.get("${language}_text", "")
+}
+
+val Message.originalLanguage
+    get() = i18n.get("language", "")
+
 fun Channel.getUnreadMessagesCount(forUserId: String = ""): Int {
 
     return if (forUserId.isEmpty()) {
@@ -53,4 +60,8 @@ internal fun getExternalField(obj: CustomObject, key: String): String {
             emptyResult
         }
     }
+}
+
+internal fun <A, B> Map<A, B>.get(key: A, default: B): B {
+    return get(key) ?: default
 }
