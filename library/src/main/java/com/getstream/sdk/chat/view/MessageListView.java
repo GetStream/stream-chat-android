@@ -76,6 +76,7 @@ public class MessageListView extends RecyclerView {
     private Function1<Message, Unit> onStartThreadHandler = (Message m) -> {
         throw new IllegalStateException("onStartThreadHandler must be set.");
     };
+    private Function1<Message, Unit> onStartThreadListener = (Message m) -> Unit.INSTANCE;
     private Function1<Message, Unit> onMessageFlagHandler = (Message m) -> {
         throw new IllegalStateException("onMessageFlagHandler must be set.");
     };
@@ -319,8 +320,8 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getReplyCount() > 0) {
-                    // viewModel.setActiveThread(message); // TODO this is event
                     onStartThreadHandler.invoke(message);
+                    onStartThreadListener.invoke(message);
                 } else {
                     //viewModel.sendMessage(message);
                 }
@@ -345,7 +346,11 @@ public class MessageListView extends RecyclerView {
                             style,
                             onMessageEditHandler,
                             onMessageDeleteHandler,
-                            onStartThreadHandler,
+                            (Message m) -> {
+                                onStartThreadHandler.invoke(m);
+                                onStartThreadListener.invoke(m);
+                                return Unit.INSTANCE;
+                            },
                             onMessageFlagHandler
                     ).show());
         }
@@ -456,6 +461,10 @@ public class MessageListView extends RecyclerView {
 
     public void setOnSendGiphyHandler(Function2<Message, GiphyAction, Unit> onSendGiphyHandler) {
         this.onSendGiphyHandler = onSendGiphyHandler;
+    }
+
+    public void setOnStartThreadListener(Function1<Message, Unit> onStartThreadListener) {
+        this.onStartThreadListener = onStartThreadListener;
     }
 
     public interface HeaderAvatarGroupClickListener {

@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
@@ -16,9 +15,10 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 class MessageListViewModel(private val cid: String,
                            private val domain: ChatDomain = ChatDomain.instance(),
                            private val client: ChatClient = ChatClient.instance()) : ViewModel() {
-    private val threadMessages: MutableLiveData<List<Message>> = MutableLiveData()
+    private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val channelController: ChannelController
     private val loading = MutableLiveData<State>()
+    private val messages: MessageListItemLiveData
     private val stateMerger = MediatorLiveData<State>()
 
     val state: LiveData<State> = stateMerger
@@ -33,24 +33,17 @@ class MessageListViewModel(private val cid: String,
         channel = channelController.toChannel()
         currentUser = domain.currentUser
 
-        val resultState = MessageListItemLiveData(
+        messages = MessageListItemLiveData(
                 currentUser,
                 channelController.messages,
                 threadMessages,
                 channelController.typing,
                 channelController.reads
         )
-        .run {
-            map(this) { State.Result(it) }
-        }
 
         stateMerger.apply {
-            addSource(loading) {
-                value = it
-            }
-            addSource(resultState) {
-                value = it
-            }
+            addSource(loading) { value = it }
+            addSource(messages) { value = State.Result(it) }
         }
     }
 
@@ -66,7 +59,7 @@ class MessageListViewModel(private val cid: String,
                 domain.useCases.markRead.invoke(cid).execute()
             }
             is Event.ThreadModeEntered -> {
-                TODO("Not implemented")
+                onThreadModeEntered(event.parentMessage)
             }
             is Event.DeleteMessage -> {
                 domain.useCases.deleteMessage(event.message).execute()
@@ -75,6 +68,13 @@ class MessageListViewModel(private val cid: String,
                 client.flag(event.message.user.id).enqueue()
             }
         }
+    }
+
+    private fun onThreadModeEntered(parentMessage: Message) {
+        val parentId: String = parentMessage.id
+        val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
+        messages.setThreadMessages(threadController.messages)
+        domain.useCases.threadLoadMore.invoke(cid, parentId, 30).execute()
     }
 
     sealed class State {

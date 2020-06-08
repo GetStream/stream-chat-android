@@ -273,10 +273,13 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // setup the new observer
         this.threadMessages = threadMessages;
-        threadMessages.observe(lifecycleOwner, this::progressMessages);
+        if (lifecycleOwner == null) {
+            threadMessages.observeForever(this::progressMessages);
+        } else {
+            threadMessages.observe(lifecycleOwner, this::progressMessages);
+        }
 
         // trigger an update
         progressMessages(threadMessages.getValue());
-
     }
 }
