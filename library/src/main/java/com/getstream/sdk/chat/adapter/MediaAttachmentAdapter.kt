@@ -11,15 +11,21 @@ import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.view.common.visible
 
 class MediaAttachmentAdapter(
-		private val attachments: List<AttachmentMetaData>,
+		private var attachments: List<AttachmentMetaData>,
 		private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {
+
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder =
 			MyViewHolder(StreamItemSelectPhotoBinding.inflate(LayoutInflater.from(parent.context), parent, false), listener)
 
 	override fun onBindViewHolder(holder: MyViewHolder, position: Int) = holder.bind(attachments[position])
 
 	override fun getItemCount(): Int = attachments.size
+
+	fun clear() {
+		attachments = listOf()
+		notifyDataSetChanged()
+	}
 
 	class MyViewHolder(
 			private val binding: StreamItemSelectPhotoBinding,

@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.view.common.visible
 
 class FileAttachmentListAdapter(
-		private val attachments: List<AttachmentMetaData>,
+		private var attachments: List<AttachmentMetaData>,
 		private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
 ) : RecyclerView.Adapter<FileAttachmentListAdapter.MyViewHolder>() {
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder =
@@ -20,6 +20,10 @@ class FileAttachmentListAdapter(
 
 	override fun onBindViewHolder(holder: MyViewHolder, position: Int) = holder.bind(attachments[position])
 	override fun getItemCount(): Int = attachments.size
+	fun clear() {
+		attachments = listOf()
+		notifyDataSetChanged()
+	}
 
 	class MyViewHolder(
 			private val binding: StreamItemAttachFileBinding,
