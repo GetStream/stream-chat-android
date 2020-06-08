@@ -38,8 +38,8 @@ class PushActivity : AppCompatActivity() {
 
         val members = listOf(userA.userId, userB.userId)
 
-        commandsViewA.setUser(userA, members)
-        commandsViewB.setUser(userB, members)
+        commandsViewA.setUser(userA, members, true)
+        commandsViewB.setUser(userB, members, true)
     }
 
     override fun onDestroy() {

@@ -14,7 +14,9 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
+import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
@@ -35,13 +37,14 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     val filter = FilterObject("type", "messaging")
     val sort = QuerySort().asc("created_at")
     val request = QueryChannelRequest().withWatch().withMessages(10)
+    val stagingEndpoint = "chat-us-east-staging.stream-io-api.com"
 
     val chType = "messaging"
     val chId = "x-test"
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>) {
+    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false) {
 
         this.config = config
         this.members = members
@@ -56,9 +59,19 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 return true
             }
         }
-        client = ChatClient.Builder(config.apiKey, App.instance)
-            .notifications(notificationsConfig)
-            .build()
+
+        if (useStaging) {
+            client = ChatClient.Builder(config.apiKey, App.instance)
+                .baseUrl(stagingEndpoint)
+                .notifications(notificationsConfig)
+                .build()
+        } else {
+            client = ChatClient.Builder(config.apiKey, App.instance)
+                .notifications(notificationsConfig)
+                .build()
+        }
+
+
 
         subs.add(client.events()
             .filter(ConnectedEvent::class.java)
@@ -176,6 +189,24 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                     println(unreadForCurrentUser)
                 }
                 UtilsMessages.show(it)
+            }
+        }
+
+        btnTranslateMessage.setOnClickListener {
+
+            val language = "nl"
+
+            client.sendMessage(chType, chId, Message(text = "how are you?")).enqueue {
+                if (it.isSuccess) {
+
+                    client.translate(it.data().id, language).enqueue { result ->
+                        val message = result.data()
+                        val originalLanguage = message.originalLanguage
+                        val translation = message.getTranslation(language)
+                    }
+                }
+
+
             }
         }
 

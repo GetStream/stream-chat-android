@@ -95,4 +95,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="translate message"
+            android:id="@+id/btnTranslateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>
