@@ -24,7 +24,13 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                 .bindView(channelHeaderView.apply {
                     onBackClick = { findNavController().navigateUp() }
                 }, this)
-        MessageInputViewModel(cid).bindView(messageInputView, viewLifecycleOwner)
+        MessageInputViewModel(cid)
+                .apply {
+                    bindView(messageInputView, viewLifecycleOwner)
+                    messageListView.setOnStartThreadListener {
+                        setActiveThread(it)
+                    }
+                }
         MessageListViewModel(cid)
                 .apply { bindView(messageListView, viewLifecycleOwner) }
                 .apply {
@@ -35,6 +41,5 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                         }
                     })
                 }
-
     }
 }
