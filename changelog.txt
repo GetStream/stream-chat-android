@@ -1,3 +1,7 @@
+# 1.6.0 - Wed 8 June 2020
+
+- Add translations api call and update message with `i18n` field. Helper `Message` extensions functions are added.
+
 # 1.5.4 - Wed 3 June 2020
 
 - Add optional `userId` parameter to `Channel.getUnreadMessagesCount` to filter out unread messages for the user

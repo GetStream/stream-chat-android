@@ -154,4 +154,6 @@ interface ChatApi {
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
+
+    fun translate(messageId: String, language: String): Call<Message>
 }

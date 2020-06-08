@@ -212,6 +212,8 @@ interface ChatClient {
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
 
+    fun translate(messageId:String, language:String): Call<Message>
+
     fun getVersion(): String
 
     class Builder {

@@ -13,7 +13,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.util.*
 
-class ChatApiImpl(
+internal class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
@@ -668,6 +668,14 @@ class ChatApiImpl(
             )
         ).map {
             it.event
+        }
+    }
+
+    override fun translate(messageId:String, language:String): Call<Message>{
+        return callMapper.map(
+            retrofitApi.translate(messageId, apiKey, userId, connectionId, TranslateMessageRequest(language))
+        ).map {
+            it.message
         }
     }
 
