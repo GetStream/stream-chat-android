@@ -46,7 +46,7 @@ class MessageInputController(private val context: Context,
 	private var selectedFileAttachmentAdapter: AttachmentListAdapter? = null
 	private var messageInputType: MessageInputType? = null
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
-	private var attachmentData: List<AttachmentMetaData>? = null
+	private var attachmentData: List<AttachmentMetaData> = emptyList()
 	private val uploadManager: UploadManager = UploadManager()
 	var members: List<Member> = listOf()
 	var channelCommands: List<Command> = listOf()
@@ -124,7 +124,7 @@ class MessageInputController(private val context: Context,
 		(context as Activity).runOnUiThread {
 			if (selectedAttachments.isEmpty()) {
 				setAttachmentAdapters(channel, isMedia)
-				if (attachmentData !!.isEmpty()) {
+				if (attachmentData.isEmpty()) {
 					Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error))
 					onClickCloseBackGroundView()
 				}
@@ -147,10 +147,7 @@ class MessageInputController(private val context: Context,
 
 	private fun setAttachmentAdapters(channel: Channel, isMedia: Boolean) {
 		if (isMedia) {
-			mediaAttachmentAdapter = MediaAttachmentAdapter(context, attachmentData,
-					MediaAttachmentAdapter.OnItemClickListener { position: Int ->
-						uploadOrCancelAttachment(channel, attachmentData !![position], isMedia)
-					})
+			mediaAttachmentAdapter = MediaAttachmentAdapter(attachmentData) { uploadOrCancelAttachment(channel, it, isMedia) }
 			binding.rvMedia.adapter = mediaAttachmentAdapter
 		} else {
 			fileAttachmentAdapter = AttachmentListAdapter(context, attachmentData, true, true)
