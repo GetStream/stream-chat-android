@@ -166,13 +166,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configAttachmentUI() {
 		// TODO: make the attachment UI into it's own view and allow you to change it.
-		binding.rvMedia.layoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
-		binding.rvMedia.hasFixedSize()
 		binding.rvComposer.layoutManager = GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
-		val spanCount = 4 // 4 columns
-		val spacing = 2 // 1 px
-		val includeEdge = false
-		binding.rvMedia.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, includeEdge))
 		binding.btnClose.setOnClickListener { v: View? ->
 			messageInputController.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)

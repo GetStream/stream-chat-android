@@ -1,16 +1,16 @@
 package com.getstream.sdk.chat.utils
 
-import android.app.Activity
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
 import android.view.View
-import android.widget.AdapterView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter
+import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
@@ -46,12 +46,14 @@ class MessageInputController(private val context: Context,
 	private val logger = get(MessageInputController::class.java.simpleName)
 	private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
 	private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
-	private var fileAttachmentAdapter: AttachmentListAdapter? = null
+	private var fileAttachmentAdapter: FileAttachmentListAdapter? = null
 	private var selectedFileAttachmentAdapter: AttachmentListAdapter? = null
 	private var messageInputType: MessageInputType? = null
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
 	private var attachmentData: List<AttachmentMetaData> = emptyList()
 	private val uploadManager: UploadManager = UploadManager()
+	val gridLayoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
+	val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
 	var members: List<Member> = listOf()
 	var channelCommands: List<Command> = listOf()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
@@ -149,14 +151,15 @@ class MessageInputController(private val context: Context,
 
 	private fun setAttachmentAdapters(channel: Channel, isMedia: Boolean) {
 		if (isMedia) {
+			gridSpacingItemDecoration.setSpanCount(4)
+			gridLayoutManager.spanCount = 4
 			mediaAttachmentAdapter = MediaAttachmentAdapter(attachmentData) { uploadOrCancelAttachment(channel, it, isMedia) }
 			binding.rvMedia.adapter = mediaAttachmentAdapter
 		} else {
-			fileAttachmentAdapter = AttachmentListAdapter(context, attachmentData, true, true)
-			binding.lvFile.adapter = fileAttachmentAdapter
-			binding.lvFile.onItemClickListener = AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-				uploadOrCancelAttachment(channel, attachmentData !![position], isMedia)
-			}
+			gridSpacingItemDecoration.setSpanCount(1)
+			gridLayoutManager.spanCount = 1
+			fileAttachmentAdapter = FileAttachmentListAdapter(attachmentData) { uploadOrCancelAttachment(channel, it, isMedia) }
+			binding.rvMedia.adapter = fileAttachmentAdapter
 		}
 	}
 
@@ -308,6 +311,10 @@ class MessageInputController(private val context: Context,
 		binding.rvComposer.removeAllViewsInLayout()
 		binding.lvComposer.visibility = View.GONE
 		binding.rvComposer.visibility = View.GONE
+		binding.rvMedia.layoutManager = gridLayoutManager
+		binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
+		mediaAttachmentAdapter?.clear()
+		fileAttachmentAdapter?.clear()
 		mediaAttachmentAdapter = null
 		selectedMediaAttachmentAdapter = null
 		fileAttachmentAdapter = null
