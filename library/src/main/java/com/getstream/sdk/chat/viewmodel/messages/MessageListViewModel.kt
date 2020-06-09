@@ -20,6 +20,7 @@ class MessageListViewModel(private val cid: String,
     private val loading = MutableLiveData<State>()
     private val messages: MessageListItemLiveData
     private val stateMerger = MediatorLiveData<State>()
+    private var currentMode: Mode = Mode.Normal
 
     val state: LiveData<State> = stateMerger
     val channel: Channel
@@ -59,7 +60,16 @@ class MessageListViewModel(private val cid: String,
                 domain.useCases.markRead.invoke(cid).execute()
             }
             is Event.ThreadModeEntered -> {
+                currentMode = Mode.Thread
                 onThreadModeEntered(event.parentMessage)
+            }
+            is Event.BackButtonPressed -> {
+                if (currentMode == Mode.Thread) {
+                    messages.resetThread()
+                    currentMode = Mode.Normal
+                } else {
+                    stateMerger.postValue(State.NavigateUp)
+                }
             }
             is Event.DeleteMessage -> {
                 domain.useCases.deleteMessage(event.message).execute()
@@ -80,15 +90,21 @@ class MessageListViewModel(private val cid: String,
     sealed class State {
         object Loading : State()
         data class Result(val messageListItem: MessageListItemWrapper) : State()
+        object NavigateUp : State()
     }
 
     sealed class Event {
+        object BackButtonPressed : Event()
         object EndRegionReached : Event()
         data class ThreadEndRegionReached(val parentMessage: Message) : Event()
         object LastMessageRead : Event()
         data class ThreadModeEntered(val parentMessage: Message) : Event()
         data class DeleteMessage(val message: Message) : Event()
         data class FlagMessage(val message: Message) : Event()
+    }
+
+    enum class Mode {
+        Thread, Normal
     }
 
     companion object {

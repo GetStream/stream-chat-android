@@ -208,7 +208,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				if (viewModel.isThread) {
 					viewModel.resetThread()
 					initSendMessage()
-					return@setOnKeyListener true
+					return@setOnKeyListener false
 				}
 				if (viewModel.isEditing) {
 					messageInputController.onClickCloseBackGroundView()

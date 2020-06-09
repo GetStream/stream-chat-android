@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -281,5 +283,10 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // trigger an update
         progressMessages(threadMessages.getValue());
+    }
+
+    public void resetThread() {
+        threadMessages = new MutableLiveData<>(Collections.emptyList());
+        progressMessages(this.messages.getValue());
     }
 }
