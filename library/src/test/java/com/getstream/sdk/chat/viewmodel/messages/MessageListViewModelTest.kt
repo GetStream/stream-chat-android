@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
+import com.getstream.sdk.chat.createThreadMessageList
 import com.getstream.sdk.chat.createUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
 import com.getstream.sdk.chat.viewmodel.observeAll
@@ -23,7 +24,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.usecase.DeleteMessage
+import io.getstream.chat.android.livedata.usecase.GetThread
 import io.getstream.chat.android.livedata.usecase.LoadOlderMessages
 import io.getstream.chat.android.livedata.usecase.ThreadLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
@@ -43,6 +46,7 @@ private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
 private val MESSAGES = createMessageList()
 private val MESSAGE = createMessage()
+private val THREAD_MESSAGES = createThreadMessageList(parentMessageId = MESSAGE.id)
 
 @ExtendWith(InstantExecutorExtension::class)
 class MessageListViewModelTest {
@@ -54,9 +58,15 @@ class MessageListViewModelTest {
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelController: ChannelController = mock()
     private val threadLoadMore: ThreadLoadMore = mock()
+    private val threadLoadMoreCall: Call2<List<Message>> = mock()
+    private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val loadOlderMessages: LoadOlderMessages = mock()
+    private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
     private val deleteMessageCall: Call2<Message> = mock()
+    private val getThreadCall: Call2<ThreadController> = mock()
+    private val getThreadResult: Result<ThreadController> = mock()
+    private val threadController:ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
     private val flagResult: Call<Flag> = mock()
 
@@ -78,9 +88,17 @@ class MessageListViewModelTest {
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
         whenever(useCases.threadLoadMore) doReturn threadLoadMore
+        whenever(threadLoadMore.invoke(any(), any(), any())) doReturn threadLoadMoreCall
+        whenever(threadLoadMoreCall.execute()) doReturn threadLoadMoreResult
+        whenever(threadLoadMoreResult.data()) doReturn emptyList()
         whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
         whenever(useCases.deleteMessage) doReturn deleteMessage
+        whenever(useCases.getThread) doReturn getThread
         whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall
+        whenever(getThread.invoke(any(), any())) doReturn getThreadCall
+        whenever(getThreadCall.execute()) doReturn getThreadResult
+        whenever(getThreadResult.data()) doReturn threadController
+        whenever(threadController.messages) doReturn MutableLiveData(THREAD_MESSAGES)
         whenever(client.flag(any())) doReturn flagCall
 
         messages.value = MESSAGES
@@ -136,4 +154,40 @@ class MessageListViewModelTest {
 
         verify(client).flag(MESSAGE.user.id)
     }
+
+    @Test
+    fun `Should return from thread to normal mode on back click`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+
+        states.last() shouldBeInstanceOf  MessageListViewModel.State.Result::class
+    }
+
+    @Test
+    fun `Should navigate up from normal mode on back click`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+
+        states.last() shouldBeEqualTo MessageListViewModel.State.NavigateUp
+    }
+
+    @Test
+    fun `Should display thread messages when thread mode entered`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
+
+        states.last().run {
+            this shouldBeInstanceOf MessageListViewModel.State.Result::class
+            val state = this as MessageListViewModel.State.Result
+            state.messageListItem.isThread shouldBeEqualTo true
+        }
+    }
+
 }

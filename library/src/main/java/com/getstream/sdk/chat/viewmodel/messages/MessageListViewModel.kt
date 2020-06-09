@@ -60,7 +60,6 @@ class MessageListViewModel(private val cid: String,
                 domain.useCases.markRead.invoke(cid).execute()
             }
             is Event.ThreadModeEntered -> {
-                currentMode = Mode.Thread
                 onThreadModeEntered(event.parentMessage)
             }
             is Event.BackButtonPressed -> {
@@ -81,10 +80,11 @@ class MessageListViewModel(private val cid: String,
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
+        currentMode = Mode.Thread
         val parentId: String = parentMessage.id
         val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
         messages.setThreadMessages(threadController.messages)
-        domain.useCases.threadLoadMore.invoke(cid, parentId, 30).execute()
+        domain.useCases.threadLoadMore.invoke(cid, parentId, MESSAGES_LIMIT).execute()
     }
 
     sealed class State {

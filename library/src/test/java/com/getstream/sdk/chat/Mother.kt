@@ -100,10 +100,13 @@ fun createMessage(
 		id: String = randomString(),
 		cid: String = randomString(),
 		text: String = randomString(),
-		createdAt: Date? = Date.from(Instant.now())
-): Message = Message(id, cid, text, createdAt = createdAt)
+		createdAt: Date? = Date.from(Instant.now()),
+		parentId: String? = null
+): Message = Message(id, cid, text, createdAt = createdAt, parentId = parentId)
 
 fun createMessageList(size: Int = 10) = (0..size).map { createMessage() }.toList()
+
+fun createThreadMessageList(size: Int = 10, parentMessageId: String = createMessage().id) = (0..size).map { createMessage() }.toList()
 
 fun createChannelUserRead(user: User = createUser(),
 						  lastReadDate: Date = Date.from(Instant.now()),
