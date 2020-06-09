@@ -13,20 +13,20 @@ import java.io.File
 
 interface SendMessageWithAttachments {
 
-    operator fun invoke(cid: String, messageText: String, files: List<File>): Call2<Message>
+    operator fun invoke(cid: String, message: Message, files: List<File>): Call2<Message>
 }
 
 class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
-    override fun invoke(cid: String, messageText: String, files: List<File>): Call2<Message> {
+    override fun invoke(cid: String, message: Message, files: List<File>): Call2<Message> {
         validateCid(cid)
         val channel = domainImpl.channel(cid)
+        message.cid = cid
         val runnable = suspend {
-            val message = Message(cid = cid, text = messageText)
             val attachments = uploadFiles(channel, files)
             if (attachments.isError) {
                 Result(attachments.error())
             } else {
-                message.attachments = attachments.data().toMutableList()
+                message.attachments.addAll(attachments.data())
                 channel.sendMessage(message)
             }
         }

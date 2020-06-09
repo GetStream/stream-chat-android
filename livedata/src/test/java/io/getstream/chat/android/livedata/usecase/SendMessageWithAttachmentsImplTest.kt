@@ -39,14 +39,14 @@ class SendMessageWithAttachmentsImplTest {
     @Test
     fun `Should throw an exception if the channel cid is empty`() {
         invoking {
-            sendMessageWithAttachemen("", randomString(), randomFiles())
+            sendMessageWithAttachemen("", randomMessage(), randomFiles())
         } `should throw` InvalidParameterException::class `with message` "cid cant be empty"
     }
 
     @Test
     fun `Should throw an exception if the channel cid doesn't contain a colon`() {
         invoking {
-            sendMessageWithAttachemen(randomString().replace(":", ""), randomString(), randomFiles())
+            sendMessageWithAttachemen(randomString().replace(":", ""), randomMessage(), randomFiles())
         } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
     }
 
@@ -62,7 +62,7 @@ class SendMessageWithAttachmentsImplTest {
 
             val result = sendMessageWithAttachemen(
                 randomCID(),
-                randomString(),
+                randomMessage(),
                 (files + badFile).shuffled()
             ).execute()
 
@@ -80,7 +80,7 @@ class SendMessageWithAttachmentsImplTest {
             channelController.configureSuccessResultSendingImages(images)
             channelController.configureFailureResultSendingImage(badImage)
 
-            val result = sendMessageWithAttachemen(randomCID(), randomString(), (images + badImage).shuffled()).execute()
+            val result = sendMessageWithAttachemen(randomCID(), randomMessage(), (images + badImage).shuffled()).execute()
 
             result `should be equal to result`  expectedResult
         }
@@ -90,23 +90,20 @@ class SendMessageWithAttachmentsImplTest {
     fun `Should return message sending files`() {
         runBlocking {
             val files = randomFiles()
-            val messageText = randomString()
             val cid = randomCID()
+            val message = randomMessage(cid = cid)
             val expectedResult = Result(
-                Message(
-                    cid = cid,
-                    text = messageText,
-                    attachments = files.map {
-                        it.toAttachment(null).apply {
-                            assetUrl = it.absolutePath
-                        }
-                    }.toMutableList()
-                )
+                message.copy(cid = cid,
+                    attachments = (message.attachments + files.map {
+                    it.toAttachment(null).apply {
+                        assetUrl = it.absolutePath
+                    }
+                }).toMutableList())
             )
             When calling channelController.scope doReturn this
             channelController.configureSuccessResultSendingFiles(files)
 
-            val result = sendMessageWithAttachemen(cid, messageText, files).execute()
+            val result = sendMessageWithAttachemen(cid, message, files).execute()
 
             result `should be equal to` expectedResult
         }
@@ -116,23 +113,22 @@ class SendMessageWithAttachmentsImplTest {
     fun `Should return message sending Images`() {
         runBlocking {
             val images = randomFiles { randomImageFile() }
-            val messageText = randomString()
             val cid = randomCID()
+            val message = randomMessage()
             val expectedResult = Result(
-                Message(
+                message.copy(
                     cid = cid,
-                    text = messageText,
-                    attachments = images.map {
+                    attachments = (message.attachments + images.map {
                         it.toAttachment("image/jpeg").apply {
                             imageUrl = it.absolutePath
                         }
-                    }.toMutableList()
+                    }).toMutableList()
                 )
             )
             When calling channelController.scope doReturn this
             channelController.configureSuccessResultSendingImages(images)
 
-            val result = sendMessageWithAttachemen(cid, messageText, images).execute()
+            val result = sendMessageWithAttachemen(cid, message, images).execute()
 
             result `should be equal to result` expectedResult
         }
