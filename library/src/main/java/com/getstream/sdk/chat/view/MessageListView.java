@@ -159,6 +159,7 @@ public class MessageListView extends RecyclerView {
                         endRegionReachedHandler.invoke();
 
                     hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
+                    lVPosition = currentLastVisible;
                     fVPosition = currentFirstVisible;
                     threadParentPosition = lVPosition;
                 }
@@ -211,7 +212,6 @@ public class MessageListView extends RecyclerView {
         // Scroll to origin position on return from thread
         if (backFromThread) {
             layoutManager.scrollToPosition(this.threadParentPosition);
-            //viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke();
             return;
         }
