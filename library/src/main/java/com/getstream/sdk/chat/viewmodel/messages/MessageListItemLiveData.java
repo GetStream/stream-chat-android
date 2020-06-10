@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -42,7 +41,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean hasNewMessages;
     private String lastMessageID;
     private LifecycleOwner lifecycleOwner;
-
 
     public MessageListItemLiveData(User currentUser,
                                    LiveData<List<Message>> messages,
@@ -135,6 +133,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
 
+    private final Observer<List<Message>> messagesObserver = new Observer<List<Message>>() {
+        @Override
+        public void onChanged(List<Message> messages) {
+            if (threadMessages.getValue() != null) return;
+            progressMessages(messages);
+        }
+    };
+
     @Override
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
@@ -147,10 +153,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observe(owner, messages -> {
-            if (threadMessages.getValue() != null) return;
-            progressMessages(messages);
-        });
+        messages.observe(owner, messagesObserver);
 
         threadMessages.observe(owner, this::progressMessages);
 
@@ -178,10 +181,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observeForever(messages -> {
-            if (threadMessages.getValue() != null) return;
-            progressMessages(messages);
-        });
+        messages.observeForever(messagesObserver);
 
         threadMessages.observeForever(this::progressMessages);
 
@@ -286,7 +286,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     public void resetThread() {
-        threadMessages = new MutableLiveData<>(Collections.emptyList());
+        threadMessages = new MutableLiveData<>();
         progressMessages(this.messages.getValue());
     }
 }
