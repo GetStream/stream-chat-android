@@ -1,9 +1,7 @@
 package com.getstream.sdk.chat.utils
 
-import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
@@ -19,9 +17,6 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
-import com.getstream.sdk.chat.view.MessageInputView.AttachmentListener
-import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
@@ -37,12 +32,9 @@ import java.util.regex.Pattern
 
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
-class MessageInputController(private val context: Context,
-                             private val binding: StreamViewMessageInputBinding,
+class MessageInputController(private val binding: StreamViewMessageInputBinding,
                              private val view: MessageInputView,
-                             private val style: MessageInputStyle,
-                             private val attachmentListener: AttachmentListener?) {
-	private val logger = get(MessageInputController::class.java.simpleName)
+                             private val style: MessageInputStyle) {
 	private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
 	private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
 	private var fileAttachmentAdapter: FileAttachmentListAdapter? = null
@@ -51,8 +43,8 @@ class MessageInputController(private val context: Context,
 	private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
 	private var attachmentData: List<AttachmentMetaData> = emptyList()
 	private val uploadManager: UploadManager = UploadManager()
-	val gridLayoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
-	val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
+	private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
+	private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
 	var members: List<Member> = listOf()
 	var channelCommands: List<Command> = listOf()
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
@@ -87,30 +79,28 @@ class MessageInputController(private val context: Context,
 				binding.btnClose.visibility = View.GONE
 			}
 		}
-		binding.tvTitle.text = type.getLabel(context)
+		binding.tvTitle.text = type.getLabel(view.context)
 		messageInputType = type
 		configPermissions()
 	}
 
-	fun configPermissions() {
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-			binding.ivMediaPermission.visibility = View.GONE
-			binding.ivCameraPermission.visibility = View.GONE
-			binding.ivFilePermission.visibility = View.GONE
-			return
-		}
-		if (PermissionChecker.isGrantedCameraPermissions(context)) {
-			binding.ivMediaPermission.visibility = View.GONE
-			binding.ivCameraPermission.visibility = View.GONE
-			binding.ivFilePermission.visibility = View.GONE
-		} else if (PermissionChecker.isGrantedStoragePermissions(context)) {
-			binding.ivMediaPermission.visibility = View.GONE
-			binding.ivCameraPermission.visibility = View.VISIBLE
-			binding.ivFilePermission.visibility = View.GONE
-		} else {
-			binding.ivMediaPermission.visibility = View.VISIBLE
-			binding.ivCameraPermission.visibility = View.VISIBLE
-			binding.ivFilePermission.visibility = View.VISIBLE
+	private fun configPermissions() {
+		when {
+			PermissionChecker.isGrantedCameraPermissions(view.context) -> {
+				binding.ivMediaPermission.visibility = View.GONE
+				binding.ivCameraPermission.visibility = View.GONE
+				binding.ivFilePermission.visibility = View.GONE
+			}
+			PermissionChecker.isGrantedStoragePermissions(view.context) -> {
+				binding.ivMediaPermission.visibility = View.GONE
+				binding.ivCameraPermission.visibility = View.VISIBLE
+				binding.ivFilePermission.visibility = View.GONE
+			}
+			else -> {
+				binding.ivMediaPermission.visibility = View.VISIBLE
+				binding.ivCameraPermission.visibility = View.VISIBLE
+				binding.ivFilePermission.visibility = View.VISIBLE
+			}
 		}
 	}
 
@@ -123,13 +113,13 @@ class MessageInputController(private val context: Context,
 		configAttachmentButtonVisible(true)
 	}
 
-	private fun configSelectAttachView(channel: Channel, isMedia: Boolean) {
+	private fun configSelectAttachView(isMedia: Boolean) {
 		GlobalScope.launch(Dispatchers.Main) {
 			attachmentData = getAttachmentsFromLocal(isMedia)
 			if (selectedAttachments.isEmpty()) {
-				setAttachmentAdapters(channel, isMedia)
+				setAttachmentAdapters(isMedia)
 				if (attachmentData.isEmpty()) {
-					Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error))
+					Utils.showMessage(view.context, view.context.getResources().getString(R.string.stream_no_media_error))
 					onClickCloseBackGroundView()
 				}
 				binding.progressBarFileLoader.visibility = View.GONE
@@ -143,12 +133,12 @@ class MessageInputController(private val context: Context,
 	private suspend fun getAttachmentsFromLocal(isMedia: Boolean): List<AttachmentMetaData> =
 			withContext(Dispatchers.IO) {
 				when (isMedia) {
-					true -> Utils.getMediaAttachments(context)
+					true -> Utils.getMediaAttachments(view.context)
 					false -> Utils.getFileAttachments(Environment.getExternalStorageDirectory())
 				}
 			}
 
-	private fun setAttachmentAdapters(channel: Channel, isMedia: Boolean) {
+	private fun setAttachmentAdapters(isMedia: Boolean) {
 		if (isMedia) {
 			gridSpacingItemDecoration.setSpanCount(4)
 			gridLayoutManager.spanCount = 4
@@ -164,10 +154,10 @@ class MessageInputController(private val context: Context,
 
 	private fun setSelectedAttachmentAdapter(fromGallery: Boolean, isMedia: Boolean) {
 		if (isMedia) {
-			selectedMediaAttachmentAdapter = MediaAttachmentSelectedAdapter(context, selectedAttachments, MediaAttachmentSelectedAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData -> cancelAttachment(attachment, fromGallery, isMedia) })
+			selectedMediaAttachmentAdapter = MediaAttachmentSelectedAdapter(view.context, selectedAttachments, MediaAttachmentSelectedAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData -> cancelAttachment(attachment, fromGallery, isMedia) })
 			binding.rvComposer.adapter = selectedMediaAttachmentAdapter
 		} else {
-			selectedFileAttachmentAdapter = AttachmentListAdapter(context, selectedAttachments, true, false, AttachmentListAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData -> cancelAttachment(attachment, fromGallery, isMedia) })
+			selectedFileAttachmentAdapter = AttachmentListAdapter(view.context, selectedAttachments, true, false, AttachmentListAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData -> cancelAttachment(attachment, fromGallery, isMedia) })
 			binding.lvComposer.adapter = selectedFileAttachmentAdapter
 		}
 	}
@@ -197,7 +187,7 @@ class MessageInputController(private val context: Context,
 
 	private fun isOverMaxUploadFileSize(file: File): Boolean =
 		(file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
-				.whenTrue { Utils.showMessage(context, R.string.stream_large_size_file_error) }
+				.whenTrue { Utils.showMessage(view.context, R.string.stream_large_size_file_error) }
 
 	private fun cancelAttachment(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		attachment.isSelected = false
@@ -218,14 +208,14 @@ class MessageInputController(private val context: Context,
 		if (isMedia) binding.rvComposer.visibility = if (show) View.VISIBLE else View.GONE else binding.lvComposer.visibility = if (show) View.VISIBLE else View.GONE
 	}
 
-	fun onClickOpenSelectView(channel: Channel, editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
-		if (! PermissionChecker.isGrantedStoragePermissions(context)) {
-			PermissionChecker.checkStoragePermissions(view) { onClickOpenSelectView(channel, editAttachments, isMedia) }
+	fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
+		if (! PermissionChecker.isGrantedStoragePermissions(view.context)) {
+			PermissionChecker.checkStoragePermissions(view) { onClickOpenSelectView(editAttachments, isMedia) }
 			return
 		}
 		initAdapter()
 		if (editAttachments != null && editAttachments.isNotEmpty()) setSelectedAttachments(editAttachments)
-		configSelectAttachView(channel, isMedia)
+		configSelectAttachView(isMedia)
 		if (selectedAttachments.isEmpty()) {
 			binding.progressBarFileLoader.visibility = View.VISIBLE
 			onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
@@ -291,14 +281,14 @@ class MessageInputController(private val context: Context,
 		selectedFileAttachmentAdapter = null
 	}
 
-	fun progressCapturedMedia(channel: Channel, file: File?, isImage: Boolean) {
+	fun progressCapturedMedia(file: File?, isImage: Boolean) {
 		val attachment = AttachmentMetaData(file)
 		attachment.file = file
 		if (isImage) {
 			attachment.type = ModelType.attach_image
 		} else {
 			val retriever = MediaMetadataRetriever()
-			retriever.setDataSource(context, Uri.fromFile(file))
+			retriever.setDataSource(view.context, Uri.fromFile(file))
 			val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
 			val videolengh = time.toLong()
 			attachment.videoLength = (videolengh / 1000).toInt()
