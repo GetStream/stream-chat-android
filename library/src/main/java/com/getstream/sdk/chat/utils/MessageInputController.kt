@@ -20,14 +20,12 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
 import com.getstream.sdk.chat.view.MessageInputView.AttachmentListener
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import io.getstream.chat.android.client.utils.ProgressCallback
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -197,57 +195,9 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun uploadOrCancelAttachment(channel: Channel,
-	                                     attachment: AttachmentMetaData,
-	                                     isMedia: Boolean) {
-		if (attachment.isSelected) {
-			cancelAttachment(attachment, true, isMedia)
-		} else {
-			selectAttachment(attachment, isMedia)
-		}
-	}
-
 	private fun isOverMaxUploadFileSize(file: File): Boolean =
 		(file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
 				.whenTrue { Utils.showMessage(context, R.string.stream_large_size_file_error) }
-
-	private fun uploadAttachment(channel: Channel, attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
-		val file = File(attachment.file.path)
-		if (isOverMaxUploadFileSize(file)) return
-		attachment.isSelected = true
-		selectedAttachments.add(attachment)
-		if (attachment.isUploaded) uploadedFileProgress(attachment) else uploadFile(channel, attachment, fromGallery, isMedia)
-		showHideComposerAttachmentGalleryView(true, isMedia)
-		if (fromGallery) totalAttachmentAdapterChanged(attachment, isMedia)
-		selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia)
-		configSendButtonEnableState()
-	}
-
-	private fun uploadFile(channel: Channel, attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
-		uploadManager.uploadFile(channel.id, channel.type, attachment, object : ProgressCallback {
-			override fun onSuccess(s: String) {
-				selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia)
-				uploadedFileProgress(attachment)
-			}
-
-			override fun onError(chatError: ChatError) {
-				logger.logE(chatError)
-				Utils.showMessage(context, R.string.stream_attachment_uploading_error)
-				cancelAttachment(attachment, fromGallery, isMedia)
-			}
-
-			override fun onProgress(l: Long) {
-				if (! attachment.isSelected) return
-				selectedAttachmentAdapterChanged(attachment, fromGallery, isMedia)
-				configSendButtonEnableState()
-			}
-		})
-	}
-
-	private fun uploadedFileProgress(attachment: AttachmentMetaData) {
-		attachmentListener?.onAddAttachment(attachment)
-		configSendButtonEnableState()
-	}
 
 	private fun cancelAttachment(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		attachment.isSelected = false
@@ -355,7 +305,6 @@ class MessageInputController(private val context: Context,
 			Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4)
 			retriever.release()
 		}
-		uploadAttachment(channel, attachment, false, true)
 	}
 
 	fun checkCommandsOrMentions(inputMessage: String) {
