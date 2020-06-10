@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import whenTrue
 import java.io.File
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -153,12 +154,12 @@ class MessageInputController(private val context: Context,
 		if (isMedia) {
 			gridSpacingItemDecoration.setSpanCount(4)
 			gridLayoutManager.spanCount = 4
-			mediaAttachmentAdapter = MediaAttachmentAdapter(attachmentData) { uploadOrCancelAttachment(channel, it, isMedia) }
+			mediaAttachmentAdapter = MediaAttachmentAdapter(attachmentData) { updateAttachment(it, isMedia) }
 			binding.rvMedia.adapter = mediaAttachmentAdapter
 		} else {
 			gridSpacingItemDecoration.setSpanCount(1)
 			gridLayoutManager.spanCount = 1
-			fileAttachmentAdapter = FileAttachmentListAdapter(attachmentData) { uploadOrCancelAttachment(channel, it, isMedia) }
+			fileAttachmentAdapter = FileAttachmentListAdapter(attachmentData) { updateAttachment(it, isMedia) }
 			binding.rvMedia.adapter = fileAttachmentAdapter
 		}
 	}
@@ -173,23 +174,42 @@ class MessageInputController(private val context: Context,
 		}
 	}
 
-	private fun uploadOrCancelAttachment(channel: Channel,
-	                                     attachment: AttachmentMetaData,
-	                                     isMedia: Boolean) {
-		if (! attachment.isSelected) {
-			uploadAttachment(channel, attachment, true, isMedia)
-		} else {
-			cancelAttachment(attachment, true, isMedia)
+	private fun updateAttachment(attachment: AttachmentMetaData, isMedia: Boolean) = when(attachment.isSelected) {
+		true -> unselectAttachment(attachment, isMedia)
+		false -> selectAttachment(attachment, isMedia)
+	}
+
+	private fun unselectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
+		attachment.isSelected = false
+		selectedAttachments.remove(attachment)
+		selectedAttachmentAdapterChanged(null, true, isMedia)
+		configSendButtonEnableState()
+		if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(true)
+	}
+
+	private fun selectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
+		if (!isOverMaxUploadFileSize(attachment.file)) {
+			attachment.isSelected = true
+			selectedAttachments.add(attachment)
+			showHideComposerAttachmentGalleryView(true, isMedia)
+			configSendButtonEnableState()
+			selectedAttachmentAdapterChanged(attachment, true, isMedia)
 		}
 	}
 
-	private fun isOverMaxUploadFileSize(file: File): Boolean {
-		if (file.length() > Constant.MAX_UPLOAD_FILE_SIZE) {
-			Utils.showMessage(context, R.string.stream_large_size_file_error)
-			return true
+	private fun uploadOrCancelAttachment(channel: Channel,
+	                                     attachment: AttachmentMetaData,
+	                                     isMedia: Boolean) {
+		if (attachment.isSelected) {
+			cancelAttachment(attachment, true, isMedia)
+		} else {
+			selectAttachment(attachment, isMedia)
 		}
-		return false
 	}
+
+	private fun isOverMaxUploadFileSize(file: File): Boolean =
+		(file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
+				.whenTrue { Utils.showMessage(context, R.string.stream_large_size_file_error) }
 
 	private fun uploadAttachment(channel: Channel, attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		val file = File(attachment.file.path)
@@ -265,12 +285,12 @@ class MessageInputController(private val context: Context,
 	private fun totalAttachmentAdapterChanged(attachment: AttachmentMetaData?, isMedia: Boolean) {
 		if (isMedia) {
 			if (attachment == null) {
-				mediaAttachmentAdapter !!.notifyDataSetChanged()
+				mediaAttachmentAdapter?.notifyDataSetChanged()
 				return
 			}
-			val index = attachmentData !!.indexOf(attachment)
-			if (index != - 1) mediaAttachmentAdapter !!.notifyItemChanged(index)
-		} else fileAttachmentAdapter !!.notifyDataSetChanged()
+			val index = attachmentData.indexOf(attachment)
+			if (index != - 1) mediaAttachmentAdapter?.notifyItemChanged(index)
+		} else fileAttachmentAdapter?.notifyDataSetChanged()
 	}
 
 	private fun selectedAttachmentAdapterChanged(attachment: AttachmentMetaData?,
