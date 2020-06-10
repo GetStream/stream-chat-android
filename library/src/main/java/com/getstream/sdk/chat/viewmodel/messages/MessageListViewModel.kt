@@ -15,6 +15,7 @@ class MessageListViewModel(private val cid: String,
                            private val domain: ChatDomain = ChatDomain.instance(),
                            private val client: ChatClient = ChatClient.instance()) : ViewModel() {
     private val loading = MutableLiveData<State>()
+    private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val messageListData: MessageListItemLiveData
     private val stateMerger = MediatorLiveData<State>()
     private var currentMode: Mode = Mode.Normal
@@ -34,7 +35,7 @@ class MessageListViewModel(private val cid: String,
         messageListData = MessageListItemLiveData(
                 currentUser,
                 channelController.messages,
-                MutableLiveData(),
+                threadMessages,
                 channelController.typing,
                 channelController.reads
         )
@@ -48,10 +49,16 @@ class MessageListViewModel(private val cid: String,
     fun onEvent(event: Event) {
         when (event) {
             is Event.EndRegionReached -> {
-                domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT)
-            }
-            is Event.ThreadEndRegionReached -> {
-                domain.useCases.threadLoadMore(cid, event.parentMessage.id, MESSAGES_LIMIT).execute()
+                currentMode.run {
+                    when(this) {
+                        is Mode.Normal -> {
+                            domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).execute()
+                        }
+                        is Mode.Thread -> {
+                            domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).execute()
+                        }
+                    }
+                }
             }
             is Event.LastMessageRead -> {
                 domain.useCases.markRead.invoke(cid).execute()
@@ -60,7 +67,7 @@ class MessageListViewModel(private val cid: String,
                 onThreadModeEntered(event.parentMessage)
             }
             is Event.BackButtonPressed -> {
-                if (currentMode == Mode.Thread) {
+                if (currentMode is Thread) {
                     onNormalModeEntered()
                 } else {
                     stateMerger.postValue(State.NavigateUp)
@@ -76,16 +83,18 @@ class MessageListViewModel(private val cid: String,
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
-        currentMode = Mode.Thread
+        currentMode = Mode.Thread(parentMessage)
         val parentId: String = parentMessage.id
         val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
-        messageListData.setThreadMessages(threadController.messages)
+        threadMessages = threadController.messages
+        messageListData.setThreadMessages(threadMessages)
         domain.useCases.threadLoadMore.invoke(cid, parentId, MESSAGES_LIMIT).execute()
     }
 
     private fun onNormalModeEntered() {
-        messageListData.resetThread()
         currentMode = Mode.Normal
+        messageListData.resetThread()
+        threadMessages = MutableLiveData()
     }
 
     sealed class State {
@@ -97,15 +106,15 @@ class MessageListViewModel(private val cid: String,
     sealed class Event {
         object BackButtonPressed : Event()
         object EndRegionReached : Event()
-        data class ThreadEndRegionReached(val parentMessage: Message) : Event()
         object LastMessageRead : Event()
         data class ThreadModeEntered(val parentMessage: Message) : Event()
         data class DeleteMessage(val message: Message) : Event()
         data class FlagMessage(val message: Message) : Event()
     }
 
-    enum class Mode {
-        Thread, Normal
+    sealed class Mode {
+        data class Thread(val parentMessage: Message): Mode()
+        object Normal: Mode()
     }
 
     companion object {
