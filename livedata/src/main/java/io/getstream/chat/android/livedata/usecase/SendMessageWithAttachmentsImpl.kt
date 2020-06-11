@@ -13,16 +13,16 @@ import java.io.File
 
 interface SendMessageWithAttachments {
 
-    operator fun invoke(cid: String, message: Message, files: List<File>): Call2<Message>
+    operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call2<Message>
 }
 
 class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
-    override fun invoke(cid: String, message: Message, files: List<File>): Call2<Message> {
+    override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call2<Message> {
         validateCid(cid)
         val channel = domainImpl.channel(cid)
         message.cid = cid
         val runnable = suspend {
-            val attachments = uploadFiles(channel, files)
+            val attachments = uploadFiles(channel, files, attachmentTransformer)
             if (attachments.isError) {
                 Result(attachments.error())
             } else {
@@ -36,7 +36,7 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
         )
     }
 
-    private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>): Result<List<Attachment>> =
+    private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Result<List<Attachment>> =
         files.fold(Result<List<Attachment>>(listOf())) { acc, file ->
             if (acc.isError) {
                 acc
@@ -45,7 +45,7 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
                 if (attachment.isError) {
                     Result(attachment.error())
                 } else {
-                    Result(acc.data() + attachment.data())
+                    Result(acc.data() + attachment.data().apply { attachmentTransformer(file) })
                 }
             }
         }

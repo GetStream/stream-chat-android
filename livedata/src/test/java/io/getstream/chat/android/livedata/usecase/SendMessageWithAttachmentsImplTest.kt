@@ -3,8 +3,8 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertions.`should be equal to result`
+import com.nhaarman.mockitokotlin2.*
 import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.errors.ChatError
@@ -131,6 +131,74 @@ class SendMessageWithAttachmentsImplTest {
             val result = sendMessageWithAttachemen(cid, message, images).execute()
 
             result `should be equal to result` expectedResult
+        }
+    }
+
+    @Test
+    fun `Should apply transformations to attachments from image files`() {
+        runBlocking {
+            val images = randomFiles { randomImageFile() }
+            val cid = randomCID()
+            val message = randomMessage()
+            val extraDataKey = randomString()
+            val attachmentTransformation: Attachment.(file: File) -> Unit = { file ->
+                this.extraData[extraDataKey] = file.name
+            }
+            val transformationSpy: Attachment.(File) -> Unit = spy(attachmentTransformation)
+            val expectedResult = Result(
+                message.copy(
+                    cid = cid,
+                    attachments = (message.attachments + images.map {
+                        it.toAttachment("image/jpeg").apply {
+                            imageUrl = it.absolutePath
+                            extraData[extraDataKey] = it.name
+                        }
+                    }).toMutableList()
+                )
+            )
+            When calling channelController.scope doReturn this
+            channelController.configureSuccessResultSendingImages(images)
+
+            val result = sendMessageWithAttachemen(cid, message, images, transformationSpy).execute()
+
+            result `should be equal to result` expectedResult
+            images.forEach {
+                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
+            }
+        }
+    }
+
+    @Test
+    fun `Should apply transformations to attachments from files`() {
+        runBlocking {
+            val files = randomFiles()
+            val cid = randomCID()
+            val message = randomMessage()
+            val extraDataKey = randomString()
+            val attachmentTransformation: Attachment.(file: File) -> Unit = { file ->
+                this.extraData[extraDataKey] = file.name
+            }
+            val transformationSpy: Attachment.(File) -> Unit = spy(attachmentTransformation)
+            val expectedResult = Result(
+                message.copy(
+                    cid = cid,
+                    attachments = (message.attachments + files.map {
+                        it.toAttachment(null).apply {
+                            assetUrl = it.absolutePath
+                            extraData[extraDataKey] = it.name
+                        }
+                    }).toMutableList()
+                )
+            )
+            When calling channelController.scope doReturn this
+            channelController.configureSuccessResultSendingFiles(files)
+
+            val result = sendMessageWithAttachemen(cid, message, files, transformationSpy).execute()
+
+            result `should be equal to result` expectedResult
+            files.forEach {
+                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
+            }
         }
     }
 }
