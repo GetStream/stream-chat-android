@@ -149,16 +149,14 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
                 if (layoutManager != null) {
-
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
-
-                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
+                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0) {
                         endRegionReachedHandler.invoke();
+                    }
 
-                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
+                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3); //TODO: investigate magic number 3
                     lVPosition = currentLastVisible;
                     fVPosition = currentFirstVisible;
                     threadParentPosition = lVPosition;

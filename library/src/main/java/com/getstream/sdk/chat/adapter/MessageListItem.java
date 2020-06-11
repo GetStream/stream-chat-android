@@ -123,7 +123,7 @@ public class MessageListItem {
             case MESSAGEITEM_MESSAGE:
                 boolean sameReads = sameReads(other.messageReadBy, messageReadBy);
                 boolean samePositions = samePositions(other.positions, positions);
-                boolean sameMessage = Objects.equals(other.message, message);
+                boolean sameMessage = other.message.equals(message);
                 return sameMessage && samePositions && sameReads;
             case MESSAGEITEM_DATE_SEPARATOR:
                 return Objects.equals(other.date, date);
