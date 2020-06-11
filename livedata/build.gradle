@@ -78,7 +78,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api 'com.github.GetStream:stream-chat-android-client:1.5.0'
+    api 'com.github.GetStream:stream-chat-android-client:1.6.1'
     //implementation project(':client')
 
     def room_version = "2.2.5"
