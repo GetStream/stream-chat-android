@@ -17,6 +17,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -61,6 +62,8 @@ class MessageListViewModelTest {
     private val threadLoadMoreCall: Call2<List<Message>> = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val loadOlderMessages: LoadOlderMessages = mock()
+    private val loadOlderMessagesCall: Call2<Channel> = mock()
+    private val loadOlderMessagesResult: Result<Channel> = mock()
     private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
     private val deleteMessageCall: Call2<Message> = mock()
@@ -92,6 +95,8 @@ class MessageListViewModelTest {
         whenever(threadLoadMoreCall.execute()) doReturn threadLoadMoreResult
         whenever(threadLoadMoreResult.data()) doReturn emptyList()
         whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
+        whenever(useCases.loadOlderMessages.invoke(any(), any())) doReturn loadOlderMessagesCall
+        whenever(loadOlderMessagesCall.execute()) doReturn loadOlderMessagesResult
         whenever(useCases.deleteMessage) doReturn deleteMessage
         whenever(useCases.getThread) doReturn getThread
         whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall

@@ -67,7 +67,7 @@ class MessageListViewModel(private val cid: String,
                 onThreadModeEntered(event.parentMessage)
             }
             is Event.BackButtonPressed -> {
-                if (currentMode is Thread) {
+                if (currentMode is Mode.Thread) {
                     onNormalModeEntered()
                 } else {
                     stateMerger.postValue(State.NavigateUp)
