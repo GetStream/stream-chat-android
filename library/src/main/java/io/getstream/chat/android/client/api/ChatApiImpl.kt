@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -80,7 +81,7 @@ internal class ChatApiImpl(
         file: File
     ): Call<String> {
 
-        val part = createFormData("file", file.name, file.asRequestBody())
+        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
 
         return callMapper.map(
             retrofitCdnApi.sendFile(
@@ -100,7 +101,7 @@ internal class ChatApiImpl(
         file: File
     ): Call<String> {
 
-        val part = createFormData("file", file.name, file.asRequestBody())
+        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
 
         return callMapper.map(
             retrofitCdnApi.sendImage(

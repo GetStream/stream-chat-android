@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api.models
 import android.os.Handler
 import android.os.Looper
 import android.webkit.MimeTypeMap
+import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -16,9 +17,7 @@ class ProgressRequestBody(
     private val callback: ProgressCallback
 ) : RequestBody() {
 
-    override fun contentType(): MediaType? {
-        return getMimeType(file.path).toMediaType()
-    }
+    override fun contentType(): MediaType = file.getMediaType()
 
     override fun contentLength(): Long {
         return file.length()
@@ -39,17 +38,6 @@ class ProgressRequestBody(
                 sink.write(buffer, 0, read)
             }
         }
-    }
-
-    private fun getMimeType(url: String): String {
-        val extension = MimeTypeMap.getFileExtensionFromUrl(url)
-        var result = "application/octet-stream"
-        if (extension != null) {
-            val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            if (mime != null) result = mime
-        }
-
-        return result
     }
 
     companion object {
