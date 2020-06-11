@@ -1,4 +1,8 @@
-# 1.6.0 - Wed 8 June 2020
+# 1.6.1 - Thu 11 June 2020
+
+- Add MimeType on sendFile and sendImage methods
+
+# 1.6.0 - Mon 8 June 2020
 
 - Add translations api call and update message with `i18n` field. Helper `Message` extensions functions are added.
 
