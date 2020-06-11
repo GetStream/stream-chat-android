@@ -136,8 +136,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private final Observer<List<Message>> messagesObserver = new Observer<List<Message>>() {
         @Override
         public void onChanged(List<Message> messages) {
-            if (threadMessages.getValue() != null) return;
-            progressMessages(messages);
+            if (threadMessages.getValue() == null || threadMessages.getValue().isEmpty()) {
+                progressMessages(messages);
+            }
         }
     };
 
