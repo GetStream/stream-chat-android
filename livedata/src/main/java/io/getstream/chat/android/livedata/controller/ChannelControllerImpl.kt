@@ -31,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.withContext
+import java.io.File
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -478,6 +479,14 @@ class ChannelControllerImpl(
         }
 
         output
+    }
+
+    suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
+        client.sendImage(channelType, channelId, file).execute()
+    }
+
+    suspend fun sendFile(file: File): Result<String> = withContext(scope.coroutineContext) {
+        client.sendFile(channelType, channelId, file).execute()
     }
 
     /**
