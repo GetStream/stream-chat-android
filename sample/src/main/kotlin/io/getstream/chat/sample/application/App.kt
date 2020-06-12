@@ -9,7 +9,6 @@ import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-import timber.log.Timber
 
 class App : Application() {
 
@@ -17,11 +16,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        DebugMetricsHelper().init()
         initKoin()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-
         Chat.Builder(appConfig.apiKey, this).apply { offlineEnabled = true }.build()
     }
 
