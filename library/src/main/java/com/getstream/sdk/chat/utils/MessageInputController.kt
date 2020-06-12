@@ -183,7 +183,9 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	}
 
 	private fun selectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
-		if (!isOverMaxUploadFileSize(attachment.file)) {
+		if (isOverMaxUploadFileSize(attachment.file)) {
+			Utils.showMessage(view.context, R.string.stream_large_size_file_error)
+		} else {
 			attachment.isSelected = true
 			selectedAttachments.add(attachment)
 			showHideComposerAttachmentGalleryView(true, isMedia)
@@ -192,9 +194,7 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		}
 	}
 
-	private fun isOverMaxUploadFileSize(file: File): Boolean =
-		(file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
-				.whenTrue { Utils.showMessage(view.context, R.string.stream_large_size_file_error) }
+	private fun isOverMaxUploadFileSize(file: File): Boolean = file.length() > Constant.MAX_UPLOAD_FILE_SIZE
 
 	private fun cancelAttachment(attachment: AttachmentMetaData, fromGallery: Boolean, isMedia: Boolean) {
 		attachment.isSelected = false
