@@ -128,11 +128,6 @@ public class AttachmentListAdapter extends BaseAdapter {
                 if (cancelListener != null)
                     cancelListener.onCancel(attachment);
             });
-
-            if (!attachment.isUploaded()) {
-                holder.progressBar.setVisibility(View.VISIBLE);
-                holder.progressBar.setProgress(attachment.progress);
-            }
         }
     }
 
