@@ -14,6 +14,7 @@ enum class ChatErrorCode(val code: Int, val description: String) {
     INVALID_TOKEN(1006, "Invalid token"),
     UNDEFINED_TOKEN(1007, "No defined token. Check if client.setUser was called and finished"),
     UNABLE_TO_PARSE_SOCKET_EVENT(1008, "Socket event payload either invalid or null"),
+    NO_ERROR_BODY(1009, "No error body. See http status code"),
 
     /**
      * Backend

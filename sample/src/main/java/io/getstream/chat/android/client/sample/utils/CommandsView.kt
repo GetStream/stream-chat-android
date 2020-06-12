@@ -10,13 +10,11 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.getTranslation
-import io.getstream.chat.android.client.models.getUnreadMessagesCount
-import io.getstream.chat.android.client.models.originalLanguage
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
@@ -41,6 +39,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
     val chType = "messaging"
     val chId = "x-test"
+    val cid = "$chType:$chId"
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
@@ -205,8 +204,21 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                         val translation = message.getTranslation(language)
                     }
                 }
+            }
+        }
 
+        btnQueryUsers.setOnClickListener {
 
+            val filter = Filters.eq("id", config.userId)
+
+            client.queryUsers(QueryUsersRequest(filter, 0, 10)).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnQueryMembers.setOnClickListener {
+            client.queryMembers(chType, chId, 0, 10, Filters.eq("invited", true)).enqueue {
+                UtilsMessages.show(it)
             }
         }
 

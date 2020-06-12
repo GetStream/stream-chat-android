@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.parser.UrlQueryPayload
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -14,7 +15,7 @@ interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
-        @Query("payload") payload: QueryChannelsRequest
+        @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest
     ): Call<QueryChannelsResponse>
 
     @POST("/channels/{type}/{id}/query")
@@ -147,7 +148,7 @@ interface RetrofitApi {
     fun queryUsers(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Query("payload") payload: QueryUsersRequest
+        @UrlQueryPayload @Query("payload") payload: QueryUsersRequest
     ): Call<QueryUserListResponse>
 
     @POST("/channels/{type}/{id}")
@@ -167,6 +168,13 @@ interface RetrofitApi {
         @Query("client_id") connectionId: String,
         @Body body: RemoveMembersRequest
     ): Call<ChannelResponse>
+
+    @GET("/members")
+    fun queryMembers(
+        @Query("api_key") apiKey: String,
+        @Query("connection_id") connectionId: String,
+        @UrlQueryPayload @Query("payload") payload: QueryMembersRequest
+    ): Call<QueryMembersResponse>
 
     @POST("/moderation/mute")
     fun muteUser(

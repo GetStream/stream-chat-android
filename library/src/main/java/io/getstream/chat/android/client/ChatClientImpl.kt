@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
@@ -126,6 +127,18 @@ internal class ChatClientImpl(
         file: File
     ): Call<String> {
         return api.sendFile(channelType, channelId, file)
+    }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>> {
+        return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
 
     override fun sendImage(

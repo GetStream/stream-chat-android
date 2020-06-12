@@ -10,5 +10,4 @@ class RetrofitCallMapper(private val chatParser: ChatParser) {
         return RetrofitCall(call, chatParser)
     }
 
-
 }
