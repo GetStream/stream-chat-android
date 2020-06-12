@@ -1,3 +1,7 @@
+# 1.7.0 - Thu 12 June 2020
+
+- Add query members call
+
 # 1.6.1 - Thu 11 June 2020
 
 - Add MimeType on sendFile and sendImage methods
