@@ -77,7 +77,14 @@ class ChatParserImpl : ChatParser {
             // Try to parse default Stream error body
             val body = okHttpResponse.peekBody(Long.MAX_VALUE).string()
             val error = toError(body)
-            ChatNetworkError.create(error.code, error.message, statusCode)
+
+            if (error == null) {
+                ChatNetworkError.create(ChatErrorCode.NO_ERROR_BODY, statusCode = statusCode)
+            } else {
+                ChatNetworkError.create(error.code, error.message, statusCode)
+            }
+
+
         } catch (t: Throwable) {
             ChatLogger.instance.logE(TAG, t)
             ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)
@@ -86,21 +93,18 @@ class ChatParserImpl : ChatParser {
 
     override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
         return builder
-            .addConverterFactory(RequestsBodiesConverter(gson))
+            .addConverterFactory(UrlQueryPayloadFactory(gson))
             .addConverterFactory(GsonConverterFactory.create(gson))
     }
 
-    private fun toError(body: String?): ErrorResponse {
+    private fun toError(body: String?): ErrorResponse? {
 
-        if (body == null) return ErrorResponse(message = "Body is null")
+        if (body.isNullOrEmpty()) return ErrorResponse(message = "Body is null or empty")
 
         return try {
             fromJson(body, ErrorResponse::class.java)
         } catch (t: Throwable) {
-            ChatLogger.instance.logE(TAG, t)
-            ErrorResponse().apply {
-                message = t.message.toString() + " from body: " + body
-            }
+            ErrorResponse().apply { message = body }
         }
     }
 }

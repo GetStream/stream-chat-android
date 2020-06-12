@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.UuidGenerator
 import okhttp3.MultipartBody.Part.Companion.createFormData
@@ -562,6 +563,28 @@ internal class ChatApiImpl(
             RemoveMembersRequest(members)
         )
     ).map { flattenChannel(it) }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>> {
+        return callMapper.map(
+            retrofitApi.queryMembers(apiKey, connectionId, QueryMembersRequest(
+                channelType,
+                channelId,
+                filter,
+                offset,
+                limit,
+                sort,
+                members
+            ))
+        ).map { it.members }
+    }
 
     override fun muteUser(
         userId: String

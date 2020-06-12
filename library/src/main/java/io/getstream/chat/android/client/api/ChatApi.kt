@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
@@ -121,6 +122,16 @@ interface ChatApi {
         channelId: String,
         members: List<String>
     ): Call<Channel>
+
+    fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>>
 
     fun muteCurrentUser(): Call<Mute>
 
