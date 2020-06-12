@@ -50,16 +50,7 @@ class MessageListViewModel(private val cid: String,
     fun onEvent(event: Event) {
         when (event) {
             is Event.EndRegionReached -> {
-                currentMode.run {
-                    when(this) {
-                        is Mode.Normal -> {
-                            domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue()
-                        }
-                        is Mode.Thread -> {
-                            domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).enqueue()
-                        }
-                    }
-                }
+                onEndRegionReached()
             }
             is Event.LastMessageRead -> {
                 domain.useCases.markRead.invoke(cid).enqueue()
@@ -68,11 +59,7 @@ class MessageListViewModel(private val cid: String,
                 onThreadModeEntered(event.parentMessage)
             }
             is Event.BackButtonPressed -> {
-                if (currentMode is Mode.Thread) {
-                    onNormalModeEntered()
-                } else {
-                    stateMerger.postValue(State.NavigateUp)
-                }
+                onBackButtonPressed()
             }
             is Event.DeleteMessage -> {
                 domain.useCases.deleteMessage(event.message).enqueue()
@@ -81,6 +68,28 @@ class MessageListViewModel(private val cid: String,
                 client.flag(event.message.user.id).enqueue()
             }
         }.exhaustive
+    }
+
+    private fun onEndRegionReached() {
+        currentMode.run {
+            when (this) {
+                is Mode.Normal -> {
+                    domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue()
+                }
+                is Mode.Thread -> {
+                    domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).enqueue()
+                }
+            }.exhaustive
+        }
+    }
+
+    private fun onBackButtonPressed() {
+        currentMode.run {
+            when (this) {
+                is Mode.Normal -> { stateMerger.postValue(State.NavigateUp) }
+                is Mode.Thread -> { onNormalModeEntered() }
+            }.exhaustive
+        }
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
