@@ -32,6 +32,8 @@ import java.util.regex.Pattern
 
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
+private const val MEDIA_ITEMS_PER_ROW = 4
+private const val FILE_ITEMS_PER_ROW = 1
 class MessageInputController(private val binding: StreamViewMessageInputBinding,
                              private val view: MessageInputView,
                              private val style: MessageInputStyle) {
@@ -145,13 +147,13 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 
 	private fun setAttachmentAdapters(isMedia: Boolean) {
 		if (isMedia) {
-			gridSpacingItemDecoration.setSpanCount(4)
-			gridLayoutManager.spanCount = 4
+			gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
+			gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
 			mediaAttachmentAdapter = MediaAttachmentAdapter(attachmentData) { updateAttachment(it, isMedia) }
 			binding.rvMedia.adapter = mediaAttachmentAdapter
 		} else {
-			gridSpacingItemDecoration.setSpanCount(1)
-			gridLayoutManager.spanCount = 1
+			gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
+			gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
 			fileAttachmentAdapter = FileAttachmentListAdapter(attachmentData) { updateAttachment(it, isMedia) }
 			binding.rvMedia.adapter = fileAttachmentAdapter
 		}
