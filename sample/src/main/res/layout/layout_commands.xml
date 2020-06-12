@@ -101,4 +101,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="query users"
+            android:id="@+id/btnQueryUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="query members"
+            android:id="@+id/btnQueryMembers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>
