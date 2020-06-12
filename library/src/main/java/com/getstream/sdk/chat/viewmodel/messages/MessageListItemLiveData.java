@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -40,7 +41,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean hasNewMessages;
     private String lastMessageID;
     private LifecycleOwner lifecycleOwner;
-
 
     public MessageListItemLiveData(User currentUser,
                                    LiveData<List<Message>> messages,
@@ -133,6 +133,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
 
+    private final Observer<List<Message>> messagesObserver = new Observer<List<Message>>() {
+        @Override
+        public void onChanged(List<Message> messages) {
+            if (threadMessages.getValue() == null || threadMessages.getValue().isEmpty()) {
+                progressMessages(messages);
+            }
+        }
+    };
+
     @Override
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
@@ -145,10 +154,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observe(owner, messages -> {
-            if (threadMessages.getValue() != null) return;
-            progressMessages(messages);
-        });
+        messages.observe(owner, messagesObserver);
 
         threadMessages.observe(owner, this::progressMessages);
 
@@ -176,10 +182,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observeForever(messages -> {
-            if (threadMessages.getValue() != null) return;
-            progressMessages(messages);
-        });
+        messages.observeForever(messagesObserver);
 
         threadMessages.observeForever(this::progressMessages);
 
@@ -273,10 +276,18 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // setup the new observer
         this.threadMessages = threadMessages;
-        threadMessages.observe(lifecycleOwner, this::progressMessages);
+        if (lifecycleOwner == null) {
+            threadMessages.observeForever(this::progressMessages);
+        } else {
+            threadMessages.observe(lifecycleOwner, this::progressMessages);
+        }
 
         // trigger an update
         progressMessages(threadMessages.getValue());
+    }
 
+    public void resetThread() {
+        threadMessages = new MutableLiveData<>();
+        progressMessages(this.messages.getValue());
     }
 }

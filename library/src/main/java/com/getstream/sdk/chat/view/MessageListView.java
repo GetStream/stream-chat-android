@@ -76,6 +76,7 @@ public class MessageListView extends RecyclerView {
     private Function1<Message, Unit> onStartThreadHandler = (Message m) -> {
         throw new IllegalStateException("onStartThreadHandler must be set.");
     };
+    private Function1<Message, Unit> onStartThreadListener = (Message m) -> Unit.INSTANCE;
     private Function1<Message, Unit> onMessageFlagHandler = (Message m) -> {
         throw new IllegalStateException("onMessageFlagHandler must be set.");
     };
@@ -148,16 +149,15 @@ public class MessageListView extends RecyclerView {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
                 if (layoutManager != null) {
-
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
-
-                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0)
+                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0) {
                         endRegionReachedHandler.invoke();
+                    }
 
-                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3);
+                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3); //TODO: investigate magic number 3
+                    lVPosition = currentLastVisible;
                     fVPosition = currentFirstVisible;
                     threadParentPosition = lVPosition;
                 }
@@ -210,7 +210,6 @@ public class MessageListView extends RecyclerView {
         // Scroll to origin position on return from thread
         if (backFromThread) {
             layoutManager.scrollToPosition(this.threadParentPosition);
-            //viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke();
             return;
         }
@@ -319,8 +318,8 @@ public class MessageListView extends RecyclerView {
         } else {
             adapter.setMessageClickListener((message, position) -> {
                 if (message.getReplyCount() > 0) {
-                    // viewModel.setActiveThread(message); // TODO this is event
                     onStartThreadHandler.invoke(message);
+                    onStartThreadListener.invoke(message);
                 } else {
                     //viewModel.sendMessage(message);
                 }
@@ -345,7 +344,11 @@ public class MessageListView extends RecyclerView {
                             style,
                             onMessageEditHandler,
                             onMessageDeleteHandler,
-                            onStartThreadHandler,
+                            (Message m) -> {
+                                onStartThreadHandler.invoke(m);
+                                onStartThreadListener.invoke(m);
+                                return Unit.INSTANCE;
+                            },
                             onMessageFlagHandler
                     ).show());
         }
@@ -456,6 +459,10 @@ public class MessageListView extends RecyclerView {
 
     public void setOnSendGiphyHandler(Function2<Message, GiphyAction, Unit> onSendGiphyHandler) {
         this.onSendGiphyHandler = onSendGiphyHandler;
+    }
+
+    public void setOnStartThreadListener(Function1<Message, Unit> onStartThreadListener) {
+        this.onStartThreadListener = onStartThreadListener;
     }
 
     public interface HeaderAvatarGroupClickListener {

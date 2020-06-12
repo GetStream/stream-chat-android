@@ -2,6 +2,7 @@ package io.getstream.chat.sample.feature.channel
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -18,23 +19,51 @@ import kotlinx.android.synthetic.main.fragment_channel.*
 class ChannelFragment : Fragment(R.layout.fragment_channel) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         val cid = navArgs<ChannelFragmentArgs>().value.cid
-        ChannelHeaderViewModel(cid)
-                .bindView(channelHeaderView.apply {
-                    onBackClick = { findNavController().navigateUp() }
-                }, this)
-        MessageInputViewModel(cid).bindView(messageInputView, viewLifecycleOwner)
-        MessageListViewModel(cid)
+
+        val messagesViewModel = MessageListViewModel(cid)
                 .apply { bindView(messageListView, viewLifecycleOwner) }
                 .apply {
                     state.observe(viewLifecycleOwner, Observer {
                         when (it) {
-                            is MessageListViewModel.State.Loading -> progressBar.visible(true)
-                            is MessageListViewModel.State.Result -> progressBar.visible(false)
+                            is MessageListViewModel.State.Loading -> showProgressBar()
+                            is MessageListViewModel.State.Result -> hideProgressBar()
+                            is MessageListViewModel.State.NavigateUp -> navigateUp()
                         }
                     })
                 }
 
+        ChannelHeaderViewModel(cid).bindView(channelHeaderView, this)
+        MessageInputViewModel(cid).apply {
+            bindView(messageInputView, viewLifecycleOwner)
+            messageListView.setOnStartThreadListener {
+                setActiveThread(it)
+            }
+        }
+
+        val backButtonHandler = {
+            messagesViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+        }
+        channelHeaderView.onBackClick = { backButtonHandler() }
+
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    backButtonHandler()
+                }
+            })
+        }
+    }
+
+    private fun navigateUp() {
+        findNavController().navigateUp()
+    }
+
+    private fun hideProgressBar() {
+        progressBar.visible(false)
+    }
+
+    private fun showProgressBar() {
+        progressBar.visible(true)
     }
 }

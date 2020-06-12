@@ -2,10 +2,14 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
+import com.getstream.sdk.chat.createThreadMessageList
 import com.getstream.sdk.chat.createUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
 import com.getstream.sdk.chat.viewmodel.observeAll
@@ -16,6 +20,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
@@ -23,7 +28,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.controller.ThreadController
 import io.getstream.chat.android.livedata.usecase.DeleteMessage
+import io.getstream.chat.android.livedata.usecase.GetThread
 import io.getstream.chat.android.livedata.usecase.LoadOlderMessages
 import io.getstream.chat.android.livedata.usecase.ThreadLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
@@ -43,6 +50,8 @@ private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
 private val MESSAGES = createMessageList()
 private val MESSAGE = createMessage()
+private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message")
+private val THREAD_MESSAGES = createThreadMessageList(parentMessageId = THREAD_PARENT_MESSAGE.id)
 
 @ExtendWith(InstantExecutorExtension::class)
 class MessageListViewModelTest {
@@ -54,9 +63,17 @@ class MessageListViewModelTest {
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelController: ChannelController = mock()
     private val threadLoadMore: ThreadLoadMore = mock()
+    private val threadLoadMoreCall: Call2<List<Message>> = mock()
+    private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val loadOlderMessages: LoadOlderMessages = mock()
+    private val loadOlderMessagesCall: Call2<Channel> = mock()
+    private val loadOlderMessagesResult: Result<Channel> = mock()
+    private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
     private val deleteMessageCall: Call2<Message> = mock()
+    private val getThreadCall: Call2<ThreadController> = mock()
+    private val getThreadResult: Result<ThreadController> = mock()
+    private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
     private val flagResult: Call<Flag> = mock()
 
@@ -78,9 +95,19 @@ class MessageListViewModelTest {
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
         whenever(useCases.threadLoadMore) doReturn threadLoadMore
+        whenever(threadLoadMore.invoke(any(), any(), any())) doReturn threadLoadMoreCall
+        whenever(threadLoadMoreCall.execute()) doReturn threadLoadMoreResult
+        whenever(threadLoadMoreResult.data()) doReturn emptyList()
         whenever(useCases.loadOlderMessages) doReturn loadOlderMessages
+        whenever(useCases.loadOlderMessages.invoke(any(), any())) doReturn loadOlderMessagesCall
+        whenever(loadOlderMessagesCall.execute()) doReturn loadOlderMessagesResult
         whenever(useCases.deleteMessage) doReturn deleteMessage
+        whenever(useCases.getThread) doReturn getThread
         whenever(deleteMessage.invoke(any())) doReturn deleteMessageCall
+        whenever(getThread.invoke(any(), any())) doReturn getThreadCall
+        whenever(getThreadCall.execute()) doReturn getThreadResult
+        whenever(getThreadResult.data()) doReturn threadController
+        whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flag(any())) doReturn flagCall
 
         messages.value = MESSAGES
@@ -136,4 +163,67 @@ class MessageListViewModelTest {
 
         verify(client).flag(MESSAGE.user.id)
     }
+
+    @Test
+    fun `Should return from thread to normal mode on back click`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+
+        states.last().run {
+            this shouldBeInstanceOf MessageListViewModel.State.Result::class
+            (this as MessageListViewModel.State.Result).let { it ->
+                it.messageListItem.run {
+                    isThread shouldBeEqualTo false
+                    isTyping shouldBeEqualTo false
+
+                    listEntities.run {
+                        first().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
+                        last().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
+                        (1 until size - 1).forEach {
+                            get(it).positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                        }
+                        map { it.message } shouldBeEqualTo MESSAGES
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `Should navigate up from normal mode on back click`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+
+        states.last() shouldBeEqualTo MessageListViewModel.State.NavigateUp
+    }
+
+    @Test
+    fun `Should display thread messages when thread mode entered`() {
+        val viewModel = MessageListViewModel(CID, domain, client)
+        val states = viewModel.state.observeAll()
+
+        viewModel.onEvent(MessageListViewModel.Event.ThreadModeEntered(MESSAGE))
+
+        states.last().run {
+            this shouldBeInstanceOf MessageListViewModel.State.Result::class
+            (this as MessageListViewModel.State.Result).let {
+                it.messageListItem.isThread shouldBeEqualTo true
+                val messages = it.messageListItem.listEntities.run {
+                    first().run {
+                        message shouldBeEqualTo THREAD_PARENT_MESSAGE
+                    }
+                    get(1).apply {
+                        type shouldBeEqualTo MESSAGEITEM_THREAD_SEPARATOR
+                    }
+                    (2 until size).map { index -> get(index).message }.toList() shouldBeEqualTo THREAD_MESSAGES
+                }
+            }
+        }
+    }
+
 }

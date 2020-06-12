@@ -70,6 +70,10 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		get() = getEditMessage().value != null
 
 	// region Thread
+	fun setActiveThread(parentMessage: Message) {
+		activeThread.postValue(parentMessage)
+	}
+
 	fun getActiveThread(): LiveData<Message?> {
 		return activeThread
 	}
@@ -92,7 +96,8 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		logger.logI("onCleared")
 	}
 
-	fun sendMessage(message: Message) {
+	fun sendMessage(messageText: String) {
+		val message = Message(cid = cid, text = messageText)
 		if (isThread) {
 			val parentMessageId = getActiveThread().value !!.id
 			message.parentId = parentMessageId
@@ -100,10 +105,6 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		stopTyping()
 		message.channel = channelController.toChannel()
 		chatDomain.useCases.sendMessage.invoke(message).execute()
-	}
-
-	fun sendMessage(message: String) {
-		chatDomain.useCases.sendMessage(Message(cid = cid, text = message)).execute()
 	}
 
 	/**

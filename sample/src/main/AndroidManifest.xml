@@ -6,13 +6,13 @@
 
     <application
         android:allowBackup="false"
-        android:name=".application.App"
+        android:name="io.getstream.chat.sample.application.App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".feature.HostActivity">
+        <activity android:name="io.getstream.chat.sample.feature.HostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -1,14 +1,10 @@
 package com.getstream.sdk.chat.view
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.StrictMode
-import android.os.StrictMode.VmPolicy
 import android.text.Editable
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -53,13 +49,8 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import whenFalse
 import whenTrue
 import java.io.File
-import java.lang.IllegalStateException
 
 class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
-	/**
-	 * Tag for logging purposes
-	 */
-	val TAG = MessageInputView::class.java.simpleName
 	private val binding: StreamViewMessageInputBinding = StreamViewMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
 	/**
@@ -95,7 +86,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private val messageInputController: MessageInputController by lazy {
 		MessageInputController(context, binding, this, style, object : AttachmentListener {
 			override fun onAddAttachment(attachment: AttachmentMetaData?) {
-				if (binding.ivSend.isEnabled) return
+				if (binding.sendButton.isEnabled) return
 				for (attachment_ in messageInputController.getSelectedAttachments()) if (! attachment_.isUploaded) return
 				onSendMessage()
 			}
@@ -125,9 +116,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
 		binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
 		// Send Button
-		binding.ivSend.setImageDrawable(style.getInputButtonIcon(false))
-		binding.ivSend.layoutParams.width = style.inputButtonWidth
-		binding.ivSend.layoutParams.height = style.inputButtonHeight
+		binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
+		binding.sendButton.layoutParams.width = style.inputButtonWidth
+		binding.sendButton.layoutParams.height = style.inputButtonHeight
 		// Input Background
 		binding.llComposer.background = style.inputBackground
 		// Input Text
@@ -140,7 +131,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configOnClickListener() {
-		binding.ivSend.setOnClickListener { onSendMessage() }
+		binding.sendButton.setOnClickListener { onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
 			binding.isAttachFile = true
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
@@ -217,7 +208,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				if (viewModel.isThread) {
 					viewModel.resetThread()
 					initSendMessage()
-					return@setOnKeyListener true
+					return@setOnKeyListener false
 				}
 				if (viewModel.isEditing) {
 					messageInputController.onClickCloseBackGroundView()
@@ -302,7 +293,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController.initSendMessage()
 		viewModel.setEditMessage(null)
 		binding.etMessage.setText("")
-		binding.ivSend.isEnabled = true
+		binding.sendButton.isEnabled = true
 	}
 
 	protected val editMessage: Message?
