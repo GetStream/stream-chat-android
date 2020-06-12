@@ -106,7 +106,8 @@ fun createMessage(
 
 fun createMessageList(size: Int = 10) = (0..size).map { createMessage() }.toList()
 
-fun createThreadMessageList(size: Int = 10, parentMessageId: String = createMessage().id) = (0..size).map { createMessage() }.toList()
+fun createThreadMessageList(size: Int = 10, parentMessageId: String) =
+		(0 until size).map { createMessage(parentId = parentMessageId, text = "thread message") }.toList()
 
 fun createChannelUserRead(user: User = createUser(),
 						  lastReadDate: Date = Date.from(Instant.now()),

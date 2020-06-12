@@ -2,6 +2,9 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
@@ -47,7 +50,8 @@ private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
 private val MESSAGES = createMessageList()
 private val MESSAGE = createMessage()
-private val THREAD_MESSAGES = createThreadMessageList(parentMessageId = MESSAGE.id)
+private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message")
+private val THREAD_MESSAGES = createThreadMessageList(parentMessageId = THREAD_PARENT_MESSAGE.id)
 
 @ExtendWith(InstantExecutorExtension::class)
 class MessageListViewModelTest {
@@ -69,7 +73,7 @@ class MessageListViewModelTest {
     private val deleteMessageCall: Call2<Message> = mock()
     private val getThreadCall: Call2<ThreadController> = mock()
     private val getThreadResult: Result<ThreadController> = mock()
-    private val threadController:ThreadController = mock()
+    private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()
     private val flagResult: Call<Flag> = mock()
 
@@ -103,7 +107,7 @@ class MessageListViewModelTest {
         whenever(getThread.invoke(any(), any())) doReturn getThreadCall
         whenever(getThreadCall.execute()) doReturn getThreadResult
         whenever(getThreadResult.data()) doReturn threadController
-        whenever(threadController.messages) doReturn MutableLiveData(THREAD_MESSAGES)
+        whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flag(any())) doReturn flagCall
 
         messages.value = MESSAGES
@@ -168,7 +172,24 @@ class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
 
-        states.last() shouldBeInstanceOf  MessageListViewModel.State.Result::class
+        states.last().run {
+            this shouldBeInstanceOf MessageListViewModel.State.Result::class
+            (this as MessageListViewModel.State.Result).let { it ->
+                it.messageListItem.run {
+                    isThread shouldBeEqualTo false
+                    isTyping shouldBeEqualTo false
+
+                    listEntities.run {
+                        first().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
+                        last().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
+                        (1 until size - 1).forEach {
+                            get(it).positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                        }
+                        map { it.message } shouldBeEqualTo MESSAGES
+                    }
+                }
+            }
+        }
     }
 
     @Test
@@ -190,8 +211,18 @@ class MessageListViewModelTest {
 
         states.last().run {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
-            val state = this as MessageListViewModel.State.Result
-            state.messageListItem.isThread shouldBeEqualTo true
+            (this as MessageListViewModel.State.Result).let {
+                it.messageListItem.isThread shouldBeEqualTo true
+                val messages = it.messageListItem.listEntities.run {
+                    first().run {
+                        message shouldBeEqualTo THREAD_PARENT_MESSAGE
+                    }
+                    get(1).apply {
+                        type shouldBeEqualTo MESSAGEITEM_THREAD_SEPARATOR
+                    }
+                    (2 until size).map { index -> get(index).message }.toList() shouldBeEqualTo THREAD_MESSAGES
+                }
+            }
         }
     }
 
