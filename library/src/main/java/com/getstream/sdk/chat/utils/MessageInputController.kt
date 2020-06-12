@@ -58,6 +58,11 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		this.selectedAttachments = selectedAttachments
 	}
 
+	fun onSendMessageClick(message: String) = when (selectedAttachments.isEmpty()) {
+		true -> view.sendTextMessage(message)
+		false -> view.sendAttachments(message, selectedAttachments.map { it.file })
+	}
+
 	fun onClickOpenBackGroundView(type: MessageInputType) {
 		binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
 		binding.clTitle.visibility = View.VISIBLE

@@ -62,9 +62,16 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private var permissionRequestListener: PermissionRequestListener? = null
 
-	var messageSendHandler: (message: String) -> Unit = {
-		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+	var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
+		override fun sendMessage(messageText: String) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
+
+		override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
 	}
+
 	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
 	private val mentionsAdapter = MentionsAdapter(style) {
 		messageInputController.onUserSelected(messageText, it)
@@ -265,8 +272,16 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun onSendMessage() {
 		when (isEdit) {
 			true -> viewModel.editMessage(editMessage)
-			false -> messageSendHandler(messageText)
+			false -> messageInputController.onSendMessageClick(messageText)
 		}.also { handleSentMessage() }
+	}
+
+	internal fun sendTextMessage(message: String) {
+		messageSendHandler.sendMessage(message)
+	}
+
+	internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
+		messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
 	}
 
 	private fun handleSentMessage() {
@@ -383,6 +398,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	interface PermissionRequestListener {
 		fun openPermissionRequest()
+	}
+
+	interface MessageSendHandler {
+		fun sendMessage(messageText: String)
+		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
 	}
 
 	init {

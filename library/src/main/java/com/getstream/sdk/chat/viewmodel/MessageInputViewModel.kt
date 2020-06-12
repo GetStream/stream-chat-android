@@ -14,6 +14,10 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.io.File
 
 class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 	val members: LiveData<List<Member>>
@@ -105,6 +109,12 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		stopTyping()
 		message.channel = channelController.toChannel()
 		chatDomain.useCases.sendMessage.invoke(message).execute()
+	}
+
+	fun sendMessageWithAttachments(message: String, attachmentFiles: List<File>) {
+		GlobalScope.launch(Dispatchers.IO) {
+			chatDomain.useCases.sendMessageWithAttachments(cid, Message(cid = cid, text = message), attachmentFiles).execute()
+		}
 	}
 
 	/**
