@@ -1,7 +1,4 @@
-package com.samuel.beatrecru.application
-
-import android.os.StrictMode
-import timber.log.Timber
+package io.getstream.chat.sample.application
 
 class DebugMetricsHelper {
     internal fun init() = Unit
