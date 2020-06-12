@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.enums.InputType;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Constant;
-import com.getstream.sdk.chat.utils.MessageListItemLiveData;
+import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData;
 import com.getstream.sdk.chat.utils.ResultCallback;
 
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +41,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController;
 import io.getstream.chat.android.livedata.controller.ThreadController;
 import kotlin.Unit;
 
+@Deprecated
 public class ChannelViewModel extends AndroidViewModel implements LifecycleHandler {
 
     protected static final String TAG = ChannelViewModel.class.getSimpleName();

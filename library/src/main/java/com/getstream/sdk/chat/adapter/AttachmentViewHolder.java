@@ -28,8 +28,6 @@ import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
 public class AttachmentViewHolder extends BaseAttachmentViewHolder {
-
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
     private ConstraintLayout cl_attachment_media, cl_des;
     private PorterShapeImageView iv_media_thumb;
@@ -81,15 +79,16 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     }
 
     private void configAttachment() {
-
         boolean hasFile = false;
         boolean hasMedia = false;
         for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType().equals(ModelType.attach_unknown)) continue;
-            if (attachment.getType().equals(ModelType.attach_file)) {
-                hasFile = true;
-            } else {
-                hasMedia = true;
+            final String type = attachment.getType();
+            if (type != null) {
+                if (ModelType.attach_file.equals(type)) {
+                    hasFile = true;
+                } else {
+                    hasMedia = true;
+                }
             }
         }
 
@@ -173,24 +172,25 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private void configMediaAttach() {
         List<Attachment> attachments = new ArrayList<>();
         for (Attachment attachment : message.getAttachments()) {
-            if (attachment.getType().equals(ModelType.attach_unknown)) continue;
-            if (!attachment.getType().equals(ModelType.attach_file)) {
+            if (!ModelType.attach_file.equals(attachment.getType())) {
                 attachments.add(attachment);
             }
         }
 
         final String type = attachments.get(0).getType();
-
         String attachUrl = attachments.get(0).getImageUrl();
-        if (attachments.get(0).getType().equals(ModelType.attach_image)) {
-            attachUrl = attachments.get(0).getImageUrl();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_giphy)) {
-            attachUrl = attachments.get(0).getThumbUrl();
-        } else if (attachments.get(0).getType().equals(ModelType.attach_video)) {
-            attachUrl = attachments.get(0).getThumbUrl();
-        } else {
-            if (attachUrl == null) attachUrl = attachments.get(0).getImage();
+        if (type != null) {
+            if (ModelType.attach_image.equals(type)) {
+                attachUrl = attachments.get(0).getImageUrl();
+            } else if (ModelType.attach_giphy.equals(type)) {
+                attachUrl = attachments.get(0).getThumbUrl();
+            } else if (ModelType.attach_video.equals(type)) {
+                attachUrl = attachments.get(0).getThumbUrl();
+            } else {
+                if (attachUrl == null) attachUrl = attachments.get(0).getImage();
+            }
         }
+
         if (TextUtils.isEmpty(attachUrl)) {
             cl_attachment_media.setVisibility(View.GONE);
             return;
@@ -200,29 +200,31 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
         configImageThumbBackground();
         configClickListeners();
 
-        if (!attachUrl.contains("https:"))
+        if (!attachUrl.contains("https:")) {
             attachUrl = "https:" + attachUrl;
+        }
         Glide.with(context)
                 .load(Chat.getInstance().urlSigner().signImageUrl(attachUrl))
                 .into(iv_media_thumb);
-        if (!message.getType().equals(ModelType.message_ephemeral))
+        if (!message.getType().equals(ModelType.message_ephemeral)) {
             tv_media_title.setText(attachments.get(0).getTitle());
+        }
         tv_media_des.setText(attachments.get(0).getText());
-
-        if (TextUtils.isEmpty(attachments.get(0).getText()))
+        if (TextUtils.isEmpty(attachments.get(0).getText())) {
             tv_media_des.setVisibility(View.GONE);
-        else
+        } else {
             tv_media_des.setVisibility(View.VISIBLE);
-
-        if (TextUtils.isEmpty(attachments.get(0).getTitle()))
+        }
+        if (TextUtils.isEmpty(attachments.get(0).getTitle())) {
             tv_media_title.setVisibility(View.GONE);
-        else
+        } else {
             tv_media_title.setVisibility(View.VISIBLE);
-
-        if (type.equals(ModelType.attach_video))
+        }
+        if (ModelType.attach_video.equals(type)) {
             tv_media_play.setVisibility(View.VISIBLE);
-        else
+        } else {
             tv_media_play.setVisibility(View.GONE);
+        }
     }
 
     private void applyStyle() {

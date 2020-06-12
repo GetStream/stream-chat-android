@@ -191,20 +191,22 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				clearFocus()
 			}
 		}
-		binding.llMedia.setOnClickListener { v: View? -> messageInputController.onClickOpenSelectView(viewModel.channel, null, true) }
-		binding.llCamera.setOnClickListener { v: View? ->
+		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(viewModel.channel, null, true) }
+		binding.llCamera.setOnClickListener { v: View ->
 			if (! PermissionChecker.isGrantedCameraPermissions(context)) {
-				PermissionChecker.showPermissionSettingDialog(context, context.getString(R.string.stream_camera_permission_message))
+				PermissionChecker.checkCameraPermissions(v) { navigateToCamera(v) }
 				return@setOnClickListener
 			}
-			Utils.setButtonDelayEnable(v)
-			messageInputController.onClickCloseBackGroundView()
-			val builder = VmPolicy.Builder()
-			StrictMode.setVmPolicy(builder.build())
-			Utils.hideSoftKeyboard(context as Activity)
-			getInstance().navigator.navigate(CameraDestination(context as Activity))
+			navigateToCamera(v)
 		}
-		binding.llFile.setOnClickListener { v: View? -> messageInputController.onClickOpenSelectView(viewModel.channel, null, false) }
+		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView(viewModel.channel, null, false) }
+	}
+
+	private fun navigateToCamera(v: View) {
+		Utils.setButtonDelayEnable(v)
+		messageInputController.onClickCloseBackGroundView()
+		Utils.hideSoftKeyboard(context as Activity)
+		getInstance().navigator.navigate(CameraDestination(context as Activity))
 	}
 
 	private fun onBackPressed() {
@@ -387,47 +389,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		val contentUri = Uri.fromFile(outputFile)
 		scanIntent.data = contentUri
 		context.sendBroadcast(scanIntent)
-	}
-
-	fun permissionResult(requestCode: Int,
-	                     permissions: Array<String>,
-	                     grantResults: IntArray) {
-		if (requestCode == Constant.PERMISSIONS_REQUEST) {
-			var storageGranted = true
-			var cameraGranted = true
-			var permission: String
-			var grantResult: Int
-			for (i in permissions.indices) {
-				permission = permissions[i]
-				grantResult = grantResults[i]
-				if (permission == Manifest.permission.CAMERA) {
-					cameraGranted = grantResult == PackageManager.PERMISSION_GRANTED
-				} else if (grantResult != PackageManager.PERMISSION_GRANTED) {
-					storageGranted = false
-				}
-			}
-			if (storageGranted && cameraGranted) {
-				messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
-				style.setCheckPermissions(true)
-			} else {
-				val message: String
-				message = if (! storageGranted && ! cameraGranted) {
-					context.getString(R.string.stream_both_permissions_message)
-				} else if (! cameraGranted) {
-					style.setCheckPermissions(true)
-					context.getString(R.string.stream_camera_permission_message)
-				} else {
-					style.setCheckPermissions(true)
-					context.getString(R.string.stream_storage_permission_message)
-				}
-				PermissionChecker.showPermissionSettingDialog(context, message)
-			}
-			messageInputController.configPermissions()
-		}
-	}
-
-	fun setPermissionRequestListener(l: PermissionRequestListener?) {
-		permissionRequestListener = l
 	}
 
 	internal fun showSuggestedMentions(users: List<User>) {

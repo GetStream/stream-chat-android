@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.utils.MessageListItemLiveData
+import com.getstream.sdk.chat.viewmodel.messages.MessageListItemLiveData
 import io.getstream.chat.android.client.logger.ChatLogger.Companion.get
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
