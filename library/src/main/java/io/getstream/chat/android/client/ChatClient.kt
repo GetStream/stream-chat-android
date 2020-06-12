@@ -16,10 +16,11 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
-import java.util.Date
+import java.util.*
 
 interface ChatClient {
 
@@ -53,7 +54,12 @@ interface ChatClient {
 
     fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
 
-    fun createChannel(channelType: String, channelId: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
+    fun createChannel(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+        extraData: Map<String, Any>
+    ): Call<Channel>
 
     fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
 
@@ -124,6 +130,16 @@ interface ChatClient {
         channelId: String,
         members: List<String>
     ): Call<Channel>
+
+    fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort = QuerySort(),
+        members: List<Member> = emptyList()
+    ): Call<List<Member>>
 
     fun muteUser(userId: String): Call<Mute>
     fun muteCurrentUser(): Call<Mute>
@@ -212,7 +228,7 @@ interface ChatClient {
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
 
-    fun translate(messageId:String, language:String): Call<Message>
+    fun translate(messageId: String, language: String): Call<Message>
 
     fun getVersion(): String
 
