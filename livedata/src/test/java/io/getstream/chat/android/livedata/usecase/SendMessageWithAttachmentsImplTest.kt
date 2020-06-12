@@ -97,6 +97,7 @@ class SendMessageWithAttachmentsImplTest {
                     attachments = (message.attachments + files.map {
                     it.toAttachment(null).apply {
                         assetUrl = it.absolutePath
+                        type = "file"
                     }
                 }).toMutableList())
             )
@@ -121,6 +122,7 @@ class SendMessageWithAttachmentsImplTest {
                     attachments = (message.attachments + images.map {
                         it.toAttachment("image/jpeg").apply {
                             imageUrl = it.absolutePath
+                            type = "image"
                         }
                     }).toMutableList()
                 )
@@ -151,6 +153,7 @@ class SendMessageWithAttachmentsImplTest {
                     attachments = (message.attachments + images.map {
                         it.toAttachment("image/jpeg").apply {
                             imageUrl = it.absolutePath
+                            type = "image"
                             extraData[extraDataKey] = it.name
                         }
                     }).toMutableList()
@@ -185,6 +188,7 @@ class SendMessageWithAttachmentsImplTest {
                     attachments = (message.attachments + files.map {
                         it.toAttachment(null).apply {
                             assetUrl = it.absolutePath
+                            type = "file"
                             extraData[extraDataKey] = it.name
                         }
                     }).toMutableList()

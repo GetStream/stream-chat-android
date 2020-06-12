@@ -68,8 +68,14 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
                         url = path
                     ).apply {
                         when (mimetype.isImageMimetype()) {
-                            true -> { this.imageUrl = path }
-                            false -> { this.assetUrl = path }
+                            true -> {
+                                imageUrl = path
+                                type = "image"
+                            }
+                            false -> {
+                                assetUrl = path
+                                type = "file"
+                            }
                         }
                     }
                 )
