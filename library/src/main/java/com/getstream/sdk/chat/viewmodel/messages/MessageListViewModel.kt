@@ -5,6 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import exhaustive
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
@@ -52,16 +53,16 @@ class MessageListViewModel(private val cid: String,
                 currentMode.run {
                     when(this) {
                         is Mode.Normal -> {
-                            domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).execute()
+                            domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue()
                         }
                         is Mode.Thread -> {
-                            domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).execute()
+                            domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).enqueue()
                         }
                     }
                 }
             }
             is Event.LastMessageRead -> {
-                domain.useCases.markRead.invoke(cid).execute()
+                domain.useCases.markRead.invoke(cid).enqueue()
             }
             is Event.ThreadModeEntered -> {
                 onThreadModeEntered(event.parentMessage)
@@ -74,12 +75,12 @@ class MessageListViewModel(private val cid: String,
                 }
             }
             is Event.DeleteMessage -> {
-                domain.useCases.deleteMessage(event.message).execute()
+                domain.useCases.deleteMessage(event.message).enqueue()
             }
             is Event.FlagMessage -> {
                 client.flag(event.message.user.id).enqueue()
             }
-        }
+        }.exhaustive
     }
 
     private fun onThreadModeEntered(parentMessage: Message) {
