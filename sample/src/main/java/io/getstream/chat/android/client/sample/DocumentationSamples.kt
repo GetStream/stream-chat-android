@@ -4,12 +4,19 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Filters.and
+import io.getstream.chat.android.client.models.Filters.contains
+import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
+import java.util.*
 
 
 val client = ChatClient.instance()
@@ -56,6 +63,18 @@ fun setUser() {
             error.printStackTrace()
         }
     })
+}
+
+/**
+ * https://getstream.io/nessy/docs/chat_docs/channels/channel_conversations
+ */
+internal object OneToOneConversations {
+    fun creatingConversations() {
+        val members = listOf("thierry", "tomasso")
+        channelController.create(members).enqueue {
+            val newChannel = it.data()
+        }
+    }
 }
 
 fun channel() {
@@ -420,7 +439,28 @@ fun notificationEvents() {
 }
 
 fun createChannelController() {
+
+
     val channelController = client.channel(channelType, channelId)
+
+    val extraData = mutableMapOf<String, Any>()
+    val members: MutableList<String> = ArrayList()
+
+    extraData["name"] = "Founder Chat"
+    extraData["image"] = "http://bit.ly/2O35mws"
+
+    members.add("thierry")
+    members.add("tommaso")
+
+    channelController
+        .create(members, extraData)
+        .enqueue { result ->
+            if (result.isSuccess) {
+                val channel = result.data()
+            } else {
+                val error = result.error()
+            }
+        }
 }
 
 fun watch() {
@@ -701,14 +741,74 @@ fun updateUsers() {
     }
 }
 
-fun channelPagination() {
+internal class ChannelPagination {
 
-    val filter = Filters.lessThanEquals("cid", cid)
-    val offset = 0
-    val limit = 10
+    init {
+        loadFirstPage()
+    }
 
-    val request = QueryChannelsRequest(filter, offset, limit)
-    client.queryChannels(request).enqueue {
-        val channels = it.data()
+    companion object {
+
+        var pageSize = 10
+
+        fun loadFirstPage() {
+            val firstPage = QueryChannelRequest().withMessages(pageSize)
+            client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
+                val messages: List<Message> = result.data().messages
+                if (messages.isNotEmpty() && messages.size == pageSize) {
+                    loadSecondPage(messages.last().id)
+                } else {
+                    //all messages loaded
+                }
+            }
+        }
+
+        fun loadSecondPage(lastMessageId: String) {
+            val firstPage = QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
+            client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
+                val messages: List<Message> = result.data().messages
+                if (messages.size < pageSize) {
+                    //all messages loaded
+                } else {
+                    //load another page
+                }
+            }
+        }
+    }
+
+
+}
+
+class MultiTenantAndTeams {
+
+
+    fun channelTeam() {
+        val extraData = mutableMapOf<String, Any>()
+        extraData["team"] = "red"
+        client.createChannel("messaging", "red-general", extraData)
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    val channel = result.data()
+                } else {
+                    val error = result.error()
+                }
+            }
+    }
+
+    fun userSearch() {
+        val filter = and(
+            eq("name", "Jordan"),
+            eq("teams", contains("red"))
+        )
+        val offset = 0
+        val limit = 1
+        client.queryUsers(QueryUsersRequest(filter, offset, limit))
+            .enqueue { result ->
+                if (result.isSuccess) {
+                    val users = result.data()
+                } else {
+                    val error = result.error()
+                }
+            }
     }
 }

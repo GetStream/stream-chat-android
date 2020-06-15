@@ -89,4 +89,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="mark channel read"
+            android:id="@+id/btnMarkChannelRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="mark all read"
+            android:id="@+id/btnMarkAllRead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="query channel"
+            android:id="@+id/btnQueryChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="translate message"
+            android:id="@+id/btnTranslateMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="query users"
+            android:id="@+id/btnQueryUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="query members"
+            android:id="@+id/btnQueryMembers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>

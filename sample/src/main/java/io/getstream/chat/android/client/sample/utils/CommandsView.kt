@@ -10,10 +10,11 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
@@ -21,7 +22,6 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
-import java.util.*
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     init {
@@ -35,13 +35,15 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     val filter = FilterObject("type", "messaging")
     val sort = QuerySort().asc("created_at")
     val request = QueryChannelRequest().withWatch().withMessages(10)
+    val stagingEndpoint = "chat-us-east-staging.stream-io-api.com"
 
     val chType = "messaging"
-
+    val chId = "x-test"
+    val cid = "$chType:$chId"
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false, channelId: String = "x-test") {
+    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false) {
 
         this.config = config
         this.members = members
@@ -57,16 +59,18 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        client = if (useStaging) {
-            ChatClient.Builder(config.apiKey, App.instance)
-                .baseUrl("chat-us-east-staging.stream-io-api.com")
+        if (useStaging) {
+            client = ChatClient.Builder(config.apiKey, App.instance)
+                .baseUrl(stagingEndpoint)
                 .notifications(notificationsConfig)
                 .build()
         } else {
-            ChatClient.Builder(config.apiKey, App.instance)
+            client = ChatClient.Builder(config.apiKey, App.instance)
                 .notifications(notificationsConfig)
                 .build()
         }
+
+
 
         subs.add(client.events()
             .filter(ConnectedEvent::class.java)
@@ -113,36 +117,37 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                     UtilsMessages.show("removed", "not removed: ", deleteDeviceResult)
                 }
             }
+
+
         }
 
         btnStartWatchingChannel.setOnClickListener {
 
 
-            client.queryChannel(chType, channelId, request).enqueue { watchResult ->
+            client.queryChannel(chType, chId, request).enqueue { watchResult ->
                 UtilsMessages.show("started", "not not started:", watchResult)
             }
         }
 
         btnStopWatchingChannel.setOnClickListener {
 
-            client.stopWatching(chType, channelId).enqueue { stopWatchResult ->
+            client.stopWatching(chType, chId).enqueue { stopWatchResult ->
                 UtilsMessages.show("stopped", "not stopped:", stopWatchResult)
             }
         }
 
         btnUpdateChannel.setOnClickListener {
             val data = mutableMapOf<String, Any>()
-            data["name"] = channelId
-            client.updateChannel(chType, channelId, Message("update-msg"), data).enqueue {
+            data["name"] = chId
+            client.updateChannel(chType, chId, Message("update-msg"), data).enqueue {
                 UtilsMessages.show("updated", "not updated:", it)
             }
         }
 
         btnSendMessage.setOnClickListener {
-            val currentTime = System.currentTimeMillis() / 1000
-            val messageOut = Message(text = "Test messages: $currentTime")
-            messageOut.extraData["test-data"] = "zed: $currentTime"
-            client.sendMessage(chType, channelId, messageOut).enqueue { messageResult ->
+            val messageOut = Message(text = "SSS")
+            messageOut.extraData["test"] = "zed"
+            client.sendMessage(chType, chId, messageOut).enqueue { messageResult ->
                 if (messageResult.isSuccess) {
                     val messageIn = messageResult.data()
                 }
@@ -154,36 +159,69 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnGetMessages.setOnClickListener {
             val queryChannelRequest = QueryChannelRequest().withMessages(5)
-            client.queryChannel(chType, channelId, queryChannelRequest).enqueue {
-                UtilsMessages.show("messages success", "messages error", it)
+
+            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+                UtilsMessages.show(it)
             }
         }
 
-        btnGetOrCreateChannel.setOnClickListener {
+        btnMarkAllRead.setOnClickListener {
+            client.markAllRead().enqueue {
+                UtilsMessages.show(it)
+            }
+        }
 
-            val queryChannelRequest = QueryChannelRequest()
-                .withData(mapOf("name" to channelId))
-                .withMessages(5)
+        btnMarkChannelRead.setOnClickListener {
+            client.markAllRead().enqueue {
+                UtilsMessages.show(it)
+            }
+        }
 
-            client.queryChannel(chType, channelId, queryChannelRequest).enqueue {
+        btnQueryChannel.setOnClickListener {
+            client.queryChannel(chType, chId, request).enqueue {
+                if (it.isSuccess) {
+                    val channel = it.data()
+                    val totalUnread = channel.getUnreadMessagesCount()
+                    val unreadForCurrentUser = channel.getUnreadMessagesCount(config.userId)
 
-                if (it.isError) {
-                    it.error().printStackTrace()
+                    println(totalUnread)
+                    println(unreadForCurrentUser)
                 }
-
-                UtilsMessages.show("query success", "query error", it)
+                UtilsMessages.show(it)
             }
         }
 
-        btnGetSyncHistory.setOnClickListener {
+        btnTranslateMessage.setOnClickListener {
 
-            val lastSyncAt = Date(0)
+            val language = "nl"
 
-            client.getSyncHistory(listOf("$chType:$channelId"), lastSyncAt).enqueue {
-                UtilsMessages.show("History received", "History not received", it)
+            client.sendMessage(chType, chId, Message(text = "how are you?")).enqueue {
+                if (it.isSuccess) {
+
+                    client.translate(it.data().id, language).enqueue { result ->
+                        val message = result.data()
+                        val originalLanguage = message.originalLanguage
+                        val translation = message.getTranslation(language)
+                    }
+                }
             }
-
         }
+
+        btnQueryUsers.setOnClickListener {
+
+            val filter = Filters.eq("id", config.userId)
+
+            client.queryUsers(QueryUsersRequest(filter, 0, 10)).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnQueryMembers.setOnClickListener {
+            client.queryMembers(chType, chId, 0, 10, Filters.eq("invited", true)).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
     }
 
     fun destroy() {

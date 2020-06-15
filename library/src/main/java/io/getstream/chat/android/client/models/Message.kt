@@ -67,11 +67,17 @@ data class Message(
     @IgnoreSerialisation
     var user: User = User(),
 
-    @IgnoreSerialisation
-    var channel: Channel = Channel(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    override var extraData: MutableMap<String, Any> = mutableMapOf()
+    override var extraData: MutableMap<String, Any> = mutableMapOf(),
 
-) : CustomObject
+    var silent: Boolean = false,
+
+    @IgnoreSerialisation
+    val i18n: Map<String, String> = mapOf()
+
+) : CustomObject {
+    @IgnoreSerialisation
+    var channel: Channel = Channel()
+}

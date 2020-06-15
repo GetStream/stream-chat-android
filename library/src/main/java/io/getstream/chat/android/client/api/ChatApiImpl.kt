@@ -4,8 +4,10 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.UuidGenerator
 import okhttp3.MultipartBody.Part.Companion.createFormData
@@ -13,7 +15,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.util.*
 
-class ChatApiImpl(
+internal class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
@@ -80,7 +82,7 @@ class ChatApiImpl(
         file: File
     ): Call<String> {
 
-        val part = createFormData("file", file.name, file.asRequestBody())
+        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
 
         return callMapper.map(
             retrofitCdnApi.sendFile(
@@ -100,7 +102,7 @@ class ChatApiImpl(
         file: File
     ): Call<String> {
 
-        val part = createFormData("file", file.name, file.asRequestBody())
+        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
 
         return callMapper.map(
             retrofitCdnApi.sendImage(
@@ -506,14 +508,14 @@ class ChatApiImpl(
         }
     }
 
-    override fun markAllRead(): Call<EventResponse> {
+    override fun markAllRead(): Call<Unit> {
         return callMapper.map(
             retrofitApi.markAllRead(
                 apiKey,
                 userId,
                 connectionId
             )
-        )
+        ).map { Unit }
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
@@ -540,10 +542,10 @@ class ChatApiImpl(
         members: List<String>
     ) = callMapper.map(
         retrofitApi.addMembers(
-            apiKey,
-            connectionId,
             channelType,
             channelId,
+            apiKey,
+            connectionId,
             AddMembersRequest(members)
         )
     ).map { flattenChannel(it) }
@@ -561,6 +563,28 @@ class ChatApiImpl(
             RemoveMembersRequest(members)
         )
     ).map { flattenChannel(it) }
+
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>> {
+        return callMapper.map(
+            retrofitApi.queryMembers(apiKey, connectionId, QueryMembersRequest(
+                channelType,
+                channelId,
+                filter,
+                offset,
+                limit,
+                sort,
+                members
+            ))
+        ).map { it.members }
+    }
 
     override fun muteUser(
         userId: String
@@ -668,6 +692,14 @@ class ChatApiImpl(
             )
         ).map {
             it.event
+        }
+    }
+
+    override fun translate(messageId:String, language:String): Call<Message>{
+        return callMapper.map(
+            retrofitApi.translate(messageId, apiKey, userId, connectionId, TranslateMessageRequest(language))
+        ).map {
+            it.message
         }
     }
 

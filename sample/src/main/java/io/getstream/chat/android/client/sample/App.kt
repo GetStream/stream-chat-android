@@ -38,20 +38,14 @@ class App : Application() {
         private const val EXTRA_MESSAGE_ID = "io.getstream.chat.example.MESSAGE_ID"
 
         lateinit var instance: App
-
-        var activities = mutableListOf<Activity>()
-
-        fun runWithActivity(call: (Activity) -> Unit) {
-            if (activities.isNotEmpty()) {
-                call(activities[0])
-            }
-        }
     }
 
     override fun onCreate() {
         super.onCreate()
 
         instance = this
+
+        initActivityListener()
 
         Stetho.initializeWithDefaults(this)
 
@@ -64,7 +58,6 @@ class App : Application() {
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
         client = ChatClient.Builder(apiKey, this)
-            .baseUrl("chat-us-east-staging.stream-io-api.com")
             .notifications(provideNotificationConfig())
             .loggerHandler(object : ChatLoggerHandler {
                 override fun logT(throwable: Throwable) {
@@ -120,7 +113,17 @@ class App : Application() {
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
 
+        client.disconnect()
+    }
+
+    var latestResumed: Activity? = null
+
+    private fun initActivityListener() {
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
+                latestResumed = activity
+            }
+
             override fun onActivityPaused(activity: Activity) {
 
             }
@@ -138,20 +141,14 @@ class App : Application() {
             }
 
             override fun onActivityStopped(activity: Activity) {
-                activities.remove(activity)
+
             }
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
 
             }
-
-            override fun onActivityResumed(activity: Activity) {
-                activities.add(activity)
-            }
-
         })
     }
-
 
     @UseExperimental(ExperimentalTime::class)
     private fun provideNotificationConfig() = object : ChatNotificationConfig(this) {

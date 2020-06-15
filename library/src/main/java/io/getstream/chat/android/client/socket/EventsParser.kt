@@ -12,29 +12,37 @@ import java.util.*
 
 
 internal class EventsParser(
-    private val service: ChatSocketServiceImpl,
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
 
-    private var firstMessageReceived = false
+    private var connectionEventReceived = false
     private val logger = ChatLogger.get("Events")
+
+    private lateinit var service: ChatSocketService
+
+    fun setSocketService(service: ChatSocketService){
+        this.service = service
+    }
 
     override fun onOpen(webSocket: WebSocket, response: Response) {
         logger.logI("onOpen")
-        firstMessageReceived = false
+        connectionEventReceived = false
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
 
-        logger.logI("onMessage: $text")
+        try {
+            val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
+            val errorData = errorMessage.data()
 
-        val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
-        val errorData = errorMessage.data()
-
-        if (errorMessage.isSuccess && errorData.error != null) {
-            handleErrorEvent(errorData.error)
-        } else {
-            handleEvent(text)
+            if (errorMessage.isSuccess && errorData.error != null) {
+                handleErrorEvent(errorData.error)
+            } else {
+                handleEvent(text)
+            }
+        } catch (t: Throwable) {
+            logger.logE("onMessage", t)
+            service.onSocketError(ChatNetworkError.create(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT))
         }
     }
 
@@ -60,12 +68,14 @@ internal class EventsParser(
         if (eventMessage.isSuccess) {
             val event = eventMessage.data()
 
-            if (!firstMessageReceived) {
-                firstMessageReceived = true
-                val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
+            if (!connectionEventReceived) {
 
-                if (connection.isSuccess) {
-                    service.onConnectionResolved(connection.data())
+                val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
+                val connectionEvent = connection.data()
+
+                if (connection.isSuccess && connectionEvent.isValid()) {
+                    connectionEventReceived = true
+                    service.onConnectionResolved(connectionEvent)
                 } else {
                     service.onSocketError(
                         ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
@@ -155,6 +165,10 @@ internal class EventsParser(
                 parser.fromJson(data, ChannelVisible::class.java)
             }
 
+            EventType.CHANNEL_TRUNCATED -> {
+                parser.fromJson(data, ChannelTruncated::class.java)
+            }
+
             //region Watching
 
             EventType.USER_WATCHING_START -> {
@@ -196,6 +210,14 @@ internal class EventsParser(
 
             EventType.NOTIFICATION_MUTES_UPDATED -> {
                 parser.fromJson(data, NotificationMutesUpdated::class.java)
+            }
+
+            EventType.NOTIFICATION_CHANNEL_DELETED -> {
+                parser.fromJson(data, NotificationChannelDeleted::class.java)
+            }
+
+            EventType.NOTIFICATION_CHANNEL_TRUNCATED -> {
+                parser.fromJson(data, NotificationChannelTruncated::class.java)
             }
 
             EventType.HEALTH_CHECK -> {

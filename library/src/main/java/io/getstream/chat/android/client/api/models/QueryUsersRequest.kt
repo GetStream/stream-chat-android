@@ -11,7 +11,7 @@ data class QueryUsersRequest(
     @IgnoreSerialisation
     var querySort: QuerySort = QuerySort(),
     var presence: Boolean = false
-) {
+){
     val sort = querySort.data
     val filter_conditions: Map<String, Any> = filter.toMap()
 }

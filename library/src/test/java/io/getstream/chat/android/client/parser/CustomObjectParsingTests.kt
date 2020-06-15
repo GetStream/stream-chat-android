@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.parser
 
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
@@ -12,7 +11,7 @@ class CustomObjectParsingTests {
 
     val parser = ChatParserImpl()
 
-    val gson = Gson()
+    val gson = SkipExtraDataGson()
     val typeAdapterFactory = TypeAdapterFactory()
 
     val customObjectImplementations = listOf(
@@ -23,6 +22,27 @@ class CustomObjectParsingTests {
         User::class.java,
         Attachment::class.java
     )
+
+    @Test
+    fun nullValuesRestoration() {
+        val json =
+            "{latest_reactions:null,silent:null,attachments:null,cid:null,reaction_counts:null, reply_count:null}"
+        val message = parser.fromJson(json, Message::class.java)
+
+        assertThat(message.latestReactions).isEmpty()
+        assertThat(message.reactionCounts).isEmpty()
+        assertThat(message.attachments).isEmpty()
+        assertThat(message.cid).isEmpty()
+        assertThat(message.silent).isFalse()
+
+        message.reactionCounts.put("like", 1)
+        message.latestReactions.add(Reaction("x"))
+        message.attachments.add(Attachment("author"))
+
+        assertThat(message.reactionCounts).isEqualTo(mapOf("like" to 1))
+        assertThat(message.latestReactions).isEqualTo(listOf(Reaction("x")))
+        assertThat(message.attachments).isEqualTo(listOf(Attachment("author")))
+    }
 
     @Test
     fun verifyAdapter() {
@@ -41,6 +61,28 @@ class CustomObjectParsingTests {
         verifyAllImplementations { obj -> verifyRawJson(obj) }
     }
 
+    @Test
+    fun verifyCollectionParsing() {
+        val id = "message-id"
+        val reactionId = "like"
+        val reactionScore = 13
+        val inputMessage = Message().apply {
+            this.id = id
+            this.latestReactions.add(Reaction(id))
+            this.reactionScores[reactionId] = reactionScore
+        }
+
+        val outputMessage = convert(inputMessage, Message::class.java)
+
+        assertThat(inputMessage.id).isEqualTo(outputMessage.id)
+        assertThat(inputMessage.latestReactions).isEqualTo(outputMessage.latestReactions)
+        assertThat(inputMessage.reactionScores).isEqualTo(outputMessage.reactionScores)
+    }
+
+    private fun <T> convert(obj: Any, clazz: Class<T>): T {
+        val jsonMessage = gson.toJson(obj)
+        return parser.fromJson(jsonMessage, clazz)
+    }
 
     private fun verifyRawJson(customObject: CustomObject) {
 
@@ -72,7 +114,7 @@ class CustomObjectParsingTests {
     }
 
     private fun verifyAdapter(clazz: Class<*>) {
-        val adapter = typeAdapterFactory.create(gson, TypeToken.get(clazz))
+        val adapter = typeAdapterFactory.create(gson.instance, TypeToken.get(clazz))
         assertThat(adapter).isInstanceOf(CustomObjectGsonAdapter::class.java)
     }
 

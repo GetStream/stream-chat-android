@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.*
@@ -92,7 +93,7 @@ interface ChatApi {
         request: UpdateChannelRequest
     ): Call<Channel>
 
-    fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    fun markRead(channelType: String, channelId: String, messageId: String = ""): Call<Unit>
     fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
         channelType: String,
@@ -103,7 +104,7 @@ interface ChatApi {
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
-    fun markAllRead(): Call<EventResponse>
+    fun markAllRead(): Call<Unit>
 
     fun updateUsers(users: List<User>): Call<List<User>>
 
@@ -122,6 +123,16 @@ interface ChatApi {
         channelId: String,
         members: List<String>
     ): Call<Channel>
+
+    fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>>
 
     fun muteCurrentUser(): Call<Mute>
 
@@ -155,6 +166,8 @@ interface ChatApi {
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
+
+    fun translate(messageId: String, language: String): Call<Message>
 
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>>
 }

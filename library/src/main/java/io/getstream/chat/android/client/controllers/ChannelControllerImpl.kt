@@ -2,10 +2,12 @@ package io.getstream.chat.android.client.controllers
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -17,6 +19,14 @@ internal class ChannelControllerImpl(
 ) : ChannelController {
 
     override val cid = "$channelType:$channelId"
+
+    override fun create(members: List<String>, extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(channelType, channelId, members, extraData)
+    }
+
+    override fun create(extraData: Map<String, Any>): Call<Channel> {
+        return client.createChannel(channelType, channelId, emptyList())
+    }
 
     override fun events(): ChatObservable {
         return client.events().filter { event ->
@@ -74,8 +84,8 @@ internal class ChannelControllerImpl(
         return client.markMessageRead(channelType, channelId, messageId)
     }
 
-    override fun markRead(): Call<ChatEvent> {
-        return client.markAllRead()
+    override fun markRead(): Call<Unit> {
+        return client.markRead(channelType, channelId)
     }
 
     override fun delete(): Call<Channel> {
@@ -164,5 +174,15 @@ internal class ChannelControllerImpl(
 
     override fun stopTyping(): Call<ChatEvent> {
         return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
+    }
+
+    override fun queryMembers(
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>> {
+        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
 }

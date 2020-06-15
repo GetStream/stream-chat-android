@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
@@ -50,6 +51,15 @@ interface ChatClient {
     fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
 
     fun createChannel(channelType: String, members: List<String>): Call<Channel>
+
+    fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
+
+    fun createChannel(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+        extraData: Map<String, Any>
+    ): Call<Channel>
 
     fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
 
@@ -87,6 +97,8 @@ interface ChatClient {
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
+    fun replayEvents(channelIds: List<String>, since: Date?, limit: Int = 100, offset: Int = 0): Call<List<ChatEvent>>
+
     //endregion
 
     //region Events
@@ -118,6 +130,16 @@ interface ChatClient {
         channelId: String,
         members: List<String>
     ): Call<Channel>
+
+    fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort = QuerySort(),
+        members: List<Member> = emptyList()
+    ): Call<List<Member>>
 
     fun muteUser(userId: String): Call<Mute>
     fun muteCurrentUser(): Call<Mute>
@@ -188,7 +210,8 @@ interface ChatClient {
 
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
-    fun markAllRead(): Call<ChatEvent>
+    fun markRead(channelType: String, channelId: String): Call<Unit>
+    fun markAllRead(): Call<Unit>
     fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     //endregion
 
@@ -204,6 +227,8 @@ interface ChatClient {
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
+
+    fun translate(messageId: String, language: String): Call<Message>
 
     fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>>
 

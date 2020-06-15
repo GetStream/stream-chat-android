@@ -1,5 +1,19 @@
 # Push messages
 
+To receive push notifications you need to configure [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/android/client) and setup desirable payload at Stream `Dashboard`. 
+
+You can also use `SDK` implementation of `FirebaseMessagingService`. To do it:
+
+1. Add `ChatFirebaseMessagingService` to your `Manifest`
+2. Set data template in Stream `Dashboard` of your app:  
+```json
+{
+  "stream-chat-channel-type": "{{ channel.type }}",
+  "stream-chat-channel-id": "{{ channel.id }}",
+  "stream-chat-message-id": "{{ message.id }}"
+}
+```
+
 To customize notifications instance of `ChatNotificationConfig` should be created and passed to `ChatClient.Builder`:
 ```kotlin
 val notificationsConfig = object : ChatNotificationConfig(context) {
@@ -47,3 +61,7 @@ val notificationsConfig = object : ChatNotificationConfig(context) {
     }
 }
 ```
+
+---
+## Possible issues
+- if `RemoteMessage` is not arrived/intercepted check if `notification` template is empty. Read more about difference between `notification` and `data` [here](https://firebase.google.com/docs/cloud-messaging/concept-options)

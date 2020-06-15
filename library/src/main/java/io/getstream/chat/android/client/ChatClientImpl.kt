@@ -20,12 +20,12 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 import java.util.*
-
 
 internal class ChatClientImpl(
     private val config: ChatClientConfig,
@@ -129,6 +129,18 @@ internal class ChatClientImpl(
         return api.sendFile(channelType, channelId, file)
     }
 
+    override fun queryMembers(
+        channelType: String,
+        channelId: String,
+        offset: Int,
+        limit: Int,
+        filter: FilterObject,
+        sort: QuerySort,
+        members: List<Member>
+    ): Call<List<Member>> {
+        return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
+    }
+
     override fun sendImage(
         channelType: String,
         channelId: String,
@@ -143,6 +155,15 @@ internal class ChatClientImpl(
 
     override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return api.deleteImage(channelType, channelId, url)
+    }
+
+    override fun replayEvents(
+        channelIds: List<String>,
+        since: Date?,
+        limit: Int,
+        offset: Int
+    ): Call<List<ChatEvent>> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     //region Reactions
@@ -192,6 +213,7 @@ internal class ChatClientImpl(
     }
 
     override fun disconnect() {
+        connectionListener = null
         socket.disconnect()
         state.reset()
     }
@@ -335,10 +357,12 @@ internal class ChatClientImpl(
         return api.acceptInvite(channelType, channelId, message)
     }
 
-    override fun markAllRead(): Call<ChatEvent> {
-        return api.markAllRead().map {
-            it.event
-        }
+    override fun markAllRead(): Call<Unit> {
+        return api.markAllRead()
+    }
+
+    override fun markRead(channelType: String, channelId: String): Call<Unit> {
+        return api.markRead(channelType, channelId)
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -384,6 +408,8 @@ internal class ChatClientImpl(
     override fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     override fun flag(targetId: String) = api.flag(targetId)
+
+    override fun translate(messageId: String, language: String) = api.translate(messageId, language)
 
     override fun banUser(
         targetId: String,
@@ -451,11 +477,29 @@ internal class ChatClientImpl(
     }
 
     override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> {
-        return createChannel(channelType, channelId, mapOf(Pair("members", members)))
+        return createChannel(channelType, channelId, mapOf(Pair(ModelFields.MEMBERS, members)))
     }
 
     override fun createChannel(channelType: String, members: List<String>): Call<Channel> {
         return createChannel(channelType, "", members)
+    }
+
+    override fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel> {
+        return createChannel(channelType, members)
+    }
+
+    override fun createChannel(
+        channelType: String,
+        channelId: String,
+        members: List<String>,
+        extraData: Map<String, Any>
+    ): Call<Channel> {
+
+        val dataWithMembers = extraData.toMutableMap()
+        dataWithMembers[ModelFields.MEMBERS] = members
+
+        val request = QueryChannelRequest().withData(dataWithMembers)
+        return queryChannel(channelType, channelId, request)
     }
 
     override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>> {
@@ -470,7 +514,6 @@ internal class ChatClientImpl(
         } else if (error != null) {
             connectionListener?.onError(error)
         }
-
         connectionListener = null
     }
 

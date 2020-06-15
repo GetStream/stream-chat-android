@@ -1,3 +1,107 @@
+# 1.7.0 - Thu 12 June 2020
+
+- Add query members call
+
+# 1.6.1 - Thu 11 June 2020
+
+- Add MimeType on sendFile and sendImage methods
+
+# 1.6.0 - Mon 8 June 2020
+
+- Add translations api call and update message with `i18n` field. Helper `Message` extensions functions are added.
+
+# 1.5.4 - Wed 3 June 2020
+
+- Add optional `userId` parameter to `Channel.getUnreadMessagesCount` to filter out unread messages for the user
+
+# 1.5.3 - Wed 3 June 2020
+
+- Fix switching users issue: `disconnect` and `setUser` resulted in wrong user connection
+
+# 1.5.2 - Tue 2 June 2020
+
+- Fix `ConcurrentModificationException` on multithread access to socket listeners
+
+# 1.5.1 - Wed 27 May 2020
+
+- Add filter contains with any value
+
+# 1.5.0 - Mon 26 May 2020
+
+🚨 Breaking change:
+- Add new constructor field to `Channel`: `team`
+- Add new constructor field to `User`: `teams`
+
+✅ Other changes:
+- Add `Filter.contains`
+
+# 1.4.17 - Mon 26 May 2020
+
+- Fix loop on client.create
+- Fix crash when backend sends first event without me
+
+# 1.4.16 - Mon 25 May 2020
+
+Breaking change:
+- `Command` fields are mandatory and marked as non-nullable
+
+
+# 1.4.15 - Fri 22 May 2020
+
+- Add events: `ChannelTruncated`, `NotificationChannelTruncated`, `NotificationChannelDeleted`
+
+# 1.4.13 - Fri 22 May 2020
+
+🚨 Breaking change:
+- Fields `role` and `isInvited` of ``Member` fields optional
+
+# 1.4.12 - Fri 22 May 2020
+
+🚨 Breaking change:
+- `Member` model is cleaned up from non existing fields
+
+# 1.4.11 - Tue 19 May 2020
+
+🚨 Breaking change:
+- `markRead` of ``ChatClient` and `ChannelController` return `Unit` instead of `ChatEvent`
+
+✅ Other changes:
+- Fix null fields which are not marked as nullable
+
+# 1.4.10 - Tue 19 May 2020
+
+- Fix add member invalid api key
+
+# 1.4.9 - Mon 18 May 2020
+
+🚨 Breaking change:
+- `markRead` of ``ChatClient` and `ChannelController` return `Unit` instead of `ChatEvent`
+
+✅ Other changes:
+- Fix `ChannelController.markRead`: was marking read all channels instead of current one
+- `ChatClient.markRead` accepts optional `messageId`
+
+# 1.4.8 - Mon 18 May 2020
+
+- Add handling invalid event payload
+
+# 1.4.7 - Tue 14 May 2020
+
+- Add more channel creation signatures to `Client` and `ChannelController`
+
+# 1.4.6 - Tue 14 May 2020
+
+- Move channel out of message constructor
+
+# 1.4.5 - Tue 12 May 2020
+
+- add message.silent field
+- add extension properties `name` and `image` to `Channel` and `User`
+
+# 1.4.3 - Thu 7 May 2020
+
+- fix type erasure of parsed collections: `LinkedTreeMap`, but not `List<Reaction>`
+
 # 1.4.2 - Mon 4 May 2020
 
 - add `reactionScores` to `Message`
