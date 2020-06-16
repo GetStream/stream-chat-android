@@ -1,7 +1,5 @@
 package com.getstream.sdk.chat.utils
 
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.os.Environment
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,7 +12,6 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
 import io.getstream.chat.android.client.models.Command
@@ -25,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import whenTrue
 import java.io.File
 import java.util.ArrayList
 import java.util.regex.Pattern
@@ -215,6 +211,14 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		if (isMedia) binding.rvComposer.visibility = if (show) View.VISIBLE else View.GONE else binding.lvComposer.visibility = if (show) View.VISIBLE else View.GONE
 	}
 
+	fun onCameraClick() {
+		if (! PermissionChecker.isGrantedCameraPermissions(view.context)) {
+			PermissionChecker.checkCameraPermissions(view) { onCameraClick() }
+		} else {
+			view.showCameraOptions()
+		}
+	}
+
 	fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
 		if (! PermissionChecker.isGrantedStoragePermissions(view.context)) {
 			PermissionChecker.checkStoragePermissions(view) { onClickOpenSelectView(editAttachments, isMedia) }
@@ -272,7 +276,6 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	}
 
 	private fun initAdapter() {
-		selectedAttachments.clear()
 		uploadManager.resetQueue()
 		binding.lvComposer.removeAllViewsInLayout()
 		binding.rvComposer.removeAllViewsInLayout()
@@ -288,20 +291,8 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		selectedFileAttachmentAdapter = null
 	}
 
-	fun progressCapturedMedia(file: File?, isImage: Boolean) {
-		val attachment = AttachmentMetaData(file)
-		attachment.file = file
-		if (isImage) {
-			attachment.type = ModelType.attach_image
-		} else {
-			val retriever = MediaMetadataRetriever()
-			retriever.setDataSource(view.context, Uri.fromFile(file))
-			val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-			val videolengh = time.toLong()
-			attachment.videoLength = (videolengh / 1000).toInt()
-			Utils.configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4)
-			retriever.release()
-		}
+	internal fun onFileCaptured(file: File) {
+		selectAttachment(AttachmentMetaData(file), true)
 	}
 
 	fun checkCommandsOrMentions(inputMessage: String) {

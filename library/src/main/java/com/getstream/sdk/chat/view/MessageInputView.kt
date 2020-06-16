@@ -2,8 +2,6 @@ package com.getstream.sdk.chat.view
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -13,6 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.widget.RelativeLayout
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.BuildCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
@@ -21,17 +22,13 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.MergeAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.Chat.Companion.getInstance
-import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.adapter.CommandsAdapter
 import com.getstream.sdk.chat.adapter.MentionsAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.navigation.destinations.CameraDestination
-import com.getstream.sdk.chat.utils.CaptureController
-import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.MessageInputController
 import com.getstream.sdk.chat.utils.PermissionChecker
@@ -72,6 +69,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 	}
 
+	private val activityResultLauncher: ActivityResultLauncher<Unit>? = (context as? ComponentActivity)
+			?.registerForActivityResult(CaptureMediaContract()) { file: File? ->
+				file?.let { messageInputController.onFileCaptured(it) }
+			}
 	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
 	private val mentionsAdapter = MentionsAdapter(style) {
 		messageInputController.onUserSelected(messageText, it)
@@ -110,6 +111,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun applyStyle() {
+		ActivityResultContracts.GetContent()
 		// Attachment Button
 		binding.ivOpenAttach.visibility = if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
 		binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
@@ -176,21 +178,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			}
 		}
 		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(null, true) }
-		binding.llCamera.setOnClickListener { v: View ->
-			if (! PermissionChecker.isGrantedCameraPermissions(context)) {
-				PermissionChecker.checkCameraPermissions(v) { navigateToCamera(v) }
-				return@setOnClickListener
-			}
-			navigateToCamera(v)
-		}
+		binding.llCamera.setOnClickListener { v: View -> messageInputController.onCameraClick() }
 		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView( null, false) }
 	}
 
-	private fun navigateToCamera(v: View) {
-		Utils.setButtonDelayEnable(v)
-		messageInputController.onClickCloseBackGroundView()
-		Utils.hideSoftKeyboard(context as Activity)
-		getInstance().navigator.navigate(CameraDestination(context as Activity))
+	internal fun showCameraOptions() {
+		activityResultLauncher?.launch(Unit)
 	}
 
 	private fun onBackPressed() {
@@ -355,32 +348,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		} else {
 			messageInputController.onClickOpenSelectView(attachments, true)
 		}
-	}
-
-	fun captureMedia(requestCode: Int, resultCode: Int, data: Intent?) {
-		if (requestCode == Constant.CAPTURE_IMAGE_REQUEST_CODE
-				&& resultCode == Activity.RESULT_OK) {
-			val imageFile = CaptureController.getCaptureFile(true)
-			val vieoFile = CaptureController.getCaptureFile(false)
-			if (imageFile == null && vieoFile == null) {
-				Utils.showMessage(context, context.getString(R.string.stream_take_photo_failed))
-				return
-			}
-			if (imageFile != null && imageFile.length() > 0) {
-				messageInputController.progressCapturedMedia(imageFile, true)
-				updateGallery(imageFile)
-			} else if (vieoFile != null && vieoFile.length() > 0) {
-				messageInputController.progressCapturedMedia(vieoFile, false)
-				updateGallery(vieoFile)
-			} else Utils.showMessage(context, context.getString(R.string.stream_take_photo_failed))
-		}
-	}
-
-	private fun updateGallery(outputFile: File) {
-		val scanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-		val contentUri = Uri.fromFile(outputFile)
-		scanIntent.data = contentUri
-		context.sendBroadcast(scanIntent)
 	}
 
 	internal fun showSuggestedMentions(users: List<User>) {
