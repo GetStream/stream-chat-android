@@ -46,9 +46,10 @@ fun createUser(
 		unreadChannels: Int = positveRandomInt(),
 		unreadCount: Int = positveRandomInt(),
 		mutes: List<Mute> = mutableListOf(),
+		teams: List<String> = listOf(),
 		extraData: MutableMap<String, Any> = mutableMapOf()
 ): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive,
-		totalUnreadCount, unreadChannels, unreadCount, mutes, extraData)
+		totalUnreadCount, unreadChannels, unreadCount, mutes, teams, extraData)
 
 fun createMember(
 		user: User = createUser(),
@@ -107,7 +108,7 @@ fun createMessage(
 fun createMessageList(size: Int = 10) = (0..size).map { createMessage() }.toList()
 
 fun createThreadMessageList(size: Int = 10, parentMessageId: String) =
-		(0 until size).map { createMessage(parentId = parentMessageId, text = "thread message") }.toList()
+		(0 until size).map { createMessage(parentId = parentMessageId) }.toList()
 
 fun createChannelUserRead(user: User = createUser(),
 						  lastReadDate: Date = Date.from(Instant.now()),

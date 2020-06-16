@@ -55,7 +55,6 @@ public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    public static List<AttachmentMetaData> attachments = new ArrayList<>();
     private static final TaggedLogger logger = ChatLogger.Companion.get(Utils.class.getSimpleName());
 
     public static String readInputStream(InputStream inputStream) {
@@ -173,11 +172,12 @@ public class Utils {
         String movPattern = ".mov";
         String mp3Pattern = ".mp3";
 
+        ArrayList<AttachmentMetaData> attachments = new ArrayList<>();
         File[] FileList = dir.listFiles();
         if (FileList != null) {
             for (File file : FileList) {
                 if (file.isDirectory()) {
-                    getFileAttachments(file);
+                    attachments.addAll(getFileAttachments(file));
                 } else {
                     AttachmentMetaData attachment = new AttachmentMetaData(file);
                     String mimeType = "";

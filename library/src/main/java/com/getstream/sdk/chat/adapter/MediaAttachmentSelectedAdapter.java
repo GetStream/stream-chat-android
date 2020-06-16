@@ -116,15 +116,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     cancelListener.onCancel(attachment);
             });
 
-            if (attachment.isUploaded()) {
-                binding.ivMask.setVisibility(View.INVISIBLE);
-                binding.progressBar.setVisibility(View.INVISIBLE);
-            } else {
-                binding.ivMask.setVisibility(View.VISIBLE);
-                binding.progressBar.setVisibility(View.VISIBLE);
-                binding.progressBar.setProgress(attachment.progress);
-            }
-
+            binding.ivMask.setVisibility(View.INVISIBLE);
+            binding.progressBar.setVisibility(View.INVISIBLE);
             binding.executePendingBindings();
         }
     }
