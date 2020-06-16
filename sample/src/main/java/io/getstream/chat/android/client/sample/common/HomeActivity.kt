@@ -32,8 +32,8 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, TestUsersApiMethodsActivity::class.java))
         }
 
-        btnTestPush.setOnClickListener {
-            startActivity(Intent(this, PushActivity::class.java))
+        btnOneToOne.setOnClickListener {
+            startActivity(Intent(this, OneToOneActivity::class.java))
         }
     }
 }

@@ -54,6 +54,12 @@
             android:layout_height="wrap_content"/>
 
     <Button
+            android:text="Get or create channel"
+            android:id="@+id/btnGetOrCreateChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
             android:text="Start Watching channel"
             android:id="@+id/btnStartWatchingChannel"
             android:layout_width="wrap_content"
@@ -74,6 +80,18 @@
     <Button
             android:text="Get messages"
             android:id="@+id/btnGetMessages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="Get 5 min sync history"
+            android:id="@+id/btnGet5MinSyncHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="Get all sync history"
+            android:id="@+id/btnGetAllSyncHistory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

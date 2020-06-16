@@ -2,21 +2,13 @@ package io.getstream.chat.android.client.sample.common
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.iid.FirebaseInstanceId
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.sample.utils.UserConfig
-import io.getstream.chat.android.client.sample.utils.UtilsMessages
-import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_push.*
 
-class PushActivity : AppCompatActivity() {
+class OneToOneActivity : AppCompatActivity() {
 
-    private val subs = mutableListOf<Subscription>()
     private val clients = mutableListOf<ChatClient>()
 
     val userA = UserConfig(
@@ -37,24 +29,15 @@ class PushActivity : AppCompatActivity() {
         setContentView(R.layout.activity_push)
 
         val members = listOf(userA.userId, userB.userId)
+        val local = "http://127.0.0.1:3000"
 
-        commandsViewA.setUser(userA, members, true)
-        commandsViewB.setUser(userB, members, true)
+        commandsViewA.setUser(userA, members)
+        commandsViewB.setUser(userB, members)
     }
 
     override fun onDestroy() {
         commandsViewA.destroy()
         commandsViewB.destroy()
         super.onDestroy()
-    }
-
-    private fun queryFirstChannel() {
-        val filter = FilterObject("type", "messaging")
-        val sort = QuerySort().asc("created_at")
-        App.client.queryChannels(QueryChannelsRequest(filter, 0, 1, sort)).enqueue {
-            if (it.isSuccess) {
-
-            }
-        }
     }
 }

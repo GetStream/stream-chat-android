@@ -13,6 +13,7 @@ internal class HeadersInterceptor(val config: ChatClientConfig) : Interceptor {
             .addHeader("stream-auth-type", authType)
             .addHeader("Accept-Encoding", "application/gzip")
             .addHeader("X-STREAM-CLIENT", ChatClient.instance().getVersion())
+            .addHeader("Cache-Control", "no-cache")
             .build()
         return chain.proceed(request)
     }

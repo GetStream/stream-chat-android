@@ -703,6 +703,19 @@ internal class ChatApiImpl(
         }
     }
 
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>> {
+        return callMapper.map(
+            retrofitApi.getSyncHistory(
+                GetSyncHistory(channelIds, lastSyncAt),
+                apiKey,
+                userId,
+                connectionId
+            )
+        ).map {
+            it.events
+        }
+    }
+
     private fun <T> noConnectionIdError(): ErrorCall<T> {
         return ErrorCall(ChatError("setUser is either not called or not finished"))
     }
@@ -719,6 +732,8 @@ internal class ChatApiImpl(
         response.channel.members = response.members.orEmpty()
         response.channel.messages = response.messages.orEmpty()
         response.channel.watchers = response.watchers.orEmpty()
+        response.channel.hidden = response.hidden
+        response.channel.hiddenMessagesBefore = response.hide_messages_before
         return response.channel
     }
 

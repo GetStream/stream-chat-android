@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
+import java.util.*
 
 interface ChatApi {
 
@@ -167,4 +168,6 @@ interface ChatApi {
     ): Call<ChatEvent>
 
     fun translate(messageId: String, language: String): Call<Message>
+
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
 }

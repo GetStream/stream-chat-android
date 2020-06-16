@@ -22,6 +22,9 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     init {
@@ -43,7 +46,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false) {
+    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false, customUrl: String = "") {
 
         this.config = config
         this.members = members
@@ -59,17 +62,23 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        if (useStaging) {
-            client = ChatClient.Builder(config.apiKey, App.instance)
-                .baseUrl(stagingEndpoint)
-                .notifications(notificationsConfig)
-                .build()
+        if (customUrl.isNullOrEmpty()) {
+            if (useStaging) {
+                client = ChatClient.Builder(config.apiKey, App.instance)
+                    .baseUrl(stagingEndpoint)
+                    .notifications(notificationsConfig)
+                    .build()
+            } else {
+                client = ChatClient.Builder(config.apiKey, App.instance)
+                    .notifications(notificationsConfig)
+                    .build()
+            }
         } else {
             client = ChatClient.Builder(config.apiKey, App.instance)
+                .baseUrl(customUrl)
                 .notifications(notificationsConfig)
                 .build()
         }
-
 
 
         subs.add(client.events()
@@ -145,7 +154,8 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnSendMessage.setOnClickListener {
-            val messageOut = Message(text = "SSS")
+
+            val messageOut = Message(text = "from llc sample at ${System.currentTimeMillis()}")
             messageOut.extraData["test"] = "zed"
             client.sendMessage(chType, chId, messageOut).enqueue { messageResult ->
                 if (messageResult.isSuccess) {
@@ -220,6 +230,53 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.queryMembers(chType, chId, 0, 10, Filters.eq("invited", true)).enqueue {
                 UtilsMessages.show(it)
             }
+        }
+
+
+
+        btnGetOrCreateChannel.setOnClickListener {
+
+            val queryChannelRequest = QueryChannelRequest()
+                .withData(mapOf("name" to chId))
+                .withMessages(5)
+
+            client.queryChannel(chType, chId, queryChannelRequest).enqueue {
+
+                if (it.isError) {
+                    it.error().printStackTrace()
+                }
+
+                UtilsMessages.show("query success", "query error", it)
+            }
+
+
+        }
+
+
+
+        btnGet5MinSyncHistory.setOnClickListener {
+
+
+            //val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            //val lastSyncAt = format.parse("2020-06-16T11:07:05.699Z")
+//            val lastSyncAt = format.parse("2020-06-14T23:00:00Z")
+
+            val now = System.currentTimeMillis()
+            val ago5Min = TimeUnit.HOURS.toMillis(1)
+            val lastSyncAt = Date(now - ago5Min)
+
+            client.getSyncHistory(listOf("$chType:$chId", "messaging:zed", "messaging:sss"), lastSyncAt).enqueue {
+                UtilsMessages.show("History received", "History not received", it)
+            }
+
+        }
+
+        btnGetAllSyncHistory.setOnClickListener {
+
+            client.getSyncHistory(listOf("$chType:$chId"), Date(0)).enqueue {
+                UtilsMessages.show("History received", "History not received", it)
+            }
+
         }
 
     }

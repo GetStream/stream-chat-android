@@ -359,4 +359,12 @@ interface RetrofitApi {
         @Query("connection_id") connectionId: String,
         @Body request: TranslateMessageRequest
     ): Call<MessageResponse>
+
+    @POST("/sync")
+    fun getSyncHistory(
+        @Body body: GetSyncHistory,
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String
+    ): Call<GetSyncHistoryResponse>
 }
