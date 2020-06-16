@@ -106,7 +106,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 }
             }
 
-            if (attachment.type.equals(ModelType.attach_file)) {
+            if (ModelType.attach_file.equals(attachment.type)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
             } else {
                 binding.tvLength.setText("");
