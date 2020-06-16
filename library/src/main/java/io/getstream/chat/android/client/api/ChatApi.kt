@@ -169,5 +169,5 @@ interface ChatApi {
 
     fun translate(messageId: String, language: String): Call<Message>
 
-    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>>
+    fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
 }

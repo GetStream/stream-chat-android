@@ -502,7 +502,7 @@ internal class ChatClientImpl(
         return queryChannel(channelType, channelId, request)
     }
 
-    override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>> {
+    override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 

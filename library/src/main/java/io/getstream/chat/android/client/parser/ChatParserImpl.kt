@@ -17,8 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
-    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-
+    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     private val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())

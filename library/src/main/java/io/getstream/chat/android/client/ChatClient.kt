@@ -230,7 +230,7 @@ interface ChatClient {
 
     fun translate(messageId: String, language: String): Call<Message>
 
-    fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<Map<String, Channel>>
+    fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
 
     fun getVersion(): String
 
@@ -292,7 +292,6 @@ interface ChatClient {
             if (baseUrl.endsWith("/")) {
                 baseUrl = baseUrl.substring(0, baseUrl.length - 1)
             }
-            this.baseUrl = baseUrl
             return this
         }
 
