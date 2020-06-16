@@ -8,10 +8,6 @@
         <variable
             name="activeMessageSend"
             type="boolean" />
-
-        <variable
-            name="isAttachFile"
-            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -245,24 +241,11 @@
                 android:id="@+id/rv_media"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                app:isGone="@{isAttachFile}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/stream_item_select_photo" />
-
-            <ListView
-                android:id="@+id/lv_file"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:divider="@null"
-                app:isGone="@{!isAttachFile}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@layout/stream_item_attach_file" />
 
             <ProgressBar
                 android:id="@+id/progressBar_file_loader"

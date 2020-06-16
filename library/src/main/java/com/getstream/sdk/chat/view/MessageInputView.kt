@@ -32,7 +32,6 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.navigation.destinations.CameraDestination
 import com.getstream.sdk.chat.utils.CaptureController
 import com.getstream.sdk.chat.utils.Constant
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.MessageInputController
 import com.getstream.sdk.chat.utils.PermissionChecker
@@ -63,9 +62,16 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private var permissionRequestListener: PermissionRequestListener? = null
 
-	var messageSendHandler: (message: String) -> Unit = {
-		throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+	var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
+		override fun sendMessage(messageText: String) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
+
+		override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
 	}
+
 	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
 	private val mentionsAdapter = MentionsAdapter(style) {
 		messageInputController.onUserSelected(messageText, it)
@@ -84,13 +90,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	 */
 	private lateinit var viewModel: MessageInputViewModel
 	private val messageInputController: MessageInputController by lazy {
-		MessageInputController(context, binding, this, style, object : AttachmentListener {
-			override fun onAddAttachment(attachment: AttachmentMetaData?) {
-				if (binding.sendButton.isEnabled) return
-				for (attachment_ in messageInputController.getSelectedAttachments()) if (! attachment_.isUploaded) return
-				onSendMessage()
-			}
-		})
+		MessageInputController(binding, this, style)
 	}
 
 	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner) {
@@ -133,7 +133,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun configOnClickListener() {
 		binding.sendButton.setOnClickListener { onSendMessage() }
 		binding.ivOpenAttach.setOnClickListener { view: View? ->
-			binding.isAttachFile = true
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
 			if (! PermissionChecker.isGrantedCameraPermissions(context)
 					&& permissionRequestListener != null && ! style.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
@@ -167,13 +166,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configAttachmentUI() {
 		// TODO: make the attachment UI into it's own view and allow you to change it.
-		binding.rvMedia.layoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
-		binding.rvMedia.hasFixedSize()
 		binding.rvComposer.layoutManager = GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
-		val spanCount = 4 // 4 columns
-		val spacing = 2 // 1 px
-		val includeEdge = false
-		binding.rvMedia.addItemDecoration(GridSpacingItemDecoration(spanCount, spacing, includeEdge))
 		binding.btnClose.setOnClickListener { v: View? ->
 			messageInputController.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)
@@ -182,7 +175,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				clearFocus()
 			}
 		}
-		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(viewModel.channel, null, true) }
+		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(null, true) }
 		binding.llCamera.setOnClickListener { v: View ->
 			if (! PermissionChecker.isGrantedCameraPermissions(context)) {
 				PermissionChecker.checkCameraPermissions(v) { navigateToCamera(v) }
@@ -190,7 +183,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			}
 			navigateToCamera(v)
 		}
-		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView(viewModel.channel, null, false) }
+		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView( null, false) }
 	}
 
 	private fun navigateToCamera(v: View) {
@@ -279,8 +272,16 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun onSendMessage() {
 		when (isEdit) {
 			true -> viewModel.editMessage(editMessage)
-			false -> messageSendHandler(messageText)
+			false -> messageInputController.onSendMessageClick(messageText)
 		}.also { handleSentMessage() }
+	}
+
+	internal fun sendTextMessage(message: String) {
+		messageSendHandler.sendMessage(message)
+	}
+
+	internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
+		messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
 	}
 
 	private fun handleSentMessage() {
@@ -347,12 +348,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		if (attachment.type == ModelType.attach_file) {
 			val fileType = attachment.mimeType
 			if (fileType == ModelType.attach_mime_mov || fileType == ModelType.attach_mime_mp4) {
-				messageInputController.onClickOpenSelectView(viewModel.channel, attachments, true)
+				messageInputController.onClickOpenSelectView(attachments, true)
 			} else {
-				messageInputController.onClickOpenSelectView(viewModel.channel, attachments, false)
+				messageInputController.onClickOpenSelectView(attachments, false)
 			}
 		} else {
-			messageInputController.onClickOpenSelectView(viewModel.channel, attachments, true)
+			messageInputController.onClickOpenSelectView(attachments, true)
 		}
 	}
 
@@ -366,10 +367,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 				return
 			}
 			if (imageFile != null && imageFile.length() > 0) {
-				messageInputController.progressCapturedMedia(viewModel.channel, imageFile, true)
+				messageInputController.progressCapturedMedia(imageFile, true)
 				updateGallery(imageFile)
 			} else if (vieoFile != null && vieoFile.length() > 0) {
-				messageInputController.progressCapturedMedia(viewModel.channel, vieoFile, false)
+				messageInputController.progressCapturedMedia(vieoFile, false)
 				updateGallery(vieoFile)
 			} else Utils.showMessage(context, context.getString(R.string.stream_take_photo_failed))
 		}
@@ -395,12 +396,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		fun onStopTyping()
 	}
 
-	interface AttachmentListener {
-		fun onAddAttachment(attachment: AttachmentMetaData?)
-	}
-
 	interface PermissionRequestListener {
 		fun openPermissionRequest()
+	}
+
+	interface MessageSendHandler {
+		fun sendMessage(messageText: String)
+		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
 	}
 
 	init {
