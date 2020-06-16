@@ -3,8 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'jacoco-android'
+apply plugin: 'maven-publish'
 
 //https://github.com/arturdm/jacoco-android-gradle-plugin
 
@@ -33,7 +33,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.6.4"
+        versionName "0.6.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -124,7 +124,23 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:3.2.4"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation 'org.amshove.kluent:kluent:1.61'
-
-
 }
 
+afterEvaluate {
+    // Creates a Maven publication which can be used to test livedata artifact locally.
+    // By default the publication is stored into ~/.m2 directory.
+    // 1. To release a local publication run `./gradlew publishToMavenLocal`
+    // 2. To use it add mavenLocal() into target project's repositories list.
+    publishing {
+        publications {
+            release(MavenPublication) {
+                // Applies the component for the release build variant
+                from components.release
+                // Custom attributes of the publication
+                groupId = project.group
+                artifactId = 'stream-chat-android-livedata'
+                version = '0.6.5-SNAPSHOT'
+            }
+        }
+    }
+}
