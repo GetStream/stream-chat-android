@@ -791,8 +791,14 @@ class ChannelControllerImpl(
             is TypingStartEvent -> {
                 setTyping(event.user?.id!!, event)
             }
-            is MessageReadEvent, is NotificationMarkReadEvent -> {
+            is MessageReadEvent -> {
                 val read = ChannelUserRead(event.user!!, event.createdAt!!)
+                updateRead(read)
+            }
+            is NotificationMarkReadEvent -> {
+                val user = domainImpl.currentUser
+                val date = event.createdAt!!
+                val read = ChannelUserRead(user, date)
                 updateRead(read)
             }
         }
