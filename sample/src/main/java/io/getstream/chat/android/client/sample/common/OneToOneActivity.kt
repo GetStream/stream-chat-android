@@ -29,9 +29,10 @@ class OneToOneActivity : AppCompatActivity() {
         setContentView(R.layout.activity_push)
 
         val members = listOf(userA.userId, userB.userId)
+        val local = "http://127.0.0.1:3000"
 
-        commandsViewA.setUser(userA, members, true)
-        commandsViewB.setUser(userB, members, true)
+        commandsViewA.setUser(userA, members)
+        commandsViewB.setUser(userB, members)
     }
 
     override fun onDestroy() {
