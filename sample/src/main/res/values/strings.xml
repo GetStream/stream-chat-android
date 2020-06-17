@@ -6,4 +6,5 @@
     <string name="add_new_channel_title">Add new channel</string>
     <string name="create_channel_name_error">Channel name is invalid, try different one</string>
     <string name="backend_error_info">Ups, something went wrong</string>
+    <string name="channels_empty_state_label">No channels available</string>
 </resources>

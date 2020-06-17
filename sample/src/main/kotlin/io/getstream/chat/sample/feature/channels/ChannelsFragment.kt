@@ -6,11 +6,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
-import com.getstream.sdk.chat.viewmodel.ChannelsViewModel
-import com.getstream.sdk.chat.viewmodel.ChannelsViewModelImpl
-import com.getstream.sdk.chat.viewmodel.bindView
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
+import com.getstream.sdk.chat.viewmodel.channels.bindView
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.R
@@ -35,21 +34,30 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
         Chat.getInstance().setUser(user, loggedInUser.token, object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
-                ChatLogger.instance.logD("ChannelsList", "User set successfully")
+                Timber.d("User set successfully")
             }
             override fun onError(error: ChatError) {
-                Timber.e(error)
+                Timber.e("Failed to set user")
             }
         })
+
         ChannelsViewModelImpl().apply {
             bindView(channelsList, this@ChannelsFragment)
             state.observe(viewLifecycleOwner, Observer {
                 when (it) {
                     is ChannelsViewModel.State.Loading -> {
                         loadingProgressbar.visible(it.isLoading)
+                        emptyStateLabel.visible(false)
                     }
                     is ChannelsViewModel.State.LoadingNextPage -> {
                         loadingNextPageProgressbar.visible(it.isLoading)
+                        emptyStateLabel.visible(false)
+                    }
+                    ChannelsViewModel.State.NoChannelsAvailable -> {
+                        emptyStateLabel.visible(true)
+                    }
+                    is ChannelsViewModel.State.Result -> {
+                        emptyStateLabel.visible(false)
                     }
                 }
             })

@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.viewmodel
+package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
