@@ -49,8 +49,8 @@ class CaptureMediaContract : ActivityResultContract<Unit, File>() {
 	}
 
 	override fun parseResult(resultCode: Int, intent: Intent?): File? =
-			(pictureFile?.takeIf { it.exists() && it.length() > 0 }
-					?: videoFile?.takeIf { it.exists() && it.length() > 0 })
+			(pictureFile.takeIfCaptured() ?: videoFile.takeIfCaptured())
 					.takeIf { resultCode == Activity.RESULT_OK }
-
 }
+
+private fun File?.takeIfCaptured(): File? = this?.takeIf { it.exists() && it.length() > 0 }
