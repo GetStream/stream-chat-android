@@ -77,9 +77,19 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		this.selectedAttachments = selectedAttachments
 	}
 
-	fun onSendMessageClick(message: String) = when (selectedAttachments.isEmpty()) {
+	fun onSendMessageClick(message: String) = when (val im = inputMode) {
+		is InputMode.Normal -> sendNormalMessage(message)
+		is InputMode.ReplyTo -> sendReplyTo(im.parentMessage, message)
+	}.also { inputMode = InputMode.Normal }
+
+	private fun sendNormalMessage(message: String) = when (selectedAttachments.isEmpty()) {
 		true -> view.sendTextMessage(message)
 		false -> view.sendAttachments(message, selectedAttachments.map { it.file })
+	}
+
+	private fun sendReplyTo(parentMessage: Message, message: String) = when (selectedAttachments.isEmpty()) {
+		true -> view.sendReplyTo(parentMessage, message)
+		false -> view.sendReplyToWithAttachments(parentMessage, message, selectedAttachments.map { it.file })
 	}
 
 	fun onClickOpenBackGroundView(type: MessageInputType) {
