@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import kotlinx.coroutines.Dispatchers
@@ -315,6 +316,11 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	fun onUserSelected(currentMessage: String, user: User) {
 		view.messageText = "${currentMessage.substringBeforeLast("@")}@${user.name} "
 	}
+}
+
+internal sealed class InputMode {
+	object Normal : InputMode()
+	data class ReplyTo(val parentMessage: Message) : InputMode()
 }
 
 private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()
