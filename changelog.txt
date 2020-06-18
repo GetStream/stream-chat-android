@@ -1,3 +1,9 @@
+# 1.8.1 - Thu 18 June 2020
+
+- Fix UTC date for sync endpoint
+- Fix inhered events parsing
+- Fix custom url setter of ChatClient.Builder
+
 # 1.8.0 - Thu 12 June 2020
 
 - Add sync api call
