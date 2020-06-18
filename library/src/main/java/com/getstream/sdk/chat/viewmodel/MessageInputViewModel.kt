@@ -22,6 +22,7 @@ import java.io.File
 class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 	val members: LiveData<List<Member>>
 	val commands: LiveData<List<Command>>
+	val replyTo: MutableLiveData<Message?> = MutableLiveData()
 	private var unreadCount: LiveData<Int>
 
 	/**

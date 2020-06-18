@@ -29,6 +29,10 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 		override fun onKeystroke() = keystroke()
 		override fun onStopTyping() = stopTyping()
 	})
+	replyTo.observe(lifecycleOwner, Observer {
+		it?.let { view.setReplyToMode(it) }
+				?: view.setNormalMode()
+	})
 	members.observe(lifecycleOwner, Observer { view.configureMembers(it) })
 	commands.observe(lifecycleOwner, Observer { view.configureCommands(it) })
 }
