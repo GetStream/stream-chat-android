@@ -375,6 +375,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		commandsAdapter.submitList(commands)
 	}
 
+	fun setNormalMode() {
+		messageInputController.inputMode = InputMode.Normal
+	}
+
+	fun setReplyToMode(parentMessage: Message) {
+		messageInputController.inputMode = InputMode.ReplyTo(parentMessage)
+	}
+
 	interface TypeListener {
 		fun onKeystroke()
 		fun onStopTyping()
