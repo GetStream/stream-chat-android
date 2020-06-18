@@ -52,10 +52,10 @@ class ChannelsViewModelImpl(
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort).execute().data()
         queryChannelsController.run {
             channelsData = map(channels) {
-                if (it.isNotEmpty()) {
-                    ChannelsViewModel.State.Result(it)
-                } else {
+                if (it.isEmpty()) {
                     ChannelsViewModel.State.NoChannelsAvailable
+                } else {
+                    ChannelsViewModel.State.Result(it)
                 }
             }
             loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
