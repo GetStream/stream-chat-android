@@ -1184,5 +1184,27 @@ public class DocumentationSamplesJava {
                 });
             }
         }
+
+        static class Translation {
+            static void translate() {
+                ChannelController channelController = client.channel("messaging:general");
+                Message message = new Message();
+                message.setText("Hello, I would like to have more information about your product.");
+                channelController.sendMessage(message).enqueue(result -> {
+                    Message message1 = result.data();
+                    String messageId = message1.getId();
+
+                    client.translate(messageId, "fr").enqueue(result1 -> {
+                        Message translatedMessage = result1.data();
+
+                        String frenchText = translatedMessage.getI18n().get("fr");
+
+                        return Unit.INSTANCE;
+                    });
+
+                    return Unit.INSTANCE;
+                });
+            }
+        }
     }
 }

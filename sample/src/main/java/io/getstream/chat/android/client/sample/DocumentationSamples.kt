@@ -812,3 +812,18 @@ class MultiTenantAndTeams {
             }
     }
 }
+
+internal object Translation {
+    fun translate() {
+        val channelController = client.channel("messaging:general")
+        val message = Message(text = "Hello, I would like to have more information about your product.")
+        val frenchLanguage = "fr"
+        channelController.sendMessage(message).enqueue { result ->
+            val messageId = result.data().id
+            client.translate(messageId, frenchLanguage).enqueue { result ->
+                val translatedMessage = result.data()
+                val translation = translatedMessage.getTranslation(frenchLanguage)
+            }
+        }
+    }
+}
