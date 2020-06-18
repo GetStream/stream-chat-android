@@ -2,13 +2,12 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket
-import java.util.*
 
 
 internal class EventsParser(
@@ -20,7 +19,7 @@ internal class EventsParser(
 
     private lateinit var service: ChatSocketService
 
-    fun setSocketService(service: ChatSocketService){
+    fun setSocketService(service: ChatSocketService) {
         this.service = service
     }
 
@@ -66,7 +65,6 @@ internal class EventsParser(
         val eventMessage = parser.fromJsonOrError(text, TypedEvent::class.java)
 
         if (eventMessage.isSuccess) {
-            val event = eventMessage.data()
 
             if (!connectionEventReceived) {
 
@@ -83,8 +81,8 @@ internal class EventsParser(
                 }
 
             } else {
-                val parsedEvent = parseEvent(event.type, text)
-                service.onEvent(parsedEvent)
+                val event = parser.fromJson(text, ChatEvent::class.java)
+                service.onEvent(event)
             }
 
 
@@ -99,157 +97,6 @@ internal class EventsParser(
         service.onSocketError(
             ChatNetworkError.create(error.code, error.message, error.statusCode)
         )
-    }
-
-    private fun parseEvent(type: String, data: String): ChatEvent {
-        val result = when (type) {
-
-            //region Messages
-
-            EventType.MESSAGE_NEW -> {
-                parser.fromJson(data, NewMessageEvent::class.java)
-            }
-            EventType.MESSAGE_DELETED -> {
-                parser.fromJson(data, MessageDeletedEvent::class.java)
-            }
-            EventType.MESSAGE_UPDATED -> {
-                parser.fromJson(data, MessageUpdatedEvent::class.java)
-            }
-            EventType.MESSAGE_READ -> {
-                parser.fromJson(data, MessageReadEvent::class.java)
-            }
-
-            //region Typing
-
-            EventType.TYPING_START -> {
-                parser.fromJson(data, TypingStartEvent::class.java)
-            }
-            EventType.TYPING_STOP -> {
-                parser.fromJson(data, TypingStopEvent::class.java)
-            }
-
-            //region Reactions
-
-            EventType.REACTION_NEW -> {
-                parser.fromJson(data, ReactionNewEvent::class.java)
-            }
-            EventType.REACTION_DELETED -> {
-                parser.fromJson(data, ReactionDeletedEvent::class.java)
-            }
-
-            //region Members
-
-            EventType.MEMBER_ADDED -> {
-                parser.fromJson(data, MemberAddedEvent::class.java)
-            }
-            EventType.MEMBER_REMOVED -> {
-                parser.fromJson(data, MemberRemovedEvent::class.java)
-            }
-            EventType.MEMBER_UPDATED -> {
-                parser.fromJson(data, MemberUpdatedEvent::class.java)
-            }
-
-            //region Channels
-
-            EventType.CHANNEL_UPDATED -> {
-                parser.fromJson(data, ChannelUpdatedEvent::class.java)
-            }
-            EventType.CHANNEL_HIDDEN -> {
-                parser.fromJson(data, ChannelHiddenEvent::class.java)
-            }
-            EventType.CHANNEL_DELETED -> {
-                parser.fromJson(data, ChannelDeletedEvent::class.java)
-            }
-
-            EventType.CHANNEL_VISIBLE -> {
-                parser.fromJson(data, ChannelVisible::class.java)
-            }
-
-            EventType.CHANNEL_TRUNCATED -> {
-                parser.fromJson(data, ChannelTruncated::class.java)
-            }
-
-            //region Watching
-
-            EventType.USER_WATCHING_START -> {
-                parser.fromJson(data, UserStartWatchingEvent::class.java)
-            }
-            EventType.USER_WATCHING_STOP -> {
-                parser.fromJson(data, UserStopWatchingEvent::class.java)
-            }
-
-            //region Notifications
-
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL -> {
-                parser.fromJson(data, NotificationAddedToChannelEvent::class.java)
-            }
-
-            EventType.NOTIFICATION_MARK_READ -> {
-                parser.fromJson(data, NotificationMarkReadEvent::class.java)
-            }
-
-            EventType.NOTIFICATION_MESSAGE_NEW -> {
-                parser.fromJson(data, NotificationMessageNew::class.java)
-            }
-
-            EventType.NOTIFICATION_INVITED -> {
-                parser.fromJson(data, NotificationInvited::class.java)
-            }
-
-            EventType.NOTIFICATION_INVITE_ACCEPTED -> {
-                parser.fromJson(data, NotificationInviteAccepted::class.java)
-            }
-
-            EventType.NOTIFICATION_INVITE_REJECTED -> {
-                parser.fromJson(data, NotificationInviteRejected::class.java)
-            }
-
-            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL -> {
-                parser.fromJson(data, NotificationRemovedFromChannel::class.java)
-            }
-
-            EventType.NOTIFICATION_MUTES_UPDATED -> {
-                parser.fromJson(data, NotificationMutesUpdated::class.java)
-            }
-
-            EventType.NOTIFICATION_CHANNEL_DELETED -> {
-                parser.fromJson(data, NotificationChannelDeleted::class.java)
-            }
-
-            EventType.NOTIFICATION_CHANNEL_TRUNCATED -> {
-                parser.fromJson(data, NotificationChannelTruncated::class.java)
-            }
-
-            EventType.HEALTH_CHECK -> {
-                parser.fromJson(data, HealthEvent::class.java)
-            }
-
-            EventType.USER_PRESENCE_CHANGED -> {
-                parser.fromJson(data, UserPresenceChanged::class.java)
-            }
-
-            EventType.USER_UPDATED -> {
-                parser.fromJson(data, UserUpdated::class.java)
-            }
-
-            EventType.USER_BANNED -> {
-                parser.fromJson(data, UserBanned::class.java)
-            }
-
-            EventType.USER_UNBANNED -> {
-                parser.fromJson(data, UserUnbanned::class.java)
-            }
-
-            else -> {
-                parser.fromJson(data, ChatEvent::class.java)
-            }
-        }
-
-        val now = Date()
-        result.receivedAt = now
-        service.setLastEventDate(now)
-
-        return result
     }
 
     private data class TypedEvent(val type: String)

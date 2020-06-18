@@ -14,7 +14,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.8.0"
+        versionName "1.8.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -64,6 +64,8 @@ dependencies {
 
     //Lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    implementation 'com.github.mrmike:ok2curl:0.6.0'
 
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"

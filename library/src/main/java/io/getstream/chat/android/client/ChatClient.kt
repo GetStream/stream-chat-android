@@ -292,6 +292,7 @@ interface ChatClient {
             if (baseUrl.endsWith("/")) {
                 baseUrl = baseUrl.substring(0, baseUrl.length - 1)
             }
+            this.baseUrl = baseUrl
             return this
         }
 

@@ -1,9 +1,6 @@
 package io.getstream.chat.android.client.parser
 
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.gson.*
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -14,15 +11,15 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
-    private val defaultDateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+
     private val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
-
-            .setDateFormat(defaultDateFormat)
+            .setDateFormat(ChatParser.DATE_FORMAT)
             .addSerializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipClass(clazz: Class<*>): Boolean {
                     return false

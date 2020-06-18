@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client
 
+import com.moczul.ok2curl.CurlInterceptor
+import com.moczul.ok2curl.logger.Loggable
 import io.getstream.chat.android.client.api.*
 import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -77,7 +79,10 @@ internal open class ChatModules(val config: ChatClientConfig) {
             .addInterceptor(TokenAuthInterceptor(
                 config.tokenManager,
                 parser
-            ) {config.isAnonymous})
+            ) { config.isAnonymous })
+            .addInterceptor(CurlInterceptor(Loggable {
+                logger().logI("CURL", it)
+            }))
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
