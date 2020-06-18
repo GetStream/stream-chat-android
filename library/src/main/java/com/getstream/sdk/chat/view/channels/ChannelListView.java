@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view;
+package com.getstream.sdk.chat.view.channels;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.models.User;
 
 
 public class ChannelListView extends RecyclerView {
-    final String TAG = ChannelListView.class.getSimpleName();
 
     private ChannelListViewStyle style;
     // our connection to the channel scope

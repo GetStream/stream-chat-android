@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view;
+package com.getstream.sdk.chat.view.channels;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.TextStyle;
+import com.getstream.sdk.chat.view.BaseStyle;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;

@@ -19,8 +19,8 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarView;
-import com.getstream.sdk.chat.view.ChannelListView;
-import com.getstream.sdk.chat.view.ChannelListViewStyle;
+import com.getstream.sdk.chat.view.channels.ChannelListView;
+import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.SimpleDateFormat;

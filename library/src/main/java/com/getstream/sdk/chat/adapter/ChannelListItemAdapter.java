@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.getstream.sdk.chat.view.ChannelListView;
-import com.getstream.sdk.chat.view.ChannelListViewStyle;
+import com.getstream.sdk.chat.view.channels.ChannelListView;
+import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 
 import java.util.ArrayList;
 import java.util.List;

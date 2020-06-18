@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.getstream.sdk.chat.view.ChannelListView
-        android:id="@+id/channelsList"
+    <com.getstream.sdk.chat.view.channels.ChannelsView
+        android:id="@+id/channelsListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,17 +21,6 @@
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"
         app:streamShowReadState="true" />
-
-    <TextView
-        android:id="@+id/emptyStateLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/channels_empty_state_label"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/loadingProgressbar"

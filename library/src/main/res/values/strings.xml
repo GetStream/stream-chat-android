@@ -76,4 +76,8 @@
     <string name="stream_giphy_send">Send</string>
     <string name="stream_giphy_shuffle">Shuffle</string>
     <string name="stream_giphy_cancel">Cancel</string>
+
+    <!--Channels list view -->
+    <string name="stream_channels_empty_state_label">No channels available</string>
+
 </resources>
