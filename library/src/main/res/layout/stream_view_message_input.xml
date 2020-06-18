@@ -304,6 +304,16 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <com.getstream.sdk.chat.view.ReplyToView
+                    android:id="@+id/vReplyTo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:visibility="gone"
+                    />
+
                 <ImageView
                     android:id="@+id/iv_openAttach"
                     android:layout_width="@dimen/stream_attachment_button_width"
@@ -327,7 +337,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/sendButton"
                     app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/vReplyTo" />
 
                 <ImageView
                     android:id="@+id/sendButton"
