@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
@@ -22,7 +23,6 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -168,7 +168,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnGetMessages.setOnClickListener {
-            val queryChannelRequest = QueryChannelRequest().withMessages(5)
+            val queryChannelRequest = QueryChannelRequest().withMessages(1)
 
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
                 UtilsMessages.show(it)
@@ -212,6 +212,8 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                         val message = result.data()
                         val originalLanguage = message.originalLanguage
                         val translation = message.getTranslation(language)
+                        println(originalLanguage)
+                        println(translation)
                     }
                 }
             }
@@ -262,11 +264,30 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 //            val lastSyncAt = format.parse("2020-06-14T23:00:00Z")
 
             val now = System.currentTimeMillis()
-            val ago5Min = TimeUnit.HOURS.toMillis(1)
-            val lastSyncAt = Date(now - ago5Min)
+            val ago5Min = TimeUnit.MINUTES.toMillis(5)
+            val utcMs = now - ago5Min
+            val lastSyncAt = Date(utcMs)
 
             client.getSyncHistory(listOf("$chType:$chId", "messaging:zed", "messaging:sss"), lastSyncAt).enqueue {
-                UtilsMessages.show("History received", "History not received", it)
+
+                if (it.isSuccess && it.data().isNotEmpty()) {
+                    val event = it.data().first()
+                    if (event is NewMessageEvent) {
+                        val message = event.message
+
+                        if (message.createdAt != null) {
+                            UtilsMessages.show(
+                                "History received: last message at " + message.createdAt,
+                                "History not received",
+                                it
+                            )
+                        }
+                    }
+                } else {
+                    UtilsMessages.show("History received", "History not received", it)
+                }
+
+
             }
 
         }
