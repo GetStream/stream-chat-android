@@ -1,10 +1,7 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.*
 import org.junit.Before
 import org.junit.Test
@@ -117,7 +114,11 @@ class MessagesApiCallsTests {
                 this.text = messageText
                 this.user = user
             }
-        val searchRequest = SearchMessagesRequest("search-text", 0, 1, FilterObject("type", "a"))
+
+        val messageFilter = FilterObject("text", "search-text")
+        val channelFilter = Filters.eq("cid", "cid")
+
+        val searchRequest = SearchMessagesRequest( 0, 1, channelFilter, messageFilter)
 
         Mockito.`when`(
             mock.retrofitApi
@@ -135,7 +136,10 @@ class MessagesApiCallsTests {
     @Test
     fun searchMessageError() {
 
-        val searchRequest = SearchMessagesRequest("search-text", 0, 1, FilterObject("type", "a"))
+        val messageFilter = FilterObject("text", "search-text")
+        val channelFilter = Filters.eq("cid", "cid")
+
+        val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)
 
         Mockito.`when`(
             mock.retrofitApi
