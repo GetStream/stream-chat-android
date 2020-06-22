@@ -1,3 +1,9 @@
+# 1.9.0 - Mon 22 June 2020
+
+- Fix search message request body
+🚨 Breaking change:
+- client.searchMessages signature has been changed: query removed, added channel filter
+
 # 1.8.1 - Thu 18 June 2020
 
 - Fix UTC date for sync endpoint
