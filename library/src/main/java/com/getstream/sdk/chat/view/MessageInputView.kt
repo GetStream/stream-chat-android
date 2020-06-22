@@ -76,6 +76,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		override fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>) {
 			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 		}
+
+		override fun editMessage(oldMessage: Message, newMessageText: String) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
 	}
 
 	private val activityResultLauncher: ActivityResultLauncher<Unit>? = (context as? ComponentActivity)
@@ -272,10 +276,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun onSendMessage() {
-		when (isEdit) {
-			true -> viewModel.editMessage(editMessage)
-			false -> messageInputController.onSendMessageClick(messageText)
-		}.also { handleSentMessage() }
+		messageInputController.onSendMessageClick(messageText)
+		handleSentMessage()
 	}
 
 	internal fun sendTextMessage(message: String) {
@@ -292,6 +294,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	internal fun sendReplyToWithAttachments(parentMessage: Message, message: String, attachmentFiles: List<File>) {
 		messageSendHandler.replyToWithAttachments(parentMessage, message, attachmentFiles)
+	}
+
+	internal fun editMessage(oldMessage: Message, newMessageText: String) {
+		messageSendHandler.editMessage(oldMessage, newMessageText)
 	}
 
 	private fun handleSentMessage() {
@@ -383,6 +389,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController.inputMode = InputMode.ReplyTo(parentMessage)
 	}
 
+	fun setEditMode(oldMessage: Message) {
+		messageInputController.inputMode = InputMode.Edit(oldMessage)
+	}
+
 	interface TypeListener {
 		fun onKeystroke()
 		fun onStopTyping()
@@ -397,6 +407,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
 		fun replyTo(parentMessage: Message, messageText: String)
 		fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>)
+		fun editMessage(oldMessage: Message, newMessageText: String)
 	}
 
 	init {

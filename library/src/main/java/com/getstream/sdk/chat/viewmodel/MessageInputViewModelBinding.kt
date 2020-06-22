@@ -24,6 +24,10 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 		override fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>) {
 			this@bindView.sendMessageWithAttachments(message, attachmentsFiles) { this.parentId = parentMessage.id }
 		}
+
+		override fun editMessage(oldMessage: Message, newMessageText: String) {
+			this@bindView.editMessage(oldMessage.apply { text = newMessageText })
+		}
 	}
 	view.addTypeListener(object : MessageInputView.TypeListener {
 		override fun onKeystroke() = keystroke()
@@ -32,6 +36,10 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 	replyTo.observe(lifecycleOwner, Observer {
 		it?.let { view.setReplyToMode(it) }
 				?: view.setNormalMode()
+	})
+	getEditMessage().observe(lifecycleOwner, Observer {
+		it?.let { view.setEditMode(it) }
+			?: view.setNormalMode()
 	})
 	members.observe(lifecycleOwner, Observer { view.configureMembers(it) })
 	commands.observe(lifecycleOwner, Observer { view.configureCommands(it) })

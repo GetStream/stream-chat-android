@@ -39,6 +39,9 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
             messageListView.setOnStartThreadListener {
                 setActiveThread(it)
             }
+            messageListView.setOnMessageEditHandler {
+                setEditMessage(it)
+            }
         }
 
         val backButtonHandler = {

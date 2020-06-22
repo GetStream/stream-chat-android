@@ -126,9 +126,9 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 	 *
 	 * @param message the Message sent
 	 */
-	fun editMessage(message: Message?) {
+	fun editMessage(message: Message) {
 		stopTyping()
-		chatDomain.useCases.editMessage.invoke(message !!).execute()
+		chatDomain.useCases.editMessage.invoke(message).execute()
 	}
 
 	/**
