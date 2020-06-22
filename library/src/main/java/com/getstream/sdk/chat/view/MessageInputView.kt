@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.InputMode
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.MessageInputController
 import com.getstream.sdk.chat.utils.PermissionChecker
@@ -65,6 +66,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		}
 
 		override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
+
+		override fun replyTo(parentMessage: Message, messageText: String) {
+			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+		}
+
+		override fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>) {
 			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 		}
 	}
@@ -277,6 +286,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
 	}
 
+	internal fun sendReplyTo(parentMessage: Message, message: String) {
+		messageSendHandler.replyTo(parentMessage, message)
+	}
+
+	internal fun sendReplyToWithAttachments(parentMessage: Message, message: String, attachmentFiles: List<File>) {
+		messageSendHandler.replyToWithAttachments(parentMessage, message, attachmentFiles)
+	}
+
 	private fun handleSentMessage() {
 		typeListeners.forEach(TypeListener::onStopTyping)
 		initSendMessage()
@@ -358,6 +375,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		commandsAdapter.submitList(commands)
 	}
 
+	fun setNormalMode() {
+		messageInputController.inputMode = InputMode.Normal
+	}
+
+	fun setReplyToMode(parentMessage: Message) {
+		messageInputController.inputMode = InputMode.ReplyTo(parentMessage)
+	}
+
 	interface TypeListener {
 		fun onKeystroke()
 		fun onStopTyping()
@@ -370,6 +395,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	interface MessageSendHandler {
 		fun sendMessage(messageText: String)
 		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+		fun replyTo(parentMessage: Message, messageText: String)
+		fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>)
 	}
 
 	init {

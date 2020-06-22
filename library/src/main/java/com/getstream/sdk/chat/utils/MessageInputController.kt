@@ -14,8 +14,11 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
+import com.getstream.sdk.chat.view.common.visible
+import exhaustive
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +28,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.ArrayList
 import java.util.regex.Pattern
+import kotlin.properties.Delegates
 
 private val COMMAND_PATTERN = Pattern.compile("^/[a-z]*$")
 private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
@@ -45,6 +49,23 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
 	var members: List<Member> = listOf()
 	var channelCommands: List<Command> = listOf()
+	internal var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, newValue ->
+		when (newValue) {
+			is InputMode.Normal ->  configureNormalInputMode()
+			is InputMode.ReplyTo -> configureReplyToInputMode(newValue.parentMessage)
+		}.exhaustive
+	}
+
+	private fun configureReplyToInputMode(parentMessage: Message) {
+		binding.vReplyTo.setMessage(parentMessage)
+		binding.vReplyTo.onCloseClick = { inputMode = InputMode.Normal }
+		binding.vReplyTo.visible(true)
+	}
+
+	private fun configureNormalInputMode() {
+		binding.vReplyTo.visible(false)
+	}
+
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
 		return selectedAttachments
 	}
@@ -56,9 +77,19 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		this.selectedAttachments = selectedAttachments
 	}
 
-	fun onSendMessageClick(message: String) = when (selectedAttachments.isEmpty()) {
+	fun onSendMessageClick(message: String) = when (val im = inputMode) {
+		is InputMode.Normal -> sendNormalMessage(message)
+		is InputMode.ReplyTo -> sendReplyTo(im.parentMessage, message)
+	}.also { inputMode = InputMode.Normal }
+
+	private fun sendNormalMessage(message: String) = when (selectedAttachments.isEmpty()) {
 		true -> view.sendTextMessage(message)
 		false -> view.sendAttachments(message, selectedAttachments.map { it.file })
+	}
+
+	private fun sendReplyTo(parentMessage: Message, message: String) = when (selectedAttachments.isEmpty()) {
+		true -> view.sendReplyTo(parentMessage, message)
+		false -> view.sendReplyToWithAttachments(parentMessage, message, selectedAttachments.map { it.file })
 	}
 
 	fun onClickOpenBackGroundView(type: MessageInputType) {
@@ -315,6 +346,11 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	fun onUserSelected(currentMessage: String, user: User) {
 		view.messageText = "${currentMessage.substringBeforeLast("@")}@${user.name} "
 	}
+}
+
+internal sealed class InputMode {
+	object Normal : InputMode()
+	data class ReplyTo(val parentMessage: Message) : InputMode()
 }
 
 private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()

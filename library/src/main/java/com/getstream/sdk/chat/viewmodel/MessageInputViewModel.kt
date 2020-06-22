@@ -22,6 +22,7 @@ import java.io.File
 class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
 	val members: LiveData<List<Member>>
 	val commands: LiveData<List<Command>>
+	val replyTo: MutableLiveData<Message?> = MutableLiveData()
 	private var unreadCount: LiveData<Int>
 
 	/**
@@ -100,7 +101,7 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		logger.logI("onCleared")
 	}
 
-	fun sendMessage(messageText: String) {
+	fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
 		val message = Message(cid = cid, text = messageText)
 		if (isThread) {
 			val parentMessageId = getActiveThread().value !!.id
@@ -108,12 +109,15 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		}
 		stopTyping()
 		message.channel = channelController.toChannel()
-		chatDomain.useCases.sendMessage.invoke(message).execute()
+		chatDomain.useCases.sendMessage.invoke(message.apply(messageTransformer)).execute()
 	}
 
-	fun sendMessageWithAttachments(message: String, attachmentFiles: List<File>) {
+	fun sendMessageWithAttachments(message: String, attachmentFiles: List<File>, messageTransformer: Message.() -> Unit = { }) {
 		GlobalScope.launch(Dispatchers.IO) {
-			chatDomain.useCases.sendMessageWithAttachments(cid, Message(cid = cid, text = message), attachmentFiles).execute()
+			chatDomain.useCases.sendMessageWithAttachments(cid,
+					Message(cid = cid, text = message).apply(messageTransformer),
+					attachmentFiles)
+					.execute()
 		}
 	}
 
