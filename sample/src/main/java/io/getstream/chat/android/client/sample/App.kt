@@ -57,6 +57,10 @@ class App : Application() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
+
+
+
+
         client = ChatClient.Builder(apiKey, this)
             .notifications(provideNotificationConfig())
             .loggerHandler(object : ChatLoggerHandler {
@@ -112,6 +116,7 @@ class App : Application() {
         channelsRepositorySync = ChannelsRepositorySync(client, cache)
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
+
 
         client.disconnect()
     }

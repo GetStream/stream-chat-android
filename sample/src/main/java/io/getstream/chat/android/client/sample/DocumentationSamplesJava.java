@@ -560,11 +560,13 @@ public class DocumentationSamplesJava {
                 ArrayList<String> members = new ArrayList<>();
                 members.add("john");
 
+                FilterObject messageFilter = Filters.in("members", members);
+                FilterObject channelFilter = Filters.eq("type", "messaging");
                 client.searchMessages(new SearchMessagesRequest(
-                        query,
                         offset,
                         limit,
-                        Filters.in("members", members)
+                        channelFilter,
+                        messageFilter
                 )).enqueue(result -> {
                     List<Message> messages = result.data();
                     return Unit.INSTANCE;

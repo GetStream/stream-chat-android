@@ -5,6 +5,14 @@ import io.getstream.chat.android.client.utils.FilterObject
 object Filters {
 
     @JvmStatic
+    fun exists(value: Any): FilterObject {
+        return FilterObject(
+            "\$exists",
+            value
+        )
+    }
+
+    @JvmStatic
     fun contains(value: Any): FilterObject {
         return FilterObject(
             "\$contains",

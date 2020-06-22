@@ -320,7 +320,7 @@ interface RetrofitApi {
     fun searchMessages(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
-        @Query("payload") payload: SearchMessagesRequest
+        @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest
     ): Call<SearchMessagesResponse>
 
     //endregion

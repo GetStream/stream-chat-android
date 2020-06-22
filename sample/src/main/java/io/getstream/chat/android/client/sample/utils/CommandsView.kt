@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -46,7 +47,12 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     lateinit var members: List<String>
     lateinit var config: UserConfig
 
-    fun setUser(config: UserConfig, members: List<String>, useStaging: Boolean = false, customUrl: String = "") {
+    fun setUser(
+        config: UserConfig,
+        members: List<String>,
+        useStaging: Boolean = false,
+        customUrl: String = ""
+    ) {
 
         this.config = config
         this.members = members
@@ -168,7 +174,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnGetMessages.setOnClickListener {
-            val queryChannelRequest = QueryChannelRequest().withMessages(1)
+            val queryChannelRequest = QueryChannelRequest().withMessages(100)
 
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
                 UtilsMessages.show(it)
@@ -188,6 +194,14 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnQueryChannel.setOnClickListener {
+
+            val request = QueryChannelRequest()
+                .withMessages(100)
+
+            //request.messages["attachments"] = "{\$exists:true}"
+            //request.messages["text"] = Filters.eq("text", "SSS")
+            request.messages["text"] = "SSS"
+
             client.queryChannel(chType, chId, request).enqueue {
                 if (it.isSuccess) {
                     val channel = it.data()
@@ -268,7 +282,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             val utcMs = now - ago5Min
             val lastSyncAt = Date(utcMs)
 
-            client.getSyncHistory(listOf("$chType:$chId", "messaging:zed", "messaging:sss"), lastSyncAt).enqueue {
+            client.getSyncHistory(
+                listOf("$chType:$chId", "messaging:zed", "messaging:sss"),
+                lastSyncAt
+            ).enqueue {
 
                 if (it.isSuccess && it.data().isNotEmpty()) {
                     val event = it.data().first()
@@ -298,6 +315,27 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 UtilsMessages.show("History received", "History not received", it)
             }
 
+        }
+
+        btnSearchMessage.setOnClickListener {
+
+            val channelFiler = Filters.and(
+                Filters.eq("type", chType),
+                Filters.eq("id", chId)
+            )
+
+            val messageFilter = Filters.and(
+                Filters.eq("text", ""),
+                Filters.eq("attachments", Filters.eq("\$exists", true))
+            )
+
+//            val messageFilter = Filters.eq("attachments", Filters.eq("\$exists", true))
+
+            client.searchMessages(
+                SearchMessagesRequest(0, 100, channelFiler, messageFilter)
+            ).enqueue {
+                UtilsMessages.show(it)
+            }
         }
 
     }

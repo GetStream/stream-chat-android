@@ -359,11 +359,15 @@ fun search() {
     val limit = 10
     val query = "supercalifragilisticexpialidocious"
 
+    val messageFilter = Filters.`in`("members", listOf("john"))
+    val channelFilter = Filters.eq("type", "messaging")
+
     client.searchMessages(
         SearchMessagesRequest(
-            query,
-            offset, limit,
-            Filters.`in`("members", listOf("john"))
+            offset,
+            limit,
+            channelFilter,
+            messageFilter
         )
     ).enqueue {
         val messages = it.data()
@@ -764,7 +768,8 @@ internal class ChannelPagination {
         }
 
         fun loadSecondPage(lastMessageId: String) {
-            val firstPage = QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
+            val firstPage =
+                QueryChannelRequest().withMessages(Pagination.LESS_THAN, lastMessageId, pageSize)
             client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
                 val messages: List<Message> = result.data().messages
                 if (messages.size < pageSize) {
@@ -816,7 +821,8 @@ class MultiTenantAndTeams {
 internal object Translation {
     fun translate() {
         val channelController = client.channel("messaging:general")
-        val message = Message(text = "Hello, I would like to have more information about your product.")
+        val message =
+            Message(text = "Hello, I would like to have more information about your product.")
         val frenchLanguage = "fr"
         channelController.sendMessage(message).enqueue { result ->
             val messageId = result.data().id
