@@ -304,8 +304,8 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <com.getstream.sdk.chat.view.ReplyToView
-                    android:id="@+id/vReplyTo"
+                <com.getstream.sdk.chat.view.PreviewMessageView
+                    android:id="@+id/vPreviewMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
@@ -337,7 +337,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/sendButton"
                     app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
-                    app:layout_constraintTop_toBottomOf="@+id/vReplyTo" />
+                    app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage" />
 
                 <ImageView
                     android:id="@+id/sendButton"

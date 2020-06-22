@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
+import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
 import exhaustive
 import io.getstream.chat.android.client.models.Command
@@ -57,13 +58,13 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	}
 
 	private fun configureReplyToInputMode(parentMessage: Message) {
-		binding.vReplyTo.setMessage(parentMessage)
-		binding.vReplyTo.onCloseClick = { inputMode = InputMode.Normal }
-		binding.vReplyTo.visible(true)
+		binding.vPreviewMessage.setMessage(parentMessage, PreviewMessageView.Mode.REPLY_TO)
+		binding.vPreviewMessage.onCloseClick = { inputMode = InputMode.Normal }
+		binding.vPreviewMessage.visible(true)
 	}
 
 	private fun configureNormalInputMode() {
-		binding.vReplyTo.visible(false)
+		binding.vPreviewMessage.visible(false)
 	}
 
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
