@@ -1,3 +1,8 @@
+## Jun 4th, 2020 - 4.2.11-beta-5
+
+- Update livedata dependency to fix crash when NotificationMarkReadEvent received
+- Add mavenLocal() repository
+
 ## Jun 4th, 2020 - 4.2.11-beta-4
 
 - Fix crash when command (`/`) is typed.
