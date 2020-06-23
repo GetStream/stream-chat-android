@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -119,6 +120,15 @@ public class MessageListView extends RecyclerView {
         setBubbleHelper(DefaultBubbleHelper.initDefaultBubbleHelper(style, context));
         setHasFixedSize(true);
         setItemViewCacheSize(20);
+
+        initFresco();
+    }
+
+    private void initFresco() {
+        try {
+            Fresco.initialize(getContext());
+        } catch (Exception e) {
+        }
     }
 
     // region Init
