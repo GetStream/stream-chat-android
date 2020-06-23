@@ -42,11 +42,9 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 	private var threadMessages: LiveData<List<Message>>
 	private var threadLoadingMore: LiveData<Boolean>? = null
 
-	private var initialized: LiveData<Boolean> = MutableLiveData(false)
 	private var reachedEndOfPagination: LiveData<Boolean>
 	private var reachedEndOfPaginationThread: LiveData<Boolean>? = null
 	private var loading: LiveData<Boolean> = MutableLiveData(false)
-	private var messageListScrollUp = MutableLiveData(false)
 	private var loadingMore: LiveData<Boolean> = MutableLiveData(false)
 	private var editMessage: MutableLiveData<Message?>
 	private var channelState = MutableLiveData<Channel>()
@@ -67,14 +65,6 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		this.editMessage.postValue(editMessage)
 	}
 
-	fun getMessageListScrollUp(): LiveData<Boolean> {
-		return messageListScrollUp
-	}
-
-	val isEditing: Boolean
-		get() = getEditMessage().value != null
-
-	// region Thread
 	fun setActiveThread(parentMessage: Message) {
 		activeThread.postValue(parentMessage)
 	}
@@ -151,9 +141,6 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 
 	init {
 		channelState.postValue(channelController.toChannel())
-
-		// connect livedata objects
-		initialized = chatDomain.initialized
 		online = chatDomain.online
 		watcherCount = channelController.watcherCount
 		typingUsers = channelController.typing

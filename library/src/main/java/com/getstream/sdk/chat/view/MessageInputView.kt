@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.util.AttributeSet
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -17,8 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.BuildCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.MergeAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -30,13 +27,11 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.InputMode
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.MessageInputController
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
@@ -99,28 +94,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		typeListeners = typeListeners - typeListener
 	}
 
-	/**
-	 * The viewModel for handling typing etc.
-	 */
-	private lateinit var viewModel: MessageInputViewModel
 	private val messageInputController: MessageInputController by lazy {
 		MessageInputController(binding, this, style)
 	}
 
-	fun setViewModel(viewModel: MessageInputViewModel, lifecycleOwner: LifecycleOwner) {
-		this.viewModel = viewModel
-		binding.lifecycleOwner = lifecycleOwner
-		init()
-		observeUIs(lifecycleOwner)
-	}
-
 	private fun init() {
-		binding.activeMessageSend = false
-		configOnClickListener()
-		configInputEditText()
-		configAttachmentUI()
-		onBackPressed()
-		setKeyboardEventListener()
+
 	}
 
 	private fun applyStyle() {
@@ -185,10 +164,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.btnClose.setOnClickListener { v: View? ->
 			messageInputController.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)
-			if (viewModel.isEditing) {
-				initSendMessage()
-				clearFocus()
-			}
 		}
 		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(null, true) }
 		binding.llCamera.setOnClickListener { v: View -> messageInputController.onCameraClick() }
@@ -199,42 +174,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		activityResultLauncher?.launch(Unit)
 	}
 
-	private fun onBackPressed() {
-		isFocusableInTouchMode = true
-		requestFocus()
-		setOnKeyListener { v: View?, keyCode: Int, event: KeyEvent ->
-			if (event.action == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-				if (viewModel.isThread) {
-					viewModel.resetThread()
-					initSendMessage()
-					return@setOnKeyListener false
-				}
-				if (viewModel.isEditing) {
-					messageInputController.onClickCloseBackGroundView()
-					initSendMessage()
-					return@setOnKeyListener true
-				}
-				if (! TextUtils.isEmpty(messageText)) {
-					initSendMessage()
-					return@setOnKeyListener true
-				}
-				if (binding.clTitle.visibility == View.VISIBLE) {
-					messageInputController.onClickCloseBackGroundView()
-					initSendMessage()
-					return@setOnKeyListener true
-				}
-				return@setOnKeyListener false
-			}
-			false
-		}
-	}
-
 	private fun setKeyboardEventListener() {
 		KeyboardVisibilityEvent.setEventListener(
 				context as Activity) { isOpen: Boolean ->
 			if (! isOpen) {
 				binding.etMessage.clearFocus()
-				onBackPressed()
 			}
 		}
 	}
@@ -255,17 +199,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			binding.etMessage.setText(text)
 			binding.etMessage.setSelection(binding.etMessage.text.length)
 		}
-
-	private fun observeUIs(lifecycleOwner: LifecycleOwner) {
-		viewModel.getEditMessage().observe(lifecycleOwner , Observer { message: Message? -> editMessage(message) })
-		viewModel.getMessageListScrollUp().observe(lifecycleOwner, Observer { messageListScrollup: Boolean -> if (messageListScrollup) Utils.hideSoftKeyboard(context as Activity) })
-		viewModel.getActiveThread().observe(lifecycleOwner, Observer { threadParentMessage: Message? ->
-			if (threadParentMessage == null) {
-				initSendMessage()
-				Utils.hideSoftKeyboard(context as Activity)
-			}
-		})
-	}
 
 	fun configureMembers(members: List<Member>) {
 		messageInputController.members = members
@@ -303,22 +236,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun handleSentMessage() {
 		typeListeners.forEach(TypeListener::onStopTyping)
 		initSendMessage()
-		if (isEdit) clearFocus()
 	}
 
 	private fun initSendMessage() {
 		messageInputController.initSendMessage()
-		viewModel.setEditMessage(null)
 		binding.etMessage.setText("")
 		binding.sendButton.isEnabled = true
 	}
-
-	protected val editMessage: Message?
-		protected get() {
-			val message = viewModel.getEditMessage().value
-			message !!.text = messageText !!
-			return message
-		}
 
 	private fun sendGiphyFromKeyboard(inputContentInfo: InputContentInfoCompat,
 	                                  flags: Int, opts: Bundle): Boolean {
@@ -341,36 +265,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.etMessage.setText("")
 		onSendMessage()
 		return true
-	}
-
-	protected val isEdit: Boolean
-		protected get() = viewModel.isEditing
-
-	protected fun editMessage(message: Message?) {
-		if (message == null) return
-
-		// Set Text to Inputbox
-		messageText = message.text
-		binding.etMessage.requestFocus()
-		val attachments = LlcMigrationUtils.getMetaAttachments(message)
-		if (! attachments.isEmpty()) binding.ivOpenAttach.visibility = View.GONE
-		// Set Attachments to Inputbox
-		if (attachments.isEmpty()
-				|| attachments[0].type == ModelType.attach_giphy || attachments[0].type == ModelType.attach_unknown) return
-
-		//for (Attachment attachment : attachments)
-		//attachment.setUploaded(true);
-		val attachment = attachments[0]
-		if (attachment.type == ModelType.attach_file) {
-			val fileType = attachment.mimeType
-			if (fileType == ModelType.attach_mime_mov || fileType == ModelType.attach_mime_mp4) {
-				messageInputController.onClickOpenSelectView(attachments, true)
-			} else {
-				messageInputController.onClickOpenSelectView(attachments, false)
-			}
-		} else {
-			messageInputController.onClickOpenSelectView(attachments, true)
-		}
 	}
 
 	internal fun showSuggestedMentions(users: List<User>) {
@@ -413,5 +307,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	init {
 		applyStyle()
 		binding.rvSuggestions.adapter = MergeAdapter(commandsAdapter, mentionsAdapter)
+		binding.activeMessageSend = false
+		configOnClickListener()
+		configInputEditText()
+		configAttachmentUI()
+		setKeyboardEventListener()
 	}
 }
