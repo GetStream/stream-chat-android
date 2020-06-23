@@ -1,3 +1,7 @@
+# 1.9.1 - Mue 23 June 2020
+
+- Fix multithreaded date parsing
+
 # 1.9.0 - Mon 22 June 2020
 
 - Fix search message request body
