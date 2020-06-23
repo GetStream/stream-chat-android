@@ -1,11 +1,11 @@
-package com.getstream.sdk.chat.viewmodel
+package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.viewmodel.ChannelsViewModel.Companion.DEFAULT_FILTER
-import com.getstream.sdk.chat.viewmodel.ChannelsViewModel.Companion.DEFAULT_SORT
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_FILTER
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.eq
@@ -22,6 +22,7 @@ interface ChannelsViewModel {
         data class Loading(val isLoading: Boolean) : State()
         data class Result(val channels: List<Channel>) : State()
         data class EndPageReached(val isEndPage: Boolean) : State()
+        object NoChannelsAvailable: State()
     }
 
     sealed class Event {
@@ -39,7 +40,7 @@ class ChannelsViewModelImpl(
         private val filter: FilterObject = DEFAULT_FILTER,
         private val sort: QuerySort = DEFAULT_SORT
 ) : ChannelsViewModel, ViewModel() {
-    private val channelsData: LiveData<ChannelsViewModel.State.Result>
+    private val channelsData: LiveData<ChannelsViewModel.State>
     private val loadingMoreData: LiveData<ChannelsViewModel.State.LoadingNextPage>
     private val loadingData: LiveData<ChannelsViewModel.State.Loading>
     private val endPageData: LiveData<ChannelsViewModel.State.EndPageReached>
@@ -50,7 +51,13 @@ class ChannelsViewModelImpl(
     init {
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort).execute().data()
         queryChannelsController.run {
-            channelsData = map(channels) { ChannelsViewModel.State.Result(it) }
+            channelsData = map(channels) {
+                if (it.isEmpty()) {
+                    ChannelsViewModel.State.NoChannelsAvailable
+                } else {
+                    ChannelsViewModel.State.Result(it)
+                }
+            }
             loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
             loadingData = map(loading) { ChannelsViewModel.State.Loading(it) }
             endPageData = map(endOfChannels) { ChannelsViewModel.State.EndPageReached(it) }

@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.getstream.sdk.chat.view.ChannelListView
-        android:id="@+id/channelsList"
+    <com.getstream.sdk.chat.view.channels.ChannelsView
+        android:id="@+id/channelsListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

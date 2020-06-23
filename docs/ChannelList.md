@@ -6,7 +6,7 @@ Typically it will show an unread/read state, the last message and who is partici
 The easiest way to render a ChannelList is to add it to your layout:
 
 ```xml
-<com.getstream.sdk.chat.view.ChannelListView
+<com.getstream.sdk.chat.view.channels.ChannelListView
     android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -227,7 +227,7 @@ You must use the following properties in your XML to change your ChannelListView
 If you need to make a bigger change you can swap the layout for the channel previews.
 
 ```xml
-<com.getstream.sdk.chat.view.ChannelListView
+<com.getstream.sdk.chat.view.channels.ChannelListView
     android:id="@+id/channelList"
     android:layout_width="match_parent"
     android:layout_height="0dp"

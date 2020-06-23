@@ -3,8 +3,8 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.View;
 
-import com.getstream.sdk.chat.view.ChannelListView;
-import com.getstream.sdk.chat.view.ChannelListViewStyle;
+import com.getstream.sdk.chat.view.channels.ChannelListView;
+import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

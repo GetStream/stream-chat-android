@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.viewmodel
+package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
@@ -53,6 +53,17 @@ class ChannelListViewModelTest {
     }
 
     @Test
+    fun `Should display empty state info when there are no channels available`() {
+        // given
+        mockNoChannelsAvailable()
+        val mockObserver: Observer<ChannelsViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
+
+        // then
+        verify(mockObserver).onChanged(ChannelsViewModel.State.NoChannelsAvailable)
+    }
+
+    @Test
     fun `Should load more channels when list is scrolled to the end region`() {
         // given
         mockChannels()
@@ -69,6 +80,13 @@ class ChannelListViewModelTest {
 
     private fun mockChannels() {
         whenever(queryChannelsController.channels) doReturn MutableLiveData(mockChannels)
+        whenever(queryChannelsController.loading) doReturn MutableLiveData()
+        whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
+        viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
+    }
+
+    private fun mockNoChannelsAvailable() {
+        whenever(queryChannelsController.channels) doReturn MutableLiveData(emptyList())
         whenever(queryChannelsController.loading) doReturn MutableLiveData()
         whenever(queryChannelsController.loadingMore) doReturn MutableLiveData()
         viewModel = ChannelsViewModelImpl(chatDomain = chatDomain)
