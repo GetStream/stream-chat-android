@@ -1,8 +1,11 @@
 package io.getstream.chat.android.client.sample.common
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.sample.R
 import kotlinx.android.synthetic.main.activity_home.*
@@ -35,5 +38,15 @@ class HomeActivity : AppCompatActivity() {
         btnOneToOne.setOnClickListener {
             startActivity(Intent(this, OneToOneActivity::class.java))
         }
+
+        requestPermissions()
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
+            1
+        );
     }
 }

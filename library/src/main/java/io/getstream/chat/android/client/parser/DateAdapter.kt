@@ -13,6 +13,7 @@ internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
+    @Synchronized
     override fun write(out: JsonWriter, value: Date?) {
 
         if (value == null) {
@@ -23,6 +24,7 @@ internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
         }
     }
 
+    @Synchronized
     override fun read(reader: JsonReader): Date? {
         val rawValue = reader.nextString()
         return if (rawValue.isNullOrEmpty()) {
