@@ -20,42 +20,13 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
-	val members: LiveData<List<Member>>
-	val commands: LiveData<List<Command>>
-	val replyTo: MutableLiveData<Message?> = MutableLiveData()
-	private var unreadCount: LiveData<Int>
-
-	/**
-	 * The numbers of users currently watching this channel
-	 */
-	private var watcherCount: LiveData<Int>
-
-	/**
-	 * The list of users currently typing
-	 */
-	private var typingUsers: LiveData<List<User>> = MutableLiveData()
-
-
 	private val channelController: ChannelController = chatDomain.useCases.watchChannel.invoke(cid, 30).execute().data()
-	private var online: LiveData<Boolean> = MutableLiveData(false)
-	private var activeThread = MutableLiveData<Message?>(null)
-	private var threadMessages: LiveData<List<Message>>
-	private var threadLoadingMore: LiveData<Boolean>? = null
-
-	private var reachedEndOfPagination: LiveData<Boolean>
-	private var reachedEndOfPaginationThread: LiveData<Boolean>? = null
-	private var loading: LiveData<Boolean> = MutableLiveData(false)
-	private var loadingMore: LiveData<Boolean> = MutableLiveData(false)
-	private var editMessage: MutableLiveData<Message?>
-	private var channelState = MutableLiveData<Channel>()
-
-	private var reads: LiveData<List<ChannelUserRead>> = MutableLiveData()
-	private var entities: MessageListItemLiveData
-	private val logger = get(MessageInputViewModel::class.java.name)
-
-	@get:Deprecated("")
-	val channel: Channel
-		get() = channelController.toChannel()
+	private var channelState = MutableLiveData<Channel>(channelController.toChannel())
+	val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
+	val members: LiveData<List<Member>> = channelController.members
+	val replyTo: MutableLiveData<Message?> = MutableLiveData()
+	private var activeThread = MutableLiveData<Message?>()
+	private var editMessage: MutableLiveData<Message?> = MutableLiveData()
 
 	fun getEditMessage(): LiveData<Message?> {
 		return editMessage
@@ -73,30 +44,16 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 		return activeThread
 	}
 
-	val isThread: Boolean
+	private val isThread: Boolean
 		get() = activeThread.value != null
 
 	fun resetThread() {
-		val thread = activeThread.value
-		if (thread != null) {
-			activeThread.postValue(null)
-			threadMessages = MutableLiveData()
-		}
-		reachedEndOfPaginationThread = MutableLiveData(false)
-		threadLoadingMore = MutableLiveData(false)
-	}
-
-	override fun onCleared() {
-		super.onCleared()
-		logger.logI("onCleared")
+		activeThread.postValue(null)
 	}
 
 	fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
 		val message = Message(cid = cid, text = messageText)
-		if (isThread) {
-			val parentMessageId = getActiveThread().value !!.id
-			message.parentId = parentMessageId
-		}
+		activeThread.value?.let { message.parentId = it.id }
 		stopTyping()
 		message.channel = channelController.toChannel()
 		chatDomain.useCases.sendMessage.invoke(message.apply(messageTransformer)).execute()
@@ -137,25 +94,5 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 	fun stopTyping() {
 		if (isThread) return
 		chatDomain.useCases.stopTyping.invoke(cid).execute()
-	}
-
-	init {
-		channelState.postValue(channelController.toChannel())
-		online = chatDomain.online
-		watcherCount = channelController.watcherCount
-		typingUsers = channelController.typing
-		reads = channelController.reads
-		members = channelController.members
-		commands = map(channelState) { it.config.commands }
-		typingUsers = channelController.typing
-		loading = channelController.loading
-		loadingMore = channelController.loadingOlderMessages
-		reachedEndOfPagination = channelController.endOfOlderMessages
-		unreadCount = channelController.unreadCount
-		threadMessages = MutableLiveData()
-		logger.logI("instance created")
-		val currentUser = chatDomain.currentUser
-		entities = MessageListItemLiveData(currentUser, channelController.messages, threadMessages, typingUsers, reads)
-		editMessage = MutableLiveData()
 	}
 }
