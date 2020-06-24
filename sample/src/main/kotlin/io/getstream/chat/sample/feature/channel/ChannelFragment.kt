@@ -40,7 +40,7 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                 setActiveThread(it)
             }
             messageListView.setOnMessageEditHandler {
-                setEditMessage(it)
+                editMessage.postValue(it)
             }
         }
 

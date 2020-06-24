@@ -36,7 +36,7 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 		it?.let { view.setReplyToMode(it) }
 				?: view.setNormalMode()
 	})
-	getEditMessage().observe(lifecycleOwner, Observer {
+	editMessage.observe(lifecycleOwner, Observer {
 		it?.let { view.setEditMode(it) }
 			?: view.setNormalMode()
 	})
