@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
+import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
 import exhaustive
 import io.getstream.chat.android.client.models.Command
@@ -53,17 +54,31 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		when (newValue) {
 			is InputMode.Normal ->  configureNormalInputMode()
 			is InputMode.ReplyTo -> configureReplyToInputMode(newValue.parentMessage)
+			is InputMode.Edit -> configureEditInputMode(newValue.oldMessage)
 		}.exhaustive
 	}
 
 	private fun configureReplyToInputMode(parentMessage: Message) {
-		binding.vReplyTo.setMessage(parentMessage)
-		binding.vReplyTo.onCloseClick = { inputMode = InputMode.Normal }
-		binding.vReplyTo.visible(true)
+		binding.vPreviewMessage.setMessage(parentMessage, PreviewMessageView.Mode.REPLY_TO)
+		binding.vPreviewMessage.onCloseClick = { inputMode = InputMode.Normal }
+		binding.vPreviewMessage.visible(true)
+		binding.ivOpenAttach.visible(true)
 	}
 
 	private fun configureNormalInputMode() {
-		binding.vReplyTo.visible(false)
+		binding.vPreviewMessage.visible(false)
+		binding.ivOpenAttach.visible(true)
+	}
+
+	private fun configureEditInputMode(message: Message) {
+		binding.vPreviewMessage.setMessage(message, PreviewMessageView.Mode.EDIT)
+		binding.vPreviewMessage.onCloseClick = {
+			inputMode = InputMode.Normal
+			binding.etMessage.setText("")
+		}
+		binding.etMessage.setText(message.text)
+		binding.vPreviewMessage.visible(true)
+		binding.ivOpenAttach.visible(false)
 	}
 
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
@@ -80,6 +95,7 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	fun onSendMessageClick(message: String) = when (val im = inputMode) {
 		is InputMode.Normal -> sendNormalMessage(message)
 		is InputMode.ReplyTo -> sendReplyTo(im.parentMessage, message)
+		is InputMode.Edit -> editMessage(im.oldMessage, message)
 	}.also { inputMode = InputMode.Normal }
 
 	private fun sendNormalMessage(message: String) = when (selectedAttachments.isEmpty()) {
@@ -90,6 +106,10 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	private fun sendReplyTo(parentMessage: Message, message: String) = when (selectedAttachments.isEmpty()) {
 		true -> view.sendReplyTo(parentMessage, message)
 		false -> view.sendReplyToWithAttachments(parentMessage, message, selectedAttachments.map { it.file })
+	}
+
+	private fun editMessage(message: Message, messageText: String) {
+		view.editMessage(message, messageText)
 	}
 
 	fun onClickOpenBackGroundView(type: MessageInputType) {
@@ -351,6 +371,7 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 internal sealed class InputMode {
 	object Normal : InputMode()
 	data class ReplyTo(val parentMessage: Message) : InputMode()
+	data class Edit(val oldMessage: Message) : InputMode()
 }
 
 private fun String.isCommandMessage() = COMMAND_PATTERN.matcher(this).find()

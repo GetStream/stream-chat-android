@@ -10,11 +10,10 @@
         >
 
         <ImageView
-            android:id="@+id/ivReply"
+            android:id="@+id/ivMode"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="8dp"
-            android:src="@drawable/stream_ic_reply"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -24,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="start"
-            app:layout_constraintStart_toEndOf="@+id/ivReply"
+            app:layout_constraintStart_toEndOf="@+id/ivMode"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ivClose"
             />
@@ -35,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:gravity="start"
-            app:layout_constraintStart_toEndOf="@+id/ivReply"
+            app:layout_constraintStart_toEndOf="@+id/ivMode"
             app:layout_constraintTop_toBottomOf="@+id/tvUserName"
             app:layout_constraintEnd_toStartOf="@+id/ivClose"
             app:layout_constraintBottom_toBottomOf="parent"

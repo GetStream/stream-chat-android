@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Command
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 import java.time.Instant
@@ -32,6 +34,7 @@ fun randomString(size: Int = 20): String = (0..size)
 		.map { charPool[random.nextInt(0, charPool.size)] }
 		.joinToString("")
 
+fun randomCID() = "${randomString()}:${randomString()}"
 fun createUser(
 		id: String = randomString(),
 		role: String = randomString(),
@@ -66,7 +69,7 @@ fun createMembers(
 		creationFunction: (Int) -> Member = { createMember() }
 ): List<Member> = (1..size).map { creationFunction(it) }
 
-fun createChannel(cid: String): Channel = Channel(cid = cid)
+fun createChannel(cid: String = randomCID(), config: Config = Config()): Channel = Channel(cid = cid, config = config)
 
 fun createAttachmentMetaDataWithFile(
 		file: File = createFile(),
@@ -99,7 +102,7 @@ fun createAttachment(
 
 fun createMessage(
 		id: String = randomString(),
-		cid: String = randomString(),
+		cid: String = randomCID(),
 		text: String = randomString(),
 		createdAt: Date? = Date.from(Instant.now()),
 		parentId: String? = null
@@ -113,3 +116,12 @@ fun createThreadMessageList(size: Int = 10, parentMessageId: String) =
 fun createChannelUserRead(user: User = createUser(),
 						  lastReadDate: Date = Date.from(Instant.now()),
 						  unreadMessages: Int = 0) = ChannelUserRead(user, lastReadDate, unreadMessages)
+
+fun createCommand(
+		name: String = randomString(),
+		description: String = randomString(),
+		args: String = randomString(),
+		set: String = randomString()
+): Command = Command(name, description, args, set)
+
+fun createCommands(size: Int = 10): List<Command> = (0 until size).map { createCommand() }
