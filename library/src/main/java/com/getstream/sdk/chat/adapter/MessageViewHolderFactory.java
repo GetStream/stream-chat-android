@@ -28,21 +28,19 @@ public class MessageViewHolderFactory {
     public static final int VIDEO_ATTACHMENT = 3;
     public static final int FILE_ATTACHMENT = 4;
 
-    public int getMessageViewType(MessageListItem messageListItem, Boolean mine, List<Position> positions) {
-        // typing
-        // date
-        // various message types
-        int messageListItemType = messageListItem.getType();
-        if (messageListItemType == MESSAGEITEM_DATE_SEPARATOR) {
+    public int getMessageViewType(MessageListItem messageListItem) {
+        if (messageListItem instanceof MessageListItem.DateSeparatorItem) {
             return MESSAGEITEM_DATE_SEPARATOR;
-        } else if (messageListItemType == MESSAGEITEM_MESSAGE) {
-            return MESSAGEITEM_MESSAGE;
-        } else if (messageListItemType == MESSAGEITEM_TYPING) {
+        } else if (messageListItem instanceof MessageListItem.TypingItem) {
             return MESSAGEITEM_TYPING;
-        } else if (messageListItemType == MESSAGEITEM_THREAD_SEPARATOR) {
+        } else if (messageListItem instanceof MessageListItem.MessageItem) {
+            return MESSAGEITEM_MESSAGE;
+        } else if (messageListItem instanceof MessageListItem.ThreadSeparatorItem) {
             return MESSAGEITEM_THREAD_SEPARATOR;
+
+        } else {
+            return MESSAGEITEM_NOT_FOUND;
         }
-        return MESSAGEITEM_NOT_FOUND;
     }
 
     public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {

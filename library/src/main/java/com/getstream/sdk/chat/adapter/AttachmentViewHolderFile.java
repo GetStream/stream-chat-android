@@ -7,14 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
@@ -27,7 +28,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     private TextView tv_file_size, tv_file_title;
 
     private Context context;
-    private MessageListItem messageListItem;
+    private MessageListItem.MessageItem messageListItem;
     private Message message;
     private Attachment attachment;
     private MessageListViewStyle style;
@@ -46,7 +47,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
 
     @Override
     public void bind(@NonNull Context context,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull Message message,
                      @NonNull Attachment attachment,
                      @NonNull MessageListViewStyle style,

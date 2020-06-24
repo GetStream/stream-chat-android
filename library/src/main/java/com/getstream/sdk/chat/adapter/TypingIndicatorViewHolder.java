@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
 
-public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
+public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.TypingItem> {
     // Tying
     private ImageView iv_typing_indicator;
     private LinearLayout ll_typingusers;
@@ -34,7 +34,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder {
     @Override
     public void bind(@NonNull Context context,
                      @NonNull Channel channel,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.TypingItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,

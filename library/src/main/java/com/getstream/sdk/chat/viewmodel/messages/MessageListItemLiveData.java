@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.getstream.chat.android.client.logger.ChatLogger;
@@ -22,8 +23,8 @@ import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 
-import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_MESSAGE;
-import static com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR;
+import static kotlin.collections.CollectionsKt.filter;
+import static kotlin.collections.CollectionsKt.map;
 
 public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
@@ -36,7 +37,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     private User currentUser;
     private List<MessageListItem> messageEntities;
-    private List<MessageListItem> typingEntities;
+    private List<MessageListItem.TypingItem> typingEntities;
     private Boolean isLoadingMore;
     private Boolean hasNewMessages;
     private String lastMessageID;
@@ -52,7 +53,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
-        this.messageEntities = new ArrayList<>();
+        this.messageEntities = new ArrayList<MessageListItem>();
         this.typingEntities = new ArrayList<>();
         this.isLoadingMore = false;
         // scroll behaviour is only triggered for new messages
@@ -68,7 +69,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         List<MessageListItem> merged = new ArrayList<>();
 
         for (MessageListItem i : messageEntities) {
-            merged.add(i.copy());
+            merged.add(i.deepCopy());
         }
 
         // TODO no need to do this whole thing for typing changes!
@@ -76,7 +77,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // remove the old read state
         for (MessageListItem i : merged) {
             if (i.getMessageReadBy().size() != 0) {
-                i.removeMessageReadBy();
+                i.getMessageReadBy().clear();
             }
         }
 
@@ -87,19 +88,22 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (userRead.getUser().getId().equals(currentUser.getId())) {
                 continue;
             }
-            for (int i = merged.size(); i-- > 0; ) {
-                MessageListItem e = merged.get(i);
-                // skip things that aren't messages
-                if (e.getType() != MESSAGEITEM_MESSAGE) {
-                    continue;
-                }
+            // skip things that aren't messages
+            final List<MessageListItem> filteredItems =
+                    filter(merged, listItem -> listItem instanceof MessageListItem.MessageItem);
+
+            final List<MessageListItem.MessageItem> messageItems =
+                    map(filteredItems, item -> (MessageListItem.MessageItem) item);
+
+            for (int i = messageItems.size(); i-- > 0; ) {
+                final MessageListItem.MessageItem messageListItem = messageItems.get(i);
                 // skip message owner as reader
-                if (userRead.getUserId().equals(e.getMessage().getUser().getId())) {
+                if (userRead.getUserId().equals(messageListItem.getMessage().getUser().getId())) {
                     continue;
                 }
-                if (userRead.getLastRead().after(e.getMessage().getCreatedAt())) {
+                if (userRead.getLastRead().after(messageListItem.getMessage().getCreatedAt())) {
                     // set the read state on this entity
-                    e.addMessageReadBy(userRead);
+                    messageListItem.getMessageReadBy().add(userRead);
                     // we only show it for the last message, so break
                     break;
                 }
@@ -162,9 +166,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (isThread()) return;
             // update
             hasNewMessages = false;
-            List<MessageListItem> typingEntities = new ArrayList<>();
+            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
             if (users.size() > 0) {
-                MessageListItem messageListItem = new MessageListItem(users);
+                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
@@ -190,9 +194,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             if (isThread()) return;
             // update
             hasNewMessages = false;
-            List<MessageListItem> typingEntities = new ArrayList<>();
+            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
             if (users.size() > 0) {
-                MessageListItem messageListItem = new MessageListItem(users);
+                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
                 typingEntities.add(messageListItem);
             }
             this.typingEntities = typingEntities;
@@ -210,7 +214,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             hasNewMessages = true;
         }
         lastMessageID = newlastMessageID;
-        List<MessageListItem> entities = new ArrayList<MessageListItem>();
+        List<MessageListItem> entities = new ArrayList<>();
         // iterate over messages and stick in the date entities
         Message previousMessage = null;
         int size = messages.size();
@@ -245,15 +249,17 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 }
             }
             // date separator
-            if (previousMessage != null && !isSameDay(previousMessage, message))
-                entities.add(new MessageListItem(message.getCreatedAt()));
+            final Date date = message.getCreatedAt();
+            if (previousMessage != null && !isSameDay(previousMessage, message) && date != null) {
+                entities.add(new MessageListItem.DateSeparatorItem(date));
+            }
 
-            MessageListItem messageListItem = new MessageListItem(message, positions, mine);
+            MessageListItem messageListItem = new MessageListItem.MessageItem(message, positions, mine);
             entities.add(messageListItem);
 
             // Insert Thread Separator
             if (isThread() && i == 0) {
-                entities.add(new MessageListItem(MESSAGEITEM_THREAD_SEPARATOR));
+                entities.add(new MessageListItem.ThreadSeparatorItem());
                 previousMessage = null;
             } else {
                 // set the previous message for the next iteration

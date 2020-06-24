@@ -4,12 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.getstream.sdk.chat.view.MessageListView;
+import com.getstream.sdk.chat.view.MessageListViewStyle;
+
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
@@ -20,7 +21,7 @@ public abstract class BaseAttachmentViewHolder extends RecyclerView.ViewHolder{
     }
 
     public abstract void bind(@NonNull Context context,
-                              @NonNull MessageListItem messageListItem,
+                              @NonNull MessageListItem.MessageItem messageListItem,
                               @NonNull Message message,
                               @NonNull Attachment attachment,
                               @NonNull MessageListViewStyle style,

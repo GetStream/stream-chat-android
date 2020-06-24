@@ -4,7 +4,6 @@ import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.MESSAGEITEM_THREAD_SEPARATOR
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
@@ -130,7 +129,10 @@ class MessageListViewModelTest {
         stateList.last().apply {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             val state = (this as MessageListViewModel.State.Result)
-            state.messageListItem.listEntities.map { it.message } shouldBeEqualTo MESSAGES
+            state.messageListItem.listEntities.map {
+                it as MessageListItem.MessageItem
+                it.message
+            } shouldBeEqualTo MESSAGES
         }
     }
 
@@ -180,12 +182,24 @@ class MessageListViewModelTest {
                     isTyping shouldBeEqualTo false
 
                     listEntities.run {
-                        first().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
-                        last().positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
-                        (1 until size - 1).forEach {
-                            get(it).positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                        first().apply {
+                            this as MessageListItem.MessageItem
+                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
                         }
-                        map { it.message } shouldBeEqualTo MESSAGES
+                        last().apply {
+                            this as MessageListItem.MessageItem
+                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
+                        }
+                        (1 until size - 1).forEach {
+                            get(it).apply {
+                                this as MessageListItem.MessageItem
+                                positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                            }
+                        }
+                        map {
+                            it as MessageListItem.MessageItem
+                            it.message
+                        } shouldBeEqualTo MESSAGES
                     }
                 }
             }
@@ -213,14 +227,20 @@ class MessageListViewModelTest {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             (this as MessageListViewModel.State.Result).let {
                 it.messageListItem.isThread shouldBeEqualTo true
-                val messages = it.messageListItem.listEntities.run {
+                it.messageListItem.listEntities.run {
                     first().run {
+                        this shouldBeInstanceOf MessageListItem.MessageItem::class.java
+                        this as MessageListItem.MessageItem
                         message shouldBeEqualTo THREAD_PARENT_MESSAGE
                     }
                     get(1).apply {
-                        type shouldBeEqualTo MESSAGEITEM_THREAD_SEPARATOR
+                        this shouldBeInstanceOf MessageListItem.ThreadSeparatorItem::class.java
                     }
-                    (2 until size).map { index -> get(index).message }.toList() shouldBeEqualTo THREAD_MESSAGES
+                    (2 until size).map { index ->
+                        val item = get(index)
+                        item as MessageListItem.MessageItem
+                        item.message
+                    }.toList() shouldBeEqualTo THREAD_MESSAGES
                 }
             }
         }

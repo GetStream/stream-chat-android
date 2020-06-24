@@ -10,8 +10,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.model.ModelType;
@@ -20,9 +23,6 @@ import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 import top.defaults.drawabletoolbox.DrawableBuilder;
@@ -42,7 +42,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private Context context;
     private Message message;
     private Attachment attachment;
-    private MessageListItem messageListItem;
+    private MessageListItem.MessageItem messageListItem;
     private MessageListViewStyle style;
     private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
@@ -82,7 +82,7 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
     @Override
     public void bind(@NonNull Context context,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull Message message,
                      @NonNull Attachment attachment,
                      @NonNull MessageListViewStyle style,

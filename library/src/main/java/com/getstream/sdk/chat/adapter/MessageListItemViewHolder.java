@@ -55,7 +55,7 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
-public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
+public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<MessageListItem.MessageItem> {
     @DimenRes
     int avatarWidth;
     protected TextView tv_text;
@@ -82,7 +82,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected int position;
     protected Context context;
     protected Message message;
-    protected MessageListItem messageListItem;
+    protected MessageListItem.MessageItem messageListItem;
 
     protected MessageListView.MessageClickListener messageClickListener;
     protected MessageListView.MessageLongClickListener messageLongClickListener;
@@ -131,7 +131,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     @Override
     public void bind(@NonNull Context context,
                      @NonNull Channel channel,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
