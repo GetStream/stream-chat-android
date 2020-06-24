@@ -6,6 +6,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.Dates;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -13,16 +16,14 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.Date;
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import io.getstream.chat.android.client.models.Channel;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
-public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
+public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.DateSeparatorItem> {
 
     private Context context;
-    private MessageListItem messageListItem;
+    private MessageListItem.DateSeparatorItem messageListItem;
     private MessageListViewStyle style;
     private TextView tv_date;
     private ImageView iv_line_right, iv_line_left;
@@ -37,7 +38,7 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder {
     @Override
     public void bind(@NonNull Context context,
                      @NonNull Channel channelState,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.DateSeparatorItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,

@@ -222,16 +222,16 @@ public class MessageListView extends RecyclerView {
         }
         // check lastmessage update
         if (!entities.isEmpty()) {
-            Message lastMessage = entities.get(entities.size() - 1).getMessage();
-            if (lastMessage != null
-                    && scrolledBottom()
-                    && justUpdated(lastMessage)) {
-                int newPosition = adapter.getItemCount() - 1;
-                logger.logI(String.format("just update last message"));
+            final MessageListItem lastListItem = entities.get(entities.size() - 1);
+            if (lastListItem instanceof MessageListItem.MessageItem) {
+                final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
+                if (scrolledBottom() && justUpdated(lastMessage)) {
+                    int newPosition = adapter.getItemCount() - 1;
+                    logger.logI("just update last message");
 
-                postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
+                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
 
-                return;
+                }
             }
         }
 

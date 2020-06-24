@@ -3,6 +3,10 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
@@ -11,14 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Channel;
 
 public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private final String TAG = MessageListItemAdapter.class.getSimpleName();
     private Channel channel;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
@@ -66,7 +65,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public long getItemId(int position) {
-        return messageListItemList.get(position).getStableID();
+        return messageListItemList.get(position).getStableId();
     }
 
     public MessageListViewStyle getStyle() {
@@ -99,7 +98,7 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         try {
             MessageListItem messageListItem = messageListItemList.get(position);
-            return viewHolderFactory.getMessageViewType(messageListItem, messageListItem.isMine(), messageListItem.getPositions());
+            return viewHolderFactory.getMessageViewType(messageListItem);
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }
