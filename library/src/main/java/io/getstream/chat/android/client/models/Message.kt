@@ -75,7 +75,10 @@ data class Message(
     var silent: Boolean = false,
 
     @IgnoreSerialisation
-    val i18n: Map<String, String> = mapOf()
+    val i18n: Map<String, String> = mapOf(),
+
+    @SerializedName("show_in_channel")
+    var showInChannel: Boolean = false
 
 ) : CustomObject {
     @IgnoreSerialisation
