@@ -2,6 +2,7 @@ package io.getstream.chat.sample.feature.channels
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
@@ -46,6 +47,14 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
         addNewChannelButton.setOnClickListener {
             findNavController().navigate(R.id.action_to_create_channel)
+        }
+
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    activity?.finish()
+                }
+            })
         }
     }
 }
