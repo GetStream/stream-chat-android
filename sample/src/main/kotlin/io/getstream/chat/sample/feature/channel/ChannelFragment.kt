@@ -36,9 +36,12 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
         ChannelHeaderViewModel(cid).bindView(channelHeaderView, this)
         MessageInputViewModel(cid).apply {
             bindView(messageInputView, viewLifecycleOwner)
-            messageListView.setOnStartThreadListener {
-                setActiveThread(it)
-            }
+            messagesViewModel.mode.observe(viewLifecycleOwner, Observer {
+                when (it) {
+                    is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
+                    is MessageListViewModel.Mode.Normal -> resetThread()
+                }
+            })
             messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
