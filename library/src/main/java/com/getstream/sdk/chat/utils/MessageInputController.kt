@@ -53,21 +53,22 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 	internal var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, newValue ->
 		when (newValue) {
 			is InputMode.Normal ->  configureNormalInputMode()
-			is InputMode.ReplyTo -> configureReplyToInputMode(newValue.parentMessage)
+			is InputMode.Thread -> configureThreadInputMode()
 			is InputMode.Edit -> configureEditInputMode(newValue.oldMessage)
 		}.exhaustive
 	}
 
-	private fun configureReplyToInputMode(parentMessage: Message) {
-		binding.vPreviewMessage.setMessage(parentMessage, PreviewMessageView.Mode.REPLY_TO)
-		binding.vPreviewMessage.onCloseClick = { inputMode = InputMode.Normal }
-		binding.vPreviewMessage.visible(true)
+	private fun configureThreadInputMode() {
+		binding.vPreviewMessage.visible(false)
 		binding.ivOpenAttach.visible(true)
+		binding.cbSendAlsoToChannel.visible(true)
+		binding.cbSendAlsoToChannel.isChecked = false
 	}
 
 	private fun configureNormalInputMode() {
 		binding.vPreviewMessage.visible(false)
 		binding.ivOpenAttach.visible(true)
+		binding.cbSendAlsoToChannel.visible(false)
 	}
 
 	private fun configureEditInputMode(message: Message) {
@@ -79,6 +80,7 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 		binding.etMessage.setText(message.text)
 		binding.vPreviewMessage.visible(true)
 		binding.ivOpenAttach.visible(false)
+		binding.cbSendAlsoToChannel.visible(false)
 	}
 
 	fun getSelectedAttachments(): List<AttachmentMetaData> {
@@ -94,18 +96,18 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 
 	fun onSendMessageClick(message: String) = when (val im = inputMode) {
 		is InputMode.Normal -> sendNormalMessage(message)
-		is InputMode.ReplyTo -> sendReplyTo(im.parentMessage, message)
-		is InputMode.Edit -> editMessage(im.oldMessage, message)
-	}.also { inputMode = InputMode.Normal }
+		is InputMode.Thread -> sendToThread(im.parentMessage, message)
+		is InputMode.Edit -> editMessage(im.oldMessage, message).also { inputMode = InputMode.Normal }
+	}
 
 	private fun sendNormalMessage(message: String) = when (selectedAttachments.isEmpty()) {
 		true -> view.sendTextMessage(message)
 		false -> view.sendAttachments(message, selectedAttachments.map { it.file })
 	}
 
-	private fun sendReplyTo(parentMessage: Message, message: String) = when (selectedAttachments.isEmpty()) {
-		true -> view.sendReplyTo(parentMessage, message)
-		false -> view.sendReplyToWithAttachments(parentMessage, message, selectedAttachments.map { it.file })
+	private fun sendToThread(parentMessage: Message, message: String) = when (selectedAttachments.isEmpty()) {
+		true -> view.sendToThread(parentMessage, message, binding.cbSendAlsoToChannel.isChecked)
+		false -> view.sendToThreadWithAttachments(parentMessage, message, binding.cbSendAlsoToChannel.isChecked, selectedAttachments.map { it.file })
 	}
 
 	private fun editMessage(message: Message, messageText: String) {
@@ -370,7 +372,7 @@ class MessageInputController(private val binding: StreamViewMessageInputBinding,
 
 internal sealed class InputMode {
 	object Normal : InputMode()
-	data class ReplyTo(val parentMessage: Message) : InputMode()
+	data class Thread(val parentMessage: Message) : InputMode()
 	data class Edit(val oldMessage: Message) : InputMode()
 }
 

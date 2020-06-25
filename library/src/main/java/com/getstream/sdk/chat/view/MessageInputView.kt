@@ -64,11 +64,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 		}
 
-		override fun replyTo(parentMessage: Message, messageText: String) {
+		override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
 			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 		}
 
-		override fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>) {
+		override fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentsFiles: List<File>) {
 			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
 		}
 
@@ -221,12 +221,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
 	}
 
-	internal fun sendReplyTo(parentMessage: Message, message: String) {
-		messageSendHandler.replyTo(parentMessage, message)
+	internal fun sendToThread(parentMessage: Message, message: String, alsoSendToChannel: Boolean) {
+		messageSendHandler.sendToThread(parentMessage, message, alsoSendToChannel)
 	}
 
-	internal fun sendReplyToWithAttachments(parentMessage: Message, message: String, attachmentFiles: List<File>) {
-		messageSendHandler.replyToWithAttachments(parentMessage, message, attachmentFiles)
+	internal fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentFiles: List<File>) {
+		messageSendHandler.sendToThreadWithAttachments(parentMessage, message, alsoSendToChannel, attachmentFiles)
 	}
 
 	internal fun editMessage(oldMessage: Message, newMessageText: String) {
@@ -279,8 +279,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		messageInputController.inputMode = InputMode.Normal
 	}
 
-	fun setReplyToMode(parentMessage: Message) {
-		messageInputController.inputMode = InputMode.ReplyTo(parentMessage)
+	fun setThreadMode(parentMessage: Message) {
+		messageInputController.inputMode = InputMode.Thread(parentMessage)
 	}
 
 	fun setEditMode(oldMessage: Message) {
@@ -299,8 +299,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	interface MessageSendHandler {
 		fun sendMessage(messageText: String)
 		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
-		fun replyTo(parentMessage: Message, messageText: String)
-		fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>)
+		fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+		fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentsFiles: List<File>)
 		fun editMessage(oldMessage: Message, newMessageText: String)
 	}
 
