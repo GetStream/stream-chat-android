@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import kotlin.properties.Delegates
 
 class MessageListViewModel(private val cid: String,
                            private val domain: ChatDomain = ChatDomain.instance(),
@@ -19,8 +20,9 @@ class MessageListViewModel(private val cid: String,
     private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val messageListData: MessageListItemLiveData
     private val stateMerger = MediatorLiveData<State>()
-    private var currentMode: Mode = Mode.Normal
+    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) {_, _, newMode -> mode.postValue(newMode) }
 
+    val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
     val state: LiveData<State> = stateMerger
     val channel: Channel
     val currentUser: User

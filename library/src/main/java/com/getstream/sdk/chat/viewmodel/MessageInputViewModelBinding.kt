@@ -16,12 +16,18 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 			this@bindView.sendMessageWithAttachments(message, attachmentsFiles)
 		}
 
-		override fun replyTo(parentMessage: Message, messageText: String) {
-			this@bindView.sendMessage(messageText) { this.parentId = parentMessage.id }
+		override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
+			this@bindView.sendMessage(messageText) {
+				this.parentId = parentMessage.id
+				this.showInChannel = alsoSendToChannel
+			}
 		}
 
-		override fun replyToWithAttachments(parentMessage: Message, message: String, attachmentsFiles: List<File>) {
-			this@bindView.sendMessageWithAttachments(message, attachmentsFiles) { this.parentId = parentMessage.id }
+		override fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentsFiles: List<File>) {
+			this@bindView.sendMessageWithAttachments(message, attachmentsFiles) {
+				this.parentId = parentMessage.id
+				this.showInChannel = alsoSendToChannel
+			}
 		}
 
 		override fun editMessage(oldMessage: Message, newMessageText: String) {
@@ -32,8 +38,8 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
 		override fun onKeystroke() = keystroke()
 		override fun onStopTyping() = stopTyping()
 	})
-	replyTo.observe(lifecycleOwner, Observer {
-		it?.let { view.setReplyToMode(it) }
+	getActiveThread().observe(lifecycleOwner, Observer {
+		it?.let { view.setThreadMode(it) }
 				?: view.setNormalMode()
 	})
 	editMessage.observe(lifecycleOwner, Observer {

@@ -20,7 +20,6 @@ class MessageInputViewModel(private val cid: String, private val chatDomain: Cha
 	private var channelState = MutableLiveData<Channel>(channelController.toChannel())
 	val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
 	val members: LiveData<List<Member>> = channelController.members
-	val replyTo: MutableLiveData<Message?> = MutableLiveData()
 	private var activeThread = MutableLiveData<Message?>()
 	val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
