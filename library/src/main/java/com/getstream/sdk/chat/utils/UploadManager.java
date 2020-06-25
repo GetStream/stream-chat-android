@@ -24,14 +24,16 @@ public class UploadManager {
         this.context = context;
     }
 
-    public void uploadFile(Attachment attachment,
-                            boolean isMedia, UploadFileListener fileListener) {
+    public void uploadFile(Attachment attachment, boolean isMedia, UploadFileListener fileListener) {
+
+        String mimeType = attachment.getMime_type();
+
         updateQueue(attachment, true);
         UploadFileCallback callback = getUploadFileCallBack(attachment, isMedia, fileListener);
         if (isMedia && attachment.getType().equals(ModelType.attach_image))
-            channel.sendImage(attachment.config.getFilePath(), "image/jpeg", callback);
+            channel.sendImage(attachment.config.getFilePath(), mimeType, callback);
         else
-            channel.sendFile(attachment.config.getFilePath(), attachment.getMime_type(), callback);
+            channel.sendFile(attachment.config.getFilePath(), mimeType, callback);
     }
 
     private UploadFileCallback getUploadFileCallBack(Attachment attachment,

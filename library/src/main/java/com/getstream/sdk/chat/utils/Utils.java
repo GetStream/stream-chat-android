@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
@@ -9,19 +10,30 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -34,7 +46,11 @@ import com.getstream.sdk.chat.rest.response.ChannelState;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,15 +58,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
-
 public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
     private static String TAG = Utils.class.getSimpleName();
     public static List<Attachment> attachments = new ArrayList<>();
+    private static final int BUF_SIZE = 0x1000; // 4K
 
     public static String readInputStream(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream).useDelimiter("\\A");
@@ -198,8 +212,26 @@ public class Utils {
         return attachments;
     }
 
+    public static String getMimeType(Uri uri, Context context) {
+        String mimeType;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = context.getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
+    }
+
     public static ArrayList<Attachment> getMediaAttachments(Context context) {
-        String[] columns = {MediaStore.Files.FileColumns._ID,
+
+        ContentResolver contentResolver = context.getContentResolver();
+
+        String[] columns = {
+                MediaStore.Files.FileColumns._ID,
                 MediaStore.Files.FileColumns.DATA,
                 MediaStore.Files.FileColumns.DATE_ADDED,
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
@@ -215,48 +247,103 @@ public class Utils {
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
 
         Uri queryUri = MediaStore.Files.getContentUri("external");
-
-        @SuppressWarnings("deprecation")
-        ContentResolver mContentResolver = context.getContentResolver();
-
-        Cursor imagecursor = mContentResolver.query(queryUri,
+        Cursor cursor = contentResolver.query(
+                queryUri,
                 columns,
                 selection,
-                null, // Selection args (none).
-                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // QuerySort order.
+                null,
+                MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
         );
 
-        if (imagecursor == null) {
+        if (cursor == null) {
             StreamChat.getLogger().logE(Utils.class, "ContentResolver query return null");
             return new ArrayList<>();
         }
 
-        int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
-        int count = imagecursor.getCount();
+        int count = cursor.getCount();
 
         ArrayList<Attachment> attachments = new ArrayList<>();
 
         for (int i = 0; i < count; i++) {
             Attachment attachment = new Attachment();
-            imagecursor.moveToPosition(i);
-            int id = imagecursor.getInt(image_column_index);
-            int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-            int type = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
-            int t = imagecursor.getInt(type);
-            File file = new File(imagecursor.getString(dataColumnIndex));
-            if (!file.exists()) continue;
-            attachment.config.setFilePath(imagecursor.getString(dataColumnIndex));
-            if (t == Constant.MEDIA_TYPE_IMAGE) {
+            cursor.moveToPosition(i);
+
+            Uri uri = ContentUris.withAppendedId(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    cursor.getInt(cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID))
+            );
+
+            int typeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
+            int type = cursor.getInt(typeIndex);
+
+            File file = copyFile(uri, context);
+
+            if (file == null || !file.exists()) continue;
+            String filePath = file.getPath();
+            attachment.config.setFilePath(filePath);
+            if (type == Constant.MEDIA_TYPE_IMAGE) {
                 attachment.setType(ModelType.attach_image);
-            } else if (t == Constant.MEDIA_TYPE_VIDEO) {
-                float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
-                attachment.config.setVideoLengh((int) (videolengh / 1000));
+                attachment.setMime_type(contentResolver.getType(uri));
+            } else if (type == Constant.MEDIA_TYPE_VIDEO) {
+                float duration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
+                attachment.config.setVideoLengh((int) (duration / 1000));
                 configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
             }
             attachments.add(attachment);
         }
-        imagecursor.close();
+        cursor.close();
         return attachments;
+    }
+
+    /**
+     * Android 10 requires copying file into app cache dir to read from there.
+     */
+    @Nullable
+    private static File copyFile(Uri uri, Context context) {
+
+        try {
+            ContentResolver contentResolver = context.getContentResolver();
+            ParcelFileDescriptor pfd = contentResolver.openFileDescriptor(uri, "r", null);
+            if (pfd == null) return null;
+            FileInputStream fis = new FileInputStream(pfd.getFileDescriptor());
+
+            File file = new File(context.getCacheDir(), getFileName(uri, contentResolver));
+            FileOutputStream outputStream = new FileOutputStream(file);
+            copy(fis, outputStream);
+            return file;
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static long copy(InputStream from, OutputStream to) throws IOException {
+        byte[] buf = new byte[BUF_SIZE];
+        long total = 0;
+        while (true) {
+            int r = from.read(buf);
+            if (r == -1) {
+                break;
+            }
+            to.write(buf, 0, r);
+            total += r;
+        }
+        return total;
+    }
+
+    private static String getFileName(Uri fileUri, ContentResolver contentResolver) {
+
+        String name = "";
+        Cursor returnCursor = contentResolver.query(fileUri, null, null, null, null);
+        if (returnCursor != null) {
+            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+            returnCursor.moveToFirst();
+            name = returnCursor.getString(nameIndex);
+            returnCursor.close();
+        }
+
+        return name;
     }
 
     public static void configFileAttachment(Attachment attachment,

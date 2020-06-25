@@ -1,3 +1,7 @@
+## May 15th, 2020 - 3.6.14
+
+- Fix media files selection for Android 10+
+
 ## May 15th, 2020 - 3.6.13
 
 - Fix memory leak with not unsubscribed `LifecycleObserver` at `ChannelViewModel`
