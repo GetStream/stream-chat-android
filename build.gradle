@@ -5,7 +5,7 @@ buildscript {
     ext {
         buildToolsVersion = "29.0.2"
         minSdkVersion = 21
-        compileSdkVersion = 28
+        compileSdkVersion = 29
         appCompatVersion = '1.1.0'
         constraintLayoutVersion = '2.0.0-beta2'
         espressoVersion = '3.2.0'
