@@ -54,7 +54,7 @@ buildscript {
 allprojects {
 
     ext {
-        releaseSdkVersion = '3.6.13'
+        releaseSdkVersion = '3.6.14'
     }
 
     repositories {
