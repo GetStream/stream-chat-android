@@ -1,4 +1,4 @@
-## May 15th, 2020 - 3.6.14
+## Thu 25, 2020 - 3.6.14
 
 - Fix media files selection for Android 10+
 
