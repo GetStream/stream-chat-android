@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import bolts.Capture;
+
 
 /**
  * Rich Message Input View component, allows you to:
@@ -512,10 +514,10 @@ public class MessageInputView extends RelativeLayout {
                 return;
             }
             if (imageFile != null && imageFile.length() > 0) {
-                messageInputController.progressCapturedMedia(imageFile, true);
+                messageInputController.progressCapturedMedia(imageFile, CaptureController.getImage(), true);
                 updateGallery(imageFile);
             } else if (vieoFile != null && vieoFile.length() > 0) {
-                messageInputController.progressCapturedMedia(vieoFile, false);
+                messageInputController.progressCapturedMedia(vieoFile, CaptureController.getVideo(),false);
                 updateGallery(vieoFile);
             } else
                 Utils.showMessage(getContext(), getContext().getString(R.string.stream_take_photo_failed));

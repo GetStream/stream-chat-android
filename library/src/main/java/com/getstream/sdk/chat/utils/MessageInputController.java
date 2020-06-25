@@ -6,9 +6,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -80,7 +78,7 @@ public class MessageInputController {
         return selectedAttachments;
     }
 
-    public boolean isUploadingFile(){
+    public boolean isUploadingFile() {
         return uploadManager.isUploadingFile();
     }
 
@@ -98,7 +96,7 @@ public class MessageInputController {
         binding.clCommand.setVisibility(View.GONE);
         binding.clSelectPhoto.setVisibility(View.GONE);
 
-        switch (type){
+        switch (type) {
             case EDIT_MESSAGE:
                 break;
             case ADD_FILE:
@@ -162,16 +160,16 @@ public class MessageInputController {
     private void configSelectAttachView(boolean isMedia) {
         binding.setIsAttachFile(!isMedia);
         getAttachmentsFromLocal(isMedia);
-        
+
         ((Activity) context).runOnUiThread(() -> {
-            if (selectedAttachments.isEmpty()){
+            if (selectedAttachments.isEmpty()) {
                 setAttachmentAdapters(isMedia);
-                if (localAttachments.isEmpty()){
+                if (localAttachments.isEmpty()) {
                     Utils.showMessage(context, context.getResources().getString(R.string.stream_no_media_error));
                     onClickCloseBackGroundView();
                 }
                 binding.progressBarFileLoader.setVisibility(View.GONE);
-            }else{
+            } else {
                 showHideComposerAttachmentGalleryView(true, isMedia);
                 setSelectedAttachmentAdapter(false, isMedia);
             }
@@ -179,27 +177,26 @@ public class MessageInputController {
     }
 
     private void getAttachmentsFromLocal(boolean isMedia) {
-        if (isMedia){
+        if (isMedia) {
             localAttachments = Utils.getMediaAttachments(context);
-            return;
+        } else {
+            Utils.attachments = new ArrayList<>();
+            localAttachments = Utils.getFilesAttachments(context);
         }
-
-        Utils.attachments = new ArrayList<>();
-        localAttachments = Utils.getFileAttachments(Environment.getExternalStorageDirectory());
     }
-    
-    private void setAttachmentAdapters(boolean isMedia){
-        if (isMedia){
+
+    private void setAttachmentAdapters(boolean isMedia) {
+        if (isMedia) {
             mediaAttachmentAdapter = new MediaAttachmentAdapter(context, localAttachments, position ->
-                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+                    uploadOrCancelAttachment(localAttachments.get(position), isMedia)
             );
             binding.rvMedia.setAdapter(mediaAttachmentAdapter);
-        }else {
+        } else {
             fileAttachmentAdapter = new AttachmentListAdapter(context, localAttachments, true, true);
             binding.lvFile.setAdapter(fileAttachmentAdapter);
             binding.lvFile.setOnItemClickListener((AdapterView<?> parent, View view,
                                                    int position, long id) ->
-                uploadOrCancelAttachment(localAttachments.get(position), isMedia)
+                    uploadOrCancelAttachment(localAttachments.get(position), isMedia)
             );
         }
     }
@@ -217,15 +214,15 @@ public class MessageInputController {
     }
 
     private void uploadOrCancelAttachment(Attachment attachment,
-                                          boolean isMedia){
+                                          boolean isMedia) {
         if (!attachment.config.isSelected()) {
             uploadAttachment(attachment, true, isMedia);
-        } else{
+        } else {
             cancelAttachment(attachment, true, isMedia);
         }
     }
 
-    private void uploadAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
+    private void uploadAttachment(Attachment attachment, boolean fromGallery, boolean isMedia) {
         if (UploadManager.isOverMaxUploadFileSize(new File(attachment.config.getFilePath()), true))
             return;
         attachment.config.setSelected(true);
@@ -243,7 +240,7 @@ public class MessageInputController {
         configSendButtonEnableState();
     }
 
-    private void uploadFile(Attachment attachment, boolean fromGallery, boolean isMedia){
+    private void uploadFile(Attachment attachment, boolean fromGallery, boolean isMedia) {
         uploadManager.uploadFile(attachment, isMedia, new UploadManager.UploadFileListener() {
             @Override
             public void onSuccess(Attachment attachment) {
@@ -265,13 +262,13 @@ public class MessageInputController {
         });
     }
 
-    private void uploadedFileProgress(Attachment attachment){
+    private void uploadedFileProgress(Attachment attachment) {
         if (attachmentListener != null)
             attachmentListener.onAddAttachment(attachment);
         configSendButtonEnableState();
     }
 
-    private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia){
+    private void cancelAttachment(Attachment attachment, boolean fromGallery, boolean isMedia) {
         attachment.config.setSelected(false);
         selectedAttachments.remove(attachment);
         uploadManager.updateQueue(attachment, false);
@@ -289,7 +286,7 @@ public class MessageInputController {
         binding.ivOpenAttach.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia){
+    private void showHideComposerAttachmentGalleryView(boolean show, boolean isMedia) {
         if (isMedia)
             binding.rvComposer.setVisibility(show ? View.VISIBLE : View.GONE);
         else
@@ -308,15 +305,15 @@ public class MessageInputController {
 
 
         AsyncTask.execute(() -> configSelectAttachView(isMedia));
-        if (selectedAttachments.isEmpty()){
+        if (selectedAttachments.isEmpty()) {
             binding.progressBarFileLoader.setVisibility(View.VISIBLE);
             onClickOpenBackGroundView(isMedia ? MessageInputType.UPLOAD_MEDIA : MessageInputType.UPLOAD_FILE);
-        }            
+        }
     }
 
     private void totalAttachmentAdapterChanged(@Nullable Attachment attachment, boolean isMedia) {
         if (isMedia) {
-            if (attachment == null){
+            if (attachment == null) {
                 mediaAttachmentAdapter.notifyDataSetChanged();
                 return;
             }
@@ -333,7 +330,7 @@ public class MessageInputController {
         if (isMedia) {
             if (selectedMediaAttachmentAdapter == null)
                 setSelectedAttachmentAdapter(fromGallery, isMedia);
-            if (attachment == null){
+            if (attachment == null) {
                 selectedMediaAttachmentAdapter.notifyDataSetChanged();
                 return;
             }
@@ -347,14 +344,14 @@ public class MessageInputController {
         }
     }
 
-    private void configSendButtonEnableState(){
-        if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())){
+    private void configSendButtonEnableState() {
+        if (!StringUtility.isEmptyTextMessage(binding.etMessage.getText().toString())) {
             binding.setActiveMessageSend(true);
-        }else{
-            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()){
+        } else {
+            if (uploadManager.isUploadingFile() || selectedAttachments.isEmpty()) {
                 viewModel.setInputType(InputType.DEFAULT);
                 binding.setActiveMessageSend(false);
-            }else{
+            } else {
                 binding.setActiveMessageSend(true);
             }
         }
@@ -366,7 +363,7 @@ public class MessageInputController {
         onClickCloseBackGroundView();
     }
 
-    private void initAdapter(){
+    private void initAdapter() {
         selectedAttachments.clear();
         uploadManager.resetQueue();
 
@@ -385,10 +382,11 @@ public class MessageInputController {
 
     // region Camera
 
-    public void progressCapturedMedia(File file, boolean isImage) {
+    public void progressCapturedMedia(File file, Uri uri, boolean isImage) {
         Attachment attachment = new Attachment();
         attachment.config.setFilePath(file.getPath());
         attachment.setFile_size((int) file.length());
+        attachment.setMime_type(Utils.getMimeType(uri, context));
         if (isImage) {
             attachment.setType(ModelType.attach_image);
         } else {
@@ -415,7 +413,7 @@ public class MessageInputController {
         commands = null;
     }
 
-    private boolean isCommandOrMention(){
+    private boolean isCommandOrMention() {
         return messageInputType != null && ((messageInputType == MessageInputType.COMMAND)
                 || (messageInputType == MessageInputType.MENTION));
     }
@@ -424,7 +422,7 @@ public class MessageInputController {
         if (TextUtils.isEmpty(text)
                 || (!text.startsWith("/") && !text.contains("@"))) {
             closeCommandView();
-        }else if (text.length() == 1) {
+        } else if (text.length() == 1) {
             onClickCommandViewOpen(text.startsWith("/"));
         } else if (text.endsWith("@")) {
             onClickCommandViewOpen(false);
@@ -466,21 +464,23 @@ public class MessageInputController {
             closeCommandView();
         });
     }
-    private void setCommandMentionListItemAdapter(boolean isCommand){
-        if (commandMentionListItemAdapter  == null) {
+
+    private void setCommandMentionListItemAdapter(boolean isCommand) {
+        if (commandMentionListItemAdapter == null) {
             commandMentionListItemAdapter = new CommandMentionListItemAdapter(this.context, commands, style, isCommand);
             binding.lvCommand.setAdapter(commandMentionListItemAdapter);
-        }else{
+        } else {
             commandMentionListItemAdapter.setCommand(isCommand);
             commandMentionListItemAdapter.setCommands(commands);
             commandMentionListItemAdapter.notifyDataSetChanged();
         }
     }
+
     private void setCommandsMentionUsers(String string) {
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         if (string.startsWith("/")) {
-            List<Command>commands = channel.getConfig().getCommands();
+            List<Command> commands = channel.getConfig().getCommands();
             if (commands == null || commands.isEmpty()) return;
 
             String commandStr = string.replace("/", "");
@@ -504,7 +504,7 @@ public class MessageInputController {
     }
 
     private void setMentionUsers(String string) {
-        StreamChat.getLogger().logD(this,"Mention UserName: " + string);
+        StreamChat.getLogger().logD(this, "Mention UserName: " + string);
         if (commands == null) commands = new ArrayList<>();
         commands.clear();
         List<Member> members = channel.getChannelState().getMembers();

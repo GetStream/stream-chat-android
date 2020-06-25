@@ -10,9 +10,8 @@ import android.provider.MediaStore;
 
 import androidx.annotation.Nullable;
 
-import com.getstream.sdk.chat.R;
-
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,8 +19,16 @@ public class CaptureController {
 
     private static Uri imageUri, videoUri;
 
+    public static Uri getImage() {
+        return imageUri;
+    }
+
+    public static Uri getVideo() {
+        return videoUri;
+    }
+
     public static Intent getTakePictureIntent(Context context) {
-        File newFile = new File(getFolderPath(true, context), "IMG_" + getFileName() + ".jpg");
+        File newFile = createFile("IMG_" + getFileName(), ".jpg", context);
         imageUri = Uri.fromFile(newFile);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ContentValues values = new ContentValues();
@@ -32,7 +39,7 @@ public class CaptureController {
     }
 
     public static Intent getTakeVideoIntent(Context context) {
-        File newFile = new File(getFolderPath(false, context), "VID_" + getFileName() + ".mp4");
+        File newFile = createFile("VID_" + getFileName(), ".mp4", context);
         videoUri = Uri.fromFile(newFile);
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         ContentValues values = new ContentValues();
@@ -47,13 +54,19 @@ public class CaptureController {
         return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date().getTime());
     }
 
-    private static String getFolderPath(boolean isImage, Context context) {
-        String appName = Utils.getApplicationName(context);
-        File f1 = new File(Environment.getExternalStorageDirectory() + "/" + appName, context.getString(isImage ? R.string.stream_image : R.string.stream_video));
-        if (!f1.exists()) {
-            f1.mkdirs();
+    private static File createFile(String fileName, String extension, Context context) {
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = null;
+        try {
+            image = File.createTempFile(
+                    fileName,
+                    extension,
+                    storageDir
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return f1.getAbsolutePath();
+        return image;
     }
 
     @Nullable
