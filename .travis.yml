@@ -22,6 +22,9 @@ script:
   - ./gradlew test --console verbose -i
   - ./gradlew jacocoTestReport
 
+before_install:
+  - echo yes | android update sdk -a --filter platform-tools --no-ui --force
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
