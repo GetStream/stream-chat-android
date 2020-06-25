@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -181,7 +182,7 @@ public class MessageInputController {
             localAttachments = Utils.getMediaAttachments(context);
         } else {
             Utils.attachments = new ArrayList<>();
-            localAttachments = Utils.getFilesAttachments(context);
+            localAttachments = Utils.getFileAttachments(Environment.getExternalStorageDirectory());
         }
     }
 
