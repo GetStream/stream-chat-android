@@ -31,6 +31,9 @@ internal class EventsParser(
     override fun onMessage(webSocket: WebSocket, text: String) {
 
         try {
+
+            logger.logI(text)
+
             val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
             val errorData = errorMessage.data()
 

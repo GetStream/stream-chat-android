@@ -12,10 +12,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
@@ -24,7 +21,6 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.layout_commands.view.*
-import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -97,11 +93,21 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 Log.d("connection-events", event::class.java.simpleName)
             })
 
+        subs.add(client.events()
+            .filter(UserUnbanned::class.java)
+            .filter(UserBanned::class.java)
+            .subscribe {
+                println("ban/unban for " + config.userId + ": " + it.type)
+            })
+
         textUserId.text = "UserId: ${config.userId}"
 
         btnConnect.setOnClickListener {
 
-            client.setUser(config.getUser(), object : TokenProvider {
+            val user = config.getUser()
+            user.extraData.clear()
+
+            client.setUser(user, object : TokenProvider {
                 override fun loadToken(): String {
                     Thread.sleep(1000)
                     return config.token
@@ -244,12 +250,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnQueryMembers.setOnClickListener {
-            client.queryMembers(chType, chId, 0, 10, Filters.eq("invited", true)).enqueue {
+            client.queryMembers(chType, chId, 0, 10, Filters.eq("banned", true)).enqueue {
                 UtilsMessages.show(it)
             }
         }
-
-
 
         btnGetOrCreateChannel.setOnClickListener {
 
@@ -339,6 +343,18 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnUploadImage.setOnClickListener {
             //client.sendFile(chType, chId, File())
+        }
+
+        btnBanUser.setOnClickListener {
+            client.banUser(config.userId, chType, chId, "reason-z", 1).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnUnbanUser.setOnClickListener {
+            client.unBanUser(config.userId, chType, chId).enqueue {
+                UtilsMessages.show(it)
+            }
         }
 
     }

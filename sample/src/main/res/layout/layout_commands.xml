@@ -143,4 +143,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="ban user"
+            android:id="@+id/btnBanUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="unban user"
+            android:id="@+id/btnUnbanUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>
