@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 
 class ThreadControllerImpl(
-    override var threadId: String,
+    override val threadId: String,
     var channelControllerImpl: ChannelControllerImpl
 ) :
     ThreadController {
