@@ -9,7 +9,7 @@ import java.util.*
 
 internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
 
-    val dateFormat = SimpleDateFormat(ChatParser.DATE_FORMAT).apply {
+    val dateFormat = SimpleDateFormat(ChatParser.DATE_FORMAT, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
@@ -30,7 +30,13 @@ internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
         return if (rawValue.isNullOrEmpty()) {
             null
         } else {
-            dateFormat.parse(rawValue)
+            try {
+                dateFormat.parse(rawValue)
+            } catch (t: Throwable) {
+                // there're cases when backend returns invalid date
+                // https://getstream.slack.com/archives/CE5N802GP/p1593472741106400
+                null
+            }
         }
 
     }
