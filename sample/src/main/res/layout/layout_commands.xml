@@ -155,4 +155,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+    <Button
+            android:text="mute user"
+            android:id="@+id/btnMuteUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="mute channel"
+            android:id="@+id/btnMuteChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    <Button
+            android:text="unmute channel"
+            android:id="@+id/btnUnMuteChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
 </merge>
