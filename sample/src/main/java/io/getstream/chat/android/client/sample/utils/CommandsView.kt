@@ -324,15 +324,8 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnSearchMessage.setOnClickListener {
 
-            val channelFiler = Filters.and(
-                Filters.eq("type", chType),
-                Filters.eq("id", chId)
-            )
-
-            val messageFilter = Filters.and(
-                Filters.eq("text", ""),
-                Filters.eq("attachments", Filters.eq("\$exists", true))
-            )
+            val channelFiler = Filters.eq("cid", cid)
+            val messageFilter = Filters.eq("attachments", Filters.exists(true))
 
             client.searchMessages(
                 SearchMessagesRequest(0, 100, channelFiler, messageFilter)
@@ -346,13 +339,15 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnBanUser.setOnClickListener {
-            client.banUser(config.userId, chType, chId, "reason-z", 1).enqueue {
+            val u = "stream-eugene-2"
+            client.banUser(u, chType, chId, "reason-z", 1).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
         btnUnbanUser.setOnClickListener {
-            client.unBanUser(config.userId, chType, chId).enqueue {
+            val u = "stream-eugene-2"
+            client.unBanUser(u, chType, chId).enqueue {
                 UtilsMessages.show(it)
             }
         }
