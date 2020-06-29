@@ -43,6 +43,8 @@ internal class ChatSocketServiceImpl(
 
     override fun onSocketError(error: ChatError) {
 
+        logger.logE(error)
+
         if (error is ChatNetworkError && error.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
             updateState(State.Error(error))
             tokenManager.expireToken()
