@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -159,8 +160,9 @@ class ChannelControllerImpl(
             val threadController =
                 ThreadControllerImpl(
                     threadId,
-                    this
-                )
+                    this,
+                    client
+                ).also { scope.launch { it.watch() } }
             activeThreadMapImpl[threadId] = threadController
         }
         return activeThreadMapImpl.getValue(threadId)
