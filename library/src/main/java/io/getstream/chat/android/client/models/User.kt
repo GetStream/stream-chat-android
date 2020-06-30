@@ -50,6 +50,10 @@ data class User(
     val teams:List<String> = listOf(),
 
     @IgnoreSerialisation
+    @SerializedName("channel_mutes")
+    val channelMutes:List<ChannelMute> = emptyList(),
+
+    @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 

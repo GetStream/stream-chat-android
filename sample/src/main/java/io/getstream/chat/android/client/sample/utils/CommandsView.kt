@@ -83,6 +83,26 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 .build()
         }
 
+        subs.add(client.events()
+            .filter(ConnectedEvent::class.java)
+            .subscribe {
+                println(it)
+            }
+        )
+
+        subs.add(client.events()
+            .filter(ConnectedEvent::class.java)
+            .filter(NotificationChannelMutesUpdated::class.java)
+            .subscribe {
+                var mutedChannels: List<ChannelMute> = emptyList()
+                if (it is ConnectedEvent) {
+                    mutedChannels = it.me.channelMutes
+                } else if (it is NotificationChannelMutesUpdated) {
+                    mutedChannels = it.me.channelMutes
+                }
+                println(mutedChannels)
+            }
+        )
 
         subs.add(client.events()
             .filter(ConnectedEvent::class.java)
@@ -339,15 +359,31 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnBanUser.setOnClickListener {
-            val u = "stream-eugene-2"
-            client.banUser(u, chType, chId, "reason-z", 1).enqueue {
+            client.banUser(config.userId, chType, chId, "reason-z", 1).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
         btnUnbanUser.setOnClickListener {
-            val u = "stream-eugene-2"
-            client.unBanUser(u, chType, chId).enqueue {
+            client.unBanUser(config.userId, chType, chId).enqueue {
+
+            }
+        }
+
+        btnMuteUser.setOnClickListener {
+            client.muteUser(config.userId).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnMuteChannel.setOnClickListener {
+            client.muteChannel(chType, chId).enqueue {
+                UtilsMessages.show(it)
+            }
+        }
+
+        btnUnMuteChannel.setOnClickListener {
+            client.unMuteChannel(chType, chId).enqueue {
                 UtilsMessages.show(it)
             }
         }

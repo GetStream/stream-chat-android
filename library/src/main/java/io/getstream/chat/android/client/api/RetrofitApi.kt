@@ -10,6 +10,22 @@ interface RetrofitApi {
 
     // region channels
 
+    @POST("/moderation/mute/channel")
+    fun muteChannel(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @Body body: MuteChannelRequest
+    ): Call<CompletableResponse>
+
+    @POST("/moderation/unmute/channel")
+    fun unMuteChannel(
+        @Query("api_key") apiKey: String,
+        @Query("user_id") userId: String,
+        @Query("connection_id") connectionId: String,
+        @Body body: MuteChannelRequest
+    ): Call<CompletableResponse>
+
     @GET("/channels")
     fun queryChannels(
         @Query("api_key") apiKey: String,

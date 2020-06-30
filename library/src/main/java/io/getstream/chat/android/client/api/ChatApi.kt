@@ -170,4 +170,8 @@ interface ChatApi {
     fun translate(messageId: String, language: String): Call<Message>
 
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+
+    fun muteChannel(channelType: String, channelId: String): Call<Unit>
+
+    fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
 }
