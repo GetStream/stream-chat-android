@@ -5,7 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
@@ -41,16 +41,20 @@ class ThreadControllerImpl(
     private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
     override val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
 
-    suspend fun watch(limit: Int = 30) {
+    suspend fun watch(limit: Int = 30): Result<List<Message>> = loadMessages(client.getReplies(threadId, limit), limit)
+
+    private suspend fun loadMessages(call: Call<List<Message>>, limit: Int): Result<List<Message>> =
         withContext(Dispatchers.IO) {
-            val newMessages = client.getReplies(threadId, limit).execute()
-                .takeIf { it.isSuccess }
+            call.execute().apply {
+                val data = this.takeIf { it.isSuccess }
                 ?.data()
-                ?.associateBy { it.id }
-                ?: mapOf()
-            threadMessages.postValue(threadMessages.value.plus(newMessages))
+                val newMessages = data
+                    ?.associateBy { it.id }
+                    ?: mapOf()
+                threadMessages.postValue(threadMessages.value.plus(newMessages))
+                _endOfOlderMessages.postValue((data?.size ?: limit) < limit )
+            }
         }
-    }
 
     suspend fun loadOlderMessages(limit: Int = 30): Result<List<Message>> {
         if (_loadingOlderMessages.value == true) {
@@ -59,15 +63,14 @@ class ThreadControllerImpl(
             return Result(null, ChatError(errorMsg))
         }
         _loadingOlderMessages.postValue(true)
-        val response = channelControllerImpl.loadMoreThreadMessages(threadId, limit, Pagination.LESS_THAN)
-        if (response.isSuccess) {
-            if (response.data().size < limit) {
-                _endOfOlderMessages.postValue(true)
-            }
-        }
-        _loadingOlderMessages.postValue(false)
-
-        return response
+        return (mediatorLiveData.value
+            ?.values
+            ?.asSequence()
+            ?.filter { it.parentId == threadId }
+            ?.sortedBy { it.createdAt }
+            ?.firstOrNull()
+            ?.let { loadMessages(client.getRepliesMore(threadId, it.id, limit), limit) }
+            ?: watch(limit)).also { _loadingOlderMessages.postValue(false) }
     }
 }
 
