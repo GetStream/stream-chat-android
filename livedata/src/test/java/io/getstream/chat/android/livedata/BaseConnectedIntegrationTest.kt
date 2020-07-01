@@ -35,9 +35,11 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         db = createRoomDb()
 
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(
-            db
-        ).offlineEnabled().userPresenceEnabled().recoveryDisabled().buildImpl()
+        chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .recoveryDisabled()
+            .buildImpl()
         chatDomain = chatDomainImpl
         chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
         chatDomainImpl.retryPolicy = object :
@@ -64,11 +66,13 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
             // doing this here since context is not available in before all
             // see https://github.com/android/android-test/issues/409
             Companion.client = Companion.createClient()
-            waitForSetUser(
-                Companion.client!!,
-                Companion.data.user1,
-                Companion.data.user1Token
-            )
+            runBlocking {
+                waitForSetUser(
+                    Companion.client!!,
+                    Companion.data.user1,
+                    Companion.data.user1Token
+                )
+            }
             Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
         }
 

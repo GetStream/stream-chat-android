@@ -11,6 +11,7 @@ import androidx.work.testing.WorkManagerTestInitHelper
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
@@ -22,6 +23,8 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
@@ -29,6 +32,8 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.When
+import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -161,6 +166,11 @@ open class BaseDomainTest {
             )
         }
 
+        When calling client.setUser(any(), any<String>(), any()) doAnswer {
+            (it.arguments[2] as InitConnectionListener).onSuccess(
+                InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString()))
+        }
+
         return client
     }
 
@@ -174,11 +184,13 @@ open class BaseDomainTest {
     fun setupChatDomain(client: ChatClient, setUser: Boolean) {
 
         if (setUser) {
-            waitForSetUser(
-                client,
-                data.user1,
-                data.user1Token
-            )
+            runBlocking {
+                waitForSetUser(
+                    client,
+                    data.user1,
+                    data.user1Token
+                )
+            }
         }
 
         db = createRoomDb()
