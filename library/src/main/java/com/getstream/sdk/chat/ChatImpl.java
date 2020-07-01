@@ -61,7 +61,7 @@ class ChatImpl implements Chat {
         this.offlineEnabled = offlineEnabled;
 
         navigator.setHandler(navigationHandler);
-
+        new ChatClient.Builder(this.apiKey, context).build();
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
@@ -122,7 +122,7 @@ class ChatImpl implements Chat {
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
         disconnectChatDomainIfAlreadyInitialized();
-        final ChatClient client = new ChatClient.Builder(this.apiKey, context).build();
+        final ChatClient client = ChatClient.instance();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
