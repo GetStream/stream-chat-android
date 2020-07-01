@@ -110,16 +110,6 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
     }
 
     @Test
-    fun eventMessageWithThread() {
-        channelControllerImpl.handleEvent(data.newMessageEvent)
-        channelControllerImpl.handleEvent(data.newMessageWithThreadEvent)
-        val parentId = data.newMessageWithThreadEvent.message.parentId!!
-
-        val messages = channelControllerImpl.getThreadMessages(parentId).getOrAwaitValue()
-        Truth.assertThat(messages.size).isEqualTo(2)
-    }
-
-    @Test
     fun eventUpdatedChannel() {
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
         val channel = channelControllerImpl.channelData.getOrAwaitValue()
