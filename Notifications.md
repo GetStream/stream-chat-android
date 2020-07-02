@@ -3,7 +3,7 @@ To handle Firebase Push Notifications, a developer needs to register `StreamFire
 
 ```
 <service
-   android:name="com.getstream.sdk.chat.notifications.StreamFirebaseMessagingService"
+   android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
    android:exported="false">
         <intent-filter>
             <action android:name="com.google.firebase.MESSAGING_EVENT" />

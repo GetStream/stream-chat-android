@@ -4,7 +4,7 @@ buildscript {
         buildToolsVersion = "28.0.3"
         minSdkVersion = 21
         compileSdkVersion = 28
-        googleServiceVersion = '4.3.2'
+        googleServiceVersion = '4.3.3'
         androidGradlePluginVersion = '3.6.3'
         gradlePluginVersion = '2.1'
         jacocoVersion = '0.1.4'
@@ -34,8 +34,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url "https://jitpack.io" }
         mavenLocal()
+        maven { url "https://jitpack.io" }
     }
 }
 

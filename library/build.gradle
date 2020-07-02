@@ -117,7 +117,8 @@ dependencies {
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
     implementation 'com.karumi:dexter:6.1.2'
 
-    implementation 'com.google.firebase:firebase-messaging:20.1.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.1'
+
     implementation 'androidx.media:media:1.1.0'
     // ExoPlayer
     api 'com.google.android.exoplayer:exoplayer-core:2.9.6'
@@ -138,7 +139,8 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation 'org.amshove.kluent:kluent:1.61'
 
-    api 'com.github.GetStream:stream-chat-android-livedata:0.6.5'
+    api 'com.github.GetStream:stream-chat-android-livedata:0.6.10-SNAPSHOT'
+//    api 'com.github.GetStream:stream-chat-android-livedata:0.6.5'
 
     implementation "io.coil-kt:coil:0.10.1"
 }
