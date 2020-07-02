@@ -75,12 +75,16 @@ fun randomMessage(
 	type: String = randomString(),
 	latestReactions: MutableList<Reaction> = mutableListOf(),
 	ownReactions: MutableList<Reaction> = mutableListOf(),
-	createdAt: Date? = null,
-	updatedAt: Date? = null,
-	deletedAt: Date? = null,
+	createdAt: Date? = randomDate(),
+	updatedAt: Date? = randomDate(),
+	deletedAt: Date? = randomDate(),
 	user: User = randomUser(),
 	extraData: MutableMap<String, Any> = mutableMapOf(),
 	silent: Boolean = randomBoolean()
 ): Message =  Message(id, cid, text, html, parentId, command, isStartDay, isYesterday, isToday, date, time, commandInfo, attachments, mentionedUsers, replyCount, reactionCounts, reactionScores, syncStatus, type, latestReactions, ownReactions, createdAt, updatedAt, deletedAt, user, extraData, silent)
+
+fun randomDate() = Date(randomLong())
+
+fun randomMessages(size: Int = 20, creationFunction: (Int) -> Message = { randomMessage() }): List<Message> = (1..size).map(creationFunction)
 
 fun randomSyncStatus(): SyncStatus = SyncStatus.values().asList().shuffled(random).first()
