@@ -1,11 +1,20 @@
 package io.getstream.chat.android.livedata.utils
 
+import android.os.Looper.getMainLooper
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.socket.InitConnectionListener
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import org.robolectric.Shadows.shadowOf
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -43,24 +52,27 @@ fun <T> LiveData<T>.getOrAwaitValue(
     return data as T
 }
 
-fun waitForSetUser(
+suspend fun waitForSetUser(
     client: ChatClient,
     user: User,
     token: String,
-    time: Long = 10,
-    timeUnit: TimeUnit = TimeUnit.SECONDS
+    timeMillis: Long = 1000
 ) {
-    val latch = CountDownLatch(1)
-    client.events().subscribe {
-        System.out.println("event received " + it.toString())
-        if (it is ConnectedEvent) {
-            latch.countDown()
-        }
-    }
-    client.setUser(user, token)
-    Thread.sleep(1000)
+    val lock = CompletableDeferred<Unit>()
+        client.setUser(user, token, object : InitConnectionListener() {
+            override fun onError(error: ChatError) {
+                super.onError(error)
+                lock.complete(Unit)
+            }
+
+            override fun onSuccess(data: ConnectionData) {
+                super.onSuccess(data)
+                lock.complete(Unit)
+            }
+        })
+    // Workaround to have `setUser()` process completed ¯\_(ツ)_/¯
+    Thread.sleep(timeMillis)
+    delay(timeMillis)
     ShadowLooper.runUiThreadTasksIncludingDelayedTasks()
-    if (!latch.await(time, timeUnit)) {
-        throw TimeoutException("setUser never completed")
-    }
+    withTimeout(timeMillis) { lock.await() }
 }

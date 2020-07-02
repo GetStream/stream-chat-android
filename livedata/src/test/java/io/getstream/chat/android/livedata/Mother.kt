@@ -49,8 +49,9 @@ fun randomUser(
 	unreadCount: Int = positveRandomInt(),
 	mutes: List<Mute> = mutableListOf(),
 	teams:List<String> = listOf(),
+	channelMutes:List<ChannelMute> = emptyList(),
 	extraData: MutableMap<String, Any> = mutableMapOf()
-): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive, totalUnreadCount, unreadChannels, unreadCount, mutes, teams, extraData)
+): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive, totalUnreadCount, unreadChannels, unreadCount, mutes, teams, channelMutes, extraData)
 
 fun randomMessage(
 	id: String = randomString(),
