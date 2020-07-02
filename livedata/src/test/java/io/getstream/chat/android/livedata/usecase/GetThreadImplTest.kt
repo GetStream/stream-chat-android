@@ -1,37 +1,64 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
-import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
+import assertions.`should be equal to result`
+import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.livedata.controller.ThreadController
+import io.getstream.chat.android.livedata.controller.ThreadControllerImpl
+import io.getstream.chat.android.livedata.randomCID
+import io.getstream.chat.android.livedata.randomString
 import kotlinx.coroutines.runBlocking
+import org.amshove.kluent.When
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.`with message`
+import org.amshove.kluent.calling
+import org.amshove.kluent.invoking
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
-class GetThreadImplTest : BaseConnectedIntegrationTest() {
+class GetThreadImplTest {
+
+    val cid = randomCID()
+    val parentId = randomString()
+    val chatDomain: ChatDomainImpl = mock()
+    val channelController: ChannelControllerImpl = mock()
+    val threadControllerImpl: ThreadControllerImpl = mock()
+    val getThreadImpl = GetThreadImpl(chatDomain)
+
+    @Before
+    fun setup() {
+        When calling chatDomain.channel(cid) doReturn channelController
+        When calling channelController.getThread(parentId) doReturn threadControllerImpl
+    }
 
     @Test
-    fun getThread() = runBlocking(Dispatchers.IO) {
-        // start a new thread
-        val message1 = data.createMessage()
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        var result = chatDomain.useCases.sendMessage(message1).execute()
-        assertSuccess(result)
-        var parentId = result.data().id
-        val message2 = data.createMessage().apply { this.parentId = parentId }
-        var result2 = chatDomain.useCases.sendMessage(message2).execute()
-        assertSuccess(result2)
-        val parentMessage = channelState.getMessage(parentId)!!
-        Truth.assertThat(parentMessage.id).isEqualTo(parentId)
+    fun `Should throw an exception if the channel cid is empty`() {
+        invoking {
+            getThreadImpl("", randomString())
+        } `should throw` InvalidParameterException::class `with message` "cid cant be empty"
+    }
 
-        // get the thread
-        val result3 = chatDomain.useCases.getThread(data.channel1.cid, parentId).execute()
-        assertSuccess(result3)
-        val threadController = result3.data()
+    @Test
+    fun `Should throw an exception if the channel cid doesn't contain a colon`() {
+        invoking {
+            getThreadImpl(randomString().replace(":", ""), randomString())
+        } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
+    }
+    @Test
+    fun `Should return a ThreadController`() {
+        runBlocking {
+            When calling channelController.scope doReturn this
 
-        val messages = threadController.messages.getOrAwaitValue()
-        Truth.assertThat(messages.size).isEqualTo(2)
+            val result = getThreadImpl(cid, parentId).execute()
+
+            result `should be equal to result` Result(threadControllerImpl as ThreadController)
+        }
     }
 }
