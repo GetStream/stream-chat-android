@@ -52,7 +52,7 @@ fun createUser(
 		teams: List<String> = listOf(),
 		extraData: MutableMap<String, Any> = mutableMapOf()
 ): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive,
-		totalUnreadCount, unreadChannels, unreadCount, mutes, teams, extraData)
+		totalUnreadCount, unreadChannels, unreadCount, mutes, teams, extraData = extraData)
 
 fun createMember(
 		user: User = createUser(),
