@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.models.Message
  * - endOfOlderMessages (if you've reached the end of older messages)
  */
 interface ThreadController {
-    var threadId: String
+    val threadId: String
     val messages: LiveData<List<Message>>
     val loadingOlderMessages: LiveData<Boolean>
     val endOfOlderMessages: LiveData<Boolean>

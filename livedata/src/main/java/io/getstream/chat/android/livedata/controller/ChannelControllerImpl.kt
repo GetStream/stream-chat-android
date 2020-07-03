@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -30,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
@@ -56,6 +56,7 @@ class ChannelControllerImpl(
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
     internal var hideMessagesBefore: Date? = null
+    val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
@@ -139,31 +140,11 @@ class ChannelControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    private val _threads: MutableMap<String, MutableLiveData<MutableMap<String, Message>>> = mutableMapOf()
+    private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> = ConcurrentHashMap()
 
-    fun getThreadMessages(threadId: String): MutableLiveData<MutableMap<String, Message>> {
-        val threadMessageMap = _threads.getOrElse(threadId) { MutableLiveData(mutableMapOf()) }
-        return threadMessageMap
-    }
-
-    fun getThread(threadId: String): ThreadControllerImpl {
-        if (!activeThreadMapImpl.containsKey(threadId)) {
-            // start the thread if it doesn't exist yet
-            if (!_threads.containsKey(threadId)) {
-                val messagesMap = mutableMapOf<String, Message>()
-                val message = getMessage(threadId)
-                message?.let { messagesMap[it.id] = it }
-                _threads[threadId] = MutableLiveData(messagesMap)
-            }
-
-            val threadController =
-                ThreadControllerImpl(
-                    threadId,
-                    this
-                )
-            activeThreadMapImpl[threadId] = threadController
-        }
-        return activeThreadMapImpl.getValue(threadId)
+    fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
+        ThreadControllerImpl(threadId, this, client)
+            .also { scope.launch { it.watch() } }
     }
 
     fun getConfig(): Config {
@@ -219,45 +200,12 @@ class ChannelControllerImpl(
         return Result(false, null)
     }
 
-    /** stores the mapping from cid to channelRepository */
-    var activeThreadMapImpl: ConcurrentHashMap<String, ThreadControllerImpl> = ConcurrentHashMap()
 
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         val messageMap = _messages.value ?: mutableMapOf()
         val messages = messageMap.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
         return messages
-    }
-
-    suspend fun loadMoreThreadMessages(threadId: String, limit: Int = 30, direction: Pagination): Result<List<Message>> {
-        val thread = getThreadMessages(threadId)
-
-        val threadMessagesMap = thread.value ?: mutableMapOf()
-        val threadMessages = threadMessagesMap.values.sortedBy { it.createdAt }
-
-        var getRepliesCall: Call<List<Message>>
-        if (threadMessages.isNotEmpty()) {
-            val messageId: String = when (direction) {
-                Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
-                    threadMessages.last().id
-                }
-                Pagination.LESS_THAN, Pagination.LESS_THAN_OR_EQUAL -> {
-                    threadMessages.first().id
-                }
-            }
-
-            getRepliesCall = client.getRepliesMore(threadId, messageId, limit)
-        } else {
-            getRepliesCall = client.getReplies(threadId, limit)
-        }
-
-        val response = getRepliesCall.execute()
-        if (response.isSuccess) {
-            upsertMessages(response.data())
-        } else {
-            domainImpl.addError(response.error())
-        }
-        return response
     }
 
     fun removeMessagesBefore(t: Date) {
@@ -645,38 +593,6 @@ class ChannelControllerImpl(
         for (message in freshMessages) {
             copy[message.id] = message
         }
-        // second pass for threads
-        for (message in freshMessages) {
-            // prevent issues with missing cids
-            message.cid = cid
-            // handle threads
-            val parentId = message.parentId ?: ""
-            if (message.replyCount != 0) {
-                // initialize the livedata object if it doesn't exist yet
-                var threadMessages = mutableMapOf<String, Message>()
-                if (!_threads.containsKey(message.id)) {
-                    _threads[message.id] = MutableLiveData(threadMessages)
-                }
-                // get a copy of the data, update it and post update
-                threadMessages = _threads[message.id]!!.value!!
-                threadMessages[message.id] = message
-                _threads[message.id]!!.postValue(threadMessages)
-            } else if (parentId.isNotEmpty()) {
-                // initialize the livedata object if it doesn't exist yet
-
-                if (!_threads.containsKey(parentId)) {
-                    var threadMessages = mutableMapOf<String, Message>()
-                    val parent = copy[parentId]
-                    parent?.let { threadMessages[it.id] = it }
-                    _threads[parentId] = MutableLiveData(threadMessages)
-                }
-                // get a copy of the data, update it and post update
-                var threadMessages = _threads[parentId]!!.value!!
-                threadMessages[message.id] = message
-                _threads[parentId]!!.postValue(threadMessages)
-            }
-        }
-
         _messages.postValue(copy)
     }
 
