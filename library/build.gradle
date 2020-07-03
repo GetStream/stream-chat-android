@@ -139,8 +139,7 @@ dependencies {
     testImplementation "androidx.arch.core:core-testing:2.1.0"
     testImplementation 'org.amshove.kluent:kluent:1.61'
 
-    api 'com.github.GetStream:stream-chat-android-livedata:0.6.10-SNAPSHOT'
-//    api 'com.github.GetStream:stream-chat-android-livedata:0.6.5'
+    api 'com.github.GetStream:stream-chat-android-livedata:0.6.7'
 
     implementation "io.coil-kt:coil:0.10.1"
 }
