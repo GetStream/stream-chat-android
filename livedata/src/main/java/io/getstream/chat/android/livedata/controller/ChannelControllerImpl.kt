@@ -56,6 +56,7 @@ class ChannelControllerImpl(
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
     internal var hideMessagesBefore: Date? = null
+    val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) {

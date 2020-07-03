@@ -22,7 +22,7 @@ class ThreadControllerImpl(
     private val logger = ChatLogger.get("ThreadController")
     private val threadMessages: MutableLiveData<Map<String, Message>> = MutableLiveData(mapOf())
 
-    private val channelMessages: LiveData<Map<String, Message>> = Transformations.map(channelControllerImpl.messages) {
+    private val channelMessages: LiveData<Map<String, Message>> = Transformations.map(channelControllerImpl.unfilteredMessages) {
         it.asSequence()
             .filter { it.id == threadId || it.parentId == threadId }
             .associateBy { it.id }

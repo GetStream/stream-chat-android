@@ -40,7 +40,7 @@ class ThreadControllerImplTest {
     fun `Should return only parent message`() {
         val parentMessage = randomMessage(id = threadId, parentId = null)
         val channelMessages = (randomMessages() + parentMessage).shuffled()
-        When calling channelControllerImpl.messages doReturn MutableLiveData(channelMessages)
+        When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
         val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient)
         threadController.messages.observeForever { }
 
@@ -60,7 +60,7 @@ class ThreadControllerImplTest {
                     createdAt = Date((it).toLong())
                 )
             }
-            When calling channelControllerImpl.messages doReturn MutableLiveData(channelMessages)
+            When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
             When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestResultCall(
                 Result(
                     replies
@@ -91,7 +91,7 @@ class ThreadControllerImplTest {
                     createdAt = Date((it).toLong())
                 )
             }
-            When calling channelControllerImpl.messages doReturn MutableLiveData(channelMessages)
+            When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
             When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestResultCall(
                 Result(
                     replies
