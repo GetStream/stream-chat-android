@@ -23,6 +23,10 @@ data class Message(
     var commandInfo: Map<String, String> = mutableMapOf(),
     var attachments: MutableList<Attachment> = mutableListOf(),
 
+    @IgnoreDeserialisation
+    @SerializedName("mentioned_users")
+    var mentionedUsersIds: MutableList<String> = mutableListOf(),
+
     @IgnoreSerialisation
     @SerializedName("mentioned_users")
     var mentionedUsers: MutableList<User> = mutableListOf(),
