@@ -1,11 +1,5 @@
 package com.getstream.sdk.chat.viewmodel.messages;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
@@ -17,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.ChannelUserRead;
@@ -231,7 +230,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 nextMessage = null;
 
             // determine if the message is written by the current user
-            Boolean mine = message.getUser().equals(currentUser);
+            boolean mine = message.getUser().getId().equals(currentUser.getId());
             // determine the position (top, middle, bottom)
             User user = message.getUser();
             List<MessageViewHolderFactory.Position> positions = new ArrayList<>();
