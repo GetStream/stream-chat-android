@@ -13,12 +13,16 @@ import org.koin.core.context.startKoin
 class App : Application() {
 
     private val appConfig: AppConfig by inject()
+    private val notifications: NotificationsConfig by inject()
 
     override fun onCreate() {
         super.onCreate()
         DebugMetricsHelper().init()
         initKoin()
-        Chat.Builder(appConfig.apiKey, this).apply { offlineEnabled = true }.build()
+        Chat.Builder(appConfig.apiKey, this).apply {
+            offlineEnabled = true
+            notificationsConfig = notifications
+        }.build()
     }
 
     private fun initKoin() {

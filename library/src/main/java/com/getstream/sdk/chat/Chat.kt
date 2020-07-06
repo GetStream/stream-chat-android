@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.socket.InitConnectionListener
 
 interface Chat {
@@ -36,6 +37,7 @@ interface Chat {
         var urlSigner: UrlSigner = DefaultUrlSigner()
         var markdown: ChatMarkdown = ChatMarkdownImpl(context)
         var offlineEnabled: Boolean = false
+        var notificationsConfig: ChatNotificationConfig = ChatNotificationConfig(context)
 
         fun build(): Chat {
             return ChatImpl(ChatFontsImpl(style, context),
@@ -45,7 +47,8 @@ interface Chat {
                     markdown,
                     apiKey,
                     context,
-                    offlineEnabled
+                    offlineEnabled,
+                    notificationsConfig
             ).apply {
                 instance = this
             }

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.livedata.ChatDomain;
@@ -43,6 +44,7 @@ class ChatImpl implements Chat {
     private final String apiKey;
     private final Context context;
     private final boolean offlineEnabled;
+    private final ChatNotificationConfig notificationConfig;
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
@@ -51,7 +53,8 @@ class ChatImpl implements Chat {
              ChatMarkdown markdown,
              String apiKey,
              Context context,
-             boolean offlineEnabled) {
+             boolean offlineEnabled,
+             ChatNotificationConfig notificationConfig) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -59,9 +62,10 @@ class ChatImpl implements Chat {
         this.apiKey = apiKey;
         this.context = context;
         this.offlineEnabled = offlineEnabled;
+        this.notificationConfig = notificationConfig;
 
         navigator.setHandler(navigationHandler);
-
+        new ChatClient.Builder(this.apiKey, context).notifications(notificationConfig).build();
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
@@ -122,7 +126,7 @@ class ChatImpl implements Chat {
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
         disconnectChatDomainIfAlreadyInitialized();
-        final ChatClient client = new ChatClient.Builder(this.apiKey, context).build();
+        final ChatClient client = ChatClient.instance();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
