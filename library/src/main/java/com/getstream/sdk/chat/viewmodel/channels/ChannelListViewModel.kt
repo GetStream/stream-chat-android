@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_FILTER
@@ -19,7 +20,7 @@ interface ChannelsViewModel {
 
     sealed class State {
         data class LoadingNextPage(val isLoading: Boolean) : State()
-        data class Loading(val isLoading: Boolean) : State()
+        object Loading : State()
         data class Result(val channels: List<Channel>) : State()
         data class EndPageReached(val isEndPage: Boolean) : State()
         object NoChannelsAvailable: State()
@@ -42,7 +43,7 @@ class ChannelsViewModelImpl(
 ) : ChannelsViewModel, ViewModel() {
     private val channelsData: LiveData<ChannelsViewModel.State>
     private val loadingMoreData: LiveData<ChannelsViewModel.State.LoadingNextPage>
-    private val loadingData: LiveData<ChannelsViewModel.State.Loading>
+    private val loadingData = MutableLiveData<ChannelsViewModel.State.Loading>()
     private val endPageData: LiveData<ChannelsViewModel.State.EndPageReached>
     private val stateMerger = MediatorLiveData<ChannelsViewModel.State>()
 
@@ -51,6 +52,7 @@ class ChannelsViewModelImpl(
     init {
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort).execute().data()
         queryChannelsController.run {
+            loadingData.postValue(ChannelsViewModel.State.Loading)
             channelsData = map(channels) {
                 if (it.isEmpty()) {
                     ChannelsViewModel.State.NoChannelsAvailable
@@ -59,7 +61,6 @@ class ChannelsViewModelImpl(
                 }
             }
             loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
-            loadingData = map(loading) { ChannelsViewModel.State.Loading(it) }
             endPageData = map(endOfChannels) { ChannelsViewModel.State.EndPageReached(it) }
         }
 
