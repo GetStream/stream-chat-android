@@ -320,7 +320,7 @@
                     android:layout_height="@dimen/stream_attachment_button_height"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="13dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <com.getstream.sdk.chat.utils.GifEditText
@@ -334,7 +334,7 @@
                     android:maxLines="7"
                     android:padding="17dp"
                     android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                     app:layout_constraintEnd_toStartOf="@+id/sendButton"
                     app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
                     app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage" />
@@ -346,9 +346,18 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="13dp"
                     app:isGone="@{!activeMessageSend}"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
                     app:layout_constraintEnd_toEndOf="parent" />
 
+                <CheckBox
+                    android:id="@+id/cbSendAlsoToChannel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="@string/stream_input_also_send_to_channel"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

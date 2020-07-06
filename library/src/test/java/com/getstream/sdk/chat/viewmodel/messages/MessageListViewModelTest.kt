@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.createMessageList
-import com.getstream.sdk.chat.createThreadMessageList
 import com.getstream.sdk.chat.createUser
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Companion.MESSAGES_LIMIT
 import com.getstream.sdk.chat.viewmodel.observeAll
@@ -41,16 +40,30 @@ import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.Instant
+import java.util.Date
 
 private const val CID = "CID:messaging"
 private const val LIMIT = 30
 private val CURRENT_USER = createUser(online = true)
 private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
-private val MESSAGES = createMessageList()
-private val MESSAGE = createMessage()
-private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message")
-private val THREAD_MESSAGES = createThreadMessageList(parentMessageId = THREAD_PARENT_MESSAGE.id)
+private val MESSAGES = createMessageList() {
+    createMessage(
+            user = CURRENT_USER,
+            createdAt = Date.from(Instant.now()),
+            parentId = null
+    )
+}
+private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
+private val THREAD_MESSAGES = createMessageList() {
+    createMessage(
+            createdAt = Date.from(Instant.now()),
+            parentId = THREAD_PARENT_MESSAGE.id,
+            user = CURRENT_USER
+    )
+}
 
 @ExtendWith(InstantExecutorExtension::class)
 class MessageListViewModelTest {
@@ -228,19 +241,18 @@ class MessageListViewModelTest {
             (this as MessageListViewModel.State.Result).let {
                 it.messageListItem.isThread shouldBeEqualTo true
                 it.messageListItem.listEntities.run {
+                    println("JcLog: list -> $this")
                     first().run {
                         this shouldBeInstanceOf MessageListItem.MessageItem::class.java
                         this as MessageListItem.MessageItem
                         message shouldBeEqualTo THREAD_PARENT_MESSAGE
                     }
-                    get(1).apply {
+                    drop(1).first().apply {
                         this shouldBeInstanceOf MessageListItem.ThreadSeparatorItem::class.java
                     }
-                    (2 until size).map { index ->
-                        val item = get(index)
-                        item as MessageListItem.MessageItem
-                        item.message
-                    }.toList() shouldBeEqualTo THREAD_MESSAGES
+                    drop(2).map { item ->
+                        (item as MessageListItem.MessageItem).message
+                    } shouldBeEqualTo THREAD_MESSAGES
                 }
             }
         }

@@ -7,10 +7,13 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.utils.SyncStatus
 import java.io.File
 import java.time.Instant
 import java.util.Date
@@ -42,26 +45,26 @@ fun createUser(
 		banned: Boolean = randomBoolean(),
 		devices: List<Device> = mutableListOf(),
 		online: Boolean = randomBoolean(),
-		createdAt: Date? = null,
-		updatedAt: Date? = null,
-		lastActive: Date? = null,
+		createdAt: Date? = randomDate(),
+		updatedAt: Date? = randomDate(),
+		lastActive: Date? = randomDate(),
 		totalUnreadCount: Int = positveRandomInt(),
 		unreadChannels: Int = positveRandomInt(),
 		unreadCount: Int = positveRandomInt(),
 		mutes: List<Mute> = mutableListOf(),
-		teams: List<String> = listOf(),
+		teams:List<String> = listOf(),
+		channelMutes:List<ChannelMute> = emptyList(),
 		extraData: MutableMap<String, Any> = mutableMapOf()
-): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive,
-		totalUnreadCount, unreadChannels, unreadCount, mutes, teams, extraData = extraData)
+): User = User(id, role, invisible, banned, devices, online, createdAt, updatedAt, lastActive, totalUnreadCount, unreadChannels, unreadCount, mutes, teams, channelMutes, extraData)
 
 fun createMember(
 		user: User = createUser(),
 		role: String = randomString(),
-		createdAt: Date? = null,
-		updatedAt: Date? = null,
+		createdAt: Date? = randomDate(),
+		updatedAt: Date? = randomDate(),
 		isInvited: Boolean = randomBoolean(),
-		inviteAcceptedAt: Date? = null,
-		inviteRejectedAt: Date? = null
+		inviteAcceptedAt: Date? = randomDate(),
+		inviteRejectedAt: Date? = randomDate()
 ): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
 fun createMembers(
@@ -104,14 +107,65 @@ fun createMessage(
 		id: String = randomString(),
 		cid: String = randomCID(),
 		text: String = randomString(),
-		createdAt: Date? = Date.from(Instant.now()),
-		parentId: String? = null
-): Message = Message(id, cid, text, createdAt = createdAt, parentId = parentId)
+		html: String = randomString(),
+		parentId: String? = randomString(),
+		command: String? = randomString(),
+		isStartDay: Boolean = randomBoolean(),
+		isYesterday: Boolean = randomBoolean(),
+		isToday: Boolean = randomBoolean(),
+		date: String = randomString(),
+		time: String = randomString(),
+		commandInfo: Map<String, String> = mutableMapOf(),
+		attachments: MutableList<Attachment> = mutableListOf(),
+		mentionedUsers: MutableList<User> = mutableListOf(),
+		replyCount: Int = randomInt(),
+		reactionCounts: MutableMap<String, Int> = mutableMapOf(),
+		reactionScores: MutableMap<String, Int> = mutableMapOf(),
+		syncStatus: SyncStatus = randomSyncStatus(),
+		type: String = randomString(),
+		latestReactions: MutableList<Reaction> = mutableListOf(),
+		ownReactions: MutableList<Reaction> = mutableListOf(),
+		createdAt: Date? = randomDate(),
+		updatedAt: Date? = randomDate(),
+		deletedAt: Date? = randomDate(),
+		user: User = createUser(),
+		extraData: MutableMap<String, Any> = mutableMapOf(),
+		silent: Boolean = randomBoolean()
+): Message =  Message(
+		id = id,
+		cid = cid,
+		text = text,
+		html = html,
+		parentId = parentId,
+		command = command,
+		isStartDay = isStartDay,
+		isYesterday = isYesterday,
+		isToday = isToday,
+		date = date,
+		time = time,
+		commandInfo = commandInfo,
+		attachments = attachments,
+		mentionedUsers = mentionedUsers,
+		replyCount = replyCount,
+		reactionCounts = reactionCounts,
+		reactionScores = reactionScores,
+		syncStatus = syncStatus,
+		type = type,
+		latestReactions = latestReactions,
+		ownReactions = ownReactions,
+		createdAt = createdAt,
+		updatedAt = updatedAt,
+		deletedAt = deletedAt,
+		user = user,
+		extraData = extraData,
+		silent = silent
+)
 
-fun createMessageList(size: Int = 10) = (0..size).map { createMessage() }.toList()
+fun randomDate() = Date(randomLong())
 
-fun createThreadMessageList(size: Int = 10, parentMessageId: String) =
-		(0 until size).map { createMessage(parentId = parentMessageId) }.toList()
+fun randomSyncStatus(): SyncStatus = SyncStatus.values().asList().shuffled(random).first()
+
+fun createMessageList(size: Int = 10, creationFunction: (Int) -> Message = { createMessage() }): List<Message> = (1..size).map(creationFunction)
 
 fun createChannelUserRead(user: User = createUser(),
 						  lastReadDate: Date = Date.from(Instant.now()),
@@ -124,4 +178,4 @@ fun createCommand(
 		set: String = randomString()
 ): Command = Command(name, description, args, set)
 
-fun createCommands(size: Int = 10): List<Command> = (0 until size).map { createCommand() }
+fun createCommands(size: Int = 10): List<Command> = (1 until size).map { createCommand() }

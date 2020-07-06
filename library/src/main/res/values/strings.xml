@@ -35,6 +35,7 @@
     <string name="stream_input_upload_media">Upload a photo or video</string>
     <string name="stream_input_take_picture">Upload from a camera</string>
     <string name="stream_input_upload_file">Upload a file</string>
+    <string name="stream_input_also_send_to_channel">Also send to channel</string>
     <!-- Folder Name -->
     <string name="stream_image">Images</string>
     <string name="stream_video">Video</string>
