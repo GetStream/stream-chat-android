@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_to_create_channel"
             app:destination="@id/createChannelFragment" />
+        <action
+            android:id="@+id/action_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/channelFragment"

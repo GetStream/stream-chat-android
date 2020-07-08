@@ -11,7 +11,6 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class App : Application() {
-
     private val appConfig: AppConfig by inject()
     private val notifications: NotificationsConfig by inject()
 

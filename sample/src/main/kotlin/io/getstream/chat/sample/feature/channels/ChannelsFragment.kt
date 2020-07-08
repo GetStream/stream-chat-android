@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import com.getstream.sdk.chat.viewmodel.channels.bindView
 import io.getstream.chat.android.client.errors.ChatError
@@ -21,6 +23,7 @@ import timber.log.Timber
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels) {
     private val userRepo: UserRepository by inject()
+    private val viewModel by lazy { ChannelsViewModelImpl() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val loggedInUser = userRepo.user
@@ -34,13 +37,29 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
             override fun onSuccess(data: ConnectionData) {
                 Timber.d("User set successfully")
             }
+
             override fun onError(error: ChatError) {
                 Timber.e("Failed to set user")
             }
         })
 
-        ChannelsViewModelImpl().bindView(channelsListView, this@ChannelsFragment)
+        viewModel.bindView(channelsListView, this@ChannelsFragment)
 
+        viewModel.state.observe(viewLifecycleOwner, Observer {
+            if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
+                findNavController().navigate(R.id.action_to_loginFragment)
+            }
+        })
+
+        setupOnClickListeners()
+        setupToolbar()
+    }
+
+    private fun setupToolbar() {
+        toolbar.inflateMenu(R.menu.menu_channels)
+    }
+
+    private fun setupOnClickListeners() {
         channelsListView.setOnChannelClickListener {
             findNavController().navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
         }
@@ -55,6 +74,16 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
                     activity?.finish()
                 }
             })
+        }
+
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.item_log_out -> {
+                    viewModel.onEvent(ChannelsViewModel.Event.LogoutClicked)
+                    true
+                }
+                else -> false
+            }
         }
     }
 }
