@@ -413,7 +413,7 @@ public class DocumentationSamplesJava {
 
             User user = new User();
             user.setId(userId);
-            message.getMentionedUsers().add(user);
+            message.getMentionedUsersIds().add(user.getId());
 
             channelController.sendMessage(message).enqueue(result -> null);
         }
@@ -943,6 +943,14 @@ public class DocumentationSamplesJava {
          */
         static class MutingChannels {
             static void channelMute() {
+
+                client.muteChannel(channelType, channelId).enqueue(new Function1<Result<Unit>, Unit>() {
+                    @Override
+                    public Unit invoke(Result<Unit> unitResult) {
+                        return null;
+                    }
+                });
+
                 client.setUser(user, token, new InitConnectionListener() {
                     @Override
                     public void onSuccess(@NotNull ConnectionData data) {

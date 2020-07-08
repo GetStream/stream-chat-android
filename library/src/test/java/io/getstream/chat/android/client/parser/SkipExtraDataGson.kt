@@ -6,6 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 class SkipExtraDataGson {
+
+    private val extraDataName = "extraData"
+
     val instance: Gson by lazy {
         GsonBuilder()
             .addSerializationExclusionStrategy(object : ExclusionStrategy {
@@ -14,7 +17,8 @@ class SkipExtraDataGson {
                 }
 
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.name == "extraData"
+                    val name = f.name
+                    return name == extraDataName
                 }
 
             })
@@ -24,7 +28,8 @@ class SkipExtraDataGson {
                 }
 
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.name == "extraData"
+                    val name = f.name
+                    return name == extraDataName
                 }
 
             })

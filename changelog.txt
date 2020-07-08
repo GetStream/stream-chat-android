@@ -1,3 +1,7 @@
+# 1.11.0 - Mon 06 Jul 2020
+
+- Fix message mentioned users
+
 # 1.10.0 - Wed 29 June 2020
 
 - Add mute and unmute channels

@@ -190,6 +190,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
             val messageOut = Message(text = "from llc sample at ${System.currentTimeMillis()}")
             messageOut.extraData["test"] = "zed"
+            messageOut.mentionedUsersIds.add("stream-eugene")
             client.sendMessage(chType, chId, messageOut).enqueue { messageResult ->
                 if (messageResult.isSuccess) {
                     val messageIn = messageResult.data()

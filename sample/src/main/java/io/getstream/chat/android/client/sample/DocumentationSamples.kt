@@ -218,7 +218,7 @@ fun sendMessage2() {
     message.attachments.add(attachment)
 
     // include the user id of the mentioned user
-    message.mentionedUsers.add(User("josh-id"))
+    //message.mentionedUsers.add(User("josh-id"))
 
     channelController.sendMessage(message).enqueue {
         val message = it.data()
