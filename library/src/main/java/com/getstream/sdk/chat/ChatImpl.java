@@ -125,8 +125,9 @@ class ChatImpl implements Chat {
     public void setUser(@NotNull User user,
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
-        disconnectChatDomainIfAlreadyInitialized();
         final ChatClient client = ChatClient.instance();
+        client.disconnect();
+        disconnectChatDomainIfAlreadyInitialized();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
@@ -146,6 +147,12 @@ class ChatImpl implements Chat {
         });
 
         init();
+    }
+
+    @Override
+    public void disconnect() {
+        ChatClient.instance().disconnect();
+        disconnectChatDomainIfAlreadyInitialized();
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
