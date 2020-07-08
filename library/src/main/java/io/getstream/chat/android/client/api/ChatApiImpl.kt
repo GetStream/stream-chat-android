@@ -300,6 +300,32 @@ internal class ChatApiImpl(
         ).map { it.message }
     }
 
+    override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
+        return callMapper.map(
+            retrofitApi.muteChannel(
+                apiKey,
+                userId,
+                connectionId,
+                MuteChannelRequest("$channelType:$channelId")
+            )
+        ).map {
+            Unit
+        }
+    }
+
+    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
+        return return callMapper.map(
+            retrofitApi.unMuteChannel(
+                apiKey,
+                userId,
+                connectionId,
+                MuteChannelRequest("$channelType:$channelId")
+            )
+        ).map {
+            Unit
+        }
+    }
+
     override fun updateMessage(
         message: Message
     ): Call<Message> {
@@ -574,15 +600,17 @@ internal class ChatApiImpl(
         members: List<Member>
     ): Call<List<Member>> {
         return callMapper.map(
-            retrofitApi.queryMembers(apiKey, connectionId, QueryMembersRequest(
-                channelType,
-                channelId,
-                filter,
-                offset,
-                limit,
-                sort,
-                members
-            ))
+            retrofitApi.queryMembers(
+                apiKey, connectionId, QueryMembersRequest(
+                    channelType,
+                    channelId,
+                    filter,
+                    offset,
+                    limit,
+                    sort,
+                    members
+                )
+            )
         ).map { it.members }
     }
 
@@ -695,9 +723,15 @@ internal class ChatApiImpl(
         }
     }
 
-    override fun translate(messageId:String, language:String): Call<Message>{
+    override fun translate(messageId: String, language: String): Call<Message> {
         return callMapper.map(
-            retrofitApi.translate(messageId, apiKey, userId, connectionId, TranslateMessageRequest(language))
+            retrofitApi.translate(
+                messageId,
+                apiKey,
+                userId,
+                connectionId,
+                TranslateMessageRequest(language)
+            )
         ).map {
             it.message
         }

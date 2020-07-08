@@ -65,6 +65,10 @@ interface ChatClient {
 
     fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
 
+    fun muteChannel(channelType: String, channelId: String): Call<Unit>
+
+    fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
+
     //region CDN
 
     fun sendFile(

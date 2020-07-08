@@ -42,6 +42,7 @@ object EventType {
     val NOTIFICATION_ADDED_TO_CHANNEL = "notification.added_to_channel"
     val NOTIFICATION_REMOVED_FROM_CHANNEL = "notification.removed_from_channel"
     val NOTIFICATION_MUTES_UPDATED = "notification.mutes_updated"
+    val NOTIFICATION_CHANNEL_MUTES_UPDATED = "notification.channel_mutes_updated"
 
     /**
      * Local

@@ -1,3 +1,15 @@
+# 1.11.0 - Mon 06 Jul 2020
+
+- Fix message mentioned users
+
+# 1.10.0 - Wed 29 June 2020
+
+- Add mute and unmute channels
+- Add `notification.channel_mutes_updated` socket even handling
+- Add user.channelMutes field
+- Improve error logging
+- Add invalid date format handling (channel.config dates might be invalid)
+
 # 1.9.3 - Wed 29 June 2020
 
 - Add raw socket events logging. See with tag `Chat:Events`

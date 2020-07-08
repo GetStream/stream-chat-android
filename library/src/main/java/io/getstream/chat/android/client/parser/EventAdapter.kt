@@ -162,6 +162,10 @@ internal class EventAdapter(
                 gson.fromJson(data, NotificationMutesUpdated::class.java)
             }
 
+            EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED -> {
+                gson.fromJson(data, NotificationChannelMutesUpdated::class.java)
+            }
+
             EventType.NOTIFICATION_CHANNEL_DELETED -> {
                 gson.fromJson(data, NotificationChannelDeleted::class.java)
             }
