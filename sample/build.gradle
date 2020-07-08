@@ -22,8 +22,8 @@ android {
         applicationId "io.getstream.chat.sample"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode gitVersioner.versionCode
+        versionName gitVersioner.versionName
     }
 
     buildTypes {
