@@ -24,6 +24,7 @@ android {
         targetSdkVersion 28
         versionCode gitVersioner.versionCode
         versionName gitVersioner.versionName
+        ndkVersion "21.3.6528147"
     }
 
     File signFile = rootProject.file('sample/.sign/keystore.properties')
