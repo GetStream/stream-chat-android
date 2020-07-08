@@ -25,7 +25,7 @@ allprojects {
 ```
 ```groovy
 dependencies {
-    implementation 'com.github.getstream:stream-chat-android-client:latest-version'
+    implementation 'com.github.GetStream:stream-chat-android-client:latest-version'
 }
 ```
 ```groovy
