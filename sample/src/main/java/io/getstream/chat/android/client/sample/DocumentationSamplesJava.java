@@ -1,12 +1,39 @@
 package io.getstream.chat.android.client.sample;
 
 import android.content.Context;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.*;
+import io.getstream.chat.android.client.api.models.Pagination;
+import io.getstream.chat.android.client.api.models.QueryChannelRequest;
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
+import io.getstream.chat.android.client.api.models.QuerySort;
+import io.getstream.chat.android.client.api.models.QueryUsersRequest;
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest;
+import io.getstream.chat.android.client.api.models.WatchChannelRequest;
 import io.getstream.chat.android.client.controllers.ChannelController;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.events.*;
-import io.getstream.chat.android.client.models.*;
+import io.getstream.chat.android.client.events.ChatEvent;
+import io.getstream.chat.android.client.events.ConnectedEvent;
+import io.getstream.chat.android.client.events.ConnectingEvent;
+import io.getstream.chat.android.client.events.DisconnectedEvent;
+import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.models.Attachment;
+import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.EventType;
+import io.getstream.chat.android.client.models.Filters;
+import io.getstream.chat.android.client.models.GuestUser;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.Mute;
+import io.getstream.chat.android.client.models.Reaction;
+import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
@@ -15,13 +42,6 @@ import io.getstream.chat.android.client.utils.Result;
 import io.getstream.chat.android.client.utils.observable.Subscription;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static io.getstream.chat.android.client.models.Filters.and;
 import static io.getstream.chat.android.client.models.Filters.eq;
@@ -944,11 +964,13 @@ public class DocumentationSamplesJava {
         static class MutingChannels {
             static void channelMute() {
 
-                client.muteChannel(channelType, channelId).enqueue(new Function1<Result<Unit>, Unit>() {
-                    @Override
-                    public Unit invoke(Result<Unit> unitResult) {
-                        return null;
+                client.muteChannel(channelType, channelId).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        //channel is muted
+                    } else {
+                        result.error().printStackTrace();
                     }
+                    return Unit.INSTANCE;
                 });
 
                 client.setUser(user, token, new InitConnectionListener() {
@@ -978,7 +1000,14 @@ public class DocumentationSamplesJava {
 
                 client.queryChannels(
                         new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
-                ).enqueue(result -> Unit.INSTANCE);
+                ).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        List<Channel> channels = result.data();
+                    } else {
+                        result.error().printStackTrace();
+                    }
+                    return Unit.INSTANCE;
+                });
 
                 // retrieve muted channels
 
@@ -986,12 +1015,26 @@ public class DocumentationSamplesJava {
 
                 client.queryChannels(
                         new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
-                ).enqueue(result -> Unit.INSTANCE);
+                ).enqueue(result -> {
+                    if (result.isSuccess()) {
+                        List<Channel> channels = result.data();
+                    } else {
+                        result.error().printStackTrace();
+                    }
+                    return Unit.INSTANCE;
+                });
             }
 
             static void unmuteCurrentUser() {
                 // unmute channel for current user
-                channelController.unmuteCurrentUser().enqueue(result -> Unit.INSTANCE);
+                channelController.unmuteCurrentUser().enqueue(result -> {
+                    if (result.isSuccess()) {
+                        Mute mute = result.data();
+                    } else {
+                        result.error().printStackTrace();
+                    }
+                    return Unit.INSTANCE;
+                });
             }
         }
 
