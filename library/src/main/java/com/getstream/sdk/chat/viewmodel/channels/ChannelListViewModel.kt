@@ -5,8 +5,10 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_FILTER
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
+import exhaustive
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters.eq
@@ -24,10 +26,12 @@ interface ChannelsViewModel {
         data class Result(val channels: List<Channel>) : State()
         data class EndPageReached(val isEndPage: Boolean) : State()
         object NoChannelsAvailable: State()
+        object NavigateToLoginScreen: State()
     }
 
     sealed class Event {
         object ReachedEndOfList : Event()
+        object LogoutClicked : Event()
     }
 
     companion object {
@@ -72,7 +76,11 @@ class ChannelsViewModelImpl(
     override fun onEvent(event: ChannelsViewModel.Event) {
         when (event) {
             is ChannelsViewModel.Event.ReachedEndOfList -> requestMoreChannels()
-        }
+            is ChannelsViewModel.Event.LogoutClicked -> {
+                Chat.getInstance().disconnect()
+                stateMerger.postValue(ChannelsViewModel.State.NavigateToLoginScreen)
+            }
+        }.exhaustive
     }
 
     private fun requestMoreChannels() {

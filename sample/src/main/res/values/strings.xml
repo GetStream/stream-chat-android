@@ -1,9 +1,11 @@
 <resources>
-    <string name="app_name">Chat Sample App</string>
+    <string name="app_name">Stream Chat Sample</string>
     <string name="login_screen_title">Select user</string>
     <string name="new_channel_button">New channel</string>
     <string name="hint_enter_channel_name">Channel name…</string>
     <string name="add_new_channel_title">Add new channel</string>
     <string name="create_channel_name_error">Channel name is invalid, try different one</string>
     <string name="backend_error_info">Ups, something went wrong</string>
+    <string name="app_title">Stream Chat</string>
+    <string name="log_out_title">Log out</string>
 </resources>

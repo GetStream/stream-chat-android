@@ -31,6 +31,8 @@ interface Chat {
                 token: String,
                 callbacks: InitConnectionListener = object : InitConnectionListener() {})
 
+    fun disconnect()
+
     class Builder(private val apiKey: String, private val context: Context) {
         var navigationHandler: ChatNavigationHandler? = null
         var style: ChatStyle = ChatStyle.Builder().build()

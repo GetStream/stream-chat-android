@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.viewmodel.CreateChannelViewModel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.hideKeyboard
 import io.getstream.chat.sample.common.showKeyboard
@@ -26,7 +25,6 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
             viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelName))
         }
         viewModel.state.observe(viewLifecycleOwner, Observer {
-            ChatLogger.instance.logD("CreateChannel", "Received state: $it")
             when (it) {
                 is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
                 is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
