@@ -3,7 +3,9 @@ android:
   components:
     - tools
     - build-tools-28.0.3
+    - build-tools-29.0.2
     - android-28
+    - android-29
     - platform-tools
     - extra-android-support
     - extra-google-google_play_services
