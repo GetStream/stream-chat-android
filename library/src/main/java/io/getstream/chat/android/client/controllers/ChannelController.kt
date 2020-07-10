@@ -48,6 +48,8 @@ interface ChannelController {
     fun removeMembers(vararg userIds: String): Call<Channel>
     fun acceptInvite(message: String): Call<Channel>
     fun rejectInvite(): Call<Channel>
+    fun mute(): Call<Unit>
+    fun unmute(): Call<Unit>
     fun muteCurrentUser(): Call<Mute>
     fun muteUser(userId: String): Call<Mute>
     fun unmuteUser(userId: String): Call<Mute>

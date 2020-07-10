@@ -128,7 +128,11 @@ internal class ChannelControllerImpl(
         return client.getReactions(messageId, offset, limit)
     }
 
-    override fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>> {
+    override fun getReactions(
+        messageId: String,
+        firstReactionId: String,
+        limit: Int
+    ): Call<List<Message>> {
         return client.getRepliesMore(messageId, firstReactionId, limit)
     }
 
@@ -154,6 +158,14 @@ internal class ChannelControllerImpl(
 
     override fun muteCurrentUser(): Call<Mute> {
         return client.muteCurrentUser()
+    }
+
+    override fun mute(): Call<Unit> {
+        return client.muteChannel(channelType, channelId)
+    }
+
+    override fun unmute(): Call<Unit> {
+        return client.unMuteChannel(channelType, channelId)
     }
 
     override fun muteUser(userId: String): Call<Mute> {

@@ -4,10 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.*
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.contains
@@ -15,6 +12,7 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import java.io.File
 import java.util.*
 
@@ -30,6 +28,8 @@ val context: Context = null!!
 val parentMessageId = ""
 val firstMessageId = ""
 val userId = ""
+val user = User()
+val token = ""
 
 fun getApplicationContext(): Context {
     return null!!
@@ -609,47 +609,79 @@ fun hide() {
 }
 
 fun muting() {
-    client.setUser(User(userId), "{{ chat_user_token }}", object : InitConnectionListener() {
+    client.muteChannel(channelType, channelId)
+        .enqueue { result: Result<Unit> ->
+            if (result.isSuccess) {
+                //channel is muted
+            } else {
+                result.error().printStackTrace()
+            }
+        }
+
+    // get list of muted channels when user is connected
+    client.setUser(user, token, object : InitConnectionListener() {
         override fun onSuccess(data: ConnectionData) {
+            val user = data.user
             // mutes contains the list of channel mutes
-            val mutes = data.user.mutes
+            val mutes: List<ChannelMute> = user.channelMutes
         }
     })
 
-    val channelController = client.channel(channelType, channelId)
-
-    channelController.muteCurrentUser().enqueue {
-        val mute = it.data()
-    }
-
-    channelController.muteUser(userId).enqueue {
-        val mute = it.data()
-    }
-
-    channelController.unmuteUser(userId).enqueue {
-        val mute = it.data()
-    }
+    // get updates about muted channels
+    client
+        .events()
+        .subscribe { event: ChatEvent? ->
+            if (event is NotificationChannelMutesUpdated) {
+                val mutes = event.me.channelMutes
+            } else if (event is NotificationMutesUpdated) {
+                val mutes = event.me.channelMutes
+            }
+        }
 }
 
 fun queryMuted() {
-
     // retrieve channels excluding muted ones
-
     val offset = 0
     val limit = 10
-    val notMutedFilter = Filters.eq("muted", false)
-    client.queryChannels(QueryChannelsRequest(notMutedFilter, offset, limit))
+    val messageLimit = 0
+    val sort = QuerySort()
+
+    val mutedFiler = eq("muted", false)
+
+    client.queryChannels(
+        QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
+    )
+        .enqueue { result ->
+            if (result.isSuccess) {
+                val channels = result.data()
+            } else {
+                result.error().printStackTrace()
+            }
+        }
 
     // retrieve muted channels
+    val unmutedFilter = eq("muted", true)
 
-    val mutedFilter = Filters.eq("muted", true)
-    client.queryChannels(QueryChannelsRequest(mutedFilter, offset, limit))
+    client.queryChannels(
+        QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
+    )
+        .enqueue { result ->
+            if (result.isSuccess) {
+                val channels = result.data()
+            } else {
+                result.error().printStackTrace()
+            }
+        }
 }
 
 fun unmute() {
     // unmute channel for current user
-    channelController.unmuteCurrentUser().enqueue {
-        val mute = it.data()
+    channelController.unmute().enqueue { result ->
+        if (result.isSuccess) {
+            // channel is unmuted
+        } else {
+            result.error().printStackTrace()
+        }
     }
 }
 

@@ -25,8 +25,11 @@ import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated;
+import io.getstream.chat.android.client.events.NotificationMutesUpdated;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
+import io.getstream.chat.android.client.models.ChannelMute;
 import io.getstream.chat.android.client.models.EventType;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.GuestUser;
@@ -973,20 +976,29 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
 
+                // get list of muted channels when user is connected
                 client.setUser(user, token, new InitConnectionListener() {
                     @Override
                     public void onSuccess(@NotNull ConnectionData data) {
                         User user = data.component1();
                         // mutes contains the list of channel mutes
-                        List<Mute> mutes = user.getMutes();
+                        List<ChannelMute> mutes = user.getChannelMutes();
                     }
                 });
 
-                channelController.unmuteCurrentUser().enqueue(result -> Unit.INSTANCE);
+                // get updates about muted channels
+                client
+                        .events()
+                        .subscribe(event -> {
 
-                channelController.muteUser(userId);
+                            if (event instanceof NotificationChannelMutesUpdated) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdated) event).me.getChannelMutes();
+                            } else if (event instanceof NotificationMutesUpdated) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdated) event).me.getChannelMutes();
+                            }
 
-                channelController.unmuteUser(userId);
+                            return Unit.INSTANCE;
+                        });
             }
 
             static void queryMutedChannels() {
@@ -1027,9 +1039,9 @@ public class DocumentationSamplesJava {
 
             static void unmuteCurrentUser() {
                 // unmute channel for current user
-                channelController.unmuteCurrentUser().enqueue(result -> {
+                channelController.unmute().enqueue(result -> {
                     if (result.isSuccess()) {
-                        Mute mute = result.data();
+                        // channel is unmuted
                     } else {
                         result.error().printStackTrace();
                     }
