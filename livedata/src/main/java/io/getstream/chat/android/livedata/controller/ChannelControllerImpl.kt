@@ -203,10 +203,11 @@ class ChannelControllerImpl(
 
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
-        _messages.value?.let {
-            return it.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+        var messages = emptyList<Message>()
+        _messages.value?.let { mapOfMessages ->
+            messages = mapOfMessages.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
         }
-        return emptyList()
+        return messages
     }
 
     fun removeMessagesBefore(t: Date) {
