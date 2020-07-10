@@ -4,49 +4,30 @@ import android.app.Application;
 import android.os.Handler;
 import android.util.Log;
 
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.LifecycleHandler;
-import com.getstream.sdk.chat.StreamLifecycleObserver;
-import com.getstream.sdk.chat.utils.LlcMigrationUtils;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.getstream.sdk.chat.LifecycleHandler;
+import com.getstream.sdk.chat.StreamLifecycleObserver;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
 import io.getstream.chat.android.client.api.models.QuerySort;
 import io.getstream.chat.android.client.call.Call;
-import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.events.ConnectedEvent;
-import io.getstream.chat.android.client.events.MessageReadEvent;
-import io.getstream.chat.android.client.events.NewMessageEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.android.client.utils.observable.Subscription;
 import io.getstream.chat.android.livedata.ChatDomain;
 import io.getstream.chat.android.livedata.controller.QueryChannelsController;
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 
-import static com.getstream.sdk.chat.utils.Utils.removeIf;
-
+@Deprecated
 public class ChannelListViewModel extends AndroidViewModel implements LifecycleHandler {
 
     private TaggedLogger logger = ChatLogger.Companion.get("ChannelListViewModel");
@@ -146,7 +127,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      */
     public Call<Unit> hideChannel(@NonNull String channelType, @NonNull String channelId, boolean clearHistory) {
 
-        return Chat.getInstance().getClient().hideChannel(channelType, channelId, clearHistory).map(unit -> {
+        return ChatClient.instance().hideChannel(channelType, channelId, clearHistory).map(unit -> {
             //deleteChannel(channelType + ":" + channelId);
             return null;
         });
@@ -159,8 +140,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * @param channelType
      */
     public Call<Unit> showChannel(@NonNull String channelType, @NonNull String channelId) {
-
-        return Chat.getInstance().getClient().showChannel(channelType, channelId).map(unit -> {
+        return ChatClient.instance().showChannel(channelType, channelId).map(unit -> {
             //deleteChannel(channelType + ":" + channelId);
             return null;
         });
@@ -187,7 +167,7 @@ public class ChannelListViewModel extends AndroidViewModel implements LifecycleH
      * loads more channels, use this to load a previous page
      */
     public void loadMore() {
-        if (!Chat.getInstance().getClient().isSocketConnected()) return;
+        if (!ChatClient.instance().isSocketConnected()) return;
 
         if (loadingMore.getValue() || loading.getValue()) {
             return;

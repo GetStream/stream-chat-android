@@ -18,6 +18,15 @@ import android.widget.ProgressBar;
 import android.widget.Space;
 import android.widget.TextView;
 
+import androidx.annotation.DimenRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.ChatMarkdown;
 import com.getstream.sdk.chat.R;
@@ -35,14 +44,7 @@ import com.getstream.sdk.chat.view.ReadStateView;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.annotation.DimenRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
@@ -53,9 +55,7 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 import static com.getstream.sdk.chat.enums.Dates.TODAY;
 import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
-public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
-
-    final String TAG = MessageListItemViewHolder.class.getSimpleName();
+public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<MessageListItem.MessageItem> {
     @DimenRes
     int avatarWidth;
     protected TextView tv_text;
@@ -82,7 +82,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected int position;
     protected Context context;
     protected Message message;
-    protected MessageListItem messageListItem;
+    protected MessageListItem.MessageItem messageListItem;
 
     protected MessageListView.MessageClickListener messageClickListener;
     protected MessageListView.MessageLongClickListener messageLongClickListener;
@@ -99,7 +99,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     public MessageListItemViewHolder(int resId, ViewGroup viewGroup) {
         super(resId, viewGroup);
 
-        rv_reaction = itemView.findViewById(R.id.rv_reaction);
+        rv_reaction = itemView.findViewById(R.id.reactionsRecyclerView);
         iv_tail = itemView.findViewById(R.id.iv_tail);
         space_reaction_tail = itemView.findViewById(R.id.space_reaction_tail);
 
@@ -126,13 +126,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
 
         mLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
-        rv_reaction.setHasFixedSize(true);
     }
 
     @Override
     public void bind(@NonNull Context context,
                      @NonNull Channel channel,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
@@ -422,7 +421,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
     protected void configMessageTextClickListener() {
         tv_text.setOnClickListener(view -> {
 
-            if (isFailedMessage() && !Chat.getInstance().getClient().isSocketConnected())
+            if (isFailedMessage() && !ChatClient.instance().isSocketConnected())
                 return;
             if (messageClickListener != null)
                 messageClickListener.onMessageClick(message, position);
@@ -630,8 +629,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder {
         rv_reaction.post(() -> {
             if (rv_reaction.getVisibility() == View.GONE) return;
             set.clone((ConstraintLayout) itemView);
-            set.clear(R.id.rv_reaction, ConstraintSet.START);
-            set.clear(R.id.rv_reaction, ConstraintSet.END);
+            set.clear(R.id.reactionsRecyclerView, ConstraintSet.START);
+            set.clear(R.id.reactionsRecyclerView, ConstraintSet.END);
             set.applyTo((ConstraintLayout) itemView);
 
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) rv_reaction.getLayoutParams();

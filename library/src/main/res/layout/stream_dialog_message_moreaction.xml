@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
     <RelativeLayout
-        android:id="@+id/rl_wrap"
+        android:id="@+id/reactionsContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -16,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_reaction"
+            android:id="@+id/reactionsRecyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
@@ -26,7 +27,6 @@
             tools:listitem="@layout/stream_item_dialog_reaction" />
     </RelativeLayout>
 
-
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -34,19 +34,21 @@
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:paddingBottom="19dp"
-        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rl_wrap">
-        <TextView
+        app:layout_constraintTop_toBottomOf="@+id/reactionsContainer"
+        app:layout_constraintVertical_bias="1">
+
+        <Space
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
         <LinearLayout
-            android:id="@+id/ll_thread"
+            android:id="@+id/startThreadButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
@@ -70,9 +72,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_copy"
+            android:id="@+id/copyMessageButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
@@ -96,9 +99,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_flag"
+            android:id="@+id/flagMessageButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
@@ -122,9 +126,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_edit"
+            android:id="@+id/editMessageButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
@@ -148,9 +153,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_delete"
+            android:id="@+id/deleteMessageButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">

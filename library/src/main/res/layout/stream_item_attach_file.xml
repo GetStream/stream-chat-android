@@ -1,91 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="@dimen/stream_attach_file_height"
-    android:paddingTop="1dp"
-    android:paddingBottom="1dp">
+    >
 
-    <ImageView
-        android:id="@+id/iv_file_thumb"
-        android:layout_width="25dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="8dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/stream_ic_file_pdf"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_file_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:lines="1"
-        android:maxLines="1"
-        android:paddingEnd="10dp"
-        android:textColor="@color/stream_attach_title_text"
-        android:textSize="14sp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"
-        app:layout_constraintTop_toTopOf="@+id/iv_file_thumb" />
-
-    <TextView
-        android:id="@+id/tv_file_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/stream_gray_dark"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/tv_file_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_file_title" />
-
-    <TextView
-        android:id="@+id/tv_close"
-        style="@style/text"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/stream_attach_close"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_large_file_mark"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/stream_ic_file_size_error"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_close"
-        app:layout_constraintEnd_toEndOf="@+id/tv_close"
-        app:layout_constraintStart_toStartOf="@+id/tv_close"
-        app:layout_constraintTop_toTopOf="@+id/tv_close" />
-
-    <ImageView
-        android:id="@+id/iv_select_mark"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@drawable/stream_rectangle_attach_media"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:max="100"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="@dimen/stream_attach_file_height"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        >
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/iv_file_thumb"
+            android:layout_width="25dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/stream_ic_file_pdf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/tv_file_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:textColor="@color/stream_attach_title_text"
+            android:textSize="14sp"
+            app:layout_constraintStart_toEndOf="@+id/iv_file_thumb"
+            app:layout_constraintTop_toTopOf="@+id/iv_file_thumb"
+            app:layout_constraintEnd_toEndOf="@+id/barrier"
+            />
+
+        <TextView
+            android:id="@+id/tv_file_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/stream_gray_dark"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/tv_file_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_file_title"
+            />
+
+        <TextView
+            android:id="@+id/tv_close"
+            style="@style/text"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/stream_attach_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/iv_large_file_mark"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/stream_ic_file_size_error"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/iv_select_mark"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/stream_rectangle_attach_media"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="start"
+            app:constraint_referenced_ids="iv_large_file_mark,tv_close"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

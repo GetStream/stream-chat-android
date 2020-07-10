@@ -106,7 +106,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 }
             }
 
-            if (attachment.type.equals(ModelType.attach_file)) {
+            if (ModelType.attach_file.equals(attachment.type)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
             } else {
                 binding.tvLength.setText("");
@@ -116,15 +116,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     cancelListener.onCancel(attachment);
             });
 
-            if (attachment.isUploaded()) {
-                binding.ivMask.setVisibility(View.INVISIBLE);
-                binding.progressBar.setVisibility(View.INVISIBLE);
-            } else {
-                binding.ivMask.setVisibility(View.VISIBLE);
-                binding.progressBar.setVisibility(View.VISIBLE);
-                binding.progressBar.setProgress(attachment.progress);
-            }
-
+            binding.ivMask.setVisibility(View.INVISIBLE);
+            binding.progressBar.setVisibility(View.INVISIBLE);
             binding.executePendingBindings();
         }
     }

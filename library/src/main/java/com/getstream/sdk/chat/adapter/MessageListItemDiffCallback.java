@@ -7,8 +7,6 @@ import androidx.recyclerview.widget.DiffUtil;
 
 public class MessageListItemDiffCallback extends DiffUtil.Callback {
 
-    private static final String TAG = MessageListItemDiffCallback.class.getSimpleName();
-
     protected List<MessageListItem> oldList, newList;
 
     public MessageListItemDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {

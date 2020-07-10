@@ -3,13 +3,14 @@ package com.getstream.sdk.chat.adapter;
 import android.content.Context;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
@@ -20,7 +21,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private Message message;
     private MessageViewHolderFactory factory;
     private Context context;
-    private MessageListItem messageListItem;
+    private MessageListItem.MessageItem messageListItem;
     private List<Attachment> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
@@ -29,7 +30,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem messageListItem, @NonNull MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem.MessageItem messageListItem, @NonNull MessageViewHolderFactory factory) {
         this.context = context;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();

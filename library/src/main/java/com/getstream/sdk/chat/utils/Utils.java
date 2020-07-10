@@ -16,7 +16,11 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
@@ -35,7 +39,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Scanner;
 
 import androidx.annotation.StringRes;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
@@ -47,7 +55,6 @@ public class Utils {
 
     public static final Locale locale = new Locale("en", "US", "POSIX");
     public static final DateFormat messageDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", locale);
-    public static List<AttachmentMetaData> attachments = new ArrayList<>();
     private static final TaggedLogger logger = ChatLogger.Companion.get(Utils.class.getSimpleName());
 
     public static String readInputStream(InputStream inputStream) {
@@ -165,11 +172,12 @@ public class Utils {
         String movPattern = ".mov";
         String mp3Pattern = ".mp3";
 
+        ArrayList<AttachmentMetaData> attachments = new ArrayList<>();
         File[] FileList = dir.listFiles();
         if (FileList != null) {
             for (File file : FileList) {
                 if (file.isDirectory()) {
-                    getFileAttachments(file);
+                    attachments.addAll(getFileAttachments(file));
                 } else {
                     AttachmentMetaData attachment = new AttachmentMetaData(file);
                     String mimeType = "";

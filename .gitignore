@@ -1,5 +1,9 @@
 *.iml
 sample/release/*
+sample/.sign/keystore.properties
+sample/.sign/keystore.properties.asc
+sample/.sign/release.keystore
+sample/.sign/release.keystore.asc
 .gradle
 /local.properties
 /.idea/

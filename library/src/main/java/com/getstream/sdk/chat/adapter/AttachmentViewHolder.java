@@ -9,6 +9,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
@@ -21,9 +25,6 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
 
@@ -35,7 +36,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
     private TextView tv_media_title, tv_media_play, tv_media_des;
 
     private Context context;
-    private MessageListItem messageListItem;
+    private MessageListItem.MessageItem messageListItem;
     private Message message;
     private Attachment attachment;
     private MessageListViewStyle style;
@@ -57,7 +58,7 @@ public class AttachmentViewHolder extends BaseAttachmentViewHolder {
 
     @Override
     public void bind(@NonNull Context context,
-                     @NonNull MessageListItem messageListItem,
+                     @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull Message message,
                      @NonNull Attachment attachment,
                      @NonNull MessageListViewStyle style,

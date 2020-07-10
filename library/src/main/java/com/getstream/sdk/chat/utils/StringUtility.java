@@ -3,13 +3,14 @@ package com.getstream.sdk.chat.utils;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.R;
 
 import java.text.DecimalFormat;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 
