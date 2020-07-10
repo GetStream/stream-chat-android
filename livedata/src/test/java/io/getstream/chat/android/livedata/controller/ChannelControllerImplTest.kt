@@ -8,12 +8,19 @@ import com.nhaarman.mockitokotlin2.spy
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChannelData
+import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.*
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -106,6 +113,28 @@ class ChannelControllerImplTest : BaseDomainTest() {
                 eq(channelId),
                 eq(file)
             ) was called
+        }
+    }
+
+    @Test
+    fun `Should return an empty channel when data is not present`() {
+        runBlocking(Dispatchers.IO) {
+            val expectedResult = Channel().apply {
+                id = channelId
+                type = channelType
+                cid = channelController.cid
+            }
+
+            val result = channelController.toChannel()
+
+            assertEquals(expectedResult.id, result.id)
+            assertEquals(expectedResult.type, result.type)
+            assertEquals(expectedResult.cid, result.cid)
+
+            assertEquals(result.messages, emptyList<Message>())
+            assertEquals(result.watchers, emptyList<Watcher>())
+            assertEquals(result.members, emptyList<Member>())
+            assertEquals(result.messages, emptyList<Message>())
         }
     }
 }

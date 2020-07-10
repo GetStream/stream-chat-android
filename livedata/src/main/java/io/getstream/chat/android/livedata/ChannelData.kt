@@ -59,7 +59,8 @@ data class ChannelData(var type: String, var channelId: String) {
 
         c.messages = messages
         c.members = members
-        c.watchers = watchers.map { Watcher(it.id, it, null) }
+
+        c.watchers = if(watchers.isEmpty()) emptyList() else watchers.map { Watcher(it.id, it, null) }
         c.watcherCount = watcherCount
 
         c.read = reads
