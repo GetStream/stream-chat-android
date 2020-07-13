@@ -13,13 +13,14 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.addReaction
+import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.isPermanent
-import io.getstream.chat.android.livedata.removeReaction
+import io.getstream.chat.android.livedata.extensions.getCid
+import io.getstream.chat.android.livedata.extensions.isPermanent
+import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
