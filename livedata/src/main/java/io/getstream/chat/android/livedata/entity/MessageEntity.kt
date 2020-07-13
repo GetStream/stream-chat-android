@@ -110,7 +110,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     }
 
     /** create a messageEntity from a message object */
-    constructor(m: Message) : this(m.id, m.cid, m.user.id) {
+    constructor(m: Message) : this(m.id, m.getCid(), m.user.id) {
         text = m.text
         attachments = m.attachments
         syncStatus = m.syncStatus ?: SyncStatus.COMPLETED
