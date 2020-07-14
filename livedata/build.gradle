@@ -79,7 +79,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api 'com.github.GetStream:stream-chat-android-client:1.10.0'
-    //implementation project(':client')
 
     def room_version = "2.2.5"
     def work_version = "2.3.4"
@@ -139,7 +138,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-livedata'
-                version = '0.6.6-SNAPSHOT'
+                version = '0.6.13-SNAPSHOT'
             }
         }
     }

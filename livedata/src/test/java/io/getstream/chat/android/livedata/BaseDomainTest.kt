@@ -113,6 +113,7 @@ open class BaseDomainTest {
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
+            on { getSyncHistory(any(), anyOrNull()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on {
                 createChannel(
                     any<String>(),

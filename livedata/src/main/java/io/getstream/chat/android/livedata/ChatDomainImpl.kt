@@ -378,7 +378,7 @@ class ChatDomainImpl private constructor(
 
     fun channel(cid: String): ChannelControllerImpl {
         val parts = cid.split(":")
-        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got $cid" }
+        check(parts.size >= 2) { "Received invalid cid, expected format messaging:123, got $cid" }
         return channel(parts[0], parts[1])
     }
 
@@ -472,7 +472,7 @@ class ChatDomainImpl private constructor(
         val allEvents = mutableListOf<ChatEvent>()
 
         while (true) {
-            val call = client.replayEvents(cids, syncState?.lastSyncedAt, limit, offset)
+            val call = client.getSyncHistory(cids, syncState?.lastSyncedAt!!)
             val response = call.execute()
             if (response.isError) {
                 // TODO: what is the best error type for this?
