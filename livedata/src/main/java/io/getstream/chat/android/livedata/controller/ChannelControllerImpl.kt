@@ -738,7 +738,7 @@ class ChannelControllerImpl(
         val watcher = watchers[userId]
         if (member != null) {
             member.user = user
-            upsertMembers(listOf(member))
+            upsertMember(member)
         }
         if (watcher != null) {
             upsertWatcher(user)
