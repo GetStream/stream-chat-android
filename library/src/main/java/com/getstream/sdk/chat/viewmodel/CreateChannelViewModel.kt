@@ -41,12 +41,12 @@ class CreateChannelViewModel(
             this.name = channelName
             this.members = members
         }
-        domain.useCases.createChannel.invoke(channel).execute().run {
+        domain.useCases.createChannel.invoke(channel).enqueue { result ->
             when {
-                isSuccess -> {
+                result.isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
                 }
-                isError -> {
+                result.isError -> {
                     stateMerger.postValue(State.BackendError)
                 }
             }
@@ -54,7 +54,7 @@ class CreateChannelViewModel(
     }
 
     private fun validateChannelName(channelNameCandidate: String): Boolean {
-        return channelNameCandidate.isNotEmpty()
+        return channelNameCandidate.isNotEmpty() && channelNameCandidate.matches(Regex("^!?[\\w-]*\$"))
     }
 
     sealed class State {
