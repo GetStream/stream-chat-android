@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.viewmodel
 
+import androidx.arch.core.executor.testing.CoroutinesExecutorExtension
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
@@ -14,7 +15,9 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.usecase.CreateChannel
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Call2
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -23,7 +26,7 @@ private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
 private val CHANNEL = createChannel(CID)
 
-@ExtendWith(InstantExecutorExtension::class)
+@ExtendWith(InstantExecutorExtension::class, CoroutinesExecutorExtension::class)
 internal class CreateChannelViewModelTest {
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomain = mock()
@@ -45,40 +48,41 @@ internal class CreateChannelViewModelTest {
     }
 
     @Test
-    fun `Should inform about validation error`() {
+    fun `Should inform about validation error`() = runBlockingTest {
         whenever(createChannelResult.isError) doReturn false
         whenever(createChannelResult.isSuccess) doReturn true
-        val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
-        val states = viewModel.state.observeAll()
-        val channelNameCandidate = ""
+        val channelNameCandidates =
+                listOf("", ":", "?", "@", "&", "$", "#", "#", "$", "%", "^", "&", "*", "(", ")", "+", "|", "\\", "/", ".", ",", "~", "`", "£", "§", "=")
 
-        viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
+        channelNameCandidates.forEach {
+            val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
+            val states = viewModel.state.observeAll()
+            viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(it))
+            states shouldBeEqualTo listOf(CreateChannelViewModel.State.ValidationError)
+        }
 
-        listOf(CreateChannelViewModel.State.ValidationError) shouldBeEqualTo states
     }
 
     @Test
-    fun `Should inform about backend error`() {
+    fun `Should inform about backend error`() = runBlockingTest {
         whenever(createChannelResult.isError) doReturn true
         whenever(createChannelResult.isSuccess) doReturn false
         val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
         val states = viewModel.state.observeAll()
-        val channelNameCandidate = "non-empty name"
-
+        val channelNameCandidate = "channel name"
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        listOf(CreateChannelViewModel.State.Loading,
-                CreateChannelViewModel.State.BackendError) shouldBeEqualTo states
+        assertEquals(states, listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.BackendError))
     }
 
     @Test
-    fun `Should inform about channel creation success`() {
+    fun `Should inform about channel creation success`() = runBlockingTest {
         val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
         val states = viewModel.state.observeAll()
-        val channelNameCandidate = "non-empty name"
+        val channelNameCandidate = "channel name"
 
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.ChannelCreated) shouldBeEqualTo  states
+        assertEquals(states, listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.ChannelCreated))
     }
 }
