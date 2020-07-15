@@ -213,7 +213,6 @@ open class BaseDomainTest {
                 return 1000
             }
         }
-        chatDomainImpl.syncState = SyncStateEntity(data.user1.id, lastSyncedAt = Date.from(Instant.now()))
         chatDomain = chatDomainImpl
 
         chatDomainImpl.errorEvents.observeForever(EventObserver {
