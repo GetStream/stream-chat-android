@@ -11,10 +11,12 @@ import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 class CreateChannelViewModel(
         private val domain: ChatDomain = ChatDomain.instance(),
-        private val client: ChatClient = ChatClient.instance()
+        private val client: ChatClient = ChatClient.instance(),
+        private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     val state: LiveData<State> = stateMerger
@@ -43,7 +45,7 @@ class CreateChannelViewModel(
             this.name = channelName
             this.members = members
         }
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             val result = domain.useCases.createChannel.invoke(channel).execute()
             when {
                 result.isSuccess -> {
