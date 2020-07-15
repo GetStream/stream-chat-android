@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
+private val CHANNEL_NAME_REGEX = Regex("^!?[\\w-]*\$")
+
 class CreateChannelViewModel(
         private val domain: ChatDomain = ChatDomain.instance(),
         private val client: ChatClient = ChatClient.instance(),
@@ -59,7 +61,7 @@ class CreateChannelViewModel(
     }
 
     private fun validateChannelName(channelNameCandidate: String): Boolean {
-        return channelNameCandidate.isNotEmpty() && channelNameCandidate.matches(Regex("^!?[\\w-]*\$"))
+        return channelNameCandidate.isNotEmpty() && channelNameCandidate.matches(CHANNEL_NAME_REGEX)
     }
 
     sealed class State {
