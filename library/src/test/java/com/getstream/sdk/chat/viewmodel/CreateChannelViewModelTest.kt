@@ -26,6 +26,9 @@ import org.junit.After
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
@@ -64,20 +67,15 @@ internal class CreateChannelViewModelTest {
         testCoroutineScope.cleanupTestCoroutines()
     }
 
-    @Test
-    fun `Should inform about validation error`() {
+    @ParameterizedTest
+    @MethodSource("com.getstream.sdk.chat.viewmodel.CreateChannelViewModelTest#provideChannelName")
+    fun `Should inform about validation error`(channelNameCandidate: String) {
         whenever(createChannelResult.isError) doReturn false
         whenever(createChannelResult.isSuccess) doReturn true
-        val channelNameCandidates =
-                listOf("", ":", "?", "@", "&", "$", "#", "#", "$", "%", "^", "&", "*", "(", ")", "+", "|", "\\", "/", ".", ",", "~", "`", "£", "§", "=")
-
-        channelNameCandidates.forEach {
-            val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
-            val states = viewModel.state.observeAll()
-            viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(it))
-            states shouldContainSame listOf(CreateChannelViewModel.State.ValidationError)
-        }
-
+        val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient)
+        val states = viewModel.state.observeAll()
+        viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
+        states shouldContainSame listOf(CreateChannelViewModel.State.ValidationError)
     }
 
     @Test
@@ -101,5 +99,37 @@ internal class CreateChannelViewModelTest {
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
         states shouldContainSame listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.ChannelCreated)
+    }
+
+    companion object {
+        @JvmStatic
+        fun provideChannelName() = listOf(
+                Arguments.of(""),
+                Arguments.of(":"),
+                Arguments.of("?"),
+                Arguments.of("@"),
+                Arguments.of("&"),
+                Arguments.of("$"),
+                Arguments.of("#"),
+                Arguments.of("#"),
+                Arguments.of("$"),
+                Arguments.of("%"),
+                Arguments.of("^"),
+                Arguments.of("&"),
+                Arguments.of("*"),
+                Arguments.of("("),
+                Arguments.of(")"),
+                Arguments.of("+"),
+                Arguments.of("|"),
+                Arguments.of("\\"),
+                Arguments.of("/"),
+                Arguments.of("."),
+                Arguments.of(","),
+                Arguments.of("~"),
+                Arguments.of("`"),
+                Arguments.of("£"),
+                Arguments.of("§"),
+                Arguments.of("=")
+        )
     }
 }
