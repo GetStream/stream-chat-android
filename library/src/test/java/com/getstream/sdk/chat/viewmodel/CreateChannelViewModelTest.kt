@@ -89,7 +89,6 @@ internal class CreateChannelViewModelTest {
         val channelNameCandidate = "channel name"
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        println("$states")
         states shouldContainSame listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.BackendError)
     }
 
@@ -101,7 +100,6 @@ internal class CreateChannelViewModelTest {
 
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        println("$states")
         states shouldContainSame listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.ChannelCreated)
     }
 }
