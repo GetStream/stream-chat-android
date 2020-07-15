@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.extensions.getCid
 import java.util.*
 
 /**
@@ -109,7 +110,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     }
 
     /** create a messageEntity from a message object */
-    constructor(m: Message) : this(m.id, m.cid, m.user.id) {
+    constructor(m: Message) : this(m.id, m.getCid(), m.user.id) {
         text = m.text
         attachments = m.attachments
         syncStatus = m.syncStatus ?: SyncStatus.COMPLETED

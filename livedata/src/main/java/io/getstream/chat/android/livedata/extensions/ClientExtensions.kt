@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata
+package io.getstream.chat.android.livedata.extensions
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -28,16 +28,13 @@ fun ChatEvent.getCid(): String? {
 /**
  * cid is sometimes devent as message.cid other times as message.channel.cid
  */
-fun Message.getCid(): String? {
-
-    var cid = this.cid
-
-    if (cid.isNullOrEmpty()) {
-        cid = this.channel?.cid
+fun Message.getCid(): String =
+    if (this.cid.isEmpty()) {
+        this.channel.cid
+    } else {
+        this.cid
     }
 
-    return cid
-}
 
 fun Message.users(): List<User> {
     val users = mutableListOf<User>()
