@@ -241,6 +241,7 @@ class TestDataHelper {
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =
         MemberAddedEvent().apply {
+            cid = channel1WithNewMember.cid
             channel = channel1WithNewMember
         }
 

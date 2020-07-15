@@ -166,9 +166,11 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
                 }
                 is MemberAddedEvent, is MemberUpdatedEvent -> {
                     val channelEntity = channelMap[event.cid!!]
-                    channelEntity?.let {
-                        it.setMember(event.member!!.user.id, event.member!!)
-                        channels[it.cid] = it
+                    channelEntity?.let { channelEntity ->
+                        event.channel?.members?.forEach { member ->
+                            channelEntity.setMember(member.user.id, member)
+                        }
+                        channels[channelEntity.cid] = channelEntity
                     }
                     event.channel?.let { c ->
                         users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
