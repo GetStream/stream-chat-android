@@ -3,22 +3,29 @@ package com.getstream.sdk.chat.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+
+private val CHANNEL_NAME_REGEX = Regex("^!?[\\w-]*\$")
 
 class CreateChannelViewModel(
         private val domain: ChatDomain = ChatDomain.instance(),
-        private val client: ChatClient = ChatClient.instance()
+        private val client: ChatClient = ChatClient.instance(),
+        private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
     val state: LiveData<State> = stateMerger
 
     fun onEvent(event: Event) {
         if (event is Event.ChannelNameSubmitted) {
-            val channelNameCandidate = event.channelName
+            val channelNameCandidate = event.channelName.replace(" ".toRegex(), "-").toLowerCase()
             val isValidName = validateChannelName(channelNameCandidate)
             if (isValidName) {
                 stateMerger.postValue(State.Loading)
@@ -30,23 +37,23 @@ class CreateChannelViewModel(
     }
 
     private fun queryChannel(channelName: String) {
-        val channelId: String = channelName.replace(" ".toRegex(), "-").toLowerCase()
         val members = client.getCurrentUser()?.run {
             listOf(Member(this))
         } ?: listOf()
         val channel = Channel().apply {
-            this.cid = "messaging:$channelId"
-            this.id = channelId
+            this.cid = "messaging:$channelName"
+            this.id = channelName
             this.type = "messaging"
             this.name = channelName
             this.members = members
         }
-        domain.useCases.createChannel.invoke(channel).execute().run {
+        viewModelScope.launch(ioDispatcher) {
+            val result = domain.useCases.createChannel.invoke(channel).execute()
             when {
-                isSuccess -> {
+                result.isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
                 }
-                isError -> {
+                result.isError -> {
                     stateMerger.postValue(State.BackendError)
                 }
             }
@@ -54,7 +61,7 @@ class CreateChannelViewModel(
     }
 
     private fun validateChannelName(channelNameCandidate: String): Boolean {
-        return channelNameCandidate.isNotEmpty()
+        return channelNameCandidate.isNotEmpty() && channelNameCandidate.matches(CHANNEL_NAME_REGEX)
     }
 
     sealed class State {
