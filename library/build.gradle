@@ -21,9 +21,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'consumer-proguard-rules.pro'
         }
         debug {
             testCoverageEnabled true
+            consumerProguardFiles 'consumer-proguard-rules.pro'
         }
     }
     compileOptions {
