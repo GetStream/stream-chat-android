@@ -1,4 +1,31 @@
-## Upcoming
+## Jun 4th, 2020 - 4.2.11-beta-5
+
+- Update livedata dependency to fix crash when NotificationMarkReadEvent received
+- Add mavenLocal() repository
+
+## Jun 4th, 2020 - 4.2.11-beta-4
+
+- Fix crash when command (`/`) is typed.
+
+## Jun 3rd, 2020 - 4.2.11-beta
+
+- Fix `AvatarView` crash when the view is not attached
+
+## May 15th, 2020 - 4.2.10-beta
+
+- Update to the latest livedata: 0.6.1
+
+## May 29th, 2020 - 4.2.9-beta-3
+
+- Fix AttachmentViewHolder crash when user sends message with plain/no-media url
+
+## May 15th, 2020 - 4.2.9-beta-2
+
+- Update to the latest livedata: 0.6.0
+
+## May 15th, 2020 - 4.2.8-beta-1
+
+- Update to the latest livedata: 0.4.6
 
 ## May 15th, 2020 - 4.2.6
 

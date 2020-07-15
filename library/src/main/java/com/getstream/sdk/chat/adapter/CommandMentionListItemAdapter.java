@@ -64,18 +64,18 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
 
         if (isCommand) {
-            configCommands((StreamItemCommandBinding)binding, position);
+            configCommands((StreamItemCommandBinding) binding, position);
         } else {
-            configMentions((StreamItemMentionBinding)binding, position);
+            configMentions((StreamItemMentionBinding) binding, position);
         }
         return binding.getRoot();
     }
 
-    public void configCommands(StreamItemCommandBinding binding, int position){
+    public void configCommands(StreamItemCommandBinding binding, int position) {
         Command command = (Command) commands.get(position);
         binding.setCommand(command);
-        if (style instanceof MessageInputStyle){
-            MessageInputStyle style_ = (MessageInputStyle)style;
+        if (style instanceof MessageInputStyle) {
+            MessageInputStyle style_ = (MessageInputStyle) style;
 
             style_.inputBackgroundText.apply(binding.tvCommand);
             style_.inputBackgroundText.apply(binding.tvDes);
@@ -83,15 +83,15 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
         }
     }
 
-    public void configMentions(StreamItemMentionBinding binding, int position){
+    public void configMentions(StreamItemMentionBinding binding, int position) {
         User user = (User) commands.get(position);
         binding.setUser(user);
         binding.avatar.setUser(user, style);
         if (style instanceof MessageInputStyle) {
-            MessageInputStyle style_ = (MessageInputStyle)style;
+            MessageInputStyle style_ = (MessageInputStyle) style;
             style_.inputBackgroundText.apply(binding.tvUsername);
             style_.inputBackgroundText.apply(binding.tvYou);
-        }else if (style instanceof MessageListViewStyle){
+        } else if (style instanceof MessageListViewStyle) {
 
         }
     }
