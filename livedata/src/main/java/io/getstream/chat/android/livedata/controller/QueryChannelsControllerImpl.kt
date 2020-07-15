@@ -17,7 +17,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.isChannelEvent
+import io.getstream.chat.android.livedata.extensions.isChannelEvent
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.*

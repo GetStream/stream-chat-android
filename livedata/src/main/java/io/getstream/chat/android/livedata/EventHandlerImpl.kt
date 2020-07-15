@@ -7,6 +7,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
+import io.getstream.chat.android.livedata.extensions.getCid
+import io.getstream.chat.android.livedata.extensions.isChannelEvent
+import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.*
 
 class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDomainImpl, var runAsync: Boolean = true) {

@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
@@ -19,10 +20,7 @@ interface EditMessage {
 
 class EditMessageImpl(var domainImpl: ChatDomainImpl) : EditMessage {
     override operator fun invoke(message: Message): Call2<Message> {
-        var cid = message.cid
-        if (cid.isEmpty()) {
-            cid = message.channel.cid
-        }
+        val cid = message.getCid()
         validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)
