@@ -50,16 +50,16 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
 
         channelTitleText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials))
-                color(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials))
-                style(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD)
-                font(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextFontAssets, R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextFont)
+            color(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextColor, getColor(R.color.stream_channel_initials))
+            style(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextStyle, Typeface.BOLD)
+            font(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextFontAssets, R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextFont)
         }.build()
 
         lastActiveText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextSize, getDimension(R.dimen.stream_channel_preview_date))
-                color(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark))
-                font(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextFontAssets, R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextFont)
-                style(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL)
+            color(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextColor, getColor(R.color.stream_gray_dark))
+            font(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextFontAssets, R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextFont)
+            style(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveTextStyle, Typeface.NORMAL)
         }.build()
 
         with(attributes) {
@@ -72,12 +72,14 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
             avatarBorderWidth = getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width))
             avatarBorderColor = getColor(R.styleable.ChannelHeaderView_streamAvatarBorderColor, Color.WHITE)
             avatarBackGroundColor = getColor(R.styleable.ChannelHeaderView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark))
-            avatarInitialText = TextStyle.Builder(attributes)
-                    .size(R.styleable.ChannelHeaderView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials))
-                    .color(R.styleable.ChannelHeaderView_streamAvatarTextColor, Color.WHITE)
-                    .font(R.styleable.ChannelHeaderView_streamAvatarTextFontAssets, R.styleable.ChannelHeaderView_streamAvatarTextFont)
-                    .style(R.styleable.ChannelHeaderView_streamAvatarTextStyle, Typeface.BOLD)
-                    .build()
+
+            avatarInitialText = TextStyle.Builder(attributes).apply {
+                size(R.styleable.ChannelHeaderView_streamAvatarTextSize, getDimension(R.dimen.stream_channel_initials))
+                color(R.styleable.ChannelHeaderView_streamAvatarTextColor, Color.WHITE)
+                font(R.styleable.ChannelHeaderView_streamAvatarTextFontAssets, R.styleable.ChannelHeaderView_streamAvatarTextFont)
+                style(R.styleable.ChannelHeaderView_streamAvatarTextStyle, Typeface.BOLD)
+            }.build()
+
             isLastActiveShow = getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true)
 
             // Back Button
