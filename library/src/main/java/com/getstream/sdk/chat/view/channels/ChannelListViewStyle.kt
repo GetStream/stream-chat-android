@@ -5,10 +5,12 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.AttributeSet
+import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.view.BaseStyle
+
 
 class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
 
@@ -33,10 +35,15 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
     @JvmField
     val lastMessageDateUnreadText: TextStyle
-    private val channelWithoutNameText: String
+
+    private var channelWithoutNameText = ""
 
     fun getChannelWithoutNameText(): String {
         return if (!TextUtils.isEmpty(channelWithoutNameText)) channelWithoutNameText else context.getString(R.string.stream_channel_unknown_title)
+    }
+
+    fun setAvatarBorderColor(@ColorRes color: Int) {
+        avatarBorderColor = color
     }
 
     init {
@@ -46,19 +53,19 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
         channelTitleText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title))
-            color(R.styleable.ChannelListView_streamChannelTitleTextColor, getColor(R.color.stream_black))
+            color(R.styleable.ChannelListView_streamChannelTitleTextColor, getColor(R.color.stream_channel_item_text_color))
             font(R.styleable.ChannelListView_streamChannelTitleTextFontAssets, R.styleable.ChannelListView_streamChannelTitleTextFont)
             style(R.styleable.ChannelListView_streamChannelTitleTextStyle, Typeface.BOLD)
         }.build()
 
         channelTitleUnreadText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title))
-            color(R.styleable.ChannelListView_streamChannelTitleUnreadTextColor, getColor(R.color.stream_black))
+            color(R.styleable.ChannelListView_streamChannelTitleUnreadTextColor, getColor(R.color.stream_channel_item_text_color))
             font(R.styleable.ChannelListView_streamChannelTitleTextFontAssets, R.styleable.ChannelListView_streamChannelTitleTextFont)
             style(R.styleable.ChannelListView_streamChannelTitleUnreadTextStyle, Typeface.BOLD)
         }.build()
 
-        channelWithoutNameText = attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)
+        attributes.getString(R.styleable.ChannelListView_streamChannelWithOutNameTitleText)?.let { channelWithoutNameText = it }
 
         lastMessage = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamLastMessageTextSize, getDimension(R.dimen.stream_channel_item_message))
@@ -69,7 +76,7 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
         lastMessageUnread = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamLastMessageTextSize, getDimension(R.dimen.stream_channel_item_message))
-            color(R.styleable.ChannelListView_streamLastMessageUnreadTextColor, getColor(R.color.stream_black))
+            color(R.styleable.ChannelListView_streamLastMessageUnreadTextColor, getColor(R.color.stream_channel_item_text_color))
             font(R.styleable.ChannelListView_streamLastMessageTextFontAssets, R.styleable.ChannelListView_streamLastMessageTextFont)
             style(R.styleable.ChannelListView_streamLastMessageUnreadTextStyle, Typeface.BOLD)
         }.build()
@@ -83,7 +90,7 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
         lastMessageDateUnreadText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamLastMessageDateTextSize, getDimension(R.dimen.stream_channel_item_message_date))
-            color(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_black))
+            color(R.styleable.ChannelListView_streamLastMessageDateTextColor, getColor(R.color.stream_channel_item_text_color))
             font(R.styleable.ChannelListView_streamLastMessageDateTextFontAssets, R.styleable.ChannelListView_streamLastMessageDateTextFont)
             style(R.styleable.ChannelListView_streamLastMessageDateUnreadTextStyle, Typeface.BOLD)
         }.build()
