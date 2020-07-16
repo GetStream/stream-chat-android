@@ -21,7 +21,7 @@ class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
         // - in theory (new channel) you could not be watching the channel yet
         // - your client is typically not connected when running this recover flow
         // - you don't want to watch the channel
-        chatDomainImpl.syncState = SyncStateEntity(data.user1.id, lastSyncedAt = Date.from(Instant.now()))
+        chatDomainImpl.syncState = SyncStateEntity(data.user1.id, lastSyncedAt = Date())
         val events = chatDomainImpl.replayEventsForActiveChannels(data.channel1.cid)
 
         // verify we now have 2 message in offline storage
