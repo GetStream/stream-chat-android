@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <!--Channel Item-->
-  <color name="stream_channel_item_text_color">#FFFFFF</color>
+  <color name="stream_channel_item_text_color">@color/stream_white</color>
+
+  <!--Message Composer-->
+  <color name="stream_channel_initials">@color/stream_white</color>
 </resources>

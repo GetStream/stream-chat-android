@@ -13,7 +13,7 @@
     <color name="stream_white">#FFFFFF</color>
 
     <!--Channel Item-->
-    <color name="stream_channel_item_text_color">#000000</color>
+    <color name="stream_channel_item_text_color">@color/stream_black</color>
 
     <!--Message Composer-->
     <color name="stream_channel_initials">@color/stream_black</color>
