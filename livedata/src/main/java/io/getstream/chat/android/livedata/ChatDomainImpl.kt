@@ -381,7 +381,7 @@ class ChatDomainImpl private constructor(
 
     fun channel(cid: String): ChannelControllerImpl {
         val parts = cid.split(":")
-        check(parts.size >= 2) { "Received invalid cid, expected format messaging:123, got $cid" }
+        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got $cid" }
         return channel(parts[0], parts[1])
     }
 
