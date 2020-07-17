@@ -113,6 +113,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
 		binding.sendButton.layoutParams.width = style.inputButtonWidth
 		binding.sendButton.layoutParams.height = style.inputButtonHeight
+		binding.cbSendAlsoToChannel.setTextColor(style.inputSendAlsoToChannelTextColor)
 		// Input Background
 		binding.llComposer.background = style.inputBackground
 		// Input Text
@@ -122,7 +123,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
 		style.inputBackgroundText.apply(binding.tvUploadFile)
 		style.inputBackgroundText.apply(binding.tvUploadCamera)
-		
 	}
 
 	private fun configOnClickListener() {

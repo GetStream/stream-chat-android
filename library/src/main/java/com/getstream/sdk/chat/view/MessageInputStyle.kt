@@ -25,6 +25,7 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
     val inputButtonHeight: Int
     val attachmentButtonWidth: Int
     val attachmentButtonHeight: Int
+    val inputSendAlsoToChannelTextColor : Int
     private var inputHint = ""
     private val attachmentButtonIcon: Int
     private val attachmentButtonDefaultIconColor: Int
@@ -165,6 +166,9 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
                 font(R.styleable.MessageInputView_streamAvatarTextFontAssets, R.styleable.MessageInputView_streamAvatarTextFont)
                 style(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD)
             }.build()
+
+            inputSendAlsoToChannelTextColor = getColor(R.styleable.MessageInputView_streamSendAlsoToChannel,
+                    getColor(R.color.stream_input_message_send_to_channel_checkbox))
 
             prefs = context.getSharedPreferences(
                     "MessageInputStyle", Context.MODE_PRIVATE)

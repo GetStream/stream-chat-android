@@ -166,6 +166,8 @@
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>
         </attr>
+
+        <attr name="streamSendAlsoToChannel" format="color|reference"/>
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
