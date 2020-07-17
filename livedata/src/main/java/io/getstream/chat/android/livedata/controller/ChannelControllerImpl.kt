@@ -813,11 +813,7 @@ class ChannelControllerImpl(
         _members.postValue(channelMembers)
     }
 
-    fun upsertMember(member: Member) {
-        val channelMembers = _members.value ?: mutableMapOf()
-        channelMembers[member.user.id] = member
-        _members.postValue(channelMembers)
-    }
+    fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     fun updateReads(
         reads: List<ChannelUserRead>
