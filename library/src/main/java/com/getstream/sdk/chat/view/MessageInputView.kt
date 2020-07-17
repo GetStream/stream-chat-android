@@ -122,11 +122,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 		style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
 		style.inputBackgroundText.apply(binding.tvUploadFile)
 		style.inputBackgroundText.apply(binding.tvUploadCamera)
+		
 	}
 
 	private fun configOnClickListener() {
 		binding.sendButton.setOnClickListener { onSendMessage() }
-		binding.ivOpenAttach.setOnClickListener { view: View? ->
+		binding.ivOpenAttach.setOnClickListener {
 			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
 			if (! PermissionChecker.isGrantedCameraPermissions(context)
 					&& permissionRequestListener != null && ! style.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
@@ -134,7 +135,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	}
 
 	private fun configInputEditText() {
-		binding.etMessage.onFocusChangeListener = OnFocusChangeListener { view: View?, hasFocus: Boolean ->
+		binding.etMessage.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
 			if (hasFocus) {
 				Utils.showSoftKeyboard(context as Activity)
 			} else Utils.hideSoftKeyboard(context as Activity)
@@ -153,7 +154,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
 	private fun configSendButtonEnableState() {
 		val attachments = messageInputController.getSelectedAttachments()
-		val hasAttachment = attachments != null && ! attachments.isEmpty()
+		val hasAttachment = attachments.isNotEmpty()
 		val notEmptyMessage = ! StringUtility.isEmptyTextMessage(messageText) || ! messageInputController.isUploadingFile && hasAttachment
 		binding.activeMessageSend = notEmptyMessage
 	}
@@ -161,12 +162,12 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 	private fun configAttachmentUI() {
 		// TODO: make the attachment UI into it's own view and allow you to change it.
 		binding.rvComposer.layoutManager = GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
-		binding.btnClose.setOnClickListener { v: View? ->
+		binding.btnClose.setOnClickListener {
 			messageInputController.onClickCloseBackGroundView()
 			Utils.hideSoftKeyboard(context as Activity)
 		}
 		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(null, true) }
-		binding.llCamera.setOnClickListener { v: View -> messageInputController.onCameraClick() }
+		binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
 		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView( null, false) }
 	}
 
