@@ -1,3 +1,7 @@
+## July 17, 2020 - 3.6.15
+
+- Fix empty imageUrl that override previous value on backend
+
 ## Thu 25, 2020 - 3.6.14
 
 - Fix media files selection for Android 10+
