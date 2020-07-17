@@ -108,7 +108,6 @@ public class UserGsonAdapter extends TypeAdapter<User> {
         }
 
         if (user.getName() == null) user.setName("");
-        if (user.getImage() == null) user.setImage("");
         user.setExtraData(extraData);
         return user;
     }
