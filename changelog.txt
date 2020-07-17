@@ -1,4 +1,8 @@
-# 1.12.1 - Mon 15 Jul 2020
+# 1.12.2 - Fri 17 Jul 2020
+
+- Add customer proguard rules
+
+# 1.12.1 - Wed 15 Jul 2020
 
 - Add customer proguard rules
 
