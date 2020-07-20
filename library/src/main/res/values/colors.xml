@@ -11,14 +11,21 @@
     <color name="stream_gray_light">#e8e8e8</color>
     <color name="stream_black">#000000</color>
     <color name="stream_white">#FFFFFF</color>
+
+    <!--Channel Item-->
+    <color name="stream_channel_item_text_color">@color/stream_black</color>
+
     <!--Message Composer-->
     <color name="stream_channel_initials">@color/stream_black</color>
+    <color name="stream_input_message_text">@color/stream_white</color>
     <color name="stream_input_message_send_button">#0076FF</color>
+    <color name="stream_input_message_send_to_channel_checkbox">@color/stream_black</color>
     <color name="stream_input_message_box_stroke_select">#0076FF</color>
     <color name="stream_input_message_box_stroke_edit">#0DD25E</color>
     <color name="stream_input_message_box_background">#EDEDED</color>
     <color name="stream_input_uploading_mask">#80FFFFFF</color>
     <color name="stream_chat_no_connection">#1AD0021B</color>
+
     <!--Message Item-->
     <color name="stream_message_background_incoming">#FFFFFF</color>
     <color name="stream_message_background_outgoing">#EDEDED</color>
