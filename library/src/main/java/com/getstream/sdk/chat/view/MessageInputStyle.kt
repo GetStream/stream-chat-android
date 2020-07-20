@@ -64,9 +64,7 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
         prefs.edit().putBoolean(permissionSetKey, passedPermissionCheck).apply()
     }
 
-    fun passedPermissionCheck(): Boolean {
-        return prefs.getBoolean(permissionSetKey, false)
-    }
+    fun passedPermissionCheck(): Boolean = prefs.getBoolean(permissionSetKey, false)
 
     private fun getMessageInputStyleColorList(normalColor: Int, pressedColor: Int, disabledColor: Int) = ColorStateList(
             arrayOf(intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_pressed),

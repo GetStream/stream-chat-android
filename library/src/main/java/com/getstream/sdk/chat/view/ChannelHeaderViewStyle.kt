@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.text.TextUtils
 import android.util.AttributeSet
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
@@ -26,21 +25,14 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
     private val offlineText: String?
     private var channelWithoutNameText = ""
 
-    fun getChannelWithoutNameText(): String {
-        return if (!TextUtils.isEmpty(channelWithoutNameText)) channelWithoutNameText else context.getString(R.string.stream_channel_unknown_title)
-    }
+    fun getChannelWithoutNameText(): String = channelWithoutNameText.takeIf(String::isNotBlank) ?: context.getString(R.string.stream_channel_unknown_title)
 
-    fun getBackButtonBackground(): Drawable {
-        return backButtonBackground ?: getDrawable(R.drawable.stream_arrow_left)
-    }
+    fun getBackButtonBackground(): Drawable = backButtonBackground ?: getDrawable(R.drawable.stream_arrow_left)
 
-    fun getOptionsButtonBackground(): Drawable {
-        return optionsButtonBackground ?: getDrawable(R.drawable.stream_ic_settings)
-    }
+    fun getOptionsButtonBackground(): Drawable = optionsButtonBackground ?: getDrawable(R.drawable.stream_ic_settings)
 
-    fun getOfflineText(): String {
-        return offlineText ?: context.getString(R.string.stream_channel_offlineText)
-    }
+    fun getOfflineText(): String = offlineText ?: context.getString(R.string.stream_channel_offlineText)
+
 
     init {
         // parse the attributes

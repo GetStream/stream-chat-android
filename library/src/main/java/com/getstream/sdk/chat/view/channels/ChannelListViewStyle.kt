@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.view.channels
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.TextUtils
 import android.util.AttributeSet
 import androidx.annotation.ColorRes
 import androidx.annotation.LayoutRes
@@ -38,9 +37,7 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
     private var channelWithoutNameText = ""
 
-    fun getChannelWithoutNameText(): String {
-        return if (!TextUtils.isEmpty(channelWithoutNameText)) channelWithoutNameText else context.getString(R.string.stream_channel_unknown_title)
-    }
+    fun getChannelWithoutNameText(): String = channelWithoutNameText.takeIf(String::isNotBlank) ?: context.getString(R.string.stream_channel_unknown_title)
 
     fun setAvatarBorderColor(@ColorRes color: Int) {
         avatarBorderColor = color
