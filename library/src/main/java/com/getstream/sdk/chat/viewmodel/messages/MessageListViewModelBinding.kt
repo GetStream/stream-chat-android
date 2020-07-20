@@ -12,7 +12,10 @@ fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: Lifecyc
     view.setOnStartThreadHandler { onEvent(MessageListViewModel.Event.ThreadModeEntered(it)) }
     view.setOnMessageFlagHandler { onEvent(MessageListViewModel.Event.FlagMessage(it)) }
 
-    state.observe(lifecycleOwner, Observer {
-        if (it is MessageListViewModel.State.Result) { view.displayNewMessage(it.messageListItem) }
-    })
+    state.observe(
+        lifecycleOwner,
+        Observer {
+            if (it is MessageListViewModel.State.Result) { view.displayNewMessage(it.messageListItem) }
+        }
+    )
 }

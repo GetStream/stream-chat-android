@@ -12,14 +12,14 @@ import com.getstream.sdk.chat.view.channels.ChannelListView.ChannelClickListener
 import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Channel
 
-private  val LOADING_VIEW_ID = R.id.channels_loading_view_id
-private  val EMPTY_STATE_VIEW_ID = R.id.channels_empty_state_view_id
-private  val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
+private val LOADING_VIEW_ID = R.id.channels_loading_view_id
+private val EMPTY_STATE_VIEW_ID = R.id.channels_empty_state_view_id
+private val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
 
 class ChannelsView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
     private var emptyStateView: View = defaultEmptyStateView()
     private var loadingView: View = defaultLoadingView()
@@ -82,7 +82,7 @@ class ChannelsView @JvmOverloads constructor(
     }
 
     private fun defaultChildLayoutParams() =
-            LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
 
     private fun defaultLoadingView(): View = ProgressBar(context).apply {
         id = LOADING_VIEW_ID

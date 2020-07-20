@@ -13,14 +13,16 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
 
-class MessageListViewModel(private val cid: String,
-                           private val domain: ChatDomain = ChatDomain.instance(),
-                           private val client: ChatClient = ChatClient.instance()) : ViewModel() {
+class MessageListViewModel(
+    private val cid: String,
+    private val domain: ChatDomain = ChatDomain.instance(),
+    private val client: ChatClient = ChatClient.instance()
+) : ViewModel() {
     private val loading = MutableLiveData<State>()
     private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val messageListData: MessageListItemLiveData
     private val stateMerger = MediatorLiveData<State>()
-    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) {_, _, newMode -> mode.postValue(newMode) }
+    private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
 
     val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
     val state: LiveData<State> = stateMerger
@@ -36,11 +38,11 @@ class MessageListViewModel(private val cid: String,
         currentUser = domain.currentUser
 
         messageListData = MessageListItemLiveData(
-                currentUser,
-                channelController.messages,
-                threadMessages,
-                channelController.typing,
-                channelController.reads
+            currentUser,
+            channelController.messages,
+            threadMessages,
+            channelController.typing,
+            channelController.reads
         )
 
         stateMerger.apply {
@@ -125,8 +127,8 @@ class MessageListViewModel(private val cid: String,
     }
 
     sealed class Mode {
-        data class Thread(val parentMessage: Message): Mode()
-        object Normal: Mode()
+        data class Thread(val parentMessage: Message) : Mode()
+        object Normal : Mode()
     }
 
     companion object {

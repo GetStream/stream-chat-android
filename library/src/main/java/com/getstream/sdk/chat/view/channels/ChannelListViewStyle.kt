@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.view.BaseStyle
 
-
 class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
 
     @JvmField
@@ -45,8 +44,10 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
     init {
         setContext(context)
-        val attributes = context.obtainStyledAttributes(attrs,
-                R.styleable.ChannelListView, 0, 0)
+        val attributes = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.ChannelListView, 0, 0
+        )
 
         channelTitleText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelListView_streamChannelTitleTextSize, getDimension(R.dimen.stream_channel_item_title))
@@ -120,7 +121,6 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
 
             recycle()
         }
-
     }
 
     companion object {

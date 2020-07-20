@@ -29,72 +29,98 @@ import org.junit.jupiter.params.provider.MethodSource
 
 private const val CID = "CID:messaging"
 private val CURRENT_USER = createUser(online = true)
+
 @ExtendWith(InstantExecutorExtension::class)
 internal class ChannelHeaderViewModelTest {
 
-	private val chatDomain: ChatDomain = mock()
-	private val useCases: UseCaseHelper = mock()
-	private val watchChannel: WatchChannel = mock()
-	private val channelControllerCall: Call2<ChannelController> = mock()
-	private val channelControllerResult: Result<ChannelController> = mock()
-	private val channelController: ChannelController = mock()
+    private val chatDomain: ChatDomain = mock()
+    private val useCases: UseCaseHelper = mock()
+    private val watchChannel: WatchChannel = mock()
+    private val channelControllerCall: Call2<ChannelController> = mock()
+    private val channelControllerResult: Result<ChannelController> = mock()
+    private val channelController: ChannelController = mock()
 
-	@BeforeEach
-	fun setup() {
-		whenever(chatDomain.currentUser) doReturn CURRENT_USER
-		whenever(chatDomain.useCases) doReturn useCases
-		whenever(useCases.watchChannel) doReturn watchChannel
-		whenever(watchChannel.invoke(CID, 30)) doReturn channelControllerCall
-		whenever(channelControllerCall.execute()) doReturn channelControllerResult
-		whenever(channelControllerResult.data()) doReturn channelController
-	}
+    @BeforeEach
+    fun setup() {
+        whenever(chatDomain.currentUser) doReturn CURRENT_USER
+        whenever(chatDomain.useCases) doReturn useCases
+        whenever(useCases.watchChannel) doReturn watchChannel
+        whenever(watchChannel.invoke(CID, 30)) doReturn channelControllerCall
+        whenever(channelControllerCall.execute()) doReturn channelControllerResult
+        whenever(channelControllerResult.data()) doReturn channelController
+    }
 
-	@Test
-	fun `Should notify about a new channel`() {
-		val channel: Channel = mock()
-		whenever(channelController.channelData) doReturn MutableLiveData(mock())
-		whenever(channelController.toChannel()) doReturn channel
-		val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
-		val mockObserver: Observer<Channel> = spy()
+    @Test
+    fun `Should notify about a new channel`() {
+        val channel: Channel = mock()
+        whenever(channelController.channelData) doReturn MutableLiveData(mock())
+        whenever(channelController.toChannel()) doReturn channel
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
+        val mockObserver: Observer<Channel> = spy()
 
-		channelHeaderViewModel.channelState.observeForever(mockObserver)
-		verify(mockObserver).onChanged(eq(channel))
-	}
+        channelHeaderViewModel.channelState.observeForever(mockObserver)
+        verify(mockObserver).onChanged(eq(channel))
+    }
 
-	@Test
-	fun `Should notify about new members`() {
-		val members = createMembers()
-		whenever(channelController.members) doReturn MutableLiveData(members)
-		val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
-		val mockObserver: Observer<List<Member>> = spy()
+    @Test
+    fun `Should notify about new members`() {
+        val members = createMembers()
+        whenever(channelController.members) doReturn MutableLiveData(members)
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
+        val mockObserver: Observer<List<Member>> = spy()
 
-		channelHeaderViewModel.members.observeForever(mockObserver)
-		verify(mockObserver).onChanged(eq(members))
-	}
+        channelHeaderViewModel.members.observeForever(mockObserver)
+        verify(mockObserver).onChanged(eq(members))
+    }
 
-	@ParameterizedTest
-	@MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
-	fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
-		whenever(channelController.members) doReturn MutableLiveData(members)
-		val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
-		val mockObserver: Observer<Boolean> = spy()
+    @ParameterizedTest
+    @MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
+    fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
+        whenever(channelController.members) doReturn MutableLiveData(members)
+        val channelHeaderViewModel = ChannelHeaderViewModel(CID, chatDomain = chatDomain)
+        val mockObserver: Observer<Boolean> = spy()
 
-		channelHeaderViewModel.anyOtherUsersOnline.observeForever(mockObserver)
+        channelHeaderViewModel.anyOtherUsersOnline.observeForever(mockObserver)
 
-		verify(mockObserver).onChanged(eq(expectedValue))
-	}
+        verify(mockObserver).onChanged(eq(expectedValue))
+    }
 
-	companion object {
-		@JvmStatic
-		fun createAnyOtherUserOnlineInput() = listOf(
-				Arguments.of(createMembers { createMember(createUser(online = false)) }, false),
-				Arguments.of(createMembers { createMember(createUser(online = true)) }, true),
-				Arguments.of(createMembers() + createMember(createUser(online = true)), true),
-				Arguments.of(createMembers { createMember(createUser(online = false)) } + createMember(createUser(online = true)), true),
-				Arguments.of(createMembers { createMember(createUser(online = false)) } + createMember(CURRENT_USER), false),
-				Arguments.of(createMembers { createMember(createUser(online = true)) } + createMember(CURRENT_USER), true),
-				Arguments.of(createMembers() + createMember(createUser(online = true)) + createMember(CURRENT_USER), true),
-				Arguments.of(createMembers { createMember(createUser(online = false)) } + createMember(createUser(online = true)) + createMember(CURRENT_USER), true)
-		)
-	}
+    companion object {
+        @JvmStatic
+        fun createAnyOtherUserOnlineInput() = listOf(
+            Arguments.of(createMembers { createMember(createUser(online = false)) }, false),
+            Arguments.of(createMembers { createMember(createUser(online = true)) }, true),
+            Arguments.of(createMembers() + createMember(createUser(online = true)), true),
+            Arguments.of(
+                createMembers { createMember(createUser(online = false)) } + createMember(
+                    createUser(online = true)
+                ),
+                true
+            ),
+            Arguments.of(
+                createMembers { createMember(createUser(online = false)) } + createMember(
+                    CURRENT_USER
+                ),
+                false
+            ),
+            Arguments.of(
+                createMembers { createMember(createUser(online = true)) } + createMember(
+                    CURRENT_USER
+                ),
+                true
+            ),
+            Arguments.of(
+                createMembers() + createMember(createUser(online = true)) + createMember(
+                    CURRENT_USER
+                ),
+                true
+            ),
+            Arguments.of(
+                createMembers { createMember(createUser(online = false)) } + createMember(
+                    createUser(online = true)
+                ) + createMember(CURRENT_USER),
+                true
+            )
+        )
+    }
 }

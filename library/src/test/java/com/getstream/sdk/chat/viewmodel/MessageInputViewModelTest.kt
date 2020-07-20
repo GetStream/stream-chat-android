@@ -42,67 +42,67 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(InstantExecutorExtension::class)
 internal class MessageInputViewModelTest {
 
-	private val CID = randomCID()
-	private val chatDomain: ChatDomain = mock()
-	private val useCases: UseCaseHelper = mock()
-	private val watchChannel: WatchChannel = mock()
-	private val sendMessage: SendMessage = mock()
-	private val sendMessageWithAttachments: SendMessageWithAttachments = mock()
-	private val editMessage: EditMessage = mock()
-	private val keystroke: Keystroke = mock()
-	private val stopTyping: StopTyping = mock()
-	private val channelControllerCall: Call2<ChannelController> = mock()
-	private val channelControllerResult: Result<ChannelController> = mock()
-	private val channelController: ChannelController = mock()
-	private val commands: List<Command> = createCommands()
-	private val channel: Channel = createChannel(cid = CID, config = Config(commands = commands))
+    private val CID = randomCID()
+    private val chatDomain: ChatDomain = mock()
+    private val useCases: UseCaseHelper = mock()
+    private val watchChannel: WatchChannel = mock()
+    private val sendMessage: SendMessage = mock()
+    private val sendMessageWithAttachments: SendMessageWithAttachments = mock()
+    private val editMessage: EditMessage = mock()
+    private val keystroke: Keystroke = mock()
+    private val stopTyping: StopTyping = mock()
+    private val channelControllerCall: Call2<ChannelController> = mock()
+    private val channelControllerResult: Result<ChannelController> = mock()
+    private val channelController: ChannelController = mock()
+    private val commands: List<Command> = createCommands()
+    private val channel: Channel = createChannel(cid = CID, config = Config(commands = commands))
 
-	@BeforeEach
-	fun setup() {
-		When calling chatDomain.useCases doReturn useCases
-		When calling useCases.watchChannel doReturn watchChannel
-		When calling useCases.sendMessage doReturn sendMessage
-		When calling useCases.sendMessageWithAttachments doReturn sendMessageWithAttachments
-		When calling useCases.editMessage doReturn editMessage
-		When calling useCases.keystroke doReturn keystroke
-		When calling useCases.stopTyping doReturn stopTyping
-		When calling watchChannel(eq(CID), eq(30)) doReturn channelControllerCall
-		When calling channelControllerCall.execute() doReturn channelControllerResult
-		When calling channelControllerResult.data() doReturn channelController
-		When calling channelController.toChannel() doReturn channel
-		When calling editMessage(any()) doReturn mock()
-		When calling keystroke(eq(CID)) doReturn mock()
-		When calling stopTyping(eq(CID)) doReturn mock()
-	}
+    @BeforeEach
+    fun setup() {
+        When calling chatDomain.useCases doReturn useCases
+        When calling useCases.watchChannel doReturn watchChannel
+        When calling useCases.sendMessage doReturn sendMessage
+        When calling useCases.sendMessageWithAttachments doReturn sendMessageWithAttachments
+        When calling useCases.editMessage doReturn editMessage
+        When calling useCases.keystroke doReturn keystroke
+        When calling useCases.stopTyping doReturn stopTyping
+        When calling watchChannel(eq(CID), eq(30)) doReturn channelControllerCall
+        When calling channelControllerCall.execute() doReturn channelControllerResult
+        When calling channelControllerResult.data() doReturn channelController
+        When calling channelController.toChannel() doReturn channel
+        When calling editMessage(any()) doReturn mock()
+        When calling keystroke(eq(CID)) doReturn mock()
+        When calling stopTyping(eq(CID)) doReturn mock()
+    }
 
-	@Test
-	fun `Should show members`() {
-		val members = createMembers()
-		When calling channelController.members doReturn MutableLiveData(members)
-		val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
-		val mockObserver: Observer<List<Member>> = spy()
-		messageInputViewModel.members.observeForever(mockObserver)
+    @Test
+    fun `Should show members`() {
+        val members = createMembers()
+        When calling channelController.members doReturn MutableLiveData(members)
+        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
+        val mockObserver: Observer<List<Member>> = spy()
+        messageInputViewModel.members.observeForever(mockObserver)
 
-		Verify on mockObserver that mockObserver.onChanged(eq(members)) was called
-	}
+        Verify on mockObserver that mockObserver.onChanged(eq(members)) was called
+    }
 
-	@Test
-	fun `Should show commands`() {
-		val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
-		val mockObserver: Observer<List<Command>> = spy()
-		messageInputViewModel.commands.observeForever(mockObserver)
+    @Test
+    fun `Should show commands`() {
+        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
+        val mockObserver: Observer<List<Command>> = spy()
+        messageInputViewModel.commands.observeForever(mockObserver)
 
-		Verify on mockObserver that mockObserver.onChanged(eq(commands)) was called
-	}
+        Verify on mockObserver that mockObserver.onChanged(eq(commands)) was called
+    }
 
-	@Test
-	fun `Should stop typing if a message is edited`() {
-		val message = createMessage()
-		val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
+    @Test
+    fun `Should stop typing if a message is edited`() {
+        val message = createMessage()
+        val messageInputViewModel = MessageInputViewModel(CID, chatDomain)
 
-		messageInputViewModel.editMessage(message)
+        messageInputViewModel.editMessage(message)
 
-		Verify on stopTyping that stopTyping(eq(CID)) was called
-		Verify on editMessage that editMessage(eq(message)) was called
-	}
+        Verify on stopTyping that stopTyping(eq(CID)) was called
+        Verify on editMessage that editMessage(eq(message)) was called
+    }
 }

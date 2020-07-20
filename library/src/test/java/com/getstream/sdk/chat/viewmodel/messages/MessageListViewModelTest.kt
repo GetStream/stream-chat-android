@@ -50,18 +50,18 @@ private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
 private val MESSAGES = createMessageList() {
     createMessage(
-            user = CURRENT_USER,
-            createdAt = Date.from(Instant.now()),
-            parentId = null
+        user = CURRENT_USER,
+        createdAt = Date.from(Instant.now()),
+        parentId = null
     )
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_MESSAGES = createMessageList() {
     createMessage(
-            createdAt = Date.from(Instant.now()),
-            parentId = THREAD_PARENT_MESSAGE.id,
-            user = CURRENT_USER
+        createdAt = Date.from(Instant.now()),
+        parentId = THREAD_PARENT_MESSAGE.id,
+        user = CURRENT_USER
     )
 }
 
@@ -93,7 +93,6 @@ class MessageListViewModelTest {
     private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<List<User>>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
-
 
     @BeforeEach
     fun setup() {
@@ -257,5 +256,4 @@ class MessageListViewModelTest {
             }
         }
     }
-
 }

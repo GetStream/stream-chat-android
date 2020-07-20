@@ -14,72 +14,84 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
+
 private const val MESSAGE_LIMIT = 30
-class MessageInputViewModel(private val cid: String, private val chatDomain: ChatDomain = ChatDomain.instance()) : ViewModel() {
-	private val channelController: ChannelController = chatDomain.useCases.watchChannel(cid, MESSAGE_LIMIT).execute().data()
-	private var channelState = MutableLiveData<Channel>(channelController.toChannel())
-	val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
-	val members: LiveData<List<Member>> = channelController.members
-	private var activeThread = MutableLiveData<Message?>()
-	val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
-	fun setActiveThread(parentMessage: Message) {
-		activeThread.postValue(parentMessage)
-	}
+class MessageInputViewModel(
+    private val cid: String,
+    private val chatDomain: ChatDomain = ChatDomain.instance()
+) : ViewModel() {
+    private val channelController: ChannelController =
+        chatDomain.useCases.watchChannel(cid, MESSAGE_LIMIT).execute().data()
+    private var channelState = MutableLiveData<Channel>(channelController.toChannel())
+    val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
+    val members: LiveData<List<Member>> = channelController.members
+    private var activeThread = MutableLiveData<Message?>()
+    val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
-	fun getActiveThread(): LiveData<Message?> {
-		return activeThread
-	}
+    fun setActiveThread(parentMessage: Message) {
+        activeThread.postValue(parentMessage)
+    }
 
-	private val isThread: Boolean
-		get() = activeThread.value != null
+    fun getActiveThread(): LiveData<Message?> {
+        return activeThread
+    }
 
-	fun resetThread() {
-		activeThread.postValue(null)
-	}
+    private val isThread: Boolean
+        get() = activeThread.value != null
 
-	fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
-		val message = Message(cid = cid, text = messageText)
-		activeThread.value?.let { message.parentId = it.id }
-		stopTyping()
-		message.channel = channelController.toChannel()
-		chatDomain.useCases.sendMessage(message.apply(messageTransformer)).execute()
-	}
+    fun resetThread() {
+        activeThread.postValue(null)
+    }
 
-	fun sendMessageWithAttachments(message: String, attachmentFiles: List<File>, messageTransformer: Message.() -> Unit = { }) {
-		GlobalScope.launch(Dispatchers.IO) {
-			chatDomain.useCases.sendMessageWithAttachments(cid,
-					Message(cid = cid, text = message).apply(messageTransformer),
-					attachmentFiles)
-					.execute()
-		}
-	}
+    fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
+        val message = Message(cid = cid, text = messageText)
+        activeThread.value?.let { message.parentId = it.id }
+        stopTyping()
+        message.channel = channelController.toChannel()
+        chatDomain.useCases.sendMessage(message.apply(messageTransformer)).execute()
+    }
 
-	/**
-	 * Edit message
-	 *
-	 * @param message the Message sent
-	 */
-	fun editMessage(message: Message) {
-		stopTyping()
-		chatDomain.useCases.editMessage(message).execute()
-	}
+    fun sendMessageWithAttachments(
+        message: String,
+        attachmentFiles: List<File>,
+        messageTransformer: Message.() -> Unit = { }
+    ) {
+        GlobalScope.launch(Dispatchers.IO) {
+            chatDomain.useCases.sendMessageWithAttachments(
+                cid,
+                Message(cid = cid, text = message).apply(messageTransformer),
+                attachmentFiles
+            )
+                .execute()
+        }
+    }
 
-	/**
-	 * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
-	 * Call this on every keystroke
-	 */
-	@Synchronized
-	fun keystroke() {
-		if (isThread) return
-		chatDomain.useCases.keystroke(cid).execute()
-	}
+    /**
+     * Edit message
+     *
+     * @param message the Message sent
+     */
+    fun editMessage(message: Message) {
+        stopTyping()
+        chatDomain.useCases.editMessage(message).execute()
+    }
 
-	/**
-	 * stopTyping - Sets last typing to null and sends the typing.stop event
-	 */
-	fun stopTyping() {
-		if (isThread) return
-		chatDomain.useCases.stopTyping(cid).execute()
-	}
+    /**
+     * keystroke - First of the typing.start and typing.stop events based on the users keystrokes.
+     * Call this on every keystroke
+     */
+    @Synchronized
+    fun keystroke() {
+        if (isThread) return
+        chatDomain.useCases.keystroke(cid).execute()
+    }
+
+    /**
+     * stopTyping - Sets last typing to null and sends the typing.stop event
+     */
+    fun stopTyping() {
+        if (isThread) return
+        chatDomain.useCases.stopTyping(cid).execute()
+    }
 }

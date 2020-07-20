@@ -95,5 +95,4 @@ class ChannelListViewModelTest {
     companion object {
         val mockChannels = listOf(Channel(cid = "1"), Channel(cid = "2"))
     }
-
 }

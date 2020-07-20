@@ -11,23 +11,32 @@ import io.getstream.chat.android.client.models.Member
 import java.util.isInLastMinute
 
 fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
-	members.observe(lifecycleOwner, Observer { members ->
-		view.setHeaderLastActive(members.lastActive(view.context))
-		view.configHeaderAvatar(members)
-	})
-	channelState.observe(lifecycleOwner, Observer { channel ->
-		view.currentChannel = channel
-		LlcMigrationUtils.getChannelNameOrMembers(channel)
-				.takeUnless { it.isBlank() }
-				?.let { view.setHeaderTitle(it) }
-	})
-	anyOtherUsersOnline.observe(lifecycleOwner, Observer { view.setActiveBadge(it) })
+    members.observe(
+        lifecycleOwner,
+        Observer { members ->
+            view.setHeaderLastActive(members.lastActive(view.context))
+            view.configHeaderAvatar(members)
+        }
+    )
+    channelState.observe(
+        lifecycleOwner,
+        Observer { channel ->
+            view.currentChannel = channel
+            LlcMigrationUtils.getChannelNameOrMembers(channel)
+                .takeUnless { it.isBlank() }
+                ?.let { view.setHeaderTitle(it) }
+        }
+    )
+    anyOtherUsersOnline.observe(lifecycleOwner, Observer { view.setActiveBadge(it) })
 }
 
-private fun List<Member>.lastActive(context: Context): String = LlcMigrationUtils.getLastActive(this).let {
-	context.getString(R.string.stream_channel_header_active,
-			when {
-				it.isInLastMinute() -> context.getString(R.string.stream_channel_header_active_now)
-				else -> DateUtils.getRelativeTimeSpanString(it.time).toString()
-			})
-}
+private fun List<Member>.lastActive(context: Context): String =
+    LlcMigrationUtils.getLastActive(this).let {
+        context.getString(
+            R.string.stream_channel_header_active,
+            when {
+                it.isInLastMinute() -> context.getString(R.string.stream_channel_header_active_now)
+                else -> DateUtils.getRelativeTimeSpanString(it.time).toString()
+            }
+        )
+    }
