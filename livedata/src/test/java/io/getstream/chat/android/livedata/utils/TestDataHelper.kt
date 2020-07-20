@@ -1,11 +1,49 @@
 package io.getstream.chat.android.livedata.utils
 
-import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelTruncated
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelVisible
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelTruncated
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNew
+import io.getstream.chat.android.client.events.NotificationMutesUpdated
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannel
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UserBanned
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserUnbanned
+import io.getstream.chat.android.client.events.UserUpdated
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.github.cdimascio.dotenv.dotenv
-import java.util.*
+import java.time.Instant
+import java.util.Calendar
+import java.util.Date
+import java.util.UUID
 
 class TestDataHelper {
     val dotenv = dotenv {
@@ -62,6 +100,17 @@ class TestDataHelper {
         createdBy = user1
         watchers = listOf(watcher1)
         members = listOf(member1)
+        config = config1
+    }
+
+    val channel1WithNewMember = Channel().apply {
+        type = "messaging"
+        id = "123-testing"
+        cid = "messaging:123-testing"
+        watcherCount = 100
+        createdBy = user1
+        watchers = listOf(watcher1)
+        members = listOf(member1, member2)
         config = config1
     }
 
@@ -191,7 +240,10 @@ class TestDataHelper {
     val user1ReadNotification = NotificationMarkReadEvent().apply { user = user1; createdAt = Date() }
     val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
     val memberAddedToChannelEvent =
-        MemberAddedEvent().apply { member = member2; cid = channel1.cid }
+        MemberAddedEvent().apply {
+            cid = channel1WithNewMember.cid
+            channel = channel1WithNewMember
+        }
 
     // member removed doesn't have a cid
     val memberRemovedFromChannel =
@@ -214,6 +266,8 @@ class TestDataHelper {
     val channelTruncatedEvent = ChannelTruncated().apply { cid = channel1.cid; createdAt = Date() }
     val notificationChannelTruncated = NotificationChannelTruncated().apply { cid = channel1.cid; createdAt = Date() }
     val channelDeletedEvent = ChannelDeletedEvent().apply { cid = channel1.cid; createdAt = Date() }
+
+    val syncState = SyncStateEntity(user1.id, lastSyncedAt = Date.from(Instant.now()))
 }
 
 fun calendar(

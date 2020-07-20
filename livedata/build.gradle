@@ -33,7 +33,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.6.7"
+        versionName "0.6.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -79,7 +79,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     api 'com.github.GetStream:stream-chat-android-client:1.10.0'
-    //implementation project(':client')
 
     def room_version = "2.2.5"
     def work_version = "2.3.4"

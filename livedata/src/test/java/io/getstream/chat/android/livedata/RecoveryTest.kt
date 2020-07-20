@@ -2,11 +2,14 @@ package io.getstream.chat.android.livedata
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.Instant
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
@@ -18,7 +21,6 @@ class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
         // - in theory (new channel) you could not be watching the channel yet
         // - your client is typically not connected when running this recover flow
         // - you don't want to watch the channel
-
         val events = chatDomainImpl.replayEventsForActiveChannels(data.channel1.cid)
 
         // verify we now have 2 message in offline storage

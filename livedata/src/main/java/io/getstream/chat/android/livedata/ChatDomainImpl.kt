@@ -237,7 +237,7 @@ class ChatDomainImpl private constructor(
             ChatDatabase.getDatabase(context, currentUser.id)
         } else {
             Room.inMemoryDatabaseBuilder(
-                    context, ChatDatabase::class.java
+                context, ChatDatabase::class.java
             ).build()
         }
         return database
@@ -324,6 +324,7 @@ class ChatDomainImpl private constructor(
 
     /** the event subscription, cancel using repo.stopListening */
     private var eventSubscription: Subscription? = null
+
     /** stores the mapping from cid to channelRepository */
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
@@ -467,28 +468,12 @@ class ChatDomainImpl private constructor(
         return activeQueryMapImpl[queryChannelsEntity]!!
     }
 
-    suspend fun queryEvents(cids: List<String>): List<ChatEvent> {
-        val limit = 100
-        var offset = 0
-        val maxEvents = 500
-        val allEvents = mutableListOf<ChatEvent>()
-
-        while (true) {
-            val call = client.replayEvents(cids, syncState?.lastSyncedAt, limit, offset)
-            val response = call.execute()
-            if (response.isError) {
-                // TODO: what is the best error type for this?
-                throw Error(response.error())
-            }
-            val events = response.data()
-            allEvents.addAll(events)
-            if (events.size <= limit || offset >= maxEvents) {
-                break
-            }
-            offset += limit
+    private fun queryEvents(cids: List<String>): List<ChatEvent> {
+        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
+        if (response.isError) {
+            throw response.error()
         }
-
-        return allEvents
+        return response.data()
     }
 
     /**
@@ -689,6 +674,10 @@ class ChatDomainImpl private constructor(
 
     fun postInitialized() {
         _initialized.postValue(true)
+    }
+
+    companion object {
+        private val NEVER = Date(0)
     }
 }
 

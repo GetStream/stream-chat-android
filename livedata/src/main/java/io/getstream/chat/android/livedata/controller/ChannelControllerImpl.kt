@@ -672,7 +672,9 @@ class ChannelControllerImpl(
             }
             is MemberAddedEvent, is MemberUpdatedEvent, is NotificationAddedToChannelEvent -> {
                 // add /remove the members etc
-                upsertMember(event.member!!)
+                event.channel?.members?.let {
+                    upsertMembers(it)
+                }
             }
 
             is UserPresenceChanged -> {
@@ -803,11 +805,15 @@ class ChannelControllerImpl(
         _members.postValue(copy)
     }
 
-    fun upsertMember(member: Member) {
-        val copy = _members.value ?: mutableMapOf()
-        copy[member.user.id] = member
-        _members.postValue(copy)
+    fun upsertMembers(members: List<Member>) {
+        val channelMembers = _members.value ?: mutableMapOf()
+        members.forEach {
+            channelMembers[it.user.id] = it
+        }
+        _members.postValue(channelMembers)
     }
+
+    fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
     fun updateReads(
         reads: List<ChannelUserRead>

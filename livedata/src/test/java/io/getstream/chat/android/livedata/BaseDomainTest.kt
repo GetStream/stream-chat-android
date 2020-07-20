@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -37,6 +38,8 @@ import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
+import java.time.Instant
+import java.util.Date
 
 open class BaseDomainTest {
     lateinit var database: ChatDatabase
@@ -113,6 +116,7 @@ open class BaseDomainTest {
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
+            on { getSyncHistory(any(), anyOrNull()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on {
                 createChannel(
                     any<String>(),
