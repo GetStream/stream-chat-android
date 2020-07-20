@@ -1,3 +1,7 @@
+## Jun 4th, 2020 - 4.2.11-beta-7
+
+- Fix channel name validation in CreateChannelViewModel
+
 ## Jun 4th, 2020 - 4.2.11-beta-5
 
 - Update livedata dependency to fix crash when NotificationMarkReadEvent received
