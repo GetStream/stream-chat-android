@@ -20,20 +20,21 @@ class ChannelsListFragment : BaseChannelsListFragment() {
     private fun load() {
         val vm = ChannelsViewModel(App.channelsRepositorySync)
 
-        vm.channels().observe(this, Observer<ViewState<List<Channel>>> { state ->
-            when (state) {
-                is ViewState.Loading -> {
-                    drawLoading()
-                }
-                is ViewState.Error -> {
-                    drawError(state.error)
-                }
-                is ViewState.Success -> {
-                    drawSuccess(state.data)
+        vm.channels().observe(
+            this,
+            Observer<ViewState<List<Channel>>> { state ->
+                when (state) {
+                    is ViewState.Loading -> {
+                        drawLoading()
+                    }
+                    is ViewState.Error -> {
+                        drawError(state.error)
+                    }
+                    is ViewState.Success -> {
+                        drawSuccess(state.data)
+                    }
                 }
             }
-        })
+        )
     }
-
-
 }

@@ -45,7 +45,7 @@ abstract class BaseChannelsListFragment : Fragment() {
         viewAllLoaded.visibility = View.GONE
         recyclerChannels.visibility = View.VISIBLE
 
-        //updateAdapter(channels)
+        // updateAdapter(channels)
     }
 
     protected fun drawAllLoaded() {

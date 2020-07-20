@@ -47,6 +47,6 @@ class HomeActivity : AppCompatActivity() {
             this,
             arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
             1
-        );
+        )
     }
 }

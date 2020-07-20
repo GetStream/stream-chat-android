@@ -1,10 +1,9 @@
-package io.getstream.chat.android.client.sample.common;
+package io.getstream.chat.android.client.sample.common
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.*
-
+import java.util.UUID
 
 @Entity(tableName = "channels")
 public class Channel {

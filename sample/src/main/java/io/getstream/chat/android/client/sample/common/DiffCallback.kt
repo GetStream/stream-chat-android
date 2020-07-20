@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client.sample.common
 
 import androidx.recyclerview.widget.DiffUtil
-import io.getstream.chat.android.client.sample.common.Channel
-
 
 internal class DiffCallback(
     private val oldData: List<Channel>,

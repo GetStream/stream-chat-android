@@ -16,18 +16,21 @@ class ChannelsRepositoryRx(
 
         var updatingCompleted = false
 
-        return merge(getCached(offset, limit)
-            .flatMap {
-                if (it.isEmpty() && !updatingCompleted) {
-                    Observable.empty()
-                } else {
-                    Observable.just(it)
+        return merge(
+            getCached(offset, limit)
+                .flatMap {
+                    if (it.isEmpty() && !updatingCompleted) {
+                        Observable.empty()
+                    } else {
+                        Observable.just(it)
+                    }
+                },
+            updateCache(offset, limit)
+                .doOnComplete {
+                    updatingCompleted = true
                 }
-            }, updateCache(offset, limit)
-            .doOnComplete {
-                updatingCompleted = true
-            }
-            .toObservable())
+                .toObservable()
+        )
     }
 
     private fun updateCache(offset: Int, limit: Int): Completable {
@@ -53,5 +56,4 @@ class ChannelsRepositoryRx(
             Observable.just(it)
         }
     }
-
 }

@@ -12,16 +12,53 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
-import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated
+import io.getstream.chat.android.client.events.UserBanned
+import io.getstream.chat.android.client.events.UserUnbanned
+import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.getTranslation
+import io.getstream.chat.android.client.models.getUnreadMessagesCount
+import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.layout_commands.view.*
-import java.util.*
+import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnDisconnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnGet5MinSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetAllSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetMessages
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetOrCreateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkAllRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkChannelRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryMembers
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryUsers
+import kotlinx.android.synthetic.main.layout_commands.view.btnRemoveDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnSearchMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnSendMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnStartWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnStopWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnTranslateMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnbanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnUpdateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUploadImage
+import kotlinx.android.synthetic.main.layout_commands.view.textStatus
+import kotlinx.android.synthetic.main.layout_commands.view.textUserId
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
@@ -83,42 +120,48 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 .build()
         }
 
-        subs.add(client.events()
-            .filter(ConnectedEvent::class.java)
-            .subscribe {
-                println(it)
-            }
-        )
-
-        subs.add(client.events()
-            .filter(ConnectedEvent::class.java)
-            .filter(NotificationChannelMutesUpdated::class.java)
-            .subscribe {
-                var mutedChannels: List<ChannelMute> = emptyList()
-                if (it is ConnectedEvent) {
-                    mutedChannels = it.me.channelMutes
-                } else if (it is NotificationChannelMutesUpdated) {
-                    mutedChannels = it.me.channelMutes
+        subs.add(
+            client.events()
+                .filter(ConnectedEvent::class.java)
+                .subscribe {
+                    println(it)
                 }
-                println(mutedChannels)
-            }
         )
 
-        subs.add(client.events()
-            .filter(ConnectedEvent::class.java)
-            .filter(DisconnectedEvent::class.java)
-            .filter(ConnectingEvent::class.java)
-            .subscribe { event ->
-                textStatus.text = event.type
-                Log.d("connection-events", event::class.java.simpleName)
-            })
+        subs.add(
+            client.events()
+                .filter(ConnectedEvent::class.java)
+                .filter(NotificationChannelMutesUpdated::class.java)
+                .subscribe {
+                    var mutedChannels: List<ChannelMute> = emptyList()
+                    if (it is ConnectedEvent) {
+                        mutedChannels = it.me.channelMutes
+                    } else if (it is NotificationChannelMutesUpdated) {
+                        mutedChannels = it.me.channelMutes
+                    }
+                    println(mutedChannels)
+                }
+        )
 
-        subs.add(client.events()
-            .filter(UserUnbanned::class.java)
-            .filter(UserBanned::class.java)
-            .subscribe {
-                println("ban/unban for " + config.userId + ": " + it.type)
-            })
+        subs.add(
+            client.events()
+                .filter(ConnectedEvent::class.java)
+                .filter(DisconnectedEvent::class.java)
+                .filter(ConnectingEvent::class.java)
+                .subscribe { event ->
+                    textStatus.text = event.type
+                    Log.d("connection-events", event::class.java.simpleName)
+                }
+        )
+
+        subs.add(
+            client.events()
+                .filter(UserUnbanned::class.java)
+                .filter(UserBanned::class.java)
+                .subscribe {
+                    println("ban/unban for " + config.userId + ": " + it.type)
+                }
+        )
 
         textUserId.text = "UserId: ${config.userId}"
 
@@ -127,12 +170,15 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             val user = config.getUser()
             user.extraData.clear()
 
-            client.setUser(user, object : TokenProvider {
-                override fun loadToken(): String {
-                    Thread.sleep(1000)
-                    return config.token
+            client.setUser(
+                user,
+                object : TokenProvider {
+                    override fun loadToken(): String {
+                        Thread.sleep(1000)
+                        return config.token
+                    }
                 }
-            })
+            )
         }
 
         btnDisconnect.setOnClickListener {
@@ -159,12 +205,9 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                     UtilsMessages.show("removed", "not removed: ", deleteDeviceResult)
                 }
             }
-
-
         }
 
         btnStartWatchingChannel.setOnClickListener {
-
 
             client.queryChannel(chType, chId, request).enqueue { watchResult ->
                 UtilsMessages.show("started", "not not started:", watchResult)
@@ -197,7 +240,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 }
 
                 UtilsMessages.show("sent", "not sent:", messageResult)
-
             }
         }
 
@@ -226,8 +268,8 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             val request = QueryChannelRequest()
                 .withMessages(100)
 
-            //request.messages["attachments"] = "{\$exists:true}"
-            //request.messages["text"] = Filters.eq("text", "SSS")
+            // request.messages["attachments"] = "{\$exists:true}"
+            // request.messages["text"] = Filters.eq("text", "SSS")
             request.messages["text"] = "SSS"
 
             client.queryChannel(chType, chId, request).enqueue {
@@ -290,17 +332,12 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
                 UtilsMessages.show("query success", "query error", it)
             }
-
-
         }
-
-
 
         btnGet5MinSyncHistory.setOnClickListener {
 
-
-            //val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-            //val lastSyncAt = format.parse("2020-06-16T11:07:05.699Z")
+            // val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            // val lastSyncAt = format.parse("2020-06-16T11:07:05.699Z")
 //            val lastSyncAt = format.parse("2020-06-14T23:00:00Z")
 
             val now = System.currentTimeMillis()
@@ -329,10 +366,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 } else {
                     UtilsMessages.show("History received", "History not received", it)
                 }
-
-
             }
-
         }
 
         btnGetAllSyncHistory.setOnClickListener {
@@ -340,7 +374,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.getSyncHistory(listOf("$chType:$chId"), Date(0)).enqueue {
                 UtilsMessages.show("History received", "History not received", it)
             }
-
         }
 
         btnSearchMessage.setOnClickListener {
@@ -356,7 +389,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         btnUploadImage.setOnClickListener {
-            //client.sendFile(chType, chId, File())
+            // client.sendFile(chType, chId, File())
         }
 
         btnBanUser.setOnClickListener {
@@ -367,7 +400,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         btnUnbanUser.setOnClickListener {
             client.unBanUser(config.userId, chType, chId).enqueue {
-
             }
         }
 
@@ -388,7 +420,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 UtilsMessages.show(it)
             }
         }
-
     }
 
     fun destroy() {

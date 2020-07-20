@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
@@ -73,21 +73,23 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             }
         }
 
-
         val user = User(benderUserId)
         user.extraData["name"] = benderUserId
 
-        client.setUser(user, benderToken, object : InitConnectionListener() {
-            override fun onSuccess(data: ConnectionData) {
-                val updatedUser = data.user
-                val connectionId = data.connectionId
-            }
+        client.setUser(
+            user, benderToken,
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    val updatedUser = data.user
+                    val connectionId = data.connectionId
+                }
 
-            override fun onError(error: ChatError) {
-                val message = error.message
-                Toast.makeText(ctx, "error setting user: $message", Toast.LENGTH_LONG).show()
+                override fun onError(error: ChatError) {
+                    val message = error.message
+                    Toast.makeText(ctx, "error setting user: $message", Toast.LENGTH_LONG).show()
+                }
             }
-        })
+        )
     }
 
     override fun onDestroy() {
@@ -125,11 +127,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 message.text = message.text + "a"
                 client.updateMessage(message).enqueue { updateResult ->
                     if (updateResult.isSuccess) {
-
                     }
                 }
             }
-
         }
     }
 
@@ -177,7 +177,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 echoResult(watchResult)
             }
         }.start()
-
     }
 
     private fun markReadMessage() {
@@ -235,12 +234,9 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                 val controller = client.channel(type, id)
                 controller.watch().enqueue {
                     if (it.isSuccess) {
-
                     }
                 }
             }
-
-
 
             echoResult(it)
         }
@@ -264,7 +260,6 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                     val returnedMessage = messageResult.data()
 
                     if (returnedMessage.id == message.id) {
-
                     }
                 }
             }
@@ -273,8 +268,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
     fun getChannels() {
         client.addSocketListener(object : SocketListener() {
-            //override required methods
-
+            // override required methods
         })
     }
 
