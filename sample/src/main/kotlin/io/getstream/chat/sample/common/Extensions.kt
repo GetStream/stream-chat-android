@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.client.models.User
 
-
 var User.image: String
     get() = extraData["image"] as String
     set(value) {
@@ -38,7 +37,7 @@ fun EditText.hideKeyboard() {
 
 fun EditText.showKeyboard() {
     requestFocus()
-    val imm : InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val imm: InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 

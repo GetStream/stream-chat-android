@@ -22,26 +22,32 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
         val cid = navArgs<ChannelFragmentArgs>().value.cid
 
         val messagesViewModel = MessageListViewModel(cid)
-                .apply { bindView(messageListView, viewLifecycleOwner) }
-                .apply {
-                    state.observe(viewLifecycleOwner, Observer {
+            .apply { bindView(messageListView, viewLifecycleOwner) }
+            .apply {
+                state.observe(
+                    viewLifecycleOwner,
+                    Observer {
                         when (it) {
                             is MessageListViewModel.State.Loading -> showProgressBar()
                             is MessageListViewModel.State.Result -> hideProgressBar()
                             is MessageListViewModel.State.NavigateUp -> navigateUp()
                         }
-                    })
-                }
+                    }
+                )
+            }
 
         ChannelHeaderViewModel(cid).bindView(channelHeaderView, this)
         MessageInputViewModel(cid).apply {
             bindView(messageInputView, viewLifecycleOwner)
-            messagesViewModel.mode.observe(viewLifecycleOwner, Observer {
-                when (it) {
-                    is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
-                    is MessageListViewModel.Mode.Normal -> resetThread()
+            messagesViewModel.mode.observe(
+                viewLifecycleOwner,
+                Observer {
+                    when (it) {
+                        is MessageListViewModel.Mode.Thread -> setActiveThread(it.parentMessage)
+                        is MessageListViewModel.Mode.Normal -> resetThread()
+                    }
                 }
-            })
+            )
             messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
@@ -53,11 +59,14 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
         channelHeaderView.onBackClick = { backButtonHandler() }
 
         activity?.apply {
-            onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    backButtonHandler()
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        backButtonHandler()
+                    }
                 }
-            })
+            )
         }
     }
 

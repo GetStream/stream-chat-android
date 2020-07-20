@@ -10,7 +10,7 @@ import io.getstream.chat.sample.data.user.User
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginFragment: Fragment(R.layout.fragment_login) {
+class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private val viewModel: LoginViewModel by viewModel()
 
@@ -20,12 +20,15 @@ class LoginFragment: Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         usersList.adapter = adapter
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when(it) {
-                is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
-                is State.LoggedIn -> redirectToChannelsScreen()
+        viewModel.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                when (it) {
+                    is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
+                    is State.LoggedIn -> redirectToChannelsScreen()
+                }
             }
-        })
+        )
     }
 
     private fun redirectToChannelsScreen() {
@@ -35,5 +38,4 @@ class LoginFragment: Fragment(R.layout.fragment_login) {
     private fun renderAvailableUsers(users: List<User>) {
         adapter.setUsers(users)
     }
-
 }
