@@ -13,6 +13,8 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: KtLint
+      run: bash ./gradlew ktlintCheck
     - name: Unit tests
       run: bash ./gradlew test --stacktrace
     - name: Upload testDebugUnitTest Results
