@@ -1,3 +1,3 @@
 package io.getstream.chat.android.client.events
 
-class ChannelHiddenEvent: ChatEvent()
+class ChannelHiddenEvent : ChatEvent()

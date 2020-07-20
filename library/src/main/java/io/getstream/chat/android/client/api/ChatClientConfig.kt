@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.notifications.options.ChatNotificationCo
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 
-
 internal class ChatClientConfig(
     val apiKey: String,
     var httpUrl: String,

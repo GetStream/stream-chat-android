@@ -1,8 +1,7 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
-
+import java.util.Date
 
 data class Member(
     override var user: User,

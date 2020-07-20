@@ -24,6 +24,7 @@ install:
 
 script:
   - ./gradlew test --console verbose -i
+  - ./gradlew ktlintCheck
   - ./gradlew jacocoTestReport
 
 after_success:

@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.utils
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-
 import org.junit.Test
 
 class TestChatUtils {

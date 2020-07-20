@@ -1,6 +1,14 @@
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.ChannelResponse
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.FlagResponse
+import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.QueryUserListResponse
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.RemoveMembersRequest
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Mute
@@ -11,7 +19,7 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
-import java.util.*
+import java.util.Date
 
 class UsersApiCallsTests {
 

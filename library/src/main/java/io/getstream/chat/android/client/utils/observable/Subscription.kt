@@ -29,7 +29,6 @@ open class Subscription(
                 }
             }
         }
-
     }
 
     private fun deliver(event: ChatEvent) {
@@ -42,6 +41,5 @@ open class Subscription(
             deliveredCounter++
             listener?.invoke(event)
         }
-
     }
 }

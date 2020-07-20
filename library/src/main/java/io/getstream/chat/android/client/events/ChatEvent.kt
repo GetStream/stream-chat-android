@@ -1,9 +1,12 @@
 package io.getstream.chat.android.client.events
 
 import com.google.gson.annotations.SerializedName
-import io.getstream.chat.android.client.models.*
-import java.util.*
-
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import java.util.Date
 
 open class ChatEvent(val type: String = "") {
 
@@ -23,7 +26,7 @@ open class ChatEvent(val type: String = "") {
     lateinit var message: Message
     var receivedAt: Date = Date()
 
-    var reaction: Reaction?= null
+    var reaction: Reaction? = null
     var member: Member? = null
 
     var channel: Channel? = null

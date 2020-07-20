@@ -8,7 +8,6 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-
 internal class TokenAuthInterceptor internal constructor(
     private val tokenManager: TokenManager,
     private val parser: ChatParser,
@@ -67,5 +66,4 @@ internal class TokenAuthInterceptor internal constructor(
     companion object {
         const val AUTH_HEADER = "Authorization"
     }
-
 }

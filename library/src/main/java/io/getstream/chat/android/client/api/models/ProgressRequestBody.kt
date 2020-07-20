@@ -2,11 +2,9 @@ package io.getstream.chat.android.client.api.models
 
 import android.os.Handler
 import android.os.Looper
-import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File

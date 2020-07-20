@@ -11,8 +11,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService.State
 import io.getstream.chat.android.client.token.TokenManager
-import java.util.*
-
+import java.util.Date
 
 internal class ChatSocketServiceImpl(
     eventsParser: EventsParser,
@@ -50,13 +49,12 @@ internal class ChatSocketServiceImpl(
             tokenManager.expireToken()
             tokenManager.loadSync()
 
-            //check if it's still in the current state
+            // check if it's still in the current state
             if (state is State.Error) {
                 updateState(State.Disconnected(true))
                 clearState()
                 healthMonitor.onError()
             }
-
         } else if (error is ChatNetworkError && error.streamCode == ChatErrorCode.API_KEY_NOT_FOUND.code) {
             updateState(State.Error(error))
             updateState(State.Disconnected(false))
@@ -75,7 +73,6 @@ internal class ChatSocketServiceImpl(
         synchronized(listeners) {
             listeners.remove(listener)
         }
-
     }
 
     override fun addListener(listener: SocketListener) {
@@ -168,8 +165,5 @@ internal class ChatSocketServiceImpl(
                 eventUiHandler.post { call(listener) }
             }
         }
-
     }
-
-
 }

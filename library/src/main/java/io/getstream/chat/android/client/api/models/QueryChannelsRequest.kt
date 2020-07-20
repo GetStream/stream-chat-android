@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
-
 class QueryChannelsRequest(
     @IgnoreSerialisation
     val filter: FilterObject,

@@ -19,7 +19,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
 import io.getstream.chat.android.client.utils.getOr
 
-
 class ChatNotificationsImpl(
     private val config: ChatNotificationConfig,
     private val client: ChatApi,
@@ -49,8 +48,6 @@ class ChatNotificationsImpl(
                 }
             }
         }
-
-
     }
 
     override fun setFirebaseToken(firebaseToken: String) {
@@ -89,7 +86,6 @@ class ChatNotificationsImpl(
                 handleEvent(event)
             }
         }
-
     }
 
     private fun handleRemoteMessage(message: RemoteMessage) {
@@ -149,7 +145,6 @@ class ChatNotificationsImpl(
 
         val notificationId = System.currentTimeMillis().toInt()
 
-
         val notification = config.buildNotification(
             notificationId,
             channel.extraData.getOr("name", "").toString(),
@@ -184,6 +179,4 @@ class ChatNotificationsImpl(
     private fun isForeground(): Boolean {
         return ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
     }
-
-
 }

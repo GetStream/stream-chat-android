@@ -1,6 +1,11 @@
 package io.getstream.chat.android.client.api
 
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Connection
+import okhttp3.Interceptor
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
 class FakeChain(vararg val response: FakeResponse) : Interceptor.Chain {
@@ -61,5 +66,4 @@ class FakeChain(vararg val response: FakeResponse) : Interceptor.Chain {
     override fun writeTimeoutMillis(): Int {
         return 0
     }
-
 }

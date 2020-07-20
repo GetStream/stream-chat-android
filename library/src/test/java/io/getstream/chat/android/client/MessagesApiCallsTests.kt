@@ -1,14 +1,27 @@
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.models.*
-import io.getstream.chat.android.client.utils.*
+import io.getstream.chat.android.client.api.models.GetReactionsResponse
+import io.getstream.chat.android.client.api.models.GetRepliesResponse
+import io.getstream.chat.android.client.api.models.MessageRequest
+import io.getstream.chat.android.client.api.models.MessageResponse
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesResponse
+import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.RetroError
+import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifyError
+import io.getstream.chat.android.client.utils.verifySuccess
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
 class MessagesApiCallsTests {
-
 
     lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient
@@ -118,15 +131,25 @@ class MessagesApiCallsTests {
         val messageFilter = FilterObject("text", "search-text")
         val channelFilter = Filters.eq("cid", "cid")
 
-        val searchRequest = SearchMessagesRequest( 0, 1, channelFilter, messageFilter)
+        val searchRequest = SearchMessagesRequest(0, 1, channelFilter, messageFilter)
 
         Mockito.`when`(
             mock.retrofitApi
                 .searchMessages(mock.apiKey, mock.connectionId, searchRequest)
-        ).thenReturn(RetroSuccess(SearchMessagesResponse(listOf(MessageResponse(Message().apply {
-            this.text = messageText
-            this.user = user
-        })))))
+        ).thenReturn(
+            RetroSuccess(
+                SearchMessagesResponse(
+                    listOf(
+                        MessageResponse(
+                            Message().apply {
+                                this.text = messageText
+                                this.user = user
+                            }
+                        )
+                    )
+                )
+            )
+        )
 
         val result = client.searchMessages(searchRequest).execute()
 
@@ -440,7 +463,6 @@ class MessagesApiCallsTests {
         verifyError(result, mock.serverErrorCode)
     }
 
-
     @Test
     fun updateMessageSuccess() {
 
@@ -467,7 +489,6 @@ class MessagesApiCallsTests {
 
         verifySuccess(result, message)
     }
-
 
     @Test
     fun updateMessageError() {

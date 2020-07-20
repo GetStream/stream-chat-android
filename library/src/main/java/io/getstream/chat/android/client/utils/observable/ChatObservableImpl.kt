@@ -1,7 +1,11 @@
 package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 

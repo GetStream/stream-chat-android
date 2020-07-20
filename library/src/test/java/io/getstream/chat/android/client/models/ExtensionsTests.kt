@@ -100,7 +100,6 @@ class ExtensionsTests {
         assertThat(channel.getUnreadMessagesCount(userB)).isEqualTo(unreadUserB)
     }
 
-
     private fun getRead(unreadCount: Int, userId: String = ""): ChannelUserRead {
         return ChannelUserRead(User(id = userId), null, unreadCount)
     }

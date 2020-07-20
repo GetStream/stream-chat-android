@@ -42,7 +42,6 @@ internal object ZipCall {
                                         callback(Result(Triple(dataA, dataB, dataC), null))
                                     }
                                 }
-
                             }
                         }
                     }

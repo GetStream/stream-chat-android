@@ -24,7 +24,6 @@ class RetroSuccess<T>(val result: T) : Call<T> {
     }
 
     override fun cancel() {
-
     }
 
     override fun execute(): Response<T> {
@@ -38,5 +37,4 @@ class RetroSuccess<T>(val result: T) : Call<T> {
     override fun timeout(): Timeout {
         return Timeout()
     }
-
 }

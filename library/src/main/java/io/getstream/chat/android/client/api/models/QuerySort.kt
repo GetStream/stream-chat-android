@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-
 data class QuerySort(val data: MutableList<Map<String, Any>> = mutableListOf()) {
 
     private fun add(fieldName: String, direction: Int): QuerySort {
@@ -24,6 +23,3 @@ data class QuerySort(val data: MutableList<Map<String, Any>> = mutableListOf()) 
         private const val ASC = 1
     }
 }
-
-
-

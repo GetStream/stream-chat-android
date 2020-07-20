@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.Response
 import okhttp3.WebSocket
 
-
 internal class EventsParser(
     private val parser: ChatParser
 ) : okhttp3.WebSocketListener() {
@@ -49,7 +48,6 @@ internal class EventsParser(
     }
 
     override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-
     }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
@@ -82,13 +80,10 @@ internal class EventsParser(
                         ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
                     )
                 }
-
             } else {
                 val event = parser.fromJson(text, ChatEvent::class.java)
                 service.onEvent(event)
             }
-
-
         } else {
             service.onSocketError(
                 ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventMessage.error())

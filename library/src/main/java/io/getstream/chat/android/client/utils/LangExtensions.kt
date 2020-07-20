@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-
 internal fun <K, V> Map<K, V>.containsKeys(vararg keys: K): Boolean {
     for (it in keys)
         if (!this.containsKey(it)) return false

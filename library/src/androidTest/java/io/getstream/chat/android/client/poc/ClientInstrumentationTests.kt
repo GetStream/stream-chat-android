@@ -46,12 +46,10 @@ class ClientInstrumentationTests {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token, setUserListener)
             client.events().subscribe { event -> connectedEventConsumer.onEvent(event) }
-
         }.andThen {
             await().atMost(5, SECONDS).until { setUserListener.onSuccessIsCalled() }
             await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
         }
-
     }
 
     @Test
@@ -103,5 +101,4 @@ class ClientInstrumentationTests {
                 .until { consumer.isReceivedExactly(listOf(HealthEvent::class.java)) }
         }
     }
-
 }

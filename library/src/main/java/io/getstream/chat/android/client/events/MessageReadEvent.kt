@@ -1,5 +1,3 @@
 package io.getstream.chat.android.client.events
 
-class MessageReadEvent : ChatEvent() {
-
-}
+class MessageReadEvent : ChatEvent()

@@ -11,7 +11,6 @@ internal class ChatLoggerImpl constructor(
     private val handler: ChatLoggerHandler? = null
 ) : ChatLogger {
 
-
     override fun logE(tag: Any, message: String, throwable: Throwable) {
         if (level.isMoreOrEqualsThan(ChatLogLevel.ERROR)) {
             Log.e(getTag(tag), message)

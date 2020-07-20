@@ -8,19 +8,15 @@ class FakeTokenManager(val tkn: String) : TokenManager {
     }
 
     override fun loadAsync() {
-
     }
 
     override fun loadSync() {
-
     }
 
     override fun expireToken() {
-
     }
 
     override fun setTokenProvider(provider: TokenProvider) {
-
     }
 
     override fun getToken(): String {

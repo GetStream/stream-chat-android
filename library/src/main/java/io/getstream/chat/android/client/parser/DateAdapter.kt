@@ -5,7 +5,9 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
 
@@ -38,6 +40,5 @@ internal class DateAdapter(val gson: Gson) : TypeAdapter<Date>() {
                 null
             }
         }
-
     }
 }

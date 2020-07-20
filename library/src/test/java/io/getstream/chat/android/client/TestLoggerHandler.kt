@@ -2,7 +2,7 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 
-class TestLoggerHandler: ChatLoggerHandler {
+object TestLoggerHandler : ChatLoggerHandler {
     override fun logT(throwable: Throwable) {
         System.out.println("logT: $throwable")
     }
@@ -30,5 +30,4 @@ class TestLoggerHandler: ChatLoggerHandler {
     override fun logE(tag: Any, message: String, throwable: Throwable) {
         System.out.println("logE: $tag $message $throwable")
     }
-
 }

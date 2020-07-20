@@ -8,8 +8,7 @@ import io.getstream.chat.android.client.models.CustomObject
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import io.getstream.chat.android.client.parser.adapters.QuerySortAdapter
 import io.getstream.chat.android.client.utils.FilterObject
-import java.util.*
-
+import java.util.Date
 
 class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
 
@@ -41,8 +40,4 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             }
         }
     }
-
-
 }
-
-

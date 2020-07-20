@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.ProgressCallback
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -23,5 +23,4 @@ class RetroProgressCallback(val callback: ProgressCallback) : Callback<UploadFil
             callback.onSuccess(file)
         }
     }
-
 }

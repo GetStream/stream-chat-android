@@ -92,6 +92,4 @@ class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : Cha
 
         return Result(data, error)
     }
-
-
 }

@@ -5,7 +5,11 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable

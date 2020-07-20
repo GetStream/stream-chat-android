@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-
 open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     override var state: Boolean = false
@@ -66,5 +65,4 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         val keys = messages.keys
         return keys.contains(Pagination.LESS_THAN.toString()) || keys.contains(Pagination.LESS_THAN_OR_EQUAL.toString())
     }
-
 }

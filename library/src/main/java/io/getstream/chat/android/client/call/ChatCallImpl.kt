@@ -47,7 +47,6 @@ abstract class ChatCallImpl<T> : Call<T> {
         ): ChatCallImpl<B> {
             return object : ChatCallImpl<B>() {
 
-
                 override fun execute(): Result<B> {
 
                     val resultA = callA.execute()

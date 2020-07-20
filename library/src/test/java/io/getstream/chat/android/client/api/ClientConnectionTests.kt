@@ -16,7 +16,10 @@ import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 
 internal class ClientConnectionTests {
 
@@ -99,6 +102,4 @@ internal class ClientConnectionTests {
 
         verify(socket, times(1)).disconnect()
     }
-
-
 }

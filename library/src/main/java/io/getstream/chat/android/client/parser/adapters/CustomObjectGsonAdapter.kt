@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.lang.reflect.Field
 
-
 class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter<CustomObject>() {
 
     companion object {
@@ -52,8 +51,6 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
         } catch (e: Throwable) {
             throw ChatParsingError("custom object serialisation error of $clazz", e)
         }
-
-
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -135,7 +132,6 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
             }
             else -> false
         }
-
     }
 
     private fun setFieldSafe(

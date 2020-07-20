@@ -48,7 +48,6 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 callback(getResult(response))
             }
-
         })
     }
 

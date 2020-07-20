@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
-
 open class ChatNotificationConfig(val context: Context) {
 
     open fun onChatEvent(event: ChatEvent): Boolean {
@@ -68,7 +67,6 @@ open class ChatNotificationConfig(val context: Context) {
                 200,
                 400
             )
-
         }
     }
 
@@ -263,6 +261,4 @@ open class ChatNotificationConfig(val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
-
-
 }

@@ -5,7 +5,7 @@ import android.os.Looper
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
-import java.util.*
+import java.util.Date
 import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min

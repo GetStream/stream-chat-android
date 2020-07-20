@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 
-
 data class Attachment(
 
     @SerializedName("author_name")

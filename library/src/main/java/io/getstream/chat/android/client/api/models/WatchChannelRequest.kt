@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-
 class WatchChannelRequest : QueryChannelRequest() {
 
     init {
@@ -16,8 +15,6 @@ class WatchChannelRequest : QueryChannelRequest() {
     override fun withMembers(limit: Int, offset: Int): WatchChannelRequest {
         return super.withMembers(limit, offset) as WatchChannelRequest
     }
-
-
 
     override fun withWatchers(limit: Int, offset: Int): WatchChannelRequest {
         return super.withWatchers(limit, offset) as WatchChannelRequest

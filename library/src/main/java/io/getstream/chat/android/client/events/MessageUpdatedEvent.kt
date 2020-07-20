@@ -1,3 +1,3 @@
 package io.getstream.chat.android.client.events
 
-class MessageUpdatedEvent: ChatEvent()
+class MessageUpdatedEvent : ChatEvent()

@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.logger
 
 internal class TaggedLoggerImpl(val tag: Any, val logger: ChatLogger) : TaggedLogger {
 
-
     override fun logI(message: String) {
         logger.logI(tag, message)
     }

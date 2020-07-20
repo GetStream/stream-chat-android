@@ -4,7 +4,13 @@ import android.content.Context
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.controllers.ChannelControllerImpl
@@ -14,7 +20,15 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.ModelFields
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -25,7 +39,8 @@ import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
-import java.util.*
+import java.util.Date
+import kotlin.collections.set
 
 internal class ChatClientImpl(
     private val config: ChatClientConfig,
@@ -163,7 +178,7 @@ internal class ChatClientImpl(
         limit: Int,
         offset: Int
     ): Call<List<ChatEvent>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     //region Reactions
@@ -182,7 +197,6 @@ internal class ChatClientImpl(
     override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return api.deleteReaction(messageId, reactionType)
     }
-
 
     override fun sendReaction(reaction: Reaction): Call<Reaction> {
         return api.sendReaction(reaction)
@@ -346,7 +360,7 @@ internal class ChatClientImpl(
     }
 
     override fun getVersion(): String {
-        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE;
+        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE
     }
 
     override fun acceptInvite(
@@ -401,11 +415,11 @@ internal class ChatClientImpl(
 
     override fun muteUser(userId: String) = api.muteUser(userId)
 
-    override fun muteChannel(channelType: String, channelId: String): Call<Unit>{
+    override fun muteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.muteChannel(channelType, channelId)
     }
 
-    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit>{
+    override fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unMuteChannel(channelType, channelId)
     }
 

@@ -19,7 +19,4 @@ interface CustomObject {
     }
 }
 
-
-class Zed (private val s:String){
-
-}
+class Zed(private val s: String)
