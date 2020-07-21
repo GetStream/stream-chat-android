@@ -7,8 +7,10 @@ import io.getstream.chat.sample.application.AppConfig
 import io.getstream.chat.sample.data.user.User
 import io.getstream.chat.sample.data.user.UserRepository
 
-class LoginViewModel(appConfig: AppConfig,
-                     private val userRepository: UserRepository) : ViewModel() {
+class LoginViewModel(
+    appConfig: AppConfig,
+    private val userRepository: UserRepository
+) : ViewModel() {
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 

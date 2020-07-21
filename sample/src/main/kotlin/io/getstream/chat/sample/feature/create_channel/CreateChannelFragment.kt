@@ -24,14 +24,17 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
             val channelName = channelNameInput.text.toString()
             viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelName))
         }
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
-                is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
-                is CreateChannelViewModel.State.BackendError -> { renderBackendError() }
-                is CreateChannelViewModel.State.Loading -> { progressBar.visible(true) }
+        viewModel.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                when (it) {
+                    is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
+                    is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
+                    is CreateChannelViewModel.State.BackendError -> { renderBackendError() }
+                    is CreateChannelViewModel.State.Loading -> { progressBar.visible(true) }
+                }
             }
-        })
+        )
     }
 
     private fun goBack() {
@@ -46,5 +49,4 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
     private fun renderBackendError() {
         activity?.showToast(getString(R.string.backend_error_info))
     }
-
 }

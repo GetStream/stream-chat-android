@@ -43,275 +43,328 @@ import whenTrue
 import java.io.File
 
 class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
-	private val binding: StreamViewMessageInputBinding = StreamViewMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding: StreamViewMessageInputBinding =
+        StreamViewMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
-	/**
-	 * Styling class for the MessageInput
-	 */
-	private val style: MessageInputStyle = MessageInputStyle(context, attrs)
+    /**
+     * Styling class for the MessageInput
+     */
+    private val style: MessageInputStyle = MessageInputStyle(context, attrs)
 
-	/**
-	 * Permission Request listener
-	 */
-	private var permissionRequestListener: PermissionRequestListener? = null
+    /**
+     * Permission Request listener
+     */
+    private var permissionRequestListener: PermissionRequestListener? = null
 
-	var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
-		override fun sendMessage(messageText: String) {
-			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-		}
+    var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
+        override fun sendMessage(messageText: String) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
 
-		override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-		}
+        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
 
-		override fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean) {
-			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-		}
+        override fun sendToThread(
+            parentMessage: Message,
+            messageText: String,
+            alsoSendToChannel: Boolean
+        ) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
 
-		override fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentsFiles: List<File>) {
-			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-		}
+        override fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsFiles: List<File>
+        ) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
 
-		override fun editMessage(oldMessage: Message, newMessageText: String) {
-			throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
-		}
-	}
+        override fun editMessage(oldMessage: Message, newMessageText: String) {
+            throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
+        }
+    }
 
-	private val activityResultLauncher: ActivityResultLauncher<Unit>? = (context as? ComponentActivity)
-			?.registerForActivityResult(CaptureMediaContract()) { file: File? ->
-				file?.let { messageInputController.onFileCaptured(it) }
-			}
-	private val commandsAdapter = CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
-	private val mentionsAdapter = MentionsAdapter(style) {
-		messageInputController.onUserSelected(messageText, it)
-	}
-	private var typeListeners: List<TypeListener> = listOf()
-	fun addTypeListener(typeListener: TypeListener) {
-		typeListeners = typeListeners + typeListener
-	}
+    private val activityResultLauncher: ActivityResultLauncher<Unit>? =
+        (context as? ComponentActivity)
+            ?.registerForActivityResult(CaptureMediaContract()) { file: File? ->
+                file?.let { messageInputController.onFileCaptured(it) }
+            }
+    private val commandsAdapter =
+        CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
+    private val mentionsAdapter = MentionsAdapter(style) {
+        messageInputController.onUserSelected(messageText, it)
+    }
+    private var typeListeners: List<TypeListener> = listOf()
+    fun addTypeListener(typeListener: TypeListener) {
+        typeListeners = typeListeners + typeListener
+    }
 
-	fun removeTypeListener(typeListener: TypeListener) {
-		typeListeners = typeListeners - typeListener
-	}
+    fun removeTypeListener(typeListener: TypeListener) {
+        typeListeners = typeListeners - typeListener
+    }
 
-	private val messageInputController: MessageInputController by lazy {
-		MessageInputController(binding, this, style)
-	}
+    private val messageInputController: MessageInputController by lazy {
+        MessageInputController(binding, this, style)
+    }
 
-	private fun init() {
+    private fun init() {
+    }
 
-	}
+    private fun applyStyle() {
+        ActivityResultContracts.GetContent()
+        // Attachment Button
+        binding.ivOpenAttach.visibility =
+            if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
+        binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
+        binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
+        binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
+        // Send Button
+        binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
+        binding.sendButton.layoutParams.width = style.inputButtonWidth
+        binding.sendButton.layoutParams.height = style.inputButtonHeight
+        binding.cbSendAlsoToChannel.setTextColor(style.inputSendAlsoToChannelTextColor)
+        // Input Background
+        binding.llComposer.background = style.inputBackground
+        // Input Text
+        style.inputText.apply(binding.etMessage)
+        style.inputBackgroundText.apply(binding.tvTitle)
+        style.inputBackgroundText.apply(binding.tvCommand)
+        style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
+        style.inputBackgroundText.apply(binding.tvUploadFile)
+        style.inputBackgroundText.apply(binding.tvUploadCamera)
+    }
 
-	private fun applyStyle() {
-		ActivityResultContracts.GetContent()
-		// Attachment Button
-		binding.ivOpenAttach.visibility = if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
-		binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
-		binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
-		binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
-		// Send Button
-		binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
-		binding.sendButton.layoutParams.width = style.inputButtonWidth
-		binding.sendButton.layoutParams.height = style.inputButtonHeight
-		binding.cbSendAlsoToChannel.setTextColor(style.inputSendAlsoToChannelTextColor)
-		// Input Background
-		binding.llComposer.background = style.inputBackground
-		// Input Text
-		style.inputText.apply(binding.etMessage)
-		style.inputBackgroundText.apply(binding.tvTitle)
-		style.inputBackgroundText.apply(binding.tvCommand)
-		style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
-		style.inputBackgroundText.apply(binding.tvUploadFile)
-		style.inputBackgroundText.apply(binding.tvUploadCamera)
-	}
+    private fun configOnClickListener() {
+        binding.sendButton.setOnClickListener { onSendMessage() }
+        binding.ivOpenAttach.setOnClickListener {
+            messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
+            if (!PermissionChecker.isGrantedCameraPermissions(context) &&
+                permissionRequestListener != null && !style.passedPermissionCheck()
+            ) permissionRequestListener!!.openPermissionRequest()
+        }
+    }
 
-	private fun configOnClickListener() {
-		binding.sendButton.setOnClickListener { onSendMessage() }
-		binding.ivOpenAttach.setOnClickListener {
-			messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
-			if (! PermissionChecker.isGrantedCameraPermissions(context)
-					&& permissionRequestListener != null && ! style.passedPermissionCheck()) permissionRequestListener !!.openPermissionRequest()
-		}
-	}
+    private fun configInputEditText() {
+        binding.etMessage.onFocusChangeListener =
+            OnFocusChangeListener { _: View?, hasFocus: Boolean ->
+                if (hasFocus) {
+                    Utils.showSoftKeyboard(context as Activity)
+                } else Utils.hideSoftKeyboard(context as Activity)
+            }
+        TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
+        binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
+            sendGiphyFromKeyboard(
+                inputContentInfo,
+                flags,
+                opts
+            )
+        }
+    }
 
-	private fun configInputEditText() {
-		binding.etMessage.onFocusChangeListener = OnFocusChangeListener { _: View?, hasFocus: Boolean ->
-			if (hasFocus) {
-				Utils.showSoftKeyboard(context as Activity)
-			} else Utils.hideSoftKeyboard(context as Activity)
-		}
-		TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
-		binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle -> sendGiphyFromKeyboard(inputContentInfo, flags, opts) }
-	}
+    private fun keyStroke(inputMessage: String) {
+        messageInputController.checkCommandsOrMentions(messageText)
+        binding.activeMessageSend = inputMessage.isNotBlank()
+            .whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
+            .whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
+        configSendButtonEnableState()
+    }
 
-	private fun keyStroke(inputMessage: String) {
-		messageInputController.checkCommandsOrMentions(messageText)
-		binding.activeMessageSend = inputMessage.isNotBlank()
-				.whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
-				.whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
-		configSendButtonEnableState()
-	}
+    private fun configSendButtonEnableState() {
+        val attachments = messageInputController.getSelectedAttachments()
+        val hasAttachment = attachments.isNotEmpty()
+        val notEmptyMessage =
+            !StringUtility.isEmptyTextMessage(messageText) || !messageInputController.isUploadingFile && hasAttachment
+        binding.activeMessageSend = notEmptyMessage
+    }
 
-	private fun configSendButtonEnableState() {
-		val attachments = messageInputController.getSelectedAttachments()
-		val hasAttachment = attachments.isNotEmpty()
-		val notEmptyMessage = ! StringUtility.isEmptyTextMessage(messageText) || ! messageInputController.isUploadingFile && hasAttachment
-		binding.activeMessageSend = notEmptyMessage
-	}
+    private fun configAttachmentUI() {
+        // TODO: make the attachment UI into it's own view and allow you to change it.
+        binding.rvComposer.layoutManager =
+            GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
+        binding.btnClose.setOnClickListener {
+            messageInputController.onClickCloseBackGroundView()
+            Utils.hideSoftKeyboard(context as Activity)
+        }
+        binding.llMedia.setOnClickListener {
+            messageInputController.onClickOpenSelectView(
+                null,
+                true
+            )
+        }
+        binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
+        binding.llFile.setOnClickListener {
+            messageInputController.onClickOpenSelectView(
+                null,
+                false
+            )
+        }
+    }
 
-	private fun configAttachmentUI() {
-		// TODO: make the attachment UI into it's own view and allow you to change it.
-		binding.rvComposer.layoutManager = GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
-		binding.btnClose.setOnClickListener {
-			messageInputController.onClickCloseBackGroundView()
-			Utils.hideSoftKeyboard(context as Activity)
-		}
-		binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(null, true) }
-		binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
-		binding.llFile.setOnClickListener { messageInputController.onClickOpenSelectView( null, false) }
-	}
+    internal fun showCameraOptions() {
+        activityResultLauncher?.launch(Unit)
+    }
 
-	internal fun showCameraOptions() {
-		activityResultLauncher?.launch(Unit)
-	}
+    private fun setKeyboardEventListener() {
+        KeyboardVisibilityEvent.setEventListener(
+            context as Activity
+        ) { isOpen: Boolean ->
+            if (!isOpen) {
+                binding.etMessage.clearFocus()
+            }
+        }
+    }
 
-	private fun setKeyboardEventListener() {
-		KeyboardVisibilityEvent.setEventListener(
-				context as Activity) { isOpen: Boolean ->
-			if (! isOpen) {
-				binding.etMessage.clearFocus()
-			}
-		}
-	}
+    override fun setEnabled(enabled: Boolean) {
+        binding.etMessage.isEnabled = true
+    }
 
-	override fun setEnabled(enabled: Boolean) {
-		binding.etMessage.isEnabled = true
-	}
+    override fun clearFocus() {
+        binding.etMessage.clearFocus()
+    }
 
-	override fun clearFocus() {
-		binding.etMessage.clearFocus()
-	}
+    var messageText: String
+        get() = binding.etMessage.text.toString()
+        set(text) {
+            if (TextUtils.isEmpty(text)) return
+            binding.etMessage.requestFocus()
+            binding.etMessage.setText(text)
+            binding.etMessage.setSelection(binding.etMessage.text.length)
+        }
 
-	var messageText: String
-		get() = binding.etMessage.text.toString()
-		set(text) {
-			if (TextUtils.isEmpty(text)) return
-			binding.etMessage.requestFocus()
-			binding.etMessage.setText(text)
-			binding.etMessage.setSelection(binding.etMessage.text.length)
-		}
+    fun configureMembers(members: List<Member>) {
+        messageInputController.members = members
+    }
 
-	fun configureMembers(members: List<Member>) {
-		messageInputController.members = members
-	}
+    fun configureCommands(commands: List<Command>) {
+        messageInputController.channelCommands = commands
+    }
 
-	fun configureCommands(commands: List<Command>) {
-		messageInputController.channelCommands = commands
-	}
+    private fun onSendMessage() {
+        messageInputController.onSendMessageClick(messageText)
+        handleSentMessage()
+    }
 
-	private fun onSendMessage() {
-		messageInputController.onSendMessageClick(messageText)
-		handleSentMessage()
-	}
+    internal fun sendTextMessage(message: String) {
+        messageSendHandler.sendMessage(message)
+    }
 
-	internal fun sendTextMessage(message: String) {
-		messageSendHandler.sendMessage(message)
-	}
+    internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
+        messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
+    }
 
-	internal fun sendAttachments(message: String, attachmentFiles: List<File>) {
-		messageSendHandler.sendMessageWithAttachments(message, attachmentFiles)
-	}
+    internal fun sendToThread(parentMessage: Message, message: String, alsoSendToChannel: Boolean) {
+        messageSendHandler.sendToThread(parentMessage, message, alsoSendToChannel)
+    }
 
-	internal fun sendToThread(parentMessage: Message, message: String, alsoSendToChannel: Boolean) {
-		messageSendHandler.sendToThread(parentMessage, message, alsoSendToChannel)
-	}
+    internal fun sendToThreadWithAttachments(
+        parentMessage: Message,
+        message: String,
+        alsoSendToChannel: Boolean,
+        attachmentFiles: List<File>
+    ) {
+        messageSendHandler.sendToThreadWithAttachments(
+            parentMessage,
+            message,
+            alsoSendToChannel,
+            attachmentFiles
+        )
+    }
 
-	internal fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentFiles: List<File>) {
-		messageSendHandler.sendToThreadWithAttachments(parentMessage, message, alsoSendToChannel, attachmentFiles)
-	}
+    internal fun editMessage(oldMessage: Message, newMessageText: String) {
+        messageSendHandler.editMessage(oldMessage, newMessageText)
+    }
 
-	internal fun editMessage(oldMessage: Message, newMessageText: String) {
-		messageSendHandler.editMessage(oldMessage, newMessageText)
-	}
+    private fun handleSentMessage() {
+        typeListeners.forEach(TypeListener::onStopTyping)
+        initSendMessage()
+    }
 
-	private fun handleSentMessage() {
-		typeListeners.forEach(TypeListener::onStopTyping)
-		initSendMessage()
-	}
+    private fun initSendMessage() {
+        messageInputController.initSendMessage()
+        binding.etMessage.setText("")
+        binding.sendButton.isEnabled = true
+    }
 
-	private fun initSendMessage() {
-		messageInputController.initSendMessage()
-		binding.etMessage.setText("")
-		binding.sendButton.isEnabled = true
-	}
+    private fun sendGiphyFromKeyboard(
+        inputContentInfo: InputContentInfoCompat,
+        flags: Int,
+        opts: Bundle
+    ): Boolean {
+        if (BuildCompat.isAtLeastQ() &&
+            flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0
+        ) {
+            try {
+                inputContentInfo.requestPermission()
+            } catch (e: Exception) {
+                return false
+            }
+        }
+        if (inputContentInfo.linkUri == null) return false
+        val url = inputContentInfo.linkUri.toString()
+        val attachment = Attachment()
+        attachment.thumbUrl = url
+        attachment.titleLink = url
+        attachment.title = inputContentInfo.description.label.toString()
+        attachment.type = ModelType.attach_giphy
+        messageInputController.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
+        binding.etMessage.setText("")
+        onSendMessage()
+        return true
+    }
 
-	private fun sendGiphyFromKeyboard(inputContentInfo: InputContentInfoCompat,
-	                                  flags: Int, opts: Bundle): Boolean {
-		if (BuildCompat.isAtLeastQ()
-				&& flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0) {
-			try {
-				inputContentInfo.requestPermission()
-			} catch (e: Exception) {
-				return false
-			}
-		}
-		if (inputContentInfo.linkUri == null) return false
-		val url = inputContentInfo.linkUri.toString()
-		val attachment = Attachment()
-		attachment.thumbUrl = url
-		attachment.titleLink = url
-		attachment.title = inputContentInfo.description.label.toString()
-		attachment.type = ModelType.attach_giphy
-		messageInputController.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
-		binding.etMessage.setText("")
-		onSendMessage()
-		return true
-	}
+    internal fun showSuggestedMentions(users: List<User>) {
+        mentionsAdapter.submitList(users)
+    }
 
-	internal fun showSuggestedMentions(users: List<User>) {
-		mentionsAdapter.submitList(users)
-	}
+    internal fun showSuggestedCommand(commands: List<Command>) {
+        commandsAdapter.submitList(commands)
+    }
 
-	internal fun showSuggestedCommand(commands: List<Command>) {
-		commandsAdapter.submitList(commands)
-	}
+    fun setNormalMode() {
+        messageInputController.inputMode = InputMode.Normal
+    }
 
-	fun setNormalMode() {
-		messageInputController.inputMode = InputMode.Normal
-	}
+    fun setThreadMode(parentMessage: Message) {
+        messageInputController.inputMode = InputMode.Thread(parentMessage)
+    }
 
-	fun setThreadMode(parentMessage: Message) {
-		messageInputController.inputMode = InputMode.Thread(parentMessage)
-	}
+    fun setEditMode(oldMessage: Message) {
+        messageInputController.inputMode = InputMode.Edit(oldMessage)
+    }
 
-	fun setEditMode(oldMessage: Message) {
-		messageInputController.inputMode = InputMode.Edit(oldMessage)
-	}
+    interface TypeListener {
+        fun onKeystroke()
+        fun onStopTyping()
+    }
 
-	interface TypeListener {
-		fun onKeystroke()
-		fun onStopTyping()
-	}
+    interface PermissionRequestListener {
+        fun openPermissionRequest()
+    }
 
-	interface PermissionRequestListener {
-		fun openPermissionRequest()
-	}
+    interface MessageSendHandler {
+        fun sendMessage(messageText: String)
+        fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+        fun sendToThreadWithAttachments(
+            parentMessage: Message,
+            message: String,
+            alsoSendToChannel: Boolean,
+            attachmentsFiles: List<File>
+        )
 
-	interface MessageSendHandler {
-		fun sendMessage(messageText: String)
-		fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
-		fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
-		fun sendToThreadWithAttachments(parentMessage: Message, message: String, alsoSendToChannel: Boolean, attachmentsFiles: List<File>)
-		fun editMessage(oldMessage: Message, newMessageText: String)
-	}
+        fun editMessage(oldMessage: Message, newMessageText: String)
+    }
 
-	init {
-		applyStyle()
-		binding.rvSuggestions.adapter = MergeAdapter(commandsAdapter, mentionsAdapter)
-		binding.activeMessageSend = false
-		configOnClickListener()
-		configInputEditText()
-		configAttachmentUI()
-		setKeyboardEventListener()
-	}
+    init {
+        applyStyle()
+        binding.rvSuggestions.adapter = MergeAdapter(commandsAdapter, mentionsAdapter)
+        binding.activeMessageSend = false
+        configOnClickListener()
+        configInputEditText()
+        configAttachmentUI()
+        setKeyboardEventListener()
+    }
 }

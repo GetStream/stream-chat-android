@@ -25,8 +25,8 @@ interface ChannelsViewModel {
         object Loading : State()
         data class Result(val channels: List<Channel>) : State()
         data class EndPageReached(val isEndPage: Boolean) : State()
-        object NoChannelsAvailable: State()
-        object NavigateToLoginScreen: State()
+        object NoChannelsAvailable : State()
+        object NavigateToLoginScreen : State()
     }
 
     sealed class Event {
@@ -41,9 +41,9 @@ interface ChannelsViewModel {
 }
 
 class ChannelsViewModelImpl(
-        private val chatDomain: ChatDomain = ChatDomain.instance(),
-        private val filter: FilterObject = DEFAULT_FILTER,
-        private val sort: QuerySort = DEFAULT_SORT
+    private val chatDomain: ChatDomain = ChatDomain.instance(),
+    private val filter: FilterObject = DEFAULT_FILTER,
+    private val sort: QuerySort = DEFAULT_SORT
 ) : ChannelsViewModel, ViewModel() {
     private val channelsData: LiveData<ChannelsViewModel.State>
     private val loadingMoreData: LiveData<ChannelsViewModel.State.LoadingNextPage>

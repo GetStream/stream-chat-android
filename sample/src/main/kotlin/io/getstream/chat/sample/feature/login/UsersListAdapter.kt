@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.RequestOptions.circleCropTransform
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.user.User
 import kotlinx.android.synthetic.main.item_user.view.*
@@ -42,13 +40,13 @@ class UsersListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.apply {
             name.text = user.name
             Glide.with(this)
-                    .load(user.image)
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_avatar_placeholder)
-                    .error(R.drawable.ic_avatar_placeholder)
-                    .fallback(R.drawable.ic_avatar_placeholder)
-                    .transform(CircleCrop())
-                    .into(avatar)
+                .load(user.image)
+                .centerCrop()
+                .placeholder(R.drawable.ic_avatar_placeholder)
+                .error(R.drawable.ic_avatar_placeholder)
+                .fallback(R.drawable.ic_avatar_placeholder)
+                .transform(CircleCrop())
+                .into(avatar)
         }
     }
 }

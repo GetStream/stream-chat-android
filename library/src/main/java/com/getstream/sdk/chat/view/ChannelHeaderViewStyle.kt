@@ -33,12 +33,13 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
 
     fun getOfflineText(): String = offlineText ?: context.getString(R.string.stream_channel_offlineText)
 
-
     init {
         // parse the attributes
         setContext(context)
-        val attributes = getContext().obtainStyledAttributes(attrs,
-                R.styleable.ChannelHeaderView, 0, 0)
+        val attributes = getContext().obtainStyledAttributes(
+            attrs,
+            R.styleable.ChannelHeaderView, 0, 0
+        )
 
         channelTitleText = TextStyle.Builder(attributes).apply {
             size(R.styleable.ChannelHeaderView_streamChannelHeaderTitleTextSize, getDimension(R.dimen.stream_channel_header_initials))

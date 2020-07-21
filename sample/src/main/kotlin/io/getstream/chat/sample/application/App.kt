@@ -30,11 +30,13 @@ class App : Application() {
                 androidLogger()
             }
             androidContext(this@App)
-            modules(listOf(
+            modules(
+                listOf(
                     appModule,
                     dataModule,
                     loginModule
-            ))
+                )
+            )
         }
     }
 }

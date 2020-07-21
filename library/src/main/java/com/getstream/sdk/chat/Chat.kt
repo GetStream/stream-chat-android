@@ -27,9 +27,11 @@ interface Chat {
     val markdown: ChatMarkdown
     val version: String
 
-    fun setUser(user: User,
-                token: String,
-                callbacks: InitConnectionListener = object : InitConnectionListener() {})
+    fun setUser(
+        user: User,
+        token: String,
+        callbacks: InitConnectionListener = object : InitConnectionListener() {}
+    )
 
     fun disconnect()
 
@@ -42,15 +44,16 @@ interface Chat {
         var notificationsConfig: ChatNotificationConfig = ChatNotificationConfig(context)
 
         fun build(): Chat {
-            return ChatImpl(ChatFontsImpl(style, context),
-                    ChatStringsImpl(context),
-                    navigationHandler,
-                    urlSigner,
-                    markdown,
-                    apiKey,
-                    context,
-                    offlineEnabled,
-                    notificationsConfig
+            return ChatImpl(
+                ChatFontsImpl(style, context),
+                ChatStringsImpl(context),
+                navigationHandler,
+                urlSigner,
+                markdown,
+                apiKey,
+                context,
+                offlineEnabled,
+                notificationsConfig
             ).apply {
                 instance = this
             }
@@ -62,6 +65,6 @@ interface Chat {
 
         @JvmStatic
         fun getInstance(): Chat = instance
-                ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
+            ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
     }
 }

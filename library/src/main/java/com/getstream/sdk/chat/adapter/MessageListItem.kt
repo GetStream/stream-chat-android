@@ -4,12 +4,14 @@ import exhaustive
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import java.util.*
+import java.util.Date
 import java.util.zip.CRC32
 import java.util.zip.Checksum
 
-sealed class MessageListItem(val isMine: Boolean = false,
-                             val messageReadBy: MutableList<ChannelUserRead> = mutableListOf()) {
+sealed class MessageListItem(
+    val isMine: Boolean = false,
+    val messageReadBy: MutableList<ChannelUserRead> = mutableListOf()
+) {
     fun getStableId(): Long {
         val checksum: Checksum = CRC32()
         var plaintext = "$this:"
@@ -25,7 +27,7 @@ sealed class MessageListItem(val isMine: Boolean = false,
 
     fun isTheirs(): Boolean = !isMine
 
-    fun deepCopy(): MessageListItem = when(this) {
+    fun deepCopy(): MessageListItem = when (this) {
         is DateSeparatorItem -> copy()
         is MessageItem -> copy()
         is TypingItem -> copy()
@@ -34,9 +36,11 @@ sealed class MessageListItem(val isMine: Boolean = false,
 
     data class DateSeparatorItem(val date: Date) : MessageListItem()
 
-    data class MessageItem(val message: Message,
-                           val positions: List<MessageViewHolderFactory.Position> = listOf(),
-                           val isMessageMine: Boolean) : MessageListItem(isMine = isMessageMine)
+    data class MessageItem(
+        val message: Message,
+        val positions: List<MessageViewHolderFactory.Position> = listOf(),
+        val isMessageMine: Boolean
+    ) : MessageListItem(isMine = isMessageMine)
 
     data class TypingItem(val users: List<User>) : MessageListItem()
 

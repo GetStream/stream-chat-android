@@ -33,23 +33,29 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
             name = loggedInUser.name
         }
 
-        Chat.getInstance().setUser(user, loggedInUser.token, object : InitConnectionListener() {
-            override fun onSuccess(data: ConnectionData) {
-                Timber.d("User set successfully")
-            }
+        Chat.getInstance().setUser(
+            user, loggedInUser.token,
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    Timber.d("User set successfully")
+                }
 
-            override fun onError(error: ChatError) {
-                Timber.e("Failed to set user")
+                override fun onError(error: ChatError) {
+                    Timber.e("Failed to set user")
+                }
             }
-        })
+        )
 
         viewModel.bindView(channelsListView, this@ChannelsFragment)
 
-        viewModel.state.observe(viewLifecycleOwner, Observer {
-            if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
-                findNavController().navigate(R.id.action_to_loginFragment)
+        viewModel.state.observe(
+            viewLifecycleOwner,
+            Observer {
+                if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
+                    findNavController().navigate(R.id.action_to_loginFragment)
+                }
             }
-        })
+        )
 
         setupOnClickListeners()
         setupToolbar()
@@ -69,11 +75,14 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
         }
 
         activity?.apply {
-            onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    activity?.finish()
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        activity?.finish()
+                    }
                 }
-            })
+            )
         }
 
         toolbar.setOnMenuItemClickListener {
