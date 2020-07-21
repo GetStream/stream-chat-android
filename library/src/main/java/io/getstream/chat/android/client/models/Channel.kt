@@ -4,8 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
-import java.util.*
-
+import java.util.Date
 
 data class Channel(
     var cid: String = "",
@@ -39,7 +38,7 @@ data class Channel(
     @IgnoreDeserialisation
     var unreadCount: Int? = null,
 
-    val team:String = "",
+    val team: String = "",
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
@@ -54,4 +53,3 @@ data class Channel(
     var hiddenMessagesBefore: Date? = null
 
 ) : CustomObject
-

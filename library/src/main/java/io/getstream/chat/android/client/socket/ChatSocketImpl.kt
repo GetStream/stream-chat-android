@@ -10,8 +10,8 @@ import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 internal class ChatSocketImpl(
     private val apiKey: String,
     private val wssUrl: String,
-    private val tokenManager: TokenManager,
-    private val parser: ChatParser
+    tokenManager: TokenManager,
+    parser: ChatParser
 ) : ChatSocket {
 
     private val eventsParser = EventsParser(parser)
@@ -45,5 +45,4 @@ internal class ChatSocketImpl(
     override fun removeListener(listener: SocketListener) {
         service.removeListener(listener)
     }
-
 }

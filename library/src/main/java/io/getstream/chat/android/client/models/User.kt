@@ -3,8 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
-import java.util.*
-
+import java.util.Date
 
 data class User(
     var id: String = "",
@@ -28,7 +27,6 @@ data class User(
     @SerializedName("last_active")
     var lastActive: Date? = null,
 
-
     //region current user fields
     @IgnoreSerialisation
     @SerializedName("total_unread_count")
@@ -47,15 +45,14 @@ data class User(
     var mutes: List<Mute> = mutableListOf(),
     //endregion
 
-    val teams:List<String> = listOf(),
+    val teams: List<String> = listOf(),
 
     @IgnoreSerialisation
     @SerializedName("channel_mutes")
-    val channelMutes:List<ChannelMute> = emptyList(),
+    val channelMutes: List<ChannelMute> = emptyList(),
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 
 ) : CustomObject
-

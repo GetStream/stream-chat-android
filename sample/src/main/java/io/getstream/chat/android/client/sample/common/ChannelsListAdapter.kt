@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.sample.R
 
-
 class ChannelsListAdapter(data: List<Channel>) :
     RecyclerView.Adapter<ChannelsListAdapter.VH>() {
 
@@ -62,7 +61,6 @@ class ChannelsListAdapter(data: List<Channel>) :
             data.addAll(sorted)
             diffResult.dispatchUpdatesTo(this)
             validateDuplicates()
-
         }
     }
 
@@ -118,6 +116,4 @@ class ChannelsListAdapter(data: List<Channel>) :
         val textId = view.findViewById<TextView>(R.id.text_id)
         val textName = view.findViewById<TextView>(R.id.text_name)
     }
-
-
 }

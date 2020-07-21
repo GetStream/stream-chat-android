@@ -7,22 +7,17 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 open class SocketListener {
 
     open fun onConnecting() {
-
     }
 
     open fun onConnected(event: ConnectedEvent) {
-
     }
 
     open fun onDisconnected() {
-
     }
 
     open fun onError(error: ChatError) {
-
     }
 
     open fun onEvent(event: ChatEvent) {
-
     }
 }

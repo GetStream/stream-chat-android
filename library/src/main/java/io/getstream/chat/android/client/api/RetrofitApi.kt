@@ -1,10 +1,53 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.api.models.AcceptInviteRequest
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
+import io.getstream.chat.android.client.api.models.AddMembersRequest
+import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.ChannelResponse
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.EventResponse
+import io.getstream.chat.android.client.api.models.FlagResponse
+import io.getstream.chat.android.client.api.models.GetDevicesResponse
+import io.getstream.chat.android.client.api.models.GetReactionsResponse
+import io.getstream.chat.android.client.api.models.GetRepliesResponse
+import io.getstream.chat.android.client.api.models.GetSyncHistory
+import io.getstream.chat.android.client.api.models.GetSyncHistoryResponse
+import io.getstream.chat.android.client.api.models.GuestUserRequest
+import io.getstream.chat.android.client.api.models.HideChannelRequest
+import io.getstream.chat.android.client.api.models.MarkReadRequest
+import io.getstream.chat.android.client.api.models.MessageRequest
+import io.getstream.chat.android.client.api.models.MessageResponse
+import io.getstream.chat.android.client.api.models.MuteChannelRequest
+import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.MuteUserResponse
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryMembersRequest
+import io.getstream.chat.android.client.api.models.QueryMembersResponse
+import io.getstream.chat.android.client.api.models.QueryUserListResponse
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.ReactionRequest
+import io.getstream.chat.android.client.api.models.ReactionResponse
+import io.getstream.chat.android.client.api.models.RejectInviteRequest
+import io.getstream.chat.android.client.api.models.RemoveMembersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesResponse
+import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.SendEventRequest
+import io.getstream.chat.android.client.api.models.TokenResponse
+import io.getstream.chat.android.client.api.models.TranslateMessageRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelRequest
+import io.getstream.chat.android.client.api.models.UpdateUsersRequest
+import io.getstream.chat.android.client.api.models.UpdateUsersResponse
 import io.getstream.chat.android.client.parser.UrlQueryPayload
 import retrofit2.Call
-import retrofit2.http.*
-
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RetrofitApi {
 

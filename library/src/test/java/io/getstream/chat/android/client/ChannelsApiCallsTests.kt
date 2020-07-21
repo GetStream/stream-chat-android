@@ -1,18 +1,29 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.QueryChannelsResponse
+import io.getstream.chat.android.client.api.models.AcceptInviteRequest
+import io.getstream.chat.android.client.api.models.ChannelResponse
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.EventResponse
+import io.getstream.chat.android.client.api.models.HideChannelRequest
+import io.getstream.chat.android.client.api.models.MarkReadRequest
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.RejectInviteRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.api.models.*
-import io.getstream.chat.android.client.utils.*
+import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.RetroError
+import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifyError
+import io.getstream.chat.android.client.utils.verifySuccess
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
-
 class ChannelsApiCallsTests {
-
 
     lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient
@@ -118,7 +129,6 @@ class ChannelsApiCallsTests {
             )
         ).thenReturn(RetroSuccess(ChannelResponse(response)))
 
-
         val result = client.deleteChannel(mock.channelType, mock.channelId).execute()
 
         verifySuccess(result, response)
@@ -135,7 +145,6 @@ class ChannelsApiCallsTests {
                 mock.connectionId
             )
         ).thenReturn(RetroError(mock.serverErrorCode))
-
 
         val result = client.deleteChannel(mock.channelType, mock.channelId).execute()
 
@@ -409,7 +418,6 @@ class ChannelsApiCallsTests {
             limit
         )
 
-
         Mockito.`when`(
             mock.retrofitApi.queryChannels(
                 mock.apiKey,
@@ -431,7 +439,6 @@ class ChannelsApiCallsTests {
         val limit = 1
         val channel = Channel()
             .apply { id = "10" }
-
 
         val request = QueryChannelsRequest(
             FilterObject("type", "messaging"),
@@ -494,7 +501,4 @@ class ChannelsApiCallsTests {
 
         verifyError(result, mock.serverErrorCode)
     }
-
-
 }
-

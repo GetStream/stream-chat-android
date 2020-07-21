@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.utils.FilterObject
 import kotlinx.android.synthetic.main.activity_test_user_api.*
 
-
 class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private val client = App.client
@@ -71,7 +70,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun setGuestUser() {
-        //testUserApiLoadingShapeContainer.makeVisible()
+        // testUserApiLoadingShapeContainer.makeVisible()
 
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
@@ -86,12 +85,12 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun setAnonymousUser() {
-        //testUserApiLoadingShapeContainer.makeVisible()
+        // testUserApiLoadingShapeContainer.makeVisible()
         client.setAnonymousUser()
     }
 
     private fun setRegularUser() {
-        //testUserApiLoadingShapeContainer.makeVisible()
+        // testUserApiLoadingShapeContainer.makeVisible()
 
         client.events().subscribe {
             if (it is ConnectedEvent) {
@@ -112,9 +111,9 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
                 task.result?.token?.let { firebaseToken ->
                     client.addDevice(firebaseToken).enqueue { result ->
                         if (result.isSuccess) {
-                            //User device registered success
+                            // User device registered success
                         } else {
-                            //Device not registered
+                            // Device not registered
                         }
                     }
                 }
@@ -132,7 +131,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
             }
 
-            //echoResult(result, "Users gets successful")
+            // echoResult(result, "Users gets successful")
         }
     }
 
@@ -142,7 +141,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             channelType = channelType,
             members = listOf("stream-eugene")
         ).enqueue { result ->
-            //echoResult(result, "Member added successful")
+            // echoResult(result, "Member added successful")
         }
     }
 
@@ -152,19 +151,19 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             channelType = channelType,
             members = listOf("stream-eugene")
         ).enqueue { result ->
-            //echoResult(result, "Member removed successful")
+            // echoResult(result, "Member removed successful")
         }
     }
 
     private fun muteUser() {
         client.muteUser("stream-eugene").enqueue { result ->
-            //echoResult(result, "Member muted successful")
+            // echoResult(result, "Member muted successful")
         }
     }
 
     private fun unMuteUser() {
         client.unmuteUser("stream-eugene").enqueue { result ->
-            //echoResult(result, "Member unmuted successful")
+            // echoResult(result, "Member unmuted successful")
         }
     }
 
@@ -172,7 +171,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         client.flag(
             targetId = "stream-eugene"
         ).enqueue { result ->
-            //echoResult(result, "Flag successful")
+            // echoResult(result, "Flag successful")
         }
     }
 
@@ -184,7 +183,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             timeout = 10,
             reason = "reason"
         ).enqueue { result ->
-            //echoResult(result, "User baned successful")
+            // echoResult(result, "User baned successful")
         }
     }
 
@@ -194,7 +193,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             channelType = channelType,
             channelId = channelId
         ).enqueue { result ->
-            //echoResult(result, "User unbaned successful")
+            // echoResult(result, "User unbaned successful")
         }
     }
 
@@ -202,7 +201,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
         val filter = FilterObject("type", "messaging")
         val sort = QuerySort()
             .asc("last_active")
-        //return QueryUsers(0, 10, filter, sort)
+        // return QueryUsers(0, 10, filter, sort)
         return QueryUsersRequest(filter, 0, 10)
     }
 

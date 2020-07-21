@@ -35,5 +35,4 @@ internal class FirebaseMessageParserImpl(val config: ChatNotificationConfig) : F
             channelType
         )
     }
-
 }

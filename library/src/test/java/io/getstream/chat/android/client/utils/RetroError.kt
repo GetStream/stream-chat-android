@@ -26,7 +26,6 @@ class RetroError<T>(val statusCode: Int) : Call<T> {
     }
 
     override fun cancel() {
-
     }
 
     override fun execute(): Response<T> {
@@ -43,5 +42,4 @@ class RetroError<T>(val statusCode: Int) : Call<T> {
     override fun timeout(): Timeout {
         return Timeout()
     }
-
 }

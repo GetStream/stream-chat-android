@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-
 data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
 
     constructor(key: String, value: Any) : this() {
@@ -38,5 +37,4 @@ data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
         }
         return data
     }
-
 }

@@ -21,10 +21,12 @@ class TokenAuthInterceptorTests {
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-
-        val exception = catchThrowableOfType({
-            interceptor.intercept(FakeChain(FakeResponse(200)))
-        }, ChatRequestError::class.java)
+        val exception = catchThrowableOfType(
+            {
+                interceptor.intercept(FakeChain(FakeResponse(200)))
+            },
+            ChatRequestError::class.java
+        )
 
         assertThat(exception.streamCode).isEqualTo(ChatErrorCode.UNDEFINED_TOKEN.code)
     }
@@ -34,10 +36,12 @@ class TokenAuthInterceptorTests {
         val tm = FakeTokenManager("token")
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-
-        val exception = catchThrowableOfType({
-            interceptor.intercept(FakeChain(FakeResponse(500)))
-        }, ChatRequestError::class.java)
+        val exception = catchThrowableOfType(
+            {
+                interceptor.intercept(FakeChain(FakeResponse(500)))
+            },
+            ChatRequestError::class.java
+        )
 
         assertThat(exception.statusCode).isEqualTo(500)
     }
@@ -62,16 +66,18 @@ class TokenAuthInterceptorTests {
         val tm = FakeTokenManager(invalidHeader)
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
 
-        val exception = catchThrowableOfType({
-            interceptor.intercept(FakeChain(FakeResponse(200)))
-        }, ChatRequestError::class.java)
+        val exception = catchThrowableOfType(
+            {
+                interceptor.intercept(FakeChain(FakeResponse(200)))
+            },
+            ChatRequestError::class.java
+        )
 
         assertThat(exception.streamCode).isEqualTo(ChatErrorCode.INVALID_TOKEN.code)
     }
 
     @Test
     fun expiredToken() {
-
 
         val tm = TokenManagerImpl()
         val interceptor = TokenAuthInterceptor(tm, parser) { false }
@@ -86,6 +92,4 @@ class TokenAuthInterceptorTests {
         chain.processChain()
         interceptor.intercept(chain)
     }
-
-
 }

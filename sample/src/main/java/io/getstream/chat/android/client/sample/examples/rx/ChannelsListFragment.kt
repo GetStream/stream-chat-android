@@ -3,14 +3,12 @@ package io.getstream.chat.android.client.sample.examples.rx
 import android.os.Bundle
 import android.view.View
 import io.getstream.chat.android.client.sample.App
-import io.getstream.chat.android.client.sample.examples.rx.PageAdapter
 import io.getstream.chat.android.client.sample.ViewState
 import io.getstream.chat.android.client.sample.common.BaseChannelsListFragment
 import io.getstream.chat.android.client.sample.common.Channel
 import io.getstream.chat.android.client.sample.utils.PaginationListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_channels.*
-
 
 class ChannelsListFragment : BaseChannelsListFragment() {
 
@@ -20,7 +18,7 @@ class ChannelsListFragment : BaseChannelsListFragment() {
     var isLoading = false
 
     var offset = 0
-    var pageSize = 15 //TODO: define on layout pass
+    var pageSize = 15 // TODO: define on layout pass
 
     private val alreadyThere = mutableSetOf<Int>()
 
@@ -76,34 +74,35 @@ class ChannelsListFragment : BaseChannelsListFragment() {
 
         isLoading = true
 
-        subs.add(vm.channels(offset, pageSize).subscribe {
+        subs.add(
+            vm.channels(offset, pageSize).subscribe {
 
-            when (it) {
-                is ViewState.Loading -> {
-                    drawLoading()
-                }
-                is ViewState.Error -> {
-                    drawError(it.error)
-                    isLoading = false
-                }
-                is ViewState.Success -> {
-                    drawSuccess(it.data)
-                    //updateAdapter(it.data)
+                when (it) {
+                    is ViewState.Loading -> {
+                        drawLoading()
+                    }
+                    is ViewState.Error -> {
+                        drawError(it.error)
+                        isLoading = false
+                    }
+                    is ViewState.Success -> {
+                        drawSuccess(it.data)
+                        // updateAdapter(it.data)
 
-                    adapter.addPage(offset, it.data)
+                        adapter.addPage(offset, it.data)
 
-                    isLastPage = it.data.size < pageSize
-                    isLoading = false
-                    if (isLastPage) {
-                        drawAllLoaded()
+                        isLastPage = it.data.size < pageSize
+                        isLoading = false
+                        if (isLastPage) {
+                            drawAllLoaded()
+                        }
                     }
                 }
             }
-        })
+        )
     }
 
     override fun updateAdapter(channels: List<Channel>) {
-
     }
 
     override fun onDestroyView() {

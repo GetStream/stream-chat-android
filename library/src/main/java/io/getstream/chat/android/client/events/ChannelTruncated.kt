@@ -1,3 +1,3 @@
 package io.getstream.chat.android.client.events
 
-class ChannelTruncated: ChatEvent()
+class ChannelTruncated : ChatEvent()

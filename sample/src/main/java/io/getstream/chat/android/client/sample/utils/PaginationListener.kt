@@ -1,13 +1,13 @@
 package io.getstream.chat.android.client.sample.utils
 
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import androidx.recyclerview.widget.RecyclerView
-
 
 abstract class PaginationListener(private val pageSize: Int) : RecyclerView.OnScrollListener() {
     override fun onScrolled(
-        recyclerView: RecyclerView, dx: Int, dy: Int
+        recyclerView: RecyclerView,
+        dx: Int,
+        dy: Int
     ) {
         super.onScrolled(recyclerView, dx, dy)
         val layoutManager =
@@ -29,5 +29,4 @@ abstract class PaginationListener(private val pageSize: Int) : RecyclerView.OnSc
     protected abstract fun loadMoreItems()
     protected abstract fun isLastPage(): Boolean
     protected abstract fun isLoading(): Boolean
-
 }

@@ -5,7 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import io.getstream.chat.android.client.sample.ViewState
 import io.getstream.chat.android.client.sample.common.Channel
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChannelsViewModel(repository: ChannelsRepositorySync) {
 

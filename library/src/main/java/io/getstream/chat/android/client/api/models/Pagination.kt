@@ -14,5 +14,4 @@ enum class Pagination(private val value: String) {
     override fun toString(): String {
         return this.get()
     }
-
 }

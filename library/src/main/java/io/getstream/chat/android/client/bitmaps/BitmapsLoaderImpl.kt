@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.errors.ChatError
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
-
 internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
 
     val TAG = BitmapsLoader::class.java.simpleName
@@ -36,5 +35,4 @@ internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
             )
         }
     }
-
 }

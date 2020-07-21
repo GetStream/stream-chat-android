@@ -4,8 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
-import java.util.*
-
+import java.util.Date
 
 data class Message(
     var id: String = "",
@@ -70,7 +69,6 @@ data class Message(
 
     @IgnoreSerialisation
     var user: User = User(),
-
 
     @IgnoreSerialisation
     @IgnoreDeserialisation

@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 import org.assertj.core.api.Assertions.assertThat
-import java.util.*
+import java.util.Date
 
 class FakeSocketService(
     val eventsCollector: MutableList<ChatEvent> = mutableListOf()
@@ -18,7 +18,6 @@ class FakeSocketService(
     override var state: ChatSocketService.State = ChatSocketService.State.Disconnected(false)
 
     override fun connect(endpoint: String, apiKey: String, user: User?) {
-
     }
 
     private val listeners = mutableListOf<SocketListener>()
@@ -30,7 +29,6 @@ class FakeSocketService(
     }
 
     override fun disconnect() {
-
     }
 
     override fun addListener(listener: SocketListener) {
@@ -42,7 +40,6 @@ class FakeSocketService(
     }
 
     override fun onSocketError(error: ChatError) {
-
     }
 
     override fun onConnectionResolved(event: ConnectedEvent) {
@@ -54,7 +51,6 @@ class FakeSocketService(
     }
 
     override fun setLastEventDate(date: Date) {
-
     }
 
     fun verifyConnectionUserId(userId: String) {
@@ -64,5 +60,4 @@ class FakeSocketService(
     fun verifyNoConnectionUserId() {
         assertThat(connectionUserId).isNull()
     }
-
 }

@@ -47,15 +47,15 @@ class NotificationMessageReceiver : BroadcastReceiver() {
 
     private fun markAsRead(messageId: String?, channelId: String?, channelType: String?) {
         if (messageId.isNullOrBlank() || channelId.isNullOrBlank() || channelType.isNullOrBlank()) {
-            //Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
+            // Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
 
         ChatClient.instance().markMessageRead(channelType, channelId, messageId).enqueue { result ->
             if (result.isSuccess) {
-                //Log.i(TAG, "Channel marked as read")
+                // Log.i(TAG, "Channel marked as read")
             } else {
-                //Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
+                // Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
             }
         }
     }
@@ -66,7 +66,7 @@ class NotificationMessageReceiver : BroadcastReceiver() {
         messageChars: CharSequence?
     ) {
         if (channelId.isNullOrBlank() || channelId.isNullOrBlank() || type.isNullOrBlank()) {
-            //Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
+            // Log.e(TAG, "Invalid replyText  parameters: id:$id type:$type")
             return
         }
 
@@ -78,9 +78,9 @@ class NotificationMessageReceiver : BroadcastReceiver() {
             }
         ).enqueue { result ->
             if (result.isSuccess) {
-                //Log.i(TAG, "Channel marked as read")
+                // Log.i(TAG, "Channel marked as read")
             } else {
-                //Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
+                // Log.e(TAG, "Cant mark as read. Error: $errMsg Code: $errCode")
             }
         }
     }

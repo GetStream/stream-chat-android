@@ -25,5 +25,4 @@ enum class ChatLogLevel(private val severity: Int) {
     fun isMoreOrEqualsThan(level: ChatLogLevel): Boolean {
         return level.severity >= severity
     }
-
 }

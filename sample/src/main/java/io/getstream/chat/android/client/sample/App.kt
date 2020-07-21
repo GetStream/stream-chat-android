@@ -57,41 +57,29 @@ class App : Application() {
         val token =
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
-
-
-
-
         client = ChatClient.Builder(apiKey, this)
             .notifications(provideNotificationConfig())
             .loggerHandler(object : ChatLoggerHandler {
                 override fun logT(throwable: Throwable) {
-
                 }
 
                 override fun logT(tag: Any, throwable: Throwable) {
-
                 }
 
                 override fun logI(tag: Any, message: String) {
-
                 }
 
                 override fun logD(tag: Any, message: String) {
-
                 }
 
                 override fun logW(tag: Any, message: String) {
-
                 }
 
                 override fun logE(tag: Any, message: String) {
-
                 }
 
                 override fun logE(tag: Any, message: String, throwable: Throwable) {
-
                 }
-
             })
             .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()
@@ -117,7 +105,6 @@ class App : Application() {
         channelsRepositoryRx = ChannelsRepositoryRx(client, cache)
         channelsRepositoryLive = ChannelsRepositoryLive(client, cache)
 
-
         client.disconnect()
     }
 
@@ -130,27 +117,21 @@ class App : Application() {
             }
 
             override fun onActivityPaused(activity: Activity) {
-
             }
 
             override fun onActivityStarted(activity: Activity) {
-
             }
 
             override fun onActivityDestroyed(activity: Activity) {
-
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-
             }
 
             override fun onActivityStopped(activity: Activity) {
-
             }
 
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-
             }
         })
     }
@@ -169,6 +150,5 @@ class App : Application() {
 
             return intent
         }
-
     }
 }

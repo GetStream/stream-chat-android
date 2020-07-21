@@ -4,10 +4,44 @@ import com.google.gson.Gson
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelTruncated
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelVisible
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeleted
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated
+import io.getstream.chat.android.client.events.NotificationChannelTruncated
+import io.getstream.chat.android.client.events.NotificationInviteAccepted
+import io.getstream.chat.android.client.events.NotificationInviteRejected
+import io.getstream.chat.android.client.events.NotificationInvited
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNew
+import io.getstream.chat.android.client.events.NotificationMutesUpdated
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannel
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UserBanned
+import io.getstream.chat.android.client.events.UserPresenceChanged
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.UserUnbanned
+import io.getstream.chat.android.client.events.UserUpdated
 import io.getstream.chat.android.client.models.EventType
-import java.util.*
-import kotlin.collections.HashMap
+import java.util.Date
 
 internal class EventAdapter(
     private val gson: Gson,
@@ -50,8 +84,6 @@ internal class EventAdapter(
                 } else {
                     gson.fromJson(data, HealthEvent::class.java)
                 }
-
-
             }
 
             //region Messages
@@ -198,5 +230,4 @@ internal class EventAdapter(
 
         return result
     }
-
 }

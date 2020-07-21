@@ -6,16 +6,10 @@ import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.utils.observable.Subscription
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
-
+import io.getstream.chat.android.client.utils.observable.Subscription
 
 class ChannelsListActivity : AppCompatActivity() {
 
@@ -26,8 +20,6 @@ class ChannelsListActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
-
-
 
         sub = client.events().subscribe {
 
@@ -118,15 +110,15 @@ class ChannelsListActivity : AppCompatActivity() {
         builder.setTitle("Delete with id")
 
         val input = EditText(this)
-        //input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        // input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         builder.setView(input)
 
-        builder.setPositiveButton("OK",
+        builder.setPositiveButton(
+            "OK",
             DialogInterface.OnClickListener { dialog, which ->
                 val id = input.text.toString()
 
                 if (id.isEmpty()) {
-
                 } else {
 
                     if (id.contains(",")) {
@@ -136,16 +128,14 @@ class ChannelsListActivity : AppCompatActivity() {
                     } else {
                         DbUtils.removeChannel(id, this)
                     }
-
                 }
-
-
-            })
-        builder.setNegativeButton("Cancel",
-            DialogInterface.OnClickListener { dialog, which -> dialog.cancel() })
+            }
+        )
+        builder.setNegativeButton(
+            "Cancel",
+            DialogInterface.OnClickListener { dialog, which -> dialog.cancel() }
+        )
 
         builder.show()
     }
-
-
 }

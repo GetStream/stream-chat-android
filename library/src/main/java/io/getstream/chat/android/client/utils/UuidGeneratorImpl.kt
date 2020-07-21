@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.utils
 
-import java.util.*
+import java.util.UUID
 
 class UuidGeneratorImpl : UuidGenerator {
     override fun generate(): String {

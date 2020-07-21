@@ -2,7 +2,12 @@ package io.getstream.chat.android.client.sample.cache
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import io.getstream.chat.android.client.sample.common.Channel
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -85,5 +90,4 @@ interface ChannelsDao {
         new: Channel,
         cached: Channel
     ) = new.updatedAt != cached.updatedAt
-
 }

@@ -12,7 +12,7 @@ import java.io.EOFException
 import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.TreeSet
 import java.util.concurrent.TimeUnit
 
 private const val logBody = true
@@ -174,10 +174,9 @@ class HttpLoggingInterceptor : Interceptor {
     private fun bodyHasUnknownEncoding(headers: Headers): Boolean {
         val contentEncoding = headers["Content-Encoding"] ?: return false
         return !contentEncoding.equals("identity", ignoreCase = true) &&
-                !contentEncoding.equals("gzip", ignoreCase = true)
+            !contentEncoding.equals("gzip", ignoreCase = true)
     }
 }
-
 
 fun Buffer.isProbablyUtf8(): Boolean {
     try {

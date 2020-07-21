@@ -20,7 +20,6 @@ class SkipExtraDataGson {
                     val name = f.name
                     return name == extraDataName
                 }
-
             })
             .addDeserializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipClass(clazz: Class<*>): Boolean {
@@ -31,7 +30,6 @@ class SkipExtraDataGson {
                     val name = f.name
                     return name == extraDataName
                 }
-
             })
             .create()
     }

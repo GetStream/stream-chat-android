@@ -24,18 +24,17 @@ class PageAdapter :
 
     fun addPage(offset: Int, newPage: List<Channel>) {
         if (pages.containsKey(offset)) {
-            //update page
+            // update page
 
             if (newPage.isEmpty()) {
-                //page was removed completely
+                // page was removed completely
                 val removedPage = pages.remove(offset)!!
                 val sorted = removeAndSort(channels, removedPage)
                 applyDiff(sorted)
             } else {
-                //merge old and new pages
+                // merge old and new pages
                 val oldPage = pages[offset]
                 pages[offset] = newPage
-
 
                 val newChannels = ArrayList(channels)
 
@@ -50,12 +49,10 @@ class PageAdapter :
                 newChannels.sortWith(java.util.Comparator { o1: Channel, o2: Channel -> (o1.updatedAt - o2.updatedAt) })
                 applyDiff(newChannels)
 
-                //setOrUpdate(newPage)
-
+                // setOrUpdate(newPage)
             }
-
         } else {
-            //add new page
+            // add new page
             pages[offset] = newPage
             setOrUpdate(newPage)
         }

@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api.models
 
 import com.google.gson.annotations.SerializedName
 
-
 data class BanUserRequest(
     @SerializedName("target_user_id")
     var targetUserId: String,

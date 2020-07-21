@@ -1,11 +1,47 @@
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.api.models.AcceptInviteRequest
+import io.getstream.chat.android.client.api.models.AddDeviceRequest
+import io.getstream.chat.android.client.api.models.AddMembersRequest
+import io.getstream.chat.android.client.api.models.BanUserRequest
+import io.getstream.chat.android.client.api.models.ChannelResponse
+import io.getstream.chat.android.client.api.models.CompletableResponse
+import io.getstream.chat.android.client.api.models.GetSyncHistory
+import io.getstream.chat.android.client.api.models.GuestUserRequest
+import io.getstream.chat.android.client.api.models.HideChannelRequest
+import io.getstream.chat.android.client.api.models.MarkReadRequest
+import io.getstream.chat.android.client.api.models.MessageRequest
+import io.getstream.chat.android.client.api.models.MuteChannelRequest
+import io.getstream.chat.android.client.api.models.MuteUserRequest
+import io.getstream.chat.android.client.api.models.ProgressRequestBody
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryMembersRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.ReactionRequest
+import io.getstream.chat.android.client.api.models.RejectInviteRequest
+import io.getstream.chat.android.client.api.models.RemoveMembersRequest
+import io.getstream.chat.android.client.api.models.RetroProgressCallback
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.SendEventRequest
+import io.getstream.chat.android.client.api.models.TranslateMessageRequest
+import io.getstream.chat.android.client.api.models.UpdateChannelRequest
+import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.getMediaType
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Device
+import io.getstream.chat.android.client.models.Flag
+import io.getstream.chat.android.client.models.GuestUser
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -13,13 +49,14 @@ import io.getstream.chat.android.client.utils.UuidGenerator
 import okhttp3.MultipartBody.Part.Companion.createFormData
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.util.*
+import java.util.Date
+import kotlin.collections.set
 
 internal class ChatApiImpl(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val retrofitCdnApi: RetrofitCdnApi,
-    private val parser: ChatParser,
+    parser: ChatParser,
     private val uuidGenerator: UuidGenerator
 ) : ChatApi {
 
@@ -342,7 +379,6 @@ internal class ChatApiImpl(
         }
     }
 
-
     override fun stopWatching(
         channelType: String,
         channelId: String
@@ -601,7 +637,8 @@ internal class ChatApiImpl(
     ): Call<List<Member>> {
         return callMapper.map(
             retrofitApi.queryMembers(
-                apiKey, connectionId, QueryMembersRequest(
+                apiKey, connectionId,
+                QueryMembersRequest(
                     channelType,
                     channelId,
                     filter,
@@ -776,5 +813,4 @@ internal class ChatApiImpl(
             message.id = userId + "-" + uuidGenerator.generate()
         }
     }
-
 }

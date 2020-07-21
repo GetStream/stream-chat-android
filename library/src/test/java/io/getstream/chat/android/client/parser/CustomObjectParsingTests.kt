@@ -1,12 +1,18 @@
 package io.getstream.chat.android.client.parser
 
 import com.google.gson.reflect.TypeToken
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.CustomObject
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.adapters.CustomObjectGsonAdapter
 import org.assertj.core.api.Assertions.assertThat
 import org.json.JSONObject
 import org.junit.Ignore
 import org.junit.Test
+import kotlin.collections.set
 
 class CustomObjectParsingTests {
 
@@ -110,9 +116,11 @@ class CustomObjectParsingTests {
 
         val key = "key"
         val value = "value"
-        val json = parser.toJson(customObject.apply {
-            extraData[key] = value
-        })
+        val json = parser.toJson(
+            customObject.apply {
+                extraData[key] = value
+            }
+        )
 
         val obj = parser.fromJson(json, customObject::class.java)
         assertThat(obj.extraData).isEqualTo(mapOf(Pair(key, value)))
@@ -137,9 +145,6 @@ class CustomObjectParsingTests {
             if (!verified) {
                 throw RuntimeException("No default(empty) constructor for custom object: $clazz")
             }
-
         }
     }
-
-
 }

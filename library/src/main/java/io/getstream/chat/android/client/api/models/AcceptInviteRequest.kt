@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.models.User
 
-
 data class AcceptInviteRequest(
     val user: User,
     val message: AcceptInviteMessage,

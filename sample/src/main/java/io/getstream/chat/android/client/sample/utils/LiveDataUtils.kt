@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.sample.utils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 
-
 fun <T, K, R> LiveData<T>.combineWith(
     liveData: LiveData<K>,
     block: (T?, K?) -> R

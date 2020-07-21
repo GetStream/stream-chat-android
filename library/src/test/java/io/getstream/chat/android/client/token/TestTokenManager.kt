@@ -31,8 +31,8 @@ class TestTokenManager {
             listenerB.called(it.data())
         }
 
-        await().atMost(2, SECONDS).until {listenerA.isCalledWith(token)}
-        await().atMost(2, SECONDS).until {listenerB.isCalledWith(token)}
+        await().atMost(2, SECONDS).until { listenerA.isCalledWith(token) }
+        await().atMost(2, SECONDS).until { listenerB.isCalledWith(token) }
 
         await().atMost(2, SECONDS).until { manager.hasTokenProvider() }
         await().atMost(2, SECONDS).until { manager.hasToken() }
@@ -56,7 +56,6 @@ class TestTokenManager {
         await().atMost(2, SECONDS).until { manager.hasTokenProvider() }
         await().atMost(2, SECONDS).until { manager.hasToken() }
         await().atMost(2, SECONDS).until { manager.getToken() == token }
-
     }
 
     @Test
@@ -99,7 +98,6 @@ class TestTokenManager {
 
         await().atMost(2, SECONDS).until { manager.getToken() == tokenB }
     }
-
 
     class CallListener {
 

@@ -14,7 +14,6 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
@@ -31,7 +30,6 @@ class ChatParserImpl : ChatParser {
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
                     return f.getAnnotation(IgnoreSerialisation::class.java) != null
                 }
-
             })
             .addDeserializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipClass(clazz: Class<*>): Boolean {
@@ -41,7 +39,6 @@ class ChatParserImpl : ChatParser {
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
                     return f.getAnnotation(IgnoreDeserialisation::class.java) != null
                 }
-
             })
             .create()
     }
@@ -86,8 +83,6 @@ class ChatParserImpl : ChatParser {
             } else {
                 ChatNetworkError.create(error.code, error.message, statusCode)
             }
-
-
         } catch (t: Throwable) {
             ChatLogger.instance.logE(TAG, t)
             ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, t, statusCode)

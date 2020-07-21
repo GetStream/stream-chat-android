@@ -1,21 +1,39 @@
-//package io.getstream.chat.android.client.sample.common
+// package io.getstream.chat.android.client.sample.common
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.*
+import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated
+import io.getstream.chat.android.client.events.NotificationMutesUpdated
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.ChannelMute
+import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.contains
 import io.getstream.chat.android.client.models.Filters.eq
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import java.io.File
-import java.util.*
-
+import java.util.ArrayList
 
 val client = ChatClient.instance()
 val channelType = ""
@@ -35,7 +53,6 @@ fun getApplicationContext(): Context {
     return null!!
 }
 
-
 fun init() {
     // Typically done in your Application class
     val client = ChatClient.Builder("{{ api_key }}", context).build()
@@ -52,17 +69,19 @@ fun setUser() {
     user.extraData["name"] = "Bender"
     user.extraData["image"] = "https://bit.ly/321RmWb"
 
+    client.setUser(
+        user, token,
+        object : InitConnectionListener() {
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                val connectionId = data.connectionId
+            }
 
-    client.setUser(user, token, object : InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            val user = data.user
-            val connectionId = data.connectionId
+            override fun onError(error: ChatError) {
+                error.printStackTrace()
+            }
         }
-
-        override fun onError(error: ChatError) {
-            error.printStackTrace()
-        }
-    })
+    )
 }
 
 /**
@@ -101,7 +120,6 @@ fun channel() {
 }
 
 fun sendMessage() {
-
 
     // prepare the message
     val message = Message()
@@ -143,17 +161,20 @@ fun initClient() {
     user.extraData["image"] = "https://bit.ly/321RmWb"
     user.extraData["name"] = "Bender"
 
-    client.setUser(user, token, object : InitConnectionListener() {
+    client.setUser(
+        user, token,
+        object : InitConnectionListener() {
 
-        override fun onSuccess(data: ConnectionData) {
-            val user = data.user
-            val connectionId = data.connectionId
-        }
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                val connectionId = data.connectionId
+            }
 
-        override fun onError(error: ChatError) {
-            error.printStackTrace()
+            override fun onError(error: ChatError) {
+                error.printStackTrace()
+            }
         }
-    })
+    )
 }
 
 fun setGuestUser() {
@@ -218,7 +239,7 @@ fun sendMessage2() {
     message.attachments.add(attachment)
 
     // include the user id of the mentioned user
-    //message.mentionedUsers.add(User("josh-id"))
+    // message.mentionedUsers.add(User("josh-id"))
 
     channelController.sendMessage(message).enqueue {
         val message = it.data()
@@ -262,36 +283,34 @@ fun sendFileAndImage() {
     val anyOtherFile = File("path")
 
     // upload an image
-    channelController.sendImage(imageFile, object : ProgressCallback {
-        override fun onSuccess(file: String) {
+    channelController.sendImage(
+        imageFile,
+        object : ProgressCallback {
+            override fun onSuccess(file: String) {
+            }
 
+            override fun onError(error: ChatError) {
+            }
+
+            override fun onProgress(progress: Long) {
+            }
         }
-
-        override fun onError(error: ChatError) {
-
-        }
-
-        override fun onProgress(progress: Long) {
-
-        }
-
-    })
+    )
 
     // upload a file
-    channelController.sendFile(anyOtherFile, object : ProgressCallback {
-        override fun onSuccess(file: String) {
+    channelController.sendFile(
+        anyOtherFile,
+        object : ProgressCallback {
+            override fun onSuccess(file: String) {
+            }
 
+            override fun onError(error: ChatError) {
+            }
+
+            override fun onProgress(progress: Long) {
+            }
         }
-
-        override fun onError(error: ChatError) {
-
-        }
-
-        override fun onProgress(progress: Long) {
-
-        }
-
-    })
+    )
 }
 
 fun sendReaction() {
@@ -379,7 +398,6 @@ fun listeningSomeEvent() {
         .events()
         .filter("message.deleted")
         .subscribe { messageDeletedEvent ->
-
         }
     subscription.unsubscribe()
 }
@@ -387,7 +405,6 @@ fun listeningSomeEvent() {
 fun listenAllEvents() {
     val subscription = channelController.events().subscribe { event ->
         if (event is NewMessageEvent) {
-
         }
     }
     subscription.unsubscribe()
@@ -397,10 +414,10 @@ fun clientEvents() {
     // subscribe to all client events and log the unread_count field
     client.events().subscribe { event ->
         if (event.totalUnreadCount != null) {
-            println("unread messages count is now: ${event.totalUnreadCount}");
+            println("unread messages count is now: ${event.totalUnreadCount}")
         }
         if (event.unreadChannels != null) {
-            println("unread channels count is now: ${event.unreadChannels}");
+            println("unread channels count is now: ${event.unreadChannels}")
         }
 
         if (event is ConnectedEvent) {
@@ -409,20 +426,19 @@ fun clientEvents() {
             val unreadChannels = event.user!!.unreadChannels
         }
     }
-
 }
 
 fun connectionEvents() {
     client.events().subscribe { event ->
         when (event) {
             is ConnectedEvent -> {
-                //socket is connected
+                // socket is connected
             }
             is ConnectingEvent -> {
-                //socket is connecting
+                // socket is connecting
             }
             is DisconnectedEvent -> {
-                //socket is disconnected
+                // socket is disconnected
             }
         }
     }
@@ -443,7 +459,6 @@ fun notificationEvents() {
 }
 
 fun createChannelController() {
-
 
     val channelController = client.channel(channelType, channelId)
 
@@ -612,20 +627,23 @@ fun muting() {
     client.muteChannel(channelType, channelId)
         .enqueue { result: Result<Unit> ->
             if (result.isSuccess) {
-                //channel is muted
+                // channel is muted
             } else {
                 result.error().printStackTrace()
             }
         }
 
     // get list of muted channels when user is connected
-    client.setUser(user, token, object : InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            val user = data.user
-            // mutes contains the list of channel mutes
-            val mutes: List<ChannelMute> = user.channelMutes
+    client.setUser(
+        user, token,
+        object : InitConnectionListener() {
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                // mutes contains the list of channel mutes
+                val mutes: List<ChannelMute> = user.channelMutes
+            }
         }
-    })
+    )
 
     // get updates about muted channels
     client
@@ -736,22 +754,23 @@ fun startAndStopTyping() {
 fun reveivingTypingEvents() {
     // add typing start event handling
     channelController.events().filter(EventType.TYPING_START).subscribe { startTyping ->
-
     }
     // add typing top event handling
     channelController.events().filter(EventType.TYPING_STOP).subscribe { startTyping ->
-
     }
 }
 
 fun unreadSetUser() {
-    client.setUser(User(userId), "{{ chat_user_token }}", object : InitConnectionListener() {
-        override fun onSuccess(data: ConnectionData) {
-            val user = data.user
-            val unreadChannels = user.unreadChannels
-            val totalUnreadCount = user.totalUnreadCount
+    client.setUser(
+        User(userId), "{{ chat_user_token }}",
+        object : InitConnectionListener() {
+            override fun onSuccess(data: ConnectionData) {
+                val user = data.user
+                val unreadChannels = user.unreadChannels
+                val totalUnreadCount = user.totalUnreadCount
+            }
         }
-    })
+    )
 }
 
 fun markRead() {
@@ -794,7 +813,7 @@ internal class ChannelPagination {
                 if (messages.isNotEmpty() && messages.size == pageSize) {
                     loadSecondPage(messages.last().id)
                 } else {
-                    //all messages loaded
+                    // all messages loaded
                 }
             }
         }
@@ -805,19 +824,16 @@ internal class ChannelPagination {
             client.queryChannel(channelType, channelId, firstPage).enqueue { result ->
                 val messages: List<Message> = result.data().messages
                 if (messages.size < pageSize) {
-                    //all messages loaded
+                    // all messages loaded
                 } else {
-                    //load another page
+                    // load another page
                 }
             }
         }
     }
-
-
 }
 
 class MultiTenantAndTeams {
-
 
     fun channelTeam() {
         val extraData = mutableMapOf<String, Any>()

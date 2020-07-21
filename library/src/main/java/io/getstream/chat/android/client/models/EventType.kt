@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.models
 
-
 /**
  * https://getstream.io/chat/docs/js/#event_object
  */
@@ -54,5 +53,4 @@ object EventType {
      * Unknown
      */
     val UNKNOWN = ""
-
 }

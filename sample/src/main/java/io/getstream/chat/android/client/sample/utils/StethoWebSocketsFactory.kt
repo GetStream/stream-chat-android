@@ -3,7 +3,11 @@ package io.getstream.chat.android.client.sample.utils
 import com.facebook.stetho.inspector.network.NetworkEventReporterImpl
 import com.facebook.stetho.inspector.network.SimpleBinaryInspectorWebSocketFrame
 import com.facebook.stetho.inspector.network.SimpleTextInspectorWebSocketFrame
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import okio.ByteString
 
 class StethoWebSocketsFactory(private val httpClient: OkHttpClient) : WebSocket.Factory {
@@ -74,6 +78,5 @@ class StethoWebSocketsFactory(private val httpClient: OkHttpClient) : WebSocket.
         override fun cancel() = wrappedSocket.cancel()
 
         override fun request() = wrappedSocket.request()
-
     }
 }

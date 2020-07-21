@@ -6,12 +6,10 @@ import io.getstream.chat.android.client.sample.common.BaseChannelsListFragment
 class ChannelsListFragment : BaseChannelsListFragment() {
 
     override fun reload() {
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 
 //        App.client.queryChannels(
 //            ChannelsQuery().apply {

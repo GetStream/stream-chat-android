@@ -17,7 +17,6 @@ internal class TokenManagerImpl : TokenManager {
     private lateinit var provider: TokenProvider
     private val tokenProviderExecutor = Executors.newSingleThreadExecutor()
 
-
     override fun loadAsync(listener: (Result<String>) -> Unit) {
 
         if (hasToken()) {

@@ -47,6 +47,4 @@ class ChannelsCache(val dao: ChannelsDao) {
     fun storeSync(channels: List<Channel>) {
         dao.upsert(channels)
     }
-
-
 }

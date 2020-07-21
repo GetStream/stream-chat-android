@@ -21,7 +21,8 @@ class ChannelsListFragment : BaseChannelsListFragment() {
     private fun load() {
         val vm = ChannelsViewModel(App.channelsRepositoryLive)
 
-        vm.channels().observe(this,
+        vm.channels().observe(
+            this,
             Observer<ViewState<List<Channel>>> { state ->
                 when (state) {
                     is ViewState.Loading -> {
@@ -34,6 +35,7 @@ class ChannelsListFragment : BaseChannelsListFragment() {
                         drawSuccess(state.data)
                     }
                 }
-            })
+            }
+        )
     }
 }
