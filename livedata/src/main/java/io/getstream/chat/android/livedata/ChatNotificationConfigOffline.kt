@@ -30,14 +30,14 @@ open class ChatNotificationConfigOffline(context: Context) : ChatNotificationCon
         logger.logI("onFirebaseMessage started a worker to update channel $cid")
         //  Start background work manager
         val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
 
         // TODO: how does this work when the app is backgrounded?
 
         val taskData = workDataOf("STREAM_CHANNEL_CID" to cid, "STREAM_USER_ID" to ChatDomain.instance().currentUser.id)
         val request = OneTimeWorkRequestBuilder<SyncWorker>().setInputData(taskData).setConstraints(constraints)
-                .build()
+            .build()
         WorkManager.getInstance(context).enqueue(request)
 
         return super.onFirebaseMessage(message)

@@ -26,7 +26,7 @@ class SyncWorkerTest : BaseDisconnectedMockedTest() {
                 .setInputData(data)
                 .build()
 
-                val syncWorker: SyncWorker = worker as SyncWorker
+        val syncWorker: SyncWorker = worker as SyncWorker
         val result = syncWorker.doWork()
 
         Truth.assertThat(result).isNotNull()

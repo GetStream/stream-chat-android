@@ -14,10 +14,10 @@ class ListConverter {
             return emptyList()
         }
         val listType = object :
-                TypeToken<List<String?>?>() {}.type
+            TypeToken<List<String?>?>() {}.type
         return gson.fromJson(
-                data,
-                listType
+            data,
+            listType
         )
     }
 
@@ -32,10 +32,10 @@ class ListConverter {
             return emptyList()
         }
         val listType = object :
-                TypeToken<List<Attachment?>?>() {}.type
+            TypeToken<List<Attachment?>?>() {}.type
         return gson.fromJson(
-                data,
-                listType
+            data,
+            listType
         )
     }
 
@@ -50,17 +50,17 @@ class ListConverter {
             return emptyList()
         }
         val listType = object :
-                TypeToken<List<ReactionEntity>?>() {}.type
+            TypeToken<List<ReactionEntity>?>() {}.type
         return gson.fromJson(
-                data,
-                listType
+            data,
+            listType
         )
     }
 
     @TypeConverter
     fun reactionListToString(someObjects: List<ReactionEntity>?): String? {
         return gson.toJson(
-                someObjects
+            someObjects
         )
     }
 }

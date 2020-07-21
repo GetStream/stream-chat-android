@@ -53,7 +53,7 @@ class ThreadControllerImplTest {
         runBlocking {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positveRandomInt( 30)
+            val limit = positveRandomInt(30)
             val replies = randomMessages(limit) {
                 randomMessage(
                     parentId = threadId,
@@ -84,8 +84,8 @@ class ThreadControllerImplTest {
         runBlocking {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positveRandomInt( 30)
-            val replies = randomMessages(limit-1) {
+            val limit = positveRandomInt(30)
+            val replies = randomMessages(limit - 1) {
                 randomMessage(
                     parentId = threadId,
                     createdAt = Date((it).toLong())

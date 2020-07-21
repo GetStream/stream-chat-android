@@ -35,7 +35,6 @@ fun Message.getCid(): String =
         this.cid
     }
 
-
 fun Message.users(): List<User> {
     val users = mutableListOf<User>()
     users.add(this.user)

@@ -77,15 +77,15 @@ class MessageRepositoryTest : BaseDomainTest() {
     fun testSelectMessagesForChannel() = runBlocking(Dispatchers.IO) {
         val message1 = data.createMessage().apply {
             id = "testSelectMessagesForChannel1"; text = "message1"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =
-            calendar(2019, 11, 1)
+                calendar(2019, 11, 1)
         }
         val message2 = data.createMessage().apply {
             id = "testSelectMessagesForChannel2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
-            data.user1; createdAt = calendar(2019, 10, 1)
+                data.user1; createdAt = calendar(2019, 10, 1)
         }
         val message3 = data.createMessage().apply {
             id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
-            data.user1; createdAt = calendar(2019, 9, 1)
+                data.user1; createdAt = calendar(2019, 9, 1)
         }
         repo.insertMessages(listOf(message1, message2, message3), true)
 

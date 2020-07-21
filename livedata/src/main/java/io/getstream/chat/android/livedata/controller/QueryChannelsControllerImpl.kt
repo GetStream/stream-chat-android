@@ -19,8 +19,8 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.extensions.isChannelEvent
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.*
+import java.util.concurrent.ConcurrentHashMap
 
 class QueryChannelsControllerImpl(
     internal var queryEntity: QueryChannelsEntity,

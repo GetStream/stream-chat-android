@@ -10,12 +10,12 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import java.lang.Thread.sleep
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
 class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
@@ -82,7 +82,8 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         var liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.channel.cid,
-            AnyChannelPaginationRequest().apply { messageLimit = 10 })
+            AnyChannelPaginationRequest().apply { messageLimit = 10 }
+        )
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
@@ -104,7 +105,8 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.channel.cid,
-            AnyChannelPaginationRequest().apply { messageLimit = 10 })
+            AnyChannelPaginationRequest().apply { messageLimit = 10 }
+        )
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)

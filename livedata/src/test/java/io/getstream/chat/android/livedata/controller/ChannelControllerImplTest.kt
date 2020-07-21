@@ -12,15 +12,13 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Watcher
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.randomString
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.ChannelData
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.*
-import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File

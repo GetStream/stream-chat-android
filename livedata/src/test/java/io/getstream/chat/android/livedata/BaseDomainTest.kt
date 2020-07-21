@@ -29,7 +29,6 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.utils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -38,8 +37,6 @@ import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import java.time.Instant
-import java.util.Date
 
 open class BaseDomainTest {
     lateinit var database: ChatDatabase
@@ -172,7 +169,8 @@ open class BaseDomainTest {
 
         When calling client.setUser(any(), any<String>(), any()) doAnswer {
             (it.arguments[2] as InitConnectionListener).onSuccess(
-                InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString()))
+                InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString())
+            )
         }
 
         return client
@@ -215,9 +213,11 @@ open class BaseDomainTest {
         }
         chatDomain = chatDomainImpl
 
-        chatDomainImpl.errorEvents.observeForever(EventObserver {
-            System.out.println("error event$it")
-        })
+        chatDomainImpl.errorEvents.observeForever(
+            EventObserver {
+                System.out.println("error event$it")
+            }
+        )
 
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)

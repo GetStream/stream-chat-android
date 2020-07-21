@@ -35,25 +35,29 @@ class IdGenerationDomainTest : BaseDomainTest() {
             FilterObject(
                 "type",
                 "messaging"
-            ), QuerySort()
+            ),
+            QuerySort()
         )
         val query2 = QueryChannelsEntity(
             FilterObject(
                 "type",
                 "messaging"
-            ), QuerySort()
+            ),
+            QuerySort()
         )
         val query3 = QueryChannelsEntity(
             FilterObject(
                 "type",
                 "commerce"
-            ), QuerySort()
+            ),
+            QuerySort()
         )
         val query4 = QueryChannelsEntity(
             FilterObject(
                 "type",
                 "messaging"
-            ), QuerySort().asc("name")
+            ),
+            QuerySort().asc("name")
         )
         // verify that 1 and 2 are equal
         Truth.assertThat(query2.id).isEqualTo(query.id)

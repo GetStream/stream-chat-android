@@ -49,8 +49,8 @@ class EventHandlerImpl(var domainImpl: io.getstream.chat.android.livedata.ChatDo
             logger.logI("Handling event of type ${event.type} for cid $cid, event batch size is ${events.size}")
             when (event) {
                 is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is NotificationRemovedFromChannel,
-                    is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent, is ChannelVisible,
-                    is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected
+                is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent, is ChannelVisible,
+                is NotificationAddedToChannelEvent, is NotificationInvited, is NotificationInviteAccepted, is NotificationInviteRejected
                 -> {
                     // get the channel, update reads, write the channel
                     channelsToFetch.add(cid)

@@ -100,7 +100,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
         c.createdBy = userMap[createdByUserId]
-                ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
+            ?: error("userMap doesnt contain the user $createdByUserId for the channel.created_by channel $cid")
 
         return c
     }

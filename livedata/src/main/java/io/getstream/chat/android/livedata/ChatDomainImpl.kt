@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -35,10 +34,10 @@ import io.getstream.chat.android.livedata.usecase.*
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import kotlinx.coroutines.*
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlinx.coroutines.*
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.

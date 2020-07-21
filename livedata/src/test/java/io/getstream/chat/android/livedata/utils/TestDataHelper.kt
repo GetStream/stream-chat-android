@@ -162,42 +162,42 @@ class TestDataHelper {
 
     val message1 = Message().apply {
         this.channel = channel1; cid = channel1.cid; text = "hi there"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+            user1; createdAt = calendar(2020, 1, 1)
     }
 
     val message1WithoutChannelAndCid = Message().apply {
         text = "hi there"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+            user1; createdAt = calendar(2020, 1, 1)
     }
 
     fun createMessage(): Message {
         val text = "hi there " + UUID.randomUUID().toString()
         val message = Message().apply {
             this.channel = channel1; cid = channel1.cid; this.text = text; id = ""; user =
-            user1; createdAt = Date()
+                user1; createdAt = Date()
         }
         return message
     }
 
     val message1Updated = Message().apply {
         channel = channel1; cid = channel1.cid; text = "im update now"; id = "message-1"; user =
-        user1; createdAt = calendar(2020, 1, 1)
+            user1; createdAt = calendar(2020, 1, 1)
     }
     val reactionMessage = Message().apply {
         channel = channel1; text = "im update now"; id = "message-1"; user = user1
         reactionScores = mutableMapOf("like" to 10)
         reactionCounts = mutableMapOf("like" to 1); ownReactions =
-        mutableListOf(reaction1); latestReactions = mutableListOf(reaction1)
+            mutableListOf(reaction1); latestReactions = mutableListOf(reaction1)
     }
     val messageThread =
         Message().apply { channel = channel1; parentId = "message-1"; id = "message-2" }
     val message2Older = Message().apply {
         this.channel = channel1; text = "message2"; id = "message-2"; user = user1; createdAt =
-        calendar(2019, 1, 1)
+            calendar(2019, 1, 1)
     }
     val messageFromUser2 = Message().apply {
         this.channel = channel1; text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
-        calendar(2020, 2, 1)
+            calendar(2020, 2, 1)
     }
 
     val connectedEvent = ConnectedEvent().apply { me = user1 }

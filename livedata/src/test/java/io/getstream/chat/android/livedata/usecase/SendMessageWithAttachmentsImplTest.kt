@@ -82,7 +82,7 @@ class SendMessageWithAttachmentsImplTest {
 
             val result = sendMessageWithAttachemen(randomCID(), randomMessage(), (images + badImage).shuffled()).execute()
 
-            result `should be equal to result`  expectedResult
+            result `should be equal to result` expectedResult
         }
     }
 
@@ -93,13 +93,17 @@ class SendMessageWithAttachmentsImplTest {
             val cid = randomCID()
             val message = randomMessage(cid = cid)
             val expectedResult = Result(
-                message.copy(cid = cid,
-                    attachments = (message.attachments + files.map {
-                    it.toAttachment(null).apply {
-                        assetUrl = it.absolutePath
-                        type = "file"
-                    }
-                }).toMutableList())
+                message.copy(
+                    cid = cid,
+                    attachments = (
+                        message.attachments + files.map {
+                            it.toAttachment(null).apply {
+                                assetUrl = it.absolutePath
+                                type = "file"
+                            }
+                        }
+                        ).toMutableList()
+                )
             )
             When calling channelController.scope doReturn this
             channelController.configureSuccessResultSendingFiles(files)
@@ -119,12 +123,14 @@ class SendMessageWithAttachmentsImplTest {
             val expectedResult = Result(
                 message.copy(
                     cid = cid,
-                    attachments = (message.attachments + images.map {
-                        it.toAttachment("image/jpeg").apply {
-                            imageUrl = it.absolutePath
-                            type = "image"
+                    attachments = (
+                        message.attachments + images.map {
+                            it.toAttachment("image/jpeg").apply {
+                                imageUrl = it.absolutePath
+                                type = "image"
+                            }
                         }
-                    }).toMutableList()
+                        ).toMutableList()
                 )
             )
             When calling channelController.scope doReturn this
@@ -150,13 +156,15 @@ class SendMessageWithAttachmentsImplTest {
             val expectedResult = Result(
                 message.copy(
                     cid = cid,
-                    attachments = (message.attachments + images.map {
-                        it.toAttachment("image/jpeg").apply {
-                            imageUrl = it.absolutePath
-                            type = "image"
-                            extraData[extraDataKey] = it.name
+                    attachments = (
+                        message.attachments + images.map {
+                            it.toAttachment("image/jpeg").apply {
+                                imageUrl = it.absolutePath
+                                type = "image"
+                                extraData[extraDataKey] = it.name
+                            }
                         }
-                    }).toMutableList()
+                        ).toMutableList()
                 )
             )
             When calling channelController.scope doReturn this
@@ -185,13 +193,15 @@ class SendMessageWithAttachmentsImplTest {
             val expectedResult = Result(
                 message.copy(
                     cid = cid,
-                    attachments = (message.attachments + files.map {
-                        it.toAttachment(null).apply {
-                            assetUrl = it.absolutePath
-                            type = "file"
-                            extraData[extraDataKey] = it.name
+                    attachments = (
+                        message.attachments + files.map {
+                            it.toAttachment(null).apply {
+                                assetUrl = it.absolutePath
+                                type = "file"
+                                extraData[extraDataKey] = it.name
+                            }
                         }
-                    }).toMutableList()
+                        ).toMutableList()
                 )
             )
             When calling channelController.scope doReturn this
