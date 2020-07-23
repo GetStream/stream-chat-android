@@ -19,6 +19,7 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.extensions.isChannelEvent
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -146,7 +147,7 @@ class QueryChannelsControllerImpl(
 
         if (channels != null) {
             // first page replaces the results, second page adds to them
-            if (pagination.isFirstPage()) {
+            if (pagination.isFirstPage) {
                 setChannels(channels)
             } else {
                 addChannels(channels)
@@ -181,7 +182,7 @@ class QueryChannelsControllerImpl(
 
             domainImpl.storeStateForChannels(channelsResponse)
 
-            if (pagination.isFirstPage()) {
+            if (pagination.isFirstPage) {
                 setChannels(channelsResponse)
             } else {
                 addChannels(channelsResponse)
@@ -195,7 +196,7 @@ class QueryChannelsControllerImpl(
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val loader = if (pagination.isFirstPage()) {
+        val loader = if (pagination.isFirstPage) {
             _loading
         } else {
             _loadingMore
