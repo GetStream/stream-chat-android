@@ -10,9 +10,9 @@ import io.getstream.chat.android.client.utils.FilterObject
  * Since those are provided by the QueryChannelsRepo
  */
 data class QueryChannelsPaginationRequest(
-    var channelOffset: Int = 0,
-    var channelLimit: Int = 30,
-    var messageLimit: Int = 10
+    val channelOffset: Int = 0,
+    val channelLimit: Int = 30,
+    val messageLimit: Int = 10
 ) {
 
     fun isFirstPage(): Boolean {
