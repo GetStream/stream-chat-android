@@ -7,34 +7,36 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.ChatNotificationConfigOffline.Companion.EXTRA_CID
 
 class SyncService: Service() {
 
-    override fun onCreate() {
-        super.onCreate()
-
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
 
         NotificationCompat.Builder(this, CHANNEL_ID)
-            // TODO: make titles dynamic
-            .setContentText("Sync notification title")
-            .setContentText("Sync notification content")
             .setAutoCancel(true)
             .build()
             .apply {
                 startForeground(1, this)
             }
-    }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         try {
             intent?.getStringExtra(EXTRA_CID)?.let {
                 // TODO: ChatDomain is null when app gets killed.
-                //  Need to store api key to re-create ChatClient + ChatDomain here.
+                // That's why it's wrapped in try clause atm.
+                // Need to store api key to re-create ChatClient + ChatDomain here.
                 ChatDomain.instance().apply {
-                    useCases.replayEventsForActiveChannels(it).execute()
+                    val result = useCases.replayEventsForActiveChannels(it).execute()
+                    if (result.isSuccess) {
+                        val numberOfNewMessages =
+                            result.data().filterIsInstance<NewMessageEvent>().count()
+                        // TODO: display notification about X new messages
+                    } else {
+                        // TODO: In case sync failed display generic notification that there are a new messages
+                    }
                 }
             }
         } finally {

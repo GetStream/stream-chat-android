@@ -12,6 +12,7 @@ import io.getstream.chat.android.livedata.service.SyncService
  * This ensures that offline storage is up to date as soon as you open the app
  */
 open class ChatNotificationConfigOffline(context: Context) : ChatNotificationConfig(context) {
+
     override fun onFirebaseMessage(message: RemoteMessage): Boolean {
         val data = message.data
         val channelId = data.get("channel_id").toString()
