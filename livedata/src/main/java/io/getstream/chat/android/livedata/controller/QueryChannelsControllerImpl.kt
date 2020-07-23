@@ -114,29 +114,12 @@ class QueryChannelsControllerImpl(
         return runQuery(QueryChannelsPaginationRequest(sort, 0, limit, messageLimit))
     }
 
-    fun paginateChannelIds(channelIds: MutableSet<String>, pagination: QueryChannelsPaginationRequest): List<String> {
-        var min = pagination.channelOffset
-        var max = pagination.channelOffset + pagination.channelLimit
-        if (max > channelIds.size - 1) {
-            max = channelIds.size - 1
-        }
-
-        return if (min > channelIds.size - 1) {
-            listOf()
-        } else {
-            channelIds.toList().slice(IntRange(min, max))
-        }
-    }
-
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        var queryEntity = domainImpl.repos.queryChannels.select(queryEntity.id)
+        val queryEntity = domainImpl.repos.queryChannels.select(queryEntity.id)
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-
-            var channelIds = paginateChannelIds(queryEntity.channelCids, pagination)
-
-            val channelPairs = domainImpl.selectAndEnrichChannels(channelIds, pagination)
+            val channelPairs = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
             for (p in channelPairs) {
                 val channelRepo = domainImpl.channel(p.channel)
                 channelRepo.updateLiveDataFromChannelEntityPair(p)

@@ -54,23 +54,6 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun testChannelIdPagination() {
-        val list = sortedSetOf("a", "b", "c")
-
-        var sub = queryControllerImpl.paginateChannelIds(list, QueryChannelsPaginationRequest(QuerySort(), 0, 5))
-        Truth.assertThat(sub).isEqualTo(listOf("a", "b", "c"))
-
-        sub = queryControllerImpl.paginateChannelIds(list, QueryChannelsPaginationRequest(QuerySort(), 1, 2))
-        Truth.assertThat(sub).isEqualTo(listOf("b", "c"))
-
-        sub = queryControllerImpl.paginateChannelIds(list, QueryChannelsPaginationRequest(QuerySort(), 3, 2))
-        Truth.assertThat(sub).isEqualTo(listOf<String>())
-
-        sub = queryControllerImpl.paginateChannelIds(list, QueryChannelsPaginationRequest(QuerySort(), 4, 2))
-        Truth.assertThat(sub).isEqualTo(listOf<String>())
-    }
-
-    @Test
     @Ignore("mock me")
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(QuerySort(), 0, 2)
