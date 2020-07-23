@@ -25,11 +25,11 @@ interface QueryChannels {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    operator fun invoke(filter: FilterObject, sort: QuerySort? = null, limit: Int = 30, messageLimit: Int = 10): Call2<QueryChannelsController>
+    operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int = 30, messageLimit: Int = 10): Call2<QueryChannelsController>
 }
 
 class QueryChannelsImpl(var domainImpl: ChatDomainImpl) : QueryChannels {
-    override operator fun invoke(filter: FilterObject, sort: QuerySort?, limit: Int, messageLimit: Int): Call2<QueryChannelsController> {
+    override operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int, messageLimit: Int): Call2<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
         val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl
         val runnable = suspend {

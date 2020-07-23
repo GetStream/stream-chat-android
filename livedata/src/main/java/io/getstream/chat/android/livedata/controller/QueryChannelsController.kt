@@ -17,11 +17,11 @@ interface QueryChannelsController {
     /**
      * The filter used for this query
      */
-    var filter: FilterObject
+    val filter: FilterObject
     /**
      * The sort used for this query
      */
-    var sort: QuerySort?
+    val sort: QuerySort
     /**
      * When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
      * determines if the channel should be added to the query or not.
@@ -40,7 +40,7 @@ interface QueryChannelsController {
     /**
      * The list of channels
      */
-    var channels: LiveData<List<Channel>>
+    val channels: LiveData<List<Channel>>
     /**
      * If we are currently loading channels
      */

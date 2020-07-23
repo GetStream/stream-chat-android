@@ -460,9 +460,9 @@ class ChatDomainImpl private constructor(
      */
     fun queryChannels(
         filter: FilterObject,
-        sort: QuerySort? = null
+        sort: QuerySort
     ): QueryChannelsControllerImpl =
-        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort?.hashCode()}") {
+        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             QueryChannelsControllerImpl(
                 QueryChannelsEntity(filter, sort),
                 filter,

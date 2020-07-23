@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
@@ -36,7 +37,7 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     @Test
     fun newChannelFiltered() = runBlocking(Dispatchers.IO) {
         val request = QueryChannelsPaginationRequest()
-        val queryChannelsController = chatDomainImpl.queryChannels(data.filter2)
+        val queryChannelsController = chatDomainImpl.queryChannels(data.filter2, QuerySort())
         queryChannelsController.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
             // ignore everything
             false

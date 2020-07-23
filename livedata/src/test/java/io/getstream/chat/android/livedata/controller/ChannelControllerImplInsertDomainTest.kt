@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -126,8 +127,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
     @Test
     fun insertQuery() = runBlocking(Dispatchers.IO) {
         val filter = Filters.eq("type", "messaging")
-        val sort = null
-        val query = QueryChannelsEntity(filter, sort)
+        val query = QueryChannelsEntity(filter, QuerySort())
         query.channelCids = sortedSetOf("messaging:123", "messaging:234")
         chatDomainImpl.repos.queryChannels.insert(query)
     }

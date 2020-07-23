@@ -24,11 +24,11 @@ import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
 
 class QueryChannelsControllerImpl(
-    internal var queryEntity: QueryChannelsEntity,
-    override var filter: FilterObject,
-    override var sort: QuerySort?,
-    internal var client: ChatClient,
-    internal var domainImpl: ChatDomainImpl,
+    internal val queryEntity: QueryChannelsEntity,
+    override val filter: FilterObject,
+    override val sort: QuerySort,
+    internal val client: ChatClient,
+    internal val domainImpl: ChatDomainImpl,
     override var newChannelEventFilter: ((Channel, FilterObject) -> Boolean)? = null
 ) : QueryChannelsController {
     override var recoveryNeeded: Boolean = false

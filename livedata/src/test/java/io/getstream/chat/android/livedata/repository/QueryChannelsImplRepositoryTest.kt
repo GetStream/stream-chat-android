@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +16,7 @@ class QueryChannelsImplRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, null)
+        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
         queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c")
         repo.insert(queryChannelsEntity)
         val entity = repo.select(queryChannelsEntity.id)
@@ -24,7 +25,7 @@ class QueryChannelsImplRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, null)
+        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
         queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c")
         repo.insert(queryChannelsEntity)
         queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c", "d")
@@ -36,7 +37,7 @@ class QueryChannelsImplRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testOrdering() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, null)
+        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
         queryChannelsEntity.channelCids = mutableSetOf("a", "b", "c")
         queryChannelsEntity.channelCids.addAll(listOf("1"))
 
