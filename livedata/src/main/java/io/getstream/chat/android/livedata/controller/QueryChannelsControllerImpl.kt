@@ -24,7 +24,6 @@ import kotlinx.coroutines.*
 import java.util.concurrent.ConcurrentHashMap
 
 class QueryChannelsControllerImpl(
-    internal val queryEntity: QueryChannelsEntity,
     override val filter: FilterObject,
     override val sort: QuerySort,
     internal val client: ChatClient,
@@ -36,6 +35,7 @@ class QueryChannelsControllerImpl(
      * A livedata object with the channels matching this query.
      */
 
+    internal val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
