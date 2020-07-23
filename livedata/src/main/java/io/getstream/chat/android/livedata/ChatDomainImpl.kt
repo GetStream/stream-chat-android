@@ -337,8 +337,7 @@ class ChatDomainImpl private constructor(
     /** stores the mapping from cid to channelRepository */
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
-    /** stores the mapping from cid to channelRepository */
-    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
@@ -462,22 +461,16 @@ class ChatDomainImpl private constructor(
     fun queryChannels(
         filter: FilterObject,
         sort: QuerySort? = null
-    ): QueryChannelsControllerImpl {
-        // mark this query as active
-        val queryChannelsEntity = QueryChannelsEntity(filter, sort)
-        if (!activeQueryMapImpl.containsKey(queryChannelsEntity)) {
-            val queryRepo =
-                QueryChannelsControllerImpl(
-                    queryChannelsEntity,
-                    queryChannelsEntity.filter,
-                    queryChannelsEntity.sort,
-                    client,
-                    this
-                )
-            activeQueryMapImpl[queryChannelsEntity] = queryRepo
+    ): QueryChannelsControllerImpl =
+        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort?.hashCode()}") {
+            QueryChannelsControllerImpl(
+                QueryChannelsEntity(filter, sort),
+                filter,
+                sort,
+                client,
+                this
+            )
         }
-        return activeQueryMapImpl[queryChannelsEntity]!!
-    }
 
     private fun queryEvents(cids: List<String>): List<ChatEvent> {
         val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
