@@ -512,7 +512,7 @@ class ChatDomainImpl private constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
+            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 30))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }

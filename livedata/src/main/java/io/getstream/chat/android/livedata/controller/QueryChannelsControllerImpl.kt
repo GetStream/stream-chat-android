@@ -56,7 +56,7 @@ class QueryChannelsControllerImpl(
 
     fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: ConcurrentHashMap()
-        return QueryChannelsPaginationRequest(channels.size, limit, messageLimit)
+        return QueryChannelsPaginationRequest(sort, channels.size, limit, messageLimit)
     }
 
     fun handleEvents(events: List<ChatEvent>) {
@@ -111,7 +111,7 @@ class QueryChannelsControllerImpl(
     }
 
     suspend fun query(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
-        return runQuery(QueryChannelsPaginationRequest(0, limit, messageLimit))
+        return runQuery(QueryChannelsPaginationRequest(sort, 0, limit, messageLimit))
     }
 
     fun paginateChannelIds(channelIds: MutableSet<String>, pagination: QueryChannelsPaginationRequest): List<String> {
@@ -157,7 +157,7 @@ class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val request = pagination.toQueryChannelsRequest(queryEntity.filter, queryEntity.sort, domainImpl.userPresence)
+        val request = pagination.toQueryChannelsRequest(queryEntity.filter, domainImpl.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
 

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata.request
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.utils.FilterObject
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest =
@@ -11,9 +10,8 @@ internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): Any
         this.messageLimit = messageLimit
     }
 
-internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(filter: FilterObject, sort: QuerySort?, userPresence: Boolean): QueryChannelsRequest {
-    val querySort = sort ?: QuerySort()
-    var request = QueryChannelsRequest(filter, channelOffset, channelLimit, querySort)
+internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(filter: FilterObject, userPresence: Boolean): QueryChannelsRequest {
+    var request = QueryChannelsRequest(filter, channelOffset, channelLimit, sort)
 
     request = request.withMessages(messageLimit)
     if (userPresence) {

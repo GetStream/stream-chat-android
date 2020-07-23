@@ -42,7 +42,7 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         // setup the query channel controller
         chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0, 10).execute()
         var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
-        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest())
+        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort()))
 
         // verify we have 1 channel in the result list and that it's hidden
         val channelController = chatDomainImpl.channel(data.channel1)
