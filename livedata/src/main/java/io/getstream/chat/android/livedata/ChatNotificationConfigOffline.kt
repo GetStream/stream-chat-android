@@ -19,15 +19,9 @@ open class ChatNotificationConfigOffline(context: Context) : ChatNotificationCon
         val channelType = data.get("channel_type").toString()
         val cid = "$channelType:$channelId"
 
-        Intent(context, SyncService::class.java).apply {
-            putExtra(EXTRA_CID, cid)
-            ContextCompat.startForegroundService(context, this)
-        }
+        ContextCompat.startForegroundService(context, SyncService.createIntent(context, cid))
 
         return true
     }
 
-    companion object {
-        const val EXTRA_CID = "key_channel_cid"
-    }
 }

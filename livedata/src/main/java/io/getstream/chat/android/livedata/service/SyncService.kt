@@ -3,15 +3,15 @@ package io.getstream.chat.android.livedata.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.livedata.ChatDomain
-import io.getstream.chat.android.livedata.ChatNotificationConfigOffline.Companion.EXTRA_CID
 
-class SyncService: Service() {
+class SyncService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
@@ -60,5 +60,11 @@ class SyncService: Service() {
         const val CHANNEL_ID = "notification_channel_id"
         const val CHANNEL_NAME = "Chat messages sync"
         const val NOTIFICATION_ID = 1
+        const val EXTRA_CID = "key_channel_cid"
+
+        fun createIntent(context: Context, cid: String) =
+            Intent(context, SyncService::class.java).apply {
+                putExtra(EXTRA_CID, cid)
+            }
     }
 }
