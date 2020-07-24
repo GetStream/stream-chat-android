@@ -91,7 +91,8 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 is NotificationInviteAccepted,
                 is NotificationInviteRejected -> channelsToFetch.add(cid)
                 is ReactionNewEvent,
-                is ReactionDeletedEvent -> event.reaction?.messageId?.let(messagesToFetch::add)
+                is ReactionDeletedEvent ->
+                    event.reaction?.messageId?.let(messagesToFetch::add) ?: logger.logI("Received $event which seems to have unexpected model structure")
                 is UserBanned, is UserUnbanned -> { me = domainImpl.repos.users.selectMe() }
             }
         }
@@ -120,7 +121,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                         message.cid = cid
                         messages[message.id] = MessageEntity(message)
                         users.putAll(message.users().map { UserEntity(it) }.associateBy { it.id })
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is NotificationMessageNew -> {
                     // add both the event and the channel
@@ -133,7 +134,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                         event.channel?.let { channel ->
                             users.putAll(channel.users().map { UserEntity(it) }.associateBy { it.id })
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is NotificationAddedToChannelEvent,
                 is NotificationInvited,
@@ -142,7 +143,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     event.channel?.let { channel ->
                         channels[channel.cid] = ChannelEntity(channel)
                         users.putAll(channel.users().map { UserEntity(it) }.associateBy { it.id })
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is ChannelHiddenEvent -> {
                     event.cid?.let { cid ->
@@ -152,14 +153,14 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                             channelEntity.hideMessagesBefore = event.createdAt
                         }
                         channels[cid] = channelEntity
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is ChannelVisible -> {
                     event.cid?.let { cid ->
                         val channelEntity = ChannelEntity(Channel(cid = cid))
                         channelEntity.hidden = false
                         channels[cid] = channelEntity
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is UserBanned,
                 is UserUnbanned -> {
@@ -182,7 +183,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                             channelEntity.updateReads(read)
                         }
                         channels[channelEntity.cid] = channelEntity
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is UserUpdated -> event.user?.let { users[it.id] = UserEntity(it) }
                 is ReactionNewEvent -> {
@@ -194,7 +195,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                             messageEntity.addReaction(reaction, domainImpl.currentUser.id == reaction.user?.id)
                             messages[messageEntity.id] = messageEntity
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
@@ -204,7 +205,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                             messageEntity.reactionCounts = event.message.reactionCounts
                             messages[messageEntity.id] = messageEntity
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is MemberAddedEvent, is MemberUpdatedEvent -> {
                     event.cid?.let { cid ->
@@ -217,7 +218,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                         event.channel?.let { c ->
                             users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is MemberRemovedEvent, is NotificationRemovedFromChannel -> {
                     // get the channel, update members, write the channel
@@ -231,19 +232,17 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                             user?.let { channelEntity.setMember(it.id, null) }
                             channels[cid] = channelEntity
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                     event.channel?.let { c ->
                         users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is ChannelUpdatedEvent, is ChannelDeletedEvent -> {
                     // get the channel, update members, write the channel
-                    event.channel?.let {
-                        channels[it.cid] = ChannelEntity(it)
-                    }
                     event.channel?.let { c ->
+                        channels[c.cid] = ChannelEntity(c)
                         users.putAll(c.users().map { UserEntity(it) }.associateBy { it.id })
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
             }
         }
@@ -262,7 +261,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                         event.createdAt?.let { createdAt ->
                             domainImpl.repos.messages.deleteChannelMessagesBefore(cid, createdAt)
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
                 is ChannelDeletedEvent -> {
                     event.getCid()?.let { cid ->
@@ -273,7 +272,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                                 domainImpl.repos.channels.insert(it)
                             }
                         }
-                    }
+                    } ?: logger.logI("Received $event which seems to have unexpected model structure")
                 }
             }
         }
