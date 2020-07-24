@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory
 import com.getstream.sdk.chat.view.channels.ChannelListView.ChannelClickListener
 import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Channel
@@ -47,6 +48,10 @@ class ChannelsView @JvmOverloads constructor(
         removeView(this.loadingView)
         this.loadingView = view.apply { id = LOADING_VIEW_ID }
         addView(loadingView, layoutParams)
+    }
+
+    fun setViewHolderFactory(factory: ChannelViewHolderFactory) {
+        this.channelListView.setViewHolderFactory(factory)
     }
 
     fun setOnChannelClickListener(listener: (Channel) -> Unit) {
