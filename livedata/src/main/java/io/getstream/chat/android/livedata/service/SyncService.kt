@@ -20,7 +20,7 @@ class SyncService: Service() {
             .setAutoCancel(true)
             .build()
             .apply {
-                startForeground(1, this)
+                startForeground(NOTIFICATION_ID, this)
             }
 
         try {
@@ -59,5 +59,6 @@ class SyncService: Service() {
     companion object {
         const val CHANNEL_ID = "notification_channel_id"
         const val CHANNEL_NAME = "Chat messages sync"
+        const val NOTIFICATION_ID = 1
     }
 }
