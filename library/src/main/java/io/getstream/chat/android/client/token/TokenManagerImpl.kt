@@ -7,13 +7,9 @@ import java.util.concurrent.Future
 
 internal class TokenManagerImpl : TokenManager {
 
-    @Volatile
-    private var token = ""
-
-    @Volatile
-    private var loadingFuture: Future<*>? = null
-
-    private val listeners = mutableListOf<(Result<String>) -> Unit>()
+    @Volatile private var token = ""
+    @Volatile private var loadingFuture: Future<*>? = null
+    private val listeners = mutableListOf<((Result<String>) -> Unit)?>()
     private lateinit var provider: TokenProvider
     private val tokenProviderExecutor = Executors.newSingleThreadExecutor()
 
@@ -67,12 +63,12 @@ internal class TokenManagerImpl : TokenManager {
 
     private fun onTokenLoaded(token: String) {
         this.token = token
-        listeners.forEach { it.invoke(Result(token)) }
+        listeners.forEach { it?.invoke(Result(token)) }
         listeners.clear()
     }
 
     private fun onTokenLoadingError(cause: Throwable) {
-        listeners.forEach { it.invoke(Result(ChatError("Unable to load token", cause))) }
+        listeners.forEach { it?.invoke(Result(ChatError("Unable to load token", cause))) }
         listeners.clear()
     }
 }
