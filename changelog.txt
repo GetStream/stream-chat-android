@@ -1,3 +1,9 @@
+# 1.12.3 - Mon 27 Jul 2020
+
+- Fix NPE on TokenManagerImpl
+- Upgrade Kotlin to version 1.3.72
+- Add Kotlin Proguard Rules 
+
 # 1.12.2 - Fri 17 Jul 2020
 
 - Add customer proguard rules
