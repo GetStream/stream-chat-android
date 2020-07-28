@@ -163,6 +163,8 @@ interface ChatClient {
     fun unmuteUser(userId: String): Call<Mute>
     fun unmuteCurrentUser(): Call<Mute>
     fun flag(targetId: String): Call<Flag>
+    fun flagUser(userId: String): Call<Flag>
+    fun flagMessage(messageId: String): Call<Flag>
     fun banUser(
         targetId: String,
         channelType: String,

@@ -6,7 +6,7 @@ import java.util.Date
 data class Flag(
     val user: User,
     @SerializedName("target_user")
-    val targetUser: User,
+    val targetUser: User?,
     @SerializedName("target_message_id")
     val targetMessageId: String,
     @SerializedName("created_at")

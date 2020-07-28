@@ -157,9 +157,11 @@ interface ChatApi {
 
     fun unmuteCurrentUser(): Call<Mute>
 
-    fun flag(
-        targetId: String
-    ): Call<Flag>
+    fun flag(targetId: String): Call<Flag>
+
+    fun flagUser(userId: String): Call<Flag>
+
+    fun flagMessage(messageId: String): Call<Flag>
 
     fun banUser(
         targetId: String,
