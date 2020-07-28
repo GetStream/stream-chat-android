@@ -181,9 +181,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun flag() {
-        client.flagUser(
-            userId = "stream-eugene"
-        ).enqueue { result ->
+        client.flagUser("stream-eugene").enqueue { result ->
             // echoResult(result, "Flag successful")
         }
     }
