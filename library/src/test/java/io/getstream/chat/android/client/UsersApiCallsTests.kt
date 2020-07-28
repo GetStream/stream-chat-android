@@ -119,6 +119,69 @@ class UsersApiCallsTests {
     }
 
     @Test
+    fun flagUserSuccess() {
+
+        val targetUserId = "target-id"
+        val user = User("user-id")
+        val targetUser = User(targetUserId)
+        val date = Date()
+        val flag = Flag(
+            user,
+            targetUser,
+            "",
+            "",
+            false,
+            date,
+            date,
+            date,
+            date,
+            date
+        )
+
+        Mockito.`when`(
+            mock.retrofitApi.flag(
+                mock.apiKey, mock.userId, mock.connectionId,
+                mapOf(Pair("target_user_id", targetUserId))
+            )
+        ).thenReturn(RetroSuccess(FlagResponse(flag)))
+
+        val result = client.flagUser(targetUserId).execute()
+
+        verifySuccess(result, flag)
+    }
+
+    @Test
+    fun flagMessageSuccess() {
+
+        val targetMessageId = "message-id"
+        val user = User("user-id")
+        val date = Date()
+        val flag = Flag(
+            user,
+            null,
+            targetMessageId,
+            "",
+            false,
+            date,
+            date,
+            date,
+            date,
+            date
+        )
+
+        Mockito.`when`(
+            mock.retrofitApi.flag(
+                mock.apiKey, mock.userId, mock.connectionId,
+                mapOf(Pair("target_message_id", targetMessageId))
+            )
+        ).thenReturn(RetroSuccess(FlagResponse(flag)))
+
+        val result = client.flagMessage(targetMessageId).execute()
+
+        verifySuccess(result, flag)
+    }
+
+    @Test
     fun getUsersSuccess() {
 
         val user = User().apply { id = "a-user" }

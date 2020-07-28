@@ -157,9 +157,15 @@ interface ChatApi {
 
     fun unmuteCurrentUser(): Call<Mute>
 
-    fun flag(
-        targetId: String
-    ): Call<Flag>
+    @Deprecated(
+        message = "We are going to replace with flagUser()",
+        replaceWith = ReplaceWith("this.flagUser(userId)")
+    )
+    fun flag(userId: String): Call<Flag>
+
+    fun flagUser(userId: String): Call<Flag>
+
+    fun flagMessage(messageId: String): Call<Flag>
 
     fun banUser(
         targetId: String,

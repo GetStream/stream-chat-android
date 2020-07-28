@@ -12,7 +12,20 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.utils.FilterObject
-import kotlinx.android.synthetic.main.activity_test_user_api.*
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiAddMembersBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiAnonymousBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiBanUserBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiFlagUserBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiFunctionalityGroup
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiGuestBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiLoadingShapeContainer
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiLoginGroup
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiMuteUserBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiQueryUsersBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiRemoveMembersBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiSetRegularUserBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiUnBanUserBtn
+import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiUnMuteUserBtn
 
 class TestUsersApiMethodsActivity : AppCompatActivity() {
 
@@ -168,9 +181,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun flag() {
-        client.flag(
-            targetId = "stream-eugene"
-        ).enqueue { result ->
+        client.flagUser("stream-eugene").enqueue { result ->
             // echoResult(result, "Flag successful")
         }
     }

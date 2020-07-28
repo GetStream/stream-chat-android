@@ -678,14 +678,12 @@ internal class ChatApiImpl(
         ).map { it.mute }
     }
 
-    override fun flag(
-        targetId: String
-    ): Call<Flag> {
+    override fun flag(targetId: String): Call<Flag> = flagUser(targetId)
+    override fun flagUser(userId: String): Call<Flag> = flag(mutableMapOf("target_user_id" to userId))
+    override fun flagMessage(messageId: String): Call<Flag> = flag(mutableMapOf("target_message_id" to messageId))
 
-        val body: MutableMap<String, String> = HashMap()
-        body["target_user_id"] = targetId
-
-        return callMapper.map(
+    private fun flag(body: MutableMap<String, String>): Call<Flag> =
+        callMapper.map(
             retrofitApi.flag(
                 apiKey,
                 userId,
@@ -693,7 +691,6 @@ internal class ChatApiImpl(
                 body
             )
         ).map { it.flag }
-    }
 
     override fun banUser(
         targetId: String,
