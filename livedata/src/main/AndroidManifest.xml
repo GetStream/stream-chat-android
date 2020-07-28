@@ -3,6 +3,6 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application>
-        <service android:name=".service.SyncService"/>
+        <service android:name=".service.sync.SyncService"/>
     </application>
 </manifest>

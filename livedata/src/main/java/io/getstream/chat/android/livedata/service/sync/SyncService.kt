@@ -1,4 +1,4 @@
-package io.getstream.chat.android.livedata.service
+package io.getstream.chat.android.livedata.service.sync
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
