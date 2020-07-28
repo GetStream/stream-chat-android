@@ -1,3 +1,7 @@
+## Jun 4th, 2020 - 4.2.11-beta-8
+
+- Add `ChannelsView.setViewHolderFactory(factory: ChannelViewHolderFactory)` function
+
 ## Jun 4th, 2020 - 4.2.11-beta-7
 
 - Fix channel name validation in CreateChannelViewModel
