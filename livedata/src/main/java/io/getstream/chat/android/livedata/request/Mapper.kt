@@ -8,6 +8,7 @@ internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): Any
         this.channelLimit = channelLimit
         this.channelOffset = channelOffset
         this.messageLimit = messageLimit
+        this.sort = sort
     }
 
 internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(filter: FilterObject, userPresence: Boolean): QueryChannelsRequest {
