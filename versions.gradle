@@ -65,14 +65,21 @@ ext {
 
     // Sample App Versions
     ktxCoreVersion = "1.3.1"
-
-    preferenceKtxVersion = "1.1.1"
-
     lifecycleExtensionsVersion = "2.2.0"
     fragmentKtxVersion = "1.2.5"
     materialVersion = "1.1.0"
+    navigationVersion = "2.3.0"
+
+    preferenceKtxVersion = "1.1.1"
+
     firebaseAnalyticsVersion = "17.4.4"
     firebaseCrashlyticsVersion = "17.1.1"
-    navigationVersion = "2.3.0"
+
+    koinVersion = "2.1.5"
+    timberVersion = "4.7.1"
+
+    leakcanaryVersion = "2.3"
+
+    junitVersion = "4.13"
 
 }

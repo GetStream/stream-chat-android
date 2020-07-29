@@ -104,7 +104,7 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude("META-INF/*.kotlin_module")
     }
-    
+
     dataBinding {
         enabled = true
     }
@@ -114,14 +114,14 @@ dependencies {
     implementation project(":library")
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
-    implementation "androidx.core:core-ktx:$ktxCoreVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
+
+    implementation "androidx.core:core-ktx:$ktxCoreVersion"
     implementation "androidx.activity:activity-ktx:$activityKtxVersion"
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion"
     implementation "com.google.android.material:material:$materialVersion"
-    implementation "com.google.firebase:firebase-analytics-ktx:$firebaseAnalyticsVersion"
-    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
 
     implementation "androidx.navigation:navigation-runtime-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
@@ -129,31 +129,23 @@ dependencies {
 
     implementation "androidx.preference:preference-ktx:$preferenceKtxVersion"
 
-    implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+    implementation "com.google.firebase:firebase-analytics-ktx:$firebaseAnalyticsVersion"
+    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
 
-    def koinVersion = '2.1.5'
-    def koin = [
-            libs: [
-                    "org.koin:koin-core:$koinVersion",
-                    "org.koin:koin-core-ext:$koinVersion",
-                    "org.koin:koin-androidx-scope:$koinVersion",
-                    "org.koin:koin-androidx-viewmodel:$koinVersion",
-                    "org.koin:koin-androidx-ext:$koinVersion"
-            ],
-            test: [
-                    "org.koin:koin-test:$koinVersion"
-            ]
-    ]
-    implementation koin.libs
 
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation "org.koin:koin-core:$koinVersion"
+    implementation "org.koin:koin-core-ext:$koinVersion"
+    implementation "org.koin:koin-androidx-scope:$koinVersion"
+    implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
+    implementation "org.koin:koin-androidx-ext:$koinVersion"
 
-    def glideVersion = '4.9.0'
+    implementation "com.jakewharton.timber:timber:$timberVersion"
+
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.3'
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
 
-    testImplementation 'junit:junit:4.13'
-    testImplementation koin.test
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation "org.koin:koin-test:$koinVersion"
 }
