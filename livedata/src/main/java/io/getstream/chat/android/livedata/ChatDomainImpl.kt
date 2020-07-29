@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.*
+import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
@@ -609,7 +610,7 @@ class ChatDomainImpl private constructor(
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
-    internal suspend fun selectAndEnrichChannels(
+    private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
     ): List<ChannelEntityPair> {
@@ -660,7 +661,7 @@ class ChatDomainImpl private constructor(
 
             channelPairs.add(channelPair)
         }
-        return channelPairs.toList()
+        return channelPairs.toList().applyPagination(pagination)
     }
 
     override fun clean() {
