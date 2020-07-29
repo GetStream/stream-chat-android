@@ -6,6 +6,7 @@ buildscript {
         jacocoVersion = '0.1.4'
         junitVersion = '4.12'
         jupiter_version = '5.5.1'
+        mannodermausVersion = '1.5.1.0'
     }
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -18,6 +19,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.dicedmelon.gradle:jacoco-android:0.1.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.10.1"
