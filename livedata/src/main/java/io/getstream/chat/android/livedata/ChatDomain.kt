@@ -8,9 +8,11 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import java.lang.IllegalArgumentException
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -81,9 +83,18 @@ interface ChatDomain {
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
+        private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
 
         fun database(db: ChatDatabase): Builder {
             this.database = db
+            return this
+        }
+
+        fun backgroundSyncEnabled(apiKey: String, userId: String, userToken: String): Builder {
+            this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, userId, userToken)
+            if (apiKey.isEmpty() || userId.isEmpty() || userToken.isEmpty()) {
+                throw IllegalArgumentException("ChatDomain.Builder::backgroundSyncEnabled. apiKey, userId, and userToken must not be empty.")
+            }
             return this
         }
 
@@ -118,7 +129,7 @@ interface ChatDomain {
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            val chatDomain = ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
+            val chatDomain = ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database, backgroundSyncConfig)
 
             return chatDomain
         }

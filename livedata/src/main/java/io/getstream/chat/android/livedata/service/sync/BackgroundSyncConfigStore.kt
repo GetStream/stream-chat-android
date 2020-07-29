@@ -1,6 +1,6 @@
 package io.getstream.chat.android.livedata.service.sync
 
-import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -11,7 +11,7 @@ interface BackgroundSyncConfigStore {
     fun clear()
 }
 
-class EncryptedBackgroundSyncConfigStore(val context: Application) : BackgroundSyncConfigStore {
+class EncryptedBackgroundSyncConfigStore(val context: Context) : BackgroundSyncConfigStore {
     private val prefs: SharedPreferences
 
     init {

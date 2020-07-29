@@ -31,6 +31,8 @@ import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
+import io.getstream.chat.android.livedata.service.sync.EncryptedBackgroundSyncConfigStore
 import io.getstream.chat.android.livedata.usecase.*
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
@@ -143,7 +145,16 @@ class ChatDomainImpl private constructor(
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
-    internal constructor(context: Context, client: ChatClient, currentUser: User, offlineEnabled: Boolean = true, userPresence: Boolean = true, recoveryEnabled: Boolean = true, db: ChatDatabase? = null) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
+    internal constructor(
+        context: Context,
+        client: ChatClient,
+        currentUser: User,
+        offlineEnabled: Boolean = true,
+        userPresence: Boolean = true,
+        recoveryEnabled: Boolean = true,
+        db: ChatDatabase? = null,
+        backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+    ) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         val chatDatabase = db ?: createDatabase()
@@ -174,6 +185,11 @@ class ChatDomainImpl private constructor(
         }
 
         useCases = UseCaseHelper(this)
+
+        EncryptedBackgroundSyncConfigStore(context.applicationContext).run {
+            clear()
+            put(backgroundSyncConfig)
+        }
 
         // verify that you're not connecting 2 different users
         if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
@@ -274,7 +290,11 @@ class ChatDomainImpl private constructor(
     suspend fun createChannel(c: Channel): Result<Channel> {
         val online = isOnline()
         c.createdAt = c.createdAt ?: Date()
-        c.syncStatus = if (online) { SyncStatus.IN_PROGRESS } else { SyncStatus.SYNC_NEEDED }
+        c.syncStatus = if (online) {
+            SyncStatus.IN_PROGRESS
+        } else {
+            SyncStatus.SYNC_NEEDED
+        }
 
         // update livedata
         val channelRepo = channel(c.cid)
@@ -329,7 +349,8 @@ class ChatDomainImpl private constructor(
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> =
+        ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
@@ -507,7 +528,9 @@ class ChatDomainImpl private constructor(
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        val queriesToRetry =
+            activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }
+                .take(3)
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
             if (response.isSuccess) {
@@ -516,7 +539,9 @@ class ChatDomainImpl private constructor(
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
+        val cids = activeChannelMapImpl.entries.toList()
+            .filter { it.value.recoveryNeeded || recoveryNeeded }
+            .filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
@@ -589,13 +614,21 @@ class ChatDomainImpl private constructor(
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
-        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
+    suspend fun selectAndEnrichChannel(
+        channelId: String,
+        pagination: QueryChannelPaginationRequest
+    ): ChannelEntityPair? {
+        val channelStates =
+            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): ChannelEntityPair? {
-        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
+    suspend fun selectAndEnrichChannel(
+        channelId: String,
+        pagination: QueryChannelsPaginationRequest
+    ): ChannelEntityPair? {
+        val channelStates =
+            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
@@ -626,7 +659,8 @@ class ChatDomainImpl private constructor(
                 userIds.addAll(it.keys)
             }
             if (pagination.messageLimit > 0) {
-                val messages = repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
+                val messages =
+                    repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
                 for (message in messages) {
                     userIds.add(message.userId)
                     for (reaction in message.latestReactions) {
