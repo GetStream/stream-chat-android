@@ -47,12 +47,12 @@ class ThreadControllerImpl(
         withContext(Dispatchers.IO) {
             call.execute().apply {
                 val data = this.takeIf { it.isSuccess }
-                ?.data()
+                    ?.data()
                 val newMessages = data
                     ?.associateBy { it.id }
                     ?: mapOf()
                 threadMessages.postValue(threadMessages.value.plus(newMessages))
-                _endOfOlderMessages.postValue((data?.size ?: limit) < limit )
+                _endOfOlderMessages.postValue((data?.size ?: limit) < limit)
             }
         }
 
@@ -63,14 +63,16 @@ class ThreadControllerImpl(
             return Result(null, ChatError(errorMsg))
         }
         _loadingOlderMessages.postValue(true)
-        return (mediatorLiveData.value
-            ?.values
-            ?.asSequence()
-            ?.filter { it.parentId == threadId }
-            ?.sortedBy { it.createdAt }
-            ?.firstOrNull()
-            ?.let { loadMessages(client.getRepliesMore(threadId, it.id, limit), limit) }
-            ?: watch(limit)).also { _loadingOlderMessages.postValue(false) }
+        return (
+            mediatorLiveData.value
+                ?.values
+                ?.asSequence()
+                ?.filter { it.parentId == threadId }
+                ?.sortedBy { it.createdAt }
+                ?.firstOrNull()
+                ?.let { loadMessages(client.getRepliesMore(threadId, it.id, limit), limit) }
+                ?: watch(limit)
+            ).also { _loadingOlderMessages.postValue(false) }
     }
 }
 

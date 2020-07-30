@@ -13,26 +13,26 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
-import java.util.Calendar
-import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -200,7 +200,6 @@ class ChannelControllerImpl(
         }
         return Result(false, null)
     }
-
 
     fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list

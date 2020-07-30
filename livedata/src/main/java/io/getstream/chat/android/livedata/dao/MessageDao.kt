@@ -36,20 +36,20 @@ interface MessageDao {
     suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
 
     @Query(
-            "SELECT * FROM stream_chat_message " +
-                    "WHERE stream_chat_message.id IN (:ids)"
+        "SELECT * FROM stream_chat_message " +
+            "WHERE stream_chat_message.id IN (:ids)"
     )
     suspend fun select(ids: List<String>): List<MessageEntity>
 
     @Query(
-            "SELECT * FROM stream_chat_message " +
-                    "WHERE stream_chat_message.id IN (:id)"
+        "SELECT * FROM stream_chat_message " +
+            "WHERE stream_chat_message.id IN (:id)"
     )
     suspend fun select(id: String?): MessageEntity?
 
     @Query(
-            "SELECT * FROM stream_chat_message " +
-                    "WHERE stream_chat_message.syncStatus IN (:syncStatus)"
+        "SELECT * FROM stream_chat_message " +
+            "WHERE stream_chat_message.syncStatus IN (:syncStatus)"
     )
     suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<MessageEntity>
 }

@@ -17,10 +17,7 @@ open class ChatNotificationConfigOffline(context: Context) : ChatNotificationCon
         val channelId = data.get("channel_id").toString()
         val channelType = data.get("channel_type").toString()
         val cid = "$channelType:$channelId"
-
         ContextCompat.startForegroundService(context, SyncService.createIntent(context, cid))
-
         return true
     }
-
 }

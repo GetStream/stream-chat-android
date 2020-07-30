@@ -141,7 +141,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.id = id
         m.cid = cid
         m.user = userMap[userId]
-                ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
+            ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
         m.text = text
         m.attachments = attachments
         m.type = type

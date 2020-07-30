@@ -5,7 +5,6 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

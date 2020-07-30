@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.utils.Result
 
 class TestResultCall<T>(val result: Result<T>) : Call<T> {
     override fun cancel() { }
@@ -32,5 +32,4 @@ class TestResultCall<T>(val result: Result<T>) : Call<T> {
     override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
         TODO("Not yet implemented")
     }
-
 }

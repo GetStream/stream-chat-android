@@ -58,9 +58,11 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
             }
         }
 
-        chatDomainImpl.errorEvents.observeForever(EventObserver {
-            System.out.println("error event$it")
-        })
+        chatDomainImpl.errorEvents.observeForever(
+            EventObserver {
+                System.out.println("error event$it")
+            }
+        )
         return chatDomainImpl
     }
 

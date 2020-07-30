@@ -8,6 +8,7 @@ buildscript {
         jupiter_version = '5.5.1'
     }
     repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
         google()
         jcenter()
 
@@ -20,6 +21,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:0.10.1"
+        classpath "org.jlleitschuh.gradle:ktlint-gradle:9.3.0"
     }
 }
 

@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -37,10 +36,13 @@ import io.getstream.chat.android.livedata.usecase.*
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import kotlinx.coroutines.*
+import java.lang.IllegalStateException
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import kotlinx.coroutines.*
+
+private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
@@ -296,52 +298,54 @@ class ChatDomainImpl private constructor(
         return result
     }
 
-    suspend fun createChannel(c: Channel): Result<Channel> {
-        val online = isOnline()
-        c.createdAt = c.createdAt ?: Date()
-        c.syncStatus = if (online) {
-            SyncStatus.IN_PROGRESS
-        } else {
-            SyncStatus.SYNC_NEEDED
-        }
-
-        // update livedata
-        val channelRepo = channel(c.cid)
-        channelRepo.updateLiveDataFromChannel(c)
-        val channelController = client.channel(c.type, c.id)
-
-        // Update Room State
-        repos.channels.insertChannel(c)
-
-        // Add to query controllers
-        for (query in activeQueryMapImpl.values) {
-            query.addChannelIfFilterMatches(c)
-        }
-
-        // make the API call and follow retry policy
-        if (online) {
-            val runnable = {
-                val members = c.members.map { it.getUserId() }
-                client.createChannel(c.type, c.id, members, c.extraData)
-            }
-            val result = runAndRetry(runnable)
-            return if (result.isSuccess) {
-                c.syncStatus = SyncStatus.COMPLETED
-                repos.channels.insertChannel(c)
-                Result(result.data() as Channel, null)
+    suspend fun createChannel(c: Channel): Result<Channel> =
+        try {
+            val online = isOnline()
+            c.createdAt = c.createdAt ?: Date()
+            c.syncStatus = if (online) {
+                SyncStatus.IN_PROGRESS
             } else {
-                if (result.error().isPermanent()) {
-                    c.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    c.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                repos.channels.insertChannel(c)
-                Result(null, result.error())
+                SyncStatus.SYNC_NEEDED
             }
-        } else {
-            return Result(c, null)
+
+            // update livedata
+            val channelRepo = channel(c.cid)
+            channelRepo.updateLiveDataFromChannel(c)
+
+            // Update Room State
+            repos.channels.insertChannel(c)
+
+            // Add to query controllers
+            for (query in activeQueryMapImpl.values) {
+                query.addChannelIfFilterMatches(c)
+            }
+
+            // make the API call and follow retry policy
+            if (online) {
+                val runnable = {
+                    val members = c.members.map { it.getUserId() }
+                    client.createChannel(c.type, c.id, members, c.extraData)
+                }
+                val result = runAndRetry(runnable)
+                if (result.isSuccess) {
+                    c.syncStatus = SyncStatus.COMPLETED
+                    repos.channels.insertChannel(c)
+                    Result(result.data() as Channel, null)
+                } else {
+                    if (result.error().isPermanent()) {
+                        c.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        c.syncStatus = SyncStatus.SYNC_NEEDED
+                    }
+                    repos.channels.insertChannel(c)
+                    Result<Channel>(null, result.error())
+                }
+            } else {
+                Result(c, null)
+            }
+        } catch (e: IllegalStateException) {
+            Result(null, ChatError(e))
         }
-    }
 
     fun addError(error: ChatError) {
         _errorEvent.postValue(
@@ -358,8 +362,7 @@ class ChatDomainImpl private constructor(
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
     /** stores the mapping from cid to channelRepository */
-    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> =
-        ConcurrentHashMap()
+    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
@@ -405,20 +408,22 @@ class ChatDomainImpl private constructor(
         eventSubscription?.let { it.unsubscribe() }
     }
 
-    fun channel(c: Channel): ChannelControllerImpl {
+    internal fun channel(c: Channel): ChannelControllerImpl {
         return channel(c.type, c.id)
     }
 
-    fun channel(cid: String): ChannelControllerImpl {
+    internal fun channel(cid: String): ChannelControllerImpl {
+        if (!CHANNEL_CID_REGEX.matches(cid)) {
+            throw IllegalArgumentException("Received invalid cid, expected format messaging:123, got $cid")
+        }
         val parts = cid.split(":")
-        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got $cid" }
         return channel(parts[0], parts[1])
     }
 
     /**
      * repo.channel("messaging", "12") return a ChatChannelRepository
      */
-    fun channel(
+    internal fun channel(
         channelType: String,
         channelId: String
     ): ChannelControllerImpl {
@@ -537,9 +542,7 @@ class ChatDomainImpl private constructor(
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry =
-            activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }
-                .take(3)
+        val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
             if (response.isSuccess) {
@@ -548,9 +551,7 @@ class ChatDomainImpl private constructor(
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList()
-            .filter { it.value.recoveryNeeded || recoveryNeeded }
-            .filterNot { updatedChannelIds.contains(it.key) }.take(30)
+        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
@@ -623,21 +624,13 @@ class ChatDomainImpl private constructor(
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelPaginationRequest
-    ): ChannelEntityPair? {
-        val channelStates =
-            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
+        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
-    suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelsPaginationRequest
-    ): ChannelEntityPair? {
-        val channelStates =
-            selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
+    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): ChannelEntityPair? {
+        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
@@ -668,8 +661,7 @@ class ChatDomainImpl private constructor(
                 userIds.addAll(it.keys)
             }
             if (pagination.messageLimit > 0) {
-                val messages =
-                    repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
+                val messages = repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
                 for (message in messages) {
                     userIds.add(message.userId)
                     for (reaction in message.latestReactions) {

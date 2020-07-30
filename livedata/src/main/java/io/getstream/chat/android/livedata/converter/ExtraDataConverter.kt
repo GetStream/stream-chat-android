@@ -11,10 +11,10 @@ class ExtraDataConverter {
             return mutableMapOf()
         }
         val mapType = object :
-                TypeToken<MutableMap<String?, Any?>?>() {}.type
+            TypeToken<MutableMap<String?, Any?>?>() {}.type
         return gson.fromJson(
-                data,
-                mapType
+            data,
+            mapType
         )
     }
 

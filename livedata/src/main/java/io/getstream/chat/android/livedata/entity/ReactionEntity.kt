@@ -20,10 +20,15 @@ import java.util.*
  * and back:
  * reactionEntity.toUser()
  */
-@Entity(tableName = "stream_chat_reaction", indices = arrayOf(
-        Index(value = ["messageId", "userId", "type"],
-                unique = true)
-))
+@Entity(
+    tableName = "stream_chat_reaction",
+    indices = arrayOf(
+        Index(
+            value = ["messageId", "userId", "type"],
+            unique = true
+        )
+    )
+)
 data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
 
     /** the score, used if you want to allow users to clap/like etc multiple times */

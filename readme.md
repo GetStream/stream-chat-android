@@ -62,3 +62,20 @@ STREAM_LOG_LEVEL=ALL
 STREAM_API_KEY=yourapikeyhere
 STREAM_USER_1_TOKEN=validTokenForUser1
 ```
+
+## Event Structure Bugs
+
+The low level client and rest API don't define the structure of events. Because of this all fields on the event are nullable which can cause issues.
+
+This JSON file shows the most common events, [event_structure](https://github.com/GetStream/stream-chat-android-livedata/blob/master/livedata/src/test/java/io/getstream/chat/android/livedata/event_structure.json)
+
+The test suite uses the event structure defined in [TestDataHelper](https://github.com/GetStream/stream-chat-android-livedata/blob/master/livedata/src/test/java/io/getstream/chat/android/livedata/utils/TestDataHelper.kt)
+
+So if you run into a crash caused by the event structure the recommended way to fix this is:
+
+1. Lookup the structure of the event in event_structure.json
+2. Update the testDataHelper with the actual event structure
+3. Fix the error
+
+
+

@@ -3,8 +3,8 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
@@ -52,7 +52,7 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
 
     private suspend fun uploadFile(channelControllerImpl: ChannelControllerImpl, file: File): Result<Attachment> =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension).let { mimetype ->
-            val pathResult =  when (mimetype.isImageMimetype()) {
+            val pathResult = when (mimetype.isImageMimetype()) {
                 true -> channelControllerImpl.sendImage(file)
                 false -> channelControllerImpl.sendFile(file)
             }

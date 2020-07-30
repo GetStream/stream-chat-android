@@ -1,24 +1,19 @@
 package io.getstream.chat.android.livedata.utils
 
-import android.os.Looper.getMainLooper
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
-import org.robolectric.shadows.ShadowLooper
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
 fun <T> LiveData<T>.getOrAwaitValue(
@@ -59,7 +54,9 @@ suspend fun waitForSetUser(
     timeMillis: Long = 1000
 ) {
     val lock = CompletableDeferred<Unit>()
-        client.setUser(user, token, object : InitConnectionListener() {
+    client.setUser(
+        user, token,
+        object : InitConnectionListener() {
             override fun onError(error: ChatError) {
                 super.onError(error)
                 lock.complete(Unit)
@@ -69,7 +66,8 @@ suspend fun waitForSetUser(
                 super.onSuccess(data)
                 lock.complete(Unit)
             }
-        })
+        }
+    )
     // Workaround to have `setUser()` process completed ¯\_(ツ)_/¯
     Thread.sleep(timeMillis)
     delay(timeMillis)
