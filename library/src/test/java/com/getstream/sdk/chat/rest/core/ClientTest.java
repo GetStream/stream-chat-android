@@ -34,7 +34,15 @@ import com.getstream.sdk.chat.rest.interfaces.QueryChannelCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryChannelListCallback;
 import com.getstream.sdk.chat.rest.interfaces.QueryUserListCallback;
 import com.getstream.sdk.chat.rest.interfaces.SearchMessagesCallback;
-import com.getstream.sdk.chat.rest.request.*;
+import com.getstream.sdk.chat.rest.request.ChannelQueryRequest;
+import com.getstream.sdk.chat.rest.request.HideChannelRequest;
+import com.getstream.sdk.chat.rest.request.MarkReadRequest;
+import com.getstream.sdk.chat.rest.request.QueryChannelsRequest;
+import com.getstream.sdk.chat.rest.request.QueryUserRequest;
+import com.getstream.sdk.chat.rest.request.ReactionRequest;
+import com.getstream.sdk.chat.rest.request.SearchMessagesRequest;
+import com.getstream.sdk.chat.rest.request.SendActionRequest;
+import com.getstream.sdk.chat.rest.request.SendEventRequest;
 import com.getstream.sdk.chat.rest.response.ChannelResponse;
 import com.getstream.sdk.chat.rest.response.ChannelState;
 import com.getstream.sdk.chat.rest.response.CompletableResponse;
@@ -77,7 +85,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -385,6 +392,22 @@ public class ClientTest {
         Config config = new Config();
         config.setReadEvents(false);
         client.addChannelConfig(TEST_CHANNEL_TYPE, config);
+
+        client.markRead(new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID), markReadRequest, callback);
+
+        verify(callback).onError(Mockito.any(), Mockito.eq(-1));
+    }
+
+    @Test
+    void markReadErrorMissingConfigTest() {
+        EventResponse response = new EventResponse();
+        EventCallback callback = mock(EventCallback.class);
+
+        when(apiService.markRead(any(), any(), any(), any(), any(), any()))
+                .thenReturn(CallFake.buildSuccess(response));
+
+        String testMessageId = "testMessageId";
+        MarkReadRequest markReadRequest = new MarkReadRequest(testMessageId);
 
         client.markRead(new Channel(client, TEST_CHANNEL_TYPE, TEST_CHANNEL_ID), markReadRequest, callback);
 

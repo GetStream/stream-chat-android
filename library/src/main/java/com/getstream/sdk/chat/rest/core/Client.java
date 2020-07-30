@@ -1320,11 +1320,9 @@ public class Client implements WSResponseHandler {
                          EventCallback callback) {
 
         Config channelConfig = getChannelConfig(channel.getType());
-        if (channelConfig != null && !channelConfig.isReadEvents()) {
+        if (channelConfig == null || !channelConfig.isReadEvents()) {
             callback.onError("Read events are disabled for this channel type", -1);
-        }
-
-        if (getChannelConfig(channel.getType()).isReadEvents())
+        } else {
             apiService.markRead(channel.getType(), channel.getId(), apiKey, getUserId(), clientID, readRequest).enqueue(new Callback<EventResponse>() {
                 @Override
                 public void onResponse(Call<EventResponse> call, Response<EventResponse> response) {
@@ -1340,6 +1338,7 @@ public class Client implements WSResponseHandler {
                     }
                 }
             });
+        }
     }
 
     /**
