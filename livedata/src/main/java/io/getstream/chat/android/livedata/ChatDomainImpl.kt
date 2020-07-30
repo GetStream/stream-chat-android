@@ -35,9 +35,12 @@ import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import kotlinx.coroutines.*
+import java.lang.IllegalStateException
 import java.lang.Thread.sleep
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+
+private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
@@ -270,48 +273,54 @@ class ChatDomainImpl private constructor(
         return result
     }
 
-    suspend fun createChannel(c: Channel): Result<Channel> {
-        val online = isOnline()
-        c.createdAt = c.createdAt ?: Date()
-        c.syncStatus = if (online) { SyncStatus.IN_PROGRESS } else { SyncStatus.SYNC_NEEDED }
-
-        // update livedata
-        val channelRepo = channel(c.cid)
-        channelRepo.updateLiveDataFromChannel(c)
-        val channelController = client.channel(c.type, c.id)
-
-        // Update Room State
-        repos.channels.insertChannel(c)
-
-        // Add to query controllers
-        for (query in activeQueryMapImpl.values) {
-            query.addChannelIfFilterMatches(c)
-        }
-
-        // make the API call and follow retry policy
-        if (online) {
-            val runnable = {
-                val members = c.members.map { it.getUserId() }
-                client.createChannel(c.type, c.id, members, c.extraData)
-            }
-            val result = runAndRetry(runnable)
-            return if (result.isSuccess) {
-                c.syncStatus = SyncStatus.COMPLETED
-                repos.channels.insertChannel(c)
-                Result(result.data() as Channel, null)
+    suspend fun createChannel(c: Channel): Result<Channel> =
+        try {
+            val online = isOnline()
+            c.createdAt = c.createdAt ?: Date()
+            c.syncStatus = if (online) {
+                SyncStatus.IN_PROGRESS
             } else {
-                if (result.error().isPermanent()) {
-                    c.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                } else {
-                    c.syncStatus = SyncStatus.SYNC_NEEDED
-                }
-                repos.channels.insertChannel(c)
-                Result(null, result.error())
+                SyncStatus.SYNC_NEEDED
             }
-        } else {
-            return Result(c, null)
+
+            // update livedata
+            val channelRepo = channel(c.cid)
+            channelRepo.updateLiveDataFromChannel(c)
+
+            // Update Room State
+            repos.channels.insertChannel(c)
+
+            // Add to query controllers
+            for (query in activeQueryMapImpl.values) {
+                query.addChannelIfFilterMatches(c)
+            }
+
+            // make the API call and follow retry policy
+            if (online) {
+                val runnable = {
+                    val members = c.members.map { it.getUserId() }
+                    client.createChannel(c.type, c.id, members, c.extraData)
+                }
+                val result = runAndRetry(runnable)
+                if (result.isSuccess) {
+                    c.syncStatus = SyncStatus.COMPLETED
+                    repos.channels.insertChannel(c)
+                    Result(result.data() as Channel, null)
+                } else {
+                    if (result.error().isPermanent()) {
+                        c.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    } else {
+                        c.syncStatus = SyncStatus.SYNC_NEEDED
+                    }
+                    repos.channels.insertChannel(c)
+                    Result<Channel>(null, result.error())
+                }
+            } else {
+                Result(c, null)
+            }
+        } catch (e: IllegalStateException) {
+            Result(null, ChatError(e))
         }
-    }
 
     fun addError(error: ChatError) {
         _errorEvent.postValue(
@@ -374,20 +383,22 @@ class ChatDomainImpl private constructor(
         eventSubscription?.let { it.unsubscribe() }
     }
 
-    fun channel(c: Channel): ChannelControllerImpl {
+    internal fun channel(c: Channel): ChannelControllerImpl {
         return channel(c.type, c.id)
     }
 
-    fun channel(cid: String): ChannelControllerImpl {
+    internal fun channel(cid: String): ChannelControllerImpl {
+        if (!CHANNEL_CID_REGEX.matches(cid)) {
+            throw IllegalArgumentException("Received invalid cid, expected format messaging:123, got $cid")
+        }
         val parts = cid.split(":")
-        check(parts.size == 2) { "Received invalid cid, expected format messaging:123, got $cid" }
         return channel(parts[0], parts[1])
     }
 
     /**
      * repo.channel("messaging", "12") return a ChatChannelRepository
      */
-    fun channel(
+    internal fun channel(
         channelType: String,
         channelId: String
     ): ChannelControllerImpl {
