@@ -186,10 +186,7 @@ class ChatDomainImpl private constructor(
 
         useCases = UseCaseHelper(this)
 
-        EncryptedBackgroundSyncConfigStore(context.applicationContext).run {
-            clear()
-            put(backgroundSyncConfig)
-        }
+        storeBackgroundSyncConfig(backgroundSyncConfig, context)
 
         // verify that you're not connecting 2 different users
         if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
@@ -204,6 +201,18 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
+    }
+
+    private fun storeBackgroundSyncConfig(
+        backgroundSyncConfig: BackgroundSyncConfig,
+        context: Context
+    ) {
+        if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
+            EncryptedBackgroundSyncConfigStore(context.applicationContext).run {
+                clear()
+                put(backgroundSyncConfig)
+            }
+        }
     }
 
     internal suspend fun updateCurrentUser(me: User) {
