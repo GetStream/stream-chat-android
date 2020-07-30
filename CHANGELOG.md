@@ -1,3 +1,7 @@
+## July 30, 2020 - 3.6.16
+
+- Handle Missing Config when mark a channel as read
+
 ## July 17, 2020 - 3.6.15
 
 - Fix empty imageUrl that override previous value on backend
