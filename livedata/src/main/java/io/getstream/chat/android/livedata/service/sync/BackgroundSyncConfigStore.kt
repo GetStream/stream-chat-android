@@ -11,11 +11,13 @@ interface BackgroundSyncConfigStore {
     fun clear()
 }
 
-class EncryptedBackgroundSyncConfigStore(val context: Context) : BackgroundSyncConfigStore {
+class EncryptedBackgroundSyncConfigStore(context: Context) : BackgroundSyncConfigStore {
     private val prefs: SharedPreferences
 
     init {
-        val masterKey = MasterKey.Builder(context, MASTER_KEY_ALIAS).build()
+        val masterKey = MasterKey.Builder(context, MASTER_KEY_ALIAS)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
         prefs = EncryptedSharedPreferences.create(
             context,
             SYNC_CONFIG_PREFS_NAME,
