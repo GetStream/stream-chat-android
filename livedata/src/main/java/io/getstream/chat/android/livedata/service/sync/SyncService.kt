@@ -7,43 +7,48 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 
 class SyncService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
+        showForegroundNotification()
 
+        intent?.getStringExtra(EXTRA_CID)?.let {
+            val config = EncryptedBackgroundSyncConfigStore(applicationContext).get()
+            val user = User(id = config.userId)
+            val chatClient = ChatClient.Builder(config.apiKey, applicationContext).build()
+            ChatDomain.Builder(applicationContext, chatClient, user).build().apply {
+                val result = useCases.replayEventsForActiveChannels(it).execute()
+                if (result.isSuccess) {
+                    val numberOfNewMessages =
+                        result.data().filterIsInstance<NewMessageEvent>().count()
+                    // TODO: display notification about X new messages
+                    Log.e("SyncService", "sync success $numberOfNewMessages new messages")
+                } else {
+                    // TODO: In case sync failed display generic notification that there are a new messages
+                }
+            }
+        }
+
+        stopForeground(true)
+        stopSelf()
+        return START_NOT_STICKY
+    }
+
+    private fun showForegroundNotification() {
         NotificationCompat.Builder(this, CHANNEL_ID)
             .setAutoCancel(true)
             .build()
             .apply {
                 startForeground(NOTIFICATION_ID, this)
             }
-
-        try {
-            intent?.getStringExtra(EXTRA_CID)?.let {
-                // TODO: ChatDomain is null when app gets killed.
-                // That's why it's wrapped in try clause atm.
-                // Need to store api key to re-create ChatClient + ChatDomain here.
-                ChatDomain.instance().apply {
-                    val result = useCases.replayEventsForActiveChannels(it).execute()
-                    if (result.isSuccess) {
-                        val numberOfNewMessages =
-                            result.data().filterIsInstance<NewMessageEvent>().count()
-                        // TODO: display notification about X new messages
-                    } else {
-                        // TODO: In case sync failed display generic notification that there are a new messages
-                    }
-                }
-            }
-        } finally {
-            stopForeground(true)
-            stopSelf()
-        }
-        return START_NOT_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? = null
