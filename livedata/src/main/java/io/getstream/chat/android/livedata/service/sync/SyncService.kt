@@ -27,11 +27,15 @@ class SyncService : Service() {
                 val user = User(id = config.userId)
                 val token = config.userToken
                 val chatClient = ChatClient.Builder(config.apiKey, applicationContext).build()
-                chatClient.setUser(user, token, object: InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        performSync(chatClient, user, it)
+                chatClient.setUser(
+                    user,
+                    token,
+                    object : InitConnectionListener() {
+                        override fun onSuccess(data: ConnectionData) {
+                            performSync(chatClient, user, it)
+                        }
                     }
-                })
+                )
             }
         }
 
