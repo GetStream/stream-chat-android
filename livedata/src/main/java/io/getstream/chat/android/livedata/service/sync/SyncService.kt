@@ -17,12 +17,16 @@ import io.getstream.chat.android.livedata.ChatDomain
 
 class SyncService : Service() {
 
+    private val syncModule by lazy {
+        SyncProvider(this)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createNotificationChannel()
         showForegroundNotification()
 
         intent?.getStringExtra(EXTRA_CID)?.let {
-            val config = EncryptedBackgroundSyncConfigStore(applicationContext).get()
+            val config = syncModule.encryptedBackgroundSyncConfigStore.get()
             if (BackgroundSyncConfig.UNAVAILABLE != config) {
                 val user = User(id = config.userId)
                 val token = config.userToken

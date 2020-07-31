@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
-import io.getstream.chat.android.livedata.service.sync.EncryptedBackgroundSyncConfigStore
+import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -84,6 +84,7 @@ interface ChatDomain {
         private var offlineEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        private val syncModule by lazy { SyncProvider(appContext) }
 
         fun database(db: ChatDatabase): Builder {
             this.database = db
@@ -130,7 +131,7 @@ interface ChatDomain {
         }
 
         fun build(): ChatDomain {
-            storeBackgroundSyncConfig(appContext, backgroundSyncConfig)
+            storeBackgroundSyncConfig(backgroundSyncConfig)
             instance = buildImpl()
             return instance
         }
@@ -139,9 +140,9 @@ interface ChatDomain {
             return ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
         }
 
-        private fun storeBackgroundSyncConfig(context: Context, backgroundSyncConfig: BackgroundSyncConfig) {
+        private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
-                EncryptedBackgroundSyncConfigStore(context.applicationContext).run {
+                syncModule.encryptedBackgroundSyncConfigStore.apply {
                     clear()
                     put(backgroundSyncConfig)
                 }
