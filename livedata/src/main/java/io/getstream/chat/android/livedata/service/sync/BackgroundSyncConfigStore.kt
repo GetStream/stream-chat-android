@@ -5,13 +5,7 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
-interface BackgroundSyncConfigStore {
-    fun put(config: BackgroundSyncConfig)
-    fun get(): BackgroundSyncConfig
-    fun clear()
-}
-
-class EncryptedBackgroundSyncConfigStore(context: Context) : BackgroundSyncConfigStore {
+internal class EncryptedBackgroundSyncConfigStore(context: Context) {
     private val prefs: SharedPreferences
 
     init {
@@ -27,7 +21,7 @@ class EncryptedBackgroundSyncConfigStore(context: Context) : BackgroundSyncConfi
         )
     }
 
-    override fun put(config: BackgroundSyncConfig) {
+    fun put(config: BackgroundSyncConfig) {
         prefs.edit().apply {
             putString(KEY_API_KEY, config.apiKey)
             putString(KEY_USER_ID, config.userId)
@@ -35,19 +29,19 @@ class EncryptedBackgroundSyncConfigStore(context: Context) : BackgroundSyncConfi
         }.apply()
     }
 
-    override fun get(): BackgroundSyncConfig = prefs.run {
+    fun get(): BackgroundSyncConfig = prefs.run {
         val apiKey = getString(KEY_API_KEY, "")
         val userId = getString(KEY_USER_ID, "")
         val userToken = getString(KEY_USER_TOKEN, "")
 
-        if (apiKey == null || userId == null || userToken == null) {
+        if (apiKey.isNullOrBlank() || userId.isNullOrBlank() || userToken.isNullOrBlank()) {
             BackgroundSyncConfig.UNAVAILABLE
         } else {
             BackgroundSyncConfig(apiKey, userId, userToken)
         }
     }
 
-    override fun clear() = prefs.edit().clear().apply()
+    fun clear() = prefs.edit().clear().apply()
 
     companion object {
         const val MASTER_KEY_ALIAS = "_stream_sync_config_master_key_"
