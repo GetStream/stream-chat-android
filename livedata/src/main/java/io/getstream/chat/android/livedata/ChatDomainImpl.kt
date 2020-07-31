@@ -15,32 +15,46 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Filters.`in`
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Mute
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.*
+import io.getstream.chat.android.livedata.entity.ChannelEntityPair
+import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
-import io.getstream.chat.android.livedata.service.sync.EncryptedBackgroundSyncConfigStore
-import io.getstream.chat.android.livedata.usecase.*
+import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.*
-import java.lang.IllegalStateException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import java.lang.Thread.sleep
-import java.util.*
+import java.util.Date
+import java.util.InputMismatchException
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 
@@ -154,8 +168,7 @@ class ChatDomainImpl private constructor(
         offlineEnabled: Boolean = true,
         userPresence: Boolean = true,
         recoveryEnabled: Boolean = true,
-        db: ChatDatabase? = null,
-        backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        db: ChatDatabase? = null
     ) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
@@ -188,8 +201,6 @@ class ChatDomainImpl private constructor(
 
         useCases = UseCaseHelper(this)
 
-        storeBackgroundSyncConfig(backgroundSyncConfig, context)
-
         // verify that you're not connecting 2 different users
         if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
             throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
@@ -203,18 +214,6 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
-    }
-
-    private fun storeBackgroundSyncConfig(
-        backgroundSyncConfig: BackgroundSyncConfig,
-        context: Context
-    ) {
-        if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
-            EncryptedBackgroundSyncConfigStore(context.applicationContext).run {
-                clear()
-                put(backgroundSyncConfig)
-            }
-        }
     }
 
     internal suspend fun updateCurrentUser(me: User) {
