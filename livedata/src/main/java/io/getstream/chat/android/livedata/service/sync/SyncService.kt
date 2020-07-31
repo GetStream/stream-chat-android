@@ -22,17 +22,19 @@ class SyncService : Service() {
 
         intent?.getStringExtra(EXTRA_CID)?.let {
             val config = EncryptedBackgroundSyncConfigStore(applicationContext).get()
-            val user = User(id = config.userId)
-            val chatClient = ChatClient.Builder(config.apiKey, applicationContext).build()
-            ChatDomain.Builder(applicationContext, chatClient, user).build().apply {
-                val result = useCases.replayEventsForActiveChannels(it).execute()
-                if (result.isSuccess) {
-                    val numberOfNewMessages =
-                        result.data().filterIsInstance<NewMessageEvent>().count()
-                    // TODO: display notification about X new messages
-                    Log.e("SyncService", "sync success $numberOfNewMessages new messages")
-                } else {
-                    // TODO: In case sync failed display generic notification that there are a new messages
+            if (BackgroundSyncConfig.UNAVAILABLE != config) {
+                val user = User(id = config.userId)
+                val chatClient = ChatClient.Builder(config.apiKey, applicationContext).build()
+                ChatDomain.Builder(applicationContext, chatClient, user).build().apply {
+                    val result = useCases.replayEventsForActiveChannels(it).execute()
+                    if (result.isSuccess) {
+                        val numberOfNewMessages =
+                            result.data().filterIsInstance<NewMessageEvent>().count()
+                        // TODO: display notification about X new messages
+                        Log.e("SyncService", "sync success $numberOfNewMessages new messages")
+                    } else {
+                        // TODO: In case sync failed display generic notification that there are a new messages
+                    }
                 }
             }
         }
