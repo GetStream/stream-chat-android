@@ -17,7 +17,7 @@ class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
-        queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c")
+        queryChannelsEntity.channelCids = listOf("a", "b", "c")
         repo.insert(queryChannelsEntity)
         val entity = repo.select(queryChannelsEntity.id)
         Truth.assertThat(queryChannelsEntity).isEqualTo(entity)
@@ -26,21 +26,12 @@ class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
         val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
-        queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c")
+        queryChannelsEntity.channelCids = listOf("a", "b", "c")
         repo.insert(queryChannelsEntity)
-        queryChannelsEntity.channelCids = sortedSetOf("a", "b", "c", "d")
+        queryChannelsEntity.channelCids = listOf("a", "b", "c", "d")
         repo.insert(queryChannelsEntity)
 
         val entity = repo.select(queryChannelsEntity.id)
         Truth.assertThat(entity).isEqualTo(queryChannelsEntity)
-    }
-
-    @Test
-    fun testOrdering() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
-        queryChannelsEntity.channelCids = mutableSetOf("a", "b", "c")
-        queryChannelsEntity.channelCids.addAll(listOf("1"))
-
-        Truth.assertThat(queryChannelsEntity.channelCids.toList()[3]).isEqualTo("1")
     }
 }

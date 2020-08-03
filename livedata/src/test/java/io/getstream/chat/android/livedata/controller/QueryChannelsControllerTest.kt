@@ -73,7 +73,7 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     fun offlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCids = sortedSetOf(data.channel1.cid)
+        query.channelCids = listOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
         chatDomainImpl.repos.messages.insertMessage(data.message1)
         chatDomainImpl.storeStateForChannel(data.channel1)
@@ -89,7 +89,7 @@ class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     fun onlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
         val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCids = sortedSetOf(data.channel1.cid)
+        query.channelCids = listOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
         chatDomainImpl.storeStateForChannel(data.channel1)
         chatDomainImpl.setOffline()

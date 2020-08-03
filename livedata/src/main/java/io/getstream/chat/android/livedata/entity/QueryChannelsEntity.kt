@@ -17,7 +17,7 @@ data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort) {
         id = (Objects.hash(filter.toMap()) + Objects.hash(sort.data)).toString()
     }
 
-    var channelCids: MutableSet<String> = sortedSetOf()
+    var channelCids: List<String> = listOf()
 
     /** we track when the query was created and updated so we can clear out old results */
     var createdAt: Date? = null
