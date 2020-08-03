@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import androidx.recyclerview.widget.DiffUtil
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -19,7 +20,7 @@ class PerformanceTest : BaseConnectedMockedTest() {
     @Test
     fun channels() = runBlocking(Dispatchers.IO) {
         var channelControllerImpl = chatDomainImpl.channel(data.channel1)
-        val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1)
+        val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
         var counter = LiveDiffCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
@@ -31,7 +32,7 @@ class PerformanceTest : BaseConnectedMockedTest() {
             counter.onEvent(channels)
         }
         // Insert a query, channel and message into offline storage
-        val query = QueryChannelsEntity(data.filter1, null).apply { channelCids = sortedSetOf(data.channel1.cid) }
+        val query = QueryChannelsEntity(data.filter1, QuerySort()).apply { channelCids = listOf(data.channel1.cid) }
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.repos.messages.insertMessage(data.message1)
         chatDomainImpl.repos.queryChannels.insert(query)

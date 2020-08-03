@@ -15,6 +15,7 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
@@ -223,8 +224,8 @@ open class BaseDomainTest {
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 
-        query = QueryChannelsEntity(data.filter1, null)
+        query = QueryChannelsEntity(data.filter1, QuerySort())
 
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1)
+        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
 }

@@ -24,12 +24,14 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.*
+import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.usecase.*
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
@@ -336,8 +338,7 @@ class ChatDomainImpl private constructor(
     /** stores the mapping from cid to channelRepository */
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
-    /** stores the mapping from cid to channelRepository */
-    var activeQueryMapImpl: ConcurrentHashMap<QueryChannelsEntity, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
@@ -460,23 +461,16 @@ class ChatDomainImpl private constructor(
      */
     fun queryChannels(
         filter: FilterObject,
-        sort: QuerySort? = null
-    ): QueryChannelsControllerImpl {
-        // mark this query as active
-        val queryChannelsEntity = QueryChannelsEntity(filter, sort)
-        if (!activeQueryMapImpl.containsKey(queryChannelsEntity)) {
-            val queryRepo =
-                QueryChannelsControllerImpl(
-                    queryChannelsEntity,
-                    queryChannelsEntity.filter,
-                    queryChannelsEntity.sort,
-                    client,
-                    this
-                )
-            activeQueryMapImpl[queryChannelsEntity] = queryRepo
+        sort: QuerySort
+    ): QueryChannelsControllerImpl =
+        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+            QueryChannelsControllerImpl(
+                filter,
+                sort,
+                client,
+                this
+            )
         }
-        return activeQueryMapImpl[queryChannelsEntity]!!
-    }
 
     private fun queryEvents(cids: List<String>): List<ChatEvent> {
         val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
@@ -519,7 +513,7 @@ class ChatDomainImpl private constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(0, 30, 30))
+            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 30))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
@@ -616,7 +610,7 @@ class ChatDomainImpl private constructor(
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
-    internal suspend fun selectAndEnrichChannels(
+    private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
     ): List<ChannelEntityPair> {
@@ -667,7 +661,7 @@ class ChatDomainImpl private constructor(
 
             channelPairs.add(channelPair)
         }
-        return channelPairs.toList()
+        return channelPairs.toList().applyPagination(pagination)
     }
 
     override fun clean() {

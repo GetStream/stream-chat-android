@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -87,9 +88,9 @@ open class BaseConnectedIntegrationTest : BaseDomainTest() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
-        query = QueryChannelsEntity(data.filter1, null)
+        query = QueryChannelsEntity(data.filter1, QuerySort())
 
-        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1)
+        queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
         Truth.assertThat(client.isSocketConnected()).isTrue()
 
