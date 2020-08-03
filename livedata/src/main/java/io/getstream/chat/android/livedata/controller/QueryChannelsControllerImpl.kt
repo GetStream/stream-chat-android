@@ -134,7 +134,7 @@ class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
-        val request = pagination.toQueryChannelsRequest(queryEntity.filter, domainImpl.userPresence)
+        val request = pagination.toQueryChannelsRequest(filter, domainImpl.userPresence)
         // next run the actual query
         val response = client.queryChannels(request).execute()
 
