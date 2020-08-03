@@ -28,7 +28,7 @@ interface QueryChannelsController {
      * Return true to add the channel, return false to ignore it.
      * By default it will simply add every channel for which this event is received
      */
-    var newChannelEventFilter: ((Channel, FilterObject) -> Boolean)?
+    var newChannelEventFilter: (Channel, FilterObject) -> Boolean
     /**
      * If the API call failed and we need to rerun this query
      */

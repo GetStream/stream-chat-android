@@ -27,9 +27,9 @@ class QueryChannelsControllerImpl(
     override val filter: FilterObject,
     override val sort: QuerySort,
     internal val client: ChatClient,
-    internal val domainImpl: ChatDomainImpl,
-    override var newChannelEventFilter: ((Channel, FilterObject) -> Boolean)? = null
+    internal val domainImpl: ChatDomainImpl
 ) : QueryChannelsController {
+    override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
     /**
      * A livedata object with the channels matching this query.
@@ -68,13 +68,7 @@ class QueryChannelsControllerImpl(
     override fun addChannelIfFilterMatches(
         channel: Channel
     ) {
-        val shouldBeAdded = if (newChannelEventFilter != null) {
-            newChannelEventFilter!!(channel, queryEntity.filter)
-        } else {
-            // default to always adding the channel
-            true
-        }
-        if (shouldBeAdded) {
+        if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
             channelControllerImpl.updateLiveDataFromChannel(channel)
             addChannels(listOf(channel), true)
