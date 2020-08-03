@@ -19,7 +19,7 @@ ext {
     ktlintVersion = "9.3.0"
 
     // Library Versions
-    streamLivedataVersion = "0.6.8"
+    streamLivedataVersion = "0.6.9"
 
     appcompatVersion = "1.1.0"
     legacySupportV4Version = "1.0.0"
