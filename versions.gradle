@@ -41,7 +41,7 @@ ext {
     retrofitVersion = "2.8.1"
     gsonVersion = "2.8.1"
 
-    frescoVersion = "1.2.0"
+    frescoVersion = "2.3.0"
     photodraweeviewVersion = "1.1.0"
     keyboardvisibilityeventVersion = "2.3.0"
     dexterVersion = "6.1.2"
