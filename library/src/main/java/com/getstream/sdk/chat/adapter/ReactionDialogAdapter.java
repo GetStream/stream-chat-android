@@ -1,27 +1,23 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.util.ArrayMap;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.getstream.sdk.chat.Chat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.Reaction;
-import io.getstream.chat.android.client.utils.SyncStatus;
 import io.getstream.chat.android.livedata.ChatDomain;
 
 
@@ -30,6 +26,7 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
     private static final String TAG = ReactionDialogAdapter.class.getSimpleName();
 
     private Message message;
+    private String cid = "";
     private View.OnClickListener clickListener;
     private Map<String, String> reactionTypes;
     private MessageListViewStyle style;
@@ -41,6 +38,11 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         this.reactionTypes = LlcMigrationUtils.getReactionTypes();
         this.style = style;
         this.clickListener = clickListener;
+        if (!message.getCid().equals("")) {
+            cid = message.getCid();
+        } else if (!message.getChannel().getCid().equals("")) {
+            cid = message.getChannel().getCid();
+        }
     }
 
     @Override
@@ -133,17 +135,20 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
             Reaction reaction = new Reaction();
             reaction.setMessageId(message.getId());
             reaction.setType(type);
-            ChatDomain.instance().getUseCases().getSendReaction().invoke(message.getCid(), reaction).execute();
+            if (!cid.equals("")) {
+                ChatDomain.instance().getUseCases().getSendReaction().invoke(cid, reaction).execute();
+            }
 
         }
 
         private void deleteReaction(final View view, String type) {
-
             clickListener.onClick(view);
             Reaction reaction = new Reaction();
             reaction.setMessageId(message.getId());
             reaction.setType(type);
-            ChatDomain.instance().getUseCases().getDeleteReaction().invoke(message.getCid(), reaction).execute();
+            if (!cid.equals("")) {
+                ChatDomain.instance().getUseCases().getDeleteReaction().invoke(cid, reaction).execute();
+            }
         }
 
     }
