@@ -1,10 +1,24 @@
-## Jun 4th, 2020 - 4.2.11-beta-8
+## Aug 5th, 2020 - 4.2.11-beta-7
 
-- Add `ChannelsView.setViewHolderFactory(factory: ChannelViewHolderFactory)` function
-
-## Jun 4th, 2020 - 4.2.11-beta-7
-
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.9
 - Fix channel name validation in CreateChannelViewModel
+- Add `ChannelsView.setViewHolderFactory(factory: ChannelViewHolderFactory)` function
+- Fix Fresco initialization
+- Fix method to add/remove reaction
+
+## Jul 13th, 2020 - 4.2.11-beta-6
+
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.10.0
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.7
+- Refactor ChannelHeaderView
+- Refactor MesageInputView
+- Refactor Permission Checker Behavior
+- Refactor MessageListVIew
+- Fix Send Attachment Behavior
+- Fix "Take Picture/Record Video" Behavior
+- Add option to show empty view when there are no channels
+- Add option to send a message to a thread
+- Allow to switch user / logout
 
 ## Jun 4th, 2020 - 4.2.11-beta-5
 
