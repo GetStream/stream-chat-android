@@ -1,6 +1,7 @@
 import com.getstream.sdk.chat.Dependencies
 
 apply plugin: 'com.pascalwelsch.gitversioner'
+apply plugin: "com.github.ben-manes.versions"
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
@@ -22,6 +23,7 @@ buildscript {
         classpath Dependencies.gitversionerPlugin
         classpath Dependencies.firebasePlugin
         classpath Dependencies.ktlintPlugin
+        classpath Dependencies.gradleVersionsPlugin
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -47,5 +49,11 @@ gitVersioner {
     yearFactor 100
     formatter = { gitVersioner ->
         "1.${gitVersioner.versionCode}.${gitVersioner.featureBranchCommitCount}.${gitVersioner.currentSha1Short}"
+    }
+}
+
+dependencyUpdates {
+    rejectVersionIf {
+        Dependencies.isStable(it.currentVersion) && Dependencies.isNonStable(it.candidate.version)
     }
 }
