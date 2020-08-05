@@ -43,6 +43,12 @@
                 android:resource="@xml/stream_filepaths"
                 />
         </provider>
+        <provider
+            android:authorities="${applicationId}.FrescoContentProvider"
+            android:name=".utils.frescoimageviewer.FrescoContentProvider"
+            android:enabled="true"
+            android:exported="false"
+            />
     </application>
 
 </manifest>
