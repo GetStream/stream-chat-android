@@ -1,3 +1,5 @@
+import com.getstream.sdk.chat.Dependencies
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
@@ -12,7 +14,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.0"
+        classpath Dependencies.navigationSafeArgsGradlePlugin
     }
 }
 
@@ -112,40 +114,40 @@ android {
 
 dependencies {
     implementation project(":library")
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation Dependencies.kotlinSTDLib
 
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation Dependencies.appCompat
 
-    implementation "androidx.core:core-ktx:$ktxCoreVersion"
-    implementation "androidx.activity:activity-ktx:$activityKtxVersion"
-    implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion"
-    implementation "com.google.android.material:material:$materialVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
+    implementation Dependencies.androidXKTX
+    implementation Dependencies.activityKtx
+    implementation Dependencies.fragmentKtx
+    implementation Dependencies.lifecycleExtension
+    implementation Dependencies.materialComponents
+    implementation Dependencies.constraintLayout
 
-    implementation "androidx.navigation:navigation-runtime-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    implementation Dependencies.navigationRuntimeKTX
+    implementation Dependencies.navigationFragmentKTX
+    implementation Dependencies.navigationUIKTX
 
-    implementation "androidx.preference:preference-ktx:$preferenceKtxVersion"
+    implementation Dependencies.preferences
 
-    implementation "com.google.firebase:firebase-analytics-ktx:$firebaseAnalyticsVersion"
-    implementation "com.google.firebase:firebase-crashlytics:$firebaseCrashlyticsVersion"
+    implementation Dependencies.firebaseAnalytics
+    implementation Dependencies.firebaseCrashlytics
 
 
-    implementation "org.koin:koin-core:$koinVersion"
-    implementation "org.koin:koin-core-ext:$koinVersion"
-    implementation "org.koin:koin-androidx-scope:$koinVersion"
-    implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
-    implementation "org.koin:koin-androidx-ext:$koinVersion"
+    implementation Dependencies.koinAndroidxExt
+    implementation Dependencies.koinAndroidxScope
+    implementation Dependencies.koinAndroidxViewmodel
+    implementation Dependencies.koinCore
+    implementation Dependencies.koinCoreExt
 
-    implementation "com.jakewharton.timber:timber:$timberVersion"
+    implementation Dependencies.timber
 
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation Dependencies.glide
+    annotationProcessor Dependencies.glideCompiler
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    debugImplementation Dependencies.leakCanary
 
-    testImplementation "junit:junit:$junitVersion"
-    testImplementation "org.koin:koin-test:$koinVersion"
+    testImplementation Dependencies.junit4
+    testImplementation Dependencies.koinTest
 }
