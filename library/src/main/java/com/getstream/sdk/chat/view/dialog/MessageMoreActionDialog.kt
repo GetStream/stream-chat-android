@@ -95,7 +95,7 @@ class MessageMoreActionDialog(
         copyMessageButton.setOnClickListener {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", message.text)
-            clipboard.primaryClip = clip
+            clipboard.setPrimaryClip(clip)
             dismiss()
         }
     }

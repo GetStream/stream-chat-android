@@ -1,3 +1,5 @@
+import com.getstream.sdk.chat.Dependencies
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.hiya.jacoco-android'
@@ -80,68 +82,64 @@ android {
     }
 }
 dependencies {
-    apply from: '../versions.gradle'
 
-    api "com.github.GetStream:stream-chat-android-livedata:$streamLivedataVersion"
+    api Dependencies.streamLivedata
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation "androidx.appcompat:appcompat:$appcompatVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
-    implementation "androidx.legacy:legacy-support-v4:$legacySupportV4Version"
-    implementation "androidx.recyclerview:recyclerview:$recyclerviewVersion"
-    implementation "androidx.activity:activity-ktx:$activityKtxVersion"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
+    implementation Dependencies.kotlinSTDLib
+    implementation Dependencies.appCompat
+    implementation Dependencies.constraintLayout
+    implementation Dependencies.androidLegacySupport
+    implementation Dependencies.recyclerview
+    implementation Dependencies.activityKtx
+    implementation Dependencies.lifecycleExtension
+    implementation Dependencies.lifecycleViewModelKTX
 
-    implementation "androidx.room:room-runtime:$roomRuntimeVersion"
-    //annotationProcessor 'androidx.room:room-compiler:2.1.0'
+    implementation Dependencies.roomRuntime
 
-    implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
-    implementation "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
+    implementation Dependencies.okhttp
+    implementation Dependencies.loggingInterceptor
 
-    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation Dependencies.retrofit
+    implementation Dependencies.gsonConverter
 
-    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation Dependencies.gson
 
-    implementation "com.aminography:redirectglide:$glideRedirectVersion"
-    implementation "com.github.bumptech.glide:glide:$glideVersion"
-    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation Dependencies.glideRedirect
+    implementation Dependencies.glide
+    kapt Dependencies.glideCompiler
 
-    implementation "com.github.duanhong169:drawabletoolbox:$drawabletoolboxVersion"
-    implementation "io.noties.markwon:core:$markdownVersion"
-    implementation "io.noties.markwon:linkify:$markdownVersion"
-    implementation "io.noties.markwon:ext-strikethrough:$markdownVersion"
-    implementation "io.noties.markwon:image:$markdownVersion"
+    implementation Dependencies.drawabletoolbox
+    implementation Dependencies.marwonCore
+    implementation Dependencies.marwonLinkify
+    implementation Dependencies.marwonextStrikethrough
+    implementation Dependencies.marwonImage
 
-    implementation "com.facebook.fresco:fresco:$frescoVersion"
-    implementation "me.relex:photodraweeview:$photodraweeviewVersion"
-    implementation "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:$keyboardvisibilityeventVersion"
-    implementation "com.karumi:dexter:$dexterVersion"
+    implementation Dependencies.fresco
+    implementation Dependencies.photodraweeview
+    implementation Dependencies.keyboardVisibilityEvent
+    implementation Dependencies.dexter
 
-    implementation "com.google.firebase:firebase-messaging:$firebaseMessagingVersion"
+    implementation Dependencies.firebaseMessaging
 
-    implementation "androidx.media:media:$androidxMediaVersion"
-    implementation "io.coil-kt:coil:$coilVersion"
+    implementation Dependencies.androidxMedia
+    implementation Dependencies.coil
 
     // ExoPlayer
-    api "com.google.android.exoplayer:exoplayer-core:$exoplayerVersion"
-    api "com.google.android.exoplayer:exoplayer-dash:$exoplayerVersion"
-    api "com.google.android.exoplayer:exoplayer-hls:$exoplayerVersion"
-    api "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayerVersion"
+    api Dependencies.exoplayerCore
+    api Dependencies.exoplayerDash
+    api Dependencies.exoplayerHls
+    api Dependencies.exoplayerSmoothstreaming
 
     // Tests
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiterVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiterVersion"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiterVersion"
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
 
-    testImplementation "com.squareup.okhttp3:mockwebserver:$mockwebserverVersion"
-    testImplementation "org.mockito:mockito-core:$mockitoCoreVersion"
-    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
-    testImplementation "org.json:json:$jsonVersion"
-    testImplementation "androidx.arch.core:core-testing:$androidxCoreTestVersion"
-    testImplementation "org.amshove.kluent:kluent:$kluentVersion"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesTestVersion"
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.androidxCoreTest
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.coroutinesTest
 
 }
 
