@@ -1,3 +1,5 @@
+import com.getstream.sdk.chat.Dependencies
+
 apply plugin: 'com.pascalwelsch.gitversioner'
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
@@ -10,18 +12,16 @@ buildscript {
     }
 
     dependencies {
-        apply from: 'versions.gradle'
-
-        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "com.google.gms:google-services:$googleServiceVersion"
-        classpath "com.hiya:jacoco-android:$jacocoVersion"
-        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokkaVersion"
-        classpath "com.github.dcendents:android-maven-gradle-plugin:$gradlePluginVersion"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:$mannodermausVersion"
-        classpath "com.pascalwelsch.gitversioner:gitversioner:$gitversionerVersion"
-        classpath "com.google.firebase:firebase-crashlytics-gradle:$crashlyticsVersion"
-        classpath "org.jlleitschuh.gradle:ktlint-gradle:$ktlintVersion"
+        classpath Dependencies.androidBuildToolGradlePlugin
+        classpath Dependencies.kotlinGradlePlugin
+        classpath Dependencies.googleServicesPlugin
+        classpath Dependencies.jacoco
+        classpath Dependencies.dokka
+        classpath Dependencies.androidMavenGradlePlugin
+        classpath Dependencies.androidJunit5GradlePlugin
+        classpath Dependencies.gitversionerPlugin
+        classpath Dependencies.firebasePlugin
+        classpath Dependencies.ktlintPlugin
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
