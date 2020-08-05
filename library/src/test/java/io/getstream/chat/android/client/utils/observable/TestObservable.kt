@@ -6,9 +6,14 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import java.util.Date
 
 class TestObservable {
 
@@ -26,7 +31,7 @@ class TestObservable {
     @Test
     fun oneEventDelivery() {
 
-        val event = ConnectedEvent()
+        val event = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
 
         observable.subscribe { result.add(it) }
         socketService.sendEvent(event)
@@ -37,9 +42,9 @@ class TestObservable {
     @Test
     fun multipleEventsDelivery() {
 
-        val eventA = ConnectedEvent()
-        val eventB = NewMessageEvent()
-        val eventC = DisconnectedEvent()
+        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
+        val eventB = NewMessageEvent(EventType.MESSAGE_NEW, Date(), User(), "type:id", "type", "id", Message(), 0, 0, 0)
+        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
         observable.subscribe { result.add(it) }
 
@@ -53,10 +58,10 @@ class TestObservable {
     @Test
     fun typesFiltering() {
 
-        val eventA = ConnectedEvent()
-        val eventB = NewMessageEvent()
-        val eventC = DisconnectedEvent()
-        val eventD = ErrorEvent(ChatError("error"))
+        val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
+        val eventB = NewMessageEvent(EventType.MESSAGE_NEW, Date(), User(), "type:id", "type", "id", Message(), 0, 0, 0)
+        val eventC = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+        val eventD = ErrorEvent(EventType.CONNECTION_ERROR, Date(), ChatError("Error"))
 
         observable
             .filter(eventA::class.java)
@@ -74,9 +79,9 @@ class TestObservable {
     @Test
     fun stringTypesFiltering() {
 
-        val eventA = ChatEvent("a")
-        val eventB = ChatEvent("b")
-        val eventC = ChatEvent("c")
+        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
 
         observable
             .filter("a")
@@ -93,15 +98,13 @@ class TestObservable {
     @Test
     fun customFiltering() {
 
-        val eventA = ChatEvent("a")
-        val eventB = ChatEvent("b")
-        val eventC = ChatEvent("c")
-
-        eventB.cid = "cid"
+        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), mapOf<Any, Any>("cid" to "myCid"))
+        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
 
         observable
             .filter {
-                it.type == "b" && it.cid == "cid"
+                it.type == "b" && (it as? UnknownEvent)?.rawData?.get("cid") == "myCid"
             }
             .subscribe { result.add(it) }
 
@@ -114,9 +117,9 @@ class TestObservable {
 
     @Test
     fun unsubscription() {
-        val eventA = ChatEvent("a")
-        val eventB = ChatEvent("b")
-        val eventC = ChatEvent("c")
+        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
 
         val subscription = observable.subscribe { result.add(it) }
 
@@ -133,9 +136,9 @@ class TestObservable {
     @Test
     fun first() {
 
-        val eventA = ChatEvent("a")
-        val eventB = ChatEvent("b")
-        val eventC = ChatEvent("c")
+        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
 
         observable.first().subscribe { result.add(it) }
 
@@ -149,9 +152,9 @@ class TestObservable {
     @Test
     fun firstAndFilter() {
 
-        val eventA = ChatEvent("a")
-        val eventB = ChatEvent("b")
-        val eventC = ChatEvent("c")
+        val eventA = UnknownEvent("a", Date(), emptyMap<Any, Any>())
+        val eventB = UnknownEvent("b", Date(), emptyMap<Any, Any>())
+        val eventC = UnknownEvent("c", Date(), emptyMap<Any, Any>())
 
         observable
             .first()

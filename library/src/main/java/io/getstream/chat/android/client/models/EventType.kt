@@ -13,6 +13,9 @@ object EventType {
     val USER_WATCHING_STOP = "user.watching.stop"
     val USER_UPDATED = "user.updated"
     val USER_BANNED = "user.banned"
+    val USER_DELETED = "user.deleted"
+    val USER_MUTED = "user.muted"
+    val USER_UNMUTED = "user.unmuted"
     val USER_UNBANNED = "user.unbanned"
     val TYPING_START = "typing.start"
     val TYPING_STOP = "typing.stop"
@@ -22,11 +25,15 @@ object EventType {
     val MESSAGE_READ = "message.read"
     val REACTION_NEW = "reaction.new"
     val REACTION_DELETED = "reaction.deleted"
+    val REACTION_UPDATED = "reaction.updated"
     val MEMBER_ADDED = "member.added"
     val MEMBER_REMOVED = "member.removed"
     val MEMBER_UPDATED = "member.updated"
+    val CHANNEL_CREATED = "channel.created"
     val CHANNEL_UPDATED = "channel.updated"
     val CHANNEL_HIDDEN = "channel.hidden"
+    val CHANNEL_MUTED = "channel.muted"
+    val CHANNEL_UNMUTED = "channel.unmuted"
     val CHANNEL_DELETED = "channel.deleted"
     val CHANNEL_VISIBLE = "channel.visible"
     val CHANNEL_TRUNCATED = "channel.truncated"
@@ -37,7 +44,6 @@ object EventType {
     val NOTIFICATION_MARK_READ = "notification.mark_read"
     val NOTIFICATION_INVITED = "notification.invited"
     val NOTIFICATION_INVITE_ACCEPTED = "notification.invite_accepted"
-    val NOTIFICATION_INVITE_REJECTED = "notification.invite_rejected"
     val NOTIFICATION_ADDED_TO_CHANNEL = "notification.added_to_channel"
     val NOTIFICATION_REMOVED_FROM_CHANNEL = "notification.removed_from_channel"
     val NOTIFICATION_MUTES_UPDATED = "notification.mutes_updated"
@@ -52,5 +58,5 @@ object EventType {
     /**
      * Unknown
      */
-    val UNKNOWN = ""
+    val UNKNOWN = "unknown_event"
 }

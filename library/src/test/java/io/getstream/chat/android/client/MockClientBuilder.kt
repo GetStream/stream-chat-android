@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
@@ -18,6 +19,7 @@ import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
+import java.util.Date
 
 /**
  * Used for integrations tests.
@@ -33,10 +35,12 @@ class MockClientBuilder {
     val token = "token"
     val serverErrorCode = 500
     val user = User().apply { id = userId }
-    val connectedEvent = ConnectedEvent().apply {
-        me = this@MockClientBuilder.user
-        connectionId = this@MockClientBuilder.connectionId
-    }
+    val connectedEvent = ConnectedEvent(
+        EventType.HEALTH_CHECK,
+        Date(),
+        user,
+        connectionId
+    )
 
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket

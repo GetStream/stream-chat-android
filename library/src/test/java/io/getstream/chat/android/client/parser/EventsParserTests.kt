@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.parser
 
-import io.getstream.chat.android.client.events.ChannelTruncated
+import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.NotificationChannelDeleted
-import io.getstream.chat.android.client.events.NotificationChannelTruncated
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.EventsParser
 import io.getstream.chat.android.client.utils.observable.FakeSocketService
@@ -54,13 +54,13 @@ class EventsParserTests {
         parser.onMessage(socket, "{type: ${EventType.NOTIFICATION_CHANNEL_TRUNCATED}}")
         parser.onMessage(socket, "{type: ${EventType.NOTIFICATION_CHANNEL_DELETED}}")
 
-        verifyEvent(eventsCollector[0], ChannelTruncated::class.java, EventType.CHANNEL_TRUNCATED)
+        verifyEvent(eventsCollector[0], ChannelTruncatedEvent::class.java, EventType.CHANNEL_TRUNCATED)
         verifyEvent(
             eventsCollector[1],
-            NotificationChannelTruncated::class.java,
+            NotificationChannelTruncatedEvent::class.java,
             EventType.NOTIFICATION_CHANNEL_TRUNCATED
         )
-        verifyEvent(eventsCollector[2], NotificationChannelDeleted::class.java, EventType.NOTIFICATION_CHANNEL_DELETED)
+        verifyEvent(eventsCollector[2], NotificationChannelDeletedEvent::class.java, EventType.NOTIFICATION_CHANNEL_DELETED)
     }
 
     private fun verifyEvent(event: ChatEvent, clazz: Class<out ChatEvent>, type: String) {

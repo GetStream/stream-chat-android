@@ -5,7 +5,58 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.events.ChannelCreatedEvent
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelMuteEvent
+import io.getstream.chat.android.client.events.ChannelTruncatedEvent
+import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.ChannelsMuteEvent
+import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
+import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
+import io.getstream.chat.android.client.events.NotificationInvitedEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMutedEvent
+import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.UserUnmutedEvent
+import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.UsersMutedEvent
+import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Member
@@ -35,7 +86,59 @@ internal class ChannelControllerImpl(
 
     override fun events(): ChatObservable {
         return client.events().filter { event ->
-            event.isFrom(cid)
+            when (event) {
+                is ChannelCreatedEvent -> event.cid == cid
+                is ChannelDeletedEvent -> event.cid == cid
+                is ChannelHiddenEvent -> event.cid == cid
+                is ChannelMuteEvent -> event.channelMute.channel.cid == cid
+                is ChannelsMuteEvent -> event.channelsMute.any { it.channel.cid == cid }
+                is ChannelTruncatedEvent -> event.cid == cid
+                is ChannelUnmuteEvent -> event.channelMute.channel.cid == cid
+                is ChannelsUnmuteEvent -> event.channelsMute.any { it.channel.cid == cid }
+                is ChannelUpdatedEvent -> event.cid == cid
+                is ChannelVisibleEvent -> event.cid == cid
+                is MemberAddedEvent -> event.cid == cid
+                is MemberRemovedEvent -> event.cid == cid
+                is MemberUpdatedEvent -> event.cid == cid
+                is MessageDeletedEvent -> event.cid == cid
+                is MessageReadEvent -> event.cid == cid
+                is MessageUpdatedEvent -> event.cid == cid
+                is NewMessageEvent -> event.cid == cid
+                is NotificationAddedToChannelEvent -> event.cid == cid
+                is NotificationChannelDeletedEvent -> event.cid == cid
+                is NotificationChannelTruncatedEvent -> event.cid == cid
+                is NotificationInviteAcceptedEvent -> event.cid == cid
+                is NotificationInvitedEvent -> event.cid == cid
+                is NotificationMarkReadEvent -> event.cid == cid
+                is NotificationMessageNewEvent -> event.cid == cid
+                is NotificationRemovedFromChannelEvent -> event.cid == cid
+                is ReactionDeletedEvent -> event.cid == cid
+                is ReactionNewEvent -> event.cid == cid
+                is ReactionUpdateEvent -> event.cid == cid
+                is TypingStartEvent -> event.cid == cid
+                is TypingStopEvent -> event.cid == cid
+                is ChannelUserBannedEvent -> event.cid == cid
+                is UserStartWatchingEvent -> event.cid == cid
+                is UserStopWatchingEvent -> event.cid == cid
+                is ChannelUserUnbannedEvent -> event.cid == cid
+                is UnknownEvent -> event.rawData["cid"] == cid
+                is HealthEvent,
+                is NotificationChannelMutesUpdatedEvent,
+                is NotificationMutesUpdatedEvent,
+                is GlobalUserBannedEvent,
+                is UserDeletedEvent,
+                is UserMutedEvent,
+                is UsersMutedEvent,
+                is UserPresenceChangedEvent,
+                is GlobalUserUnbannedEvent,
+                is UserUnmutedEvent,
+                is UsersUnmutedEvent,
+                is UserUpdatedEvent,
+                is ConnectedEvent,
+                is ConnectingEvent,
+                is DisconnectedEvent,
+                is ErrorEvent -> false
+            }
         }
     }
 

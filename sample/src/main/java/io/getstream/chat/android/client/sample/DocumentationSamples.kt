@@ -15,8 +15,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated
-import io.getstream.chat.android.client.events.NotificationMutesUpdated
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.EventType
@@ -410,24 +410,6 @@ fun listenAllEvents() {
     subscription.unsubscribe()
 }
 
-fun clientEvents() {
-    // subscribe to all client events and log the unread_count field
-    client.events().subscribe { event ->
-        if (event.totalUnreadCount != null) {
-            println("unread messages count is now: ${event.totalUnreadCount}")
-        }
-        if (event.unreadChannels != null) {
-            println("unread channels count is now: ${event.unreadChannels}")
-        }
-
-        if (event is ConnectedEvent) {
-            // the initial count of unread messages is returned by client.setUser
-            val unreadCount = event.user!!.totalUnreadCount
-            val unreadChannels = event.user!!.unreadChannels
-        }
-    }
-}
-
 fun connectionEvents() {
     client.events().subscribe { event ->
         when (event) {
@@ -649,9 +631,9 @@ fun muting() {
     client
         .events()
         .subscribe { event: ChatEvent? ->
-            if (event is NotificationChannelMutesUpdated) {
+            if (event is NotificationChannelMutesUpdatedEvent) {
                 val mutes = event.me.channelMutes
-            } else if (event is NotificationMutesUpdated) {
+            } else if (event is NotificationMutesUpdatedEvent) {
                 val mutes = event.me.channelMutes
             }
         }
@@ -777,16 +759,6 @@ fun markRead() {
     channelController.markRead().enqueue {
         val readEvent = it.data()
     }
-}
-
-fun unreadEvents() {
-    channelController.events()
-        .filter { event ->
-            event.unreadChannels != null && event.totalUnreadCount != null
-        }.subscribe { event ->
-            val unreadChannels = event.unreadChannels
-            val totalUnreadCount = event.totalUnreadCount
-        }
 }
 
 fun updateUsers() {

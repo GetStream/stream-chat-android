@@ -2,9 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.EventType
 import java.util.Date
 import kotlin.math.floor
 import kotlin.math.max
@@ -24,10 +22,10 @@ internal class HealthMonitor(val socket: ChatSocketServiceImpl) {
     }
 
     private val healthCheck: Runnable = Runnable {
-        if (socket.state is ChatSocketService.State.Connected) {
+        (socket.state as? ChatSocketService.State.Connected)?.let {
             logger.logI("Ok")
             consecutiveFailures = 0
-            socket.sendEvent(ChatEvent(EventType.HEALTH_CHECK))
+            socket.sendEvent(it.event)
             delayHandler.postDelayed(monitor, healthCheckInterval)
         }
     }

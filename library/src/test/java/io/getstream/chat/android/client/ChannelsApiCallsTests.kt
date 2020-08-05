@@ -11,9 +11,11 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.RejectInviteRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
-import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -22,6 +24,7 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
+import java.util.Date
 
 class ChannelsApiCallsTests {
 
@@ -327,9 +330,6 @@ class ChannelsApiCallsTests {
 
     @Test
     fun markAllReadSuccess() {
-
-        val event = ChatEvent("any")
-
         Mockito.`when`(
             mock.retrofitApi.markAllRead(
                 mock.apiKey,
@@ -363,7 +363,7 @@ class ChannelsApiCallsTests {
     fun markReadSuccess() {
 
         val messageId = "message-id"
-        val event = ChatEvent("any")
+        val event = MessageReadEvent(EventType.MESSAGE_READ, Date(), User(), "${mock.channelType}:${mock.channelId}", mock.channelType, mock.channelId, 0)
 
         Mockito.`when`(
             mock.retrofitApi.markRead(

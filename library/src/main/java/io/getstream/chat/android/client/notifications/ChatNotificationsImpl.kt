@@ -100,13 +100,11 @@ class ChatNotificationsImpl(
     }
 
     private fun handleEvent(event: NewMessageEvent) {
-        val channelType = event.cid!!.split(":")[0]
-        val channelId = event.cid!!.split(":")[1]
         val messageId = event.message.id
 
         if (!checkIfNotificationShowed(messageId)) {
             showedNotifications.add(messageId)
-            loadRequiredData(channelType, channelId, messageId)
+            loadRequiredData(event.channelType, event.channelId, messageId)
         }
     }
 

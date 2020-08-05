@@ -12,13 +12,15 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
+import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated
-import io.getstream.chat.android.client.events.UserBanned
-import io.getstream.chat.android.client.events.UserUnbanned
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
@@ -31,33 +33,7 @@ import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
-import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
-import kotlinx.android.synthetic.main.layout_commands.view.btnDisconnect
-import kotlinx.android.synthetic.main.layout_commands.view.btnGet5MinSyncHistory
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetAllSyncHistory
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetMessages
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetOrCreateChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnMarkAllRead
-import kotlinx.android.synthetic.main.layout_commands.view.btnMarkChannelRead
-import kotlinx.android.synthetic.main.layout_commands.view.btnMuteChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnMuteUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryMembers
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryUsers
-import kotlinx.android.synthetic.main.layout_commands.view.btnRemoveDevice
-import kotlinx.android.synthetic.main.layout_commands.view.btnSearchMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnSendMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnStartWatchingChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnStopWatchingChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnTranslateMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnUnMuteChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnUnbanUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnUpdateChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnUploadImage
-import kotlinx.android.synthetic.main.layout_commands.view.textStatus
-import kotlinx.android.synthetic.main.layout_commands.view.textUserId
+import kotlinx.android.synthetic.main.layout_commands.view.*
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -131,12 +107,12 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         subs.add(
             client.events()
                 .filter(ConnectedEvent::class.java)
-                .filter(NotificationChannelMutesUpdated::class.java)
+                .filter(NotificationChannelMutesUpdatedEvent::class.java)
                 .subscribe {
                     var mutedChannels: List<ChannelMute> = emptyList()
                     if (it is ConnectedEvent) {
                         mutedChannels = it.me.channelMutes
-                    } else if (it is NotificationChannelMutesUpdated) {
+                    } else if (it is NotificationChannelMutesUpdatedEvent) {
                         mutedChannels = it.me.channelMutes
                     }
                     println(mutedChannels)
@@ -156,8 +132,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         subs.add(
             client.events()
-                .filter(UserUnbanned::class.java)
-                .filter(UserBanned::class.java)
+                .filter(ChannelUserUnbannedEvent::class.java)
+                .filter(GlobalUserUnbannedEvent::class.java)
+                .filter(ChannelUserBannedEvent::class.java)
+                .filter(GlobalUserBannedEvent::class.java)
                 .subscribe {
                     println("ban/unban for " + config.userId + ": " + it.type)
                 }
