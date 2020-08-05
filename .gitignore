@@ -1,4 +1,5 @@
 *.iml
+buildSrc/build
 sample/release/*
 sample/.sign/keystore.properties
 sample/.sign/keystore.properties.asc
