@@ -1,4 +1,5 @@
 import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
@@ -11,9 +12,6 @@ apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
 group = 'com.github.GetStream'
 
-def DEFAULT_COMPILE_SDK_VERSION = 29
-def DEFAULT_TARGET_SDK_VERSION = 29
-def DEFAULT_MIN_SDK_VERSION = 21
 
 def DEFAULT_API_ENDPOINT = 'chat-us-east-1.stream-io-api.com'
 def DEFAULT_API_KEEP_ALIVE_TIMEOUT = 1000 * 45
@@ -21,19 +19,19 @@ def DEFAULT_API_TIMEOUT = 1000 * 6
 def DEFAULT_CDN_TIMEOUT = 1000 * 6
 
 android {
-    compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
+    compileSdkVersion Configuration.compileSdkVersion
 
     defaultConfig {
 
-        versionName "4.2.11-beta-8"
+        versionName Configuration.versionName
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
         buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
         buildConfigField "int", "DEFAULT_CDN_TIMEOUT", "$DEFAULT_CDN_TIMEOUT"
         buildConfigField "int", "DEFAULT_API_KEEP_ALIVE_TIMEOUT", "$DEFAULT_API_KEEP_ALIVE_TIMEOUT"
 
-        minSdkVersion rootProject.hasProperty('minSdkVersion') ? rootProject.minSdkVersion : DEFAULT_MIN_SDK_VERSION
-        targetSdkVersion rootProject.hasProperty('targetSdkVersion') ? rootProject.targetSdkVersion : DEFAULT_TARGET_SDK_VERSION
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
     }
 
