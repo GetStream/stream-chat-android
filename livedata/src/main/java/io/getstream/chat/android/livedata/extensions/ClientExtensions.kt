@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.extensions
 
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -7,6 +8,12 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.entity.ChannelEntityPair
+import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
+
+private const val EQUAL_ON_COMPARISON = 0
 
 // TODO: move these to the LLC at some point
 fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
@@ -107,4 +114,42 @@ fun ChatError.isPermanent(): Boolean {
         isPermanent = false
     }
     return isPermanent
+}
+
+internal fun Collection<ChannelEntityPair>.applyPagination(pagination: AnyChannelPaginationRequest): List<ChannelEntityPair> =
+    sortedWith(pagination.sort.comparator).drop(pagination.channelOffset).take(pagination.channelLimit)
+
+internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
+    get() =
+        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<ChannelEntityPair> })
+
+internal val Map<String, Any>.comparator: Comparator<in ChannelEntityPair>?
+    get() =
+        (this["field"] as? String)?.let { fieldName ->
+            (this["direction"] as? Int)?.let { sortDirection ->
+                Channel::class.declaredMemberProperties
+                    .find { it.name == fieldName }
+                    ?.comparator(sortDirection)
+            }
+        }
+
+internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<ChannelEntityPair>? =
+    this?.let { compareProperty ->
+        Comparator { c0, c1 ->
+            (compareProperty.getter.call(c0.channel) as? Comparable<Any>)?.let { a ->
+                (compareProperty.getter.call(c1.channel) as? Comparable<Any>)?.let { b ->
+                    a.compareTo(b) * sortDirection
+                }
+            } ?: EQUAL_ON_COMPARISON
+        }
+    }
+
+internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
+    override fun compare(o1: T, o2: T): Int =
+        comparators.fold(EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
+            when (currentComparisonValue) {
+                EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
+                else -> currentComparisonValue
+            }
+        }
 }

@@ -2,6 +2,8 @@ package io.getstream.chat.android.livedata
 
 import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import java.io.File
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
@@ -127,6 +129,62 @@ fun randomMessage(
     extraData,
     silent
 )
+
+fun randomChannel(
+    cid: String = randomString(),
+    id: String = randomString(),
+    type: String = randomString(),
+    watcherCount: Int = randomInt(),
+    frozen: Boolean = randomBoolean(),
+    lastMessageAt: Date? = randomDate(),
+    createdAt: Date? = randomDate(),
+    deletedAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    syncStatus: SyncStatus = randomSyncStatus(),
+    memberCount: Int = randomInt(),
+    messages: List<Message> = mutableListOf(),
+    members: List<Member> = mutableListOf(),
+    watchers: List<Watcher> = mutableListOf(),
+    read: List<ChannelUserRead> = mutableListOf(),
+    config: Config = Config(),
+    createdBy: User = randomUser(),
+    unreadCount: Int? = randomInt(),
+    team: String = randomString(),
+    hidden: Boolean? = randomBoolean(),
+    hiddenMessagesBefore: Date? = randomDate()
+): Channel = Channel(
+    cid = cid,
+    id = id,
+    type = type,
+    watcherCount = watcherCount,
+    frozen = frozen,
+    lastMessageAt = lastMessageAt,
+    createdAt = createdAt,
+    deletedAt = deletedAt,
+    updatedAt = updatedAt,
+    syncStatus = syncStatus,
+    memberCount = memberCount,
+    messages = messages,
+    members = members,
+    watchers = watchers,
+    read = read,
+    config = config,
+    createdBy = createdBy,
+    unreadCount = unreadCount,
+    team = team,
+    hidden = hidden,
+    hiddenMessagesBefore = hiddenMessagesBefore
+)
+
+fun randomChannelEntity(
+    type: String = randomString(),
+    channelId: String = randomString()
+): ChannelEntity = ChannelEntity(type, channelId)
+
+fun randomChannelEntityPair(
+    channel: Channel = randomChannel(),
+    channelEntity: ChannelEntity = randomChannelEntity()
+): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)
 
 fun randomDate() = Date(randomLong())
 

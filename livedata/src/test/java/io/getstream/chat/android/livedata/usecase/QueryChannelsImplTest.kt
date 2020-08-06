@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.models.Message
@@ -21,7 +22,7 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     @Ignore("mock me")
     fun filter() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
+        var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
         assertSuccess(queryChannelResult)
         val queryChannelsController = queryChannelResult.data()
         val channels = queryChannelsController.channels.getOrAwaitValue()
@@ -34,7 +35,7 @@ class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     @Test
     @Ignore("mock me")
     fun unreadCountNewMessage() = runBlocking(Dispatchers.IO) {
-        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, null).execute()
+        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
         assertSuccess(queryChannelResult)
         val queryChannelsController = queryChannelResult.data()
         val channels = queryChannelsController.channels.getOrAwaitValue()

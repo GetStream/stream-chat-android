@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.utils
 
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncated
@@ -72,7 +73,7 @@ class TestDataHelper {
     val filter2 =
         Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", listOf(user1.id)))
 
-    val query1 = QueryChannelsEntity(filter1, null)
+    val query1 = QueryChannelsEntity(filter1, QuerySort())
 
     val attachment1 =
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }

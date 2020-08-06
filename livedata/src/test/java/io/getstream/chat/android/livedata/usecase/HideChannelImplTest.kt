@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
@@ -35,13 +36,13 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channelEntity = ChannelEntity(data.channel1)
         channelEntity.hidden = true
         chatDomainImpl.repos.channels.insert(channelEntity)
-        val query = QueryChannelsEntity(data.filter1, null).apply { channelCids = sortedSetOf<String>(data.channel1.cid) }
+        val query = QueryChannelsEntity(data.filter1, QuerySort()).apply { channelCids = listOf(data.channel1.cid) }
         chatDomainImpl.repos.queryChannels.insert(query)
 
         // setup the query channel controller
-        chatDomain.useCases.queryChannels(data.filter1, null, 0, 10).execute()
-        var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, null)
-        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest())
+        chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0, 10).execute()
+        var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
+        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort()))
 
         // verify we have 1 channel in the result list and that it's hidden
         val channelController = chatDomainImpl.channel(data.channel1)
