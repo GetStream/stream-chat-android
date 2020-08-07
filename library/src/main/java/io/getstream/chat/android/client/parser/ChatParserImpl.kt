@@ -21,7 +21,6 @@ class ChatParserImpl : ChatParser {
     val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
-            .setDateFormat(ChatParser.DATE_FORMAT)
             .addSerializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipClass(clazz: Class<*>): Boolean {
                     return false
