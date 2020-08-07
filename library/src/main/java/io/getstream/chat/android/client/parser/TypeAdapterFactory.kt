@@ -27,7 +27,7 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
                 ) as TypeAdapter<T>
             }
             Date::class.java -> {
-                DateAdapter(gson) as TypeAdapter<T>
+                DateAdapter() as TypeAdapter<T>
             }
             FilterObject::class.java -> {
                 FilterObjectAdapter(gson) as TypeAdapter<T>
