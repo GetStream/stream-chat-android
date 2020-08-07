@@ -9,9 +9,13 @@ import java.util.Locale
 import java.util.TimeZone
 
 private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+private const val DATE_FORMAT_WITHOUTH_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 internal class DateAdapter() : TypeAdapter<Date>() {
 
     private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
+    private val dateFormatWithoutNanoseconds = SimpleDateFormat(DATE_FORMAT_WITHOUTH_NANOSECONDS, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
@@ -27,18 +31,25 @@ internal class DateAdapter() : TypeAdapter<Date>() {
     }
 
     @Synchronized
-    override fun read(reader: JsonReader): Date? {
-        val rawValue = reader.nextString()
-        return if (rawValue.isNullOrEmpty()) {
-            null
-        } else {
-            try {
-                dateFormat.parse(rawValue)
-            } catch (t: Throwable) {
-                // there're cases when backend returns invalid date
-                // https://getstream.slack.com/archives/CE5N802GP/p1593472741106400
+    override fun read(reader: JsonReader): Date? =
+        try {
+            val rawValue = reader.nextString()
+            if (rawValue.isNullOrEmpty()) {
                 null
+            } else {
+                try {
+                    dateFormat.parse(rawValue)
+                } catch (t: Throwable) {
+                    try {
+                        dateFormatWithoutNanoseconds.parse(rawValue)
+                    } catch (t: Throwable) {
+                        // there're cases when backend returns invalid date
+                        // https://getstream.slack.com/archives/CE5N802GP/p1593472741106400
+                        null
+                    }
+                }
             }
+        } catch (t: Throwable) {
+            null
         }
-    }
 }
