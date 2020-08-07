@@ -1,3 +1,7 @@
+# 1.13.1 - Fri 7 Aug 2020
+
+- Fix DateParser
+
 # 1.13.0 - Tue 28 Jul 2020
 
 - Add `Client.flagUser()` method to flag an User
