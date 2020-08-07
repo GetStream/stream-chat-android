@@ -8,6 +8,8 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
+import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -81,9 +83,20 @@ interface ChatDomain {
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
+        private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        private val syncModule by lazy { SyncProvider(appContext) }
 
         fun database(db: ChatDatabase): Builder {
             this.database = db
+            return this
+        }
+
+        fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
+            // TODO: Consider exposing apiKey and userToken by ChatClient to make this function more friendly
+            this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
+            if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
+                throw IllegalArgumentException("ChatDomain.Builder::backgroundSyncEnabled. apiKey and user.id, and userToken must not be empty.")
+            }
             return this
         }
 
@@ -117,17 +130,23 @@ interface ChatDomain {
             return this
         }
 
-        internal fun buildImpl(): ChatDomainImpl {
-            val chatDomain = ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
-
-            return chatDomain
+        fun build(): ChatDomain {
+            storeBackgroundSyncConfig(backgroundSyncConfig)
+            instance = buildImpl()
+            return instance
         }
 
-        fun build(): ChatDomain {
-            val chatDomainImpl = buildImpl()
-            val chatDomain: ChatDomain = chatDomainImpl
-            instance = chatDomain
-            return chatDomain
+        internal fun buildImpl(): ChatDomainImpl {
+            return ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
+        }
+
+        private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
+            if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
+                syncModule.encryptedBackgroundSyncConfigStore.apply {
+                    clear()
+                    put(backgroundSyncConfig)
+                }
+            }
         }
     }
 

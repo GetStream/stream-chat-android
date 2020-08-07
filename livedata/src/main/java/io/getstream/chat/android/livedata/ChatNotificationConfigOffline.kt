@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
-import io.getstream.chat.android.livedata.service.SyncService
+import io.getstream.chat.android.livedata.service.sync.SyncService
 
 /**
  * Extend the ChatNotificationConfig to start the sync service when receiving new messages
