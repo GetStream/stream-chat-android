@@ -10,7 +10,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.TestResultCall
-import io.getstream.chat.android.livedata.positveRandomInt
+import io.getstream.chat.android.livedata.positiveRandomInt
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessages
 import io.getstream.chat.android.livedata.randomString
@@ -53,7 +53,7 @@ class ThreadControllerImplTest {
         runBlocking {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positveRandomInt(30)
+            val limit = positiveRandomInt(30)
             val replies = randomMessages(limit) {
                 randomMessage(
                     parentId = threadId,
@@ -84,7 +84,7 @@ class ThreadControllerImplTest {
         runBlocking {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positveRandomInt(30)
+            val limit = positiveRandomInt(30)
             val replies = randomMessages(limit - 1) {
                 randomMessage(
                     parentId = threadId,
