@@ -198,4 +198,3 @@ fun randomMessages(
 ): List<Message> = (1..size).map(creationFunction)
 
 fun randomSyncStatus(): SyncStatus = SyncStatus.values().asList().shuffled(random).first()
-
