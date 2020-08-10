@@ -101,6 +101,7 @@ dependencies {
     implementation "androidx.test:core:1.2.0"
     implementation "com.google.firebase:firebase-messaging:20.2.4"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.0-alpha06"
+    implementation "androidx.security:security-crypto:1.1.0-alpha02"
 
     testImplementation "androidx.room:room-testing:$room_version"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
