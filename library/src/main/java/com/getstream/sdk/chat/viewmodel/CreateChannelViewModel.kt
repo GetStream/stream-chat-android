@@ -15,7 +15,7 @@ import kotlin.coroutines.CoroutineContext
 
 private val CHANNEL_NAME_REGEX = Regex("^!?[\\w-]*\$")
 
-class CreateChannelViewModel(
+class CreateChannelViewModel @JvmOverloads constructor(
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance(),
     private val ioDispatcher: CoroutineContext = Dispatchers.IO

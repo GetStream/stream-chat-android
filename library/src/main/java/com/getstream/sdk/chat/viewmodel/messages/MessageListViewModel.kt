@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
 
-class MessageListViewModel(
+class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance()

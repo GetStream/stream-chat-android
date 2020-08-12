@@ -17,7 +17,7 @@ import java.io.File
 
 private const val MESSAGE_LIMIT = 30
 
-class MessageInputViewModel(
+class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
