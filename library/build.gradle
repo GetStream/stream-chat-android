@@ -76,7 +76,7 @@ dependencies {
     implementation Dependencies.appCompat
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidLegacySupport
-    implementation Dependencies.recyclerview
+    api Dependencies.recyclerview
     implementation Dependencies.activityKtx
     implementation Dependencies.lifecycleExtension
     implementation Dependencies.lifecycleViewModelKTX
