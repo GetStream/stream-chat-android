@@ -10,7 +10,7 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 
 private const val MESSAGE_LIMIT = 30
 
-class ChannelHeaderViewModel(
+class ChannelHeaderViewModel @JvmOverloads constructor(
     cid: String,
     messageLimit: Int = MESSAGE_LIMIT,
     private val chatDomain: ChatDomain = ChatDomain.instance()
