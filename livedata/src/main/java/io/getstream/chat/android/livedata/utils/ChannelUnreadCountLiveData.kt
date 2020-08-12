@@ -15,21 +15,14 @@ class ChannelUnreadCountLiveData(
     var read: ChannelUserRead? = null
     var messages: List<Message>? = null
 
-    val readObserver = Observer<ChannelUserRead> { r ->
-        read = r
-
-        val count = calculateUnreadCount()
-        if (count != null) {
-            value = count
-        }
+    val readObserver = Observer<ChannelUserRead> { read ->
+        this.read = read
+        calculateUnreadCount()?.let { value = it }
     }
 
     val messageObserver = Observer<List<Message>> { messages ->
         this.messages = messages
-        val count = calculateUnreadCount()
-        if (count != null) {
-            value = count
-        }
+        calculateUnreadCount()?.let { value = it }
     }
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in Int>) {
