@@ -56,6 +56,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
      */
     private var permissionRequestListener: PermissionRequestListener? = null
 
+    private var isKeyboardEventListenerInitialized = false
+
     var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
         override fun sendMessage(messageText: String) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -153,6 +155,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
                 if (hasFocus) {
                     Utils.showSoftKeyboard(context as Activity)
                 } else Utils.hideSoftKeyboard(context as Activity)
+                if (!isKeyboardEventListenerInitialized) {
+                    isKeyboardEventListenerInitialized = true
+                    setKeyboardEventListener()
+                }
             }
         TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
         binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
@@ -365,6 +371,5 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
-        setKeyboardEventListener()
     }
 }
