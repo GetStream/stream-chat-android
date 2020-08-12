@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'jacoco-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'maven-publish'
 
 group = 'com.github.getstream'
 
@@ -99,3 +100,22 @@ dependencies {
 }
 
 apply from: 'scripts/docs.gradle'
+
+afterEvaluate {
+    // Creates a Maven publication which can be used to test livedata artifact locally.
+    // By default the publication is stored into ~/.m2 directory.
+    // 1. To release a local publication run `./gradlew publishToMavenLocal`
+    // 2. To use it add mavenLocal() into target project's repositories list.
+    publishing {
+        publications {
+            release(MavenPublication) {
+                // Applies the component for the release build variant
+                from components.release
+                // Custom attributes of the publication
+                groupId = project.group
+                artifactId = 'stream-chat-android-client'
+                version = '1.13.2-SNAPSHOT'
+            }
+        }
+    }
+}
