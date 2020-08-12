@@ -151,15 +151,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private fun configInputEditText() {
         binding.etMessage.onFocusChangeListener =
-                OnFocusChangeListener { _: View?, hasFocus: Boolean ->
-                    if (hasFocus) {
-                        Utils.showSoftKeyboard(context as Activity)
-                    } else Utils.hideSoftKeyboard(context as Activity)
-                    if (!isKeyboardEventListenerInitialized) {
-                        isKeyboardEventListenerInitialized = true
-                        setKeyboardEventListener()
-                    }
+            OnFocusChangeListener { _: View?, hasFocus: Boolean ->
+                if (hasFocus) {
+                    Utils.showSoftKeyboard(context as Activity)
+                } else Utils.hideSoftKeyboard(context as Activity)
+                if (!isKeyboardEventListenerInitialized) {
+                    isKeyboardEventListenerInitialized = true
+                    setKeyboardEventListener()
                 }
+            }
         TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
         binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
             sendGiphyFromKeyboard(
