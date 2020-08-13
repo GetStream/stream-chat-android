@@ -19,19 +19,10 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
     val optionsButtonWidth: Int
     val optionsButtonHeight: Int
     val isActiveBadgeShow: Boolean
-
-    internal val backButtonBackground: Drawable?
-    internal val optionsButtonBackground: Drawable?
-    private val offlineText: String?
-    private var channelWithoutNameText = ""
-
-    fun getChannelWithoutNameText(): String = channelWithoutNameText.takeIf(String::isNotBlank) ?: context.getString(R.string.stream_channel_unknown_title)
-
-    fun getBackButtonBackground(): Drawable = backButtonBackground ?: getDrawable(R.drawable.stream_arrow_left)
-
-    fun getOptionsButtonBackground(): Drawable = optionsButtonBackground ?: getDrawable(R.drawable.stream_ic_settings)
-
-    fun getOfflineText(): String = offlineText ?: context.getString(R.string.stream_channel_offlineText)
+    val backButtonBackground: Drawable
+    val optionsButtonBackground: Drawable
+    val offlineText: String
+    val channelWithoutNameText: String
 
     init {
         // parse the attributes
@@ -56,8 +47,10 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
         }.build()
 
         with(attributes) {
-            getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText)?.let { channelWithoutNameText = it }
-            offlineText = getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText)
+            channelWithoutNameText = getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText)?.takeIf(String::isNotBlank)
+                ?: getContext().getString(R.string.stream_channel_unknown_title)
+            offlineText = getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText)?.takeIf(String::isNotBlank)
+                ?: getContext().getString(R.string.stream_channel_offlineText)
 
             // Avatar
             avatarWidth = getDimensionPixelSize(R.styleable.ChannelHeaderView_streamAvatarWidth, getDimension(R.dimen.stream_channel_avatar_width))
@@ -78,6 +71,7 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
             // Back Button
             isBackButtonShow = getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonShow, true)
             backButtonBackground = getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonBackground)
+                ?: this@ChannelHeaderViewStyle.getDrawable(R.drawable.stream_arrow_left)
 
             // Avatar
             isAvatarGroupShow = getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderAvatarShow, true)
@@ -88,6 +82,7 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
             // Options
             isOptionsButtonShow = getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonShow, false)
             optionsButtonBackground = getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonBackground)
+                ?: this@ChannelHeaderViewStyle.getDrawable(R.drawable.stream_ic_settings)
             optionsButtonTextSize = getDimension(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonTextSize, getDimension(R.dimen.stream_channel_header_initials).toFloat()).toInt()
             optionsButtonWidth = getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonWidth, getDimension(R.dimen.stream_channel_avatar_width))
             optionsButtonHeight = getDimensionPixelSize(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonHeight, getDimension(R.dimen.stream_channel_avatar_height))
