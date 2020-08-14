@@ -553,6 +553,8 @@ internal class ChatClientImpl(
     }
 
     private fun warmUp() {
-        api.warmUp()
+        if (config.warmUp) {
+            api.warmUp()
+        }
     }
 }

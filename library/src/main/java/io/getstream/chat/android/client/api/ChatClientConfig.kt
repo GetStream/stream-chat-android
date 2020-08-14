@@ -12,6 +12,7 @@ internal class ChatClientConfig(
     var wssUrl: String,
     var baseTimeout: Long,
     var cdnTimeout: Long,
+    val warmUp: Boolean,
     val loggerConfig: ChatLogger.Config,
     val notificationsConfig: ChatNotificationConfig,
     val tokenManager: TokenManager = TokenManagerImpl()
