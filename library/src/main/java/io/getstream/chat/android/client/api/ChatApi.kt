@@ -195,4 +195,6 @@ interface ChatApi {
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
     fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
+
+    fun warmUp()
 }
