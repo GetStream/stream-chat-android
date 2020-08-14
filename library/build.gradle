@@ -78,6 +78,7 @@ dependencies {
     implementation Dependencies.androidLegacySupport
     api Dependencies.recyclerview
     implementation Dependencies.activityKtx
+    implementation Dependencies.fragmentKtx
     implementation Dependencies.lifecycleExtension
     implementation Dependencies.lifecycleViewModelKTX
 
