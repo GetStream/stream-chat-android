@@ -89,6 +89,7 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(ImmediateTokenProvider(token))
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connect(user)
@@ -99,6 +100,7 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connect(user)
@@ -108,6 +110,7 @@ internal class ChatClientImpl(
     override fun setAnonymousUser(listener: InitConnectionListener?) {
         connectionListener = listener
         config.isAnonymous = true
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connectAnonymously()
@@ -547,5 +550,9 @@ internal class ChatClientImpl(
         config.tokenManager.loadAsync {
             connect()
         }
+    }
+
+    private fun warmUp() {
+        api.warmUp()
     }
 }
