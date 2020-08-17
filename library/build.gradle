@@ -89,6 +89,7 @@ dependencies {
     testImplementation('org.awaitility:awaitility:4.0.2') {
         exclude group: "org.hamcrest", module: "hamcrest"
     }
+    testImplementation "org.amshove.kluent:kluent:1.61"
 
     androidTestImplementation 'junit:junit:4.13'
     androidTestImplementation 'org.assertj:assertj-core:3.15.0'
