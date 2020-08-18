@@ -1,3 +1,7 @@
+# 1.13.3 - Tue 18 Aug 2020
+
+- Set message as optional when updating a channel
+
 # 1.13.2 - Fri 14 Aug 2020
 
 - Reduce TLS Latency
