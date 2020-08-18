@@ -26,7 +26,7 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
-open class ChatNotificationHandler(
+open class ChatNotificationHandler @JvmOverloads constructor(
     val context: Context,
     val config: NotificationConfig = NotificationConfig()
 ) {
