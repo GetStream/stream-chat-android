@@ -36,6 +36,7 @@ internal class ClientConnectionTests {
         "socket.url",
         1000,
         1000,
+        false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
         ChatNotificationHandler(context),
         FakeTokenManager(token)

@@ -242,8 +242,6 @@ interface ChatClient {
 
     // region messages
     fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
-    fun onMessageHandled(event: NewMessageEvent)
-    fun onMessageHandlingError()
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
@@ -269,6 +267,7 @@ interface ChatClient {
         private var baseTimeout = 10000L
         private var cdnTimeout = 10000L
         private var logLevel = ChatLogLevel.ALL
+        private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
         private lateinit var notificationsHandler: ChatNotificationHandler
 
@@ -305,6 +304,10 @@ interface ChatClient {
         fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
+        }
+
+        fun disableWarmUp(): Builder = apply {
+            warmUp = false
         }
 
         fun baseUrl(value: String): Builder {
@@ -354,6 +357,7 @@ interface ChatClient {
                 "wss://$baseUrl/",
                 baseTimeout,
                 cdnTimeout,
+                warmUp,
                 ChatLogger.Config(logLevel, loggerHandler),
                 notificationsHandler
             )

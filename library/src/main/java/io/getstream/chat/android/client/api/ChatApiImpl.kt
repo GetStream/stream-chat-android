@@ -784,6 +784,10 @@ internal class ChatApiImpl(
         }
     }
 
+    override fun warmUp() {
+        callMapper.map(retrofitApi.warmUp()).enqueue { }
+    }
+
     private fun <T> noConnectionIdError(): ErrorCall<T> {
         return ErrorCall(ChatError("setUser is either not called or not finished"))
     }

@@ -90,6 +90,7 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(ImmediateTokenProvider(token))
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connect(user)
@@ -100,6 +101,7 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connect(user)
@@ -109,6 +111,7 @@ internal class ChatClientImpl(
     override fun setAnonymousUser(listener: InitConnectionListener?) {
         connectionListener = listener
         config.isAnonymous = true
+        warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
             socket.connectAnonymously()
@@ -468,14 +471,6 @@ internal class ChatClientImpl(
         notifications.onFirebaseMessage(remoteMessage)
     }
 
-    override fun onMessageHandled(event: NewMessageEvent) {
-        notifications.onFirebaseMessageHandled(event)
-    }
-
-    override fun onMessageHandlingError() {
-        notifications.onFirebaseMessageHandlingFallback()
-    }
-
     override fun onNewTokenReceived(token: String, context: Context) {
         notifications.setFirebaseToken(token)
     }
@@ -555,6 +550,12 @@ internal class ChatClientImpl(
     private fun getTokenAndConnect(connect: () -> Unit) {
         config.tokenManager.loadAsync {
             connect()
+        }
+    }
+
+    private fun warmUp() {
+        if (config.warmUp) {
+            api.warmUp()
         }
     }
 }
