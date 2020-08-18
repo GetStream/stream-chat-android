@@ -16,28 +16,27 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.utils.getOr
 
 class ChatNotificationsImpl(
-    private val config: ChatNotificationConfig,
+    private val handler: ChatNotificationHandler,
     private val client: ChatApi,
     private val context: Context
 ) : ChatNotifications {
 
     private val showedNotifications = mutableSetOf<String>()
-    private val logger = ChatLogger.get("Notifications")
+    private val logger = ChatLogger.get("ChatNotifications")
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            notificationManager.createNotificationChannel(config.createNotificationChannel())
+            notificationManager.createNotificationChannel(handler.createNotificationChannel())
     }
 
     override fun onSetUser() {
-
         if (FirebaseApp.getApps(context).isNotEmpty()) {
             FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -51,36 +50,33 @@ class ChatNotificationsImpl(
     }
 
     override fun setFirebaseToken(firebaseToken: String) {
-
         logger.logI("setFirebaseToken: $firebaseToken")
 
         client.addDevice(firebaseToken).enqueue { result ->
             if (result.isSuccess) {
-                config.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
+                handler.getDeviceRegisteredListener()?.onDeviceRegisteredSuccess()
                 logger.logI("DeviceRegisteredSuccess")
             } else {
-                config.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
+                handler.getDeviceRegisteredListener()?.onDeviceRegisteredError(result.error())
                 logger.logE("Error register device ${result.error().message}")
             }
         }
     }
 
     override fun onFirebaseMessage(message: RemoteMessage) {
-
         logger.logI("onReceiveFirebaseMessage: payload: {$message.data}")
 
-        if (!config.onFirebaseMessage(message)) {
+        if (!handler.onFirebaseMessage(message)) {
             if (isForeground()) return
             handleRemoteMessage(message)
         }
     }
 
     override fun onChatEvent(event: ChatEvent) {
-
         if (event is NewMessageEvent) {
-            logger.logI("onReceiveWebSocketEvent: {$event.type}")
+            logger.logI("onChatEvent: {$event.type}")
 
-            if (!config.onChatEvent(event)) {
+            if (!handler.onChatEvent(event)) {
                 if (isForeground()) return
                 logger.logI("onReceiveWebSocketEvent: $event")
                 handleEvent(event)
@@ -90,7 +86,7 @@ class ChatNotificationsImpl(
 
     private fun handleRemoteMessage(message: RemoteMessage) {
 
-        val firebaseParser = config.getFirebaseMessageParser()
+        val firebaseParser = handler.getFirebaseMessageParser()
 
         if (firebaseParser.isValid(message)) {
             val data = firebaseParser.parse(message)
@@ -104,12 +100,11 @@ class ChatNotificationsImpl(
     }
 
     private fun handleEvent(event: NewMessageEvent) {
-
         val channelType = event.cid!!.split(":")[0]
         val channelId = event.cid!!.split(":")[1]
         val messageId = event.message.id
 
-        if (checkIfNotificationShowed(messageId)) {
+        if (!checkIfNotificationShowed(messageId)) {
             showedNotifications.add(messageId)
             loadRequiredData(channelType, channelId, messageId)
         }
@@ -128,11 +123,11 @@ class ChatNotificationsImpl(
                 val channel = result.data().first
                 val message = result.data().second
 
-                config.getDataLoadListener()?.onLoadSuccess(channel, message)
+                handler.getDataLoadListener()?.onLoadSuccess(channel, message)
                 onRequiredDataLoaded(channel, message)
             } else {
                 logger.logE("Error loading required data: ${result.error().message}", result.error())
-                config.getDataLoadListener()?.onLoadFail(messageId, result.error())
+                handler.getDataLoadListener()?.onLoadFail(messageId, result.error())
                 showErrorCaseNotification()
             }
         }
@@ -145,7 +140,7 @@ class ChatNotificationsImpl(
 
         val notificationId = System.currentTimeMillis().toInt()
 
-        val notification = config.buildNotification(
+        val notification = handler.buildNotification(
             notificationId,
             channel.extraData.getOr("name", "").toString(),
             message.text,
@@ -162,7 +157,7 @@ class ChatNotificationsImpl(
     private fun showErrorCaseNotification() {
         showNotification(
             System.currentTimeMillis().toInt(),
-            config.buildErrorCaseNotification()
+            handler.buildErrorCaseNotification()
         )
     }
 

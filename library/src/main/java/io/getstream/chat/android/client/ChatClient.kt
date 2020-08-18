@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -25,7 +26,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
@@ -241,7 +242,8 @@ interface ChatClient {
 
     // region messages
     fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
-
+    fun onMessageHandled(event: NewMessageEvent)
+    fun onMessageHandlingError()
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
@@ -268,7 +270,7 @@ interface ChatClient {
         private var cdnTimeout = 10000L
         private var logLevel = ChatLogLevel.ALL
         private var loggerHandler: ChatLoggerHandler? = null
-        private lateinit var notificationsConfig: ChatNotificationConfig
+        private lateinit var notificationsHandler: ChatNotificationHandler
 
         constructor(apiKey: String, appContext: Context) {
             this.apiKey = apiKey
@@ -290,8 +292,8 @@ interface ChatClient {
             return this
         }
 
-        fun notifications(notificationsConfig: ChatNotificationConfig): Builder {
-            this.notificationsConfig = notificationsConfig
+        fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+            this.notificationsHandler = notificationsHandler
             return this
         }
 
@@ -341,8 +343,8 @@ interface ChatClient {
                 throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
             }
 
-            if (!this::notificationsConfig.isInitialized) {
-                notificationsConfig = ChatNotificationConfig(appContext)
+            if (!this::notificationsHandler.isInitialized) {
+                notificationsHandler = ChatNotificationHandler(appContext)
             }
 
             val config = ChatClientConfig(
@@ -353,7 +355,7 @@ interface ChatClient {
                 baseTimeout,
                 cdnTimeout,
                 ChatLogger.Config(logLevel, loggerHandler),
-                notificationsConfig
+                notificationsHandler
             )
 
             val modules = ChatModules(config)

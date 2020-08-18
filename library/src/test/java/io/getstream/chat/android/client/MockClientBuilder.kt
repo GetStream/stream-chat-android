@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
@@ -58,7 +58,7 @@ class MockClientBuilder {
             1000,
             1000,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationConfig(context)
+            ChatNotificationHandler(context)
         )
 
         socket = mock(ChatSocket::class.java)

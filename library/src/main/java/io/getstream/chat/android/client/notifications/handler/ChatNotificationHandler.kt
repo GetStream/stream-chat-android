@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.notifications.options
+package io.getstream.chat.android.client.notifications.handler
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -19,13 +19,18 @@ import androidx.core.app.RemoteInput
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.DeviceRegisteredListener
 import io.getstream.chat.android.client.notifications.FirebaseMessageParser
 import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
-open class ChatNotificationConfig(val context: Context) {
+open class ChatNotificationHandler(
+    val context: Context,
+    val config: NotificationConfig = NotificationConfig()
+) {
+    private val logger = ChatLogger.get("ChatNotificationHandler")
 
     open fun onChatEvent(event: ChatEvent): Boolean {
         return false
@@ -45,7 +50,7 @@ open class ChatNotificationConfig(val context: Context) {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     open fun createNotificationChannel(): NotificationChannel {
-
+        logger.logI("createNotificationChannel()")
         return NotificationChannel(
             getNotificationChannelId(),
             getNotificationChannelName(),
@@ -70,38 +75,26 @@ open class ChatNotificationConfig(val context: Context) {
         }
     }
 
-    open fun getNotificationChannelId() =
-        context.getString(R.string.stream_chat_notification_channel_id)
+    open fun getNotificationChannelId(): String = context.getString(config.notificationChannelId)
 
-    open fun getNotificationChannelName() =
-        context.getString(R.string.stream_chat_notification_channel_name)
+    open fun getNotificationChannelName(): String =
+        context.getString(config.notificationChannelName)
 
-    open fun getSmallIcon(): Int {
-        return R.drawable.stream_ic_notification
-    }
+    open fun getSmallIcon(): Int = config.smallIcon
 
-    open fun getFirebaseMessageIdKey(): String {
-        return "stream-chat-message-id"
-    }
+    open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
 
-    open fun getFirebaseChannelIdKey(): String {
-        return "stream-chat-channel-id"
-    }
+    open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
 
-    open fun getFirebaseChannelTypeKey(): String {
-        return "stream-chat-channel-type"
-    }
+    open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 
-    open fun getErrorCaseNotificationTitle(): String {
-        return context.getString(R.string.stream_chat_notification_title)
-    }
+    open fun getErrorCaseNotificationTitle(): String =
+        context.getString(config.errorCaseNotificationTitle)
 
-    open fun getErrorCaseNotificationContent(): String {
-        return context.getString(R.string.stream_chat_notification_content)
-    }
+    open fun getErrorCaseNotificationContent(): String =
+        context.getString(config.errorCaseNotificationContent)
 
     open fun buildErrorCaseNotification(): Notification {
-
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = getNotificationBuilder()
         val intent = PendingIntent.getActivity(

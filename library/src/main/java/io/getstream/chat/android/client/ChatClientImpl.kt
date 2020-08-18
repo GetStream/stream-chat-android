@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
@@ -465,6 +466,14 @@ internal class ChatClientImpl(
 
     override fun onMessageReceived(remoteMessage: RemoteMessage, context: Context) {
         notifications.onFirebaseMessage(remoteMessage)
+    }
+
+    override fun onMessageHandled(event: NewMessageEvent) {
+        notifications.onFirebaseMessageHandled(event)
+    }
+
+    override fun onMessageHandlingError() {
+        notifications.onFirebaseMessageHandlingFallback()
     }
 
     override fun onNewTokenReceived(token: String, context: Context) {

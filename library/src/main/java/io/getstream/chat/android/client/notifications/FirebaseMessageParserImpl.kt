@@ -1,15 +1,15 @@
 package io.getstream.chat.android.client.notifications
 
 import com.google.firebase.messaging.RemoteMessage
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.utils.containsKeys
 import io.getstream.chat.android.client.utils.isNullOrEmpty
 
-internal class FirebaseMessageParserImpl(val config: ChatNotificationConfig) : FirebaseMessageParser {
+internal class FirebaseMessageParserImpl(val handler: ChatNotificationHandler) : FirebaseMessageParser {
 
-    private val messageIdKey = config.getFirebaseMessageIdKey()
-    private val channelTypeKey = config.getFirebaseChannelTypeKey()
-    private val channelIdKey = config.getFirebaseChannelIdKey()
+    private val messageIdKey = handler.getFirebaseMessageIdKey()
+    private val channelTypeKey = handler.getFirebaseChannelTypeKey()
+    private val channelIdKey = handler.getFirebaseChannelIdKey()
 
     override fun isValid(message: RemoteMessage): Boolean {
         return verifyPayload(message)

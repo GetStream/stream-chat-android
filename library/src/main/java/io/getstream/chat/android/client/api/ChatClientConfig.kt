@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 
@@ -13,7 +13,7 @@ internal class ChatClientConfig(
     var baseTimeout: Long,
     var cdnTimeout: Long,
     val loggerConfig: ChatLogger.Config,
-    val notificationsConfig: ChatNotificationConfig,
+    val notificationsHandler: ChatNotificationHandler,
     val tokenManager: TokenManager = TokenManagerImpl()
 ) {
 

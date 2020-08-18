@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -28,10 +28,10 @@ internal open class ChatModules(val config: ChatClientConfig) {
 
     private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }
-    private val defaultNotifications by lazy { buildNotification(config.notificationsConfig, api()) }
+    private val defaultNotifications by lazy { buildNotification(config.notificationsHandler, api()) }
     private val defaultApi by lazy { buildApi(config, parser()) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
-    private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsConfig.context)
+    private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsHandler.context)
 
     //region Modules
 
@@ -58,10 +58,10 @@ internal open class ChatModules(val config: ChatClientConfig) {
     //endregion
 
     private fun buildNotification(
-        config: ChatNotificationConfig,
+        handler: ChatNotificationHandler,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotificationsImpl(config, api, config.context)
+        return ChatNotificationsImpl(handler, api, handler.context)
     }
 
     private fun buildRetrofit(
