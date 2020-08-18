@@ -228,7 +228,7 @@ interface ChatClient {
     fun updateChannel(
         channelType: String,
         channelId: String,
-        updateMessage: Message,
+        updateMessage: Message? = null,
         channelExtraData: Map<String, Any> = emptyMap()
     ): Call<Channel>
 

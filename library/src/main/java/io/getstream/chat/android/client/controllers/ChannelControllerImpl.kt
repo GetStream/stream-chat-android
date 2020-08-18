@@ -141,7 +141,7 @@ internal class ChannelControllerImpl(
         return client.getRepliesMore(messageId, firstReactionId, limit)
     }
 
-    override fun update(message: Message, extraData: Map<String, Any>): Call<Channel> {
+    override fun update(message: Message?, extraData: Map<String, Any>): Call<Channel> {
         return client.updateChannel(channelType, channelId, message, extraData)
     }
 
