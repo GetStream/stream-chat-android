@@ -47,7 +47,7 @@ interface ChannelController {
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
     fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
     fun events(): ChatObservable
-    fun update(message: Message, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+    fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>
     fun acceptInvite(message: String): Call<Channel>

@@ -338,16 +338,10 @@ internal class ChatClientImpl(
     override fun updateChannel(
         channelType: String,
         channelId: String,
-        updateMessage: Message,
+        updateMessage: Message?,
         channelExtraData: Map<String, Any>
-    ): Call<Channel> {
-
-        val toMutableMap = channelExtraData.toMutableMap()
-        toMutableMap.remove("members")
-
-        val request = UpdateChannelRequest(channelExtraData, updateMessage)
-        return api.updateChannel(channelType, channelId, request)
-    }
+    ): Call<Channel> =
+        api.updateChannel(channelType, channelId, UpdateChannelRequest(channelExtraData, updateMessage))
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId)
