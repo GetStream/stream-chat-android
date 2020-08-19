@@ -268,11 +268,12 @@ interface ChatClient {
         private var logLevel = ChatLogLevel.ALL
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
-        private lateinit var notificationsHandler: ChatNotificationHandler
+        private var notificationsHandler: ChatNotificationHandler
 
         constructor(apiKey: String, appContext: Context) {
             this.apiKey = apiKey
             this.appContext = appContext
+            this.notificationsHandler = ChatNotificationHandler(appContext)
         }
 
         fun logLevel(level: ChatLogLevel): Builder {
@@ -343,10 +344,6 @@ interface ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
-            }
-
-            if (!this::notificationsHandler.isInitialized) {
-                notificationsHandler = ChatNotificationHandler(appContext)
             }
 
             val config = ChatClientConfig(
