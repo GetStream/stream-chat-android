@@ -5,14 +5,14 @@ import android.content.SharedPreferences
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 
 private const val NOTIFICATION_CONFIG_PREFS_NAME = "stream_notification_config_store"
-private const val KEY_ERROR_CONTENT = ""
-private const val KEY_ERROR_TITLE = ""
-private const val KEY_FIREBASE_CHANNEL_ID_KEY = ""
-private const val KEY_FIREBASE_CHANNEL_TYPE_KEY = ""
-private const val KEY_FIREBASE_MESSAGE_ID_KEY = ""
-private const val KEY_NOTIFICATION_CHANNEL_ID = ""
-private const val KEY_NOTIFICATION_CHANNEL_NAME = ""
-private const val KEY_SMALL_ICON = ""
+private const val KEY_ERROR_CONTENT = "key_error_content"
+private const val KEY_ERROR_TITLE = "key_error_title"
+private const val KEY_FIREBASE_CHANNEL_ID_KEY = "key_firebase_channel_id"
+private const val KEY_FIREBASE_CHANNEL_TYPE_KEY = "key_firebase_channel_type_key"
+private const val KEY_FIREBASE_MESSAGE_ID_KEY = "key_firebase_message_id_key"
+private const val KEY_NOTIFICATION_CHANNEL_ID = "key_firebase_notification_channel_id"
+private const val KEY_NOTIFICATION_CHANNEL_NAME = "key_notification_channel_name"
+private const val KEY_SMALL_ICON = "key_small_icon"
 private const val DEFAULT_INT = -1
 
 internal class NotificationConfigStore(context: Context) {
