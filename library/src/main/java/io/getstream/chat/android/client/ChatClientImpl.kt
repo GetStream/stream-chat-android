@@ -40,7 +40,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 import java.io.File
 import java.util.Date
-import kotlin.collections.set
 
 internal class ChatClientImpl(
     private val config: ChatClientConfig,
@@ -490,40 +489,28 @@ internal class ChatClientImpl(
         return channel(type, id)
     }
 
-    override fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel> {
-        return createChannel(channelType, "", extraData)
-    }
+    override fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel> =
+        createChannel(channelType, "", emptyList(), extraData)
 
-    override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> {
-        val request = QueryChannelRequest().withData(extraData)
-        return queryChannel(channelType, channelId, request)
-    }
+    override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> =
+        createChannel(channelType, channelId, emptyList(), extraData)
 
-    override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> {
-        return createChannel(channelType, channelId, mapOf(Pair(ModelFields.MEMBERS, members)))
-    }
+    override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> =
+        createChannel(channelType, channelId, members, emptyMap())
 
-    override fun createChannel(channelType: String, members: List<String>): Call<Channel> {
-        return createChannel(channelType, "", members)
-    }
+    override fun createChannel(channelType: String, members: List<String>): Call<Channel> =
+        createChannel(channelType, "", members, emptyMap())
 
-    override fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel> {
-        return createChannel(channelType, members)
-    }
+    override fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel> =
+        createChannel(channelType, "", members, extraData)
 
     override fun createChannel(
         channelType: String,
         channelId: String,
         members: List<String>,
         extraData: Map<String, Any>
-    ): Call<Channel> {
-
-        val dataWithMembers = extraData.toMutableMap()
-        dataWithMembers[ModelFields.MEMBERS] = members
-
-        val request = QueryChannelRequest().withData(dataWithMembers)
-        return queryChannel(channelType, channelId, request)
-    }
+    ): Call<Channel> =
+        queryChannel(channelType, channelId, QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members)))
 
     override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
