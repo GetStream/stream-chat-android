@@ -6,16 +6,14 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 
 class ChatFirebaseMessagingService : FirebaseMessagingService() {
-
-    private val TAG = ChatFirebaseMessagingService::class.java.simpleName
+    private val logger = ChatLogger.get("ChatFirebaseMessagingService")
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        ChatLogger.instance.logI(TAG, "onMessageReceived: ${remoteMessage.data}")
+        logger.logD("onMessageReceived(): $remoteMessage")
         ChatClient.instance().onMessageReceived(remoteMessage, this)
     }
 
     override fun onNewToken(token: String) {
-        ChatLogger.instance.logI(TAG, "onNewToken: $token")
         ChatClient.instance().onNewTokenReceived(token, this)
     }
 }

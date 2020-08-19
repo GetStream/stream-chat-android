@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
@@ -241,7 +241,6 @@ interface ChatClient {
 
     // region messages
     fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
-
     fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
@@ -269,11 +268,12 @@ interface ChatClient {
         private var logLevel = ChatLogLevel.ALL
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
-        private lateinit var notificationsConfig: ChatNotificationConfig
+        private var notificationsHandler: ChatNotificationHandler
 
         constructor(apiKey: String, appContext: Context) {
             this.apiKey = apiKey
             this.appContext = appContext
+            this.notificationsHandler = ChatNotificationHandler(appContext)
         }
 
         fun logLevel(level: ChatLogLevel): Builder {
@@ -291,8 +291,8 @@ interface ChatClient {
             return this
         }
 
-        fun notifications(notificationsConfig: ChatNotificationConfig): Builder {
-            this.notificationsConfig = notificationsConfig
+        fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+            this.notificationsHandler = notificationsHandler
             return this
         }
 
@@ -346,10 +346,6 @@ interface ChatClient {
                 throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
             }
 
-            if (!this::notificationsConfig.isInitialized) {
-                notificationsConfig = ChatNotificationConfig(appContext)
-            }
-
             val config = ChatClientConfig(
                 apiKey,
                 "https://$baseUrl/",
@@ -359,7 +355,7 @@ interface ChatClient {
                 cdnTimeout,
                 warmUp,
                 ChatLogger.Config(logLevel, loggerHandler),
-                notificationsConfig
+                notificationsHandler
             )
 
             val modules = ChatModules(config)

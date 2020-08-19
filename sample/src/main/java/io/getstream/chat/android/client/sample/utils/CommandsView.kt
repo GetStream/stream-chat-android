@@ -25,7 +25,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.models.originalLanguage
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.token.TokenProvider
@@ -96,7 +96,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         request.withData(data)
 
-        val notificationsConfig = object : ChatNotificationConfig(context) {
+        val notificationsHandler = object : ChatNotificationHandler(context) {
             override fun onFirebaseMessage(message: RemoteMessage): Boolean {
                 return true
             }
@@ -106,17 +106,17 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             if (useStaging) {
                 client = ChatClient.Builder(config.apiKey, App.instance)
                     .baseUrl(stagingEndpoint)
-                    .notifications(notificationsConfig)
+                    .notifications(notificationsHandler)
                     .build()
             } else {
                 client = ChatClient.Builder(config.apiKey, App.instance)
-                    .notifications(notificationsConfig)
+                    .notifications(notificationsHandler)
                     .build()
             }
         } else {
             client = ChatClient.Builder(config.apiKey, App.instance)
                 .baseUrl(customUrl)
-                .notifications(notificationsConfig)
+                .notifications(notificationsHandler)
                 .build()
         }
 

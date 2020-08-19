@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.sample.cache.AppDatabase
 import io.getstream.chat.android.client.sample.common.HomeActivity
 import io.getstream.chat.android.client.sample.common.KeyValue
@@ -137,7 +137,7 @@ class App : Application() {
     }
 
     @UseExperimental(ExperimentalTime::class)
-    private fun provideNotificationConfig() = object : ChatNotificationConfig(this) {
+    private fun provideNotificationConfig() = object : ChatNotificationHandler(this) {
 
         override fun getNewMessageIntent(messageId: String, channelType: String, channelId: String): Intent {
 
