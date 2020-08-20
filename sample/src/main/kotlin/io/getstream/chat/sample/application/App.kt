@@ -2,6 +2,7 @@ package io.getstream.chat.sample.application
 
 import android.app.Application
 import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
 import loginModule
@@ -12,7 +13,6 @@ import org.koin.core.context.startKoin
 
 class App : Application() {
     private val appConfig: AppConfig by inject()
-    private val notifications: NotificationsConfig by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -20,7 +20,12 @@ class App : Application() {
         initKoin()
         Chat.Builder(appConfig.apiKey, this).apply {
             offlineEnabled = true
-            notificationsConfig = notifications
+            notificationsConfig =
+                NotificationConfig(
+                    firebaseMessageIdKey = "message_id",
+                    firebaseChannelIdKey = "channel_id",
+                    firebaseChannelTypeKey = "channel_type"
+                )
         }.build()
     }
 
