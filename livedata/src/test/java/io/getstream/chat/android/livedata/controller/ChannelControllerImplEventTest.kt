@@ -20,8 +20,7 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
         val event = data.userStartWatchingEvent
         channelControllerImpl.handleEvent(event)
         Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(100)
-        val users = event.channel?.watchers!!.map { it.user }
-        Truth.assertThat(channelControllerImpl.watchers.getOrAwaitValue()).isEqualTo(users)
+        Truth.assertThat(channelControllerImpl.watchers.getOrAwaitValue()).isEqualTo(listOf(event.user))
     }
 
     @Test
