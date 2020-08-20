@@ -73,6 +73,9 @@ android {
         outputFormat = 'html'
         outputDirectory = "$rootDir/docs"
     }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlinX'
+    }
 }
 
 dependencies {
