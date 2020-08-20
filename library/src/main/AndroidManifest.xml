@@ -16,7 +16,7 @@
         <activity android:name=".view.activity.AttachmentActivity" />
 
         <service
-            android:name="io.getstream.chat.android.client.notifications.ChatFirebaseMessagingService"
+            android:name="io.getstream.chat.android.livedata.service.sync.OfflineSyncFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
