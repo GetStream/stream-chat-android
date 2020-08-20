@@ -1,5 +1,7 @@
 # To be released:
 
+# 1.14.0 - Thu 20 Aug 2020
+
 - Decouple cloud messages handler logic from configuration data
 - Fix createChannel methods
 
