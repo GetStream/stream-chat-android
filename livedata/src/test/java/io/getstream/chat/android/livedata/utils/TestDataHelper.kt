@@ -3,9 +3,11 @@ package io.getstream.chat.android.livedata.utils
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelTruncated
+import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
-import io.getstream.chat.android.client.events.ChannelVisible
+import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -15,21 +17,20 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationChannelTruncated
+import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
-import io.getstream.chat.android.client.events.NotificationMessageNew
-import io.getstream.chat.android.client.events.NotificationMutesUpdated
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannel
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.UserBanned
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserUnbanned
-import io.getstream.chat.android.client.events.UserUpdated
+import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -190,8 +191,6 @@ class TestDataHelper {
         reactionCounts = mutableMapOf("like" to 1); ownReactions =
             mutableListOf(reaction1); latestReactions = mutableListOf(reaction1)
     }
-    val messageThread =
-        Message().apply { channel = channel1; parentId = "message-1"; id = "message-2" }
     val message2Older = Message().apply {
         this.channel = channel1; text = "message2"; id = "message-2"; user = user1; createdAt =
             calendar(2019, 1, 1)
@@ -201,72 +200,57 @@ class TestDataHelper {
             calendar(2020, 2, 1)
     }
 
-    val connectedEvent = ConnectedEvent().apply { me = user1 }
-    val connectedEvent2 = ConnectedEvent().apply { totalUnreadCount = 3; unreadChannels = 2; me = user1 }
+    val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user1, connection1)
+    val connectedEvent2 = ConnectedEvent(EventType.HEALTH_CHECK, Date(), user1, connection1)
 
-    val disconnectedEvent = DisconnectedEvent()
-    val newMessageEvent = NewMessageEvent().apply { message = message1; cid = channel1.cid }
-    val newMessageEvent2 = NewMessageEvent().apply { message = message2Older; cid = channel1.cid }
-    val newMessageFromUser2 = NewMessageEvent().apply { message = messageFromUser2; cid = channel1.cid }
+    val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+    val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message1, null, null, null)
+    val newMessageEvent2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message2Older, null, null, null)
+    val newMessageFromUser2 = NewMessageEvent(EventType.MESSAGE_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, messageFromUser2, null, null, null)
 
-    val newMessageEventNotification = NotificationMessageNew().apply { message = message1WithoutChannelAndCid; cid = channel1.cid; channel = channel1 }
+    val newMessageEventNotification = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, message1WithoutChannelAndCid, null, null, null)
 
-    val messageUpdatedEvent = MessageUpdatedEvent().apply { message = message1Updated; cid = channel1.cid }
-    val userStartWatchingEvent = UserStartWatchingEvent().apply { channel = channel1; user = user1 }
-    val reactionEvent = ReactionNewEvent().apply { message = reactionMessage; reaction = reaction1; cid = channel1.cid }
-    val reactionEvent2 = ReactionNewEvent().apply { reaction = reaction2 }
+    val messageUpdatedEvent = MessageUpdatedEvent(EventType.MESSAGE_UPDATED, Date(), user1, channel1.cid, channel1.type, channel1.id, message1Updated, null)
+    val userStartWatchingEvent = UserStartWatchingEvent(EventType.USER_WATCHING_START, Date(), channel1.cid, 1, channel1.type, channel1.id, user1)
+    val reactionEvent = ReactionNewEvent(EventType.REACTION_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, reactionMessage, reaction1)
+    val reactionEvent2 = ReactionNewEvent(EventType.REACTION_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, reactionMessage, reaction2)
 
-    val newMessageWithThreadEvent = NewMessageEvent().apply { message = messageThread }
-    val channelUpdatedEvent =
-        ChannelUpdatedEvent().apply { channel = channel1Updated; cid = channel1Updated.cid }
-    val user1TypingStarted = TypingStartEvent().apply { user = user1 }
-    val user1TypingStartedOld = TypingStartEvent().apply { user = user1; receivedAt = getOldDate() }
-    val user3TypingStartedOld = TypingStartEvent().apply { user = user3; receivedAt = getOldDate() }
+    val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, user1, null, channel1Updated)
+    val user1TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user1, channel1.cid, channel1.type, channel1.id)
+    val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, Date(), user3, channel1.cid, channel1.type, channel1.id)
 
-    val channelHiddenEvent = ChannelHiddenEvent().apply { user = user1; channel = channel2 }
-    val channelVisibleEvent = ChannelVisible().apply { user = user1; channel = channel2 }
+    val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false)
+    val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1)
 
-    val user2TypingStarted = TypingStartEvent().apply { user = user2; receivedAt = Date() }
-    val user1TypingStop = TypingStopEvent().apply { user = user1 }
-    val user2TypingStop = TypingStopEvent().apply { user = user2 }
-    val readEvent = MessageReadEvent().apply {
-        message = message1; user = user1; cid = channel1.cid; createdAt = Date()
-    }
+    val user2TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user2, channel2.cid, channel2.type, channel2.id)
+    val user1TypingStop = TypingStopEvent(EventType.TYPING_STOP, Date(), user1, channel2.cid, channel2.type, channel2.id)
+    val readEvent = MessageReadEvent(EventType.MESSAGE_READ, Date(), user1, channel1.cid, channel1.type, channel1.id, null)
 
-    val notificationMutesUpdated = NotificationMutesUpdated().apply { me = me1 }
+    val notificationMutesUpdated = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, Date(), me1)
 
-    val user1Banned = UserBanned().apply { user = user1 }
-    val user1Unbanned = UserUnbanned().apply { user = user1 }
+    val user1Banned = ChannelUserBannedEvent(EventType.USER_BANNED, Date(), channel2.cid, channel2.type, channel2.id, user1, null)
+    val user1Unbanned = ChannelUserUnbannedEvent(EventType.USER_UNBANNED, Date(), user1, channel2.cid, channel2.type, channel2.id)
 
-    val user1ReadNotification = NotificationMarkReadEvent().apply { user = user1; createdAt = Date() }
-    val user1Read = MessageReadEvent().apply { user = user1; createdAt = Date() }
-    val memberAddedToChannelEvent =
-        MemberAddedEvent().apply {
-            cid = channel1WithNewMember.cid
-            channel = channel1WithNewMember
-        }
+    val user1ReadNotification = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, Date(), user1, channel2.cid, channel2.type, channel2.id, null, null, null)
+    val user1Read = MessageReadEvent(EventType.MESSAGE_READ, Date(), user1, channel2.cid, channel2.type, channel2.id, null)
+    val memberAddedToChannelEvent = MemberAddedEvent(EventType.MEMBER_ADDED, Date(), user1, channel1WithNewMember.cid, channel1WithNewMember.type, channel1WithNewMember.id, member2)
 
     // member removed doesn't have a cid
-    val memberRemovedFromChannel =
-        MemberRemovedEvent().apply { member = null; user = member2.user; channel = channel1 }
+    val memberRemovedFromChannel = MemberRemovedEvent(EventType.MEMBER_REMOVED, Date(), member2.user, channel1.cid, channel1.type, channel1.id)
 
-    val notificationRemovedFromChannel =
-        NotificationRemovedFromChannel().apply { channel = channel1 }
+    val notificationRemovedFromChannel = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, Date(), user1, channel1.cid, channel1.type, channel1.id)
 
     // for whatever reason these events don't have event.cid
-    val notificationAddedToChannelEvent =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel1; }
-    val notificationAddedToChannel2Event =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel2; }
+    val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel1.cid, channel1.type, channel1.id, channel1)
+    val notificationAddedToChannel2Event = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel2.cid, channel2.type, channel2.id, channel2)
     // no created by
-    val notificationAddedToChannel3Event =
-        NotificationAddedToChannelEvent().apply { user = user1; channel = channel3 }
-    val user1UpdatedEvent = UserUpdated().apply { user = user1updated }
+    val notificationAddedToChannel3Event = NotificationAddedToChannelEvent(EventType.NOTIFICATION_ADDED_TO_CHANNEL, Date(), channel3.cid, channel3.type, channel3.id, channel3)
+    val user1UpdatedEvent = UserUpdatedEvent(EventType.USER_UPDATED, Date(), user1updated)
     val replayEventsResult: Result<List<ChatEvent>> = Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2), null)
 
-    val channelTruncatedEvent = ChannelTruncated().apply { cid = channel1.cid; createdAt = Date() }
-    val notificationChannelTruncated = NotificationChannelTruncated().apply { cid = channel1.cid; createdAt = Date() }
-    val channelDeletedEvent = ChannelDeletedEvent().apply { cid = channel1.cid; createdAt = Date() }
+    val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, user1, channel1)
+    val notificationChannelTruncated = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, Date(), channel1.cid, channel1.type, channel1.id, user1, channel1)
+    val channelDeletedEvent = ChannelDeletedEvent(EventType.CHANNEL_DELETED, Date(), channel1.cid, channel1.type, channel1.id, channel1, null)
 
     val syncState = SyncStateEntity(user1.id, lastSyncedAt = Date.from(Instant.now()))
 }
