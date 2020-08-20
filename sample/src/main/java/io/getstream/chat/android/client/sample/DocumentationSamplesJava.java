@@ -25,8 +25,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.events.ConnectingEvent;
 import io.getstream.chat.android.client.events.DisconnectedEvent;
 import io.getstream.chat.android.client.events.NewMessageEvent;
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdated;
-import io.getstream.chat.android.client.events.NotificationMutesUpdated;
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent;
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelMute;
@@ -34,7 +34,6 @@ import io.getstream.chat.android.client.models.EventType;
 import io.getstream.chat.android.client.models.Filters;
 import io.getstream.chat.android.client.models.GuestUser;
 import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.Mute;
 import io.getstream.chat.android.client.models.Reaction;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
@@ -163,7 +162,8 @@ public class DocumentationSamplesJava {
                 Subscription subscription = client.events().subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
-                        Message message = event.message;
+                        NewMessageEvent newMessageEvent = (NewMessageEvent) event;
+                        Message message = newMessageEvent.getMessage();
                     }
 
                     return Unit.INSTANCE;
@@ -244,7 +244,8 @@ public class DocumentationSamplesJava {
                 Subscription subscription = client.events().subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
-                        Message message = event.message;
+                        NewMessageEvent newMessageEvent = (NewMessageEvent) event;
+                        Message message = newMessageEvent.getMessage();
                     }
 
                     return Unit.INSTANCE;
@@ -624,18 +625,11 @@ public class DocumentationSamplesJava {
             static void clientEvents() {
                 client.events().subscribe(event -> {
 
-                    if (event.getTotalUnreadCount() != null) {
-                        int totalUnreadCount = event.getTotalUnreadCount();
-                    }
-
-                    if (event.getUnreadChannels() != null) {
-                        int unreadChannels = event.getUnreadChannels();
-                    }
-
                     if (event instanceof ConnectedEvent) {
+                        ConnectedEvent connectedEvent = (ConnectedEvent) event;
                         // the initial count of unread messages is returned by client.setUser
-                        int totalUnreadCount = event.getUser().getTotalUnreadCount();
-                        int unreadChannels = event.getUser().getUnreadChannels();
+                        int totalUnreadCount = connectedEvent.getMe().getTotalUnreadCount();
+                        int unreadChannels = connectedEvent.getMe().getUnreadChannels();
                     }
 
                     return Unit.INSTANCE;
@@ -991,10 +985,10 @@ public class DocumentationSamplesJava {
                         .events()
                         .subscribe(event -> {
 
-                            if (event instanceof NotificationChannelMutesUpdated) {
-                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdated) event).me.getChannelMutes();
-                            } else if (event instanceof NotificationMutesUpdated) {
-                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdated) event).me.getChannelMutes();
+                            if (event instanceof NotificationChannelMutesUpdatedEvent) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
+                            } else if (event instanceof NotificationMutesUpdatedEvent) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
                             }
 
                             return Unit.INSTANCE;
@@ -1189,23 +1183,6 @@ public class DocumentationSamplesJava {
 
                 {
                     channelController.markRead().enqueue(result -> Unit.INSTANCE);
-                }
-
-                {
-
-                }
-
-                {
-                    channelController
-                            .events()
-                            .filter(event -> event.getUnreadChannels() != null && event.getTotalUnreadCount() != null)
-                            .subscribe(event -> {
-
-                                int unreadChannels = event.getUnreadChannels();
-                                int totalUnreadCount = event.getTotalUnreadCount();
-
-                                return Unit.INSTANCE;
-                            });
                 }
             }
 

@@ -71,7 +71,7 @@ internal class EventsParser(
 
                 val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
 
-                if (connection.isSuccess && connection.data().isValid()) {
+                if (connection.isSuccess) {
                     connectionEventReceived = true
                     val connectionEvent = connection.data()
                     service.onConnectionResolved(connectionEvent)

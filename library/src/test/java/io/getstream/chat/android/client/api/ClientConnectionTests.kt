@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
@@ -20,6 +21,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
+import java.util.Date
 
 internal class ClientConnectionTests {
 
@@ -42,10 +44,12 @@ internal class ClientConnectionTests {
         FakeTokenManager(token)
     )
 
-    val connectedEvent = ConnectedEvent().apply {
-        me = this@ClientConnectionTests.user
-        connectionId = this@ClientConnectionTests.connectionId
-    }
+    val connectedEvent = ConnectedEvent(
+        EventType.HEALTH_CHECK,
+        Date(),
+        user,
+        connectionId
+    )
 
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket

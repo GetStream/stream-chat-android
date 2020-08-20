@@ -6,8 +6,10 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
+import java.util.Date
 
 internal class ChatObservableImpl(private val service: ChatSocketService) : ChatObservable {
 
@@ -77,8 +79,8 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
 
         when (val state = service.state) {
             is ChatSocketService.State.Connected -> firstEvent = state.event
-            is ChatSocketService.State.Connecting -> firstEvent = ConnectingEvent()
-            is ChatSocketService.State.Disconnected -> firstEvent = DisconnectedEvent()
+            is ChatSocketService.State.Connecting -> firstEvent = ConnectingEvent(EventType.CONNECTION_CONNECTING, Date())
+            is ChatSocketService.State.Disconnected -> firstEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
         }
 
         if (firstEvent != null) subscription.onNext(firstEvent)
@@ -90,7 +92,7 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
     private class EventsMapper(val observable: ChatObservableImpl) : SocketListener() {
 
         override fun onConnecting() {
-            observable.onNext(ConnectingEvent())
+            observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date()))
         }
 
         override fun onConnected(event: ConnectedEvent) {
@@ -98,7 +100,7 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         }
 
         override fun onDisconnected() {
-            observable.onNext(DisconnectedEvent())
+            observable.onNext(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
         }
 
         override fun onEvent(event: ChatEvent) {
@@ -106,7 +108,7 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         }
 
         override fun onError(error: ChatError) {
-            observable.onNext(ErrorEvent(error))
+            observable.onNext(ErrorEvent(EventType.CONNECTION_ERROR, Date(), error))
         }
     }
 }

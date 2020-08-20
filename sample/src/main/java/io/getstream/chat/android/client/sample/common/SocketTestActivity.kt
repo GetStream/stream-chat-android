@@ -96,9 +96,7 @@ class SocketTestActivity : AppCompatActivity() {
     private val logTimeFormat = SimpleDateFormat("hh:mm:ss")
 
     private fun appendEvent(event: ChatEvent) {
-        val date = event.receivedAt
-        val log = logTimeFormat.format(date) + ":" + event.type + "\n"
-        sb.insert(0, log)
+        sb.insert(0, "${event.type}\n")
         textSocketEvent.text = sb.toString()
     }
 }

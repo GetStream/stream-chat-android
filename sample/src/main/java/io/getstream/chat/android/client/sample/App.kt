@@ -91,9 +91,6 @@ class App : Application() {
             }
 
         client.events()
-            .filter {
-                it.cid != null && it.cid == "*"
-            }
             .filter("newMessage")
             .subscribe {
                 println(it)

@@ -32,6 +32,7 @@ data class Channel(
     var watchers: List<Watcher> = mutableListOf(),
     var read: List<ChannelUserRead> = mutableListOf(),
     var config: Config = Config(),
+    @SerializedName("created_by")
     var createdBy: User = User(),
 
     @IgnoreSerialisation
