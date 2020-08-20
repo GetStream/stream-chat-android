@@ -489,9 +489,6 @@ internal class ChatClientImpl(
         return channel(type, id)
     }
 
-    override fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel> =
-        createChannel(channelType, "", emptyList(), extraData)
-
     override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> =
         createChannel(channelType, channelId, emptyList(), extraData)
 

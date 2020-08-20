@@ -74,8 +74,6 @@ interface ChatClient {
         extraData: Map<String, Any>
     ): Call<Channel>
 
-    fun createChannel(channelType: String, extraData: Map<String, Any>): Call<Channel>
-
     fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
 
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
