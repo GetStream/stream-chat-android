@@ -152,7 +152,6 @@ interface ChatDomain {
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    clear()
                     put(backgroundSyncConfig)
                 }
             }
@@ -161,7 +160,6 @@ interface ChatDomain {
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
             if (NotificationConfigUnavailable != notificationConfig) {
                 syncModule.notificationConfigStore.apply {
-                    clear()
                     put(notificationConfig)
                 }
             }
