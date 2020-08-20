@@ -7,4 +7,8 @@ internal class SyncProvider(context: Context) {
     internal val encryptedBackgroundSyncConfigStore by lazy {
         EncryptedBackgroundSyncConfigStore(context)
     }
+
+    internal val notificationConfigStore by lazy {
+        NotificationConfigStore(context)
+    }
 }

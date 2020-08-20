@@ -9,6 +9,7 @@ buildscript {
         maven { url "https://plugins.gradle.org/m2/" }
         google()
         jcenter()
+        mavenLocal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.4'

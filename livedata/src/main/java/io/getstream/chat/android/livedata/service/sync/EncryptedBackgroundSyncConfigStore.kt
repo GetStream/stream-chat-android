@@ -5,6 +5,12 @@ import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 
+private const val MASTER_KEY_ALIAS = "_stream_sync_config_master_key_"
+private const val SYNC_CONFIG_PREFS_NAME = "stream_livedata_sync_config_store"
+private const val KEY_API_KEY = "api_key"
+private const val KEY_USER_ID = "user_id"
+private const val KEY_USER_TOKEN = "user_token"
+
 internal class EncryptedBackgroundSyncConfigStore(context: Context) {
     private val prefs: SharedPreferences
 
@@ -42,12 +48,4 @@ internal class EncryptedBackgroundSyncConfigStore(context: Context) {
     }
 
     fun clear() = prefs.edit().clear().apply()
-
-    companion object {
-        const val MASTER_KEY_ALIAS = "_stream_sync_config_master_key_"
-        const val SYNC_CONFIG_PREFS_NAME = "stream_livedata_sync_config_store"
-        const val KEY_API_KEY = "api_key"
-        const val KEY_USER_ID = "user_id"
-        const val KEY_USER_TOKEN = "user_token"
-    }
 }

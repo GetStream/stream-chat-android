@@ -7,8 +7,10 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
+import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
@@ -84,6 +86,7 @@ interface ChatDomain {
         private var offlineEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
         fun database(db: ChatDatabase): Builder {
@@ -130,8 +133,14 @@ interface ChatDomain {
             return this
         }
 
+        fun notificationConfig(notificationConfig: NotificationConfig): Builder {
+            this.notificationConfig = notificationConfig
+            return this
+        }
+
         fun build(): ChatDomain {
             storeBackgroundSyncConfig(backgroundSyncConfig)
+            storeNotificationConfig(notificationConfig)
             instance = buildImpl()
             return instance
         }
@@ -143,8 +152,15 @@ interface ChatDomain {
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    clear()
                     put(backgroundSyncConfig)
+                }
+            }
+        }
+
+        private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
+            if (NotificationConfigUnavailable != notificationConfig) {
+                syncModule.notificationConfigStore.apply {
+                    put(notificationConfig)
                 }
             }
         }
