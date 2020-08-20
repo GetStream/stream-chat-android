@@ -144,4 +144,3 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
         const val NOTIFICATION_ID = 1
     }
 }
-
