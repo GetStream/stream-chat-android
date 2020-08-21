@@ -4,5 +4,4 @@ import org.koin.dsl.module
 
 val appModule = module {
     single { AppConfig() }
-    single { NotificationsConfig(get()) }
 }

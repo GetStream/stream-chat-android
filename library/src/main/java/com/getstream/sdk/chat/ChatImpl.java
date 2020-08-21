@@ -20,7 +20,8 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.notifications.options.ChatNotificationConfig;
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.livedata.ChatDomain;
@@ -44,7 +45,7 @@ class ChatImpl implements Chat {
     private final String apiKey;
     private final Context context;
     private final boolean offlineEnabled;
-    private final ChatNotificationConfig notificationConfig;
+    private final NotificationConfig notificationConfig;
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
@@ -54,7 +55,7 @@ class ChatImpl implements Chat {
              String apiKey,
              Context context,
              boolean offlineEnabled,
-             ChatNotificationConfig notificationConfig) {
+             NotificationConfig notificationConfig) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -65,7 +66,9 @@ class ChatImpl implements Chat {
         this.notificationConfig = notificationConfig;
 
         navigator.setHandler(navigationHandler);
-        new ChatClient.Builder(this.apiKey, context).notifications(notificationConfig).build();
+        new ChatClient.Builder(this.apiKey, context)
+                        .notifications(new ChatNotificationHandler(context, notificationConfig))
+                        .build();
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
@@ -132,7 +135,10 @@ class ChatImpl implements Chat {
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
         }
-        final ChatDomain chatDomain = domainBuilder.userPresenceEnabled().build();
+        final ChatDomain chatDomain = domainBuilder
+                .userPresenceEnabled()
+                .notificationConfig(notificationConfig)
+                .build();
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
             public void onSuccess(@NotNull ConnectionData data) {
