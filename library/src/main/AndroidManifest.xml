@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:networkSecurityConfig="@xml/network_security_config">
         <activity android:name=".view.activity.UsersActivity"/>
         <activity android:name=".view.activity.AttachmentMediaActivity" />
