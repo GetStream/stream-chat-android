@@ -17,7 +17,7 @@ import androidx.core.os.BuildCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.MergeAdapter
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.adapter.CommandsAdapter
@@ -366,7 +366,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     init {
         applyStyle()
-        binding.rvSuggestions.adapter = MergeAdapter(commandsAdapter, mentionsAdapter)
+        binding.rvSuggestions.adapter = ConcatAdapter(commandsAdapter, mentionsAdapter)
         binding.activeMessageSend = false
         configOnClickListener()
         configInputEditText()
