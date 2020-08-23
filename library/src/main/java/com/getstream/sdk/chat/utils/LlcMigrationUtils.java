@@ -447,13 +447,6 @@ public class LlcMigrationUtils {
         return fileTyineRes;
     }
 
-    public static boolean isFromCurrentUser(ChatEvent event) {
-        User user = event.getUser();
-        User currentUser = getCurrentUser();
-        if (user == null || currentUser == null) return false;
-        return user.getId().equals(currentUser.getId());
-    }
-
     public static boolean isFromCurrentUser(String userId) {
         User currentUser = getCurrentUser();
         if (userId == null || currentUser == null) return false;
