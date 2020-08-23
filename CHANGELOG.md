@@ -1,3 +1,8 @@
+## Aug 23th, 2020 - 4.2.11-beta-8
+- Fix Upload Files
+- Update RecyclerView Lib
+- Update Notification Customization
+
 ## Aug 5th, 2020 - 4.2.11-beta-7
 
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.9
