@@ -55,8 +55,10 @@ class MessageRepositoryTest : BaseDomainTest() {
     fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
         val oldDate = calendar(2019, 11, 1)
         val message1 =
-            data.createMessage().apply { id = "testSyncNeeded-1"; text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED; createdAt =
-                oldDate }
+            data.createMessage().apply {
+                id = "testSyncNeeded-1"; text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED
+                createdAt = oldDate
+            }
         val message2 = data.createMessage()
             .apply { id = "testSyncNeeded-2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY }
         val message3 = data.createMessage()
