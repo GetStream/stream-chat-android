@@ -11,7 +11,6 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -56,7 +55,7 @@ class MessageRepositoryTest : BaseDomainTest() {
     fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
         val oldDate = calendar(2019, 11, 1)
         val message1 =
-            data.createMessage().apply { id="testSyncNeeded-1"; text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED; createdAt =
+            data.createMessage().apply { id = "testSyncNeeded-1"; text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED; createdAt =
                 oldDate }
         val message2 = data.createMessage()
             .apply { id = "testSyncNeeded-2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY }
