@@ -46,20 +46,29 @@ fun Channel.users(): List<User> {
 }
 
 fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
+
+
     // add to own reactions
     if (isMine) {
+        this.ownReactions = this.ownReactions.toMutableList()
         this.ownReactions.add(reaction)
     }
 
     // add to latest reactions
+    this.latestReactions = this.latestReactions.toMutableList()
     this.latestReactions.add(reaction)
 
     // update the count
     val currentCount = this.reactionCounts.getOrElse(reaction.type) { 0 }
+    // copy the object so livedata's diffutils can notice a change
+    this.reactionCounts = this.reactionCounts.toMutableMap()
     this.reactionCounts[reaction.type] = currentCount + 1
     // update the score
     val currentScore = this.reactionScores.getOrElse(reaction.type) { 0 }
+    this.reactionScores = this.reactionScores.toMutableMap()
     this.reactionScores[reaction.type] = currentScore + reaction.score
+
+
 }
 
 fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
