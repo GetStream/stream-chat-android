@@ -29,9 +29,6 @@ class SendMessageImpl(var domainImpl: ChatDomainImpl) : SendMessage {
             channelRepo.sendMessage(message)
         }
 
-        return CallImpl2<Message>(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelRepo.scope)
     }
 }
