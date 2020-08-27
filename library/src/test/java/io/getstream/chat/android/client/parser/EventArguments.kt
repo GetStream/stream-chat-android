@@ -273,4 +273,7 @@ object EventArguments {
 
     @JvmStatic
     fun eventAdapterArguments() = eventArguments().map { it.get().let { Arguments.of(it[0], it[2]) } }
+
+    @JvmStatic
+    fun chatParserEventArguments() = eventArguments()
 }

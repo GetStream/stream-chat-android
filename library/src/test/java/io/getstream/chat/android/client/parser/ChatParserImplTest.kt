@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.parser
 
+import io.getstream.chat.android.client.events.ChatEvent
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -19,6 +20,12 @@ internal class ChatParserImplTest {
     @MethodSource("io.getstream.chat.android.client.parser.ChatParserImplTest#dateFromJsonArguments")
     fun `Should convert to proper date`(jsonDate: String, expectedDateTime: Long) {
         chatParser.fromJson(jsonDate, Date::class.java).time `should be equal to` expectedDateTime
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.parser.EventArguments#chatParserEventArguments")
+    fun `Should create proper event`(eventData: String, eventClass: Class<*>, expectedEvent: ChatEvent) {
+        chatParser.fromJson(eventData, eventClass) `should be equal to` expectedEvent
     }
 
     companion object {
