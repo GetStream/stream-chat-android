@@ -19,6 +19,10 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             return CustomObjectGsonAdapter(gson, type.rawType) as TypeAdapter<T>
         }
 
+        if (type.rawType.getAllInterfaces().contains(Map::class.java)) {
+            return MapAdapter(gson.getDelegateAdapter(this, type) as TypeAdapter<Map<*, *>>) as TypeAdapter<T>
+        }
+
         return when (type.rawType) {
             ChatEvent::class.java -> {
                 EventAdapter(
@@ -40,4 +44,10 @@ class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
             }
         }
     }
+}
+
+private fun Class<*>.getAllInterfaces(): List<Class<*>> = if (this == Object::class.java) {
+    emptyList()
+} else {
+    interfaces.toList() + (superclass?.getAllInterfaces() ?: emptyList())
 }
