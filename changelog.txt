@@ -1,5 +1,7 @@
 # To be released:
 
+- New MapAdapter that omit key that contains null values or emptyMaps
+
 # 1.15.0 - Thu 20 Aug 2020
 
 - Refactor ChatEvents Strcuture
