@@ -8,10 +8,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.runner.RunWith
 
-data class Message2(
-    var reactionCounts: Map<String, Int> = mapOf()
-)
-
 @RunWith(AndroidJUnit4::class)
 class SendReactionImplTest : BaseConnectedIntegrationTest() {
 
