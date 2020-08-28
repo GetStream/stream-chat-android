@@ -375,7 +375,6 @@ class ChannelControllerImpl(
      */
 
     suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
-        var output: Result<Message>
         val online = domainImpl.isOnline()
 
         // set defaults for id, cid and created at
@@ -408,20 +407,21 @@ class ChannelControllerImpl(
             domainImpl.repos.channels.insert(it)
         }
 
-        if (online) {
+        return@withContext if (online) {
             logger.logI("Starting to send message with id ${message.id} and text ${message.text}")
 
-            val runnable = {
-                val result = channelController.sendMessage(message)
-                result
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { channelController.sendMessage(message) }
             if (result.isSuccess) {
-                // set sendMessageCompletedAt so we know when to edit vs call sendMessage
-                messageEntity.syncStatus = SyncStatus.COMPLETED
-                messageEntity.sendMessageCompletedAt = Date()
-                domainImpl.repos.messages.insert(messageEntity)
-                output = Result(result.data() as Message?, null)
+                val processedMessage: Message = result.data()
+                processedMessage.apply {
+                    syncStatus = SyncStatus.COMPLETED
+                    val entity = MessageEntity(this)
+                    entity.sendMessageCompletedAt = Date()
+                    domainImpl.repos.messages.insert(entity)
+                }
+
+                upsertMessage(processedMessage)
+                Result(processedMessage, null)
             } else {
                 if (result.error().isPermanent()) {
                     messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -429,14 +429,12 @@ class ChannelControllerImpl(
                     messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.messages.insert(messageEntity)
-                output = Result(null, result.error())
+                Result(message, result.error())
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            output = Result(message, null)
+            Result(message, null)
         }
-
-        output
     }
 
     suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
@@ -485,7 +483,7 @@ class ChannelControllerImpl(
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data() as Reaction, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -532,7 +530,7 @@ class ChannelControllerImpl(
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -921,7 +919,7 @@ class ChannelControllerImpl(
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
 
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     message.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -960,7 +958,7 @@ class ChannelControllerImpl(
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     message.syncStatus = SyncStatus.FAILED_PERMANENTLY
