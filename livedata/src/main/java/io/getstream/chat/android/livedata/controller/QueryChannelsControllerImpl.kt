@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -17,7 +18,6 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.extensions.isChannelEvent
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.*
@@ -76,9 +76,9 @@ class QueryChannelsControllerImpl(
 
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
-            event.channel?.let { addChannelIfFilterMatches(it) }
+            addChannelIfFilterMatches(event.channel)
         }
-        if (event.isChannelEvent()) {
+        if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
@@ -86,7 +86,7 @@ class QueryChannelsControllerImpl(
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
-            event.cid?.let { updateChannel(domainImpl.channel(it).toChannel()) }
+            updateChannel(domainImpl.channel(event.cid).toChannel())
         }
     }
 

@@ -79,7 +79,10 @@ class ChannelControllerImpl(
 
     /** who is currently typing (current user is excluded from this) */
     override val typing: LiveData<List<User>> = Transformations.map(_typing) {
-        it.values.sortedBy { it.receivedAt }.map { it.user!! }
+        it.values.sortedBy { it.createdAt }.mapNotNull {
+            (it as? TypingStartEvent)?.user
+                ?: (it as? TypingStopEvent)?.user
+        }
     }
 
     /** how far every user in this channel has read */
@@ -372,7 +375,6 @@ class ChannelControllerImpl(
      */
 
     suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
-        var output: Result<Message>
         val online = domainImpl.isOnline()
 
         // set defaults for id, cid and created at
@@ -405,20 +407,21 @@ class ChannelControllerImpl(
             domainImpl.repos.channels.insert(it)
         }
 
-        if (online) {
+        return@withContext if (online) {
             logger.logI("Starting to send message with id ${message.id} and text ${message.text}")
 
-            val runnable = {
-                val result = channelController.sendMessage(message)
-                result
-            }
-            val result = domainImpl.runAndRetry(runnable)
+            val result = domainImpl.runAndRetry { channelController.sendMessage(message) }
             if (result.isSuccess) {
-                // set sendMessageCompletedAt so we know when to edit vs call sendMessage
-                messageEntity.syncStatus = SyncStatus.COMPLETED
-                messageEntity.sendMessageCompletedAt = Date()
-                domainImpl.repos.messages.insert(messageEntity)
-                output = Result(result.data() as Message?, null)
+                val processedMessage: Message = result.data()
+                processedMessage.apply {
+                    syncStatus = SyncStatus.COMPLETED
+                    val entity = MessageEntity(this)
+                    entity.sendMessageCompletedAt = Date()
+                    domainImpl.repos.messages.insert(entity)
+                }
+
+                upsertMessage(processedMessage)
+                Result(processedMessage, null)
             } else {
                 if (result.error().isPermanent()) {
                     messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -426,14 +429,12 @@ class ChannelControllerImpl(
                     messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.messages.insert(messageEntity)
-                output = Result(null, result.error())
+                Result(message, result.error())
             }
         } else {
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            output = Result(message, null)
+            Result(message, null)
         }
-
-        output
     }
 
     suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
@@ -482,7 +483,7 @@ class ChannelControllerImpl(
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data() as Reaction, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -529,7 +530,7 @@ class ChannelControllerImpl(
             if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -612,7 +613,7 @@ class ChannelControllerImpl(
         calendar.add(Calendar.SECOND, -15)
         val old = calendar.time
         for ((userId, typing) in copy.toList()) {
-            if (typing.receivedAt.before(old)) {
+            if (typing.createdAt.before(old)) {
                 copy.remove(userId)
                 changed = true
             }
@@ -652,79 +653,92 @@ class ChannelControllerImpl(
     }
 
     fun handleEvent(event: ChatEvent) {
-        event.channel?.watcherCount?.let {
-            setWatcherCount(it)
-        }
         when (event) {
-            is NewMessageEvent, is MessageUpdatedEvent, is MessageDeletedEvent, is NotificationMessageNew -> {
+            is NewMessageEvent -> {
                 upsertEventMessage(event.message)
-                // unhide the channel
-                if (isHidden()) {
-                    setHidden(false)
-                }
+                setHidden(false)
             }
-            is ReactionNewEvent, is ReactionDeletedEvent -> {
+            is MessageUpdatedEvent -> {
+                upsertEventMessage(event.message)
+                setHidden(false)
+            }
+            is MessageDeletedEvent -> {
+                upsertEventMessage(event.message)
+                setHidden(false)
+            }
+            is NotificationMessageNewEvent -> {
+                upsertEventMessage(event.message)
+                setHidden(false)
+                event.watcherCount?.let { setWatcherCount(it) }
+            }
+            is ReactionNewEvent -> {
+                upsertEventMessage(event.message)
+            }
+            is ReactionDeletedEvent -> {
                 upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
-                deleteMember(event.user!!.id)
+                deleteMember(event.user.id)
             }
-            is MemberAddedEvent, is MemberUpdatedEvent, is NotificationAddedToChannelEvent -> {
-                // add /remove the members etc
-                event.channel?.members?.let {
-                    upsertMembers(it)
-                }
+            is MemberAddedEvent -> {
+                upsertMember(event.member)
+            }
+            is MemberUpdatedEvent -> {
+                upsertMember(event.member)
+            }
+            is NotificationAddedToChannelEvent -> {
+                upsertMembers(event.channel.members)
             }
 
-            is UserPresenceChanged -> {
-                upsertUserPresence(event.user!!)
+            is UserPresenceChangedEvent -> {
+                upsertUserPresence(event.user)
             }
 
-            is UserUpdated -> {
-                upsertUser(event.user!!)
+            is UserUpdatedEvent -> {
+                upsertUser(event.user)
             }
 
             is UserStartWatchingEvent -> {
-                upsertWatcher(event.user!!)
+                upsertWatcher(event.user)
+                setWatcherCount(event.watcherCount)
             }
             is UserStopWatchingEvent -> {
-                deleteWatcher(event.user!!)
+                deleteWatcher(event.user)
+                setWatcherCount(event.watcherCount)
             }
             is ChannelUpdatedEvent -> {
-                event.channel?.let { updateChannelData(it) }
+                updateChannelData(event.channel)
             }
             is ChannelHiddenEvent -> {
-                event.channel?.let { setHidden(true) }
+                setHidden(true)
             }
-            is ChannelVisible -> {
-                event.channel?.let { setHidden(false) }
+            is ChannelVisibleEvent -> {
+                setHidden(false)
             }
             is ChannelDeletedEvent -> {
-                removeMessagesBefore(event.createdAt!!)
+                removeMessagesBefore(event.createdAt)
                 val channelData = _channelData.value
                 channelData?.let {
-                    it.deletedAt = event.createdAt!!
+                    it.deletedAt = event.createdAt
                     _channelData.postValue(it)
                 }
             }
-            is ChannelTruncated, is NotificationChannelTruncated -> {
-                removeMessagesBefore(event.createdAt!!)
+            is ChannelTruncatedEvent,
+            is NotificationChannelTruncatedEvent -> {
+                removeMessagesBefore(event.createdAt)
             }
             is TypingStopEvent -> {
-                setTyping(event.user?.id!!, null)
+                setTyping(event.user.id, null)
             }
             is TypingStartEvent -> {
-                setTyping(event.user?.id!!, event)
+                setTyping(event.user.id, event)
             }
             is MessageReadEvent -> {
-                val read = ChannelUserRead(event.user!!, event.createdAt!!)
-                updateRead(read)
+                updateRead(ChannelUserRead(event.user, event.createdAt))
             }
             is NotificationMarkReadEvent -> {
-                val user = domainImpl.currentUser
-                val date = event.createdAt!!
-                val read = ChannelUserRead(user, date)
-                updateRead(read)
+                updateRead(ChannelUserRead(event.user, event.createdAt))
+                event.watcherCount?.let { setWatcherCount(it) }
             }
         }
     }
@@ -905,7 +919,7 @@ class ChannelControllerImpl(
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
 
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     message.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -944,7 +958,7 @@ class ChannelControllerImpl(
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
                 domainImpl.repos.messages.insertMessage(message)
-                return Result(result.data() as Message, null)
+                return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     message.syncStatus = SyncStatus.FAILED_PERMANENTLY
