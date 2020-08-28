@@ -596,7 +596,7 @@ class ChannelControllerImpl(
 
         // update all the fresh messages
         for (message in freshMessages) {
-            copy[message.id] = message
+            copy[message.id] = message.copy()
         }
         _messages.postValue(copy)
     }

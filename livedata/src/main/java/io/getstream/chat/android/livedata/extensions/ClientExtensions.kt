@@ -47,7 +47,6 @@ fun Channel.users(): List<User> {
 
 fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 
-
     // add to own reactions
     if (isMine) {
         this.ownReactions = this.ownReactions.toMutableList()
@@ -67,8 +66,6 @@ fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
     val currentScore = this.reactionScores.getOrElse(reaction.type) { 0 }
     this.reactionScores = this.reactionScores.toMutableMap()
     this.reactionScores[reaction.type] = currentScore + reaction.score
-
-
 }
 
 fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
