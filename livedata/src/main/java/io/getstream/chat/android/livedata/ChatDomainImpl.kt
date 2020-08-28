@@ -270,9 +270,9 @@ class ChatDomainImpl private constructor(
         return database
     }
 
-    suspend fun runAndRetry(runnable: () -> Call<*>): Result<*> {
+    suspend fun <T> runAndRetry(runnable: () -> Call<T>): Result<T> {
         var attempt = 1
-        var result: Result<*>
+        var result: Result<T>
 
         while (true) {
             result = runnable().execute()
