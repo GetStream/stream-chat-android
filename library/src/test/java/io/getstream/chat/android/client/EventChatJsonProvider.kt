@@ -1,9 +1,7 @@
 package io.getstream.chat.android.client
 
-import java.io.StringReader
-
-fun createChannelCreatedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelCreatedEventStringJson() =
+    createChatEventStringJson(
         "channel.created",
         """
             "channel_type": "channelType",
@@ -15,8 +13,8 @@ fun createChannelCreatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelDeletedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelDeletedEventStringJson() =
+    createChatEventStringJson(
         "channel.deleted",
         """
             "channel_type": "channelType",
@@ -27,8 +25,8 @@ fun createChannelDeletedEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelHiddenEventStringReader() =
-    createChatEventStringReader(
+fun createChannelHiddenEventStringJson() =
+    createChatEventStringJson(
         "channel.hidden",
         """
             "user": ${createUserJsonString()},
@@ -39,16 +37,16 @@ fun createChannelHiddenEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelMuteEventStringReader() =
-    createChatEventStringReader(
+fun createChannelMuteEventStringJson() =
+    createChatEventStringJson(
         "channel.muted",
         """
             "mute": ${createChannelMuteJsonString()}
         """.trimIndent()
     )
 
-fun createChannelsMuteEventStringReader() =
-    createChatEventStringReader(
+fun createChannelsMuteEventStringJson() =
+    createChatEventStringJson(
         "channel.muted",
         """
             "mutes": [
@@ -57,8 +55,8 @@ fun createChannelsMuteEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelTruncatedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelTruncatedEventStringJson() =
+    createChatEventStringJson(
         "channel.truncated",
         """
             "channel_type": "channelType",
@@ -69,24 +67,24 @@ fun createChannelTruncatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelUnmuteEventStringReader() =
-    createChatEventStringReader(
+fun createChannelUnmuteEventStringJson() =
+    createChatEventStringJson(
         "channel.unmuted",
         """
             "mute": ${createChannelMuteJsonString()}
         """.trimIndent()
     )
 
-fun createChannelsUnmuteEventStringReader() =
-    createChatEventStringReader(
+fun createChannelsUnmuteEventStringJson() =
+    createChatEventStringJson(
         "channel.unmuted",
         """
             "mutes": [ ${createChannelMuteJsonString()} ]
         """.trimIndent()
     )
 
-fun createChannelUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelUpdatedEventStringJson() =
+    createChatEventStringJson(
         "channel.updated",
         """
             "channel_type": "channelType",
@@ -98,8 +96,8 @@ fun createChannelUpdatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelVisibleEventStringReader() =
-    createChatEventStringReader(
+fun createChannelVisibleEventStringJson() =
+    createChatEventStringJson(
         "channel.visible",
         """
             "channel_type": "channelType",
@@ -109,8 +107,8 @@ fun createChannelVisibleEventStringReader() =
         """.trimIndent()
     )
 
-fun createMemberAddedEventStringReader() =
-    createChatEventStringReader(
+fun createMemberAddedEventStringJson() =
+    createChatEventStringJson(
         "member.added",
         """
             "channel_type": "channelType",
@@ -121,8 +119,8 @@ fun createMemberAddedEventStringReader() =
         """.trimIndent()
     )
 
-fun createMemberRemovedEventStringReader() =
-    createChatEventStringReader(
+fun createMemberRemovedEventStringJson() =
+    createChatEventStringJson(
         "member.removed",
         """
             "channel_type": "channelType",
@@ -132,8 +130,8 @@ fun createMemberRemovedEventStringReader() =
         """.trimIndent()
     )
 
-fun createMemberUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createMemberUpdatedEventStringJson() =
+    createChatEventStringJson(
         "member.updated",
         """
             "channel_type": "channelType",
@@ -144,8 +142,8 @@ fun createMemberUpdatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createMessageDeletedEventStringReader() =
-    createChatEventStringReader(
+fun createMessageDeletedEventStringJson() =
+    createChatEventStringJson(
         "message.deleted",
         """
             "user": ${createUserJsonString()},
@@ -158,8 +156,8 @@ fun createMessageDeletedEventStringReader() =
         """.trimIndent()
     )
 
-fun createMessageReadEventStringReader() =
-    createChatEventStringReader(
+fun createMessageReadEventStringJson() =
+    createChatEventStringJson(
         "message.read",
         """
             "user": ${createUserJsonString()},
@@ -170,8 +168,8 @@ fun createMessageReadEventStringReader() =
         """.trimIndent()
     )
 
-fun createMessageUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createMessageUpdatedEventStringJson() =
+    createChatEventStringJson(
         "message.updated",
         """
             "user": ${createUserJsonString()},
@@ -183,8 +181,8 @@ fun createMessageUpdatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationAddedToChannelEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationAddedToChannelEventStringJson() =
+    createChatEventStringJson(
         "notification.added_to_channel",
         """
             "channel_type": "channelType",
@@ -194,8 +192,8 @@ fun createNotificationAddedToChannelEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationChannelDeletedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationChannelDeletedEventStringJson() =
+    createChatEventStringJson(
         "notification.channel_deleted",
         """
             "channel_type": "channelType",
@@ -206,8 +204,8 @@ fun createNotificationChannelDeletedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationChannelTruncatedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationChannelTruncatedEventStringJson() =
+    createChatEventStringJson(
         "notification.channel_truncated",
         """
             "channel_type": "channelType",
@@ -218,8 +216,8 @@ fun createNotificationChannelTruncatedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationInviteAcceptedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationInviteAcceptedEventStringJson() =
+    createChatEventStringJson(
         "notification.invite_accepted",
         """
             "channel_type": "channelType",
@@ -230,8 +228,8 @@ fun createNotificationInviteAcceptedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationInvitedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationInvitedEventStringJson() =
+    createChatEventStringJson(
         "notification.invited",
         """
             "channel_type": "channelType",
@@ -242,8 +240,8 @@ fun createNotificationInvitedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationMarkReadEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationMarkReadEventStringJson() =
+    createChatEventStringJson(
         "notification.mark_read",
         """
             "channel_type": "channelType",
@@ -256,8 +254,8 @@ fun createNotificationMarkReadEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationMessageNewEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationMessageNewEventStringJson() =
+    createChatEventStringJson(
         "notification.message_new",
         """
             "user": ${createUserJsonString()},
@@ -271,8 +269,8 @@ fun createNotificationMessageNewEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationRemovedFromChannelEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationRemovedFromChannelEventStringJson() =
+    createChatEventStringJson(
         "notification.removed_from_channel",
         """
             "channel_type": "channelType",
@@ -282,8 +280,8 @@ fun createNotificationRemovedFromChannelEventStringReader() =
         """.trimIndent()
     )
 
-fun createReactionDeletedEventStringReader() =
-    createChatEventStringReader(
+fun createReactionDeletedEventStringJson() =
+    createChatEventStringJson(
         "reaction.deleted",
         """
             "user": ${createUserJsonString()},
@@ -295,8 +293,8 @@ fun createReactionDeletedEventStringReader() =
         """.trimIndent()
     )
 
-fun createReactionNewEventStringReader() =
-    createChatEventStringReader(
+fun createReactionNewEventStringJson() =
+    createChatEventStringJson(
         "reaction.new",
         """
             "user": ${createUserJsonString()},
@@ -308,8 +306,8 @@ fun createReactionNewEventStringReader() =
         """.trimIndent()
     )
 
-fun createReactionUpdateEventStringReader() =
-    createChatEventStringReader(
+fun createReactionUpdateEventStringJson() =
+    createChatEventStringJson(
         "reaction.updated",
         """
             "user": ${createUserJsonString()},
@@ -321,8 +319,8 @@ fun createReactionUpdateEventStringReader() =
         """.trimIndent()
     )
 
-fun createTypingStartEventStringReader() =
-    createChatEventStringReader(
+fun createTypingStartEventStringJson() =
+    createChatEventStringJson(
         "typing.start",
         """
             "user": ${createUserJsonString()},
@@ -332,8 +330,8 @@ fun createTypingStartEventStringReader() =
         """.trimIndent()
     )
 
-fun createTypingStopEventStringReader() =
-    createChatEventStringReader(
+fun createTypingStopEventStringJson() =
+    createChatEventStringJson(
         "typing.stop",
         """
             "user": ${createUserJsonString()},
@@ -343,8 +341,8 @@ fun createTypingStopEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelUserBannedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelUserBannedEventStringJson() =
+    createChatEventStringJson(
         "user.banned",
         """
             "user": ${createUserJsonString()},
@@ -355,24 +353,24 @@ fun createChannelUserBannedEventStringReader() =
         """.trimIndent()
     )
 
-fun createGlobalUserBannedEventStringReader() =
-    createChatEventStringReader(
+fun createGlobalUserBannedEventStringJson() =
+    createChatEventStringJson(
         "user.banned",
         """
             "user": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createUserDeletedEventStringReader() =
-    createChatEventStringReader(
+fun createUserDeletedEventStringJson() =
+    createChatEventStringJson(
         "user.deleted",
         """
             "user": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createUserMutedEventStringReader() =
-    createChatEventStringReader(
+fun createUserMutedEventStringJson() =
+    createChatEventStringJson(
         "user.muted",
         """
             "user": ${createUserJsonString()},
@@ -380,8 +378,8 @@ fun createUserMutedEventStringReader() =
         """.trimIndent()
     )
 
-fun createUsersMutedEventStringReader() =
-    createChatEventStringReader(
+fun createUsersMutedEventStringJson() =
+    createChatEventStringJson(
         "user.muted",
         """
             "user": ${createUserJsonString()},
@@ -389,16 +387,16 @@ fun createUsersMutedEventStringReader() =
         """.trimIndent()
     )
 
-fun createUserPresenceChangedEventStringReader() =
-    createChatEventStringReader(
+fun createUserPresenceChangedEventStringJson() =
+    createChatEventStringJson(
         "user.presence.changed",
         """
             "user": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createUserStartWatchingEventStringReader() =
-    createChatEventStringReader(
+fun createUserStartWatchingEventStringJson() =
+    createChatEventStringJson(
         "user.watching.start",
         """
             "user": ${createUserJsonString()},
@@ -409,8 +407,8 @@ fun createUserStartWatchingEventStringReader() =
         """.trimIndent()
     )
 
-fun createUserStopWatchingEventStringReader() =
-    createChatEventStringReader(
+fun createUserStopWatchingEventStringJson() =
+    createChatEventStringJson(
         "user.watching.stop",
         """
             "user": ${createUserJsonString()},
@@ -421,8 +419,8 @@ fun createUserStopWatchingEventStringReader() =
         """.trimIndent()
     )
 
-fun createChannelUserUnbannedEventStringReader() =
-    createChatEventStringReader(
+fun createChannelUserUnbannedEventStringJson() =
+    createChatEventStringJson(
         "user.unbanned",
         """
             "user": ${createUserJsonString()},
@@ -432,16 +430,16 @@ fun createChannelUserUnbannedEventStringReader() =
         """.trimIndent()
     )
 
-fun createGlobalUserUnbannedEventStringReader() =
-    createChatEventStringReader(
+fun createGlobalUserUnbannedEventStringJson() =
+    createChatEventStringJson(
         "user.unbanned",
         """
             "user": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createUserUnmutedEventStringReader() =
-    createChatEventStringReader(
+fun createUserUnmutedEventStringJson() =
+    createChatEventStringJson(
         "user.unmuted",
         """
             "user": ${createUserJsonString()},
@@ -449,8 +447,8 @@ fun createUserUnmutedEventStringReader() =
         """.trimIndent()
     )
 
-fun createUsersUnmutedEventStringReader() =
-    createChatEventStringReader(
+fun createUsersUnmutedEventStringJson() =
+    createChatEventStringJson(
         "user.unmuted",
         """
             "user": ${createUserJsonString()},
@@ -458,24 +456,24 @@ fun createUsersUnmutedEventStringReader() =
         """.trimIndent()
     )
 
-fun createUserUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createUserUpdatedEventStringJson() =
+    createChatEventStringJson(
         "user.updated",
         """
             "user": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createHealthEventStringReader() =
-    createChatEventStringReader(
+fun createHealthEventStringJson() =
+    createChatEventStringJson(
         "health.check",
         """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
         """.trimIndent()
     )
 
-fun createConnectedEventStringReader() =
-    createChatEventStringReader(
+fun createConnectedEventStringJson() =
+    createChatEventStringJson(
         "health.check",
         """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
@@ -483,24 +481,24 @@ fun createConnectedEventStringReader() =
         """.trimIndent()
     )
 
-fun createNotificationChannelMutesUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationChannelMutesUpdatedEventStringJson() =
+    createChatEventStringJson(
         "notification.channel_mutes_updated",
         """
             "me": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createNotificationMutesUpdatedEventStringReader() =
-    createChatEventStringReader(
+fun createNotificationMutesUpdatedEventStringJson() =
+    createChatEventStringJson(
         "notification.mutes_updated",
         """
             "me": ${createUserJsonString()}
         """.trimIndent()
     )
 
-fun createNewMessageEventStringReader() =
-    createChatEventStringReader(
+fun createNewMessageEventStringJson() =
+    createChatEventStringJson(
         "message.new",
         """
             "user": ${createUserJsonString()},
@@ -514,14 +512,13 @@ fun createNewMessageEventStringReader() =
         """.trimIndent()
     )
 
-private fun createChatEventStringReader(type: String, payload: String) = StringReader(
+private fun createChatEventStringJson(type: String, payload: String) =
     """
         {"type": "$type",
          "created_at": "2020-06-29T06:14:28.000Z",
          $payload
          }
     """.trimIndent()
-)
 
 private fun createUserJsonString() =
     """
