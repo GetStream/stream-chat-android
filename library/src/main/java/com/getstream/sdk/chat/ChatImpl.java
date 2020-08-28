@@ -20,12 +20,16 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.client.notifications.ChatNotifications;
+import io.getstream.chat.android.client.notifications.ChatNotificationsImpl;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.livedata.ChatDomain;
 import kotlin.UninitializedPropertyAccessException;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import kotlinx.coroutines.BuildersKt;
 import kotlinx.coroutines.CoroutineStart;
 import kotlinx.coroutines.Dispatchers;
@@ -193,38 +197,24 @@ class ChatImpl implements Chat {
     }
 
     private void initSocketListener() {
-        client().addSocketListener(new SocketListener() {
-            @Override
-            public void onConnected(@NotNull ConnectedEvent event) {
-                onlineStatus.postValue(OnlineStatus.CONNECTED);
-                currentUser.postValue(event.me);
-            }
-
-            @Override
-            public void onConnecting() {
-                onlineStatus.postValue(OnlineStatus.CONNECTING);
-            }
-
-            @Override
-            public void onError(@NotNull ChatError error) {
-                onlineStatus.postValue(OnlineStatus.FAILED);
-            }
-
-            @Override
-            public void onEvent(@NotNull ChatEvent event) {
-
-                Integer totalUnreadCount = event.getTotalUnreadCount();
-                Integer unreadChannels = event.getUnreadChannels();
-
-                if (totalUnreadCount != null) {
-                    ChatImpl.this.unreadMessages.postValue(totalUnreadCount);
+        client().addSocketListener(new ChatSocketListener(
+                onlineStatus -> {
+                    ChatImpl.this.onlineStatus.postValue(onlineStatus);
+                    return Unit.INSTANCE;
+                },
+                user -> {
+                    currentUser.postValue(user);
+                    return Unit.INSTANCE;
+                },
+                newUnreadChannels -> {
+                    unreadChannels.postValue(newUnreadChannels);
+                    return Unit.INSTANCE;
+                },
+                newUnreadMessages -> {
+                    unreadMessages.postValue(newUnreadMessages);
+                    return Unit.INSTANCE;
                 }
-
-                if (unreadChannels != null) {
-                    ChatImpl.this.unreadChannels.postValue(unreadChannels);
-                }
-            }
-        });
+        ));
     }
 
     private ChatClient client() {

@@ -1,3 +1,9 @@
+# To be released:
+
+- Update event structure
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.0
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.1
+
 ## Aug 23th, 2020 - 4.2.11-beta-8
 - Fix Upload Files
 - Update RecyclerView Lib
