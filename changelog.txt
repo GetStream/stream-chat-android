@@ -1,10 +1,13 @@
 # To be released:
 
+# 1.15.1 - Thu 28 Aug 2020
+
 - New MapAdapter that omit key that contains null values or emptyMaps
+- Null-Check over Watchers response
 
 # 1.15.0 - Thu 20 Aug 2020
 
-- Refactor ChatEvents Strcuture
+- Refactor ChatEvents Structure
 
 # 1.14.0 - Thu 20 Aug 2020
 
