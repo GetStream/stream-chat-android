@@ -42,12 +42,6 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import java.lang.Thread.sleep
-import java.util.Date
-import java.util.InputMismatchException
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
-import kotlin.collections.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -56,6 +50,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import java.lang.Thread.sleep
+import java.util.Date
+import java.util.InputMismatchException
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 
@@ -330,7 +330,7 @@ class ChatDomainImpl private constructor(
                 if (result.isSuccess) {
                     c.syncStatus = SyncStatus.COMPLETED
                     repos.channels.insertChannel(c)
-                    Result(result.data() as Channel, null)
+                    Result(result.data(), null)
                 } else {
                     if (result.error().isPermanent()) {
                         c.syncStatus = SyncStatus.FAILED_PERMANENTLY

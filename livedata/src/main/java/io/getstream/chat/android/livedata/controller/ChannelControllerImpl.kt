@@ -24,15 +24,15 @@ import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
-import java.io.File
-import java.util.Calendar
-import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.util.Calendar
+import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 
 class ChannelControllerImpl(
     override var channelType: String,
