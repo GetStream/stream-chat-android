@@ -49,7 +49,7 @@ interface MessageDao {
 
     @Query(
         "SELECT * FROM stream_chat_message " +
-            "WHERE stream_chat_message.syncStatus IN (:syncStatus)"
+            "WHERE stream_chat_message.syncStatus IN (:syncStatus) ORDER BY createdAt ASC"
     )
     suspend fun selectSyncNeeded(syncStatus: SyncStatus = SyncStatus.SYNC_NEEDED): List<MessageEntity>
 }
