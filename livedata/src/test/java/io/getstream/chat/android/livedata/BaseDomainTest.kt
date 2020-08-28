@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -38,6 +39,7 @@ import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
+import java.util.Date
 
 open class BaseDomainTest {
     lateinit var database: ChatDatabase
@@ -96,7 +98,7 @@ open class BaseDomainTest {
 
     fun createDisconnectedMockClient(): ChatClient {
 
-        val connectedEvent = DisconnectedEvent().apply {
+        val connectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()).apply {
         }
 
         val result = Result(listOf(data.channel1), null)
@@ -135,10 +137,7 @@ open class BaseDomainTest {
 
     fun createConnectedMockClient(): ChatClient {
 
-        val connectedEvent = ConnectedEvent().apply {
-            me = data.user1
-            connectionId = data.connection1
-        }
+        val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
 
         val result = Result(listOf(data.channel1), null)
         val channelMock = mock<ChannelController> {

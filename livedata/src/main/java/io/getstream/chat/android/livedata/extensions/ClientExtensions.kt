@@ -3,7 +3,6 @@ package io.getstream.chat.android.livedata.extensions
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -14,23 +13,6 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
 private const val EQUAL_ON_COMPARISON = 0
-
-// TODO: move these to the LLC at some point
-fun ChatEvent.isChannelEvent(): Boolean = !this.cid.isNullOrEmpty() && this.cid != "*"
-
-/**
- * cid is sometimes devent as event.cid other times as event.channel.cid
- */
-fun ChatEvent.getCid(): String? {
-
-    var cid = this.cid
-
-    if (cid.isNullOrEmpty()) {
-        cid = this.channel?.cid
-    }
-
-    return cid
-}
 
 /**
  * cid is sometimes devent as message.cid other times as message.channel.cid
