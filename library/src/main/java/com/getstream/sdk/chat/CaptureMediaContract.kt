@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.content.FileProvider
@@ -22,12 +23,12 @@ class CaptureMediaContract : ActivityResultContract<Unit, File>() {
 
     override fun createIntent(context: Context, input: Unit?): Intent {
         val takePictureIntents =
-            File(context.externalCacheDir, createFileName("STREAM_IMG", "jpg")).let {
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_IMG", "jpg")).let {
                 pictureFile = it
                 createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
             }
         val recordVideoIntents =
-            File(context.externalCacheDir, createFileName("STREAM_VID", "mp4")).let {
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_VID", "mp4")).let {
                 videoFile = it
                 createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
             }

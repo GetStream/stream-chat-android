@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.CaptureMediaContract
+import com.getstream.sdk.chat.DocumentTreeAccessContract
 import com.getstream.sdk.chat.adapter.CommandsAdapter
 import com.getstream.sdk.chat.adapter.MentionsAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
@@ -94,6 +96,17 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             ?.registerForActivityResult(CaptureMediaContract()) { file: File? ->
                 file?.let { messageInputController.onFileCaptured(it) }
             }
+
+    private val documentTreeAccessContract: ActivityResultLauncher<Unit>? =
+        (context as? ComponentActivity)
+            ?.registerForActivityResult(DocumentTreeAccessContract()) { uri: Uri? ->
+                messageInputController.onClickOpenSelectView(
+                    null,
+                    false,
+                    uri
+                )
+            }
+
     private val commandsAdapter =
         CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
     private val mentionsAdapter = MentionsAdapter(style) {
@@ -180,9 +193,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
-        val hasAttachment = attachments.isNotEmpty()
         val notEmptyMessage =
-            !StringUtility.isEmptyTextMessage(messageText) || !messageInputController.isUploadingFile && hasAttachment
+            !StringUtility.isEmptyTextMessage(messageText) || attachments.isNotEmpty()
         binding.activeMessageSend = notEmptyMessage
     }
 
@@ -202,10 +214,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         }
         binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
         binding.llFile.setOnClickListener {
-            messageInputController.onClickOpenSelectView(
-                null,
-                false
-            )
+            documentTreeAccessContract?.launch(Unit)
         }
     }
 

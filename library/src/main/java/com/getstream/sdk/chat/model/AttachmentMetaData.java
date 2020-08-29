@@ -1,5 +1,10 @@
 package com.getstream.sdk.chat.model;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.utils.Utils;
 
 import java.io.File;
@@ -7,35 +12,35 @@ import java.io.File;
 import io.getstream.chat.android.client.models.Attachment;
 
 public class AttachmentMetaData {
-
-    public Attachment attachment;
-
     public boolean isSelected;
-    public int videoLength;
-    public int progress;
-    public File file;
+    public long videoLength;
+    public long size;
+    @Nullable
+    public Uri uri;
     public String type;
     public String mimeType;
     public String title;
+    @Nullable
+    public File file;
 
     public AttachmentMetaData(Attachment attachment) {
-        this.attachment = attachment;
         this.type = attachment.getType();
         this.mimeType = attachment.getMimeType();
         this.title = attachment.getTitle();
     }
 
-    public AttachmentMetaData(File file) {
+    public AttachmentMetaData(@NonNull File file) {
         this.file = file;
         this.mimeType = Utils.getMimeType(file);
     }
 
-    public boolean isUploaded() {
-        return attachment != null;
+    public AttachmentMetaData(@NonNull Uri uri, String mimeType) {
+        this.uri = uri;
+        this.mimeType = mimeType;
     }
 
     public boolean isImage() {
-        return mimeType != null && mimeType.contains("image");
+        return type.equals(ModelType.attach_image);
     }
 
 }

@@ -92,11 +92,6 @@ fun createMembers(
 fun createChannel(cid: String = randomCID(), config: Config = Config()): Channel =
     Channel(cid = cid, config = config)
 
-fun createAttachmentMetaDataWithFile(
-    file: File = createFile(),
-    forceMimeType: String? = null
-): AttachmentMetaData = AttachmentMetaData(file).apply { forceMimeType?.let { mimeType = it } }
-
 fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData =
     AttachmentMetaData(attachment)
 
