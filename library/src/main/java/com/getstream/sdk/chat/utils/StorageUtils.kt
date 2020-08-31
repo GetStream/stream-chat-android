@@ -11,6 +11,10 @@ import androidx.documentfile.provider.DocumentFile
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import java.io.File
+import java.lang.IllegalStateException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 internal object StorageUtils {
 
@@ -28,20 +32,29 @@ internal object StorageUtils {
             ModelType.attach_mime_mov,
             ModelType.attach_mime_mp3
         )
+    private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
     internal fun getCachedFileFromUri(
         context: Context,
         attachmentMetaData: AttachmentMetaData
     ): File {
+        if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
+            throw IllegalStateException("Unable to create cache file for attachment: $attachmentMetaData. Either file or URI cannot be null.")
+        }
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!
         }
-        val cachedFile = File(context.cacheDir, "STREAM_${attachmentMetaData.title}")
-        if (!cachedFile.exists()) {
-            context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
-                cachedFile.outputStream().use {
-                    inputStream.copyTo(it)
-                }
+        val cachedFile = File(
+            context.cacheDir,
+            "STREAM_${
+            dateFormat.format(
+                Date().time
+            )
+            }_${attachmentMetaData.title}"
+        )
+        context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
+            cachedFile.outputStream().use {
+                inputStream.copyTo(it)
             }
         }
 
