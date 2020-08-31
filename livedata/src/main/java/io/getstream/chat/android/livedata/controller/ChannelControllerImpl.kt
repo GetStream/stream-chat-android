@@ -442,13 +442,19 @@ class ChannelControllerImpl(
      * Cancels ephemeral Message.
      * Removes message from the offline storage and memory and notifies about update.
      */
-    suspend fun cancelMessage(message: Message) {
+    suspend fun cancelMessage(message: Message): Result<Boolean> {
         if ("ephemeral" != message.type) {
             throw IllegalArgumentException("Only ephemeral message can be canceled")
         }
 
-        channelController.deleteMessage(message.id)
         domainImpl.repos.messages.deleteChannelMessage(message)
+        val call = channelController.deleteMessage(message.id)
+        val result = domainImpl.runAndRetry { call }
+        return if (result.isSuccess) {
+            Result(result.isSuccess)
+        } else {
+            Result(result.isSuccess, result.error())
+        }
     }
 
     suspend fun sendGiphy(message: Message) {
