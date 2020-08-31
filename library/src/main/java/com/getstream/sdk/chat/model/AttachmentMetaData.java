@@ -31,6 +31,7 @@ public class AttachmentMetaData {
 
     public AttachmentMetaData(@NonNull File file) {
         this.file = file;
+        this.uri = Uri.fromFile(file);
         this.mimeType = Utils.getMimeType(file);
     }
 
@@ -38,9 +39,4 @@ public class AttachmentMetaData {
         this.uri = uri;
         this.mimeType = mimeType;
     }
-
-    public boolean isImage() {
-        return type.equals(ModelType.attach_image);
-    }
-
 }

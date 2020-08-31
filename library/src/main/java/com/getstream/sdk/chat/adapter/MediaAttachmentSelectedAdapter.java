@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,11 +80,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
 
-            if (attachment.file != null) {
-                Glide.with(context)
-                        .load(Uri.fromFile(attachment.file))
-                        .into(binding.ivMedia);
-            } else if (attachment.uri != null) {
+            if (attachment.uri != null) {
                 Glide.with(context)
                         .load(attachment.uri)
                         .into(binding.ivMedia);
