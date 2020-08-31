@@ -34,14 +34,14 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.whenFalse
+import com.getstream.sdk.chat.whenTrue
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
-import whenFalse
-import whenTrue
 import java.io.File
 
 class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
