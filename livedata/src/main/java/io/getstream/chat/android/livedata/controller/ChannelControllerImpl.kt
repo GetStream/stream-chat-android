@@ -30,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.lang.IllegalArgumentException
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
@@ -435,6 +436,27 @@ class ChannelControllerImpl(
             logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
             Result(message, null)
         }
+    }
+
+    /**
+     * Cancels ephemeral Message.
+     * Removes message from the offline storage and memory and notifies about update.
+     */
+    suspend fun cancelMessage(message: Message) {
+        if ("ephemeral" != message.type) {
+            throw IllegalArgumentException("Only ephemeral message can be canceled")
+        }
+
+        channelController.deleteMessage(message.id)
+        domainImpl.repos.messages.deleteChannelMessage(message)
+    }
+
+    suspend fun sendGiphy(message: Message) {
+
+    }
+
+    suspend fun shuffleGiphy() {
+
     }
 
     suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
