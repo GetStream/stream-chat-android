@@ -28,7 +28,7 @@ class CaptureMediaContract : ActivityResultContract<Unit, File>() {
                 createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
             }
         val recordVideoIntents =
-            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir, createFileName("STREAM_VID", "mp4")).let {
+            File(context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir, createFileName("STREAM_VID", "mp4")).let {
                 videoFile = it
                 createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
             }
