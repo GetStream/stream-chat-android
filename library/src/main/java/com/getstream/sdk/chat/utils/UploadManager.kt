@@ -1,8 +1,8 @@
 package com.getstream.sdk.chat.utils
 
+import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import exhaustive
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment

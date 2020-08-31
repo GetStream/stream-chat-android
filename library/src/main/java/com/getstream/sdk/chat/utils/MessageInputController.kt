@@ -11,12 +11,12 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
+import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.MessageInputStyle
 import com.getstream.sdk.chat.view.MessageInputView
 import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
-import exhaustive
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
