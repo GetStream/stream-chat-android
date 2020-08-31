@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat
 
 import com.getstream.sdk.chat.enums.OnlineStatus
-import exhaustive
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
