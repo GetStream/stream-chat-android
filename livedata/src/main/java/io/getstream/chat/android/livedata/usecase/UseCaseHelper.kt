@@ -67,6 +67,11 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
      */
     var sendMessage: SendMessage = SendMessageImpl(chatDomainImpl)
     /**
+     * Cancel an emphemeral message. This message is immediately removed from local storage.
+     * The API call to delete the message is retried using the retry policy
+     */
+    var cancelMessage: CancelMessage = CancelMessage(chatDomainImpl)
+    /**
      * Send a message with attachments.
      */
     var sendMessageWithAttachments: SendMessageWithAttachments = SendMessageWithAttachmentsImpl(chatDomainImpl)
