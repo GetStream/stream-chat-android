@@ -741,8 +741,9 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
+                int memberLimit = 10;
                 QuerySort sort = new QuerySort().desc("last_message_at");
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
                 request.setWatch(true);
                 request.setState(true);
 
@@ -773,9 +774,10 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
+                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -914,9 +916,10 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
+                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -929,9 +932,10 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
+                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -1000,12 +1004,13 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 0;
+                int memberLimit = 0;
                 QuerySort sort = new QuerySort();
 
                 FilterObject mutedFiler = eq("muted", false);
 
                 client.queryChannels(
-                        new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
+                        new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit, memberLimit)
                 ).enqueue(result -> {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
@@ -1020,7 +1025,7 @@ public class DocumentationSamplesJava {
                 FilterObject unmutedFilter = eq("muted", true);
 
                 client.queryChannels(
-                        new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
+                        new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit, memberLimit)
                 ).enqueue(result -> {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
