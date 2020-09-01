@@ -42,7 +42,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -805,11 +804,6 @@ internal class ChatApiImpl(
         response.channel.members = response.members.orEmpty()
         response.channel.messages = response.messages.orEmpty()
         response.channel.watchers = response.watchers.orEmpty()
-            .mapNotNull { watcherResponse ->
-                watcherResponse.user?.let { user ->
-                    Watcher(watcherResponse.id, user, watcherResponse.createdAt)
-                }
-            }
         response.channel.hidden = response.hidden
         response.channel.hiddenMessagesBefore = response.hide_messages_before
         return response.channel

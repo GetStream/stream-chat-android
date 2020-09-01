@@ -29,7 +29,7 @@ data class Channel(
     val memberCount: Int = 0,
     var messages: List<Message> = mutableListOf(),
     var members: List<Member> = mutableListOf(),
-    var watchers: List<Watcher> = mutableListOf(),
+    var watchers: List<User> = mutableListOf(),
     var read: List<ChannelUserRead> = mutableListOf(),
     var config: Config = Config(),
     @SerializedName("created_by")
