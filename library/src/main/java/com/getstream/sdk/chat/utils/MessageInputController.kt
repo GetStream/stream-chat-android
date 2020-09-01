@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils
 
-import android.os.Environment
+import android.net.Uri
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,7 +48,6 @@ class MessageInputController(
     private var messageInputType: MessageInputType? = null
     private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
     private var attachmentData: List<AttachmentMetaData> = emptyList()
-    private val uploadManager: UploadManager = UploadManager()
     private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
     var members: List<Member> = listOf()
@@ -90,9 +89,6 @@ class MessageInputController(
         return selectedAttachments
     }
 
-    val isUploadingFile: Boolean
-        get() = uploadManager.isUploadingFile
-
     fun setSelectedAttachments(selectedAttachments: MutableList<AttachmentMetaData>) {
         this.selectedAttachments = selectedAttachments
     }
@@ -107,7 +103,10 @@ class MessageInputController(
 
     private fun sendNormalMessage(message: String) = when (selectedAttachments.isEmpty()) {
         true -> view.sendTextMessage(message)
-        false -> view.sendAttachments(message, selectedAttachments.map { it.file })
+        false -> view.sendAttachments(
+            message,
+            selectedAttachments.map { StorageUtils.getCachedFileFromUri(view.context, it) }
+        )
     }
 
     private fun sendToThread(parentMessage: Message, message: String) =
@@ -117,7 +116,7 @@ class MessageInputController(
                 parentMessage,
                 message,
                 binding.cbSendAlsoToChannel.isChecked,
-                selectedAttachments.map { it.file }
+                selectedAttachments.map { StorageUtils.getCachedFileFromUri(view.context, it) }
             )
         }
 
@@ -156,12 +155,12 @@ class MessageInputController(
             PermissionChecker.isGrantedCameraPermissions(view.context) -> {
                 binding.ivMediaPermission.visibility = View.GONE
                 binding.ivCameraPermission.visibility = View.GONE
-                binding.ivFilePermission.visibility = View.GONE
+                binding.ivFilePermission.visibility = View.VISIBLE
             }
             PermissionChecker.isGrantedStoragePermissions(view.context) -> {
                 binding.ivMediaPermission.visibility = View.GONE
                 binding.ivCameraPermission.visibility = View.VISIBLE
-                binding.ivFilePermission.visibility = View.GONE
+                binding.ivFilePermission.visibility = View.VISIBLE
             }
             else -> {
                 binding.ivMediaPermission.visibility = View.VISIBLE
@@ -180,9 +179,9 @@ class MessageInputController(
         configAttachmentButtonVisible(true)
     }
 
-    private fun configSelectAttachView(isMedia: Boolean) {
+    private fun configSelectAttachView(isMedia: Boolean, treeUri: Uri? = null) {
         GlobalScope.launch(Dispatchers.Main) {
-            attachmentData = getAttachmentsFromLocal(isMedia)
+            attachmentData = getAttachmentsFromLocal(isMedia, treeUri)
             if (selectedAttachments.isEmpty()) {
                 setAttachmentAdapters(isMedia)
                 if (attachmentData.isEmpty()) {
@@ -200,11 +199,14 @@ class MessageInputController(
         }
     }
 
-    private suspend fun getAttachmentsFromLocal(isMedia: Boolean): List<AttachmentMetaData> =
+    private suspend fun getAttachmentsFromLocal(
+        isMedia: Boolean,
+        treeUri: Uri? = null
+    ): List<AttachmentMetaData> =
         withContext(Dispatchers.IO) {
             when (isMedia) {
-                true -> Utils.getMediaAttachments(view.context)
-                false -> Utils.getFileAttachments(Environment.getExternalStorageDirectory())
+                true -> StorageUtils.getMediaAttachments(view.context)
+                false -> StorageUtils.getFileAttachments(view.context, treeUri)
             }
         }
 
@@ -273,7 +275,7 @@ class MessageInputController(
     }
 
     private fun selectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
-        if (isOverMaxUploadFileSize(attachment.file)) {
+        if (attachment.size > Constant.MAX_UPLOAD_FILE_SIZE) {
             Utils.showMessage(view.context, R.string.stream_large_size_file_error)
         } else {
             attachment.isSelected = true
@@ -284,9 +286,6 @@ class MessageInputController(
         }
     }
 
-    private fun isOverMaxUploadFileSize(file: File): Boolean =
-        file.length() > Constant.MAX_UPLOAD_FILE_SIZE
-
     private fun cancelAttachment(
         attachment: AttachmentMetaData,
         fromGallery: Boolean,
@@ -294,7 +293,6 @@ class MessageInputController(
     ) {
         attachment.isSelected = false
         selectedAttachments.remove(attachment)
-        uploadManager.removeFromQueue(attachment)
         if (fromGallery) totalAttachmentAdapterChanged(null, isMedia)
         selectedAttachmentAdapterChanged(null, fromGallery, isMedia)
         configSendButtonEnableState()
@@ -322,8 +320,8 @@ class MessageInputController(
         }
     }
 
-    fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean) {
-        if (!PermissionChecker.isGrantedStoragePermissions(view.context)) {
+    fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean, treeUri: Uri? = null) {
+        if (isMedia && !PermissionChecker.isGrantedStoragePermissions(view.context)) {
             PermissionChecker.checkStoragePermissions(view) {
                 onClickOpenSelectView(
                     editAttachments,
@@ -331,12 +329,15 @@ class MessageInputController(
                 )
             }
             return
+        } else if (!isMedia && treeUri == null) {
+            Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
+            return
         }
         initAdapter()
         if (editAttachments != null && editAttachments.isNotEmpty()) setSelectedAttachments(
             editAttachments
         )
-        configSelectAttachView(isMedia)
+        configSelectAttachView(isMedia, treeUri)
         if (selectedAttachments.isEmpty()) {
             binding.progressBarFileLoader.visibility = View.VISIBLE
             onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
@@ -383,8 +384,7 @@ class MessageInputController(
         if (!StringUtility.isEmptyTextMessage(binding.etMessage.text.toString())) {
             binding.activeMessageSend = true
         } else {
-            binding.activeMessageSend =
-                !(uploadManager.isUploadingFile || selectedAttachments.isEmpty())
+            binding.activeMessageSend = selectedAttachments.isNotEmpty()
         }
     }
 
@@ -395,7 +395,6 @@ class MessageInputController(
     }
 
     private fun initAdapter() {
-        uploadManager.resetQueue()
         binding.lvComposer.removeAllViewsInLayout()
         binding.rvComposer.removeAllViewsInLayout()
         binding.lvComposer.visibility = View.GONE
@@ -404,6 +403,7 @@ class MessageInputController(
         binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
         mediaAttachmentAdapter?.clear()
         fileAttachmentAdapter?.clear()
+        selectedAttachments.clear()
         mediaAttachmentAdapter = null
         selectedMediaAttachmentAdapter = null
         fileAttachmentAdapter = null

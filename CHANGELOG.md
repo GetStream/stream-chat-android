@@ -1,5 +1,7 @@
 # To be released:
 
+- Fix uploading files and capturing images on Android >= 10
+
 # Aug 28th, 2020 - 4.2.11-beta-9
 
 - Update event structure
