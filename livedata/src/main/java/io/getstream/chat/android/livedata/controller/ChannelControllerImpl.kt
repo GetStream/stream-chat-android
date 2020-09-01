@@ -448,13 +448,8 @@ class ChannelControllerImpl(
         }
 
         domainImpl.repos.messages.deleteChannelMessage(message)
-        val call = channelController.deleteMessage(message.id)
-        val result = domainImpl.runAndRetry { call }
-        return if (result.isSuccess) {
-            Result(result.isSuccess)
-        } else {
-            Result(result.isSuccess, result.error())
-        }
+        removeLocalMessage(message)
+        return Result(true)
     }
 
     suspend fun sendGiphy(message: Message) {
@@ -603,7 +598,7 @@ class ChannelControllerImpl(
         return message
     }
 
-    fun upsertMessages(messages: List<Message>) {
+    private fun upsertMessages(messages: List<Message> = emptyList()) {
         val copy = _messages.value ?: mutableMapOf()
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -625,6 +620,12 @@ class ChannelControllerImpl(
             copy[message.id] = message
         }
         _messages.postValue(copy)
+    }
+
+    private fun removeLocalMessage(message: Message) {
+        val messages = _messages.value ?: mutableMapOf()
+        messages.remove(message.id)
+        _messages.postValue(messages)
     }
 
     override fun clean() {
