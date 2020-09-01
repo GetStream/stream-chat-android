@@ -805,11 +805,6 @@ internal class ChatApiImpl(
         response.channel.members = response.members.orEmpty()
         response.channel.messages = response.messages.orEmpty()
         response.channel.watchers = response.watchers.orEmpty()
-            .mapNotNull { watcherResponse ->
-                watcherResponse.user?.let { user ->
-                    Watcher(watcherResponse.id, user, watcherResponse.createdAt)
-                }
-            }
         response.channel.hidden = response.hidden
         response.channel.hiddenMessagesBefore = response.hide_messages_before
         return response.channel
