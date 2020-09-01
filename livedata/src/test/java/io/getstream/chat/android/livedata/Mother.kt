@@ -151,7 +151,7 @@ fun randomChannel(
     memberCount: Int = randomInt(),
     messages: List<Message> = mutableListOf(),
     members: List<Member> = mutableListOf(),
-    watchers: List<Watcher> = mutableListOf(),
+    watchers: List<User> = mutableListOf(),
     read: List<ChannelUserRead> = mutableListOf(),
     config: Config = Config(),
     createdBy: User = randomUser(),

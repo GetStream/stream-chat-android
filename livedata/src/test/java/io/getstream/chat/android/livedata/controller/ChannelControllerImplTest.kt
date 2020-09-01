@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Watcher
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest
 import io.getstream.chat.android.livedata.randomString
@@ -130,7 +130,7 @@ class ChannelControllerImplTest : BaseDomainTest() {
             assertEquals(expectedResult.cid, result.cid)
 
             assertEquals(result.messages, emptyList<Message>())
-            assertEquals(result.watchers, emptyList<Watcher>())
+            assertEquals(result.watchers, emptyList<User>())
             assertEquals(result.members, emptyList<Member>())
             assertEquals(result.messages, emptyList<Message>())
         }

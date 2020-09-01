@@ -37,7 +37,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
@@ -79,7 +78,7 @@ class TestDataHelper {
     val attachment1 =
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
 
-    val watcher1 = Watcher("test", user1, null)
+    val watcher1 = user1
     val member1 = Member(user = user1, role = "user", isInvited = false)
     val member2 = Member(user = user2, role = "user", isInvited = false)
 
