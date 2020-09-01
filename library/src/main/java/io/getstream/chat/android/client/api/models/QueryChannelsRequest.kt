@@ -5,14 +5,12 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
 class QueryChannelsRequest(
-    @IgnoreSerialisation
-    val filter: FilterObject,
+    @IgnoreSerialisation val filter: FilterObject,
     var offset: Int,
     var limit: Int,
-    @IgnoreSerialisation
-    val querySort: QuerySort = QuerySort(),
-    @SerializedName("message_limit")
-    var messageLimit: Int = 0
+    @IgnoreSerialisation val querySort: QuerySort = QuerySort(),
+    @SerializedName("message_limit") var messageLimit: Int = 0,
+    @SerializedName("member_limit") var memberLimit: Int = 0
 ) : ChannelRequest<QueryChannelsRequest> {
 
     override var state: Boolean = true
