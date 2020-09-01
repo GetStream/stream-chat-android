@@ -1,6 +1,7 @@
 # To be released:
 
 - `ChannelResponse.watchers` is an array of User now
+- `Watcher` model has been removed, `User` model should be used instead
 
 # 1.15.1 - Thu 28 Aug 2020
 
