@@ -1,5 +1,7 @@
 # To be released:
 
+# 1.15.2 - Tue 1 Sep 2020
+
 - `ChannelResponse.watchers` is an array of User now
 - `Watcher` model has been removed, `User` model should be used instead
 - `QueryChannelsRequet` has a new field called `memberLimit` to limit the number of members received per channel
