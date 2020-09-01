@@ -90,7 +90,10 @@ internal object StorageUtils {
         return emptyList()
     }
 
-    internal fun getFileAttachments(context: Context, treeUri: Uri): List<AttachmentMetaData> {
+    internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
+        if (treeUri == null) {
+            throw IllegalStateException("Cannot get file attachments because treeUri doesn't exist")
+        }
         return DocumentFile.fromTreeUri(context, treeUri)?.let {
             getFilesFromDocumentFile(it)
         } ?: emptyList()

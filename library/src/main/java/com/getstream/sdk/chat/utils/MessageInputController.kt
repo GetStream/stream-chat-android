@@ -206,7 +206,7 @@ class MessageInputController(
         withContext(Dispatchers.IO) {
             when (isMedia) {
                 true -> StorageUtils.getMediaAttachments(view.context)
-                false -> StorageUtils.getFileAttachments(view.context, treeUri!!)
+                false -> StorageUtils.getFileAttachments(view.context, treeUri)
             }
         }
 
