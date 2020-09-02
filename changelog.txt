@@ -1,5 +1,7 @@
 # To be released:
 
+- Add send action operation to ChannelController
+
 # 1.15.2 - Tue 1 Sep 2020
 
 - `ChannelResponse.watchers` is an array of User now
