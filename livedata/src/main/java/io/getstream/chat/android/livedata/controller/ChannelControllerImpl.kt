@@ -5,10 +5,43 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.events.*
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelTruncatedEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
+import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
+import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UserPresenceChangedEvent
+import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.*
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
@@ -30,10 +63,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.set
+
+val KEY_MESSAGE_ACTION = "image_action"
+val MESSAGE_ACTION_SHUFFLE = "shuffle"
+val MESSAGE_ACTION_SEND = "send"
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -290,7 +327,10 @@ class ChannelControllerImpl(
     suspend fun loadOlderMessages(limit: Int = 30): Result<Channel> {
         if (_loadingOlderMessages.value == true) {
             logger.logI("Another request to load older messages is in progress. Ignoring this request.")
-            return Result(null, ChatError("Another request to load older messages is in progress. Ignoring this request."))
+            return Result(
+                null,
+                ChatError("Another request to load older messages is in progress. Ignoring this request.")
+            )
         }
         _loadingOlderMessages.postValue(true)
         val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
@@ -302,7 +342,10 @@ class ChannelControllerImpl(
     suspend fun loadNewerMessages(limit: Int = 30): Result<Channel> {
         if (_loadingNewerMessages.value == true) {
             logger.logI("Another request to load newer messages is in progress. Ignoring this request.")
-            return Result(null, ChatError("Another request to load newer messages is in progress. Ignoring this request."))
+            return Result(
+                null,
+                ChatError("Another request to load newer messages is in progress. Ignoring this request.")
+            )
         }
         _loadingNewerMessages.value = true
         val pagination = loadMoreMessagesRequest(limit, Pagination.GREATER_THAN)
@@ -452,12 +495,36 @@ class ChannelControllerImpl(
         return Result(true)
     }
 
-    suspend fun sendGiphy(message: Message) {
-
+    suspend fun sendGiphy(message: Message): Result<Message> {
+        val request = SendActionRequest(
+            message.cid,
+            message.id,
+            message.type,
+            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
+        )
+        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        return if (result.isSuccess) {
+            Result(result.data())
+        } else {
+            Result(result.error())
+        }
     }
 
-    suspend fun shuffleGiphy() {
+    suspend fun shuffleGiphy(message: Message): Result<Message> {
+        val request = SendActionRequest(
+            message.cid,
+            message.id,
+            message.type,
+            mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
+        )
+        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        removeLocalMessage(message)
 
+        return if (result.isSuccess) {
+            Result(result.data())
+        } else {
+            Result(result.error())
+        }
     }
 
     suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
