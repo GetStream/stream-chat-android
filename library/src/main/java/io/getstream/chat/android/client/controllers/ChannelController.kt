@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.controllers
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
@@ -43,6 +44,7 @@ interface ChannelController {
     fun sendFile(file: File, callback: ProgressCallback): Call<String>
     fun sendImage(file: File, callback: ProgressCallback): Call<String>
     fun sendReaction(reaction: Reaction): Call<Reaction>
+    fun sendAction(request: SendActionRequest): Call<Message>
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
     fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>

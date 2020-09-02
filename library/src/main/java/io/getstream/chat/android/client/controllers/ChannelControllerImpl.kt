@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.controllers
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
@@ -226,6 +227,10 @@ internal class ChannelControllerImpl(
 
     override fun sendReaction(reaction: Reaction): Call<Reaction> {
         return client.sendReaction(reaction)
+    }
+
+    override fun sendAction(request: SendActionRequest): Call<Message> {
+        return client.sendAction(request)
     }
 
     override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
