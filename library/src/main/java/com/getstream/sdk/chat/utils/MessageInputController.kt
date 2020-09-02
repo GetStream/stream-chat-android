@@ -62,14 +62,14 @@ class MessageInputController(
 
     private fun configureThreadInputMode() {
         binding.vPreviewMessage.visible(false)
-        binding.ivOpenAttach.visible(true)
+        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
         binding.cbSendAlsoToChannel.visible(true)
         binding.cbSendAlsoToChannel.isChecked = false
     }
 
     private fun configureNormalInputMode() {
         binding.vPreviewMessage.visible(false)
-        binding.ivOpenAttach.visible(true)
+        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
         binding.cbSendAlsoToChannel.visible(false)
     }
 

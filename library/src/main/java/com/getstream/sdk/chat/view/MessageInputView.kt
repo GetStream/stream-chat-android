@@ -34,6 +34,7 @@ import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.view.common.visible
 import com.getstream.sdk.chat.whenFalse
 import com.getstream.sdk.chat.whenTrue
 import io.getstream.chat.android.client.models.Attachment
@@ -131,8 +132,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     private fun applyStyle() {
         ActivityResultContracts.GetContent()
         // Attachment Button
-        binding.ivOpenAttach.visibility =
-            if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
+        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
         binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
         binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
