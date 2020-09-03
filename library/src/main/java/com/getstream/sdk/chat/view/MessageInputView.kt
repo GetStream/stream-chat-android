@@ -30,10 +30,10 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.InputMode
 import com.getstream.sdk.chat.utils.MessageInputController
-import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.view.common.visible
 import com.getstream.sdk.chat.whenFalse
 import com.getstream.sdk.chat.whenTrue
 import io.getstream.chat.android.client.models.Attachment
@@ -52,11 +52,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
      * Styling class for the MessageInput
      */
     private val style: MessageInputStyle = MessageInputStyle(context, attrs)
-
-    /**
-     * Permission Request listener
-     */
-    private var permissionRequestListener: PermissionRequestListener? = null
 
     private var isKeyboardEventListenerInitialized = false
 
@@ -131,8 +126,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     private fun applyStyle() {
         ActivityResultContracts.GetContent()
         // Attachment Button
-        binding.ivOpenAttach.visibility =
-            if (style.isShowAttachmentButton) View.VISIBLE else View.GONE
+        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
         binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
         binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
@@ -145,6 +139,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.llComposer.background = style.inputBackground
         // Input Text
         style.inputText.apply(binding.etMessage)
+        binding.etMessage.hint = style.getInputHint()
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
@@ -156,9 +151,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.sendButton.setOnClickListener { onSendMessage() }
         binding.ivOpenAttach.setOnClickListener {
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
-            if (!PermissionChecker.isGrantedCameraPermissions(context) &&
-                permissionRequestListener != null && !style.passedPermissionCheck()
-            ) permissionRequestListener!!.openPermissionRequest()
         }
     }
 
@@ -353,10 +345,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     interface TypeListener {
         fun onKeystroke()
         fun onStopTyping()
-    }
-
-    interface PermissionRequestListener {
-        fun openPermissionRequest()
     }
 
     interface MessageSendHandler {
