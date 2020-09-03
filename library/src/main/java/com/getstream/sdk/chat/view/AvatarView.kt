@@ -53,8 +53,7 @@ class AvatarView @JvmOverloads constructor(
             layoutParams?.apply {
                 width = style.getAvatarWidth()
                 height = style.getAvatarHeight()
-                layoutParams = this
-            }
+            }?.let(::setLayoutParams)
             setImageDrawable(generateAvatarDrawable())
         }
     }
