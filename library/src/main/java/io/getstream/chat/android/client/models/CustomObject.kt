@@ -14,9 +14,5 @@ interface CustomObject {
 
     fun putExtraValue(key: String, value: Any) {
         extraData[key] = value
-
-        Zed("s")
     }
 }
-
-class Zed(private val s: String)
