@@ -36,7 +36,7 @@ private val MENTION_PATTERN = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$")
 private const val MEDIA_ITEMS_PER_ROW = 4
 private const val FILE_ITEMS_PER_ROW = 1
 
-class MessageInputController(
+internal class MessageInputController(
     private val binding: StreamViewMessageInputBinding,
     private val view: MessageInputView,
     private val style: MessageInputStyle
