@@ -503,6 +503,7 @@ class ChannelControllerImpl(
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
         )
         val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        removeLocalMessage(message)
         return if (result.isSuccess) {
             Result(result.data())
         } else {
@@ -519,7 +520,6 @@ class ChannelControllerImpl(
         )
         val result = domainImpl.runAndRetry { channelController.sendAction(request) }
         removeLocalMessage(message)
-
         return if (result.isSuccess) {
             Result(result.data())
         } else {
