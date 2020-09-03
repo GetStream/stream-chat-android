@@ -30,7 +30,6 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.InputMode
 import com.getstream.sdk.chat.utils.MessageInputController
-import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
@@ -53,11 +52,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
      * Styling class for the MessageInput
      */
     private val style: MessageInputStyle = MessageInputStyle(context, attrs)
-
-    /**
-     * Permission Request listener
-     */
-    private var permissionRequestListener: PermissionRequestListener? = null
 
     private var isKeyboardEventListenerInitialized = false
 
@@ -157,9 +151,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.sendButton.setOnClickListener { onSendMessage() }
         binding.ivOpenAttach.setOnClickListener {
             messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
-            if (!PermissionChecker.isGrantedCameraPermissions(context) &&
-                permissionRequestListener != null && !style.passedPermissionCheck()
-            ) permissionRequestListener!!.openPermissionRequest()
         }
     }
 
@@ -354,10 +345,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     interface TypeListener {
         fun onKeystroke()
         fun onStopTyping()
-    }
-
-    interface PermissionRequestListener {
-        fun openPermissionRequest()
     }
 
     interface MessageSendHandler {
