@@ -50,8 +50,8 @@ class MessageInputController(
     private var attachmentData: List<AttachmentMetaData> = emptyList()
     private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
     private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
-    var members: List<Member> = listOf()
-    var channelCommands: List<Command> = listOf()
+    internal var members: List<Member> = listOf()
+    internal var channelCommands: List<Command> = listOf()
     internal var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, newValue ->
         when (newValue) {
             is InputMode.Normal -> configureNormalInputMode()
@@ -85,15 +85,15 @@ class MessageInputController(
         binding.cbSendAlsoToChannel.visible(false)
     }
 
-    fun getSelectedAttachments(): List<AttachmentMetaData> {
+    internal fun getSelectedAttachments(): List<AttachmentMetaData> {
         return selectedAttachments
     }
 
-    fun setSelectedAttachments(selectedAttachments: MutableList<AttachmentMetaData>) {
+    internal fun setSelectedAttachments(selectedAttachments: MutableList<AttachmentMetaData>) {
         this.selectedAttachments = selectedAttachments
     }
 
-    fun onSendMessageClick(message: String) = when (val im = inputMode) {
+    internal fun onSendMessageClick(message: String) = when (val im = inputMode) {
         is InputMode.Normal -> sendNormalMessage(message)
         is InputMode.Thread -> sendToThread(im.parentMessage, message)
         is InputMode.Edit -> editMessage(im.oldMessage, message).also {
@@ -124,7 +124,7 @@ class MessageInputController(
         view.editMessage(message, messageText)
     }
 
-    fun onClickOpenBackGroundView(type: MessageInputType) {
+    internal fun onClickOpenBackGroundView(type: MessageInputType) {
         binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
         binding.clTitle.visibility = View.VISIBLE
         binding.btnClose.visibility = View.VISIBLE
@@ -170,7 +170,7 @@ class MessageInputController(
         }
     }
 
-    fun onClickCloseBackGroundView() {
+    internal fun onClickCloseBackGroundView() {
         binding.clTitle.visibility = View.GONE
         binding.clAddFile.visibility = View.GONE
         binding.clSelectPhoto.visibility = View.GONE
@@ -312,7 +312,7 @@ class MessageInputController(
             if (show) View.VISIBLE else View.GONE
     }
 
-    fun onCameraClick() {
+    internal fun onCameraClick() {
         if (!PermissionChecker.isGrantedCameraPermissions(view.context)) {
             PermissionChecker.checkCameraPermissions(view) { onCameraClick() }
         } else {
@@ -320,7 +320,7 @@ class MessageInputController(
         }
     }
 
-    fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean, treeUri: Uri? = null) {
+    internal fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean, treeUri: Uri? = null) {
         if (isMedia && !PermissionChecker.isGrantedStoragePermissions(view.context)) {
             PermissionChecker.checkStoragePermissions(view) {
                 onClickOpenSelectView(
@@ -388,7 +388,7 @@ class MessageInputController(
         }
     }
 
-    fun initSendMessage() {
+    internal fun initSendMessage() {
         binding.etMessage.setText("")
         initAdapter()
         onClickCloseBackGroundView()
@@ -414,7 +414,7 @@ class MessageInputController(
         selectAttachment(AttachmentMetaData(file), true)
     }
 
-    fun checkCommandsOrMentions(inputMessage: String) {
+    internal fun checkCommandsOrMentions(inputMessage: String) {
         when {
             inputMessage.isCommandMessage() -> {
                 view.showSuggestedCommand(channelCommands.matchName(inputMessage.removePrefix("/")))
@@ -433,11 +433,11 @@ class MessageInputController(
         view.showSuggestedCommand(listOf())
     }
 
-    fun onCommandSelected(command: Command) {
+    internal fun onCommandSelected(command: Command) {
         view.messageText = "/${command.name} "
     }
 
-    fun onUserSelected(currentMessage: String, user: User) {
+    internal fun onUserSelected(currentMessage: String, user: User) {
         view.messageText = "${currentMessage.substringBeforeLast("@")}@${user.name} "
     }
 }
