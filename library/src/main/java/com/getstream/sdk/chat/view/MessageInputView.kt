@@ -145,6 +145,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.llComposer.background = style.inputBackground
         // Input Text
         style.inputText.apply(binding.etMessage)
+        binding.etMessage.hint = style.getInputHint()
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
