@@ -53,6 +53,7 @@ class AvatarView @JvmOverloads constructor(
             layoutParams?.apply {
                 width = style.getAvatarWidth()
                 height = style.getAvatarHeight()
+                layoutParams = this
             }
             setImageDrawable(generateAvatarDrawable())
         }
@@ -83,7 +84,7 @@ class AvatarView @JvmOverloads constructor(
             typeface = baseStyle.avatarInitialText.font ?: Typeface.DEFAULT
             textAlign = Paint.Align.CENTER
             color = baseStyle.avatarInitialText.color
-            textSize = 72f
+            textSize = baseStyle.avatarInitialText.size.toFloat()
         }
         val paintCircle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             isAntiAlias = true
