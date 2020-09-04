@@ -130,6 +130,7 @@
         <attr name="streamAttachmentButtonIcon" format="reference"/>
         <attr name="streamAttachmentButtonWidth" format="dimension|reference"/>
         <attr name="streamAttachmentButtonHeight" format="dimension|reference"/>
+        <attr name="streamAttachmentCloseButtonBackground" format="reference" />
         <!--Send Button-->
         <attr name="streamInputButtonDefaultIconColor" format="color|reference"/>
         <attr name="streamInputButtonEditIconColor" format="color|reference"/>

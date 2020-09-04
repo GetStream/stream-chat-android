@@ -25,6 +25,7 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
     val inputButtonHeight: Int
     val attachmentButtonWidth: Int
     val attachmentButtonHeight: Int
+    val attachmentCloseButtonBackground: Drawable
     val inputSendAlsoToChannelTextColor: Int
     private var inputHint = ""
     private val attachmentButtonIcon: Int
@@ -135,6 +136,8 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
             )
             attachmentButtonWidth = getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonWidth, getDimension(R.dimen.stream_attachment_button_width))
             attachmentButtonHeight = getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonHeight, getDimension(R.dimen.stream_attachment_button_height))
+            attachmentCloseButtonBackground = getDrawable(R.styleable.MessageInputView_streamAttachmentCloseButtonBackground)
+                ?: this@MessageInputStyle.getDrawable(R.drawable.stream_button_close)
 
             // Send Button
             inputButtonIcon = getResourceId(R.styleable.MessageInputView_streamInputButtonIcon, -1)
