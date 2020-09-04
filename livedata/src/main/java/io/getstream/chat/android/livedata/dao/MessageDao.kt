@@ -36,7 +36,7 @@ interface MessageDao {
     suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
 
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND id = :messageId")
-    suspend fun deleteMessage(cid: String, messageId:String)
+    suspend fun deleteMessage(cid: String, messageId: String)
 
     @Query(
         "SELECT * FROM stream_chat_message " +
