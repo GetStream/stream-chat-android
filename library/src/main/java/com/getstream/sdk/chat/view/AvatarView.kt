@@ -16,6 +16,7 @@ import com.getstream.sdk.chat.ImageLoader
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,8 +39,10 @@ class AvatarView @JvmOverloads constructor(
     ) {
         configUIs(style) {
             AvatarDrawable(
-                channel?.createBitmap(style)?.let { listOf(it) }
-                    ?: lastActiveUsers.createBitmaps(style)
+                channel?.createBitmap()?.let { listOf(it) }
+                    ?: lastActiveUsers.createBitmaps(style).takeUnless { it.isEmpty() }
+                    ?: LlcMigrationUtils.getInitials(channel)?.let { listOf(createImageRounded(it, style)) }
+                    ?: listOf()
             )
         }
     }
@@ -58,24 +61,23 @@ class AvatarView @JvmOverloads constructor(
         }
     }
 
-    private suspend fun User.createBitmap(style: BaseStyle): Bitmap? =
+    private suspend fun User.createBitmap(style: BaseStyle): Bitmap =
         ImageLoader.getBitmap(
             context,
-            getExtraValue("image", ""),
+            image,
             ImageLoader.ImageTransformation.Circle
         )
             ?: createImageRounded(LlcMigrationUtils.getInitials(this) ?: "", style)
 
     private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
-        take(3).mapNotNull { it.createBitmap(style) }
+        take(3).map { it.createBitmap(style) }
 
-    private suspend fun Channel.createBitmap(style: BaseStyle): Bitmap? =
+    private suspend fun Channel.createBitmap(): Bitmap? =
         ImageLoader.getBitmap(
             context,
-            getExtraValue("image", ""),
+            image,
             ImageLoader.ImageTransformation.Circle
         )
-            ?: LlcMigrationUtils.getInitials(this)?.let { createImageRounded(it, style) }
 
     private fun createImageRounded(initials: String, baseStyle: BaseStyle): Bitmap {
         val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
