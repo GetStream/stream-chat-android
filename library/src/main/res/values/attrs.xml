@@ -115,8 +115,6 @@
         <!--AvatarGroupView(automention)-->
         <attr name="streamAvatarWidth"/>
         <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBorderWidth"/>
-        <attr name="streamAvatarBorderColor"/>
         <attr name="streamAvatarBackGroundColor"/>
         <attr name="streamAvatarTextSize"/>
         <attr name="streamAvatarTextColor"/>

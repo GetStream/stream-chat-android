@@ -181,8 +181,6 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
             // Avatar
             avatarWidth = getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarWidth, getDimension(R.dimen.stream_message_avatar_width))
             avatarHeight = getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarHeight, getDimension(R.dimen.stream_message_avatar_height))
-            avatarBorderWidth = getDimensionPixelSize(R.styleable.MessageInputView_streamAvatarBorderWidth, getDimension(R.dimen.stream_channel_avatar_border_width))
-            avatarBorderColor = getColor(R.styleable.MessageInputView_streamAvatarBorderColor, Color.WHITE)
             avatarBackGroundColor = getColor(R.styleable.MessageInputView_streamAvatarBackGroundColor, getColor(R.color.stream_gray_dark))
 
             avatarInitialText = TextStyle.Builder(this).apply {
