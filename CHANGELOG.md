@@ -1,5 +1,7 @@
 # To be released:
 
+# Sep 4th, 2020 - 4.2.11-beta-11
+
 - Fix uploading files and capturing images on Android >= 10
 - Fix `AvatarView`: Render lastActiveUsers avatars when channel image is not present
 
