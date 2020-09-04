@@ -41,7 +41,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.Watcher
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
@@ -521,7 +520,15 @@ class ChannelControllerImpl(
         val result = domainImpl.runAndRetry { channelController.sendAction(request) }
         removeLocalMessage(message)
         return if (result.isSuccess) {
-            Result(result.data())
+            val processedMessage: Message = result.data()
+            processedMessage.apply {
+                syncStatus = SyncStatus.COMPLETED
+                val entity = MessageEntity(this)
+                entity.sendMessageCompletedAt = Date()
+                domainImpl.repos.messages.insert(entity)
+            }
+            upsertMessage(processedMessage)
+            Result(processedMessage)
         } else {
             Result(result.error())
         }

@@ -72,6 +72,19 @@ data class UseCaseHelper(var chatDomainImpl: ChatDomainImpl) {
      */
     var cancelMessage: CancelMessage = CancelMessage(chatDomainImpl)
     /**
+    * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+    * Returns new "ephemeral" message with new giphy url.
+    * API call to remove the message is retried according to the retry policy specified on the chatDomain
+    */
+    var shuffleGiphy: ShuffleGiphy = ShuffleGiphy(chatDomainImpl)
+    /**
+     * Sends selected giphy message to the channel.
+     * Replaces the original "ephemeral" message in local storage with the one received from backend.
+     * Returns new "ephemeral" message with new giphy url.
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     */
+    var sendGiphy: SendGiphy = SendGiphy(chatDomainImpl)
+    /**
      * Send a message with attachments.
      */
     var sendMessageWithAttachments: SendMessageWithAttachments = SendMessageWithAttachmentsImpl(chatDomainImpl)
