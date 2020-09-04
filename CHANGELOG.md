@@ -1,4 +1,5 @@
 # To be released:
+- Implement Giphy actions handler
 
 # Aug 28th, 2020 - 4.2.11-beta-9
 
