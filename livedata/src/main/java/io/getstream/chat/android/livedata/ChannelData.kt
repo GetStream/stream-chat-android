@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.Watcher
 import java.util.*
 
 /**
@@ -60,7 +59,7 @@ data class ChannelData(var type: String, var channelId: String) {
         c.messages = messages
         c.members = members
 
-        c.watchers = if (watchers.isEmpty()) emptyList() else watchers.map { Watcher(it.id, it, null) }
+        c.watchers = watchers
         c.watcherCount = watcherCount
 
         c.read = reads

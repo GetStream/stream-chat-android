@@ -51,7 +51,7 @@ class ChannelControllerImpl(
     private val _loading = MutableLiveData<Boolean>(false)
     private val _hidden = MutableLiveData<Boolean>(false)
     private val _muted = MutableLiveData<Boolean>(false)
-    private val _watchers = MutableLiveData<MutableMap<String, User>>()
+    private val _watchers = MutableLiveData<Map<String, User>>(mapOf())
     private val _members = MutableLiveData<MutableMap<String, Member>>()
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
@@ -801,15 +801,11 @@ class ChannelControllerImpl(
     }
 
     private fun deleteWatcher(user: User) {
-        val copy = _watchers.value ?: mutableMapOf()
-        copy.remove(user.id)
-        _watchers.postValue(copy)
+        _watchers.postValue((_watchers.value ?: mapOf()) - user.id)
     }
 
     private fun upsertWatcher(user: User) {
-        val copy = _watchers.value ?: mutableMapOf()
-        copy[user.id] = user
-        _watchers.postValue(copy)
+        _watchers.postValue((_watchers.value ?: mapOf()) + mapOf(user.id to user))
     }
 
     private fun deleteMember(userId: String) {
@@ -884,15 +880,8 @@ class ChannelControllerImpl(
         _channelData.postValue(ChannelData(channel))
     }
 
-    fun setWatchers(watchers: List<Watcher>) {
-        val copy = _watchers.value ?: mutableMapOf()
-        for (watcher in watchers) {
-            watcher.user.let {
-                copy[it.id] = it
-            }
-        }
-
-        _watchers.postValue(copy)
+    fun setWatchers(watchers: List<User>) {
+        _watchers.postValue((_watchers.value ?: mapOf()) + watchers.associateBy { it.id })
     }
 
     suspend fun editMessage(message: Message): Result<Message> {
