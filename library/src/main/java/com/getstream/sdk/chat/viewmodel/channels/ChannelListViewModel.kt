@@ -35,7 +35,9 @@ interface ChannelsViewModel {
     }
 
     companion object {
+        @JvmStatic
         val DEFAULT_FILTER: FilterObject = eq("type", "messaging")
+        @JvmStatic
         val DEFAULT_SORT: QuerySort = QuerySort().desc("last_message_at")
     }
 }
