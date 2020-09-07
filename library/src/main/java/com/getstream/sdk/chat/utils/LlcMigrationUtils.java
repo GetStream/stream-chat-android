@@ -72,17 +72,6 @@ public class LlcMigrationUtils {
         }
     }
 
-    public static List<Attachment> getAttachments(List<AttachmentMetaData> attachments) {
-        List<Attachment> result = new ArrayList<>();
-        for (AttachmentMetaData attachment : attachments)
-            result.add(attachment.attachment);
-        return result;
-    }
-
-    public static List<AttachmentMetaData> getMetaAttachments(Message message) {
-        return getMetaAttachments(message.getAttachments());
-    }
-
     public static List<AttachmentMetaData> getMetaAttachments(List<Attachment> attachments) {
         List<AttachmentMetaData> result = new ArrayList<>();
         for (Attachment attachment : attachments) {

@@ -112,7 +112,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         holder.tv_close.setVisibility(View.INVISIBLE);
         holder.progressBar.setVisibility(View.GONE);
 
-        long fileSize = attachment.file.length();
+        long fileSize = attachment.size;
         holder.tv_file_size.setText(StringUtility.convertFileSizeByteCount(fileSize));
 
         if (!this.localAttach) return;
@@ -120,8 +120,7 @@ public class AttachmentListAdapter extends BaseAdapter {
         if (this.isTotalFileAdapter) {
             if (attachment.isSelected)
                 holder.iv_select_mark.setVisibility(View.VISIBLE);
-            File file = new File(attachment.file.getPath());
-            holder.iv_large_file_mark.setVisibility(file.length()> Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
+            holder.iv_large_file_mark.setVisibility(fileSize > Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
             holder.tv_close.setVisibility(View.VISIBLE);
             holder.tv_close.setOnClickListener(view -> {

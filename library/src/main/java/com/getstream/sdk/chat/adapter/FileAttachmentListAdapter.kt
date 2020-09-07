@@ -42,12 +42,12 @@ class FileAttachmentListAdapter(
         fun bind(attachment: AttachmentMetaData) {
             binding.ivFileThumb.setImageResource(LlcMigrationUtils.getIcon(attachment.mimeType))
             binding.tvFileTitle.text = attachment.title
-            binding.ivLargeFileMark.visible(attachment.file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
+            binding.ivLargeFileMark.visible(attachment.size > Constant.MAX_UPLOAD_FILE_SIZE)
             binding.ivSelectMark.visible(attachment.isSelected)
             binding.tvClose.visible(false)
             binding.progressBar.visible(false)
             binding.tvFileSize.text =
-                StringUtility.convertFileSizeByteCount(attachment.file.length())
+                StringUtility.convertFileSizeByteCount(attachment.size)
             itemView.setOnClickListener { listener(attachment) }
             binding.executePendingBindings()
         }

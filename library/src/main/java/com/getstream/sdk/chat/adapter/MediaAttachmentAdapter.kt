@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -41,10 +40,10 @@ class MediaAttachmentAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(attachment: AttachmentMetaData) {
             Glide.with(binding.ivMedia.context)
-                .load(Uri.fromFile(attachment.file))
+                .load(attachment.uri)
                 .into(binding.ivMedia)
             binding.ivSelectMark.visible(attachment.isSelected)
-            binding.ivLargeFileMark.visible(attachment.file.length() > Constant.MAX_UPLOAD_FILE_SIZE)
+            binding.ivLargeFileMark.visible(attachment.size > Constant.MAX_UPLOAD_FILE_SIZE)
             itemView.setOnClickListener { listener(attachment) }
             binding.executePendingBindings()
         }

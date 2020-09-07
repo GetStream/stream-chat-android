@@ -130,7 +130,7 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
                 getColor(R.color.stream_gray_light)
             )
             attachmentButtonSelectedIconColor = getColor(
-                R.styleable.MessageInputView_streamAttachmentButtonDefaultIconDisabledColor,
+                R.styleable.MessageInputView_streamAttachmentButtonSelectedIconColor,
                 getColor(R.color.stream_black)
             )
             attachmentButtonWidth = getDimensionPixelSize(R.styleable.MessageInputView_streamAttachmentButtonWidth, getDimension(R.dimen.stream_attachment_button_width))

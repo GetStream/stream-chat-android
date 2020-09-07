@@ -2,10 +2,11 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -14,10 +15,8 @@ import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.StringUtility;
 
-import java.io.File;
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
@@ -81,19 +80,9 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
 
-            if (attachment.file != null && attachment.file.getPath() != null) {
-                File file = new File(attachment.file.getPath());
-                if (file.exists()) {
-                    Uri imageUri = Uri.fromFile(file);
-                    Glide.with(context)
-                            .load(imageUri)
-                            .into(binding.ivMedia);
-                }
-            } else if (attachment.isUploaded()) {
+            if (attachment.uri != null) {
                 Glide.with(context)
-                        .load(attachment.attachment.getUrl())
-                        //TODO: llc check signing
-                        //.load(StreamChat.getInstance().getUploadStorage().signGlideUrl(attachment.getImageURL()))
+                        .load(attachment.uri)
                         .into(binding.ivMedia);
             } else {
                 try {
@@ -106,7 +95,7 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 }
             }
 
-            if (ModelType.attach_file.equals(attachment.type)) {
+            if (ModelType.attach_video.equals(attachment.type)) {
                 binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
             } else {
                 binding.tvLength.setText("");

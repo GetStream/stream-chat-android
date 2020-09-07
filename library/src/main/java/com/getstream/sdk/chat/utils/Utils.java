@@ -1,11 +1,9 @@
 package com.getstream.sdk.chat.utils;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
@@ -28,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.Chat;
@@ -45,9 +47,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import androidx.annotation.StringRes;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 
@@ -159,124 +158,6 @@ public class Utils {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
     }
 
-    public static List<AttachmentMetaData> getFileAttachments(File dir) {
-        String pdfPattern = ".pdf";
-        String pptPattern = ".ppt";
-        String csvPattern = ".csv";
-        String docPattern = ".doc";
-        String docxPattern = ".docx";
-        String txtPattern = ".txt";
-        String xlsxPattern = ".xlsx";
-        String zipPattern = ".zip";
-        String tarPattern = ".tar";
-        String movPattern = ".mov";
-        String mp3Pattern = ".mp3";
-
-        ArrayList<AttachmentMetaData> attachments = new ArrayList<>();
-        File[] FileList = dir.listFiles();
-        if (FileList != null) {
-            for (File file : FileList) {
-                if (file.isDirectory()) {
-                    attachments.addAll(getFileAttachments(file));
-                } else {
-                    AttachmentMetaData attachment = new AttachmentMetaData(file);
-                    String mimeType = "";
-                    if (file.getName().endsWith(pdfPattern)) {
-                        mimeType = ModelType.attach_mime_pdf;
-                    } else if (file.getName().endsWith(pptPattern)) {
-                        mimeType = ModelType.attach_mime_ppt;
-                    } else if (file.getName().endsWith(csvPattern)) {
-                        mimeType = ModelType.attach_mime_csv;
-                    } else if (file.getName().endsWith(xlsxPattern)) {
-                        mimeType = ModelType.attach_mime_xlsx;
-                    } else if (file.getName().endsWith(docPattern)) {
-                        mimeType = ModelType.attach_mime_doc;
-                    } else if (file.getName().endsWith(docxPattern)) {
-                        mimeType = ModelType.attach_mime_docx;
-                    } else if (file.getName().endsWith(txtPattern)) {
-                        mimeType = ModelType.attach_mime_txt;
-                    } else if (file.getName().endsWith(zipPattern)) {
-                        mimeType = ModelType.attach_mime_zip;
-                    } else if (file.getName().endsWith(tarPattern)) {
-                        mimeType = ModelType.attach_mime_tar;
-                    } else if (file.getName().endsWith(movPattern)) {
-                        mimeType = ModelType.attach_mime_mov;
-                    } else if (file.getName().endsWith(mp3Pattern)) {
-                        mimeType = ModelType.attach_mime_mp3;
-                    }
-
-                    if (!file.exists() || TextUtils.isEmpty(mimeType)) continue;
-                    configFileAttachment(attachment, file, ModelType.attach_file, mimeType);
-                    attachments.add(attachment);
-                }
-            }
-        }
-        return attachments;
-    }
-
-    public static List<AttachmentMetaData> getMediaAttachments(Context context) {
-        String[] columns = {MediaStore.Files.FileColumns._ID,
-                MediaStore.Files.FileColumns.DATA,
-                MediaStore.Files.FileColumns.DATE_ADDED,
-                MediaStore.Files.FileColumns.MEDIA_TYPE,
-                MediaStore.Files.FileColumns.MIME_TYPE,
-                MediaStore.Files.FileColumns.TITLE,
-                MediaStore.Video.VideoColumns.DURATION,
-        };
-
-        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
-                + " OR "
-                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
-
-        Uri queryUri = MediaStore.Files.getContentUri("external");
-
-        @SuppressWarnings("deprecation")
-        ContentResolver mContentResolver = context.getContentResolver();
-
-        Cursor imagecursor = mContentResolver.query(queryUri,
-                columns,
-                selection,
-                null, // Selection args (none).
-                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // QuerySort order.
-        );
-
-        if (imagecursor == null) {
-            logger.logE("ContentResolver query return null");
-            return new ArrayList<>();
-        }
-
-        int image_column_index = imagecursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID);
-        int count = imagecursor.getCount();
-
-        ArrayList<AttachmentMetaData> attachments = new ArrayList<>();
-
-        for (int i = 0; i < count; i++) {
-
-            imagecursor.moveToPosition(i);
-            int id = imagecursor.getInt(image_column_index);
-            int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.DATA);
-            int type = imagecursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
-            int t = imagecursor.getInt(type);
-            String filePath = imagecursor.getString(dataColumnIndex);
-            File file = new File(filePath);
-            if (!file.exists()) continue;
-            AttachmentMetaData attachment = new AttachmentMetaData(file);
-            if (t == Constant.MEDIA_TYPE_IMAGE) {
-                attachment.type = ModelType.attach_image;
-                attachment.mimeType = getMimeType(filePath);
-            } else if (t == Constant.MEDIA_TYPE_VIDEO) {
-                float videolengh = imagecursor.getLong(imagecursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
-                attachment.videoLength = ((int) (videolengh / 1000));
-                configFileAttachment(attachment, file, ModelType.attach_file, ModelType.attach_mime_mp4);
-            }
-            attachments.add(attachment);
-        }
-        imagecursor.close();
-        return attachments;
-    }
-
     public static String getMimeType(File file) {
         return getMimeType(file.getPath());
     }
@@ -288,16 +169,6 @@ public class Utils {
             type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         }
         return type;
-    }
-
-    public static void configFileAttachment(AttachmentMetaData attachment,
-                                            File file,
-                                            String type,
-                                            String mimeType) {
-        attachment.type = type;
-        attachment.mimeType = mimeType;
-        attachment.title = file.getName();
-        attachment.file = file;
     }
 
     public static abstract class TextViewLinkHandler extends LinkMovementMethod {
