@@ -672,7 +672,7 @@ class ChannelControllerImpl(
         return message
     }
 
-    private fun upsertMessages(messages: List<Message> = emptyList()) {
+    private fun upsertMessages(messages: List<Message>) {
         val copy = _messages.value ?: mutableMapOf()
         // filter out old events
         val freshMessages = mutableListOf<Message>()
