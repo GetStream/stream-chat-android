@@ -53,17 +53,15 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         return attachments.size();
     }
 
-
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent,
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                       int viewType) {
-        BaseAttachmentViewHolder holder = this.factory.createAttachmentViewHolder(this, parent, viewType);
-        return holder;
+        return this.factory.createAttachmentViewHolder(this, parent, viewType);
     }
 
-
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Attachment attachment = attachments.get(position);
         ((BaseAttachmentViewHolder) holder).bind(
                 context,
@@ -75,7 +73,6 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 attachmentClickListener,
                 longClickListener);
     }
-
 
     public void setStyle(MessageListViewStyle style) {
         this.style = style;
