@@ -2,6 +2,7 @@
 
 - Add send action operation to ChannelController
 - Fix serialized file names of SendActionRequest
+- Fix `ConnectedEvent` parse process
 
 # 1.15.2 - Tue 1 Sep 2020
 

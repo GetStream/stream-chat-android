@@ -472,12 +472,12 @@ fun createHealthEventStringJson() =
         """.trimIndent()
     )
 
-fun createConnectedEventStringJson() =
+fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
     createChatEventStringJson(
         "health.check",
         """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
-            "me": ${createUserJsonString()}
+            "me": $userJsonString
         """.trimIndent()
     )
 
@@ -512,11 +512,14 @@ fun createNewMessageEventStringJson() =
         """.trimIndent()
     )
 
-private fun createChatEventStringJson(type: String, payload: String) =
+fun createUnknownEventStringJson(type: String = "unknown_event") =
+    createChatEventStringJson(type, null)
+
+private fun createChatEventStringJson(type: String, payload: String?) =
     """
         {"type": "$type",
-         "created_at": "2020-06-29T06:14:28.000Z",
-         $payload
+         "created_at": "2020-06-29T06:14:28.000Z"
+         ${payload?.let { ", $it" } ?: ""}
          }
     """.trimIndent()
 

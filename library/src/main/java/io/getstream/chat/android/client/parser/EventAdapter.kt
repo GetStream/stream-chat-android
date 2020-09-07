@@ -54,7 +54,6 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.EventType
-import java.util.Date
 
 internal class EventAdapter(
     private val gson: Gson,
@@ -81,8 +80,8 @@ internal class EventAdapter(
 
         val mapAdapter = gson.getAdapter(HashMap::class.java)
 
-        val mapData = mapAdapter.read(reader) as HashMap<*, *>
-        val type = mapData["type"] as String
+        val mapData = (mapAdapter.read(reader) as HashMap<*, *>).filterNot { it.value == null }
+        val type = mapData["type"] as? String
         val data = gson.toJson(mapData)
 
         return when (type) {
@@ -280,7 +279,11 @@ internal class EventAdapter(
                 }
             }
             else -> {
-                UnknownEvent(mapData["type"]?.toString() ?: EventType.UNKNOWN, Date(), mapData)
+                gson.fromJson(data, UnknownEvent::class.java)
+                    .copy(
+                        type = mapData["type"]?.toString() ?: EventType.UNKNOWN,
+                        rawData = mapData
+                    )
             }
         }
     }
