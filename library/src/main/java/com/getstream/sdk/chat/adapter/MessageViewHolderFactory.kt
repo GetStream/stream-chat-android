@@ -2,7 +2,10 @@ package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.*
+import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
+import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -35,11 +38,11 @@ open class MessageViewHolderFactory {
     }
 
     open fun getAttachmentViewType(
-            message: Message,
-            mine: Boolean,
-            position: Position,
-            attachments: List<Attachment>,
-            attachment: Attachment
+        message: Message,
+        mine: Boolean,
+        position: Position,
+        attachments: List<Attachment>,
+        attachment: Attachment
     ): Int {
         return when (attachment.type) {
             null ->
@@ -78,9 +81,9 @@ open class MessageViewHolderFactory {
     }
 
     open fun createAttachmentViewHolder(
-            adapter: AttachmentListItemAdapter,
-            parent: ViewGroup,
-            viewType: Int
+        adapter: AttachmentListItemAdapter,
+        parent: ViewGroup,
+        viewType: Int
     ): BaseAttachmentViewHolder {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
@@ -97,5 +100,4 @@ open class MessageViewHolderFactory {
     enum class Position {
         TOP, MIDDLE, BOTTOM
     }
-
 }
