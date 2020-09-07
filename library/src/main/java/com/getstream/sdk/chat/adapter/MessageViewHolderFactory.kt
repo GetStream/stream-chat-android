@@ -1,109 +1,105 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
-
-import android.view.ViewGroup;
-
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.model.ModelType;
-
-import java.util.List;
-
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Message;
+import android.view.ViewGroup
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem.*
+import com.getstream.sdk.chat.model.ModelType
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Message
 
 /**
  * Allows you to easily customize message rendering or message attachment rendering
  */
-public class MessageViewHolderFactory {
-    private static String TAG = MessageViewHolderFactory.class.getName();
+open class MessageViewHolderFactory {
+    companion object {
+        const val MESSAGEITEM_DATE_SEPARATOR = 1
+        const val MESSAGEITEM_MESSAGE = 2
+        const val MESSAGEITEM_TYPING = 3
+        const val MESSAGEITEM_THREAD_SEPARATOR = 4
+        const val MESSAGEITEM_NOT_FOUND = 5
 
-    public static final int MESSAGEITEM_DATE_SEPARATOR = 1;
-    public static final int MESSAGEITEM_MESSAGE = 2;
-    public static final int MESSAGEITEM_TYPING = 3;
-    public static final int MESSAGEITEM_THREAD_SEPARATOR = 4;
-    public static final int MESSAGEITEM_NOT_FOUND = 5;
+        const val GENERIC_ATTACHMENT = 1
+        const val IMAGE_ATTACHMENT = 2
+        const val VIDEO_ATTACHMENT = 3
+        const val FILE_ATTACHMENT = 4
+    }
 
-    public static final int GENERIC_ATTACHMENT = 1;
-    public static final int IMAGE_ATTACHMENT = 2;
-    public static final int VIDEO_ATTACHMENT = 3;
-    public static final int FILE_ATTACHMENT = 4;
-
-    public int getMessageViewType(MessageListItem messageListItem) {
-        if (messageListItem instanceof MessageListItem.DateSeparatorItem) {
-            return MESSAGEITEM_DATE_SEPARATOR;
-        } else if (messageListItem instanceof MessageListItem.TypingItem) {
-            return MESSAGEITEM_TYPING;
-        } else if (messageListItem instanceof MessageListItem.MessageItem) {
-            return MESSAGEITEM_MESSAGE;
-        } else if (messageListItem instanceof MessageListItem.ThreadSeparatorItem) {
-            return MESSAGEITEM_THREAD_SEPARATOR;
-
-        } else {
-            return MESSAGEITEM_NOT_FOUND;
+    open fun getMessageViewType(messageListItem: MessageListItem?): Int {
+        return when (messageListItem) {
+            is DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
+            is TypingItem -> MESSAGEITEM_TYPING
+            is MessageItem -> MESSAGEITEM_MESSAGE
+            is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
+            else -> MESSAGEITEM_NOT_FOUND
         }
     }
 
-    public int getAttachmentViewType(Message message, Boolean mine, Position position, List<Attachment> attachments, Attachment attachment) {
+    open fun getAttachmentViewType(
+            message: Message,
+            mine: Boolean,
+            position: Position,
+            attachments: List<Attachment>,
+            attachment: Attachment
+    ): Int {
         // video
         // image
         // link/card layout
         // custom attachment types
-        String t = attachment.getType();
-        if (t == null) {
-            return GENERIC_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_video)) {
-            return VIDEO_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_image) ||
-                t.equals(ModelType.attach_giphy)) {
-            return IMAGE_ATTACHMENT;
-        } else if (t.equals(ModelType.attach_file)) {
-            return FILE_ATTACHMENT;
-        } else {
-            return GENERIC_ATTACHMENT;
-        }
-
-    }
-
-    public BaseMessageListItemViewHolder createMessageViewHolder(MessageListItemAdapter adapter, ViewGroup parent, int viewType) {
-        if (viewType == MESSAGEITEM_DATE_SEPARATOR) {
-            DateSeparatorViewHolder holder = new DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent);
-            return holder;
-        } else if (viewType == MESSAGEITEM_MESSAGE) {
-            MessageListItemViewHolder holder = new MessageListItemViewHolder(R.layout.stream_item_message, parent);
-            holder.setMessageClickListener(adapter.getMessageClickListener());
-            holder.setMessageLongClickListener(adapter.getMessageLongClickListener());
-            holder.setAttachmentClickListener(adapter.getAttachmentClickListener());
-            holder.setReactionViewClickListener(adapter.getReactionViewClickListener());
-            holder.setUserClickListener(adapter.getUserClickListener());
-            holder.setReadStateClickListener(adapter.getReadStateClickListener());
-            holder.setGiphySendListener(adapter.getGiphySendListener());
-            return holder;
-        } else if (viewType == MESSAGEITEM_TYPING) {
-            TypingIndicatorViewHolder holder = new TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent);
-            return holder;
-        } else if (viewType == MESSAGEITEM_THREAD_SEPARATOR) {
-            ThreadSeparatorViewHolder holder = new ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent);
-            return holder;
-        } else {
-            return null;
+        return when (attachment.type) {
+            null ->
+                GENERIC_ATTACHMENT
+            ModelType.attach_video ->
+                VIDEO_ATTACHMENT
+            ModelType.attach_image, ModelType.attach_giphy ->
+                IMAGE_ATTACHMENT
+            ModelType.attach_file ->
+                FILE_ATTACHMENT
+            else ->
+                GENERIC_ATTACHMENT
         }
     }
 
-    public BaseAttachmentViewHolder createAttachmentViewHolder(AttachmentListItemAdapter adapter, ViewGroup parent, int viewType) {
-        if (viewType == VIDEO_ATTACHMENT || viewType == IMAGE_ATTACHMENT) {
-            AttachmentViewHolderMedia holder = new AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent);
-            holder.setGiphySendListener(adapter.getGiphySendListener());
-            return holder;
-        } else if (viewType == FILE_ATTACHMENT) {
-            AttachmentViewHolderFile holder = new AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent);
-            return holder;
-        } else {
-            AttachmentViewHolder holder = new AttachmentViewHolder(R.layout.stream_item_attachment, parent);
-            return holder;
+    open fun createMessageViewHolder(adapter: MessageListItemAdapter, parent: ViewGroup, viewType: Int): BaseMessageListItemViewHolder<*>? {
+        return when (viewType) {
+            MESSAGEITEM_DATE_SEPARATOR ->
+                DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent)
+            MESSAGEITEM_MESSAGE ->
+                MessageListItemViewHolder(R.layout.stream_item_message, parent).apply {
+                    setMessageClickListener(adapter.messageClickListener)
+                    setMessageLongClickListener(adapter.messageLongClickListener)
+                    setAttachmentClickListener(adapter.attachmentClickListener)
+                    setReactionViewClickListener(adapter.reactionViewClickListener)
+                    setUserClickListener(adapter.userClickListener)
+                    setReadStateClickListener(adapter.readStateClickListener)
+                    setGiphySendListener(adapter.giphySendListener)
+                }
+            MESSAGEITEM_TYPING ->
+                TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent)
+            MESSAGEITEM_THREAD_SEPARATOR ->
+                ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent)
+            else -> null
         }
     }
 
-    public enum Position {
+    open fun createAttachmentViewHolder(
+            adapter: AttachmentListItemAdapter,
+            parent: ViewGroup,
+            viewType: Int
+    ): BaseAttachmentViewHolder {
+        return when (viewType) {
+            VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
+                AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent).apply {
+                    setGiphySendListener(adapter.giphySendListener)
+                }
+            FILE_ATTACHMENT ->
+                AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
+            else ->
+                AttachmentViewHolder(R.layout.stream_item_attachment, parent)
+        }
+    }
+
+    enum class Position {
         TOP, MIDDLE, BOTTOM
     }
+
 }
