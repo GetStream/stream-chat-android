@@ -1,36 +1,21 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
+import androidx.recyclerview.widget.DiffUtil
 
-import java.util.List;
+class MessageListItemDiffCallback(
+    private val oldList: List<MessageListItem>,
+    private val newList: List<MessageListItem>
+) : DiffUtil.Callback() {
 
-import androidx.recyclerview.widget.DiffUtil;
+    override fun getOldListSize(): Int = oldList.size
 
-public class MessageListItemDiffCallback extends DiffUtil.Callback {
+    override fun getNewListSize(): Int = newList.size
 
-    protected List<MessageListItem> oldList, newList;
-
-    public MessageListItemDiffCallback(List<MessageListItem> oldList, List<MessageListItem> newList) {
-        this.oldList = oldList;
-        this.newList = newList;
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 
-    @Override
-    public int getOldListSize() {
-        return oldList == null ? 0 : oldList.size();
-    }
-
-    @Override
-    public int getNewListSize() {
-        return newList == null ? 0 : newList.size();
-    }
-
-    @Override
-    public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
-    }
-
-    @Override
-    public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
