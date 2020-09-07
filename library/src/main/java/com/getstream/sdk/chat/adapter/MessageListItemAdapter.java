@@ -17,7 +17,7 @@ import java.util.List;
 
 import io.getstream.chat.android.client.models.Channel;
 
-public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MessageListItemAdapter extends RecyclerView.Adapter<BaseMessageListItemViewHolder> {
     private Channel channel;
     private MessageListView.MessageClickListener messageClickListener;
     private MessageListView.MessageLongClickListener messageLongClickListener;
@@ -30,8 +30,6 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private boolean isThread;
     private MessageListViewStyle style;
     private Context context;
-    private String className;
-    private int itemLayoutId;
     private MessageViewHolderFactory viewHolderFactory;
     private MessageListView.BubbleHelper bubbleHelper;
 
@@ -87,11 +85,8 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void replaceEntities(List<MessageListItem> newEntities) {
         final DiffUtil.DiffResult result = DiffUtil.calculateDiff(
                 new MessageListItemDiffCallback(messageListItemList, newEntities), true);
-
-        // only update those rows that change...
         result.dispatchUpdatesTo(this);
         messageListItemList = newEntities;
-
     }
 
     @Override
@@ -106,16 +101,15 @@ public class MessageListItemAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @NotNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
+    public BaseMessageListItemViewHolder onCreateViewHolder(@NotNull ViewGroup parent,
                                                       int viewType) {
         return this.viewHolderFactory.createMessageViewHolder(this, parent, viewType);
     }
 
-
     @Override
-    public void onBindViewHolder(@NotNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull BaseMessageListItemViewHolder holder, int position) {
         MessageListItem messageListItem = messageListItemList.get(position);
-        ((BaseMessageListItemViewHolder) holder).bind(this.context,
+        holder.bind(this.context,
                 this.channel,
                 messageListItem,
                 style,
