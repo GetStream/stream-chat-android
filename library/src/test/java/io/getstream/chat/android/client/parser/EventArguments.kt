@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.createReactionNewEventStringJson
 import io.getstream.chat.android.client.createReactionUpdateEventStringJson
 import io.getstream.chat.android.client.createTypingStartEventStringJson
 import io.getstream.chat.android.client.createTypingStopEventStringJson
+import io.getstream.chat.android.client.createUnknownEventStringJson
 import io.getstream.chat.android.client.createUserDeletedEventStringJson
 import io.getstream.chat.android.client.createUserMutedEventStringJson
 import io.getstream.chat.android.client.createUserPresenceChangedEventStringJson
@@ -85,6 +86,7 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
 import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -108,6 +110,7 @@ import java.util.Date
 
 object EventArguments {
     private val date = Date(1593411268000)
+    private val dateString = "2020-06-29T06:14:28.000Z"
     private val connectionId = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
     private val channelType = "channelType"
     private val channelId = "channelId"
@@ -220,6 +223,8 @@ object EventArguments {
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)
     private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, unreadMessages, totalUnreadCount)
+    private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
+    private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, mapOf("type" to "some.unknown.type", "created_at" to dateString))
 
     private fun eventArguments() = listOf(
         Arguments.of(createChannelTruncatedEventStringJson(), ChannelTruncatedEvent::class.java, channelTruncatedEvent),
@@ -269,7 +274,9 @@ object EventArguments {
         Arguments.of(createHealthEventStringJson(), HealthEvent::class.java, healthEvent),
         Arguments.of(createNotificationChannelMutesUpdatedEventStringJson(), NotificationChannelMutesUpdatedEvent::class.java, notificationChannelMutesUpdatedEvent),
         Arguments.of(createNotificationMutesUpdatedEventStringJson(), NotificationMutesUpdatedEvent::class.java, notificationMutesUpdatedEvent),
-        Arguments.of(createNewMessageEventStringJson(), NewMessageEvent::class.java, newMessageEvent)
+        Arguments.of(createNewMessageEventStringJson(), NewMessageEvent::class.java, newMessageEvent),
+        Arguments.of(createUnknownEventStringJson(), UnknownEvent::class.java, unknownEvent),
+        Arguments.of(createUnknownEventStringJson("some.unknown.type"), UnknownEvent::class.java, otherUnknownEvent)
     )
 
     @JvmStatic

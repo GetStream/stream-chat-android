@@ -512,11 +512,14 @@ fun createNewMessageEventStringJson() =
         """.trimIndent()
     )
 
-private fun createChatEventStringJson(type: String, payload: String) =
+fun createUnknownEventStringJson(type: String = "unknown_event") =
+    createChatEventStringJson(type, null)
+
+private fun createChatEventStringJson(type: String, payload: String?) =
     """
         {"type": "$type",
-         "created_at": "2020-06-29T06:14:28.000Z",
-         $payload
+         "created_at": "2020-06-29T06:14:28.000Z"
+         ${payload?.let { ", $it" } ?: ""}
          }
     """.trimIndent()
 
