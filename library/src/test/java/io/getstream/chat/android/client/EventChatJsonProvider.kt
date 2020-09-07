@@ -472,12 +472,12 @@ fun createHealthEventStringJson() =
         """.trimIndent()
     )
 
-fun createConnectedEventStringJson() =
+fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
     createChatEventStringJson(
         "health.check",
         """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
-            "me": ${createUserJsonString()}
+            "me": $userJsonString
         """.trimIndent()
     )
 
