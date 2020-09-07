@@ -41,10 +41,6 @@ open class MessageViewHolderFactory {
             attachments: List<Attachment>,
             attachment: Attachment
     ): Int {
-        // video
-        // image
-        // link/card layout
-        // custom attachment types
         return when (attachment.type) {
             null ->
                 GENERIC_ATTACHMENT
