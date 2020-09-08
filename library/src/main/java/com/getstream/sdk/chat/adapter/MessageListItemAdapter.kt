@@ -52,10 +52,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
     override fun getItemId(position: Int): Long = messageListItemList[position].getStableId()
 
     override fun getItemViewType(position: Int): Int {
-        if (position !in messageListItemList.indices) {
-            return 0
-        }
-
         val messageListItem = messageListItemList[position]
         return viewHolderFactory.getMessageViewType(messageListItem)
     }
