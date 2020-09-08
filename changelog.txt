@@ -1,5 +1,7 @@
 # To be released:
 
+- Fix Socket Disconnection
+
 # 1.15.3 - Tue 7 Sep 2020
 
 - Add send action operation to ChannelController
