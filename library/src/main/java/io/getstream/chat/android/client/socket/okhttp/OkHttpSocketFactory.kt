@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client.socket.okhttp
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
@@ -11,7 +10,6 @@ import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.WebSocket
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -33,7 +31,7 @@ internal class OkHttpSocketFactory(
 
         logger.logI("new web socket: $url")
 
-        return OkHttpSocket(newWebSocket, parser)
+        return Socket(newWebSocket, parser)
     }
 
     private fun buildUrl(endpoint: String, apiKey: String, user: User?): String {
@@ -62,20 +60,5 @@ internal class OkHttpSocketFactory(
         data["server_determines_connection_id"] = true
         data["X-STREAM-CLIENT"] = ChatClient.instance().getVersion()
         return parser.toJson(data)
-    }
-
-    class OkHttpSocket(val socket: WebSocket, val parser: ChatParser) : Socket {
-
-        override fun send(event: ChatEvent) {
-            socket.send(parser.toJson(event))
-        }
-
-        override fun cancel() {
-            socket.cancel()
-        }
-
-        override fun close(code: Int, reason: String) {
-            socket.close(code, reason)
-        }
     }
 }
