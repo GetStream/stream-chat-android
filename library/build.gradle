@@ -93,7 +93,9 @@ dependencies {
     implementation Dependencies.gson
 
     implementation Dependencies.glideRedirect
-    implementation Dependencies.glide
+    implementation(Dependencies.glide) {
+        exclude group: "com.android.support"
+    }
     kapt Dependencies.glideCompiler
 
     implementation Dependencies.drawabletoolbox

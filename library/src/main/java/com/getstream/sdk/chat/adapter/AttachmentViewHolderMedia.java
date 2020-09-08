@@ -156,12 +156,18 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         final String type = attachment.getType();
         configImageThumbBackground();
 
-        String imageUrl = attachment.getImageUrl();
-        Glide.with(context)
-                //.load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
-                .load(imageUrl)
-                .placeholder(R.drawable.stream_placeholder)
-                .into(iv_media_thumb);
+        if (ModelType.attach_giphy.equals(type)) {
+            Glide.with(context)
+                    .asGif()
+                    .load(attachment.getThumbUrl())
+                    .placeholder(R.drawable.stream_placeholder)
+                    .into(iv_media_thumb);
+        } else {
+            Glide.with(context)
+                    .load(attachment.getImageUrl())
+                    .placeholder(R.drawable.stream_placeholder)
+                    .into(iv_media_thumb);
+        }
 
         if (!message.getType().equals(ModelType.message_ephemeral))
             tv_media_title.setText(attachment.getTitle());
