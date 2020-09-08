@@ -14,10 +14,9 @@ sealed class MessageListItem(
 ) {
     fun getStableId(): Long {
         val checksum: Checksum = CRC32()
-        var plaintext = "$this:"
-        plaintext += when (this) {
-            is TypingItem -> "typing"
-            is ThreadSeparatorItem -> "Start of a new thread"
+        val plaintext = when (this) {
+            is TypingItem -> "id_typing"
+            is ThreadSeparatorItem -> "id_thread_separator"
             is MessageItem -> message.id
             is DateSeparatorItem -> date.toString()
         }
