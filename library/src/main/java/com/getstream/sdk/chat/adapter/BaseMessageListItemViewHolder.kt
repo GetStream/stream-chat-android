@@ -19,7 +19,6 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     fun bindListItem(
-        context: Context,
         channel: Channel,
         messageListItem: MessageListItem,
         style: MessageListViewStyle,
@@ -28,11 +27,10 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
         position: Int
     ) {
         @Suppress("UNCHECKED_CAST")
-        bind(context, channel, messageListItem as T, style, bubbleHelper, factory, position)
+        bind(channel, messageListItem as T, style, bubbleHelper, factory, position)
     }
 
     protected abstract fun bind(
-        context: Context,
         channel: Channel,
         messageListItem: T,
         style: MessageListViewStyle,
@@ -40,4 +38,7 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
         factory: MessageViewHolderFactory,
         position: Int
     )
+
+    protected val context: Context
+        get() = itemView.context
 }

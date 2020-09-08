@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -8,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.enums.Dates;
@@ -22,7 +22,6 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.DateSeparatorItem> {
 
-    private Context context;
     private MessageListItem.DateSeparatorItem messageListItem;
     private MessageListViewStyle style;
     private TextView tv_date;
@@ -36,21 +35,19 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<Messa
     }
 
     @Override
-    public void bind(@NonNull Context context,
-                     @NonNull Channel channelState,
+    public void bind(@NonNull Channel channelState,
                      @NonNull MessageListItem.DateSeparatorItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
                      int position) {
-        this.context = context;
         this.messageListItem = messageListItem;
         this.style = style;
         configDate();
         applyStyle();
     }
 
-    private void configDate(){
+    private void configDate() {
         String humanizedDate;
         long messageDate = messageListItem.getDate().getTime();
         Date now = new Date();
@@ -61,14 +58,14 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<Messa
 
         tv_date.setText(humanizedDate);
     }
-    private void applyStyle(){
 
+    private void applyStyle() {
         style.dateSeparatorDateText.apply(tv_date);
 
         if (style.getDateSeparatorLineDrawable() != -1) {
             int drawable = style.getDateSeparatorLineDrawable();
-            iv_line_right.setBackground(context.getDrawable(drawable));
-            iv_line_left.setBackground(context.getDrawable(drawable));
+            iv_line_right.setBackground(ContextCompat.getDrawable(getContext(), drawable));
+            iv_line_left.setBackground(ContextCompat.getDrawable(getContext(), drawable));
         } else {
             iv_line_right.setBackgroundColor(style.getDateSeparatorLineColor());
             iv_line_left.setBackgroundColor(style.getDateSeparatorLineColor());

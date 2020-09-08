@@ -236,7 +236,7 @@ public class MessageListView extends RecyclerView {
         if (viewHolderFactory == null) {
             viewHolderFactory = new MessageViewHolderFactory(listenerContainer);
         }
-        adapter = new MessageListItemAdapter(getContext(), viewHolderFactory);
+        adapter = new MessageListItemAdapter(viewHolderFactory);
         adapter.setHasStableIds(true);
 
         adapter.setViewHolderFactory(viewHolderFactory);

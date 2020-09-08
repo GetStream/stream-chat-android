@@ -1,10 +1,11 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.R;
@@ -12,7 +13,6 @@ import com.getstream.sdk.chat.view.AvatarView;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
-import androidx.annotation.NonNull;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
 
@@ -32,8 +32,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<Mes
     }
 
     @Override
-    public void bind(@NonNull Context context,
-                     @NonNull Channel channel,
+    public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.TypingItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
@@ -46,7 +45,7 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<Mes
         int i = 0;
 
         for (User user : messageListItem.getUsers()) {
-            AvatarView avatarView = new AvatarView(context);
+            AvatarView avatarView = new AvatarView(getContext());
             avatarView.setUser(user, style);
             int height = style.getAvatarHeight();
             int width = style.getAvatarWidth();
@@ -61,6 +60,6 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<Mes
             ll_typingusers.addView(avatarView);
             i += 1;
         }
-        Glide.with(context).asGif().load(R.raw.stream_typing).into(iv_typing_indicator);
+        Glide.with(getContext()).asGif().load(R.raw.stream_typing).into(iv_typing_indicator);
     }
 }

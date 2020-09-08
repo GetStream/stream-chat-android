@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
@@ -23,6 +22,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -80,7 +80,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected MessageListView.BubbleHelper bubbleHelper;
     protected MessageViewHolderFactory viewHolderFactory;
     protected int position;
-    protected Context context;
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
 
@@ -148,13 +147,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
         iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
-        mLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
     }
 
     @Override
-    public void bind(@NonNull Context context,
-                     @NonNull Channel channel,
+    public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
@@ -162,7 +160,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
                      int position) {
 
         // set binding
-        this.context = context;
         this.channel = channel;
         this.messageListItem = messageListItem;
         this.style = style;
@@ -262,7 +259,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             if (message.getDate().equals(TODAY.getLabel()) || message.getDate().equals(YESTERDAY.getLabel()))
                 tv_messagedate.setText(message.getTime());
             else
-                tv_messagedate.setText(context.getString(R.string.stream_message_date, message.getDate(), message.getTime()));
+                tv_messagedate.setText(itemView.getContext().getString(R.string.stream_message_date, message.getDate(), message.getTime()));
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
@@ -357,7 +354,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             // Set Failed Message Title Text
             SpannableStringBuilder builder = new SpannableStringBuilder();
             int failedDes = TextUtils.isEmpty(message.getCommand()) ? R.string.stream_message_failed_send : R.string.stream_message_invalid_command;
-            SpannableString str1 = new SpannableString(context.getResources().getText(failedDes));
+            SpannableString str1 = new SpannableString(getContext().getResources().getText(failedDes));
             str1.setSpan(new ForegroundColorSpan(Color.GRAY), 0, str1.length(), 0);
             str1.setSpan(new RelativeSizeSpan(0.7f), 0, str1.length(), 0);
             builder.append(str1);
@@ -376,8 +373,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
     protected void configMessageTextStyle() {
         if (isDeletedMessage()) {
-            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size));
-            tv_text.setTextColor(context.getResources().getColor(R.color.stream_gray_dark));
+            tv_text.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size));
+            tv_text.setTextColor(getContext().getResources().getColor(R.color.stream_gray_dark));
             return;
         }
 
@@ -434,7 +431,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
                     isLongClick = false;
                     return;
                 }
-                Chat.getInstance().getNavigator().navigate(new WebLinkDestination(url, context));
+                Chat.getInstance().getNavigator().navigate(new WebLinkDestination(url, getContext()));
             }
         });
     }
@@ -476,7 +473,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         rv_reaction.setVisibility(View.VISIBLE);
         iv_tail.setVisibility(View.VISIBLE);
         space_reaction_tail.setVisibility(View.VISIBLE);
-        rv_reaction.setAdapter(new ReactionListItemAdapter(context,
+        rv_reaction.setAdapter(new ReactionListItemAdapter(getContext(),
                 message.getReactionCounts(),
                 LlcMigrationUtils.getReactionTypes(),
                 style));
@@ -630,7 +627,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
                     params.endToEnd = R.id.space_reaction_tail;
             } else {
                 @DimenRes
-                int reactionMargin = context.getResources().getDimensionPixelSize(R.dimen.stream_reaction_margin);
+                int reactionMargin = getContext().getResources().getDimensionPixelSize(R.dimen.stream_reaction_margin);
                 if (tv_text.getWidth() + reactionMargin < rv_reaction.getWidth()) {
                     if (messageListItem.isMine())
                         params.endToEnd = R.id.tv_text;
@@ -653,7 +650,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected void configParamsUserAvatar() {
         if (avatar.getVisibility() != View.VISIBLE) return;
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) avatar.getLayoutParams();
-        int marginStart = (int) context.getResources().getDimension(R.dimen.stream_message_avatar_margin);
+        int marginStart = (int) getContext().getResources().getDimension(R.dimen.stream_message_avatar_margin);
         if (messageListItem.isTheirs()) {
             params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
             params.setMarginStart(marginStart);
@@ -738,18 +735,17 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
                     .build());
 
             if (messageListItem.isMine())
-                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_outgoing));
+                iv_tail.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.stream_tail_outgoing));
             else
-                iv_tail.setImageDrawable(context.getResources().getDrawable(R.drawable.stream_tail_incoming));
+                iv_tail.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.stream_tail_incoming));
 
             DrawableCompat.setTint(iv_tail.getDrawable(), style.getReactionViewBgColor());
         } else {
             int drawable = style.getReactionViewBgDrawable();
-            rv_reaction.setBackground(context.getDrawable(drawable));
+            rv_reaction.setBackground(ContextCompat.getDrawable(getContext(), drawable));
             iv_tail.setVisibility(View.GONE);
         }
     }
-
 
     protected boolean isDeletedMessage() {
         return message.getDeletedAt() != null;

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +8,6 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
-    private var context: Context,
     var viewHolderFactory: MessageViewHolderFactory,
     var channel: Channel? = null,
     private var messageListItemList: List<MessageListItem> = emptyList()
@@ -45,7 +43,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(
-            context,
             requireNotNull(channel) { "Channel was not set" },
             messageListItemList[position],
             requireNotNull(style) { "Style was not set" },
