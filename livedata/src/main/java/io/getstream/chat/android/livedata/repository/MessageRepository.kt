@@ -49,6 +49,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
     suspend fun select(messageId: String): MessageEntity? {
         return select(listOf(messageId)).getOrElse(0) { null }
     }
+
     suspend fun select(messageIds: List<String>): List<MessageEntity> {
         val cachedMessages: MutableList<MessageEntity> = mutableListOf()
         for (messageId in messageIds) {
@@ -134,5 +135,10 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
         // wipe the cache
         messageCache = LruCache<String, MessageEntity>(cacheSize)
+    }
+
+    suspend fun deleteChannelMessage(message: Message) {
+        messageDao.deleteMessage(message.cid, message.id)
+        messageCache.remove(message.id)
     }
 }
