@@ -76,7 +76,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected RecyclerView.LayoutManager mLayoutManager;
 
     protected Channel channel;
-    protected MessageListViewStyle style;
+    protected final MessageListViewStyle style;
     protected MessageListView.BubbleHelper bubbleHelper;
     protected MessageViewHolderFactory viewHolderFactory;
     protected int position;
@@ -105,6 +105,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     public MessageListItemViewHolder(
             int resId,
             ViewGroup viewGroup,
+            MessageListViewStyle style,
             @NonNull MessageListView.MessageClickListener messageClickListener,
             @NonNull MessageListView.MessageLongClickListener messageLongClickListener,
             @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
@@ -114,6 +115,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             @NonNull MessageListView.GiphySendListener giphySendListener
     ) {
         super(resId, viewGroup);
+        this.style = style;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
@@ -154,7 +156,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     @Override
     public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.MessageItem messageListItem,
-                     @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
                      int position) {
@@ -162,7 +163,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         // set binding
         this.channel = channel;
         this.messageListItem = messageListItem;
-        this.style = style;
         this.bubbleHelper = bubbleHelper;
         this.viewHolderFactory = factory;
         this.position = position;

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
-import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
@@ -21,19 +20,17 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
     fun bindListItem(
         channel: Channel,
         messageListItem: MessageListItem,
-        style: MessageListViewStyle,
         bubbleHelper: BubbleHelper,
         factory: MessageViewHolderFactory,
         position: Int
     ) {
         @Suppress("UNCHECKED_CAST")
-        bind(channel, messageListItem as T, style, bubbleHelper, factory, position)
+        bind(channel, messageListItem as T, bubbleHelper, factory, position)
     }
 
     protected abstract fun bind(
         channel: Channel,
         messageListItem: T,
-        style: MessageListViewStyle,
         bubbleHelper: BubbleHelper,
         factory: MessageViewHolderFactory,
         position: Int

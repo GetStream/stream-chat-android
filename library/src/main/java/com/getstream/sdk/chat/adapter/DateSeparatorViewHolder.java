@@ -22,13 +22,16 @@ import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
 public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.DateSeparatorItem> {
 
-    private MessageListItem.DateSeparatorItem messageListItem;
-    private MessageListViewStyle style;
-    private TextView tv_date;
-    private ImageView iv_line_right, iv_line_left;
+    private final MessageListViewStyle style;
 
-    public DateSeparatorViewHolder(int resId, ViewGroup viewGroup) {
+    private final TextView tv_date;
+    private final ImageView iv_line_right, iv_line_left;
+
+    private MessageListItem.DateSeparatorItem messageListItem;
+
+    public DateSeparatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle style) {
         super(resId, viewGroup);
+        this.style = style;
         tv_date = itemView.findViewById(R.id.tv_date);
         iv_line_right = itemView.findViewById(R.id.iv_line_right);
         iv_line_left = itemView.findViewById(R.id.iv_line_left);
@@ -37,12 +40,10 @@ public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<Messa
     @Override
     public void bind(@NonNull Channel channelState,
                      @NonNull MessageListItem.DateSeparatorItem messageListItem,
-                     @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
                      int position) {
         this.messageListItem = messageListItem;
-        this.style = style;
         configDate();
         applyStyle();
     }

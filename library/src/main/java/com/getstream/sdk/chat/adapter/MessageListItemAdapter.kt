@@ -45,7 +45,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
         holder.bindListItem(
             requireNotNull(channel) { "Channel was not set" },
             messageListItemList[position],
-            requireNotNull(style) { "Style was not set" },
             requireNotNull(bubbleHelper) { "BubbleHelper was not set" },
             viewHolderFactory,
             position

@@ -17,16 +17,15 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
 
 public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.TypingItem> {
-    // Tying
-    private ImageView iv_typing_indicator;
-    private LinearLayout ll_typingusers;
 
-    public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle s) {
-        this(resId, viewGroup);
-    }
+    private final MessageListViewStyle style;
 
-    public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup) {
+    private final ImageView iv_typing_indicator;
+    private final LinearLayout ll_typingusers;
+
+    public TypingIndicatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle style) {
         super(resId, viewGroup);
+        this.style = style;
         iv_typing_indicator = itemView.findViewById(R.id.iv_typing_indicator);
         ll_typingusers = itemView.findViewById(R.id.ll_typing_indicator);
     }
@@ -34,7 +33,6 @@ public class TypingIndicatorViewHolder extends BaseMessageListItemViewHolder<Mes
     @Override
     public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.TypingItem messageListItem,
-                     @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @NonNull MessageViewHolderFactory factory,
                      int position) {
