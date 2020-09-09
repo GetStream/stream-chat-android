@@ -106,7 +106,6 @@ class MessageListItemLiveDataTests {
             } shouldBeEqualTo true
         }
     }
-
 }
 
 class TestObserver<T> : Observer<T> {
