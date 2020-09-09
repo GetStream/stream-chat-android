@@ -130,6 +130,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
+    private Observer<List<Message>> messagesObserver = this::onMessagesChanged;
+    private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
+
     private boolean isThread() {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
@@ -158,9 +161,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observe(owner, this::onMessagesChanged);
+        messages.observe(owner, messagesObserver);
 
-        threadMessages.observe(owner, this::onThreadMessagesChanged);
+        threadMessages.observe(owner, threadMessagesObserver);
 
         this.typing.observe(owner, users -> {
             if (isThread()) return;
@@ -186,9 +189,9 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
             broadcastValue();
         });
 
-        messages.observeForever(this::onMessagesChanged);
+        messages.observeForever(messagesObserver);
 
-        threadMessages.observeForever(this::onThreadMessagesChanged);
+        threadMessages.observeForever(threadMessagesObserver);
 
         this.typing.observeForever(users -> {
             if (isThread()) return;
@@ -278,14 +281,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {
         // remove the old observer
-        this.threadMessages.removeObserver(this::onThreadMessagesChanged);
+        this.threadMessages.removeObserver(threadMessagesObserver);
 
         // setup the new observer
         this.threadMessages = threadMessages;
         if (lifecycleOwner == null) {
-            threadMessages.observeForever(this::onThreadMessagesChanged);
+            threadMessages.observeForever(threadMessagesObserver);
         } else {
-            threadMessages.observe(lifecycleOwner, this::onThreadMessagesChanged);
+            threadMessages.observe(lifecycleOwner, threadMessagesObserver);
         }
 
         // trigger an update
