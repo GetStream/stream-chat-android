@@ -12,7 +12,6 @@ import androidx.core.view.inputmethod.InputConnectionCompat;
 
 @SuppressLint("AppCompatCustomView")
 public class GifEditText extends EditText {
-    private static final String TAG = GifEditText.class.getSimpleName();
     private InputConnectionCompat.OnCommitContentListener callback;
 
     public GifEditText(Context context) {

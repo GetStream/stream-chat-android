@@ -324,7 +324,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <com.getstream.sdk.chat.utils.GifEditText
-                    android:id="@+id/et_message"
+                    android:id="@+id/message_text_input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

@@ -1,4 +1,5 @@
 # To be released:
+- Implement Giphy actions handler
 
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
 
