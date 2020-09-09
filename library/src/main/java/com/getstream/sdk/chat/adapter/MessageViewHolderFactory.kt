@@ -53,7 +53,11 @@ open class MessageViewHolderFactory {
         }
     }
 
-    open fun createMessageViewHolder(adapter: MessageListItemAdapter, parent: ViewGroup, viewType: Int): BaseMessageListItemViewHolder<*>? {
+    open fun createMessageViewHolder(
+        adapter: MessageListItemAdapter,
+        parent: ViewGroup,
+        viewType: Int
+    ): BaseMessageListItemViewHolder<*> {
         return when (viewType) {
             MESSAGEITEM_DATE_SEPARATOR ->
                 DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent)
@@ -71,7 +75,8 @@ open class MessageViewHolderFactory {
                 TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent)
             MESSAGEITEM_THREAD_SEPARATOR ->
                 ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent)
-            else -> null
+            else ->
+                throw IllegalArgumentException("Unhandled viewType ($viewType)")
         }
     }
 
