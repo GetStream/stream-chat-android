@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
@@ -71,6 +72,23 @@ class MessageListViewModel @JvmOverloads constructor(
             is Event.FlagMessage -> {
                 client.flag(event.message.user.id).enqueue()
             }
+            is Event.GiphyActionSelected -> {
+                onGiphyActionSelected(event)
+            }
+        }.exhaustive
+    }
+
+    private fun onGiphyActionSelected(event: Event.GiphyActionSelected) {
+        when (event.action) {
+            GiphyAction.SEND -> {
+                domain.useCases.sendGiphy(event.message).enqueue()
+            }
+            GiphyAction.SHUFFLE -> {
+                domain.useCases.shuffleGiphy(event.message).enqueue()
+            }
+            GiphyAction.CANCEL -> {
+                domain.useCases.cancelMessage(event.message).enqueue()
+            }
         }.exhaustive
     }
 
@@ -124,6 +142,7 @@ class MessageListViewModel @JvmOverloads constructor(
         data class ThreadModeEntered(val parentMessage: Message) : Event()
         data class DeleteMessage(val message: Message) : Event()
         data class FlagMessage(val message: Message) : Event()
+        data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
     }
 
     sealed class Mode {

@@ -185,7 +185,7 @@ public class MessageListView extends RecyclerView {
         adapter.setHasStableIds(true);
 
         if (viewHolderFactory != null) {
-            adapter.setFactory(viewHolderFactory);
+            adapter.setViewHolderFactory(viewHolderFactory);
         }
 
         if (bubbleHelper != null) {
@@ -286,7 +286,7 @@ public class MessageListView extends RecyclerView {
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
         this.viewHolderFactory = factory;
         if (adapter != null) {
-            adapter.setFactory(factory);
+            adapter.setViewHolderFactory(factory);
         }
     }
 
