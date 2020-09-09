@@ -51,7 +51,7 @@ class MessageListItemLiveDataTests {
     }
 
     @Test
-    fun `When messages are changed if live data is not in the thread state should observe last assigned value`() {
+    fun `When messages are changed if live data is not in the thread state should observe last assigned value to messages`() {
         sut.observeForever(observer)
         val sendingMessage = createMessage()
 
@@ -59,12 +59,54 @@ class MessageListItemLiveDataTests {
 
         observer.lastObservedValue.also { result ->
             result shouldNotBeEqualTo null
-            result!!.listEntities.size shouldBeEqualTo 1
-            result.listEntities.any { item ->
+            result!!.listEntities.any { item ->
                 item is MessageListItem.MessageItem && item.message == sendingMessage
             } shouldBeEqualTo true
         }
     }
+
+    @Test
+    fun `When thread messages are changed should observe last assigned value to thread messages`() {
+        sut.observeForever(observer)
+        val threadMessage = createMessage()
+
+        threadMessages.value = listOf(threadMessage)
+
+        observer.lastObservedValue.also { result ->
+            result shouldNotBeEqualTo null
+            result!!.listEntities.any { item ->
+                item is MessageListItem.MessageItem && item.message == threadMessage
+            } shouldBeEqualTo true
+        }
+    }
+
+    @Test
+    fun `When set thread messages should remove observer from old thread messages and set to new one`() {
+        sut.observeForever(observer)
+        val newThreadMessages = MutableLiveData<List<Message>>(listOf())
+
+        sut.setThreadMessages(newThreadMessages)
+
+        threadMessages.hasObservers() shouldBeEqualTo false
+        newThreadMessages.hasObservers() shouldBeEqualTo true
+    }
+
+    @Test
+    fun `When set thread messages should observe values from new thread messages`() {
+        sut.observeForever(observer)
+        val newThreadMessage = createMessage()
+        val newThreadMessages = MutableLiveData(listOf(newThreadMessage))
+
+        sut.setThreadMessages(newThreadMessages)
+
+        observer.lastObservedValue.let { result ->
+            result shouldNotBeEqualTo null
+            result!!.listEntities.any { item ->
+                item is MessageListItem.MessageItem && item.message == newThreadMessage
+            } shouldBeEqualTo true
+        }
+    }
+
 }
 
 class TestObserver<T> : Observer<T> {
