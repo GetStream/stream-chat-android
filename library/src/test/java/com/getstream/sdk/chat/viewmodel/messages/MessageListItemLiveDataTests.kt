@@ -3,12 +3,14 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -46,6 +48,22 @@ class MessageListItemLiveDataTests {
         messages.value = listOf(createMessage())
 
         observer.lastObservedValue shouldBeEqualTo null
+    }
+
+    @Test
+    fun `When messages are changed if live data is not in the thread state should observe last assigned value`() {
+        sut.observeForever(observer)
+        val sendingMessage = createMessage()
+
+        messages.value = listOf(sendingMessage)
+
+        observer.lastObservedValue.also { result ->
+            result shouldNotBeEqualTo null
+            result!!.listEntities.size shouldBeEqualTo 1
+            result.listEntities.any { item ->
+                item is MessageListItem.MessageItem && item.message == sendingMessage
+            } shouldBeEqualTo true
+        }
     }
 }
 
