@@ -7,7 +7,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Attachment
 
 /**
  * Allows you to easily customize message rendering or message attachment rendering
@@ -37,9 +36,9 @@ open class MessageViewHolderFactory {
     }
 
     open fun getAttachmentViewType(
-        attachment: Attachment
+        attachmentItem: AttachmentListItem
     ): Int {
-        return when (attachment.type) {
+        return when (attachmentItem.attachment.type) {
             null ->
                 GENERIC_ATTACHMENT
             ModelType.attach_video ->
