@@ -1,5 +1,6 @@
 # To be released:
 - Implement Giphy actions handler
+- Fix .gif preview rendering on message list 
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
