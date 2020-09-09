@@ -127,6 +127,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
         binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
         binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
+        binding.btnClose.background = style.attachmentCloseButtonBackground
         // Send Button
         binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
         binding.sendButton.layoutParams.width = style.inputButtonWidth

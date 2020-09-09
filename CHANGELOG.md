@@ -2,6 +2,8 @@
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
 
+- Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
+
 # Sep 4th, 2020 - 4.2.11-beta-11
 
 - Fix uploading files and capturing images on Android >= 10
