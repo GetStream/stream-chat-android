@@ -155,10 +155,14 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private void configMediaAttach() {
         final String type = attachment.getType();
         configImageThumbBackground();
-
-        String imageUrl = attachment.getImageUrl();
+        final String imageUrl;
+        if (attachment.getThumbUrl() != null && !attachment.getThumbUrl().isEmpty()) {
+            imageUrl = attachment.getThumbUrl();
+        } else {
+            imageUrl = attachment.getImageUrl();
+        }
         Glide.with(context)
-                //.load(client.getUploadStorage().signGlideUrl(ModelType.getAssetUrl(attachment)))
+                .asDrawable()
                 .load(imageUrl)
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_media_thumb);
