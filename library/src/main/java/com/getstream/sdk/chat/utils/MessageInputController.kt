@@ -77,9 +77,9 @@ internal class MessageInputController(
         binding.vPreviewMessage.setMessage(message, PreviewMessageView.Mode.EDIT)
         binding.vPreviewMessage.onCloseClick = {
             inputMode = InputMode.Normal
-            binding.etMessage.setText("")
+            binding.messageTextInput.setText("")
         }
-        binding.etMessage.setText(message.text)
+        binding.messageTextInput.setText(message.text)
         binding.vPreviewMessage.visible(true)
         binding.ivOpenAttach.visible(false)
         binding.cbSendAlsoToChannel.visible(false)
@@ -381,7 +381,7 @@ internal class MessageInputController(
     }
 
     private fun configSendButtonEnableState() {
-        if (!StringUtility.isEmptyTextMessage(binding.etMessage.text.toString())) {
+        if (!StringUtility.isEmptyTextMessage(binding.messageTextInput.text.toString())) {
             binding.activeMessageSend = true
         } else {
             binding.activeMessageSend = selectedAttachments.isNotEmpty()
@@ -389,7 +389,7 @@ internal class MessageInputController(
     }
 
     internal fun initSendMessage() {
-        binding.etMessage.setText("")
+        binding.messageTextInput.setText("")
         initAdapter()
         onClickCloseBackGroundView()
     }

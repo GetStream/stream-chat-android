@@ -29,7 +29,6 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
 
-    final String TAG = AttachmentViewHolder.class.getSimpleName();
     // Attachment
     private PorterShapeImageView iv_media_thumb;
     private TextView tv_media_title, tv_media_play, tv_media_des;
@@ -48,20 +47,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
     private MessageListView.GiphySendListener giphySendListener;
-
-//    private MessageCallback sendGiphyMessageCallback = new MessageCallback() {
-//        @Override
-//        public void onSuccess(MessageResponse response) {
-//            enableSendGiphyButtons(true);
-//        }
-//
-//        @Override
-//        public void onError(String errMsg, int errCode) {
-//            enableSendGiphyButtons(true);
-//            Utils.showMessage(context, errMsg);
-//        }
-//    };
-
 
     public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
         super(resId, parent);

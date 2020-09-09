@@ -66,7 +66,6 @@ public class ChannelViewModel extends AndroidViewModel implements LifecycleHandl
      */
     protected MutableLiveData<String> messageInputText = new MutableLiveData<>("");
 
-
     protected String channelId;
     protected String channelType;
 
