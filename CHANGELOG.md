@@ -1,5 +1,6 @@
 # To be released:
 - Implement Giphy actions handler
+- Fix .gif preview rendering on message list 
 
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
 
