@@ -1,6 +1,7 @@
 # To be released:
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
+- Fix thread shown issue after sending message to a channel 
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
