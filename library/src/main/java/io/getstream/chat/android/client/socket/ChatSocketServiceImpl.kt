@@ -97,7 +97,6 @@ internal class ChatSocketServiceImpl(
         this.apiKey = apiKey
         this.user = user
         this.healthMonitor.reset()
-
         setupSocket()
     }
 
@@ -127,7 +126,6 @@ internal class ChatSocketServiceImpl(
 
     private fun clearState() {
         healthMonitor.reset()
-        socket?.cancel()
         socket?.close(1000, "bye")
         socket = null
     }
