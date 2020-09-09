@@ -42,7 +42,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     public int getItemViewType(int position) {
         try {
             Attachment attachment = attachments.get(position);
-            return factory.getAttachmentViewType(message, true, MessageViewHolderFactory.Position.BOTTOM, attachments, attachment);
+            return factory.getAttachmentViewType(attachment);
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }

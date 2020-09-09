@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.model.ModelType
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 
 /**
  * Allows you to easily customize message rendering or message attachment rendering
@@ -38,10 +37,6 @@ open class MessageViewHolderFactory {
     }
 
     open fun getAttachmentViewType(
-        message: Message,
-        mine: Boolean,
-        position: Position,
-        attachments: List<Attachment>,
         attachment: Attachment
     ): Int {
         return when (attachment.type) {
