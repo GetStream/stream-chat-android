@@ -2,15 +2,15 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
+import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldNotBeEqualTo
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -31,19 +31,19 @@ class MessageListItemLiveDataTests {
     @BeforeEach
     fun setUp() {
         observer = TestObserver()
-        messages = MutableLiveData(listOf())
-        threadMessages = MutableLiveData(listOf())
-        typing = MutableLiveData(listOf())
-        reads = MutableLiveData(listOf())
+        messages = MutableLiveData(emptyList())
+        threadMessages = MutableLiveData(emptyList())
+        typing = MutableLiveData(emptyList())
+        reads = MutableLiveData(emptyList())
 
         sut = MessageListItemLiveData(currentUser, messages, threadMessages, typing, reads)
     }
 
     @Test
-    fun `When messages are changed if live data in the thread state should not be observed any values `() {
+    fun `When messages are changed if live data is in the thread state should not be observed any values`() {
         sut.observeForever(observer)
         threadMessages.value = listOf(createMessage())
-        observer.cleanState()
+        observer.reset()
 
         messages.value = listOf(createMessage())
 
@@ -57,12 +57,11 @@ class MessageListItemLiveDataTests {
 
         messages.value = listOf(sendingMessage)
 
-        observer.lastObservedValue.also { result ->
-            result shouldNotBeEqualTo null
-            result!!.listEntities.any { item ->
-                item is MessageListItem.MessageItem && item.message == sendingMessage
-            } shouldBeEqualTo true
-        }
+        val result = observer.lastObservedValue
+        result.shouldNotBeNull()
+        result.listEntities.any { item ->
+            item is MessageListItem.MessageItem && item.message == sendingMessage
+        } shouldBeEqualTo true
     }
 
     @Test
@@ -72,12 +71,11 @@ class MessageListItemLiveDataTests {
 
         threadMessages.value = listOf(threadMessage)
 
-        observer.lastObservedValue.also { result ->
-            result shouldNotBeEqualTo null
-            result!!.listEntities.any { item ->
-                item is MessageListItem.MessageItem && item.message == threadMessage
-            } shouldBeEqualTo true
-        }
+        val result = observer.lastObservedValue
+        result.shouldNotBeNull()
+        result.listEntities.any { item ->
+            item is MessageListItem.MessageItem && item.message == threadMessage
+        } shouldBeEqualTo true
     }
 
     @Test
@@ -99,24 +97,10 @@ class MessageListItemLiveDataTests {
 
         sut.setThreadMessages(newThreadMessages)
 
-        observer.lastObservedValue.let { result ->
-            result shouldNotBeEqualTo null
-            result!!.listEntities.any { item ->
-                item is MessageListItem.MessageItem && item.message == newThreadMessage
-            } shouldBeEqualTo true
-        }
-    }
-}
-
-class TestObserver<T> : Observer<T> {
-    var lastObservedValue: T? = null
-        private set
-
-    override fun onChanged(value: T?) {
-        lastObservedValue = value
-    }
-
-    fun cleanState() {
-        lastObservedValue = null
+        val result = observer.lastObservedValue
+        result.shouldNotBeNull()
+        result.listEntities.any { item ->
+            item is MessageListItem.MessageItem && item.message == newThreadMessage
+        } shouldBeEqualTo true
     }
 }
