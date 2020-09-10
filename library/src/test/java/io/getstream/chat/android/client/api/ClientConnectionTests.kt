@@ -4,6 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -19,6 +20,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
 import java.util.Date
@@ -78,7 +80,7 @@ internal class ClientConnectionTests {
     @Test
     fun successConnection() {
 
-        `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+        `when`(socket.events()).thenReturn(JustObservable(DisconnectedEvent(EventType.HEALTH_CHECK, Date())))
 
         client = ChatClientImpl(
             config,
@@ -89,6 +91,22 @@ internal class ClientConnectionTests {
         client.setUser(user, token)
 
         verify(socket, times(1)).connect(user)
+    }
+
+    @Test
+    fun `Should not connect when user is already set`() {
+
+        `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
+
+        client = ChatClientImpl(
+            config,
+            api,
+            socket,
+            notificationsManager
+        )
+        client.setUser(user, token)
+
+        verify(socket, never()).connect(user)
     }
 
     @Test
