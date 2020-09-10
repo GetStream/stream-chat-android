@@ -3,6 +3,7 @@
 - Fix .gif preview rendering on message list 
 
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
+- Wrap Attachment into AttachmentListItem for use in adapter
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
