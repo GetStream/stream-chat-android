@@ -205,6 +205,7 @@ public class MessageListView extends RecyclerView {
             backFromThread = !listItem.isThread();
         }
 
+        int oldSize = adapter.getItemCount();
         adapter.replaceEntities(entities);
 
         // Scroll to origin position on return from thread
@@ -234,8 +235,6 @@ public class MessageListView extends RecyclerView {
                 }
             }
         }
-
-        int oldSize = adapter.getItemCount();
         int newSize = adapter.getItemCount();
         int sizeGrewBy = newSize - oldSize;
 
