@@ -1,6 +1,7 @@
 # To be released:
 
 - Fix Socket Disconnection
+- Remove useless message's properties (isStartDay, isYesterday, isToday, date, time and commandInfo)
 
 # 1.15.3 - Tue 7 Sep 2020
 

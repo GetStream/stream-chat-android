@@ -14,12 +14,6 @@ data class Message(
     @SerializedName("parent_id")
     var parentId: String? = null,
     var command: String? = null,
-    var isStartDay: Boolean = false,
-    var isYesterday: Boolean = false,
-    var isToday: Boolean = false,
-    var date: String = "",
-    var time: String = "",
-    var commandInfo: Map<String, String> = mutableMapOf(),
     var attachments: MutableList<Attachment> = mutableListOf(),
 
     @IgnoreDeserialisation
