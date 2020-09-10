@@ -133,12 +133,6 @@ class ChatImpl implements Chat {
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
         final ChatClient client = ChatClient.instance();
-        if (client.getCurrentUser() != null) {
-            ChatLogger.Companion.get("ChatImpl").logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.");
-            callbacks.onError(new ChatError("User cannot be set until previous one is disconnected."));
-            return;
-        }
-
         client.disconnect();
         disconnectChatDomainIfAlreadyInitialized();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
