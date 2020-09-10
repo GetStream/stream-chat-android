@@ -1,8 +1,8 @@
 # To be released:
 - Implement Giphy actions handler
-- Fix .gif preview rendering on message list 
-
+- Fix .gif preview rendering on message list
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
+- Forbid setting new user when previous one wasn't disconnected. (Resolves channels list updates)
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
