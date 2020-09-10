@@ -13,9 +13,11 @@ import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
+import org.amshove.kluent.any
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -60,6 +62,7 @@ internal class ClientConnectionTests {
     lateinit var client: ChatClient
     lateinit var logger: ChatLogger
     lateinit var notificationsManager: ChatNotifications
+    lateinit var initConnectionListener: InitConnectionListener
 
     @Before
     fun before() {
@@ -68,6 +71,7 @@ internal class ClientConnectionTests {
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
         logger = mock(ChatLogger::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
+        initConnectionListener = mock(InitConnectionListener::class.java)
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,
@@ -94,7 +98,7 @@ internal class ClientConnectionTests {
     }
 
     @Test
-    fun `Should not connect when user is already set`() {
+    fun `Should not connect and report error when user is already set`() {
 
         `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
 
@@ -104,9 +108,10 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager
         )
-        client.setUser(user, token)
+        client.setUser(user, token, initConnectionListener)
 
         verify(socket, never()).connect(user)
+        verify(initConnectionListener).onError(any())
     }
 
     @Test
