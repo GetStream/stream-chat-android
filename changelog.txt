@@ -1,6 +1,7 @@
 # To be released:
 
 - Fix Socket Disconnection
+- Forbid setting new user when previous one wasn't disconnected
 
 # 1.15.3 - Tue 7 Sep 2020
 
