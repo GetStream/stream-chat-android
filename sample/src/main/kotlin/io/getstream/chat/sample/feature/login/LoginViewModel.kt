@@ -3,9 +3,16 @@ package io.getstream.chat.sample.feature.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.AppConfig
+import io.getstream.chat.sample.common.image
+import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.User
 import io.getstream.chat.sample.data.user.UserRepository
+import timber.log.Timber
+import io.getstream.chat.android.client.models.User as ChatUser
 
 class LoginViewModel(
     appConfig: AppConfig,
@@ -19,12 +26,33 @@ class LoginViewModel(
     }
 
     fun userClicked(user: User) {
+        _state.postValue(State.Loading)
         userRepository.user = user
-        _state.postValue(State.LoggedIn)
+        val chatUser = ChatUser().apply {
+            id = user.id
+            image = user.image
+            name = user.name
+        }
+        Chat.getInstance().setUser(
+            chatUser, user.token,
+            object : InitConnectionListener() {
+                override fun onSuccess(data: ConnectionData) {
+                    _state.postValue(State.LoggedIn)
+                    Timber.d("User set successfully")
+                }
+
+                override fun onError(error: ChatError) {
+                    _state.postValue(State.Error(error.message))
+                    Timber.e("Failed to set user $error")
+                }
+            }
+        )
     }
 }
 
 sealed class State {
     data class AvailableUsers(val availableUsers: List<User>) : State()
     object LoggedIn : State()
+    object Loading : State()
+    data class Error(val errorMessage: String?) : State()
 }
