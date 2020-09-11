@@ -85,6 +85,9 @@ internal class ChatClientImpl(
     //region Set user
 
     override fun setUser(user: User, token: String, listener: InitConnectionListener?) {
+        if (!ensureUserNotSet(listener)) {
+            return
+        }
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(ImmediateTokenProvider(token))
@@ -96,6 +99,9 @@ internal class ChatClientImpl(
     }
 
     override fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener?) {
+        if (!ensureUserNotSet(listener)) {
+            return
+        }
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
@@ -533,6 +539,16 @@ internal class ChatClientImpl(
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
+        }
+    }
+
+    private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
+        return if (state.user != null) {
+            logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
+            listener?.onError(ChatError("User cannot be set until previous one is disconnected."))
+            false
+        } else {
+            true
         }
     }
 }

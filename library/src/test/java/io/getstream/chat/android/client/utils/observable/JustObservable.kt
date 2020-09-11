@@ -4,6 +4,8 @@ import io.getstream.chat.android.client.events.ChatEvent
 
 class JustObservable(private val event: ChatEvent) : ChatObservable {
 
+    internal lateinit var subscription: Subscription
+
     override fun filter(eventType: String): ChatObservable {
         return this
     }
@@ -22,7 +24,8 @@ class JustObservable(private val event: ChatEvent) : ChatObservable {
 
     override fun subscribe(listener: (ChatEvent) -> Unit): Subscription {
         listener(event)
-        return Subscription(this, listener, mutableListOf(), false)
+        subscription = Subscription(this, listener, mutableListOf(), false)
+        return subscription
     }
 
     override fun unsubscribe(subscription: Subscription) {
