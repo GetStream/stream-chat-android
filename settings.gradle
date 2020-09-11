@@ -28,7 +28,7 @@ if (new File(rootDir, '../stream-chat-android-client').exists()) {
 
     includeBuild("../stream-chat-android-client") {
         dependencySubstitution {
-            substitute(module("com.github.GetStream:stream-chat-android-client:")).with(project(":client"))
+            substitute(module("com.github.GetStream:stream-chat-android-client:")).with(project(":"))
         }
     }
 }
