@@ -149,7 +149,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
         iv_deliver = itemView.findViewById(R.id.iv_deliver);
 
-        mLayoutManager = new LinearLayoutManager(itemView.getContext(), RecyclerView.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
         rv_reaction.setLayoutManager(mLayoutManager);
     }
 
@@ -259,7 +259,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             if (message.getDate().equals(TODAY.getLabel()) || message.getDate().equals(YESTERDAY.getLabel()))
                 tv_messagedate.setText(message.getTime());
             else
-                tv_messagedate.setText(itemView.getContext().getString(R.string.stream_message_date, message.getDate(), message.getTime()));
+                tv_messagedate.setText(getContext().getString(R.string.stream_message_date, message.getDate(), message.getTime()));
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
