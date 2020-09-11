@@ -1,5 +1,7 @@
 # To be released:
 
+# 1.15.4 - Fri 11 Sep 2020
+
 - Fix Socket Disconnection
 - Remove useless message's properties (isStartDay, isYesterday, isToday, date, time and commandInfo)
 - Forbid setting new user when previous one wasn't disconnected
