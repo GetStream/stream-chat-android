@@ -12,7 +12,9 @@ import io.getstream.chat.android.client.models.Attachment
 /**
  * Allows you to easily customize message rendering or message attachment rendering
  */
-open class MessageViewHolderFactory {
+open class MessageViewHolderFactory(
+    protected val listenerContainer: ListenerContainer
+) {
     companion object {
         const val MESSAGEITEM_DATE_SEPARATOR = 1
         const val MESSAGEITEM_MESSAGE = 2
@@ -62,8 +64,11 @@ open class MessageViewHolderFactory {
             MESSAGEITEM_DATE_SEPARATOR ->
                 DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent)
             MESSAGEITEM_MESSAGE ->
-                MessageListItemViewHolder(R.layout.stream_item_message, parent).apply {
-                    setMessageClickListener(adapter.messageClickListener)
+                MessageListItemViewHolder(
+                    R.layout.stream_item_message,
+                    parent,
+                    listenerContainer
+                ).apply {
                     setMessageLongClickListener(adapter.messageLongClickListener)
                     setAttachmentClickListener(adapter.attachmentClickListener)
                     setReactionViewClickListener(adapter.reactionViewClickListener)

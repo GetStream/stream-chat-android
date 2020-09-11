@@ -8,7 +8,6 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
@@ -17,18 +16,13 @@ import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
     private var context: Context,
+    var viewHolderFactory: MessageViewHolderFactory,
     var channel: Channel? = null,
-    private var messageListItemList: List<MessageListItem> = emptyList(),
-    var viewHolderFactory: MessageViewHolderFactory = MessageViewHolderFactory()
+    private var messageListItemList: List<MessageListItem> = emptyList()
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
 
     var bubbleHelper: BubbleHelper? = null
 
-    var messageClickListener: MessageClickListener? = null
-        set(value) {
-            if (style?.isReactionEnabled == true)
-                field = value
-        }
     var messageLongClickListener: MessageLongClickListener? = null
     var attachmentClickListener: AttachmentClickListener? = null
     var reactionViewClickListener: ReactionViewClickListener? = null
