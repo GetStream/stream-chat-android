@@ -23,7 +23,9 @@ import com.getstream.sdk.chat.view.channels.ChannelListView;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import io.getstream.chat.android.client.models.Attachment;
@@ -33,10 +35,10 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 
-
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
-    static final SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d");
+    private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm");
 
     protected TextView tv_name, tv_last_message, tv_date;
     protected ReadStateView<ChannelListViewStyle> read_state;
@@ -188,10 +190,19 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             return;
         }
 
-        if (lastMessage.isToday())
-            tv_date.setText(lastMessage.getTime());
-        else
-            tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
+        if (isFromToday(lastMessage)) {
+            tv_date.setText(TIME_DATEFORMAT.format(lastMessage.getCreatedAt()));
+        } else {
+            tv_date.setText(DATE_FORMAT.format(lastMessage.getCreatedAt()));
+        }
+    }
+
+    private boolean isFromToday(Message message) {
+        Calendar today = Calendar.getInstance();
+        Calendar messageCalendar = Calendar.getInstance();
+        messageCalendar.setTime(message.getCreatedAt());
+        return today.get(Calendar.DAY_OF_YEAR) == messageCalendar.get(Calendar.DAY_OF_YEAR)
+                && today.get(Calendar.YEAR) == messageCalendar.get(Calendar.YEAR);
     }
 
     protected void configReadState(Channel channel) {
