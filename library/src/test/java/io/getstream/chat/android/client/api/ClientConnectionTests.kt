@@ -63,6 +63,7 @@ internal class ClientConnectionTests {
     lateinit var logger: ChatLogger
     lateinit var notificationsManager: ChatNotifications
     lateinit var initConnectionListener: InitConnectionListener
+    lateinit var observable: JustObservable
 
     @Before
     fun before() {
@@ -79,12 +80,8 @@ internal class ClientConnectionTests {
             ChatParserImpl(),
             UuidGeneratorImpl()
         )
-    }
-
-    @Test
-    fun successConnection() {
-
-        `when`(socket.events()).thenReturn(JustObservable(DisconnectedEvent(EventType.HEALTH_CHECK, Date())))
+        observable = JustObservable(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
+        `when`(socket.events()).thenReturn(observable)
 
         client = ChatClientImpl(
             config,
@@ -92,6 +89,10 @@ internal class ClientConnectionTests {
             socket,
             notificationsManager
         )
+    }
+
+    @Test
+    fun successConnection() {
         client.setUser(user, token)
 
         verify(socket, times(1)).connect(user)
@@ -99,15 +100,8 @@ internal class ClientConnectionTests {
 
     @Test
     fun `Should not connect and report error when user is already set`() {
+        observable.subscription.onNext(connectedEvent)
 
-        `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
-
-        client = ChatClientImpl(
-            config,
-            api,
-            socket,
-            notificationsManager
-        )
         client.setUser(user, token, initConnectionListener)
 
         verify(socket, never()).connect(user)
@@ -116,14 +110,6 @@ internal class ClientConnectionTests {
 
     @Test
     fun connectAndDisconnect() {
-        `when`(socket.events()).thenReturn(JustObservable(connectedEvent))
-
-        client = ChatClientImpl(
-            config,
-            api,
-            socket,
-            notificationsManager
-        )
         client.setUser(user, token)
 
         client.disconnect()
