@@ -84,21 +84,25 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
 
+    protected MessageListView.MessageClickListener messageClickListener;
     protected MessageListView.MessageLongClickListener messageLongClickListener;
     protected MessageListView.AttachmentClickListener attachmentClickListener;
     protected MessageListView.ReactionViewClickListener reactionViewClickListener;
     protected MessageListView.UserClickListener userClickListener;
     protected MessageListView.ReadStateClickListener readStateClickListener;
     protected MessageListView.GiphySendListener giphySendListener;
-    protected final ListenerContainer listenerContainer;
 
     protected List<MessageViewHolderFactory.Position> positions;
 
     protected ConstraintSet set;
 
-    public MessageListItemViewHolder(int resId, ViewGroup viewGroup, ListenerContainer listenerContainer) {
+    public MessageListItemViewHolder(
+            int resId,
+            ViewGroup viewGroup,
+            MessageListView.MessageClickListener messageClickListener
+    ) {
         super(resId, viewGroup);
-        this.listenerContainer = listenerContainer;
+        this.messageClickListener = messageClickListener;
 
         rv_reaction = itemView.findViewById(R.id.reactionsRecyclerView);
         iv_tail = itemView.findViewById(R.id.iv_tail);
@@ -420,7 +424,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
             if (isFailedMessage() && !ChatClient.instance().isSocketConnected())
                 return;
-            listenerContainer.getMessageClickListener().onMessageClick(message, position);
+            messageClickListener.onMessageClick(message, position);
         });
 
         tv_text.setOnLongClickListener(view -> {
@@ -510,10 +514,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         tv_reply.setText(tv_reply.getContext().getResources().getQuantityString(R.plurals.stream_reply_count, replyCount, replyCount));
 
         iv_reply.setOnClickListener(view -> {
-            listenerContainer.getMessageClickListener().onMessageClick(message, position);
+            messageClickListener.onMessageClick(message, position);
         });
         tv_reply.setOnClickListener(view -> {
-            listenerContainer.getMessageClickListener().onMessageClick(message, position);
+            messageClickListener.onMessageClick(message, position);
         });
     }
 

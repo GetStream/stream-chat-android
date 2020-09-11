@@ -67,7 +67,7 @@ open class MessageViewHolderFactory(
                 MessageListItemViewHolder(
                     R.layout.stream_item_message,
                     parent,
-                    listenerContainer
+                    listenerContainer.messageClickListener
                 ).apply {
                     setMessageLongClickListener(adapter.messageLongClickListener)
                     setAttachmentClickListener(adapter.attachmentClickListener)
