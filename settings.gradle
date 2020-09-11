@@ -1,6 +1,34 @@
 include ':library', ':sample'
 
+// compositeBuild allow you to easily work on multiple projects at once
+// you can use the debugger and edit code as if it was a single project
+// this replaces the need to use mavenLocal publish commands and edit versions
+// android studio also supports this gradle feature
+// to work you need to have the client, livedata and main repo in the same top level folder, ie
+// folder
+// - stream-chat-android-client
+// - stream-chat-android-livedata
+// - stream-chat-android
+// comment this code or move the directory to enable/disable local modules
 
-//include ':livedata'
+if (new File(rootDir, '../stream-chat-android-livedata').exists()) {
 
-//project(":livedata").projectDir=new File("/Users/thierry/workspace/stream-chat-android-livedata/livedata")
+    includeBuild("../stream-chat-android-livedata") {
+        dependencySubstitution {
+            // project spec is validated, if you get it wrong you get an error
+            // module spec is not validated, if you get it wrong you just dont get a local version of the module
+            substitute(module("com.github.GetStream:stream-chat-android-livedata:")).with(project(":livedata"))
+        }
+    }
+}
+
+// defined at livedata level settings.gradle as well
+// TODO: This sub doesn't seem to work
+if (new File(rootDir, '../stream-chat-android-client').exists()) {
+
+    includeBuild("../stream-chat-android-client") {
+        dependencySubstitution {
+            substitute(module("com.github.GetStream:stream-chat-android-client:")).with(project(":client"))
+        }
+    }
+}
