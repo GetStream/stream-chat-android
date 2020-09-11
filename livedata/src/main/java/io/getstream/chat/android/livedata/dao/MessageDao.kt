@@ -35,6 +35,9 @@ interface MessageDao {
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND createdAt < :deleteMessagesBefore")
     suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
 
+    @Query("DELETE from stream_chat_message WHERE cid = :cid AND id = :messageId")
+    suspend fun deleteMessage(cid: String, messageId: String)
+
     @Query(
         "SELECT * FROM stream_chat_message " +
             "WHERE stream_chat_message.id IN (:ids)"
