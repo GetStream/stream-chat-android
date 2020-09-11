@@ -21,5 +21,4 @@ class ThreadSeparatorViewHolder(resId: Int, viewGroup: ViewGroup) :
     ) {
         /* Empty */
     }
-
 }
