@@ -83,12 +83,15 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         }
 
         // add to latest reactions
+        latestReactions = latestReactions.toMutableList()
         latestReactions.add(reactionEntity)
 
         // update the count
+        reactionCounts = reactionCounts.toMutableMap()
         val currentCount = reactionCounts.getOrElse(reaction.type) { 0 }
         reactionCounts[reaction.type] = currentCount + 1
         // update the score
+        reactionScores = reactionScores.toMutableMap()
         val currentScore = reactionScores.getOrElse(reaction.type) { 0 }
         reactionScores[reaction.type] = currentScore + reaction.score
     }
@@ -96,15 +99,23 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     // removes this reaction and update the counts
     fun removeReaction(reaction: Reaction, updateCounts: Boolean = false) {
         val reactionEntity = ReactionEntity(reaction)
-        val removed1 = ownReactions.remove(reactionEntity)
-        val removed2 = latestReactions.remove(reactionEntity)
+        val countBeforeFilter = ownReactions.size + latestReactions.size
+        ownReactions = ownReactions.filterNot { it.type == reactionEntity.type && it.userId == reactionEntity.userId }.toMutableList()
+        latestReactions = latestReactions.filterNot { it.type == reactionEntity.type && it.userId == reactionEntity.userId }.toMutableList()
+        val countAfterFilter = ownReactions.size + latestReactions.size
         if (updateCounts) {
-            val shouldDecrement = removed1 || removed2 || latestReactions.size >= 15
+            val shouldDecrement = (countBeforeFilter > countAfterFilter) || latestReactions.size >= 15
             if (shouldDecrement) {
                 val currentCount = reactionCounts.getOrElse(reaction.type) { 1 }
                 reactionCounts[reaction.type] = currentCount - 1
+                if (reactionCounts[reaction.type] == 0) {
+                    reactionCounts.remove(reaction.type)
+                }
                 val currentScore = reactionScores.getOrElse(reaction.type) { 1 }
                 reactionScores[reaction.type] = currentScore - reaction.score
+                if (reactionScores[reaction.type] == 0) {
+                    reactionScores.remove(reaction.type)
+                }
             }
         }
     }

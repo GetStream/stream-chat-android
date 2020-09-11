@@ -60,14 +60,15 @@ class ChannelControllerImpl(
     val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
+    override val messages: LiveData<List<Message>> = Transformations.map(_messages) { messageMap ->
         // TODO: consider removing this check
-        it.values
+        val messages = messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
             .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
             .sortedBy { it.createdAt }
             .toList()
+        messages.map {it.copy(cid = cid)}
     }
 
     /** the number of people currently watching the channel */
