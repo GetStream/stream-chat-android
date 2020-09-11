@@ -105,7 +105,7 @@ class ChannelControllerImpl(
             .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
             .sortedBy { it.createdAt }
             .toList()
-        messages.map {it.copy(cid = cid)}
+        messages.map { it.copy(cid = cid) }
     }
 
     /** the number of people currently watching the channel */
