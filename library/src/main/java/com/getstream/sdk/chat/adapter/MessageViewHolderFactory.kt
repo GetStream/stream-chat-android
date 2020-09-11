@@ -56,7 +56,6 @@ open class MessageViewHolderFactory(
     }
 
     open fun createMessageViewHolder(
-        adapter: MessageListItemAdapter,
         parent: ViewGroup,
         viewType: Int
     ): BaseMessageListItemViewHolder<*> {
@@ -67,15 +66,14 @@ open class MessageViewHolderFactory(
                 MessageListItemViewHolder(
                     R.layout.stream_item_message,
                     parent,
-                    listenerContainer.messageClickListener
-                ).apply {
-                    setMessageLongClickListener(adapter.messageLongClickListener)
-                    setAttachmentClickListener(adapter.attachmentClickListener)
-                    setReactionViewClickListener(adapter.reactionViewClickListener)
-                    setUserClickListener(adapter.userClickListener)
-                    setReadStateClickListener(adapter.readStateClickListener)
-                    setGiphySendListener(adapter.giphySendListener)
-                }
+                    listenerContainer.messageClickListener,
+                    listenerContainer.messageLongClickListener,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.reactionViewClickListener,
+                    listenerContainer.userClickListener,
+                    listenerContainer.readStateClickListener,
+                    listenerContainer.giphySendListener
+                )
             MESSAGEITEM_TYPING ->
                 TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent)
             MESSAGEITEM_THREAD_SEPARATOR ->
@@ -92,9 +90,11 @@ open class MessageViewHolderFactory(
     ): BaseAttachmentViewHolder {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
-                AttachmentViewHolderMedia(R.layout.stream_item_attach_media, parent).apply {
-                    setGiphySendListener(adapter.giphySendListener)
-                }
+                AttachmentViewHolderMedia(
+                    R.layout.stream_item_attach_media,
+                    parent,
+                    listenerContainer.giphySendListener
+                )
             FILE_ATTACHMENT ->
                 AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
             else ->

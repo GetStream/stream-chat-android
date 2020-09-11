@@ -84,12 +84,19 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
 
+    @NonNull
     protected MessageListView.MessageClickListener messageClickListener;
+    @NonNull
     protected MessageListView.MessageLongClickListener messageLongClickListener;
+    @NonNull
     protected MessageListView.AttachmentClickListener attachmentClickListener;
+    @NonNull
     protected MessageListView.ReactionViewClickListener reactionViewClickListener;
+    @NonNull
     protected MessageListView.UserClickListener userClickListener;
+    @NonNull
     protected MessageListView.ReadStateClickListener readStateClickListener;
+    @NonNull
     protected MessageListView.GiphySendListener giphySendListener;
 
     protected List<MessageViewHolderFactory.Position> positions;
@@ -99,10 +106,22 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     public MessageListItemViewHolder(
             int resId,
             ViewGroup viewGroup,
-            MessageListView.MessageClickListener messageClickListener
+            @NonNull MessageListView.MessageClickListener messageClickListener,
+            @NonNull MessageListView.MessageLongClickListener messageLongClickListener,
+            @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
+            @NonNull MessageListView.ReactionViewClickListener reactionViewClickListener,
+            @NonNull MessageListView.UserClickListener userClickListener,
+            @NonNull MessageListView.ReadStateClickListener readStateClickListener,
+            @NonNull MessageListView.GiphySendListener giphySendListener
     ) {
         super(resId, viewGroup);
         this.messageClickListener = messageClickListener;
+        this.messageLongClickListener = messageLongClickListener;
+        this.attachmentClickListener = attachmentClickListener;
+        this.reactionViewClickListener = reactionViewClickListener;
+        this.userClickListener = userClickListener;
+        this.readStateClickListener = readStateClickListener;
+        this.giphySendListener = giphySendListener;
 
         rv_reaction = itemView.findViewById(R.id.reactionsRecyclerView);
         iv_tail = itemView.findViewById(R.id.iv_tail);
@@ -183,31 +202,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         configParamsReply();
         configParamsReadIndicator();
     }
-
-    public void setMessageLongClickListener(MessageListView.MessageLongClickListener messageLongClickListener) {
-        this.messageLongClickListener = messageLongClickListener;
-    }
-
-    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
-        this.attachmentClickListener = attachmentClickListener;
-    }
-
-    public void setReactionViewClickListener(MessageListView.ReactionViewClickListener reactionViewClickListener) {
-        this.reactionViewClickListener = reactionViewClickListener;
-    }
-
-    public void setUserClickListener(MessageListView.UserClickListener userClickListener) {
-        this.userClickListener = userClickListener;
-    }
-
-    public void setReadStateClickListener(MessageListView.ReadStateClickListener readStateClickListener) {
-        this.readStateClickListener = readStateClickListener;
-    }
-
-    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
-        this.giphySendListener = giphySendListener;
-    }
-
     // endregion
 
     // region Config
@@ -242,8 +236,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         avatar.setVisibility(isBottomPosition() ? View.VISIBLE : View.GONE);
         avatar.setUser(message.getUser(), style);
         avatar.setOnClickListener(view -> {
-            if (userClickListener != null)
-                userClickListener.onUserClick(message.getUser());
+            userClickListener.onUserClick(message.getUser());
         });
     }
 
@@ -338,8 +331,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         read_state.setVisibility(View.VISIBLE);
         read_state.setReads(readBy, messageListItem.isTheirs(), style);
         read_state.setOnClickListener(view -> {
-            if (readStateClickListener != null)
-                readStateClickListener.onReadStateClick(readBy);
+            readStateClickListener.onReadStateClick(readBy);
         });
     }
 
@@ -430,8 +422,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         tv_text.setOnLongClickListener(view -> {
             if (isDeletedMessage() || isFailedMessage()) return true;
             isLongClick = true;
-            if (this.messageLongClickListener != null)
-                this.messageLongClickListener.onMessageLongClick(message);
+            this.messageLongClickListener.onMessageLongClick(message);
             return true;
         });
 

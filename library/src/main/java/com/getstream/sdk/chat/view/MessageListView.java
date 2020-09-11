@@ -87,7 +87,6 @@ public class MessageListView extends RecyclerView {
 
     private TaggedLogger logger = ChatLogger.Companion.get("MessageListView");
 
-
     private final MessageClickListener DEFAULT_MESSAGE_CLICK_LISTENER = (message, position) -> {
         if (message.getReplyCount() > 0) {
             onStartThreadHandler.invoke(message);
@@ -96,18 +95,63 @@ public class MessageListView extends RecyclerView {
             //viewModel.sendMessage(message);
         }
     };
+    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message -> {
+        new MessageMoreActionDialog(
+                getContext(),
+                channel,
+                message,
+                currentUser,
+                style,
+                onMessageEditHandler,
+                onMessageDeleteHandler,
+                (Message m) -> {
+                    onStartThreadHandler.invoke(m);
+                    onStartThreadListener.invoke(m);
+                    return Unit.INSTANCE;
+                },
+                onMessageFlagHandler
+        ).show();
+    };
+    private final AttachmentClickListener DEFAULT_ATTACHMENT_CLICK_LISTENER = (message, attachment) -> {
+        Chat.getInstance()
+                .getNavigator()
+                .navigate(new AttachmentDestination(message, attachment, getContext()));
+    };
+    private final ReactionViewClickListener DEFAULT_REACTION_VIEW_CLICK_LISTENER = message -> {
+        Utils.hideSoftKeyboard((Activity) getContext());
+        new MessageMoreActionDialog(
+                getContext(),
+                channel,
+                message,
+                currentUser,
+                style,
+                onMessageEditHandler,
+                onMessageDeleteHandler,
+                onStartThreadHandler,
+                onMessageFlagHandler
+        ).show();
+    };
+    private final UserClickListener DEFAULT_USER_CLICK_LISTENER = user -> { /* Empty */ };
+    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads -> {
+        new ReadUsersDialog(getContext())
+                .setReads(reads)
+                .setStyle(style)
+                .show();
+    };
+    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) -> {
+        onSendGiphyHandler.invoke(message, action);
+    };
 
     private final ListenerContainer listenerContainer = new ListenerContainer(
-            DEFAULT_MESSAGE_CLICK_LISTENER
+            DEFAULT_MESSAGE_CLICK_LISTENER,
+            DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+            DEFAULT_ATTACHMENT_CLICK_LISTENER,
+            DEFAULT_REACTION_VIEW_CLICK_LISTENER,
+            DEFAULT_USER_CLICK_LISTENER,
+            DEFAULT_READ_STATE_CLICK_LISTENER,
+            DEFAULT_GIPHY_SEND_LISTENER
     );
     private MessageViewHolderFactory viewHolderFactory;
-
-    private MessageLongClickListener messageLongClickListener;
-    private AttachmentClickListener attachmentClickListener;
-    private ReactionViewClickListener reactionViewClickListener;
-    private UserClickListener userClickListener;
-    private ReadStateClickListener readStateClickListener;
-
 
     // region Constructor
     public MessageListView(Context context) {
@@ -152,17 +196,9 @@ public class MessageListView extends RecyclerView {
 
     private void setAdapterWithStyle(MessageListItemAdapter adapter) {
         adapter.setStyle(style);
-        adapter.setGiphySendListener((Message message, GiphyAction action) -> onSendGiphyHandler.invoke(message, action));
-        setMessageLongClickListener(messageLongClickListener);
-        setAttachmentClickListener(attachmentClickListener);
-        setReactionViewClickListener(reactionViewClickListener);
-        setUserClickListener(userClickListener);
-        setReadStateClickListener(readStateClickListener);
-        setMessageLongClickListener(messageLongClickListener);
         adapter.setChannel(channel);
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (layoutManager != null) {
@@ -324,6 +360,11 @@ public class MessageListView extends RecyclerView {
                 && passedTime < 3000;
     }
 
+    /**
+     * Sets the message click listener to be used by MessageListView.
+     *
+     * @param messageClickListener The listener to use. If null, the default will be used instead.
+     */
     public void setMessageClickListener(@Nullable MessageClickListener messageClickListener) {
         if (messageClickListener == null) {
             messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER;
@@ -331,97 +372,64 @@ public class MessageListView extends RecyclerView {
         listenerContainer.setMessageClickListener(messageClickListener);
     }
 
-    public void setMessageLongClickListener(MessageLongClickListener messageLongClickListener) {
-        this.messageLongClickListener = messageLongClickListener;
-
-        if (adapter == null) return;
-
-        if (this.messageLongClickListener != null) {
-            adapter.setMessageLongClickListener(this.messageLongClickListener);
-        } else {
-            adapter.setMessageLongClickListener(message ->
-                    new MessageMoreActionDialog(
-                            getContext(),
-                            channel,
-                            message,
-                            currentUser,
-                            style,
-                            onMessageEditHandler,
-                            onMessageDeleteHandler,
-                            (Message m) -> {
-                                onStartThreadHandler.invoke(m);
-                                onStartThreadListener.invoke(m);
-                                return Unit.INSTANCE;
-                            },
-                            onMessageFlagHandler
-                    ).show());
+    /**
+     * Sets the message long click listener to be used by MessageListView.
+     *
+     * @param messageLongClickListener The listener to use. If null, the default will be used instead.
+     */
+    public void setMessageLongClickListener(@Nullable MessageLongClickListener messageLongClickListener) {
+        if (messageLongClickListener == null) {
+            messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER;
         }
+        listenerContainer.setMessageLongClickListener(messageLongClickListener);
     }
 
-    public void setAttachmentClickListener(AttachmentClickListener attachmentClickListener) {
-        this.attachmentClickListener = attachmentClickListener;
-
-        if (adapter == null) return;
-
-        if (this.attachmentClickListener != null) {
-            adapter.setAttachmentClickListener(this.attachmentClickListener);
-        } else {
-            adapter.setAttachmentClickListener(this::showAttachment);
+    /**
+     * Sets the attachment click listener to be used by MessageListView.
+     *
+     * @param attachmentClickListener The listener to use. If null, the default will be used instead.
+     */
+    public void setAttachmentClickListener(@Nullable AttachmentClickListener attachmentClickListener) {
+        if (attachmentClickListener == null) {
+            attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER;
         }
+        listenerContainer.setAttachmentClickListener(attachmentClickListener);
     }
 
-    public void showAttachment(Message message, Attachment attachment) {
-        Chat.getInstance().getNavigator().navigate(new AttachmentDestination(message, attachment, getContext()));
+    /**
+     * Sets the reaction view click listener to be used by MessageListView.
+     *
+     * @param reactionViewClickListener The listener to use. If null, the default will be used instead.
+     */
+    public void setReactionViewClickListener(@Nullable ReactionViewClickListener reactionViewClickListener) {
+        if (reactionViewClickListener == null) {
+            reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER;
+        }
+        listenerContainer.setReactionViewClickListener(reactionViewClickListener);
     }
 
-    public void setReactionViewClickListener(ReactionViewClickListener l) {
-        this.reactionViewClickListener = l;
-        if (adapter == null) return;
-
-        if (this.reactionViewClickListener != null) {
-            adapter.setReactionViewClickListener(this.reactionViewClickListener);
-        } else {
-            adapter.setReactionViewClickListener(message -> {
-                Utils.hideSoftKeyboard((Activity) getContext());
-                new MessageMoreActionDialog(
-                        getContext(),
-                        channel,
-                        message,
-                        currentUser,
-                        style,
-                        onMessageEditHandler,
-                        onMessageDeleteHandler,
-                        onStartThreadHandler,
-                        onMessageFlagHandler
-                ).show();
-            });
+    /**
+     * Sets the user click listener to be used by MessageListView.
+     *
+     * @param userClickListener The listener to use. If null, the default will be used instead.
+     */
+    public void setUserClickListener(@Nullable UserClickListener userClickListener) {
+        if (userClickListener == null) {
+            userClickListener = DEFAULT_USER_CLICK_LISTENER;
         }
+        listenerContainer.setUserClickListener(userClickListener);
     }
 
-    public void setUserClickListener(UserClickListener userClickListener) {
-        this.userClickListener = userClickListener;
-
-        if (adapter == null) return;
-
-        if (this.userClickListener != null) {
-            adapter.setUserClickListener(this.userClickListener);
+    /**
+     * Sets the read state click listener to be used by MessageListView.
+     *
+     * @param readStateClickListener The listener to use. If null, the default will be used instead.
+     */
+    public void setReadStateClickListener(@Nullable ReadStateClickListener readStateClickListener) {
+        if (readStateClickListener == null) {
+            readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER;
         }
-    }
-
-    public void setReadStateClickListener(ReadStateClickListener readStateClickListener) {
-        this.readStateClickListener = readStateClickListener;
-        if (adapter == null) return;
-
-        if (this.readStateClickListener != null) {
-            adapter.setReadStateClickListener(this.readStateClickListener);
-        } else {
-            adapter.setReadStateClickListener(reads -> {
-                new ReadUsersDialog(getContext())
-                        .setReads(reads)
-                        .setStyle(style)
-                        .show();
-            });
-        }
+        listenerContainer.setReadStateClickListener(readStateClickListener);
     }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {

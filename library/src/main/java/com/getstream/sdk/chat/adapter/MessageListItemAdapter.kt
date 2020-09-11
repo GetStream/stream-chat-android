@@ -4,13 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.view.MessageListView
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
@@ -22,14 +16,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
 
     var bubbleHelper: BubbleHelper? = null
-
-    var messageLongClickListener: MessageLongClickListener? = null
-    var attachmentClickListener: AttachmentClickListener? = null
-    var reactionViewClickListener: ReactionViewClickListener? = null
-    var userClickListener: MessageListView.UserClickListener? = null
-    var readStateClickListener: ReadStateClickListener? = null
-    var giphySendListener: GiphySendListener? = null
-
     var isThread = false
     var style: MessageListViewStyle? = null
 
@@ -54,7 +40,7 @@ class MessageListItemAdapter @JvmOverloads constructor(
         parent: ViewGroup,
         viewType: Int
     ): BaseMessageListItemViewHolder<*> {
-        return viewHolderFactory.createMessageViewHolder(this, parent, viewType)
+        return viewHolderFactory.createMessageViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {

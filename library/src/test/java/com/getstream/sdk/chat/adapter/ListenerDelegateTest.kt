@@ -1,43 +1,54 @@
 package com.getstream.sdk.chat.adapter
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
 
+@TestInstance(PER_METHOD)
 class ListenerDelegateTest {
 
     interface TestListener {
-        fun call(): Int
+        fun call()
+    }
+
+    private var listener1: TestListener = mock()
+    private var listener2: TestListener = mock()
+
+    private var delegate: TestListener by ListenerContainer.ListenerDelegate(
+        initialValue = listener1,
+        wrap = { realListener ->
+            object : TestListener {
+                override fun call() = realListener().call()
+                override fun toString() = "wrapper"
+            }
+        }
+    )
+
+    @Test
+    fun `Given valid setup Then the accessible listener is the wrapper`() {
+        val delegateRef = delegate
+        delegateRef.toString() shouldBeEqualTo "wrapper"
     }
 
     @Test
-    fun test() {
-        val listener1 = object : TestListener {
-            override fun call() = 1
-        }
-        val listener2 = object : TestListener {
-            override fun call() = 2
-        }
+    fun `Given valid setup When listener is called Then the initial listener is called`() {
+        delegate.call()
+        verify(listener1).call()
+    }
 
-        var delegate: TestListener by ListenerDelegate<TestListener>(
-            initialValue = listener1,
-            wrap = { realListener ->
-                object : TestListener {
-                    override fun call() = realListener().call()
-                    override fun toString() = "wrapper"
-                }
-            }
-        )
+    @Test
+    fun `Given valid setup When underlying listener is changed Then the new listener is called`() {
+        val delegateRef = delegate
 
-        // Save reference locally
-        val localProp = delegate
-        localProp.call() shouldBeEqualTo 1
-
-        // Swap underlying listener back and forth, wrapper always calls the correct one
         delegate = listener2
-        localProp.call() shouldBeEqualTo 2
-        delegate = listener1
-        localProp.call() shouldBeEqualTo 1
+        delegateRef.call()
+        verify(listener2).call()
 
-        localProp.toString() shouldBeEqualTo "wrapper"
+        delegate = listener1
+        delegateRef.call()
+        verify(listener1).call()
     }
 }
