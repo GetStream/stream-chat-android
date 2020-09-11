@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 
 /**
@@ -57,15 +58,17 @@ open class MessageViewHolderFactory(
 
     open fun createMessageViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
+        style: MessageListViewStyle
     ): BaseMessageListItemViewHolder<*> {
         return when (viewType) {
             MESSAGEITEM_DATE_SEPARATOR ->
-                DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent)
+                DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent, style)
             MESSAGEITEM_MESSAGE ->
                 MessageListItemViewHolder(
                     R.layout.stream_item_message,
                     parent,
+                    style,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
                     listenerContainer.attachmentClickListener,
@@ -75,7 +78,7 @@ open class MessageViewHolderFactory(
                     listenerContainer.giphySendListener
                 )
             MESSAGEITEM_TYPING ->
-                TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent)
+                TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent, style)
             MESSAGEITEM_THREAD_SEPARATOR ->
                 ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent)
             else ->

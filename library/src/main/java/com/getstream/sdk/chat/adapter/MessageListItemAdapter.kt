@@ -38,7 +38,11 @@ class MessageListItemAdapter @JvmOverloads constructor(
         parent: ViewGroup,
         viewType: Int
     ): BaseMessageListItemViewHolder<*> {
-        return viewHolderFactory.createMessageViewHolder(parent, viewType)
+        return viewHolderFactory.createMessageViewHolder(
+            parent = parent,
+            viewType = viewType,
+            style = requireNotNull(style) { "Style was not set" }
+        )
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
