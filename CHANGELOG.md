@@ -4,6 +4,7 @@
 - Fix thread shown issue after sending message to a channel 
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
 - Improve setting user in sample app
+- Add updating message read state after loading first messages
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 

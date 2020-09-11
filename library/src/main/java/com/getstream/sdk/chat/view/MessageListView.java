@@ -251,6 +251,7 @@ public class MessageListView extends RecyclerView {
             int newPosition = adapter.getItemCount() - 1;
             layoutManager.scrollToPosition(newPosition);
             logger.logI(String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+            lastMessageReadHandler.invoke();
         } else if (listItem.getLoadingMore()) {
             // the load more behaviour is different, scroll positions starts out at 0
             // to stay at the relative 0 we should go to 0 + size of new messages...
