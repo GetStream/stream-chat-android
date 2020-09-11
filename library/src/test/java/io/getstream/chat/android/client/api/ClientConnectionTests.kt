@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -17,7 +18,7 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.JustObservable
-import org.amshove.kluent.any
+import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.`when`
@@ -105,7 +106,9 @@ internal class ClientConnectionTests {
         client.setUser(user, token, initConnectionListener)
 
         verify(socket, never()).connect(user)
-        verify(initConnectionListener).onError(any())
+
+        val error = ChatError("User cannot be set until previous one is disconnected.")
+        verify(initConnectionListener).onError(safeArgThat(error, { it.message == error.message }))
     }
 
     @Test

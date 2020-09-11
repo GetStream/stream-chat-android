@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.utils
 
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.argThat
 import org.mockito.Mockito
 
 /**
@@ -22,3 +23,11 @@ fun <T> any(): T = Mockito.any<T>()
  * when null is returned.
  */
 fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
+
+/**
+ * Calls ArgumentMatcher.argThat() and returns result to avoid nulls when using with non-nullable parameters
+ */
+fun <T> safeArgThat(result: T, matcher: ((T) -> Boolean)): T {
+    argThat(matcher)
+    return result
+}
