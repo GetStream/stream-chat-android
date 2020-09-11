@@ -1,30 +1,25 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.view.ViewGroup
+import android.widget.TextView
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
+import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
+import io.getstream.chat.android.client.models.Channel
 
-import androidx.annotation.NonNull;
+class ThreadSeparatorViewHolder(resId: Int, viewGroup: ViewGroup) :
+    BaseMessageListItemViewHolder<ThreadSeparatorItem>(resId, viewGroup) {
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.view.MessageListView;
+    private val tv_text: TextView = itemView.findViewById(R.id.tv_text)
 
-import io.getstream.chat.android.client.models.Channel;
-
-public class ThreadSeparatorViewHolder extends BaseMessageListItemViewHolder {
-
-    private final TextView tv_text;
-
-    public ThreadSeparatorViewHolder(int resId, ViewGroup viewGroup) {
-        super(resId, viewGroup);
-        tv_text = itemView.findViewById(R.id.tv_text);
+    override fun bind(
+        channel: Channel,
+        messageListItem: ThreadSeparatorItem,
+        bubbleHelper: BubbleHelper,
+        factory: MessageViewHolderFactory,
+        position: Int
+    ) {
+        /* Empty */
     }
 
-    @Override
-    public void bind(@NonNull Channel channelState,
-                     @NonNull MessageListItem messageListItem,
-                     @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @NonNull MessageViewHolderFactory factory,
-                     int position) {
-//        tv_text.setText();
-    }
 }

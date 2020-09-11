@@ -1,84 +1,75 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.text.format.DateUtils
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
+import com.getstream.sdk.chat.enums.Dates
+import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
+import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.client.models.Channel
+import java.util.Date
 
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
+class DateSeparatorViewHolder(
+    resId: Int,
+    viewGroup: ViewGroup,
+    private val style: MessageListViewStyle
+) : BaseMessageListItemViewHolder<DateSeparatorItem>(resId, viewGroup) {
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.enums.Dates;
-import com.getstream.sdk.chat.view.MessageListView;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
+    private val tv_date: TextView = itemView.findViewById(R.id.tv_date)
+    private val iv_line_right: ImageView = itemView.findViewById(R.id.iv_line_right)
+    private val iv_line_left: ImageView = itemView.findViewById(R.id.iv_line_left)
 
-import java.util.Date;
+    private var messageListItem: DateSeparatorItem? = null
 
-import io.getstream.chat.android.client.models.Channel;
-
-import static android.text.format.DateUtils.getRelativeTimeSpanString;
-
-public class DateSeparatorViewHolder extends BaseMessageListItemViewHolder<MessageListItem.DateSeparatorItem> {
-
-    private final MessageListViewStyle style;
-
-    private final TextView tv_date;
-    private final ImageView iv_line_right, iv_line_left;
-
-    private MessageListItem.DateSeparatorItem messageListItem;
-
-    public DateSeparatorViewHolder(int resId, ViewGroup viewGroup, MessageListViewStyle style) {
-        super(resId, viewGroup);
-        this.style = style;
-        tv_date = itemView.findViewById(R.id.tv_date);
-        iv_line_right = itemView.findViewById(R.id.iv_line_right);
-        iv_line_left = itemView.findViewById(R.id.iv_line_left);
+    override fun bind(
+        channel: Channel,
+        messageListItem: DateSeparatorItem,
+        bubbleHelper: BubbleHelper,
+        factory: MessageViewHolderFactory,
+        position: Int
+    ) {
+        this.messageListItem = messageListItem
+        configDate(messageListItem)
+        applyStyle()
     }
 
-    @Override
-    public void bind(@NonNull Channel channelState,
-                     @NonNull MessageListItem.DateSeparatorItem messageListItem,
-                     @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @NonNull MessageViewHolderFactory factory,
-                     int position) {
-        this.messageListItem = messageListItem;
-        configDate();
-        applyStyle();
+    private fun configDate(messageListItem: DateSeparatorItem) {
+        val messageDate = messageListItem.date.time
+        val now = Date()
+        val humanizedDate =
+            if (now.time - messageDate < 60 * 1000) {
+                Dates.JUST_NOW.label
+            } else {
+                DateUtils.getRelativeTimeSpanString(messageDate)
+            }
+        tv_date.text = humanizedDate
     }
 
-    private void configDate() {
-        String humanizedDate;
-        long messageDate = messageListItem.getDate().getTime();
-        Date now = new Date();
-        if ((now.getTime() - messageDate) < 60 * 1000)
-            humanizedDate = Dates.JUST_NOW.getLabel();
-        else
-            humanizedDate = getRelativeTimeSpanString(messageDate).toString();
+    private fun applyStyle() {
+        style.dateSeparatorDateText.apply(tv_date)
 
-        tv_date.setText(humanizedDate);
-    }
-
-    private void applyStyle() {
-        style.dateSeparatorDateText.apply(tv_date);
-
-        if (style.getDateSeparatorLineDrawable() != -1) {
-            int drawable = style.getDateSeparatorLineDrawable();
-            iv_line_right.setBackground(ContextCompat.getDrawable(getContext(), drawable));
-            iv_line_left.setBackground(ContextCompat.getDrawable(getContext(), drawable));
+        if (style.dateSeparatorLineDrawable != -1) {
+            val drawable = style.dateSeparatorLineDrawable
+            iv_line_right.background = ContextCompat.getDrawable(context, drawable)
+            iv_line_left.background = ContextCompat.getDrawable(context, drawable)
         } else {
-            iv_line_right.setBackgroundColor(style.getDateSeparatorLineColor());
-            iv_line_left.setBackgroundColor(style.getDateSeparatorLineColor());
+            iv_line_right.setBackgroundColor(style.dateSeparatorLineColor)
+            iv_line_left.setBackgroundColor(style.dateSeparatorLineColor)
         }
-        configSeparatorLineWidth(iv_line_right);
-        configSeparatorLineWidth(iv_line_left);
+        configSeparatorLineWidth(iv_line_right)
+        configSeparatorLineWidth(iv_line_left)
     }
 
-    private void configSeparatorLineWidth(View view) {
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
-        params.height = style.getDateSeparatorLineWidth();
-        view.setLayoutParams(params);
+    private fun configSeparatorLineWidth(view: View) {
+        view.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            height = style.dateSeparatorLineWidth
+        }
     }
-
 }
