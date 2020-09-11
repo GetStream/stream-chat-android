@@ -1,26 +1,24 @@
 package com.getstream.sdk.chat.viewmodel.messages;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
-
+import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.TaggedLogger;
+import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.Message;
+import io.getstream.chat.android.client.models.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.logger.TaggedLogger;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
 
 import static kotlin.collections.CollectionsKt.filter;
 import static kotlin.collections.CollectionsKt.map;
@@ -132,18 +130,24 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
+    private Observer<List<Message>> messagesObserver = this::onMessagesChanged;
+    private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
+
     private boolean isThread() {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
 
-    private final Observer<List<Message>> messagesObserver = new Observer<List<Message>>() {
-        @Override
-        public void onChanged(List<Message> messages) {
-            if (threadMessages.getValue() == null || threadMessages.getValue().isEmpty()) {
-                progressMessages(messages);
-            }
+    private void onMessagesChanged(List<Message> messages) {
+        if (!isThread()) {
+            progressMessages(messages);
         }
-    };
+    }
+
+    private void onThreadMessagesChanged(List<Message> messages) {
+        if (isThread()) {
+            progressMessages(messages);
+        }
+    }
 
     @Override
     public void observe(@NonNull LifecycleOwner owner,
@@ -159,7 +163,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         messages.observe(owner, messagesObserver);
 
-        threadMessages.observe(owner, this::progressMessages);
+        threadMessages.observe(owner, threadMessagesObserver);
 
         this.typing.observe(owner, users -> {
             if (isThread()) return;
@@ -187,7 +191,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         messages.observeForever(messagesObserver);
 
-        threadMessages.observeForever(this::progressMessages);
+        threadMessages.observeForever(threadMessagesObserver);
 
         this.typing.observeForever(users -> {
             if (isThread()) return;
@@ -277,22 +281,22 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {
         // remove the old observer
-        this.threadMessages.removeObserver(this::progressMessages);
+        this.threadMessages.removeObserver(threadMessagesObserver);
 
         // setup the new observer
         this.threadMessages = threadMessages;
         if (lifecycleOwner == null) {
-            threadMessages.observeForever(this::progressMessages);
+            threadMessages.observeForever(threadMessagesObserver);
         } else {
-            threadMessages.observe(lifecycleOwner, this::progressMessages);
+            threadMessages.observe(lifecycleOwner, threadMessagesObserver);
         }
 
         // trigger an update
-        progressMessages(threadMessages.getValue());
+        onThreadMessagesChanged(threadMessages.getValue());
     }
 
     public void resetThread() {
         threadMessages = new MutableLiveData<>();
-        progressMessages(this.messages.getValue());
+        onMessagesChanged(this.messages.getValue());
     }
 }

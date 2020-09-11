@@ -1,6 +1,7 @@
 # To be released:
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
+- Fix thread shown issue after sending message to a channel 
 
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
 - Wrap Attachment into AttachmentListItem for use in adapter
