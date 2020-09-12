@@ -3,10 +3,10 @@ package com.getstream.sdk.chat.adapter
 import androidx.recyclerview.widget.DiffUtil
 
 class MessageListItemDiffCallback(
-        private val old: List<MessageListItem>,
-        private val new: List<MessageListItem>
+    private val old: List<MessageListItem>,
+    private val new: List<MessageListItem>
 ) :
-        DiffUtil.Callback() {
+    DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {
         return old.size
@@ -17,15 +17,15 @@ class MessageListItemDiffCallback(
     }
 
     override fun areItemsTheSame(
-            oldItemPosition: Int,
-            newItemPosition: Int
+        oldItemPosition: Int,
+        newItemPosition: Int
     ): Boolean {
         return old[oldItemPosition].getStableId() == new[newItemPosition].getStableId()
     }
 
     override fun areContentsTheSame(
-            oldItemPosition: Int,
-            newItemPosition: Int
+        oldItemPosition: Int,
+        newItemPosition: Int
     ): Boolean {
         return old[oldItemPosition] == new[newItemPosition]
     }
