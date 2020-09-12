@@ -199,9 +199,9 @@ class QueryChannelsControllerImpl(
     private fun addChannels(newChannels: List<Channel>, onTop: Boolean = false) {
         // second page adds to the list of channels
         queryEntity.channelCids = if (onTop) {
-            newChannels.map { it.cid } + queryEntity.channelCids
+            (newChannels.map { it.cid } + queryEntity.channelCids).distinct()
         } else {
-            queryEntity.channelCids + newChannels.map { it.cid }
+            (queryEntity.channelCids + newChannels.map { it.cid }).distinct()
         }
 
         _channels.postValue(

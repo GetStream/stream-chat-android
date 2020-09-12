@@ -53,6 +53,28 @@ internal class QueryChannelsControllerImplTest {
         result.size shouldBeEqualTo 1
         result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
     }
+
+    @Test
+    fun `when add channel twice if filter matches should post value to liveData only one value`() {
+        val chatDomainImpl = mock<ChatDomainImpl>().apply {
+            whenever(currentUser) doReturn mock()
+            whenever(job) doReturn Job()
+        }
+        val channelController = spy(ChannelControllerImpl("ChannelType", "ChannelID", mock(), chatDomainImpl))
+        val sut = Fixture()
+            .givenChatDomain(chatDomainImpl)
+            .giveNewChannelController(channelController)
+            .setupChantControllersInstantiation()
+            .get()
+        val newChannel = Channel(cid = "ChannelType:ChannelID", id = "ChannelID")
+
+        sut.addChannelIfFilterMatches(newChannel)
+        sut.addChannelIfFilterMatches(newChannel)
+
+        val result = sut.channels.getOrAwaitValue()
+        result.size shouldBeEqualTo 1
+        result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
+    }
 }
 
 class Fixture {
@@ -72,13 +94,11 @@ class Fixture {
     fun setupChantControllersInstantiation(): Fixture {
         whenever(chatDomainImpl?.channel(any<String>())) doAnswer { invocation ->
             val cid = invocation.arguments[0] as String
-            val parts = cid.split(":")
-            ChannelControllerImpl(
-                parts[0],
-                parts[1],
-                mock(),
-                chatDomainImpl.shouldNotBeNull()
-            )
+            val mockChannelController = mock<ChannelControllerImpl>()
+            val mockChannel = mock<Channel>()
+            whenever(mockChannel.cid) doReturn cid
+            whenever(mockChannelController.toChannel()) doReturn mockChannel
+            mockChannelController
         }
         whenever(chatDomainImpl.shouldNotBeNull().getChannelConfig(any())) doReturn mock()
         return this
