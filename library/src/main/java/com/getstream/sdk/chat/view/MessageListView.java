@@ -226,6 +226,9 @@ public class MessageListView extends RecyclerView {
             final MessageListItem lastListItem = entities.get(entities.size() - 1);
             if (lastListItem instanceof MessageListItem.MessageItem) {
                 final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
+                // Checks if we should scroll to bottom because last message was updated.
+                // If it's a new message it will be marked as read in "else" branch, otherwise it
+                // should be already marked as read.
                 if (scrolledBottom() && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     logger.logI("just update last message");
