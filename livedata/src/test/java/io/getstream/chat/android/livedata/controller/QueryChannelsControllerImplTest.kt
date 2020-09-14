@@ -5,6 +5,7 @@ import com.nhaarman.mockitokotlin2.*
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Job
 import org.amshove.kluent.shouldBeEqualTo
@@ -20,7 +21,7 @@ internal class QueryChannelsControllerImplTest {
             .givenNewChannelController(channelController)
             .setupChatControllersInstantiation()
             .get()
-        val newChannel = Channel(cid = "CID", id = "ID")
+        val newChannel = randomChannel()
 
         sut.addChannelIfFilterMatches(newChannel)
 
@@ -33,7 +34,7 @@ internal class QueryChannelsControllerImplTest {
             .givenNewChannelController(mock())
             .setupChatControllersInstantiation()
             .get()
-        val newChannel = Channel(cid = "ChannelType:ChannelID", id = "ChannelID")
+        val newChannel = randomChannel(cid = "ChannelType:ChannelID")
 
         sut.addChannelIfFilterMatches(newChannel)
 
@@ -48,7 +49,7 @@ internal class QueryChannelsControllerImplTest {
             .givenNewChannelController(mock())
             .setupChatControllersInstantiation()
             .get()
-        val newChannel = Channel(cid = "ChannelType:ChannelID", id = "ChannelID")
+        val newChannel = randomChannel(cid = "ChannelType:ChannelID")
 
         sut.addChannelIfFilterMatches(newChannel)
         sut.addChannelIfFilterMatches(newChannel)
