@@ -1159,12 +1159,12 @@ public class DocumentationSamplesJava {
                     channelController.stopTyping();
                 }
 
-                static void receivingTypingInvicatorEvents() {
+                static void receivingTypingIndicatorEvents() {
                     // add typing start event handling
-                    channelController.events().filter(EventType.INSTANCE.getTYPING_START()).subscribe(startedTyping -> Unit.INSTANCE);
+                    channelController.events().filter(EventType.TYPING_START).subscribe(startedTyping -> Unit.INSTANCE);
 
                     // add typing top event handling
-                    channelController.events().filter(EventType.INSTANCE.getTYPING_STOP()).subscribe(startedTyping -> Unit.INSTANCE);
+                    channelController.events().filter(EventType.TYPING_STOP).subscribe(startedTyping -> Unit.INSTANCE);
                 }
             }
         }
