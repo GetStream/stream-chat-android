@@ -59,7 +59,7 @@ internal class QueryChannelsControllerImplTest {
     }
 }
 
-class Fixture {
+private class Fixture {
     private val chatClient: ChatClient = mock()
     private val chatDomainImpl: ChatDomainImpl = mock()
 
