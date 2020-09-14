@@ -1,6 +1,9 @@
 package io.getstream.chat.android.client.api
 
 import android.content.Context
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
@@ -15,13 +18,12 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.client.utils.observable.JustObservable
 import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -55,6 +57,7 @@ internal class ClientConnectionTests {
         user,
         connectionId
     )
+    val disconnectedEvent = (DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
 
     lateinit var api: ChatApi
     lateinit var socket: ChatSocket
@@ -64,7 +67,7 @@ internal class ClientConnectionTests {
     lateinit var logger: ChatLogger
     lateinit var notificationsManager: ChatNotifications
     lateinit var initConnectionListener: InitConnectionListener
-    lateinit var observable: JustObservable
+    lateinit var socketListener: SocketListener
 
     @Before
     fun before() {
@@ -81,8 +84,11 @@ internal class ClientConnectionTests {
             ChatParserImpl(),
             UuidGeneratorImpl()
         )
-        observable = JustObservable(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
-        `when`(socket.events()).thenReturn(observable)
+
+        whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
+            socketListener = invocationOnMock.getArgument<SocketListener>(0)
+            socketListener.onEvent(disconnectedEvent)
+        }
 
         client = ChatClientImpl(
             config,
@@ -101,7 +107,7 @@ internal class ClientConnectionTests {
 
     @Test
     fun `Should not connect and report error when user is already set`() {
-        observable.subscription.onNext(connectedEvent)
+        socketListener.onEvent(connectedEvent)
 
         client.setUser(user, token, initConnectionListener)
 

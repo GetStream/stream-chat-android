@@ -64,8 +64,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        chatSub = client.events().subscribe {
-
+        chatSub = client.subscribe {
             if (it is ConnectedEvent) {
                 initButtons()
             } else if (it is ErrorEvent) {
@@ -119,41 +118,41 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun updatedMessage() {
-        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1)).enqueue { queryResult ->
+        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1))
+            .enqueue { queryResult ->
 
-            if (queryResult.isSuccess) {
-                val channel = queryResult.data()[0]
-                val message = channel.messages[0]
-                message.text = message.text + "a"
-                client.updateMessage(message).enqueue { updateResult ->
-                    if (updateResult.isSuccess) {
+                if (queryResult.isSuccess) {
+                    val channel = queryResult.data()[0]
+                    val message = channel.messages[0]
+                    message.text = message.text + "a"
+                    client.updateMessage(message).enqueue { updateResult ->
+                        if (updateResult.isSuccess) {
+                        }
                     }
                 }
             }
-        }
     }
 
     private fun checkTyping() {
-        client.events()
-            .filter(TypingStartEvent::class.java)
-            .subscribe {
-                println("checkTyping: received")
-            }
+        client.subscribeFor(TypingStartEvent::class.java) {
+            println("checkTyping: received")
+        }
 
-        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1)).enqueue {
-            val channel = it.data()[0]
+        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1))
+            .enqueue {
+                val channel = it.data()[0]
 
-            val controller = client.channel(channel.cid)
+                val controller = client.channel(channel.cid)
 
-            controller.watch().enqueue {
-                controller.keystroke().enqueue {
-                    if (it.isSuccess)
-                        println("checkTyping: sent")
-                    else
-                        it.error().printStackTrace()
+                controller.watch().enqueue {
+                    controller.keystroke().enqueue {
+                        if (it.isSuccess)
+                            println("checkTyping: sent")
+                        else
+                            it.error().printStackTrace()
+                    }
                 }
             }
-        }
     }
 
     private fun watchChannel() {
@@ -245,7 +244,8 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     private fun getMessage() {
         Thread {
 
-            val request = QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1).withMessages(1)
+            val request =
+                QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1).withMessages(1)
 
             val channelsResult = client.queryChannels(request).execute()
 

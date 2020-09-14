@@ -136,7 +136,7 @@ fun sendMessage() {
 }
 
 fun events() {
-    val subscription = client.events().subscribe { event ->
+    val subscription = client.subscribe { event ->
         if (event is NewMessageEvent) {
             val message = event.message
         }
@@ -395,15 +395,13 @@ fun search() {
 
 fun listeningSomeEvent() {
     val subscription = channelController
-        .events()
-        .filter("message.deleted")
-        .subscribe { messageDeletedEvent ->
+        .subscribeFor("message.deleted") { messageDeletedEvent ->
         }
     subscription.unsubscribe()
 }
 
 fun listenAllEvents() {
-    val subscription = channelController.events().subscribe { event ->
+    val subscription = channelController.subscribe { event ->
         if (event is NewMessageEvent) {
         }
     }
@@ -411,7 +409,7 @@ fun listenAllEvents() {
 }
 
 fun connectionEvents() {
-    client.events().subscribe { event ->
+    client.subscribe { event ->
         when (event) {
             is ConnectedEvent -> {
                 // socket is connected
@@ -427,15 +425,13 @@ fun connectionEvents() {
 }
 
 fun stopListening() {
-    val subscription = channelController.events().subscribe { event -> }
+    val subscription = channelController.subscribe { event -> }
     subscription.unsubscribe()
 }
 
 fun notificationEvents() {
     channelController
-        .events()
-        .filter("notification.added_to_channel")
-        .subscribe { notificationEvent ->
+        .subscribeFor("notification.added_to_channel") { notificationEvent ->
             notificationEvent
         }
 }
@@ -628,15 +624,13 @@ fun muting() {
     )
 
     // get updates about muted channels
-    client
-        .events()
-        .subscribe { event: ChatEvent? ->
-            if (event is NotificationChannelMutesUpdatedEvent) {
-                val mutes = event.me.channelMutes
-            } else if (event is NotificationMutesUpdatedEvent) {
-                val mutes = event.me.channelMutes
-            }
+    client.subscribe { event: ChatEvent? ->
+        if (event is NotificationChannelMutesUpdatedEvent) {
+            val mutes = event.me.channelMutes
+        } else if (event is NotificationMutesUpdatedEvent) {
+            val mutes = event.me.channelMutes
         }
+    }
 }
 
 fun queryMuted() {
@@ -735,10 +729,10 @@ fun startAndStopTyping() {
 
 fun reveivingTypingEvents() {
     // add typing start event handling
-    channelController.events().filter(EventType.TYPING_START).subscribe { startTyping ->
+    channelController.subscribeFor(EventType.TYPING_START) { startTyping ->
     }
     // add typing top event handling
-    channelController.events().filter(EventType.TYPING_STOP).subscribe { startTyping ->
+    channelController.subscribeFor(EventType.TYPING_STOP) { startTyping ->
     }
 }
 

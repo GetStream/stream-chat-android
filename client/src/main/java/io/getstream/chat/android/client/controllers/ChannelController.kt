@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Subscription
 import java.io.File
 
 interface ChannelController {
@@ -48,7 +48,10 @@ interface ChannelController {
     fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
     fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
-    fun events(): ChatObservable
+    fun subscribe(listener: (event: ChatEvent) -> Unit): Subscription
+    fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Subscription
+    fun subscribeFor(vararg eventTypes: Class<out ChatEvent>, listener: (event: ChatEvent) -> Unit): Subscription
+    fun unsubscribe(subscription: Subscription)
     fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>

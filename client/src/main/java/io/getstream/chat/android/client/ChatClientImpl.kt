@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Subscription
 import java.io.File
 import java.util.Date
 
@@ -51,10 +52,10 @@ internal class ChatClientImpl(
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
+    private val eventsObservable = ChatObservable(socket)
 
     init {
-        val events = socket.events()
-        events.subscribe { event ->
+        eventsObservable.subscribe { event ->
 
             notifications.onChatEvent(event)
 
@@ -98,7 +99,11 @@ internal class ChatClientImpl(
         }
     }
 
-    override fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener?) {
+    override fun setUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        listener: InitConnectionListener?
+    ) {
         if (!ensureUserNotSet(listener)) {
             return
         }
@@ -230,8 +235,34 @@ internal class ChatClientImpl(
         socket.removeListener(listener)
     }
 
-    override fun events(): ChatObservable {
-        return socket.events()
+    override fun subscribe(
+        listener: (ChatEvent) -> Unit
+    ): Subscription {
+        return eventsObservable.subscribe(listener = listener)
+    }
+
+    override fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (ChatEvent) -> Unit
+    ): Subscription {
+        val filter = { event: ChatEvent ->
+            event.type in eventTypes
+        }
+        return eventsObservable.subscribe(filter, listener)
+    }
+
+    override fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (ChatEvent) -> Unit
+    ): Subscription {
+        val filter = { event: ChatEvent ->
+            eventTypes.any { type -> type.isInstance(event) }
+        }
+        return eventsObservable.subscribe(filter, listener)
+    }
+
+    override fun unsubscribe(subscription: Subscription) {
+        eventsObservable.unsubscribe(subscription)
     }
 
     override fun disconnect() {
@@ -346,7 +377,11 @@ internal class ChatClientImpl(
         updateMessage: Message?,
         channelExtraData: Map<String, Any>
     ): Call<Channel> =
-        api.updateChannel(channelType, channelId, UpdateChannelRequest(channelExtraData, updateMessage))
+        api.updateChannel(
+            channelType,
+            channelId,
+            UpdateChannelRequest(channelExtraData, updateMessage)
+        )
 
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId)
@@ -495,16 +530,28 @@ internal class ChatClientImpl(
         return channel(type, id)
     }
 
-    override fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel> =
+    override fun createChannel(
+        channelType: String,
+        channelId: String,
+        extraData: Map<String, Any>
+    ): Call<Channel> =
         createChannel(channelType, channelId, emptyList(), extraData)
 
-    override fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel> =
+    override fun createChannel(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): Call<Channel> =
         createChannel(channelType, channelId, members, emptyMap())
 
     override fun createChannel(channelType: String, members: List<String>): Call<Channel> =
         createChannel(channelType, "", members, emptyMap())
 
-    override fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel> =
+    override fun createChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>
+    ): Call<Channel> =
         createChannel(channelType, "", members, extraData)
 
     override fun createChannel(
@@ -513,9 +560,16 @@ internal class ChatClientImpl(
         members: List<String>,
         extraData: Map<String, Any>
     ): Call<Channel> =
-        queryChannel(channelType, channelId, QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members)))
+        queryChannel(
+            channelType,
+            channelId,
+            QueryChannelRequest().withData(extraData + mapOf(ModelFields.MEMBERS to members))
+        )
 
-    override fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>> {
+    override fun getSyncHistory(
+        channelsIds: List<String>,
+        lastSyncAt: Date
+    ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 

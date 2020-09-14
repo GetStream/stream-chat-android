@@ -21,7 +21,7 @@ class ChannelsListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
 
-        sub = client.events().subscribe {
+        sub = client.subscribe {
 
 //            if (it is ErrorEvent) {
 //
@@ -47,7 +47,7 @@ class ChannelsListActivity : AppCompatActivity() {
 
         client.setUser(User("bender"), token)
 
-        client.events().subscribe {
+        client.subscribe {
             Log.d("chat-events", it.toString())
         }
 

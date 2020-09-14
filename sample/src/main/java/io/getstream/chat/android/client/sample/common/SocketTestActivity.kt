@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
 import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
@@ -41,38 +42,31 @@ class SocketTestActivity : AppCompatActivity() {
             textSocketState.text = "Connecting..."
 
             subs.add(
-                client
-                    .events()
-                    .filter(ConnectedEvent::class.java)
-                    .first()
-                    .subscribe {
-                        Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
-                    }
+                client.subscribeForSingle<ConnectedEvent> {
+                    Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
+                }
             )
 
             subs.add(
-                client
-                    .events()
-                    .subscribe {
+                client.subscribe {
+                    Log.d("evt", it::class.java.simpleName)
+                    appendEvent(it)
 
-                        Log.d("evt", it::class.java.simpleName)
-                        appendEvent(it)
-
-                        when (it) {
-                            is ConnectedEvent -> {
-                                textSocketState.text = "Connected"
-                            }
-                            is ErrorEvent -> {
-                                textSocketState.text = "Error: " + it.error.toString()
-                            }
-                            is ConnectingEvent -> {
-                                textSocketState.text = "Connecting..."
-                            }
-                            is DisconnectedEvent -> {
-                                textSocketState.text = "Disconnected"
-                            }
+                    when (it) {
+                        is ConnectedEvent -> {
+                            textSocketState.text = "Connected"
+                        }
+                        is ErrorEvent -> {
+                            textSocketState.text = "Error: " + it.error.toString()
+                        }
+                        is ConnectingEvent -> {
+                            textSocketState.text = "Connecting..."
+                        }
+                        is DisconnectedEvent -> {
+                            textSocketState.text = "Disconnected"
                         }
                     }
+                }
             )
 
             client.setUser(User("bender"), token)

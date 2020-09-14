@@ -97,48 +97,46 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .subscribe {
-                    println(it)
-                }
+            client.subscribeFor(ConnectedEvent::class.java) {
+                println(it)
+            }
         )
 
         subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .filter(NotificationChannelMutesUpdatedEvent::class.java)
-                .subscribe {
-                    var mutedChannels: List<ChannelMute> = emptyList()
-                    if (it is ConnectedEvent) {
-                        mutedChannels = it.me.channelMutes
-                    } else if (it is NotificationChannelMutesUpdatedEvent) {
-                        mutedChannels = it.me.channelMutes
-                    }
-                    println(mutedChannels)
+            client.subscribeFor(
+                ConnectedEvent::class.java,
+                NotificationChannelMutesUpdatedEvent::class.java
+            ) {
+                var mutedChannels: List<ChannelMute> = emptyList()
+                if (it is ConnectedEvent) {
+                    mutedChannels = it.me.channelMutes
+                } else if (it is NotificationChannelMutesUpdatedEvent) {
+                    mutedChannels = it.me.channelMutes
                 }
+                println(mutedChannels)
+            }
         )
 
         subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .filter(DisconnectedEvent::class.java)
-                .filter(ConnectingEvent::class.java)
-                .subscribe { event ->
-                    textStatus.text = event.type
-                    Log.d("connection-events", event::class.java.simpleName)
-                }
+            client.subscribeFor(
+                ConnectedEvent::class.java,
+                DisconnectedEvent::class.java,
+                ConnectingEvent::class.java
+            ) { event ->
+                textStatus.text = event.type
+                Log.d("connection-events", event::class.java.simpleName)
+            }
         )
 
         subs.add(
-            client.events()
-                .filter(ChannelUserUnbannedEvent::class.java)
-                .filter(GlobalUserUnbannedEvent::class.java)
-                .filter(ChannelUserBannedEvent::class.java)
-                .filter(GlobalUserBannedEvent::class.java)
-                .subscribe {
-                    println("ban/unban for " + config.userId + ": " + it.type)
-                }
+            client.subscribeFor(
+                ChannelUserUnbannedEvent::class.java,
+                GlobalUserUnbannedEvent::class.java,
+                ChannelUserBannedEvent::class.java,
+                GlobalUserBannedEvent::class.java
+            ) {
+                println("ban/unban for " + config.userId + ": " + it.type)
+            }
         )
 
         textUserId.text = "UserId: ${config.userId}"

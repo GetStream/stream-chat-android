@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitListener
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
@@ -45,7 +46,7 @@ class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token, setUserListener)
-            client.events().subscribe { event -> connectedEventConsumer.onEvent(event) }
+            client.subscribe { event -> connectedEventConsumer.onEvent(event) }
         }.andThen {
             await().atMost(5, SECONDS).until { setUserListener.onSuccessIsCalled() }
             await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
@@ -70,14 +71,11 @@ class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token)
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .first()
-                .subscribe {
-                    client.events().subscribe { event ->
-                        connectedEventConsumer.onEvent(event)
-                    }
+            client.subscribeForSingle<ConnectedEvent> {
+                client.subscribe { event ->
+                    connectedEventConsumer.onEvent(event)
                 }
+            }
         }.andThen {
             await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
         }
@@ -91,10 +89,9 @@ class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token)
-            client.events()
-                .filter(HealthEvent::class.java)
-                .first()
-                .subscribe { consumer.onEvent(it) }
+            client.subscribeForSingle<HealthEvent> {
+                consumer.onEvent(it)
+            }
         }.andThen {
             await()
                 .atMost(10, SECONDS)
