@@ -50,11 +50,12 @@ public class MessageListView extends RecyclerView {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
     protected MessageListViewStyle style;
-    private MessageListItemAdapter adapter;
+
+    @Nullable
+    private MessageListItemAdapter adapter = null;
     private LinearLayoutManager layoutManager;
 
     private boolean hasScrolledUp;
-    private BubbleHelper bubbleHelper;
     private int threadParentPosition;
     private Function0<Unit> endRegionReachedHandler = () -> {
         throw new IllegalStateException("endRegionReachedHandler must be set.");
@@ -151,6 +152,8 @@ public class MessageListView extends RecyclerView {
             DEFAULT_READ_STATE_CLICK_LISTENER,
             DEFAULT_GIPHY_SEND_LISTENER
     );
+
+    private BubbleHelper bubbleHelper;
     private MessageViewHolderFactory viewHolderFactory;
 
     // region Constructor
@@ -177,7 +180,6 @@ public class MessageListView extends RecyclerView {
 
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
-        setBubbleHelper(DefaultBubbleHelper.initDefaultBubbleHelper(style, context));
         setHasFixedSize(true);
         setItemViewCacheSize(20);
     }
@@ -190,12 +192,12 @@ public class MessageListView extends RecyclerView {
 
     // set the adapter and apply the style.
     @Override
-    public void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
+    @Deprecated
+    public final void setAdapter(Adapter adapter) {
+        throw new IllegalArgumentException("Use setMessageListItemAdapter instead please");
     }
 
-    private void setAdapterWithStyle(MessageListItemAdapter adapter) {
-        adapter.setStyle(style);
+    private void setMessageListItemAdapter(MessageListItemAdapter adapter) {
         adapter.setChannel(channel);
 
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -231,21 +233,43 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
+    public void init(Channel channel, User currentUser) {
+        this.currentUser = currentUser;
+        this.channel = channel;
+        initAdapter();
+    }
+
     private void initAdapter() {
-        // Setup a default adapter and pass the style
+        // Set default ViewHolderFactory if needed
         if (viewHolderFactory == null) {
-            viewHolderFactory = new MessageViewHolderFactory(listenerContainer);
+            viewHolderFactory = new MessageViewHolderFactory();
         }
-        adapter = new MessageListItemAdapter(getContext(), viewHolderFactory);
+        // Inject factory
+        viewHolderFactory.setListenerContainer(listenerContainer);
+
+        // Set default BubbleHelper if needed
+        if (bubbleHelper == null) {
+            bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
+        }
+
+        adapter = new MessageListItemAdapter(getContext(), viewHolderFactory, bubbleHelper, style);
         adapter.setHasStableIds(true);
 
-        adapter.setViewHolderFactory(viewHolderFactory);
+        this.setMessageListItemAdapter(adapter);
+    }
 
-        if (bubbleHelper != null) {
-            adapter.setBubbleHelper(bubbleHelper);
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set ViewHolderFactory first");
         }
+        this.viewHolderFactory = factory;
+    }
 
-        this.setAdapterWithStyle(adapter);
+    public void setBubbleHelper(BubbleHelper bubbleHelper) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set BubbleHelper first");
+        }
+        this.bubbleHelper = bubbleHelper;
     }
 
     public void displayNewMessage(MessageListItemWrapper listItem) {
@@ -336,13 +360,6 @@ public class MessageListView extends RecyclerView {
         }
     }
 
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-        if (adapter != null) {
-            adapter.setViewHolderFactory(factory);
-        }
-    }
-
     public MessageListViewStyle getStyle() {
         return style;
     }
@@ -430,19 +447,6 @@ public class MessageListView extends RecyclerView {
             readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER;
         }
         listenerContainer.setReadStateClickListener(readStateClickListener);
-    }
-
-    public void setBubbleHelper(BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-        if (adapter != null) {
-            adapter.setBubbleHelper(bubbleHelper);
-        }
-    }
-
-    public void init(Channel channel, User currentUser) {
-        this.currentUser = currentUser;
-        this.channel = channel;
-        initAdapter();
     }
 
     public void setEndRegionReachedHandler(Function0<Unit> endRegionReachedHandler) {
