@@ -5,29 +5,32 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import java.io.File
-import java.util.*
-import java.util.concurrent.ThreadLocalRandom
+import java.util.Date
+import kotlin.random.Random
 
-private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-private val random = ThreadLocalRandom.current()
+private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
 fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
-    random.nextInt(maxInt + 1).takeIf { it > 0 } ?: positiveRandomInt(maxInt)
+    Random.nextInt(1, maxInt + 1)
 
 fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
-    random.nextLong(maxLong + 1).takeIf { it > 0 } ?: positiveRandomLong(maxLong)
+    Random.nextLong(1, maxLong + 1)
 
-fun randomInt() = random.nextInt()
+fun randomInt() = Random.nextInt()
 
-fun randomIntBetween(min: Int, max: Int) = random.nextInt(max - min) + min
+fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
 
-fun randomLong() = random.nextLong()
+fun randomIntBetween(range: IntRange) = Random.nextInt(range.first, range.last)
 
-fun randomBoolean() = random.nextBoolean()
+fun randomLong() = Random.nextLong()
 
-fun randomString(size: Int = 20): String = (0..size)
-    .map { charPool[random.nextInt(0, charPool.size)] }
-    .joinToString("")
+fun randomBoolean() = Random.nextBoolean()
+
+fun randomString(size: Int = 20): String = buildString(capacity = size) {
+    repeat(size) {
+        append(charPool.random())
+    }
+}
 
 fun randomCID() = "${randomString()}:${randomString()}"
 
@@ -200,4 +203,4 @@ fun randomMessages(
     creationFunction: (Int) -> Message = { randomMessage() }
 ): List<Message> = (1..size).map(creationFunction)
 
-fun randomSyncStatus(): SyncStatus = SyncStatus.values().asList().shuffled(random).first()
+fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
