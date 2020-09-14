@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
@@ -146,7 +147,13 @@ interface ChatDomain {
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            return ChatDomainImpl(appContext, client, user, offlineEnabled, userPresence, recoveryEnabled, database)
+            return ChatDomainImpl(client, user, database ?: createDatabase(), offlineEnabled, userPresence, recoveryEnabled)
+        }
+
+        private fun createDatabase() = if (offlineEnabled) {
+            ChatDatabase.getDatabase(appContext, user.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(appContext, ChatDatabase::class.java).build()
         }
 
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {

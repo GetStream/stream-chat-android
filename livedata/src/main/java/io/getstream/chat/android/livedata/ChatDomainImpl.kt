@@ -1,11 +1,9 @@
 package io.getstream.chat.android.livedata
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.room.Room
 import com.google.gson.Gson
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
@@ -15,12 +13,8 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.client.models.Filters.`in`
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -42,18 +36,9 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import java.lang.Thread.sleep
-import java.util.Date
-import java.util.InputMismatchException
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -77,7 +62,6 @@ private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
  *
  */
 class ChatDomainImpl private constructor(
-    internal var context: Context,
     internal var client: ChatClient,
     override var currentUser: User,
     override var offlineEnabled: Boolean = false,
@@ -163,18 +147,16 @@ class ChatDomainImpl private constructor(
         DefaultRetryPolicy()
 
     internal constructor(
-        context: Context,
         client: ChatClient,
         currentUser: User,
+        db: ChatDatabase,
         offlineEnabled: Boolean = true,
         userPresence: Boolean = true,
-        recoveryEnabled: Boolean = true,
-        db: ChatDatabase? = null
-    ) : this(context, client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
+        recoveryEnabled: Boolean = true
+    ) : this(client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
-        val chatDatabase = db ?: createDatabase()
-        repos = RepositoryHelper(client, currentUser, chatDatabase)
+        repos = RepositoryHelper(client, currentUser, db)
 
         // load channel configs from Room into memory
         initJob = scope.async(scope.coroutineContext) {
@@ -257,17 +239,6 @@ class ChatDomainImpl private constructor(
         mainHandler = Handler(Looper.getMainLooper())
 
         mainHandler.postDelayed(cleanTask, 5000)
-    }
-
-    private fun createDatabase(): ChatDatabase {
-        val database = if (offlineEnabled) {
-            ChatDatabase.getDatabase(context, currentUser.id)
-        } else {
-            Room.inMemoryDatabaseBuilder(
-                context, ChatDatabase::class.java
-            ).build()
-        }
-        return database
     }
 
     suspend fun <T> runAndRetry(runnable: () -> Call<T>): Result<T> {
@@ -543,7 +514,8 @@ class ChatDomainImpl private constructor(
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }.filterNot { updatedChannelIds.contains(it.key) }.take(30)
+        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }
+            .filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
 
@@ -616,12 +588,18 @@ class ChatDomainImpl private constructor(
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
+    suspend fun selectAndEnrichChannel(
+        channelId: String,
+        pagination: QueryChannelPaginationRequest
+    ): ChannelEntityPair? {
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
 
-    suspend fun selectAndEnrichChannel(channelId: String, pagination: QueryChannelsPaginationRequest): ChannelEntityPair? {
+    suspend fun selectAndEnrichChannel(
+        channelId: String,
+        pagination: QueryChannelsPaginationRequest
+    ): ChannelEntityPair? {
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
