@@ -24,50 +24,57 @@ class ListenerContainer(
         val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
     }
 
-    var messageClickListener: MessageClickListener
-    by ListenerDelegate(messageClickListener) { realListener ->
+    var messageClickListener: MessageClickListener by ListenerDelegate(
+        messageClickListener
+    ) { realListener ->
         MessageClickListener { message, position ->
             realListener().onMessageClick(message, position)
         }
     }
 
-    var messageLongClickListener: MessageLongClickListener
-    by ListenerDelegate(messageLongClickListener) { realListener ->
+    var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
+        messageLongClickListener
+    ) { realListener ->
         MessageLongClickListener { message ->
             realListener().onMessageLongClick(message)
         }
     }
 
-    var attachmentClickListener: AttachmentClickListener
-    by ListenerDelegate(attachmentClickListener) { realListener ->
+    var attachmentClickListener: AttachmentClickListener by ListenerDelegate(
+        attachmentClickListener
+    ) { realListener ->
         AttachmentClickListener { message, attachment ->
             realListener().onAttachmentClick(message, attachment)
         }
     }
 
-    var reactionViewClickListener: ReactionViewClickListener
-    by ListenerDelegate(reactionViewClickListener) { realListener ->
+    var reactionViewClickListener: ReactionViewClickListener by ListenerDelegate(
+        reactionViewClickListener
+    ) { realListener ->
         ReactionViewClickListener { message ->
             realListener().onReactionViewClick(message)
         }
     }
 
-    var userClickListener: UserClickListener
-    by ListenerDelegate(userClickListener) { realListener ->
+    var userClickListener: UserClickListener by ListenerDelegate(
+        userClickListener
+    ) { realListener ->
         UserClickListener { user ->
             realListener().onUserClick(user)
         }
     }
 
-    var readStateClickListener: ReadStateClickListener
-    by ListenerDelegate(readStateClickListener) { realListener ->
+    var readStateClickListener: ReadStateClickListener by ListenerDelegate(
+        readStateClickListener
+    ) { realListener ->
         ReadStateClickListener { reads ->
             realListener().onReadStateClick(reads)
         }
     }
 
-    var giphySendListener: GiphySendListener
-    by ListenerDelegate(giphySendListener) { realListener ->
+    var giphySendListener: GiphySendListener by ListenerDelegate(
+        giphySendListener
+    ) { realListener ->
         GiphySendListener { message, action ->
             realListener().onGiphySend(message, action)
         }
