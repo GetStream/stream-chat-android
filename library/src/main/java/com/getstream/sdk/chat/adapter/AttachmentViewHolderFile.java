@@ -49,7 +49,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
     public void bind(@NonNull Context context,
                      @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull Message message,
-                     @NonNull Attachment attachment,
+                     @NonNull AttachmentListItem attachmentItem,
                      @NonNull MessageListViewStyle style,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
                      @Nullable MessageListView.AttachmentClickListener clickListener,
@@ -58,7 +58,7 @@ public class AttachmentViewHolderFile extends BaseAttachmentViewHolder {
         this.context = context;
         this.messageListItem = messageListItem;
         this.message = message;
-        this.attachment = attachment;
+        this.attachment = attachmentItem.getAttachment();
         this.style = style;
         this.bubbleHelper = bubbleHelper;
         this.clickListener = clickListener;
