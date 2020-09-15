@@ -41,8 +41,8 @@ class MessageRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testMessageObjectWithExtraData() = runBlocking(Dispatchers.IO) {
-        val extra = mutableMapOf("int" to 10, "string" to "green",  "list" to listOf("a", "b"))
-        val messageIn = data.createMessage().apply { extraData = extra; id="testMessageObjectWithExtraData" }
+        val extra = mutableMapOf("int" to 10, "string" to "green", "list" to listOf("a", "b"))
+        val messageIn = data.createMessage().apply { extraData = extra; id = "testMessageObjectWithExtraData" }
         repo.insertMessage(messageIn, true)
         val entity = repo.select(messageIn.id)
         val messageOut = entity!!.toMessage(data.userMap)
