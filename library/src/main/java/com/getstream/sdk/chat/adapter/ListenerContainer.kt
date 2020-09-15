@@ -7,110 +7,13 @@ import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
-class ListenerContainer(
-    messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.TWO_PARAM),
-    messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
-    attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
-    reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
-    userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
-    readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
-    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM)
-) {
-    private object EmptyFunctions {
-        val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
-        val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
-    }
-
-    var messageClickListener: MessageClickListener by ListenerDelegate(
-        messageClickListener
-    ) { realListener ->
-        MessageClickListener { message, position ->
-            realListener().onMessageClick(message, position)
-        }
-    }
-
-    var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
-        messageLongClickListener
-    ) { realListener ->
-        MessageLongClickListener { message ->
-            realListener().onMessageLongClick(message)
-        }
-    }
-
-    var attachmentClickListener: AttachmentClickListener by ListenerDelegate(
-        attachmentClickListener
-    ) { realListener ->
-        AttachmentClickListener { message, attachment ->
-            realListener().onAttachmentClick(message, attachment)
-        }
-    }
-
-    var reactionViewClickListener: ReactionViewClickListener by ListenerDelegate(
-        reactionViewClickListener
-    ) { realListener ->
-        ReactionViewClickListener { message ->
-            realListener().onReactionViewClick(message)
-        }
-    }
-
-    var userClickListener: UserClickListener by ListenerDelegate(
-        userClickListener
-    ) { realListener ->
-        UserClickListener { user ->
-            realListener().onUserClick(user)
-        }
-    }
-
-    var readStateClickListener: ReadStateClickListener by ListenerDelegate(
-        readStateClickListener
-    ) { realListener ->
-        ReadStateClickListener { reads ->
-            realListener().onReadStateClick(reads)
-        }
-    }
-
-    var giphySendListener: GiphySendListener by ListenerDelegate(
-        giphySendListener
-    ) { realListener ->
-        GiphySendListener { message, action ->
-            realListener().onGiphySend(message, action)
-        }
-    }
-
-    /**
-     * A property delegate to be used with listeners.
-     *
-     * The real listener stored in [realListener] isn't exposed externally, it's only
-     * accessible through the [wrapper].
-     *
-     * The [wrapper] is exposed by the getter, and a reference to it can be safely stored
-     * long-term.
-     *
-     * Setting new listeners via the setter will update the underlying listener, and
-     * calls to the [wrapper] will then be forwarded to the latest [realListener] that
-     * was set.
-     *
-     * @param wrap A function that has to produce the wrapper listener. The listener being
-     *             wrapped can be referenced by calling the realListener() method. This
-     *             function always returns the current listener, even if it changes.
-     */
-    internal class ListenerDelegate<L : Any>(
-        initialValue: L,
-        wrap: (realListener: () -> L) -> L
-    ) : ReadWriteProperty<Any?, L> {
-
-        private var realListener: L = initialValue
-        private val wrapper: L = wrap { realListener }
-
-        override fun getValue(thisRef: Any?, property: KProperty<*>): L {
-            return wrapper
-        }
-
-        override fun setValue(thisRef: Any?, property: KProperty<*>, value: L) {
-            realListener = value
-        }
-    }
+interface ListenerContainer {
+    var messageClickListener: MessageClickListener
+    var messageLongClickListener: MessageLongClickListener
+    var attachmentClickListener: AttachmentClickListener
+    var reactionViewClickListener: ReactionViewClickListener
+    var userClickListener: UserClickListener
+    var readStateClickListener: ReadStateClickListener
+    var giphySendListener: GiphySendListener
 }

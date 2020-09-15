@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
+import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -143,7 +144,7 @@ public class MessageListView extends RecyclerView {
         onSendGiphyHandler.invoke(message, action);
     };
 
-    private final ListenerContainer listenerContainer = new ListenerContainer(
+    private final ListenerContainer listenerContainer = new ListenerContainerImpl(
             DEFAULT_MESSAGE_CLICK_LISTENER,
             DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
             DEFAULT_ATTACHMENT_CLICK_LISTENER,
