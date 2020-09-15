@@ -19,7 +19,7 @@ internal interface ChatDomainImplFactory {
     ): ChatDomainImpl
 }
 
-class ChatDomainImplFactoryImpl : ChatDomainImplFactory {
+internal class ChatDomainImplFactoryImpl : ChatDomainImplFactory {
     override fun create(
         context: Context,
         chatClient: ChatClient,
