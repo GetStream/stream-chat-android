@@ -107,8 +107,8 @@ android {
         exclude("META-INF/*.kotlin_module")
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
 }
 
@@ -146,7 +146,7 @@ dependencies {
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
 
-    debugImplementation Dependencies.leakCanary
+    //debugImplementation Dependencies.leakCanary
 
     testImplementation Dependencies.junit4
     testImplementation Dependencies.koinTest

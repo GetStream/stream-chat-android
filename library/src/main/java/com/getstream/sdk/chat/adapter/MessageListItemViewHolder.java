@@ -263,12 +263,16 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
         if (style.isMessageDateShow()) {
             tv_messagedate.setVisibility(View.VISIBLE);
+            // TODO: refactor this logic
+            /*
             if (message.getDate() == null)
                 LlcMigrationUtils.setStartDay(Arrays.asList(message), null);
             if (message.getDate().equals(TODAY.getLabel()) || message.getDate().equals(YESTERDAY.getLabel()))
                 tv_messagedate.setText(message.getTime());
             else
                 tv_messagedate.setText(context.getString(R.string.stream_message_date, message.getDate(), message.getTime()));
+
+             */
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }

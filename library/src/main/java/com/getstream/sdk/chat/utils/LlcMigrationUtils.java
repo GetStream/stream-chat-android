@@ -524,61 +524,10 @@ public class LlcMigrationUtils {
                 break;
             }
         }
-        setStartDay(Collections.singletonList(lastMessage), null);
 
         return lastMessage;
     }
 
-    public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
-        if (messages == null) return;
-        if (messages.size() == 0) return;
-
-        Message preMessage = (preMessage0 != null) ? preMessage0 : messages.get(0);
-        setFormattedDate(preMessage);
-        int startIndex = (preMessage0 != null) ? 0 : 1;
-        for (int i = startIndex; i < messages.size(); i++) {
-            if (i != startIndex) {
-                preMessage = messages.get(i - 1);
-            }
-
-            Message message = messages.get(i);
-            setFormattedDate(message);
-            message.setStartDay(!message.getDate().equals(preMessage.getDate()));
-        }
-    }
-
-    public static int indexOf(List<Message> messages, Message message) {
-        String id = message.getId();
-        for (int i = 0; i < messages.size(); i++)
-            if (id.equals(messages.get(i).getId())) return i;
-        return -1;
-    }
-
-    private static void setFormattedDate(Message message) {
-        if (message == null || message.getDate() != null) return;
-        Utils.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        Calendar smsTime = Calendar.getInstance();
-        smsTime.setTimeInMillis(message.getCreatedAt().getTime());
-
-        Calendar now = Calendar.getInstance();
-
-        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            message.setToday(true);
-            message.setDate(TODAY.getLabel());
-        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-            message.setYesterday(true);
-            message.setDate(YESTERDAY.getLabel());
-        } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
-            DateFormat dayName = new SimpleDateFormat("EEEE");
-            message.setDate(dayName.format(message.getCreatedAt()));
-        } else {
-            DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG);
-            message.setDate(dateFormat.format(message.getCreatedAt()));
-        }
-        DateFormat timeFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
-        message.setTime(timeFormat.format(message.getCreatedAt()));
-    }
     
     public static User getCurrentUser(){
         return ChatDomain.instance().getCurrentUser();

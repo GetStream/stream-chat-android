@@ -188,10 +188,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             return;
         }
 
-        if (lastMessage.isToday())
-            tv_date.setText(lastMessage.getTime());
-        else
-            tv_date.setText(dateFormat.format(lastMessage.getCreatedAt()));
+        // TODO: Create a utility function for formatting dates
+        String formattedDate = dateFormat.format(lastMessage.getCreatedAt());
+        tv_date.setText(formattedDate);
     }
 
     protected void configReadState(Channel channel) {
