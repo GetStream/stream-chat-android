@@ -20,7 +20,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.7.3"
+        versionName "0.7.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -68,7 +68,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.15.3"
+    api "com.github.getstream:stream-chat-android-client:1.15.4"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
@@ -140,7 +140,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-livedata'
-                version = '0.7.4-SNAPSHOT'
+                version = '0.7.5-SNAPSHOT'
             }
         }
     }

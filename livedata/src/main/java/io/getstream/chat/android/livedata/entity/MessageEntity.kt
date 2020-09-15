@@ -67,9 +67,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     /** slash command like /giphy etc */
     var command: String? = null
 
-    /** command info */
-    var commandInfo: Map<String, String>? = null
-
     /** all the custom data provided for this message */
     var extraData = mutableMapOf<String, Any>()
 
@@ -134,7 +131,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         deletedAt = m.deletedAt
         parentId = m.parentId
         command = m.command
-        commandInfo = m.commandInfo
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
         reactionScores = m.reactionScores ?: mutableMapOf()
@@ -164,7 +160,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.deletedAt = deletedAt
         m.parentId = parentId
         m.command = command
-        m.commandInfo = commandInfo ?: emptyMap()
         m.extraData = extraData
         m.reactionCounts = reactionCounts ?: mutableMapOf()
         m.reactionScores = reactionScores ?: mutableMapOf()
