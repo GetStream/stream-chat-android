@@ -185,7 +185,7 @@ public class MessageListView extends RecyclerView {
         adapter.setHasStableIds(true);
 
         if (viewHolderFactory != null) {
-            adapter.setFactory(viewHolderFactory);
+            adapter.setViewHolderFactory(viewHolderFactory);
         }
 
         if (bubbleHelper != null) {
@@ -205,6 +205,7 @@ public class MessageListView extends RecyclerView {
             backFromThread = !listItem.isThread();
         }
 
+        int oldSize = adapter.getItemCount();
         adapter.replaceEntities(entities);
 
         // Scroll to origin position on return from thread
@@ -225,6 +226,9 @@ public class MessageListView extends RecyclerView {
             final MessageListItem lastListItem = entities.get(entities.size() - 1);
             if (lastListItem instanceof MessageListItem.MessageItem) {
                 final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
+                // Checks if we should scroll to bottom because last message was updated.
+                // If it's a new message it will be marked as read in "else" branch, otherwise it
+                // should be already marked as read.
                 if (scrolledBottom() && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     logger.logI("just update last message");
@@ -234,8 +238,6 @@ public class MessageListView extends RecyclerView {
                 }
             }
         }
-
-        int oldSize = adapter.getItemCount();
         int newSize = adapter.getItemCount();
         int sizeGrewBy = newSize - oldSize;
 
@@ -252,6 +254,7 @@ public class MessageListView extends RecyclerView {
             int newPosition = adapter.getItemCount() - 1;
             layoutManager.scrollToPosition(newPosition);
             logger.logI(String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+            lastMessageReadHandler.invoke();
         } else if (listItem.getLoadingMore()) {
             // the load more behaviour is different, scroll positions starts out at 0
             // to stay at the relative 0 we should go to 0 + size of new messages...
@@ -287,7 +290,7 @@ public class MessageListView extends RecyclerView {
     public void setViewHolderFactory(MessageViewHolderFactory factory) {
         this.viewHolderFactory = factory;
         if (adapter != null) {
-            adapter.setFactory(factory);
+            adapter.setViewHolderFactory(factory);
         }
     }
 

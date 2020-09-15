@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlinx.coroutines.Dispatchers
@@ -37,15 +38,15 @@ class CreateChannelViewModel @JvmOverloads constructor(
     }
 
     private fun queryChannel(channelName: String) {
-        val members = client.getCurrentUser()?.run {
-            listOf(Member(this))
-        } ?: listOf()
+        val author = client.getCurrentUser() ?: User()
+        val members = listOf(Member(author))
         val channel = Channel().apply {
             this.cid = "messaging:$channelName"
             this.id = channelName
             this.type = "messaging"
             this.name = channelName
             this.members = members
+            this.createdBy = author
         }
         viewModelScope.launch(ioDispatcher) {
             val result = domain.useCases.createChannel.invoke(channel).execute()

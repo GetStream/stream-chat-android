@@ -120,9 +120,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         MessageInputController(binding, this, style)
     }
 
-    private fun init() {
-    }
-
     private fun applyStyle() {
         ActivityResultContracts.GetContent()
         // Attachment Button
@@ -130,6 +127,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
         binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
         binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
+        binding.btnClose.background = style.attachmentCloseButtonBackground
         // Send Button
         binding.sendButton.setImageDrawable(style.getInputButtonIcon(false))
         binding.sendButton.layoutParams.width = style.inputButtonWidth
@@ -138,8 +136,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         // Input Background
         binding.llComposer.background = style.inputBackground
         // Input Text
-        style.inputText.apply(binding.etMessage)
-        binding.etMessage.hint = style.getInputHint()
+        style.inputText.apply(binding.messageTextInput)
+        binding.messageTextInput.hint = style.getInputHint()
         style.inputBackgroundText.apply(binding.tvTitle)
         style.inputBackgroundText.apply(binding.tvCommand)
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
@@ -155,7 +153,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     }
 
     private fun configInputEditText() {
-        binding.etMessage.onFocusChangeListener =
+        binding.messageTextInput.onFocusChangeListener =
             OnFocusChangeListener { _: View?, hasFocus: Boolean ->
                 if (hasFocus) {
                     Utils.showSoftKeyboard(context as Activity)
@@ -165,12 +163,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
                     setKeyboardEventListener()
                 }
             }
-        TextViewUtils.afterTextChanged(binding.etMessage) { editable: Editable -> keyStroke(editable.toString()) }
-        binding.etMessage.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
+        TextViewUtils.afterTextChanged(binding.messageTextInput) { editable: Editable -> keyStroke(editable.toString()) }
+        binding.messageTextInput.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
             sendGiphyFromKeyboard(
                 inputContentInfo,
-                flags,
-                opts
+                flags
             )
         }
     }
@@ -219,26 +216,26 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             context as Activity
         ) { isOpen: Boolean ->
             if (!isOpen) {
-                binding.etMessage.clearFocus()
+                binding.messageTextInput.clearFocus()
             }
         }
     }
 
     override fun setEnabled(enabled: Boolean) {
-        binding.etMessage.isEnabled = true
+        binding.messageTextInput.isEnabled = true
     }
 
     override fun clearFocus() {
-        binding.etMessage.clearFocus()
+        binding.messageTextInput.clearFocus()
     }
 
     var messageText: String
-        get() = binding.etMessage.text.toString()
+        get() = binding.messageTextInput.text.toString()
         set(text) {
             if (TextUtils.isEmpty(text)) return
-            binding.etMessage.requestFocus()
-            binding.etMessage.setText(text)
-            binding.etMessage.setSelection(binding.etMessage.text.length)
+            binding.messageTextInput.requestFocus()
+            binding.messageTextInput.setText(text)
+            binding.messageTextInput.setSelection(binding.messageTextInput.text.length)
         }
 
     fun configureMembers(members: List<Member>) {
@@ -291,14 +288,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private fun initSendMessage() {
         messageInputController.initSendMessage()
-        binding.etMessage.setText("")
+        binding.messageTextInput.setText("")
         binding.sendButton.isEnabled = true
     }
 
     private fun sendGiphyFromKeyboard(
         inputContentInfo: InputContentInfoCompat,
-        flags: Int,
-        opts: Bundle
+        flags: Int
     ): Boolean {
         if (BuildCompat.isAtLeastQ() &&
             flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0
@@ -317,7 +313,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         attachment.title = inputContentInfo.description.label.toString()
         attachment.type = ModelType.attach_giphy
         messageInputController.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
-        binding.etMessage.setText("")
+        binding.messageTextInput.setText("")
         onSendMessage()
         return true
     }

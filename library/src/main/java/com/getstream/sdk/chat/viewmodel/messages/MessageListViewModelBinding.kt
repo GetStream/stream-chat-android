@@ -11,6 +11,9 @@ fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: Lifecyc
     view.setOnMessageDeleteHandler { onEvent(MessageListViewModel.Event.DeleteMessage(it)) }
     view.setOnStartThreadHandler { onEvent(MessageListViewModel.Event.ThreadModeEntered(it)) }
     view.setOnMessageFlagHandler { onEvent(MessageListViewModel.Event.FlagMessage(it)) }
+    view.setOnSendGiphyHandler { message, giphyAction ->
+        onEvent(MessageListViewModel.Event.GiphyActionSelected(message, giphyAction))
+    }
 
     state.observe(
         lifecycleOwner,
