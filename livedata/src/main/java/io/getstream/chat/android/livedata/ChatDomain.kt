@@ -1,10 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
-import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
@@ -93,6 +90,7 @@ interface ChatDomain {
         private var client: ChatClient,
         private var user: User
     ) {
+        private val factory: ChatDomainImplFactory = ChatDomainImplFactoryImpl()
 
         private var database: ChatDatabase? = null
 
@@ -159,25 +157,8 @@ interface ChatDomain {
             return instance
         }
 
-        internal fun buildImpl(): ChatDomainImpl {
-            return ChatDomainImpl(
-                client,
-                user,
-                database ?: createDatabase(),
-                createHandler(),
-                offlineEnabled,
-                userPresence,
-                recoveryEnabled
-            )
-        }
-
-        private fun createDatabase() = if (offlineEnabled) {
-            ChatDatabase.getDatabase(appContext, user.id)
-        } else {
-            Room.inMemoryDatabaseBuilder(appContext, ChatDatabase::class.java).build()
-        }
-
-        private fun createHandler() = Handler(Looper.getMainLooper())
+        internal fun buildImpl() =
+            factory.create(appContext, client, user, database, offlineEnabled, userPresence, recoveryEnabled)
 
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
