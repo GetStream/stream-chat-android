@@ -11,6 +11,7 @@ include ':library', ':sample'
 // - stream-chat-android
 // comment this code or move the directory to enable/disable local modules
 
+/*
 if (new File(rootDir, '../stream-chat-android-livedata').exists()) {
 
     includeBuild("../stream-chat-android-livedata") {
@@ -31,4 +32,4 @@ if (new File(rootDir, '../stream-chat-android-client').exists()) {
             substitute(module("com.github.GetStream:stream-chat-android-client:")).with(project(":client"))
         }
     }
-}
+}*/
