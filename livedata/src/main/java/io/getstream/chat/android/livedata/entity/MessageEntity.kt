@@ -107,13 +107,15 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
             val shouldDecrement = (countBeforeFilter > countAfterFilter) || latestReactions.size >= 15
             if (shouldDecrement) {
                 val currentCount = reactionCounts.getOrElse(reaction.type) { 1 }
-                reactionCounts[reaction.type] = currentCount - 1
-                if (reactionCounts[reaction.type] == 0) {
+                val newCount = currentCount - 1
+                reactionCounts[reaction.type] = newCount
+                if (newCount <= 0) {
                     reactionCounts.remove(reaction.type)
                 }
                 val currentScore = reactionScores.getOrElse(reaction.type) { 1 }
-                reactionScores[reaction.type] = currentScore - reaction.score
-                if (reactionScores[reaction.type] == 0) {
+                val newScore = currentScore - reaction.score
+                reactionScores[reaction.type] = newScore
+                if (newScore <= 0) {
                     reactionScores.remove(reaction.type)
                 }
             }

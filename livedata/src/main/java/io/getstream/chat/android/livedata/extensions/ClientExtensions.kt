@@ -80,14 +80,16 @@ fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
         if (shouldDecrement) {
             this.reactionCounts = this.reactionCounts.toMutableMap()
             val currentCount = this.reactionCounts.getOrElse(reaction.type) { 1 }
-            this.reactionCounts[reaction.type] = currentCount - 1
-            if (reactionCounts[reaction.type] == 0) {
+            val newCount = currentCount - 1
+            this.reactionCounts[reaction.type] = newCount
+            if (newCount <= 0) {
                 reactionCounts.remove(reaction.type)
             }
             this.reactionScores = this.reactionScores.toMutableMap()
             val currentScore = this.reactionScores.getOrElse(reaction.type) { 1 }
-            this.reactionScores[reaction.type] = currentScore - reaction.score
-            if (reactionScores[reaction.type] == 0) {
+            val newScore = currentScore - reaction.score
+            this.reactionScores[reaction.type] = newScore
+            if (newScore <= 0) {
                 reactionScores.remove(reaction.type)
             }
         }
