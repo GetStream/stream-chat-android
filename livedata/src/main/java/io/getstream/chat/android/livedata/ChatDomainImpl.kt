@@ -276,6 +276,9 @@ class ChatDomainImpl private constructor(
             } else {
                 SyncStatus.SYNC_NEEDED
             }
+            if (c.createdBy != currentUser) {
+                c.createdBy = currentUser
+            }
 
             // update livedata
             val channelRepo = channel(c.cid)
