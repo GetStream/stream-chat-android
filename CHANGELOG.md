@@ -6,6 +6,7 @@
 - Improve setting user in sample app
 - Add updating message read state after loading first messages
 - Wrap Attachment into AttachmentListItem for use in adapter
+- Revamp MessageListView adapter customization, introduce ListenerContainer to handle all ViewHolder listeners
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
