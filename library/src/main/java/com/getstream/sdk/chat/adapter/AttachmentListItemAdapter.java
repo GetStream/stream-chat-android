@@ -11,8 +11,8 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
-import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Message;
+import kotlin.collections.CollectionsKt;
 
 
 public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -22,7 +22,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageViewHolderFactory factory;
     private Context context;
     private MessageListItem.MessageItem messageListItem;
-    private List<Attachment> attachments;
+    private List<AttachmentListItem> attachments;
     private MessageListViewStyle style;
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
@@ -30,19 +30,21 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageListView.BubbleHelper bubbleHelper;
 
 
-    public AttachmentListItemAdapter(Context context, @NonNull MessageListItem.MessageItem messageListItem, @NonNull MessageViewHolderFactory factory) {
+    public AttachmentListItemAdapter(Context context,
+                                     @NonNull MessageListItem.MessageItem messageListItem,
+                                     @NonNull MessageViewHolderFactory factory) {
         this.context = context;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.factory = factory;
-        this.attachments = message.getAttachments();
+        this.attachments = CollectionsKt.map(message.getAttachments(), AttachmentListItem::new);
     }
 
     @Override
     public int getItemViewType(int position) {
         try {
-            Attachment attachment = attachments.get(position);
-            return factory.getAttachmentViewType(attachment);
+            AttachmentListItem attachmentItem = attachments.get(position);
+            return factory.getAttachmentViewType(attachmentItem);
         } catch (IndexOutOfBoundsException e) {
             return 0;
         }
@@ -62,12 +64,12 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Attachment attachment = attachments.get(position);
+        AttachmentListItem attachmentItem = attachments.get(position);
         ((BaseAttachmentViewHolder) holder).bind(
                 context,
                 messageListItem,
                 message,
-                attachment,
+                attachmentItem,
                 style,
                 bubbleHelper,
                 attachmentClickListener,
