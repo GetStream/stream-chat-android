@@ -20,9 +20,9 @@ jobs:
         with:
           java-version: 1.8
       - name: KtLint
-        run: bash ./gradlew ktlintCheck
+        run: ./gradlew ktlintCheck
       - name: Unit tests
-        run: bash ./gradlew test --stacktrace
+        run: ./gradlew test --stacktrace
       - name: Coverage
         run: ./gradlew jacocoTestReport
       - name: Upload Coverage
