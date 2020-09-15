@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
@@ -25,25 +27,32 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 interface ChatDomain {
     /** The current user object */
     var currentUser: User
+
     /** if offline is enabled */
     var offlineEnabled: Boolean
+
     /** if we want to track user presence */
     var userPresence: Boolean
+
     /** if the client connection has been initialized */
     val initialized: LiveData<Boolean>
+
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
     val online: LiveData<Boolean>
+
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
     val totalUnreadCount: LiveData<Int>
+
     /**
      * the number of unread channels for the current user
      */
     val channelUnreadCount: LiveData<Int>
+
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
      * The following example shows how to observe these errors
@@ -54,16 +63,20 @@ interface ChatDomain {
      *
      */
     val errorEvents: LiveData<Event<ChatError>>
+
     /**
      * list of users that you've muted
      */
     val muted: LiveData<List<Mute>>
+
     /**
      * if the current user is banned or not
      */
     val banned: LiveData<Boolean>
+
     /** The retry policy for retrying failed requests */
     var retryPolicy: RetryPolicy
+
     /** a helper object which lists all the initialized use cases for the chat domain */
     var useCases: UseCaseHelper
 
@@ -147,7 +160,15 @@ interface ChatDomain {
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            return ChatDomainImpl(client, user, database ?: createDatabase(), offlineEnabled, userPresence, recoveryEnabled)
+            return ChatDomainImpl(
+                client,
+                user,
+                database ?: createDatabase(),
+                createHandler(),
+                offlineEnabled,
+                userPresence,
+                recoveryEnabled
+            )
         }
 
         private fun createDatabase() = if (offlineEnabled) {
@@ -155,6 +176,8 @@ interface ChatDomain {
         } else {
             Room.inMemoryDatabaseBuilder(appContext, ChatDatabase::class.java).build()
         }
+
+        private fun createHandler() = Handler(Looper.getMainLooper())
 
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {

@@ -1,7 +1,6 @@
 package io.getstream.chat.android.livedata
 
 import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -64,6 +63,7 @@ private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
 class ChatDomainImpl private constructor(
     internal var client: ChatClient,
     override var currentUser: User,
+    private val mainHandler: Handler,
     override var offlineEnabled: Boolean = false,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false
@@ -125,7 +125,6 @@ class ChatDomainImpl private constructor(
     // TODO 1.1: We should accelerate online/offline detection
 
     internal lateinit var eventHandler: EventHandlerImpl
-    private lateinit var mainHandler: Handler
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -150,10 +149,11 @@ class ChatDomainImpl private constructor(
         client: ChatClient,
         currentUser: User,
         db: ChatDatabase,
+        handler: Handler,
         offlineEnabled: Boolean = true,
         userPresence: Boolean = true,
         recoveryEnabled: Boolean = true
-    ) : this(client, currentUser, offlineEnabled, userPresence, recoveryEnabled) {
+    ) : this(client, currentUser, handler, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         repos = RepositoryHelper(client, currentUser, db)
@@ -236,8 +236,6 @@ class ChatDomainImpl private constructor(
     }
 
     private fun initClean() {
-        mainHandler = Handler(Looper.getMainLooper())
-
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
