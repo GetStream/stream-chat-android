@@ -265,7 +265,7 @@ object EventArguments {
         Arguments.of(createUsersUnmutedEventStringJson(), UsersUnmutedEvent::class.java, usersUnmutedEvent),
         Arguments.of(createUserUpdatedEventStringJson(), UserUpdatedEvent::class.java, userUpdatedEvent),
         Arguments.of(createConnectedEventStringJson(), ConnectedEvent::class.java, connectedEvent),
-        Arguments.of(createConnectedEventStringJson(null), ConnectedEvent::class.java, healthEvent),
+        Arguments.of(createConnectedEventStringJson(null), HealthEvent::class.java, healthEvent),
         Arguments.of(createChannelCreatedEventStringJson(), ChannelCreatedEvent::class.java, channelCreatedEvent),
         Arguments.of(createChannelDeletedEventStringJson(), ChannelDeletedEvent::class.java, channelDeletedEvent),
         Arguments.of(createChannelHiddenEventStringJson(), ChannelHiddenEvent::class.java, channelHiddenEvent),
