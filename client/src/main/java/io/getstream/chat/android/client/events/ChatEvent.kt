@@ -181,7 +181,8 @@ data class NewMessageEvent(
     val message: Message,
     @SerializedName("watcher_count") val watcherCount: Int?,
     @SerializedName("unread_messages") val unreadMessages: Int?,
-    @SerializedName("total_unread_count") val totalUnreadCount: Int?
+    @SerializedName("total_unread_count") val totalUnreadCount: Int?,
+    @SerializedName("unread_channels" ) val unreadChannels: Int?
 ) : CidEvent()
 
 data class NotificationAddedToChannelEvent(
@@ -248,7 +249,8 @@ data class NotificationMarkReadEvent(
     @SerializedName("channel_id") val channelId: String,
     @SerializedName("watcher_count") val watcherCount: Int?,
     @SerializedName("unread_messages") val unreadMessages: Int?,
-    @SerializedName("total_unread_count") val totalUnreadCount: Int?
+    @SerializedName("total_unread_count") val totalUnreadCount: Int?,
+    @SerializedName("unread_channels" ) val unreadChannels: Int?
 ) : CidEvent()
 
 data class NotificationMessageNewEvent(
@@ -261,7 +263,8 @@ data class NotificationMessageNewEvent(
     val message: Message,
     @SerializedName("watcher_count") val watcherCount: Int?,
     @SerializedName("unread_messages") val unreadMessages: Int?,
-    @SerializedName("total_unread_count") val totalUnreadCount: Int?
+    @SerializedName("total_unread_count") val totalUnreadCount: Int?,
+    @SerializedName("unread_channels" ) val unreadChannels: Int?
 ) : CidEvent()
 
 data class NotificationMutesUpdatedEvent(
