@@ -41,6 +41,8 @@ import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 import com.getstream.sdk.chat.view.ReadStateView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,10 +54,8 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.SyncStatus;
 import top.defaults.drawabletoolbox.DrawableBuilder;
 
-import static com.getstream.sdk.chat.enums.Dates.TODAY;
-import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
-
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<MessageListItem.MessageItem> {
+    private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm");
     @DimenRes
     int avatarWidth;
     protected TextView tv_text;
@@ -263,12 +263,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
         if (style.isMessageDateShow()) {
             tv_messagedate.setVisibility(View.VISIBLE);
-            if (message.getDate() == null)
-                LlcMigrationUtils.setStartDay(Arrays.asList(message), null);
-            if (message.getDate().equals(TODAY.getLabel()) || message.getDate().equals(YESTERDAY.getLabel()))
-                tv_messagedate.setText(message.getTime());
-            else
-                tv_messagedate.setText(context.getString(R.string.stream_message_date, message.getDate(), message.getTime()));
+            tv_messagedate.setText(TIME_DATEFORMAT.format(message.getCreatedAt()));
         } else {
             tv_messagedate.setVisibility(View.GONE);
         }
