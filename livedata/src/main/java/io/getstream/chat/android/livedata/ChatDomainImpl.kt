@@ -302,7 +302,7 @@ class ChatDomainImpl private constructor(
                 if (result.isSuccess) {
                     c.syncStatus = SyncStatus.COMPLETED
                     repos.channels.insertChannel(c)
-                    Result(result.data() as Channel, null)
+                    Result(result.data(), null)
                 } else {
                     if (result.error().isPermanent()) {
                         c.syncStatus = SyncStatus.FAILED_PERMANENTLY

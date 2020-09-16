@@ -97,14 +97,14 @@ class ChannelControllerImpl(
     val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = Transformations.map(_messages) {
+    override val messages: LiveData<List<Message>> = Transformations.map(_messages) { messageMap ->
         // TODO: consider removing this check
-        it.values
+        messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
             .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
             .sortedBy { it.createdAt }
-            .toList()
+            .toList().map { it.copy(cid = cid) }
     }
 
     /** the number of people currently watching the channel */
@@ -691,7 +691,7 @@ class ChannelControllerImpl(
 
         // update all the fresh messages
         for (message in freshMessages) {
-            copy[message.id] = message
+            copy[message.id] = message.copy()
         }
         _messages.postValue(copy)
     }

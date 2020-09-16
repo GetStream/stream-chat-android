@@ -3,28 +3,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'jacoco-android'
 apply plugin: 'maven-publish'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: "com.hiya.jacoco-android"
+
 
 group = 'com.github.GetStream'
 
-//https://github.com/arturdm/jacoco-android-gradle-plugin
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-}
 
-jacoco {
-    toolVersion = "0.8.4"
-}
-
-jacocoAndroidUnitTestReport {
-    csv.enabled false
-    html.enabled true
-    xml.enabled true
-    excludes += ['**/*_Impl.java', '**/*JavascriptBridge.class']
-}
 
 android {
     compileSdkVersion 28
@@ -33,7 +20,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.7.4"
+        versionName "0.7.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
