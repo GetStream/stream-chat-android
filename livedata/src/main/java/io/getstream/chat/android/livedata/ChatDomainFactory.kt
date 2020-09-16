@@ -7,20 +7,8 @@ import androidx.room.Room
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 
-internal interface ChatDomainImplFactory {
+internal class ChatDomainFactory {
     fun create(
-        context: Context,
-        chatClient: ChatClient,
-        user: User,
-        database: ChatDatabase?,
-        offlineEnabled: Boolean,
-        userPresence: Boolean,
-        recoveryEnabled: Boolean
-    ): ChatDomainImpl
-}
-
-internal class ChatDomainImplFactoryImpl : ChatDomainImplFactory {
-    override fun create(
         context: Context,
         chatClient: ChatClient,
         user: User,
