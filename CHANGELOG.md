@@ -1,5 +1,9 @@
 # To be released:
 
+# Sep 15th, 2020 - 0.7.5
+- Fix offline support for adding and removing reactions
+- Fix crash when creating a channel while channel.createdBy is not set
+
 # Sep 14th, 2020 - 0.7.4
 - Remove duplicates of new channels
 - Improve tests
