@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.hiya.jacoco-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'maven-publish'
+apply plugin: "de.mannodermaus.android-junit5"
 
 group = 'com.github.getstream'
 
@@ -80,6 +81,7 @@ dependencies {
     testImplementation "org.json:json:20190722"
 
     testImplementation 'junit:junit:4.13'
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$jupiter_version"
     testImplementation 'org.mockito:mockito-core:2.23.0'
     testImplementation 'org.assertj:assertj-core:3.15.0'
     testImplementation "org.robolectric:robolectric:4.3.1"
