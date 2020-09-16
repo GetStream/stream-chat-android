@@ -90,7 +90,7 @@ interface ChatDomain {
         private var client: ChatClient,
         private var user: User
     ) {
-        private val factory: ChatDomainImplFactory = ChatDomainImplFactoryImpl()
+        private val factory: ChatDomainFactory = ChatDomainFactory()
 
         private var database: ChatDatabase? = null
 
