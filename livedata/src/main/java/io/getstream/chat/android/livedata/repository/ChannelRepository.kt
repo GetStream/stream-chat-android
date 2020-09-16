@@ -9,7 +9,12 @@ import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 
-class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
+class ChannelRepository(
+    var channelDao: ChannelDao,
+    var cacheSize: Int = 100,
+    var currentUser: User,
+    var client: ChatClient
+) {
     // the channel cache is simple, just keeps the last 100 users in memory
     var channelCache = LruCache<String, ChannelEntity>(cacheSize)
 
@@ -66,13 +71,12 @@ class ChannelRepository(var channelDao: ChannelDao, var cacheSize: Int = 100, va
     }
 
     suspend fun retryChannels(): List<ChannelEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
         val channelEntities = selectSyncNeeded()
 
         for (channelEntity in channelEntities) {
-            val channel = channelEntity.toChannel(userMap)
             // TODO: what about channel.members
-            val result = client.createChannel(channel.type, channel.id, channel.extraData).execute()
+            val result =
+                client.createChannel(channelEntity.type, channelEntity.channelId, channelEntity.extraData).execute()
             if (result.isSuccess) {
                 channelEntity.syncStatus = SyncStatus.COMPLETED
                 insert(channelEntity)

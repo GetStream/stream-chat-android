@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
-import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
@@ -616,31 +616,22 @@ class ChatDomainImpl private constructor(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
     ): List<ChannelEntityPair> {
-
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
+        val channelMessagesMap = if (pagination.memberLimit > 0) {
+            channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
+        } else {
+            emptyMap()
+        }
 
         // gather the user ids from channels, members and the last message
-        val userIds = mutableSetOf<String>()
-        val channelMessagesMap = mutableMapOf<String, List<MessageEntity>>()
-        for (channelEntity in channelEntities) {
-            channelEntity.createdByUserId?.let { userIds.add(it) }
-            channelEntity.members.let {
-                userIds.addAll(it.keys)
-            }
-            channelEntity.reads.let {
-                userIds.addAll(it.keys)
-            }
-            if (pagination.messageLimit > 0) {
-                val messages = repos.messages.selectMessagesForChannel(channelEntity.cid, pagination)
-                for (message in messages) {
-                    userIds.add(message.userId)
-                    for (reaction in message.latestReactions) {
-                        userIds.add(reaction.userId)
-                    }
-                }
-                channelMessagesMap[channelEntity.cid] = messages
-            }
+        val userIds = channelEntities.fold(emptySet<String>()) { acc, channel ->
+            acc + channel.createdByUserId.orEmpty() +
+                channel.members.keys +
+                channel.reads.keys +
+                channelMessagesMap[channel.cid]?.map { message ->
+                    message.userId + message.latestReactions.map(ReactionEntity::userId)
+                }.orEmpty()
         }
 
         // get a map with user id to User
