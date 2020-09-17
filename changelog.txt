@@ -1,5 +1,7 @@
 # To be released:
 
+- Update events fields related to read status
+
 # 1.15.4 - Fri 11 Sep 2020
 
 - Fix Socket Disconnection
