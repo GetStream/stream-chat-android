@@ -288,20 +288,8 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     event.targetUsers.forEach { users[it.id] = UserEntity(it) }
                     users[event.user.id] = UserEntity(event.user)
                 }
-                is TypingStartEvent -> {
-                }
-                is TypingStopEvent -> {
-                }
-                is HealthEvent -> {
-                }
-                is ConnectingEvent -> {
-                }
-                is DisconnectedEvent -> {
-                }
-                is ErrorEvent -> {
-                }
-                is UnknownEvent -> {
-                }
+                is TypingStartEvent, is TypingStopEvent, is HealthEvent, is ConnectingEvent, is DisconnectedEvent,
+                is ErrorEvent, is UnknownEvent -> Unit
             }.exhaustive
         }
         // actually insert the data
