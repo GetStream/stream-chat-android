@@ -116,7 +116,7 @@ object EventArguments {
     private val channelId = "channelId"
     private val cid = "channelType:channelId"
     private val watcherCount = 3
-    private val unreadMessages = 5
+    private val unreadChannels = 5
     private val totalUnreadCount = 4
     private val user = User(
         id = "bender",
@@ -197,8 +197,8 @@ object EventArguments {
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(EventType.NOTIFICATION_CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, channel)
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(EventType.NOTIFICATION_INVITE_ACCEPTED, date, cid, channelType, channelId, user, member)
     private val notificationInvitedEvent = NotificationInvitedEvent(EventType.NOTIFICATION_INVITED, date, cid, channelType, channelId, user, member)
-    private val notificationMarkReadEvent = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, date, user, cid, channelType, channelId, watcherCount, unreadMessages, totalUnreadCount)
-    private val notificationMessageNewEvent = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, unreadMessages, totalUnreadCount)
+    private val notificationMarkReadEvent = NotificationMarkReadEvent(EventType.NOTIFICATION_MARK_READ, date, user, cid, channelType, channelId, watcherCount, totalUnreadCount, unreadChannels)
+    private val notificationMessageNewEvent = NotificationMessageNewEvent(EventType.NOTIFICATION_MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
     private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(EventType.NOTIFICATION_REMOVED_FROM_CHANNEL, date, user, cid, channelType, channelId)
     private val reactionDeletedEvent = ReactionDeletedEvent(EventType.REACTION_DELETED, date, user, cid, channelType, channelId, message, reaction)
     private val reactionNewEvent = ReactionNewEvent(EventType.REACTION_NEW, date, user, cid, channelType, channelId, message, reaction)
@@ -222,7 +222,7 @@ object EventArguments {
     private val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, date, user, connectionId)
     private val notificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED, date, user)
     private val notificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(EventType.NOTIFICATION_MUTES_UPDATED, date, user)
-    private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, unreadMessages, totalUnreadCount)
+    private val newMessageEvent = NewMessageEvent(EventType.MESSAGE_NEW, date, user, cid, channelType, channelId, message, watcherCount, totalUnreadCount, unreadChannels)
     private val unknownEvent = UnknownEvent(EventType.UNKNOWN, date, mapOf("type" to EventType.UNKNOWN, "created_at" to dateString))
     private val otherUnknownEvent = UnknownEvent("some.unknown.type", date, mapOf("type" to "some.unknown.type", "created_at" to dateString))
 

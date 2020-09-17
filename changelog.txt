@@ -1,6 +1,6 @@
 # To be released:
 
-- Update events fields related to read status
+- Update events fields related to read status - remove "unread_messages" field and add "unread_channels" to NewMessageEvent, NotificationMarkReadEvent, and NotificationMessageNewEvent
 
 # 1.15.4 - Fri 11 Sep 2020
 

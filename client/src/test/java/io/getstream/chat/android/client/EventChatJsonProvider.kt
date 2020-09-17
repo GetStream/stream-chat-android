@@ -249,8 +249,8 @@ fun createNotificationMarkReadEventStringJson() =
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "watcher_count": 3,
-            "unread_messages": 5,
-            "total_unread_count": 4
+            "total_unread_count": 4,
+            "unread_channels": 5
         """.trimIndent()
     )
 
@@ -263,8 +263,8 @@ fun createNotificationMessageNewEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "unread_messages": 5,
             "total_unread_count": 4,
+            "unread_channels": 5,
             "message": ${createMessageJsonString()}
         """.trimIndent()
     )
@@ -506,8 +506,8 @@ fun createNewMessageEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "unread_messages": 5,
             "total_unread_count": 4,
+            "unread_channels": 5,
             "message": ${createMessageJsonString()}
         """.trimIndent()
     )
