@@ -17,9 +17,12 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun eventWatcherCountUpdates() {
+        Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(100)
+
         val event = data.userStartWatchingEvent
         channelControllerImpl.handleEvent(event)
-        Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(100)
+
+        Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(1)
         Truth.assertThat(channelControllerImpl.watchers.getOrAwaitValue()).isEqualTo(listOf(event.user))
     }
 
@@ -117,9 +120,11 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun eventReaction() {
+        val messageWithCid = data.reactionEvent.message.copy(cid = data.reactionEvent.cid)
+
         channelControllerImpl.handleEvent(data.reactionEvent)
+
         val messages = channelControllerImpl.messages.getOrAwaitValue()
-        Truth.assertThat(messages.size).isEqualTo(1)
-        Truth.assertThat(messages[0]).isEqualTo(data.reactionEvent.message)
+        Truth.assertThat(messages).isEqualTo(listOf(messageWithCid))
     }
 }
