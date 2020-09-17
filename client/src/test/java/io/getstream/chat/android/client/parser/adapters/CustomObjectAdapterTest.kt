@@ -38,7 +38,6 @@ class CustomObjectAdapterTest {
         checkJsonStructureAndValues(jsonObject)
     }
 
-
     private fun checkJsonStructureAndValues(jsonObject: JsonObject) {
         jsonObject.apply {
             get("id").asString shouldBeEqualTo "8584452-6d711169-0224-41c2-b9aa-1adbe624521b"
