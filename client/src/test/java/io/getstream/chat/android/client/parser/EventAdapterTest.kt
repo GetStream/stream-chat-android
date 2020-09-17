@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.parser
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
 import io.getstream.chat.android.client.events.ChatEvent
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
@@ -23,11 +24,13 @@ internal class EventAdapterTest {
                 f.getAnnotation(IgnoreDeserialisation::class.java) != null
         })
         .create()
-    private val evenAdapter = EventAdapter(gson, gson.getAdapter(ChatEvent::class.java))
+
+    private val eventAdapter: TypeAdapter<ChatEvent> =
+        EventAdapter(gson, gson.getAdapter(ChatEvent::class.java))
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArguments")
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
-        evenAdapter.fromJson(eventData) `should be equal to` expectedEvent
+        eventAdapter.fromJson(eventData) `should be equal to` expectedEvent
     }
 }
