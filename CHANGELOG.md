@@ -1,4 +1,5 @@
 # To be released:
+- Adjust ChatSocketListener to new events(NewMessageEvent, NotificationMarkReadEvent, NotificationMessageNewEvent) properties.
 
 # Sep 18th, 2020 - 4.2.11-beta-12
 - Implement Giphy actions handler

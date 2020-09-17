@@ -206,12 +206,12 @@ class ChatImpl implements Chat {
                     currentUser.postValue(user);
                     return Unit.INSTANCE;
                 },
-                newUnreadChannels -> {
-                    unreadChannels.postValue(newUnreadChannels);
-                    return Unit.INSTANCE;
-                },
                 newUnreadMessages -> {
                     unreadMessages.postValue(newUnreadMessages);
+                    return Unit.INSTANCE;
+                },
+                newUnreadChannels -> {
+                    unreadChannels.postValue(newUnreadChannels);
                     return Unit.INSTANCE;
                 }
         ));
