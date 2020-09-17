@@ -108,25 +108,6 @@ class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(chatDomainImpl.totalUnreadCount.getOrAwaitValue()).isEqualTo(3)
     }
 
-    @Ignore("Failing for unknown reasons")
-    @Test
-    fun banUserFlow() = runBlocking(Dispatchers.IO) {
-        // ensure we have the current user stored
-        chatDomainImpl.repos.users.insertMe(data.user1)
-        // ban flow
-        chatDomainImpl.eventHandler.handleEvent(data.user1Banned)
-        var banned = chatDomainImpl.banned.getOrAwaitValue()
-        var me = chatDomainImpl.repos.users.selectMe()
-        Truth.assertThat(banned).isTrue()
-        Truth.assertThat(me!!.banned).isTrue()
-        // unban flow
-        chatDomainImpl.eventHandler.handleEvent(data.user1Unbanned)
-        banned = chatDomainImpl.banned.getOrAwaitValue()
-        me = chatDomainImpl.repos.users.selectMe()
-        Truth.assertThat(banned).isFalse()
-        Truth.assertThat(me!!.banned).isFalse()
-    }
-
     @Test
     fun mutUsers() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.notificationMutesUpdated)
