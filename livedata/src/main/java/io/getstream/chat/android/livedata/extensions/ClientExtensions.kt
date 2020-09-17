@@ -3,10 +3,7 @@ package io.getstream.chat.android.livedata.extensions
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.*
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
@@ -24,26 +21,9 @@ fun Message.getCid(): String =
         this.cid
     }
 
-fun Message.users(): List<User> {
-    val users = mutableListOf<User>()
-    users.add(this.user)
-    for (reaction in this.latestReactions) {
-        reaction.user?.let { users.add(it) }
-    }
-    return users
-}
+fun Message.users() = latestReactions.mapNotNull(Reaction::user) + user
 
-fun Channel.users(): List<User> {
-    val users = mutableListOf<User>()
-    users.add(this.createdBy)
-    for (member in this.members) {
-        users.add(member.user)
-    }
-    for (read in this.read) {
-        users.add(read.user)
-    }
-    return users
-}
+fun Channel.users() = members.map(Member::user) + read.map(ChannelUserRead::user) + createdBy
 
 fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 

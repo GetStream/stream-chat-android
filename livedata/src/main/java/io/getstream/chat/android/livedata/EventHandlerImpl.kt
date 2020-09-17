@@ -1,59 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import exhaustive
-import io.getstream.chat.android.client.events.ChannelCreatedEvent
-import io.getstream.chat.android.client.events.ChannelDeletedEvent
-import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelMuteEvent
-import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUnmuteEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
-import io.getstream.chat.android.client.events.ChannelUserBannedEvent
-import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
-import io.getstream.chat.android.client.events.ChannelVisibleEvent
-import io.getstream.chat.android.client.events.ChannelsMuteEvent
-import io.getstream.chat.android.client.events.ChannelsUnmuteEvent
-import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.events.GlobalUserBannedEvent
-import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
-import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.MemberUpdatedEvent
-import io.getstream.chat.android.client.events.MessageDeletedEvent
-import io.getstream.chat.android.client.events.MessageReadEvent
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
-import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
-import io.getstream.chat.android.client.events.NotificationInvitedEvent
-import io.getstream.chat.android.client.events.NotificationMarkReadEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.events.ReactionDeletedEvent
-import io.getstream.chat.android.client.events.ReactionNewEvent
-import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMutedEvent
-import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUnmutedEvent
-import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.UsersMutedEvent
-import io.getstream.chat.android.client.events.UsersUnmutedEvent
+import io.getstream.chat.android.client.events.*
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.livedata.entity.ChannelEntity
@@ -89,25 +37,24 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
 
+        events.filterIsInstance<CidEvent>().onEach { channelsToFetch += it.cid }
+
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
             when (event) {
-                is MessageReadEvent -> channelsToFetch += event.cid
-                is MemberAddedEvent -> channelsToFetch += event.cid
-                is MemberRemovedEvent -> channelsToFetch += event.cid
-                is NotificationRemovedFromChannelEvent -> channelsToFetch += event.cid
-                is MemberUpdatedEvent -> channelsToFetch += event.cid
-                is ChannelUpdatedEvent -> channelsToFetch += event.cid
-                is ChannelDeletedEvent -> channelsToFetch += event.cid
-                is ChannelHiddenEvent -> channelsToFetch += event.cid
-                is ChannelVisibleEvent -> channelsToFetch += event.cid
-                is NotificationAddedToChannelEvent -> channelsToFetch += event.cid
-                is NotificationInvitedEvent -> channelsToFetch += event.cid
-                is NotificationInviteAcceptedEvent -> channelsToFetch += event.cid
-                is ChannelTruncatedEvent -> channelsToFetch += event.cid
+                is MessageReadEvent, is MemberAddedEvent, is MemberRemovedEvent, is NotificationRemovedFromChannelEvent,
+                is MemberUpdatedEvent, is ChannelUpdatedEvent, is ChannelDeletedEvent, is ChannelHiddenEvent,
+                is ChannelVisibleEvent, is NotificationAddedToChannelEvent, is NotificationInvitedEvent,
+                is NotificationInviteAcceptedEvent, is ChannelTruncatedEvent, is ChannelCreatedEvent, is HealthEvent,
+                is NotificationMutesUpdatedEvent, is GlobalUserBannedEvent, is UserDeletedEvent, is UserMutedEvent,
+                is UsersMutedEvent, is UserPresenceChangedEvent, is GlobalUserUnbannedEvent, is UserUnmutedEvent,
+                is UsersUnmutedEvent, is UserUpdatedEvent, is NotificationChannelMutesUpdatedEvent, is ConnectedEvent,
+                is ConnectingEvent, is DisconnectedEvent, is ErrorEvent, is UnknownEvent, is NotificationMessageNewEvent,
+                is NotificationChannelDeletedEvent, is NotificationChannelTruncatedEvent, is NotificationMarkReadEvent,
+                is TypingStartEvent, is TypingStopEvent, is ChannelUserBannedEvent, is UserStartWatchingEvent,
+                is UserStopWatchingEvent, is ChannelUserUnbannedEvent -> Unit
                 is ReactionNewEvent -> messagesToFetch += event.reaction.messageId
                 is ReactionDeletedEvent -> messagesToFetch += event.reaction.messageId
-                is ChannelCreatedEvent -> channelsToFetch += event.cid
                 is ChannelMuteEvent -> channelsToFetch += event.channelMute.channel.cid
                 is ChannelsMuteEvent -> {
                     event.channelsMute.forEach { channelsToFetch.add(it.channel.cid) }
@@ -116,37 +63,11 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 is ChannelsUnmuteEvent -> {
                     event.channelsMute.forEach { channelsToFetch.add(it.channel.cid) }
                 }
-                is HealthEvent -> { }
                 is MessageDeletedEvent -> messagesToFetch += event.message.id
                 is MessageUpdatedEvent -> messagesToFetch += event.message.id
                 is NewMessageEvent -> messagesToFetch += event.message.id
                 is NotificationMessageNewEvent -> messagesToFetch += event.message.id
                 is ReactionUpdateEvent -> messagesToFetch += event.message.id
-                is NotificationChannelDeletedEvent -> channelsToFetch += event.cid
-                is NotificationChannelTruncatedEvent -> channelsToFetch += event.cid
-                is NotificationMarkReadEvent -> channelsToFetch += event.cid
-                is TypingStartEvent -> channelsToFetch += event.cid
-                is TypingStopEvent -> channelsToFetch += event.cid
-                is ChannelUserBannedEvent -> channelsToFetch += event.cid
-                is UserStartWatchingEvent -> channelsToFetch += event.cid
-                is UserStopWatchingEvent -> channelsToFetch += event.cid
-                is ChannelUserUnbannedEvent -> channelsToFetch += event.cid
-                is NotificationMutesUpdatedEvent -> { }
-                is GlobalUserBannedEvent -> { }
-                is UserDeletedEvent -> { }
-                is UserMutedEvent -> { }
-                is UsersMutedEvent -> { }
-                is UserPresenceChangedEvent -> { }
-                is GlobalUserUnbannedEvent -> { }
-                is UserUnmutedEvent -> { }
-                is UsersUnmutedEvent -> { }
-                is UserUpdatedEvent -> { }
-                is NotificationChannelMutesUpdatedEvent -> { }
-                is ConnectedEvent -> { }
-                is ConnectingEvent -> { }
-                is DisconnectedEvent -> { }
-                is ErrorEvent -> { }
-                is UnknownEvent -> { }
             }.exhaustive
         }
         // actually fetch the data
@@ -221,6 +142,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
+                    users[event.user.id] = UserEntity(event.user)
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -331,6 +253,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 }
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
+                    users[event.user.id] = UserEntity(event.user)
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -365,13 +288,20 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     event.targetUsers.forEach { users[it.id] = UserEntity(it) }
                     users[event.user.id] = UserEntity(event.user)
                 }
-                is TypingStartEvent -> { }
-                is TypingStopEvent -> { }
-                is HealthEvent -> { }
-                is ConnectingEvent -> { }
-                is DisconnectedEvent -> { }
-                is ErrorEvent -> { }
-                is UnknownEvent -> { }
+                is TypingStartEvent -> {
+                }
+                is TypingStopEvent -> {
+                }
+                is HealthEvent -> {
+                }
+                is ConnectingEvent -> {
+                }
+                is DisconnectedEvent -> {
+                }
+                is ErrorEvent -> {
+                }
+                is UnknownEvent -> {
+                }
             }.exhaustive
         }
         // actually insert the data
