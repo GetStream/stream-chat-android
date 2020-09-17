@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -198,9 +199,7 @@ public class MessageListView extends RecyclerView {
         throw new IllegalArgumentException("Use setMessageListItemAdapter instead please");
     }
 
-    private void setMessageListItemAdapter(MessageListItemAdapter adapter) {
-        adapter.setChannel(channel);
-
+    private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -253,7 +252,7 @@ public class MessageListView extends RecyclerView {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
         }
 
-        adapter = new MessageListItemAdapter(getContext(), viewHolderFactory, bubbleHelper, style);
+        adapter = new MessageListItemAdapter(getContext(), channel, viewHolderFactory, bubbleHelper, style);
         adapter.setHasStableIds(true);
 
         this.setMessageListItemAdapter(adapter);

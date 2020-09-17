@@ -10,10 +10,10 @@ import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
     private var context: Context,
+    val channel: Channel,
     val viewHolderFactory: MessageViewHolderFactory,
     val bubbleHelper: BubbleHelper,
     val style: MessageListViewStyle,
-    var channel: Channel? = null,
     private var messageListItemList: List<MessageListItem> = emptyList()
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
 
@@ -45,13 +45,13 @@ class MessageListItemAdapter @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(
-            context,
-            requireNotNull(channel) { "Channel was not set" },
-            messageListItemList[position],
-            style,
-            bubbleHelper,
-            viewHolderFactory,
-            position
+            context = context,
+            channel = channel,
+            messageListItem = messageListItemList[position],
+            style = style,
+            bubbleHelper = bubbleHelper,
+            factory = viewHolderFactory,
+            position = position
         )
     }
 }
