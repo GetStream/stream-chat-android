@@ -367,7 +367,7 @@ class ChatDomainImpl private constructor(
         if (eventSubscription != null) {
             return
         }
-        eventSubscription = client.events().subscribe {
+        eventSubscription = client.subscribe {
             eventHandler.handleEvents(listOf(it))
         }
     }
