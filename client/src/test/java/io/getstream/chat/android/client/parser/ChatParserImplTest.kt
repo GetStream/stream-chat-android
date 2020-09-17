@@ -24,8 +24,8 @@ internal class ChatParserImplTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#chatParserEventArguments")
-    fun `Should create proper event`(eventData: String, eventClass: Class<*>, expectedEvent: ChatEvent) {
-        chatParser.fromJson(eventData, eventClass) `should be equal to` expectedEvent
+    fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
+        chatParser.fromJson(eventData, ChatEvent::class.java) `should be equal to` expectedEvent
     }
 
     companion object {

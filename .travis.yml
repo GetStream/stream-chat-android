@@ -23,7 +23,7 @@ install:
   - true
 
 script:
-  - ./gradlew test --console verbose -i
+  - ./gradlew test
   - ./gradlew ktlintCheck
   - ./gradlew jacocoTestReport
 
