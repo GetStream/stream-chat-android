@@ -148,6 +148,5 @@ dependencies {
 
     debugImplementation Dependencies.leakCanary
 
-    testImplementation Dependencies.junit4
     testImplementation Dependencies.koinTest
 }
