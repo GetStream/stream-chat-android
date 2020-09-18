@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
-import org.junit.Before
 import org.junit.jupiter.api.Test
 
 class CustomObjectAdapterTest {
@@ -61,7 +60,8 @@ class CustomObjectAdapterTest {
 
     companion object {
         @Language("JSON")
-        const val json = """{
+        const val json =
+            """{
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
           "extraData": {
             "key1": "value1",
