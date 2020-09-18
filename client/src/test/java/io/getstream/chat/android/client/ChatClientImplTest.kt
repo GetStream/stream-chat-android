@@ -152,4 +152,20 @@ internal class ChatClientImplTest {
 
         result shouldBeEqualTo listOf(eventA)
     }
+
+    @Test
+    fun `Unsubscribe from events`() {
+        val disposable = client.subscribe {
+            result.add(it)
+        }
+
+        socket.sendEvent(eventA)
+
+        disposable.dispose()
+
+        socket.sendEvent(eventB)
+        socket.sendEvent(eventC)
+
+        result shouldBeEqualTo listOf(eventA)
+    }
 }
