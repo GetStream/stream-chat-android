@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import java.util.*
+import java.util.Date
 
 /**
  * ChannelStateEntity stores both the channel information as well as references

@@ -31,7 +31,13 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.utils.*
+import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
+import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.livedata.utils.JustObservable
+import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.TestDataHelper
+import io.getstream.chat.android.livedata.utils.TestLoggerHandler
+import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When

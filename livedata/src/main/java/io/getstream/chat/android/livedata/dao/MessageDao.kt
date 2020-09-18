@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
-import java.util.*
+import java.util.Date
 
 @Dao
 interface MessageDao {
