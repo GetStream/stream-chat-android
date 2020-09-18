@@ -184,7 +184,8 @@ open class BaseDomainTest {
 
     fun createRoomDb(): ChatDatabase {
         db = Room.inMemoryDatabaseBuilder(
-            getApplicationContext(), ChatDatabase::class.java
+            getApplicationContext(),
+            ChatDatabase::class.java
         ).build()
         return db
     }
