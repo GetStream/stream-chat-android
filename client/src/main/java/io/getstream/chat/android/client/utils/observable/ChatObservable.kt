@@ -28,7 +28,6 @@ interface ChatObservable {
     fun unsubscribe(subscription: Subscription)
     @Deprecated("Use the subscribe methods on ChatClient or ChannelController directly instead of events()")
     fun ignoreInitState(): ChatObservable
-
 }
 
 internal class ChatObservableImpl(private val service: ChatSocketService) : ChatObservable {

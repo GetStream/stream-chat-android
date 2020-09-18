@@ -7,40 +7,40 @@ class Subscription(
     private val observable: ChatObservable,
     private var listener: ((ChatEvent) -> Unit)?,
     private val filters: MutableList<(event: ChatEvent) -> Boolean> = mutableListOf(),
-    private val firstOnly: Boolean	
-) {	
+    private val firstOnly: Boolean
+) {
 
-    private var deliveredCounter = 0	
+    private var deliveredCounter = 0
 
     fun unsubscribe() {
-        listener = null	
-        filters.clear()	
-        observable.unsubscribe(this)	
-    }	
+        listener = null
+        filters.clear()
+        observable.unsubscribe(this)
+    }
 
-    fun onNext(event: ChatEvent) {	
+    fun onNext(event: ChatEvent) {
 
-        if (filters.isEmpty()) {	
-            deliver(event)	
-        } else {	
-            filters.forEach { filtered ->	
-                if (filtered(event)) {	
-                    deliver(event)	
-                    return	
-                }	
-            }	
-        }	
-    }	
+        if (filters.isEmpty()) {
+            deliver(event)
+        } else {
+            filters.forEach { filtered ->
+                if (filtered(event)) {
+                    deliver(event)
+                    return
+                }
+            }
+        }
+    }
 
-    private fun deliver(event: ChatEvent) {	
-        if (firstOnly) {	
-            if (deliveredCounter == 0) {	
-                deliveredCounter = 1	
-                listener?.invoke(event)	
-            }	
-        } else {	
-            deliveredCounter++	
-            listener?.invoke(event)	
-        }	
-    }	
+    private fun deliver(event: ChatEvent) {
+        if (firstOnly) {
+            if (deliveredCounter == 0) {
+                deliveredCounter = 1
+                listener?.invoke(event)
+            }
+        } else {
+            deliveredCounter++
+            listener?.invoke(event)
+        }
+    }
 }
