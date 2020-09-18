@@ -15,7 +15,6 @@ internal class EventsParser(
 
     private var connectionEventReceived = false
     private val logger = ChatLogger.get("Events")
-
     private lateinit var service: ChatSocketService
 
     fun setSocketService(service: ChatSocketService) {
@@ -28,14 +27,10 @@ internal class EventsParser(
     }
 
     override fun onMessage(webSocket: WebSocket, text: String) {
-
         try {
-
             logger.logI(text)
-
             val errorMessage = parser.fromJsonOrError(text, SocketErrorMessage::class.java)
             val errorData = errorMessage.data()
-
             if (errorMessage.isSuccess && errorData.error != null) {
                 handleErrorEvent(errorData.error)
             } else {
@@ -47,8 +42,7 @@ internal class EventsParser(
         }
     }
 
-    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-    }
+    override fun onClosing(webSocket: WebSocket, code: Int, reason: String) { }
 
     override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
         // Treat as failure and reconnect, socket shouldn't be closed by server
@@ -63,39 +57,27 @@ internal class EventsParser(
     }
 
     private fun handleEvent(text: String) {
-        val eventMessage = parser.fromJsonOrError(text, TypedEvent::class.java)
-
-        if (eventMessage.isSuccess) {
-
+        val eventResult = parser.fromJsonOrError(text, ChatEvent::class.java)
+        if (eventResult.isSuccess) {
+            val event = eventResult.data()
             if (!connectionEventReceived) {
-
-                val connection = parser.fromJsonOrError(text, ConnectedEvent::class.java)
-
-                if (connection.isSuccess) {
+                if (event is ConnectedEvent) {
                     connectionEventReceived = true
-                    val connectionEvent = connection.data()
-                    service.onConnectionResolved(connectionEvent)
+                    service.onConnectionResolved(event)
                 } else {
-                    service.onSocketError(
-                        ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
-                    )
+                    service.onSocketError(ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT))
                 }
             } else {
-                val event = parser.fromJson(text, ChatEvent::class.java)
                 service.onEvent(event)
             }
         } else {
             service.onSocketError(
-                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventMessage.error())
+                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error())
             )
         }
     }
 
     private fun handleErrorEvent(error: ErrorResponse) {
-        service.onSocketError(
-            ChatNetworkError.create(error.code, error.message, error.statusCode)
-        )
+        service.onSocketError(ChatNetworkError.create(error.code, error.message, error.statusCode))
     }
-
-    private data class TypedEvent(val type: String)
 }
