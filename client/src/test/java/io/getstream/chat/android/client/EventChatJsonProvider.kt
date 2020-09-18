@@ -561,13 +561,7 @@ private fun createMessageJsonString() =
             "updated_at": "2020-06-29T06:14:28.000Z",
             "mentioned_users": [ ],
             "silent": false,
-            "isToday": false,
-            "isStartDay": false,
-            "commandInfo": { },
-            "isYesterday": false,
-            "cid": "",
-            "date": "",
-            "time": ""
+            "cid": ""
         }
     """.trimIndent()
 
