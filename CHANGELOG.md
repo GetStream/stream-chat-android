@@ -1,4 +1,5 @@
 # To be released:
+- Stop trying to execute background sync in case ChatDomain.offlineEnabled is set to false
 
 # Sep 15th, 2020 - 0.7.5
 - Fix offline support for adding and removing reactions
