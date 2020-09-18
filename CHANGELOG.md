@@ -10,6 +10,7 @@
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.4
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.4
 - Revamp MessageListView adapter customization, introduce ListenerContainer to handle all ViewHolder listeners
+- Fix default filters on `ChannelsViewModelImpl`
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
