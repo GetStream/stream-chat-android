@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -341,7 +340,7 @@ interface ChatClient {
         fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
-                throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
+                throw IllegalArgumentException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
             val config = ChatClientConfig(

@@ -45,7 +45,7 @@ internal class TokenAuthInterceptor internal constructor(
                     response.close()
                     response = chain.proceed(request)
                 } else {
-                    throw ChatRequestError(err.description, err.streamCode, err.statusCode, err)
+                    throw ChatRequestError(err.description, err.streamCode, err.statusCode, err.throwable)
                 }
             }
             return response

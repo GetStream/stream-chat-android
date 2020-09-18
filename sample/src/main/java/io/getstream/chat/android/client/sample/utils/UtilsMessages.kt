@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.utils.Result
 object UtilsMessages {
 
     fun show(error: ChatError) {
-        error.printStackTrace()
+        error.throwable?.printStackTrace()
         show(error.message.toString())
     }
 

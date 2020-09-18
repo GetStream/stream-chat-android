@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -62,6 +63,13 @@ internal class EventsParser(
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
+    private fun onFailure(webSocket: WebSocket, chatError: ChatError, response: Response?) {
+        logger.logE("onFailure", chatError)
+        // Called when socket is disconnected by client also (client.disconnect())
+        // See issue here https://stream-io.atlassian.net/browse/CAS-88
+        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.throwable))
+    }
+
     private fun handleEvent(text: String) {
         val eventMessage = parser.fromJsonOrError(text, TypedEvent::class.java)
 
@@ -77,7 +85,7 @@ internal class EventsParser(
                     service.onConnectionResolved(connectionEvent)
                 } else {
                     service.onSocketError(
-                        ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error())
+                        ChatNetworkError.create(ChatErrorCode.CANT_PARSE_CONNECTION_EVENT, connection.error().throwable)
                     )
                 }
             } else {
@@ -86,7 +94,7 @@ internal class EventsParser(
             }
         } else {
             service.onSocketError(
-                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventMessage.error())
+                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventMessage.error().throwable)
             )
         }
     }

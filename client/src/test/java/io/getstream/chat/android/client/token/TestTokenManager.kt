@@ -71,7 +71,7 @@ class TestTokenManager {
         })
 
         manager.loadAsync {
-            listener.called(it.error().cause!!)
+            listener.called(it.error().throwable!!)
         }
 
         await().atMost(2, SECONDS).until { !manager.hasToken() }
