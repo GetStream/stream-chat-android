@@ -79,11 +79,12 @@ internal class ChatObservableImpl(private val service: ChatSocketService) : Chat
         var firstEvent: ChatEvent? = null
 
         when (val state = service.state) {
-            is ChatSocketService.State.Connected -> firstEvent = state.event
-            is ChatSocketService.State.Connecting -> firstEvent =
-                ConnectingEvent(EventType.CONNECTION_CONNECTING, Date())
-            is ChatSocketService.State.Disconnected -> firstEvent =
-                DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
+            is ChatSocketService.State.Connected ->
+                firstEvent = state.event
+            is ChatSocketService.State.Connecting ->
+                firstEvent = ConnectingEvent(EventType.CONNECTION_CONNECTING, Date())
+            is ChatSocketService.State.Disconnected ->
+                firstEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
         }
 
         if (firstEvent != null) subscription.onNext(firstEvent)

@@ -20,4 +20,3 @@ interface ChatObservable {
     @Deprecated("Use the subscribe methods on ChatClient or ChannelController directly instead of events()")
     fun ignoreInitState(): ChatObservable
 }
-

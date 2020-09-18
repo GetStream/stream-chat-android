@@ -96,14 +96,14 @@ internal class ChannelControllerImpl(
 
     override fun subscribeFor(
         vararg eventTypes: String,
-        listener: (ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }

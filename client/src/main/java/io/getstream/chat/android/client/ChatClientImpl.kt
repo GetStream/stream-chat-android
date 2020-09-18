@@ -241,14 +241,14 @@ internal class ChatClientImpl(
     }
 
     override fun subscribe(
-        listener: (ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return eventsObservable.subscribe(listener = listener)
     }
 
     override fun subscribeFor(
         vararg eventTypes: String,
-        listener: (ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit
     ): Disposable {
         val filter = { event: ChatEvent ->
             event.type in eventTypes
@@ -258,7 +258,7 @@ internal class ChatClientImpl(
 
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
-        listener: (ChatEvent) -> Unit
+        listener: (event: ChatEvent) -> Unit
     ): Disposable {
         val filter = { event: ChatEvent ->
             eventTypes.any { type -> type.isInstance(event) }
