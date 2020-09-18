@@ -624,7 +624,7 @@ fun muting() {
     )
 
     // get updates about muted channels
-    client.subscribe { event: ChatEvent? ->
+    client.subscribe { event: ChatEvent ->
         if (event is NotificationChannelMutesUpdatedEvent) {
             val mutes = event.me.channelMutes
         } else if (event is NotificationMutesUpdatedEvent) {
