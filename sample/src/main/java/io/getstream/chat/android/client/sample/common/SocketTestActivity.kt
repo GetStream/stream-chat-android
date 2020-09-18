@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.subscribeForSingle
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
 import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
 import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
@@ -25,7 +25,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
-    var subs = mutableListOf<Subscription>()
+    var disposables = mutableListOf<Disposable>()
 
     val token =
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
@@ -41,13 +41,13 @@ class SocketTestActivity : AppCompatActivity() {
 
             textSocketState.text = "Connecting..."
 
-            subs.add(
+            disposables.add(
                 client.subscribeForSingle<ConnectedEvent> {
                     Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
                 }
             )
 
-            subs.add(
+            disposables.add(
                 client.subscribe {
                     Log.d("evt", it::class.java.simpleName)
                     appendEvent(it)
@@ -75,14 +75,14 @@ class SocketTestActivity : AppCompatActivity() {
         btnDisconnect.setOnClickListener {
             textSocketState.text = "Disconnected"
             client.disconnect()
-            subs.forEach { it.dispose() }
-            subs.clear()
+            disposables.forEach { it.dispose() }
+            disposables.clear()
         }
     }
 
     override fun onDestroy() {
-        subs.forEach { it.dispose() }
-        subs.clear()
+        disposables.forEach { it.dispose() }
+        disposables.clear()
         super.onDestroy()
     }
 

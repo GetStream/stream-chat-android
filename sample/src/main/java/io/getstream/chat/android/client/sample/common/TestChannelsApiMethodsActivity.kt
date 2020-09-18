@@ -22,7 +22,7 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlinx.android.synthetic.main.activity_test_api.btnAcceptInvite
 import kotlinx.android.synthetic.main.activity_test_api.btnCheckTyping
 import kotlinx.android.synthetic.main.activity_test_api.btnGetMessage
@@ -43,7 +43,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val channelId = "general"
     val channelType = "team"
 
-    var chatSub: Subscription? = null
+    var chatDisposable: Disposable? = null
     var watchingChannel: Channel? = null
 
     val benderUserId = "bender"
@@ -76,7 +76,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        chatSub = client.subscribe {
+        chatDisposable = client.subscribe {
             if (it is ConnectedEvent) {
                 initButtons()
             } else if (it is ErrorEvent) {
@@ -104,7 +104,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        chatSub?.dispose()
+        chatDisposable?.dispose()
         client.disconnect()
         super.onDestroy()
     }

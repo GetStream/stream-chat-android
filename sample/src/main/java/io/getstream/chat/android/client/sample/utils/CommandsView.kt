@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
 import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
 import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
@@ -69,7 +69,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         LayoutInflater.from(context).inflate(R.layout.layout_commands, this, true)
     }
 
-    private val subs = mutableListOf<Subscription>()
+    private val disposables = mutableListOf<Disposable>()
     lateinit var client: ChatClient
 
     val filter = FilterObject("type", "messaging")
@@ -122,13 +122,13 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 .build()
         }
 
-        subs.add(
+        disposables.add(
             client.subscribeFor(ConnectedEvent::class.java) {
                 println(it)
             }
         )
 
-        subs.add(
+        disposables.add(
             client.subscribeFor(
                 ConnectedEvent::class.java,
                 NotificationChannelMutesUpdatedEvent::class.java
@@ -143,7 +143,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         )
 
-        subs.add(
+        disposables.add(
             client.subscribeFor(
                 ConnectedEvent::class.java,
                 DisconnectedEvent::class.java,
@@ -154,7 +154,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         )
 
-        subs.add(
+        disposables.add(
             client.subscribeFor(
                 ChannelUserUnbannedEvent::class.java,
                 GlobalUserUnbannedEvent::class.java,
@@ -425,7 +425,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     }
 
     fun destroy() {
-        subs.forEach { it.dispose() }
+        disposables.forEach { it.dispose() }
         client.disconnect()
     }
 }
