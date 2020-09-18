@@ -6,14 +6,14 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
-import org.junit.jupiter.api.BeforeEach
+import org.junit.Before
 import org.junit.jupiter.api.Test
 
 class CustomObjectAdapterTest {
     private val parser = ChatParserImpl()
 
-    @BeforeEach
-    fun `check prerequisites`() {
+    @Test
+    fun `check test data`() {
         val jsonObject = JsonParser.parseString(json).asJsonObject
         checkJsonStructureAndValues(jsonObject)
     }
