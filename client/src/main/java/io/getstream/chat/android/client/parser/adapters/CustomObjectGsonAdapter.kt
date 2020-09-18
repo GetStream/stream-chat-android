@@ -26,7 +26,7 @@ class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter
                 gson.getAdapter(HashMap::class.java).write(writer, null)
             } else {
                 val result = HashMap<String, Any?>()
-                obj.extraData.forEach { result[it.key] = it.value }
+                result += obj.extraData
 
                 for (field in clazz.declaredFields) {
                     if (field.isSynthetic) continue
