@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import java.util.*
+import java.util.Date
 
 /**
  * The ReactionEntity

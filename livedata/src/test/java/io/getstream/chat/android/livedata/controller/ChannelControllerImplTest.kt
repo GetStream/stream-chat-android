@@ -18,7 +18,14 @@ import io.getstream.chat.android.livedata.randomString
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.*
+import org.amshove.kluent.Verify
+import org.amshove.kluent.When
+import org.amshove.kluent.`should be`
+import org.amshove.kluent.called
+import org.amshove.kluent.calling
+import org.amshove.kluent.on
+import org.amshove.kluent.that
+import org.amshove.kluent.was
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File

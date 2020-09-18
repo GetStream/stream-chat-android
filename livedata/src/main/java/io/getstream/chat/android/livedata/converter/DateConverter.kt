@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.converter
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.util.Date
 
 class DateConverter {
     @TypeConverter

@@ -24,7 +24,7 @@ import org.amshove.kluent.calling
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
+import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class ThreadControllerImplTest {

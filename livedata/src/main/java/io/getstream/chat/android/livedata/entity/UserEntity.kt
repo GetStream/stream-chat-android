@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.User
-import java.util.*
+import java.util.Date
 
 /**
  * The UserEntity, id is a required field
