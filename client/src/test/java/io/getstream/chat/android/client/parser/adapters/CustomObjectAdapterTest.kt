@@ -61,7 +61,24 @@ class CustomObjectAdapterTest {
 
     companion object {
         @Language("JSON")
-        const val json = "{\n  \"id\": \"8584452-6d711169-0224-41c2-b9aa-1adbe624521b\",\n  \"extraData\": {\n    \"key1\": \"value1\",\n    \"key2\": true,\n    \"key3\": {\n      \"key4\": \"val4\"\n    }\n  },\n  \"customKey1\": \"customVal1\",\n  \"customKey2\": \"customVal2\",\n  \"customKey3\": true,\n  \"customKey4\": [\n    \"a\",\n    \"b\",\n    \"c\"\n  ]\n}"
+        const val json = """{
+          "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "extraData": {
+            "key1": "value1",
+            "key2": true,
+            "key3": {
+              "key4": "val4"
+            }
+          },
+          "customKey1": "customVal1",
+          "customKey2": "customVal2",
+          "customKey3": true,
+          "customKey4": [
+            "a",
+            "b",
+            "c"
+          ]
+        }"""
         val testMessage = Message().apply {
             id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b"
             extraData["extraData"] = mapOf("key1" to "value1", "key2" to true, "key3" to mapOf("key4" to "val4"))
