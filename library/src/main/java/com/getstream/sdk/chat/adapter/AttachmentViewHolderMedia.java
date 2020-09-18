@@ -46,10 +46,17 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
     private MessageListView.BubbleHelper bubbleHelper;
     private MessageListView.AttachmentClickListener clickListener;
     private MessageListView.MessageLongClickListener longClickListener;
+    @NonNull
     private MessageListView.GiphySendListener giphySendListener;
 
-    public AttachmentViewHolderMedia(int resId, ViewGroup parent) {
+    public AttachmentViewHolderMedia(
+            int resId,
+            @NonNull ViewGroup parent,
+            @NonNull MessageListView.GiphySendListener giphySendListener
+    ) {
         super(resId, parent);
+        this.giphySendListener = giphySendListener;
+
         // Attach
         iv_media_thumb = itemView.findViewById(R.id.iv_media_thumb);
         tv_media_title = itemView.findViewById(R.id.tv_media_title);
@@ -130,22 +137,16 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
             cl_action.setVisibility(View.VISIBLE);
 
             tv_action_send.setOnClickListener(view -> {
-                if (giphySendListener != null){
-                    enableSendGiphyButtons(false);
-                    giphySendListener.onGiphySend(message, GiphyAction.SEND);
-                }
+                enableSendGiphyButtons(false);
+                giphySendListener.onGiphySend(message, GiphyAction.SEND);
             });
 
             tv_action_shuffle.setOnClickListener((View v) -> {
-                if (giphySendListener != null){
-                    enableSendGiphyButtons(false);
-                    giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
-                }
+                enableSendGiphyButtons(false);
+                giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE);
             });
             tv_action_cancel.setOnClickListener((View v) -> {
-                if (giphySendListener != null){
-                    giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
-                }
+                giphySendListener.onGiphySend(message, GiphyAction.CANCEL);
             });
         } else {
             cl_action.setVisibility(View.GONE);
@@ -198,10 +199,6 @@ public class AttachmentViewHolderMedia extends BaseAttachmentViewHolder {
         tv_action_send.setEnabled(isEnable);
         tv_action_shuffle.setEnabled(isEnable);
         tv_action_cancel.setEnabled(isEnable);
-    }
-
-    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
-        this.giphySendListener = giphySendListener;
     }
 
     private void configClickListeners(){
