@@ -55,7 +55,8 @@ suspend fun waitForSetUser(
 ) {
     val lock = CompletableDeferred<Unit>()
     client.setUser(
-        user, token,
+        user,
+        token,
         object : InitConnectionListener() {
             override fun onError(error: ChatError) {
                 super.onError(error)

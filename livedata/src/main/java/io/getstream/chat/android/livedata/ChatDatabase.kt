@@ -5,9 +5,29 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import io.getstream.chat.android.livedata.converter.*
-import io.getstream.chat.android.livedata.dao.*
-import io.getstream.chat.android.livedata.entity.*
+import io.getstream.chat.android.livedata.converter.ConfigConverter
+import io.getstream.chat.android.livedata.converter.DateConverter
+import io.getstream.chat.android.livedata.converter.ExtraDataConverter
+import io.getstream.chat.android.livedata.converter.FilterObjectConverter
+import io.getstream.chat.android.livedata.converter.ListConverter
+import io.getstream.chat.android.livedata.converter.MapConverter
+import io.getstream.chat.android.livedata.converter.QuerySortConverter
+import io.getstream.chat.android.livedata.converter.SetConverter
+import io.getstream.chat.android.livedata.converter.SyncStatusConverter
+import io.getstream.chat.android.livedata.dao.ChannelConfigDao
+import io.getstream.chat.android.livedata.dao.ChannelDao
+import io.getstream.chat.android.livedata.dao.MessageDao
+import io.getstream.chat.android.livedata.dao.QueryChannelsDao
+import io.getstream.chat.android.livedata.dao.ReactionDao
+import io.getstream.chat.android.livedata.dao.SyncStateDao
+import io.getstream.chat.android.livedata.dao.UserDao
+import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
+import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.entity.SyncStateEntity
+import io.getstream.chat.android.livedata.entity.UserEntity
 
 @Database(
     entities = [

@@ -3,7 +3,13 @@ package io.getstream.chat.android.livedata.repository
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDatabase
-import io.getstream.chat.android.livedata.dao.*
+import io.getstream.chat.android.livedata.dao.ChannelConfigDao
+import io.getstream.chat.android.livedata.dao.ChannelDao
+import io.getstream.chat.android.livedata.dao.MessageDao
+import io.getstream.chat.android.livedata.dao.QueryChannelsDao
+import io.getstream.chat.android.livedata.dao.ReactionDao
+import io.getstream.chat.android.livedata.dao.SyncStateDao
+import io.getstream.chat.android.livedata.dao.UserDao
 
 class RepositoryHelper(var client: ChatClient, var currentUser: User, var database: ChatDatabase) {
 
