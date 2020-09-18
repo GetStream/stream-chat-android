@@ -1,5 +1,7 @@
 # To be released:
 - Stop trying to execute background sync in case ChatDomain.offlineEnabled is set to false
+- Fix Socket Connection/Reconnection
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
 
 # Sep 15th, 2020 - 0.7.5
 - Fix offline support for adding and removing reactions
