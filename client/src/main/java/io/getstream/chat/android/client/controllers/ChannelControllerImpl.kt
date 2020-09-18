@@ -66,7 +66,8 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
 internal class ChannelControllerImpl(
@@ -85,35 +86,39 @@ internal class ChannelControllerImpl(
         return client.createChannel(channelType, channelId, emptyList())
     }
 
-    override fun subscribe(listener: (event: ChatEvent) -> Unit): Subscription {
+    override fun events(): ChatObservable {
+        return client.events().filter(this::isRelevantForChannel)
+    }
+
+    override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
 
     override fun subscribeFor(
         vararg eventTypes: String,
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
     override fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
-    ): Subscription {
+    ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 

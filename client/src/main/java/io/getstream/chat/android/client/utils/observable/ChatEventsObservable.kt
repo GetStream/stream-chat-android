@@ -14,7 +14,7 @@ import java.util.Date
 
 internal class ChatEventsObservable(private val socket: ChatSocket) {
 
-    private val subscriptions = mutableSetOf<OpenSubscription>()
+    private val subscriptions = mutableSetOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
 
     private fun onNext(event: ChatEvent) {
@@ -23,7 +23,7 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
                 subscription.onNext(event)
             }
         }
-        subscriptions.removeAll(Subscription::isDisposed)
+        subscriptions.removeAll(Disposable::isDisposed)
         checkIfEmpty()
     }
 
@@ -36,18 +36,18 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return addSubscription(SubscriptionImpl(filter, listener))
     }
 
     fun subscribeSingle(
         filter: (ChatEvent) -> Boolean = { true },
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return addSubscription(SingleSubscriptionImpl(filter, listener))
     }
 
-    private fun addSubscription(subscription: OpenSubscription): Subscription {
+    private fun addSubscription(subscription: EventSubscription): Disposable {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
             socket.addListener(eventsMapper)
@@ -60,7 +60,7 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
         return subscription
     }
 
-    private fun deliverInitState(subscription: OpenSubscription) {
+    private fun deliverInitState(subscription: EventSubscription) {
         val firstEvent: ChatEvent = when (val state = socket.state) {
             is ChatSocketService.State.Connected ->
                 state.event

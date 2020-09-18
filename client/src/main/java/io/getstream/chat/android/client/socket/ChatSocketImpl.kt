@@ -3,6 +3,8 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.ChatObservableImpl
 
 internal class ChatSocketImpl(
     private val apiKey: String,
@@ -28,6 +30,10 @@ internal class ChatSocketImpl(
 
     override fun connect(user: User) {
         service.connect(wssUrl, apiKey, user)
+    }
+
+    override fun events(): ChatObservable {
+        return ChatObservableImpl(service)
     }
 
     override fun disconnect() {

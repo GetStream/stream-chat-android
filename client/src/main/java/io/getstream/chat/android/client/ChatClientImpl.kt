@@ -38,7 +38,8 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
@@ -235,16 +236,20 @@ internal class ChatClientImpl(
         socket.removeListener(listener)
     }
 
+    override fun events(): ChatObservable {
+        return socket.events()
+    }
+
     override fun subscribe(
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         return eventsObservable.subscribe(listener = listener)
     }
 
     override fun subscribeFor(
         vararg eventTypes: String,
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         val filter = { event: ChatEvent ->
             event.type in eventTypes
         }
@@ -254,7 +259,7 @@ internal class ChatClientImpl(
     override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         val filter = { event: ChatEvent ->
             eventTypes.any { type -> type.isInstance(event) }
         }
@@ -264,7 +269,7 @@ internal class ChatClientImpl(
     override fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
-    ): Subscription {
+    ): Disposable {
         val filter = { event: ChatEvent ->
             event.type == eventType
         }
@@ -274,7 +279,7 @@ internal class ChatClientImpl(
     override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
-    ): Subscription {
+    ): Disposable {
         val filter = { event: ChatEvent ->
             eventType.isInstance(event)
         }

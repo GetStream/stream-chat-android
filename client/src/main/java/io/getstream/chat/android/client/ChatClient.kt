@@ -31,7 +31,8 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
@@ -135,27 +136,33 @@ interface ChatClient {
 
     fun removeSocketListener(listener: SocketListener)
 
-    fun subscribe(listener: (event: ChatEvent) -> Unit): Subscription
+    @Deprecated(
+        message = "Use subscribe() on the client directly instead",
+        level = DeprecationLevel.WARNING
+    )
+    fun events(): ChatObservable
+
+    fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
 
     fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
-    ): Subscription
+    ): Disposable
 
     fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
-    ): Subscription
+    ): Disposable
 
     fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
-    ): Subscription
+    ): Disposable
 
     fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
-    ): Subscription
+    ): Disposable
 
     //endregion
 

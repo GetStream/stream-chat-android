@@ -159,7 +159,7 @@ public class DocumentationSamplesJava {
 
             static void events() {
                 // Subscribe
-                Subscription subscription = client.subscribe(event -> {
+                Subscription subscription = client.events().subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
                         NewMessageEvent newMessageEvent = (NewMessageEvent) event;
@@ -169,7 +169,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.dispose();
+                subscription.unsubscribe();
             }
         }
 
@@ -241,7 +241,7 @@ public class DocumentationSamplesJava {
 
             static void events() {
                 // Subscribe
-                Subscription subscription = client.subscribe(event -> {
+                Subscription subscription = client.events().subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
                         NewMessageEvent newMessageEvent = (NewMessageEvent) event;
@@ -251,7 +251,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.dispose();
+                subscription.unsubscribe();
             }
         }
 
@@ -605,22 +605,25 @@ public class DocumentationSamplesJava {
         static class ListeningForEvents {
             {
                 Subscription subscription = channelController
-                        .subscribeFor(new String[]{"message.deleted"}, messageDeletedEvent -> {
+                        .events()
+                        .filter("message.deleted")
+                        .subscribe(messageDeletedEvent -> {
                             return Unit.INSTANCE;
                         });
 
-                subscription.dispose();
+                subscription.unsubscribe();
             }
 
             {
                 Subscription subscription = channelController
+                        .events()
                         .subscribe(chatEvent -> Unit.INSTANCE);
 
-                subscription.dispose();
+                subscription.unsubscribe();
             }
 
             static void clientEvents() {
-                client.subscribe(event -> {
+                client.events().subscribe(event -> {
 
                     if (event instanceof ConnectedEvent) {
                         ConnectedEvent connectedEvent = (ConnectedEvent) event;
@@ -634,7 +637,7 @@ public class DocumentationSamplesJava {
             }
 
             static void connectionEvents() {
-                client.subscribe(new Function1<ChatEvent, Unit>() {
+                client.events().subscribe(new Function1<ChatEvent, Unit>() {
                     @Override
                     public Unit invoke(ChatEvent event) {
 
@@ -652,8 +655,8 @@ public class DocumentationSamplesJava {
             }
 
             static void stopListeningForEvents() {
-                Subscription subscription = channelController.subscribe(chatEvent -> Unit.INSTANCE);
-                subscription.dispose();
+                Subscription subscription = channelController.events().subscribe(chatEvent -> Unit.INSTANCE);
+                subscription.unsubscribe();
 
             }
         }
@@ -673,10 +676,9 @@ public class DocumentationSamplesJava {
 
         static class NotificationEvents {
             {
-                channelController.subscribeFor(
-                        new String[]{"notification.added_to_channel"},
-                        addToChannel -> Unit.INSTANCE
-                );
+                channelController.events()
+                        .filter("notification.added_to_channel")
+                        .subscribe(addToChannel -> Unit.INSTANCE);
             }
         }
 
@@ -739,9 +741,8 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
-                int memberLimit = 10;
                 QuerySort sort = new QuerySort().desc("last_message_at");
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, 0);
                 request.setWatch(true);
                 request.setState(true);
 
@@ -772,10 +773,9 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
-                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, 0);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -914,10 +914,9 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
-                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, 0);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -930,10 +929,9 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 10;
-                int memberLimit = 10;
                 QuerySort sort = new QuerySort();
 
-                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit);
+                QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, 0);
 
                 client.queryChannels(request).enqueue(result -> {
                     List<Channel> channels = result.data();
@@ -983,15 +981,18 @@ public class DocumentationSamplesJava {
                 });
 
                 // get updates about muted channels
-                client.subscribe(event -> {
-                    if (event instanceof NotificationChannelMutesUpdatedEvent) {
-                        List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
-                    } else if (event instanceof NotificationMutesUpdatedEvent) {
-                        List<ChannelMute> mutes = ((NotificationMutesUpdatedEvent) event).getMe().getChannelMutes();
-                    }
+                client
+                        .events()
+                        .subscribe(event -> {
 
-                    return Unit.INSTANCE;
-                });
+                            if (event instanceof NotificationChannelMutesUpdatedEvent) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
+                            } else if (event instanceof NotificationMutesUpdatedEvent) {
+                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
+                            }
+
+                            return Unit.INSTANCE;
+                        });
             }
 
             static void queryMutedChannels() {
@@ -999,13 +1000,12 @@ public class DocumentationSamplesJava {
                 int offset = 0;
                 int limit = 10;
                 int messageLimit = 0;
-                int memberLimit = 0;
                 QuerySort sort = new QuerySort();
 
                 FilterObject mutedFiler = eq("muted", false);
 
                 client.queryChannels(
-                        new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit, memberLimit)
+                        new QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit, 0)
                 ).enqueue(result -> {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
@@ -1020,7 +1020,7 @@ public class DocumentationSamplesJava {
                 FilterObject unmutedFilter = eq("muted", true);
 
                 client.queryChannels(
-                        new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit, memberLimit)
+                        new QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit, 0)
                 ).enqueue(result -> {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
@@ -1154,18 +1154,12 @@ public class DocumentationSamplesJava {
                     channelController.stopTyping();
                 }
 
-                static void receivingTypingIndicatorEvents() {
+                static void receivingTypingInvicatorEvents() {
                     // add typing start event handling
-                    channelController.subscribeFor(
-                            new String[]{EventType.TYPING_START},
-                            startedTyping -> Unit.INSTANCE
-                    );
+                    channelController.events().filter(EventType.INSTANCE.TYPING_START).subscribe(startedTyping -> Unit.INSTANCE);
 
                     // add typing top event handling
-                    channelController.subscribeFor(
-                            new String[]{EventType.TYPING_STOP},
-                            startedTyping -> Unit.INSTANCE
-                    );
+                    channelController.events().filter(EventType.INSTANCE.TYPING_STOP).subscribe(startedTyping -> Unit.INSTANCE);
                 }
             }
         }
