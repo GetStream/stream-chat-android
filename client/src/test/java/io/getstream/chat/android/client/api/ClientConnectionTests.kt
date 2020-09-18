@@ -32,13 +32,13 @@ import java.util.Date
 
 internal class ClientConnectionTests {
 
-    val userId = "test-id"
-    val connectionId = "connection-id"
-    val user = User().apply { id = userId }
-    val token = "token"
-    val context = mock(Context::class.java)
+    private val userId = "test-id"
+    private val connectionId = "connection-id"
+    private val user = User().apply { id = userId }
+    private val token = "token"
+    private val context = mock(Context::class.java)
 
-    val config = ChatClientConfig(
+    private val config = ChatClientConfig(
         "api-key",
         "hello.http",
         "cdn.http",
@@ -51,23 +51,23 @@ internal class ClientConnectionTests {
         FakeTokenManager(token)
     )
 
-    val connectedEvent = ConnectedEvent(
+    private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
         Date(),
         user,
         connectionId
     )
-    val disconnectedEvent = (DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
+    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    lateinit var api: ChatApi
-    lateinit var socket: ChatSocket
-    lateinit var retrofitApi: RetrofitApi
-    lateinit var retrofitCdnApi: RetrofitCdnApi
-    lateinit var client: ChatClient
-    lateinit var logger: ChatLogger
-    lateinit var notificationsManager: ChatNotifications
-    lateinit var initConnectionListener: InitConnectionListener
-    lateinit var socketListener: SocketListener
+    private lateinit var api: ChatApi
+    private lateinit var socket: ChatSocket
+    private lateinit var retrofitApi: RetrofitApi
+    private lateinit var retrofitCdnApi: RetrofitCdnApi
+    private lateinit var client: ChatClient
+    private lateinit var logger: ChatLogger
+    private lateinit var notificationsManager: ChatNotifications
+    private lateinit var initConnectionListener: InitConnectionListener
+    private lateinit var socketListener: SocketListener
 
     @Before
     fun before() {

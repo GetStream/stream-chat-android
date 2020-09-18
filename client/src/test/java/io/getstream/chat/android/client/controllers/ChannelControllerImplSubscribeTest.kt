@@ -52,10 +52,10 @@ internal class ChannelControllerImplSubscribeTest {
         )
     }
 
-    lateinit var client: ChatClient
-    lateinit var channelController: ChannelController
+    private lateinit var client: ChatClient
+    private lateinit var channelController: ChannelController
 
-    lateinit var result: MutableList<ChatEvent>
+    private lateinit var result: MutableList<ChatEvent>
 
     @BeforeEach
     fun setUp() {
