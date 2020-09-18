@@ -141,7 +141,7 @@ fun events() {
             val message = event.message
         }
     }
-    subscription.unsubscribe()
+    subscription.dispose()
 }
 
 fun initClient() {
@@ -397,7 +397,7 @@ fun listeningSomeEvent() {
     val subscription = channelController
         .subscribeFor("message.deleted") { messageDeletedEvent ->
         }
-    subscription.unsubscribe()
+    subscription.dispose()
 }
 
 fun listenAllEvents() {
@@ -405,7 +405,7 @@ fun listenAllEvents() {
         if (event is NewMessageEvent) {
         }
     }
-    subscription.unsubscribe()
+    subscription.dispose()
 }
 
 fun connectionEvents() {
@@ -426,7 +426,7 @@ fun connectionEvents() {
 
 fun stopListening() {
     val subscription = channelController.subscribe { event -> }
-    subscription.unsubscribe()
+    subscription.dispose()
 }
 
 fun notificationEvents() {

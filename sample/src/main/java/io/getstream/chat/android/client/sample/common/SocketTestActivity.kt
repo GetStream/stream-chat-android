@@ -75,13 +75,13 @@ class SocketTestActivity : AppCompatActivity() {
         btnDisconnect.setOnClickListener {
             textSocketState.text = "Disconnected"
             client.disconnect()
-            subs.forEach { it.unsubscribe() }
+            subs.forEach { it.dispose() }
             subs.clear()
         }
     }
 
     override fun onDestroy() {
-        subs.forEach { it.unsubscribe() }
+        subs.forEach { it.dispose() }
         subs.clear()
         super.onDestroy()
     }

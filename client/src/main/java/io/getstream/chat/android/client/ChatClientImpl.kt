@@ -37,7 +37,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ImmediateTokenProvider
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Subscription
 import java.io.File
 import java.util.Date
@@ -52,7 +52,7 @@ internal class ChatClientImpl(
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
-    private val eventsObservable = ChatObservable(socket)
+    private val eventsObservable = ChatEventsObservable(socket)
 
     init {
         eventsObservable.subscribe { event ->
@@ -261,8 +261,27 @@ internal class ChatClientImpl(
         return eventsObservable.subscribe(filter, listener)
     }
 
-    override fun unsubscribe(subscription: Subscription) {
-        eventsObservable.unsubscribe(subscription)
+    override fun subscribeForSingle(
+        eventType: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Subscription {
+        val filter = { event: ChatEvent ->
+            event.type == eventType
+        }
+        return eventsObservable.subscribeSingle(filter, listener)
+    }
+
+    override fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: (event: T) -> Unit
+    ): Subscription {
+        val filter = { event: ChatEvent ->
+            eventType.isInstance(event)
+        }
+        return eventsObservable.subscribeSingle(filter) { event: ChatEvent ->
+            @Suppress("UNCHECKED_CAST")
+            listener.invoke(event as T)
+        }
     }
 
     override fun disconnect() {

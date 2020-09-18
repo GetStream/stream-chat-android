@@ -23,7 +23,19 @@ import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.activity_test_api.*
+import kotlinx.android.synthetic.main.activity_test_api.btnAcceptInvite
+import kotlinx.android.synthetic.main.activity_test_api.btnCheckTyping
+import kotlinx.android.synthetic.main.activity_test_api.btnGetMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnHideChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnMarkReadMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnQueryChannels
+import kotlinx.android.synthetic.main.activity_test_api.btnRejectInvite
+import kotlinx.android.synthetic.main.activity_test_api.btnShowChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnStopWatching
+import kotlinx.android.synthetic.main.activity_test_api.btnUpdateChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnUpdateMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnWatchChannel
+import kotlinx.android.synthetic.main.activity_test_api.buttonsContainer
 
 class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
@@ -92,7 +104,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        chatSub?.unsubscribe()
+        chatSub?.dispose()
         client.disconnect()
         super.onDestroy()
     }

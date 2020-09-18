@@ -51,7 +51,8 @@ interface ChannelController {
     fun subscribe(listener: (event: ChatEvent) -> Unit): Subscription
     fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Subscription
     fun subscribeFor(vararg eventTypes: Class<out ChatEvent>, listener: (event: ChatEvent) -> Unit): Subscription
-    fun unsubscribe(subscription: Subscription)
+    fun subscribeForSingle(eventType: String, listener: (event: ChatEvent) -> Unit): Subscription
+    fun <T : ChatEvent> subscribeForSingle(eventType: Class<T>, listener: (event: T) -> Unit): Subscription
     fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>

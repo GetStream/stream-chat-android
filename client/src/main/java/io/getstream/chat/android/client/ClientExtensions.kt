@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import kotlin.reflect.KClass
 
 inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
-    noinline listener: (event: T) -> Unit
+    crossinline listener: (event: T) -> Unit
 ): Subscription {
     return this.subscribeFor(
         T::class.java,
@@ -26,15 +26,5 @@ fun ChatClient.subscribeFor(
 inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
     noinline listener: (event: T) -> Unit
 ): Subscription {
-    lateinit var subscription: Subscription
-
-    subscription = this.subscribeFor(
-        T::class.java,
-        listener = { event ->
-            listener(event as T)
-            subscription.unsubscribe()
-        }
-    )
-
-    return subscription
+    return this.subscribeForSingle(T::class.java, listener)
 }

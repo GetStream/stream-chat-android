@@ -103,10 +103,24 @@ internal class ChannelControllerImpl(
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
-    private fun filterRelevantEvents(
+    override fun subscribeForSingle(
+        eventType: String,
         listener: (event: ChatEvent) -> Unit
-    ): (ChatEvent) -> Unit {
-        return { event: ChatEvent ->
+    ): Subscription {
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
+    override fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: (event: T) -> Unit
+    ): Subscription {
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
+    private fun <T : ChatEvent> filterRelevantEvents(
+        listener: (event: T) -> Unit
+    ): (T) -> Unit {
+        return { event: T ->
             if (isRelevantForChannel(event)) {
                 listener.invoke(event)
             }
@@ -167,10 +181,6 @@ internal class ChannelControllerImpl(
             is DisconnectedEvent,
             is ErrorEvent -> false
         }
-    }
-
-    override fun unsubscribe(subscription: Subscription) {
-        client.unsubscribe(subscription)
     }
 
     override fun query(request: QueryChannelRequest): Call<Channel> {

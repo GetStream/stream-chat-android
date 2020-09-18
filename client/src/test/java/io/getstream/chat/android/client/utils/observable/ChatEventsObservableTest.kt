@@ -13,16 +13,16 @@ import org.junit.Before
 import org.junit.Test
 import java.util.Date
 
-internal class ChatObservableTest {
+internal class ChatEventsObservableTest {
 
     lateinit var socket: FakeChatSocket
-    lateinit var observable: ChatObservable
+    lateinit var observable: ChatEventsObservable
     lateinit var result: MutableList<ChatEvent>
 
     @Before
     fun before() {
         socket = FakeChatSocket()
-        observable = ChatObservable(socket)
+        observable = ChatEventsObservable(socket)
         result = mutableListOf()
     }
 
@@ -92,7 +92,7 @@ internal class ChatObservableTest {
         socket.sendEvent(eventA)
         socket.sendEvent(eventB)
 
-        subscription.unsubscribe()
+        subscription.dispose()
 
         socket.sendEvent(eventC)
 

@@ -10,19 +10,20 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
-import java.lang.Exception
 import java.util.Date
 
-internal class ChatObservable(private val socket: ChatSocket) {
+internal class ChatEventsObservable(private val socket: ChatSocket) {
 
-    private val subscriptions = mutableSetOf<Subscription>()
-    private val disposing = mutableSetOf<Subscription>()
+    private val subscriptions = mutableSetOf<OpenSubscription>()
     private var eventsMapper = EventsMapper(this)
 
     private fun onNext(event: ChatEvent) {
-        subscriptions.forEach { it.onNext(event) }
-
-        subscriptions -= disposing
+        subscriptions.forEach { subscription ->
+            if (!subscription.isDisposed) {
+                subscription.onNext(event)
+            }
+        }
+        subscriptions.removeAll(Subscription::isDisposed)
         checkIfEmpty()
     }
 
@@ -36,30 +37,30 @@ internal class ChatObservable(private val socket: ChatSocket) {
         filter: (ChatEvent) -> Boolean = { true },
         listener: (ChatEvent) -> Unit
     ): Subscription {
-        val result = SubscriptionImpl(this, listener, filter)
+        return addSubscription(SubscriptionImpl(filter, listener))
+    }
 
+    fun subscribeSingle(
+        filter: (ChatEvent) -> Boolean = { true },
+        listener: (ChatEvent) -> Unit
+    ): Subscription {
+        return addSubscription(SingleSubscriptionImpl(filter, listener))
+    }
+
+    private fun addSubscription(subscription: OpenSubscription): Subscription {
         if (subscriptions.isEmpty()) {
             // add listener to socket events only once
             socket.addListener(eventsMapper)
         }
 
-        subscriptions.add(result)
+        subscriptions.add(subscription)
 
-        deliverInitState(result)
+        deliverInitState(subscription)
 
-        return result
+        return subscription
     }
 
-    fun unsubscribe(subscription: Subscription) {
-        try {
-            subscriptions -= subscription
-            checkIfEmpty()
-        } catch (e: Exception) {
-            disposing += subscription
-        }
-    }
-
-    private fun deliverInitState(subscription: Subscription) {
+    private fun deliverInitState(subscription: OpenSubscription) {
         val firstEvent: ChatEvent = when (val state = socket.state) {
             is ChatSocketService.State.Connected ->
                 state.event
@@ -74,9 +75,9 @@ internal class ChatObservable(private val socket: ChatSocket) {
     }
 
     /**
-     * Maps methods of [SocketListener] to events of [ChatObservable]
+     * Maps methods of [SocketListener] to events of [ChatEventsObservable]
      */
-    private class EventsMapper(val observable: ChatObservable) : SocketListener() {
+    private class EventsMapper(private val observable: ChatEventsObservable) : SocketListener() {
 
         override fun onConnecting() {
             observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date()))

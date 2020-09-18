@@ -147,7 +147,15 @@ interface ChatClient {
         listener: (event: ChatEvent) -> Unit
     ): Subscription
 
-    fun unsubscribe(subscription: Subscription)
+    fun subscribeForSingle(
+        eventType: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Subscription
+
+    fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: (event: T) -> Unit
+    ): Subscription
 
     //endregion
 

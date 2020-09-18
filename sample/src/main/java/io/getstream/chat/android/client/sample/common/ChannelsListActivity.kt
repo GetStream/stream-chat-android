@@ -100,7 +100,7 @@ class ChannelsListActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        sub?.unsubscribe()
+        sub?.dispose()
         client.disconnect()
         super.onDestroy()
     }

@@ -169,7 +169,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.unsubscribe();
+                subscription.dispose();
             }
         }
 
@@ -251,7 +251,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.unsubscribe();
+                subscription.dispose();
             }
         }
 
@@ -609,14 +609,14 @@ public class DocumentationSamplesJava {
                             return Unit.INSTANCE;
                         });
 
-                subscription.unsubscribe();
+                subscription.dispose();
             }
 
             {
                 Subscription subscription = channelController
                         .subscribe(chatEvent -> Unit.INSTANCE);
 
-                subscription.unsubscribe();
+                subscription.dispose();
             }
 
             static void clientEvents() {
@@ -653,7 +653,7 @@ public class DocumentationSamplesJava {
 
             static void stopListeningForEvents() {
                 Subscription subscription = channelController.subscribe(chatEvent -> Unit.INSTANCE);
-                subscription.unsubscribe();
+                subscription.dispose();
 
             }
         }

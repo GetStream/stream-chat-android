@@ -33,7 +33,33 @@ import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.layout_commands.view.*
+import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnDisconnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnGet5MinSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetAllSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetMessages
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetOrCreateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkAllRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkChannelRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryMembers
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryUsers
+import kotlinx.android.synthetic.main.layout_commands.view.btnRemoveDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnSearchMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnSendMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnStartWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnStopWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnTranslateMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnbanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnUpdateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUploadImage
+import kotlinx.android.synthetic.main.layout_commands.view.textStatus
+import kotlinx.android.synthetic.main.layout_commands.view.textUserId
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -399,7 +425,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     }
 
     fun destroy() {
-        subs.forEach { it.unsubscribe() }
+        subs.forEach { it.dispose() }
         client.disconnect()
     }
 }
