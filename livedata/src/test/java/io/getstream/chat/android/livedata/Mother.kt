@@ -14,6 +14,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
+import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
+import io.getstream.chat.android.livedata.entity.MemberEntity
+import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import java.io.File
 import java.util.Date
 import kotlin.random.Random
@@ -192,6 +196,22 @@ fun randomChannelEntityPair(
     channel: Channel = randomChannel(),
     channelEntity: ChannelEntity = randomChannelEntity()
 ): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)
+
+fun randomMessageEntity(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    userId: String = randomString()
+) = MessageEntity(id, cid, userId)
+
+fun randomReactionEntity(
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    type: String = randomString()
+) = ReactionEntity(messageId, userId, type)
+
+fun randomMemberEntity(userId: String = randomString()) = MemberEntity(userId)
+
+fun randomChannelUserReadEntity(userId: String = randomString()) = ChannelUserReadEntity(userId)
 
 fun randomDate() = Date(randomLong())
 
