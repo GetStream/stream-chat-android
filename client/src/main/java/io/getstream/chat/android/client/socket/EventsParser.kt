@@ -53,14 +53,12 @@ internal class EventsParser(
     override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
         logger.logE("onFailure", t)
         // Called when socket is disconnected by client also (client.disconnect())
-        // See issue here https://stream-io.atlassian.net/browse/CAS-88
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, t))
     }
 
     private fun onFailure(webSocket: WebSocket, chatError: ChatError, response: Response?) {
         logger.logE("onFailure", chatError)
         // Called when socket is disconnected by client also (client.disconnect())
-        // See issue here https://stream-io.atlassian.net/browse/CAS-88
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.throwable))
     }
 
