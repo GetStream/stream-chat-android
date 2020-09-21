@@ -1,4 +1,5 @@
 # To be released:
+- Fix crash when map channels DB entity to Channel
 
 # Sep 18th, 2020 - 0.7.6
 - Store needed users in DB
