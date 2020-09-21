@@ -1,5 +1,7 @@
 # To be released:
 
+- Convert ChatError to plain class. Changes in ChatLogger interface.
+
 # 1.15.5 - Fri 18 Sep 2020
 
 - Fix Socket Connection/Reconnection
