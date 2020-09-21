@@ -1,4 +1,6 @@
 # To be released:
+
+# Sep 18th, 2020 - 4.2.11-beta-12
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
 - Fix thread shown issue after sending message to a channel 
@@ -7,9 +9,10 @@
 - Add updating message read state after loading first messages
 - Wrap Attachment into AttachmentListItem for use in adapter
 - Properly show the message date
-- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.4
-- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.4
 - Revamp MessageListView adapter customization, introduce ListenerContainer to handle all ViewHolder listeners
+- Fix default filters on `ChannelsViewModelImpl`
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.6
 
 # Sep 4th, 2020 - 4.2.11-beta-11
 
