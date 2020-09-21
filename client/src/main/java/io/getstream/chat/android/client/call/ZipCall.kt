@@ -88,14 +88,14 @@ internal object ZipCall {
     private fun <A, B> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
         return Result(
             null,
-            ChatError("Error executing callA", resultA.error().throwable)
+            ChatError("Error executing callA", resultA.error().cause)
         )
     }
 
     private fun <A, B> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
         return Result(
             null,
-            ChatError("Error executing callB", resultB.error().throwable)
+            ChatError("Error executing callB", resultB.error().cause)
         )
     }
 }

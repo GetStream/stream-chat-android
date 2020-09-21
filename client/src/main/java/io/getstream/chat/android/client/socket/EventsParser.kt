@@ -59,7 +59,7 @@ internal class EventsParser(
     private fun onFailure(webSocket: WebSocket, chatError: ChatError, response: Response?) {
         logger.logE("onFailure", chatError)
         // Called when socket is disconnected by client also (client.disconnect())
-        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.throwable))
+        service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
     }
 
     private fun handleEvent(text: String) {
@@ -78,7 +78,7 @@ internal class EventsParser(
             }
         } else {
             service.onSocketError(
-                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().throwable)
+                ChatNetworkError.create(ChatErrorCode.CANT_PARSE_EVENT, eventResult.error().cause)
             )
         }
     }

@@ -108,8 +108,8 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                       if (error.getThrowable() != null) {
-                           error.getThrowable().printStackTrace();
+                       if (error.getCause() != null) {
+                           error.getCause().printStackTrace();
                        }
                     }
                 });
@@ -133,7 +133,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Channel channel = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -155,7 +155,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Message msg = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -203,8 +203,8 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        if (error.getThrowable() != null) {
-                            error.getThrowable().printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
                         }
                     }
                 });
@@ -226,7 +226,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Channel channel = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -245,7 +245,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Message msg = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -305,8 +305,8 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        if (error.getThrowable() != null) {
-                            error.getThrowable().printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
                         }
                     }
                 });
@@ -330,8 +330,8 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        if (error.getThrowable() != null) {
-                            error.getThrowable().printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
                         }
                     }
                 });
@@ -989,7 +989,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         //channel is muted
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -1038,7 +1038,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -1056,7 +1056,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -1071,7 +1071,7 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         // channel is unmuted
                     } else {
-                        Throwable throwable = result.error().getThrowable();
+                        Throwable throwable = result.error().getCause();
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
