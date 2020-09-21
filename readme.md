@@ -64,11 +64,11 @@ android {
     //or
     
     client.setUser(user, token)
-    client
-	  .events()
-	  .filter(ConnectedEvent::class.java)
-	  .filter(ErrorEvent::class.java)
-	  .subscribe {}
+    client.subscribeFor(
+        ConnectedEvent::class, ErrorEvent::class
+    ) { event: ChatEvent ->
+         // Handle events
+    }
 	```
 
 3. Get channels
@@ -101,10 +101,12 @@ android {
 	client.addSocketListener(object: SocketListener() {
 	    //override required methods
 	})
-	// or with observable
-	// first event of observable delivers socket state: DisconnectedEvent, ConnectingEvent or ConnectedEvent
-    client.events().subscribe { event ->
-       if(event is NewMessageEvent) doSomething()
+	// or with higher level subscription
+	// first event delivers socket state: DisconnectedEvent, ConnectingEvent or ConnectedEvent
+    client.subscribe { event: ChatEvent ->
+        if (event is NewMessageEvent) {
+            doSomething()
+        }
     }
 	```
 6. Keep using instance
@@ -136,10 +138,11 @@ val client = ChatClient.Builder(apiKey, context)
 ```
 
 To intercept socket errors:
+
 ```kotlin
-client.events()
-  .filter(ErrorEvent::class.java)
-  .subscribe { println(it) }
+client.subscribeFor<ErrorEvent> { errorEvent: ErrorEvent ->
+    println(errorEvent)
+}
 ```
 
 All SDK log tags have prefix `Chat:`, so to filter out only SDK logs grep the prefix:
