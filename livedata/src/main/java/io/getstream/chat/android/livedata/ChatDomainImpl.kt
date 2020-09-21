@@ -629,8 +629,8 @@ class ChatDomainImpl private constructor(
             acc + channel.createdByUserId.orEmpty() +
                 channel.members.keys +
                 channel.reads.keys +
-                channelMessagesMap[channel.cid]?.map { message ->
-                    message.userId + message.latestReactions.map(ReactionEntity::userId)
+                channelMessagesMap[channel.cid]?.flatMap { message ->
+                    message.latestReactions.map(ReactionEntity::userId) + message.userId
                 }.orEmpty()
         }
 
