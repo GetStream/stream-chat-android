@@ -33,7 +33,7 @@ class EventsParserTests {
 
     @Test
     fun firstConnection() {
-        parser.onMessage(socket, "{me:{id:\"$userId\"}}")
+        parser.onMessage(socket, "{type: ${ EventType.HEALTH_CHECK }, me:{id:\"$userId\"}}")
 
         service.verifyConnectionUserId(userId)
     }
