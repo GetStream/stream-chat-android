@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -123,15 +124,15 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         }
 
         disposables.add(
-            client.subscribeFor(ConnectedEvent::class.java) {
+            client.subscribeFor(ConnectedEvent::class) {
                 println(it)
             }
         )
 
         disposables.add(
             client.subscribeFor(
-                ConnectedEvent::class.java,
-                NotificationChannelMutesUpdatedEvent::class.java
+                ConnectedEvent::class,
+                NotificationChannelMutesUpdatedEvent::class
             ) {
                 var mutedChannels: List<ChannelMute> = emptyList()
                 if (it is ConnectedEvent) {
@@ -145,9 +146,9 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         disposables.add(
             client.subscribeFor(
-                ConnectedEvent::class.java,
-                DisconnectedEvent::class.java,
-                ConnectingEvent::class.java
+                ConnectedEvent::class,
+                ConnectingEvent::class,
+                DisconnectedEvent::class
             ) { event ->
                 textStatus.text = event.type
                 Log.d("connection-events", event::class.java.simpleName)
@@ -156,10 +157,10 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
 
         disposables.add(
             client.subscribeFor(
-                ChannelUserUnbannedEvent::class.java,
-                GlobalUserUnbannedEvent::class.java,
-                ChannelUserBannedEvent::class.java,
-                GlobalUserBannedEvent::class.java
+                ChannelUserUnbannedEvent::class,
+                GlobalUserUnbannedEvent::class,
+                ChannelUserBannedEvent::class,
+                GlobalUserBannedEvent::class
             ) {
                 println("ban/unban for " + config.userId + ": " + it.type)
             }
