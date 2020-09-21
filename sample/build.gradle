@@ -106,8 +106,8 @@ android {
         exclude 'META-INF/ASL2.0'
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
 }
 
