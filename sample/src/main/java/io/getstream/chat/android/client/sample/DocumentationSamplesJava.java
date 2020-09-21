@@ -606,7 +606,7 @@ public class DocumentationSamplesJava {
             {
                 Disposable disposable = channelController.subscribeFor(
                         new String[]{"message.deleted"},
-                        messageDeletedEvent -> {
+                        (ChatEvent event) -> {
                             return Unit.INSTANCE;
                         });
 
