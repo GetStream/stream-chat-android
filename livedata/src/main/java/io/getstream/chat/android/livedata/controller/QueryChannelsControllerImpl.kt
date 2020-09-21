@@ -20,7 +20,9 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 class QueryChannelsControllerImpl(
     override val filter: FilterObject,

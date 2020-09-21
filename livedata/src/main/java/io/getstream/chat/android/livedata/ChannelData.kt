@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import java.util.*
+import java.util.Date
 
 /**
  * A class that only stores the channel data and not all the other channel state

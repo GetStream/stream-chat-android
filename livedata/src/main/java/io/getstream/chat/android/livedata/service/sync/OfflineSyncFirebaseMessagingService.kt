@@ -59,20 +59,23 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 performSync(ChatDomain.instance(), cid)
-                ChatClient.instance().onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                ChatClient.instance()
+                    .onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
             } catch (e: UninitializedPropertyAccessException) {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-                val user = User(id = syncConfig.userId)
-                val client = initClient(
-                    this@OfflineSyncFirebaseMessagingService,
-                    user,
-                    syncConfig.userToken,
-                    syncConfig.apiKey
-                )
                 if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
-                    val domain = initDomain(user, client)
-                    performSync(domain, cid)
-                    client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                    val user = User(id = syncConfig.userId)
+                    val client = initClient(
+                        this@OfflineSyncFirebaseMessagingService,
+                        user,
+                        syncConfig.userToken,
+                        syncConfig.apiKey
+                    )
+                    if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
+                        val domain = initDomain(user, client)
+                        performSync(domain, cid)
+                        client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                    }
                 }
             } finally {
                 stopForeground(true)

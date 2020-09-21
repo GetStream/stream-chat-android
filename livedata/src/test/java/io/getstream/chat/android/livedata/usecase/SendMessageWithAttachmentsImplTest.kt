@@ -3,18 +3,36 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import assertions.`should be equal to result`
-import com.nhaarman.mockitokotlin2.*
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.spy
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.*
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.livedata.randomCID
+import io.getstream.chat.android.livedata.randomFile
+import io.getstream.chat.android.livedata.randomFiles
+import io.getstream.chat.android.livedata.randomImageFile
+import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomString
 import kotlinx.coroutines.runBlocking
-import org.amshove.kluent.*
+import org.amshove.kluent.Verify
+import org.amshove.kluent.When
+import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should throw`
+import org.amshove.kluent.`with message`
+import org.amshove.kluent.called
+import org.amshove.kluent.calling
+import org.amshove.kluent.invoking
+import org.amshove.kluent.on
+import org.amshove.kluent.that
+import org.amshove.kluent.was
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

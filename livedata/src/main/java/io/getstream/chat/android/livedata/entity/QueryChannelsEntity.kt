@@ -4,7 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.utils.FilterObject
-import java.util.*
+import java.util.Date
+import java.util.Objects
 
 @Entity(tableName = "stream_channel_query")
 data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort) {
