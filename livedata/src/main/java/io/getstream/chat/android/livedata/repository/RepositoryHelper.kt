@@ -3,33 +3,38 @@ package io.getstream.chat.android.livedata.repository
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDatabase
-import io.getstream.chat.android.livedata.dao.*
+import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 
-class RepositoryHelper(var client: ChatClient, var currentUser: User, var database: ChatDatabase) {
+class RepositoryHelper(
+    client: ChatClient,
+    currentUser: User,
+    database: ChatDatabase
+) {
+    val users = UserRepository(database.userDao(), 100, currentUser)
+    val configs = ChannelConfigRepository(database.channelConfigDao())
+    val channels = ChannelRepository(database.channelStateDao(), 100, currentUser, client)
+    val queryChannels = QueryChannelsRepository(database.queryChannelsQDao())
+    val messages = MessageRepository(database.messageDao(), 100, currentUser, client)
+    val reactions = ReactionRepository(database.reactionDao(), currentUser, client)
+    val syncState = SyncStateRepository(database.syncStateDao())
 
-    private var queryChannelsDao: QueryChannelsDao = database.queryChannelsQDao()
-    private var userDao: UserDao = database.userDao()
-    private var reactionDao: ReactionDao = database.reactionDao()
-    private var messageDao: MessageDao = database.messageDao()
-    private var channelDao: ChannelDao = database.channelStateDao()
-    private var channelConfigDao: ChannelConfigDao = database.channelConfigDao()
-    private var syncStateDao: SyncStateDao = database.syncStateDao()
 
-    var users: UserRepository
-    var configs: ChannelConfigRepository
-    var channels: ChannelRepository
-    var queryChannels: QueryChannelsRepository
-    var messages: MessageRepository
-    var reactions: ReactionRepository
-    var syncState: SyncStateRepository
+    internal suspend fun getUsersForChannels(
+        channelEntities: Collection<ChannelEntity>,
+        channelMessagesMap: Map<String, Collection<MessageEntity>>
+    ): Map<String, User> {
+        val userIds = channelEntities.fold(emptySet<String>()) { acc, channel ->
+            acc + channel.createdByUserId.orEmpty() +
+                    channel.members.keys +
+                    channel.reads.keys +
+                    channelMessagesMap[channel.cid]?.flatMap { message ->
+                        message.latestReactions.map(ReactionEntity::userId) + message.userId
+                    }.orEmpty()
+        }
 
-    init {
-        users = UserRepository(userDao, 100, currentUser)
-        configs = ChannelConfigRepository(channelConfigDao)
-        channels = ChannelRepository(channelDao, 100, currentUser, client)
-        queryChannels = QueryChannelsRepository(queryChannelsDao)
-        messages = MessageRepository(messageDao, 100, currentUser, client)
-        reactions = ReactionRepository(reactionDao, currentUser, client)
-        syncState = SyncStateRepository(syncStateDao)
+        // get a map with user id to User
+        return users.selectUserMap(userIds.toList())
     }
 }
