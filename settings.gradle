@@ -1,2 +1,1 @@
 include ':client', ':sample'
-rootProject.name='stream-chat-android-client'
