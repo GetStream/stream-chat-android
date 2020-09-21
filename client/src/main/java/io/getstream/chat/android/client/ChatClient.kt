@@ -340,7 +340,7 @@ interface ChatClient {
         fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
-                throw IllegalArgumentException("apiKey is not defined in " + this::class.java.simpleName)
+                throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
             val config = ChatClientConfig(
