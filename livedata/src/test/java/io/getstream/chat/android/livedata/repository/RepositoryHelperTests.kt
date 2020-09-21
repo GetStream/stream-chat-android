@@ -62,6 +62,7 @@ internal class RepositoryHelperTests {
             )
         }
         val channelEntity2 = randomChannelEntity().apply { createdByUserId = authorId2 }
+        val channels = listOf(channelEntity1, channelEntity2)
         val messageUserId1 = "messageUserId1"
         val messageUserId2 = "messageUserId2"
         val reactionUserId1 = "reactionUserId1"
@@ -74,7 +75,7 @@ internal class RepositoryHelperTests {
         val message2 = randomMessageEntity(cid = cid, userId = messageUserId2)
         val messageMap = mapOf(cid to listOf(message1, message2))
 
-        val result = sut.calculateUserIds(listOf(channelEntity1, channelEntity2), messageMap)
+        val result = sut.calculateUserIds(channels, messageMap)
 
         result shouldBeEqualTo setOf(
             authorId1,
