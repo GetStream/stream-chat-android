@@ -4,9 +4,10 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
@@ -17,35 +18,18 @@ private const val EQUAL_ON_COMPARISON = 0
 /**
  * cid is sometimes devent as message.cid other times as message.channel.cid
  */
-fun Message.getCid(): String =
+internal fun Message.getCid(): String =
     if (this.cid.isEmpty()) {
         this.channel.cid
     } else {
         this.cid
     }
 
-fun Message.users(): List<User> {
-    val users = mutableListOf<User>()
-    users.add(this.user)
-    for (reaction in this.latestReactions) {
-        reaction.user?.let { users.add(it) }
-    }
-    return users
-}
+internal fun Message.users() = latestReactions.mapNotNull(Reaction::user) + user
 
-fun Channel.users(): List<User> {
-    val users = mutableListOf<User>()
-    users.add(this.createdBy)
-    for (member in this.members) {
-        users.add(member.user)
-    }
-    for (read in this.read) {
-        users.add(read.user)
-    }
-    return users
-}
+internal fun Channel.users() = members.map(Member::user) + read.map(ChannelUserRead::user) + createdBy
 
-fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
+internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 
     // add to own reactions
     if (isMine) {
@@ -68,11 +52,12 @@ fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
     this.reactionScores[reaction.type] = currentScore + reaction.score
 }
 
-fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
+internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
 
     val countBeforeFilter = ownReactions.size + latestReactions.size
     ownReactions = ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
-    latestReactions = latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
+    latestReactions =
+        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
     val countAfterFilter = ownReactions.size + latestReactions.size
 
     if (updateCounts) {

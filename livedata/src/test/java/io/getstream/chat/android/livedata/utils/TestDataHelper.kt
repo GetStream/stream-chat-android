@@ -216,7 +216,7 @@ class TestDataHelper {
 
     val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, user1, null, channel1Updated)
     val user1TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user1, channel1.cid, channel1.type, channel1.id)
-    val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, Date(), user3, channel1.cid, channel1.type, channel1.id)
+    val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, getOldDate(), user3, channel1.cid, channel1.type, channel1.id)
 
     val channelHiddenEvent = ChannelHiddenEvent(EventType.CHANNEL_HIDDEN, Date(), channel2.cid, channel2.type, channel2.id, user1, false)
     val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, Date(), channel2.cid, channel2.type, channel2.id, user1)

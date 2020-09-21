@@ -20,7 +20,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.7.5"
+        versionName "0.7.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -68,11 +68,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.15.4"
+    api "com.github.getstream:stream-chat-android-client:1.15.5"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
-    def jupiter_version = "5.6.1"
+    def jupiter_version = "5.6.2"
 
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -113,6 +113,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
 
     androidTestImplementation "junit:junit:4.13"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$jupiter_version"
     androidTestImplementation "androidx.test.ext:junit:1.1.1"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.2.0"
     androidTestImplementation "org.mockito:mockito-core:3.4.6"
@@ -140,7 +141,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-livedata'
-                version = '0.7.5-SNAPSHOT'
+                version = '0.7.7-SNAPSHOT'
             }
         }
     }

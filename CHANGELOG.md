@@ -1,5 +1,11 @@
 # To be released:
 
+# Sep 18th, 2020 - 0.7.6
+- Store needed users in DB
+- Stop trying to execute background sync in case ChatDomain.offlineEnabled is set to false
+- Fix Socket Connection/Reconnection
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
+
 # Sep 15th, 2020 - 0.7.5
 - Fix offline support for adding and removing reactions
 - Fix crash when creating a channel while channel.createdBy is not set

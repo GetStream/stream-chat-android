@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.gson
-import java.util.*
 
 class ListConverter {
     @TypeConverter

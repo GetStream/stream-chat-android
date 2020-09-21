@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.entity
 
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
-import java.util.*
+import java.util.Date
 
 /**
  * Efficiently store the member data
