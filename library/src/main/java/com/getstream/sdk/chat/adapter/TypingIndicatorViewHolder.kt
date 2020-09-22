@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.view.AvatarView
-import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
@@ -25,7 +24,6 @@ class TypingIndicatorViewHolder(
     override fun bind(
         channel: Channel,
         messageListItem: TypingItem,
-        bubbleHelper: BubbleHelper,
         position: Int
     ) {
         ll_typingusers.visibility = View.VISIBLE

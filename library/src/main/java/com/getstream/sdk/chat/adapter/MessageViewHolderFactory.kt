@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 
 /**
@@ -30,6 +31,9 @@ open class MessageViewHolderFactory {
         internal set
     lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
         @JvmName("setAttachmentViewHolderFactoryInternal")
+        internal set
+    lateinit var bubbleHelper: MessageListView.BubbleHelper
+        @JvmName("setBubbleHelperInternal")
         internal set
 
     open fun getMessageViewType(messageListItem: MessageListItem?): Int {
@@ -56,6 +60,7 @@ open class MessageViewHolderFactory {
                     parent,
                     style,
                     attachmentViewHolderFactory,
+                    bubbleHelper,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
                     listenerContainer.attachmentClickListener,

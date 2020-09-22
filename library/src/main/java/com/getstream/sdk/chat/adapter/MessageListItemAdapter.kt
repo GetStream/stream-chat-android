@@ -3,14 +3,12 @@ package com.getstream.sdk.chat.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
     val channel: Channel,
     val viewHolderFactory: MessageViewHolderFactory,
-    val bubbleHelper: BubbleHelper,
     val style: MessageListViewStyle,
     private var messageListItemList: List<MessageListItem> = emptyList()
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
@@ -45,7 +43,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
         holder.bindListItem(
             channel = channel,
             messageListItem = messageListItemList[position],
-            bubbleHelper = bubbleHelper,
             position = position
         )
     }

@@ -107,6 +107,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             ViewGroup viewGroup,
             MessageListViewStyle style,
             @NonNull AttachmentViewHolderFactory factory,
+            @NonNull MessageListView.BubbleHelper bubbleHelper,
             @NonNull MessageListView.MessageClickListener messageClickListener,
             @NonNull MessageListView.MessageLongClickListener messageLongClickListener,
             @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
@@ -118,6 +119,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         super(resId, viewGroup);
         this.style = style;
         this.viewHolderFactory = factory;
+        this.bubbleHelper = bubbleHelper;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
@@ -158,13 +160,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     @Override
     public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.MessageItem messageListItem,
-                     @NonNull MessageListView.BubbleHelper bubbleHelper,
                      int position) {
 
         // set binding
         this.channel = channel;
         this.messageListItem = messageListItem;
-        this.bubbleHelper = bubbleHelper;
         this.position = position;
 
         this.message = messageListItem.getMessage();

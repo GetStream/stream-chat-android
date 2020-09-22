@@ -250,16 +250,17 @@ public class MessageListView extends RecyclerView {
         if (messageViewHolderFactory == null) {
             messageViewHolderFactory = new MessageViewHolderFactory();
         }
-        // Inject factory
-        messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
-        messageViewHolderFactory.setAttachmentViewHolderFactoryInternal(attachmentViewHolderFactory);
-
         // Create default BubbleHelper if needed
         if (bubbleHelper == null) {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
         }
 
-        adapter = new MessageListItemAdapter(channel, messageViewHolderFactory, bubbleHelper, style);
+        // Inject factory
+        messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
+        messageViewHolderFactory.setAttachmentViewHolderFactoryInternal(attachmentViewHolderFactory);
+        messageViewHolderFactory.setBubbleHelperInternal(bubbleHelper);
+
+        adapter = new MessageListItemAdapter(channel, messageViewHolderFactory, style);
         adapter.setHasStableIds(true);
 
         this.setMessageListItemAdapter(adapter);
