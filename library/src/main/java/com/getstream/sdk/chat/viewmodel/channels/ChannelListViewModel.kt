@@ -84,6 +84,6 @@ class ChannelsViewModelImpl(
     }
 
     private fun requestMoreChannels() {
-        chatDomain.useCases.queryChannelsLoadMore(filter, sort)
+        chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue { Unit }
     }
 }
