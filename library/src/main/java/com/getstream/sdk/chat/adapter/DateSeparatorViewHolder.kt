@@ -32,7 +32,6 @@ class DateSeparatorViewHolder(
         channel: Channel,
         messageListItem: DateSeparatorItem,
         bubbleHelper: BubbleHelper,
-        factory: MessageViewHolderFactory,
         position: Int
     ) {
         this.messageListItem = messageListItem

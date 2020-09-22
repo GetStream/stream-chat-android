@@ -19,7 +19,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private final String TAG = AttachmentListItemAdapter.class.getSimpleName();
 
     private Message message;
-    private MessageViewHolderFactory factory;
+    private AttachmentViewHolderFactory factory;
     private Context context;
     private MessageListItem.MessageItem messageListItem;
     private List<AttachmentListItem> attachments;
@@ -32,7 +32,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     public AttachmentListItemAdapter(Context context,
                                      @NonNull MessageListItem.MessageItem messageListItem,
-                                     @NonNull MessageViewHolderFactory factory) {
+                                     @NonNull AttachmentViewHolderFactory factory) {
         this.context = context;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();

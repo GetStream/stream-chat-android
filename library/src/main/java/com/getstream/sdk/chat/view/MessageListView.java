@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
+import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
 import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
 import com.getstream.sdk.chat.adapter.MessageListItem;
@@ -156,7 +157,8 @@ public class MessageListView extends RecyclerView {
     );
 
     private BubbleHelper bubbleHelper;
-    private MessageViewHolderFactory viewHolderFactory;
+    private AttachmentViewHolderFactory attachmentViewHolderFactory;
+    private MessageViewHolderFactory messageViewHolderFactory;
 
     // region Constructor
     public MessageListView(Context context) {
@@ -240,29 +242,52 @@ public class MessageListView extends RecyclerView {
     }
 
     private void initAdapter() {
-        // Set default ViewHolderFactory if needed
-        if (viewHolderFactory == null) {
-            viewHolderFactory = new MessageViewHolderFactory();
+        // Create default AttachmentViewHolderFactory if needed
+        if (attachmentViewHolderFactory == null) {
+            attachmentViewHolderFactory = new AttachmentViewHolderFactory();
+        }
+        // Create default ViewHolderFactory if needed
+        if (messageViewHolderFactory == null) {
+            messageViewHolderFactory = new MessageViewHolderFactory();
         }
         // Inject factory
-        viewHolderFactory.setListenerContainer(listenerContainer);
+        messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
+        messageViewHolderFactory.setAttachmentViewHolderFactoryInternal(attachmentViewHolderFactory);
 
-        // Set default BubbleHelper if needed
+        // Create default BubbleHelper if needed
         if (bubbleHelper == null) {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
         }
 
-        adapter = new MessageListItemAdapter(channel, viewHolderFactory, bubbleHelper, style);
+        adapter = new MessageListItemAdapter(channel, messageViewHolderFactory, bubbleHelper, style);
         adapter.setHasStableIds(true);
 
         this.setMessageListItemAdapter(adapter);
     }
 
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+    public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set ViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already inited, please set AttachmentViewHolderFactory first");
         }
-        this.viewHolderFactory = factory;
+        this.attachmentViewHolderFactory = attachmentViewHolderFactory;
+    }
+
+    public void setMessageViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+        }
+        this.messageViewHolderFactory = messageViewHolderFactory;
+    }
+
+    /**
+     * Use the more explicit setMessageViewHolderFactory method instead.
+     */
+    @Deprecated
+    public void setViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+        }
+        this.messageViewHolderFactory = messageViewHolderFactory;
     }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {

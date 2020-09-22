@@ -16,7 +16,6 @@ class ThreadSeparatorViewHolder(resId: Int, viewGroup: ViewGroup) :
         channel: Channel,
         messageListItem: ThreadSeparatorItem,
         bubbleHelper: BubbleHelper,
-        factory: MessageViewHolderFactory,
         position: Int
     ) {
         /* Empty */

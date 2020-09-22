@@ -21,18 +21,16 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
         channel: Channel,
         messageListItem: MessageListItem,
         bubbleHelper: BubbleHelper,
-        factory: MessageViewHolderFactory,
         position: Int
     ) {
         @Suppress("UNCHECKED_CAST")
-        bind(channel, messageListItem as T, bubbleHelper, factory, position)
+        bind(channel, messageListItem as T, bubbleHelper, position)
     }
 
     protected abstract fun bind(
         channel: Channel,
         messageListItem: T,
         bubbleHelper: BubbleHelper,
-        factory: MessageViewHolderFactory,
         position: Int
     )
 

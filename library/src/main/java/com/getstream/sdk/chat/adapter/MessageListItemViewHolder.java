@@ -78,7 +78,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected Channel channel;
     protected final MessageListViewStyle style;
     protected MessageListView.BubbleHelper bubbleHelper;
-    protected MessageViewHolderFactory viewHolderFactory;
+    protected AttachmentViewHolderFactory viewHolderFactory;
     protected int position;
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
@@ -106,6 +106,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
             int resId,
             ViewGroup viewGroup,
             MessageListViewStyle style,
+            @NonNull AttachmentViewHolderFactory factory,
             @NonNull MessageListView.MessageClickListener messageClickListener,
             @NonNull MessageListView.MessageLongClickListener messageLongClickListener,
             @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
@@ -116,6 +117,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     ) {
         super(resId, viewGroup);
         this.style = style;
+        this.viewHolderFactory = factory;
         this.messageClickListener = messageClickListener;
         this.messageLongClickListener = messageLongClickListener;
         this.attachmentClickListener = attachmentClickListener;
@@ -157,14 +159,12 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     public void bind(@NonNull Channel channel,
                      @NonNull MessageListItem.MessageItem messageListItem,
                      @NonNull MessageListView.BubbleHelper bubbleHelper,
-                     @NonNull MessageViewHolderFactory factory,
                      int position) {
 
         // set binding
         this.channel = channel;
         this.messageListItem = messageListItem;
         this.bubbleHelper = bubbleHelper;
-        this.viewHolderFactory = factory;
         this.position = position;
 
         this.message = messageListItem.getMessage();

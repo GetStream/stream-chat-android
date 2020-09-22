@@ -46,7 +46,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
             channel = channel,
             messageListItem = messageListItemList[position],
             bubbleHelper = bubbleHelper,
-            factory = viewHolderFactory,
             position = position
         )
     }

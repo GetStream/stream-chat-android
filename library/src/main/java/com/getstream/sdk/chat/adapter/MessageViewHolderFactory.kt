@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageListViewStyle
 
 /**
@@ -27,6 +26,11 @@ open class MessageViewHolderFactory {
     }
 
     lateinit var listenerContainer: ListenerContainer
+        @JvmName("setListenerContainerInternal")
+        internal set
+    lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+        @JvmName("setAttachmentViewHolderFactoryInternal")
+        internal set
 
     open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
@@ -35,23 +39,6 @@ open class MessageViewHolderFactory {
             is MessageItem -> MESSAGEITEM_MESSAGE
             is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
             else -> MESSAGEITEM_NOT_FOUND
-        }
-    }
-
-    open fun getAttachmentViewType(
-        attachmentItem: AttachmentListItem
-    ): Int {
-        return when (attachmentItem.attachment.type) {
-            null ->
-                GENERIC_ATTACHMENT
-            ModelType.attach_video ->
-                VIDEO_ATTACHMENT
-            ModelType.attach_image, ModelType.attach_giphy ->
-                IMAGE_ATTACHMENT
-            ModelType.attach_file ->
-                FILE_ATTACHMENT
-            else ->
-                GENERIC_ATTACHMENT
         }
     }
 
@@ -68,6 +55,7 @@ open class MessageViewHolderFactory {
                     R.layout.stream_item_message,
                     parent,
                     style,
+                    attachmentViewHolderFactory,
                     listenerContainer.messageClickListener,
                     listenerContainer.messageLongClickListener,
                     listenerContainer.attachmentClickListener,
@@ -85,26 +73,8 @@ open class MessageViewHolderFactory {
         }
     }
 
-    open fun createAttachmentViewHolder(
-        adapter: AttachmentListItemAdapter,
-        parent: ViewGroup,
-        viewType: Int
-    ): BaseAttachmentViewHolder {
-        return when (viewType) {
-            VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
-                AttachmentViewHolderMedia(
-                    R.layout.stream_item_attach_media,
-                    parent,
-                    listenerContainer.giphySendListener
-                )
-            FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
-            else ->
-                AttachmentViewHolder(R.layout.stream_item_attachment, parent)
-        }
-    }
-
     enum class Position {
         TOP, MIDDLE, BOTTOM
     }
 }
+

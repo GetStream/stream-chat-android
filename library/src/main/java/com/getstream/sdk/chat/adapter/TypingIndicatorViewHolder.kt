@@ -26,7 +26,6 @@ class TypingIndicatorViewHolder(
         channel: Channel,
         messageListItem: TypingItem,
         bubbleHelper: BubbleHelper,
-        factory: MessageViewHolderFactory,
         position: Int
     ) {
         ll_typingusers.visibility = View.VISIBLE
