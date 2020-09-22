@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.utils.observable.Subscription
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
@@ -637,17 +636,7 @@ class ChatDomainImpl private constructor(
         }
 
         // gather the user ids from channels, members and the last message
-        val userIds = channelEntities.fold(emptySet<String>()) { acc, channel ->
-            acc + channel.createdByUserId.orEmpty() +
-                channel.members.keys +
-                channel.reads.keys +
-                channelMessagesMap[channel.cid]?.map { message ->
-                    message.userId + message.latestReactions.map(ReactionEntity::userId)
-                }.orEmpty()
-        }
-
-        // get a map with user id to User
-        val userMap = repos.users.selectUserMap(userIds.toList())
+        val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
 
         // convert the channels
         val channelPairs = mutableListOf<ChannelEntityPair>()
