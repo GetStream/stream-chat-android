@@ -1,7 +1,7 @@
 # To be released:
-- Removed `context` and `style` parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead
-- `MessageViewHolderFactory` now receives a `style` parameter that can be passed in to ViewHolders
+- Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
+- Removed `position` parameter from `MessageClickListener`
 
 # Sep 18th, 2020 - 4.2.11-beta-12
 - Implement Giphy actions handler
