@@ -42,14 +42,16 @@ class TestTokenManager {
     @Test
     fun async() {
 
-        manager.setTokenProvider(object : TokenProvider {
-            override fun loadToken(): String {
-                Thread {
-                    Thread.sleep(1000)
-                }.start()
-                return token
+        manager.setTokenProvider(
+            object : TokenProvider {
+                override fun loadToken(): String {
+                    Thread {
+                        Thread.sleep(1000)
+                    }.start()
+                    return token
+                }
             }
-        })
+        )
 
         manager.loadAsync()
 
@@ -64,11 +66,13 @@ class TestTokenManager {
         val listener = CallListener()
         val error = RuntimeException()
 
-        manager.setTokenProvider(object : TokenProvider {
-            override fun loadToken(): String {
-                throw error
+        manager.setTokenProvider(
+            object : TokenProvider {
+                override fun loadToken(): String {
+                    throw error
+                }
             }
-        })
+        )
 
         manager.loadAsync {
             listener.called(it.error().cause!!)

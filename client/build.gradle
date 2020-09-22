@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'jacoco-android'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'maven-publish'
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: "com.hiya.jacoco-android"
 
 group = 'com.github.getstream'
 
@@ -17,7 +17,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.15.5"
+        versionName "1.15.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

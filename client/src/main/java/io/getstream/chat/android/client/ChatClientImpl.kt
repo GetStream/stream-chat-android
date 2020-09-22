@@ -446,7 +446,11 @@ internal class ChatClientImpl(
         reason: String,
         timeout: Int
     ): Call<Unit> = api.banUser(
-        targetId, timeout, reason, channelType, channelId
+        targetId,
+        timeout,
+        reason,
+        channelType,
+        channelId
     ).map {
         Unit
     }

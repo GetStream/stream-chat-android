@@ -13,16 +13,20 @@ internal class EventAdapterTest {
 
     private val gson = GsonBuilder()
         .registerTypeAdapterFactory(TypeAdapterFactory())
-        .addSerializationExclusionStrategy(object : ExclusionStrategy {
-            override fun shouldSkipClass(clazz: Class<*>): Boolean = false
-            override fun shouldSkipField(f: FieldAttributes): Boolean =
-                f.getAnnotation(IgnoreSerialisation::class.java) != null
-        })
-        .addDeserializationExclusionStrategy(object : ExclusionStrategy {
-            override fun shouldSkipClass(clazz: Class<*>): Boolean = false
-            override fun shouldSkipField(f: FieldAttributes): Boolean =
-                f.getAnnotation(IgnoreDeserialisation::class.java) != null
-        })
+        .addSerializationExclusionStrategy(
+            object : ExclusionStrategy {
+                override fun shouldSkipClass(clazz: Class<*>): Boolean = false
+                override fun shouldSkipField(f: FieldAttributes): Boolean =
+                    f.getAnnotation(IgnoreSerialisation::class.java) != null
+            }
+        )
+        .addDeserializationExclusionStrategy(
+            object : ExclusionStrategy {
+                override fun shouldSkipClass(clazz: Class<*>): Boolean = false
+                override fun shouldSkipField(f: FieldAttributes): Boolean =
+                    f.getAnnotation(IgnoreDeserialisation::class.java) != null
+            }
+        )
         .create()
 
     private val eventAdapter: TypeAdapter<ChatEvent> =

@@ -39,20 +39,22 @@ class ChannelsListFragment : BaseChannelsListFragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerChannels.addOnScrollListener(object : PaginationListener(10) {
+        recyclerChannels.addOnScrollListener(
+            object : PaginationListener(10) {
 
-            override fun loadMoreItems() {
-                loadNextPage()
-            }
+                override fun loadMoreItems() {
+                    loadNextPage()
+                }
 
-            override fun isLastPage(): Boolean {
-                return isLastPage
-            }
+                override fun isLastPage(): Boolean {
+                    return isLastPage
+                }
 
-            override fun isLoading(): Boolean {
-                return isLoading
+                override fun isLoading(): Boolean {
+                    return isLoading
+                }
             }
-        })
+        )
 
         recyclerChannels.adapter = adapter
 

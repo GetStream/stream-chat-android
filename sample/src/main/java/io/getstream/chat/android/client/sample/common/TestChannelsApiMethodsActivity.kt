@@ -77,7 +77,8 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
         user.extraData["name"] = benderUserId
 
         client.setUser(
-            user, benderToken,
+            user,
+            benderToken,
             object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
                     val updatedUser = data.user
@@ -267,9 +268,11 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     fun getChannels() {
-        client.addSocketListener(object : SocketListener() {
-            // override required methods
-        })
+        client.addSocketListener(
+            object : SocketListener() {
+// override required methods
+            }
+        )
     }
 
     private fun stopWatching() {

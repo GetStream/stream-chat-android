@@ -11,26 +11,30 @@ class SkipExtraDataGson {
 
     val instance: Gson by lazy {
         GsonBuilder()
-            .addSerializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
+            .addSerializationExclusionStrategy(
+                object : ExclusionStrategy {
+                    override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                        return false
+                    }
 
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    val name = f.name
-                    return name == extraDataName
+                    override fun shouldSkipField(f: FieldAttributes): Boolean {
+                        val name = f.name
+                        return name == extraDataName
+                    }
                 }
-            })
-            .addDeserializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
+            )
+            .addDeserializationExclusionStrategy(
+                object : ExclusionStrategy {
+                    override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                        return false
+                    }
 
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    val name = f.name
-                    return name == extraDataName
+                    override fun shouldSkipField(f: FieldAttributes): Boolean {
+                        val name = f.name
+                        return name == extraDataName
+                    }
                 }
-            })
+            )
             .create()
     }
 
