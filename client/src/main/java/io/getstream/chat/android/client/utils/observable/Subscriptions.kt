@@ -20,6 +20,8 @@ internal open class SubscriptionImpl(
 
     override var isDisposed: Boolean = false
 
+    var afterEventDelivered: () -> Unit = {}
+
     override fun dispose() {
         isDisposed = true
         listener = null
@@ -37,16 +39,4 @@ internal open class SubscriptionImpl(
         }
     }
 
-    open fun afterEventDelivered() {}
-}
-
-internal class SingleSubscriptionImpl(
-    filter: (ChatEvent) -> Boolean,
-    listener: ((ChatEvent) -> Unit)
-) : SubscriptionImpl(filter, listener) {
-
-    override fun afterEventDelivered() {
-        // Dispose self, so that the listener is never called again
-        dispose()
-    }
 }
