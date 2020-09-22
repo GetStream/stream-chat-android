@@ -106,8 +106,8 @@ android {
         exclude 'META-INF/ASL2.0'
     }
 
-    dataBinding {
-        enabled = true
+    buildFeatures {
+        dataBinding true
     }
 }
 
@@ -145,7 +145,7 @@ dependencies {
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
 
-    debugImplementation Dependencies.leakCanary
+    //debugImplementation Dependencies.leakCanary
 
     testImplementation Dependencies.koinTest
 }
