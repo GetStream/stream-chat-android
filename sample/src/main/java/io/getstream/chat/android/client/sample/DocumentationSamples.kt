@@ -78,7 +78,7 @@ fun setUser() {
             }
 
             override fun onError(error: ChatError) {
-                error.printStackTrace()
+                error.cause?.printStackTrace()
             }
         }
     )
@@ -114,7 +114,7 @@ fun channel() {
         if (it.isSuccess) {
             val channel = it.data()
         } else {
-            it.error().printStackTrace()
+            it.error().cause?.printStackTrace()
         }
     }
 }
@@ -130,7 +130,7 @@ fun sendMessage() {
         if (it.isSuccess) {
             val message = it.data()
         } else {
-            it.error().printStackTrace()
+            it.error().cause?.printStackTrace()
         }
     }
 }
@@ -171,7 +171,7 @@ fun initClient() {
             }
 
             override fun onError(error: ChatError) {
-                error.printStackTrace()
+                error.cause?.printStackTrace()
             }
         }
     )
@@ -611,7 +611,7 @@ fun muting() {
             if (result.isSuccess) {
                 // channel is muted
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 
@@ -655,7 +655,7 @@ fun queryMuted() {
             if (result.isSuccess) {
                 val channels = result.data()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 
@@ -669,7 +669,7 @@ fun queryMuted() {
             if (result.isSuccess) {
                 val channels = result.data()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 }
@@ -680,7 +680,7 @@ fun unmute() {
         if (result.isSuccess) {
             // channel is unmuted
         } else {
-            result.error().printStackTrace()
+            result.error().cause?.printStackTrace()
         }
     }
 }

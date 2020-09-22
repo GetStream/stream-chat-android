@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client.logger
 
+import io.getstream.chat.android.client.errors.ChatError
+
 class ChatSilentLogger : ChatLogger {
 
     override fun getLevel(): ChatLogLevel {
@@ -11,6 +13,14 @@ class ChatSilentLogger : ChatLogger {
     }
 
     override fun logE(tag: Any, message: String, throwable: Throwable) {
+        // silent
+    }
+
+    override fun logE(tag: Any, chatError: ChatError) {
+        // silent
+    }
+
+    override fun logE(tag: Any, message: String, chatError: ChatError) {
         // silent
     }
 

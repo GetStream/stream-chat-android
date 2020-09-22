@@ -150,7 +150,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
                     if (it.isSuccess)
                         println("checkTyping: sent")
                     else
-                        it.error().printStackTrace()
+                        it.error().cause?.printStackTrace()
                 }
             }
         }
@@ -290,7 +290,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
 
                 val message = result.error().message
                 Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT).show()
