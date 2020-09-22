@@ -42,27 +42,25 @@ class ClientInstrumentationTests {
 
     @Test
     fun successfulConnect() {
-
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token, setUserListener)
-            client.subscribe { event -> connectedEventConsumer.onEvent(event) }
+            client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until { setUserListener.onSuccessIsCalled() }
-            await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
+            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
 
     @Test
     fun invalidToken() {
-
         val invalidToken = "invalid"
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), invalidToken, setUserListener)
         }.andThen {
-            await().atMost(5, SECONDS).until { setUserListener.onErrorIsCalled() }
+            await().atMost(5, SECONDS).until(setUserListener::onErrorIsCalled)
         }
     }
 
@@ -72,26 +70,21 @@ class ClientInstrumentationTests {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token)
             client.subscribeForSingle<ConnectedEvent> {
-                client.subscribe { event ->
-                    connectedEventConsumer.onEvent(event)
-                }
+                client.subscribe(connectedEventConsumer::onEvent)
             }
         }.andThen {
-            await().atMost(5, SECONDS).until { connectedEventConsumer.isReceived() }
+            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
 
     @Test
     fun firstHealth() {
-
         val consumer = EventsConsumer(listOf(HealthEvent::class.java))
 
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.setUser(User(userId), token)
-            client.subscribeForSingle<HealthEvent> {
-                consumer.onEvent(it)
-            }
+            client.subscribeForSingle<HealthEvent>(consumer::onEvent)
         }.andThen {
             await()
                 .atMost(10, SECONDS)
