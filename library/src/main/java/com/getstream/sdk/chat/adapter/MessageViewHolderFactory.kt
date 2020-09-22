@@ -77,4 +77,3 @@ open class MessageViewHolderFactory {
         TOP, MIDDLE, BOTTOM
     }
 }
-
