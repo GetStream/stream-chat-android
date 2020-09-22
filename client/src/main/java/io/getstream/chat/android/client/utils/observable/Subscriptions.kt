@@ -38,5 +38,4 @@ internal open class SubscriptionImpl(
             }
         }
     }
-
 }

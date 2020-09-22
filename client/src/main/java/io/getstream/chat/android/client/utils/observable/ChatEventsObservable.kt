@@ -44,9 +44,11 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
         filter: (ChatEvent) -> Boolean = { true },
         listener: (ChatEvent) -> Unit
     ): Disposable {
-        return addSubscription(SubscriptionImpl(filter, listener).apply {
-            afterEventDelivered = this::dispose
-        })
+        return addSubscription(
+            SubscriptionImpl(filter, listener).apply {
+                afterEventDelivered = this::dispose
+            }
+        )
     }
 
     private fun addSubscription(subscription: EventSubscription): Disposable {
