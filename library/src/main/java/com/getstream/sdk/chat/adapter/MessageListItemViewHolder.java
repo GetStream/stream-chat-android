@@ -408,7 +408,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
             if (isFailedMessage() && !ChatClient.instance().isSocketConnected())
                 return;
-            messageClickListener.onMessageClick(message, position);
+            messageClickListener.onMessageClick(message);
         });
 
         tv_text.setOnLongClickListener(view -> {
@@ -497,10 +497,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         tv_reply.setText(tv_reply.getContext().getResources().getQuantityString(R.plurals.stream_reply_count, replyCount, replyCount));
 
         iv_reply.setOnClickListener(view -> {
-            messageClickListener.onMessageClick(message, position);
+            messageClickListener.onMessageClick(message);
         });
         tv_reply.setOnClickListener(view -> {
-            messageClickListener.onMessageClick(message, position);
+            messageClickListener.onMessageClick(message);
         });
     }
 

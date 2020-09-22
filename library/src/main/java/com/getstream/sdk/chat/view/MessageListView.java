@@ -90,7 +90,7 @@ public class MessageListView extends RecyclerView {
 
     private TaggedLogger logger = ChatLogger.Companion.get("MessageListView");
 
-    private final MessageClickListener DEFAULT_MESSAGE_CLICK_LISTENER = (message, position) -> {
+    private final MessageClickListener DEFAULT_MESSAGE_CLICK_LISTENER = (message) -> {
         if (message.getReplyCount() > 0) {
             onStartThreadHandler.invoke(message);
             onStartThreadListener.invoke(message);
@@ -494,7 +494,7 @@ public class MessageListView extends RecyclerView {
     }
 
     public interface MessageClickListener {
-        void onMessageClick(Message message, int position);
+        void onMessageClick(Message message);
     }
 
     public interface MessageLongClickListener {
