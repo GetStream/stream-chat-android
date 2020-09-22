@@ -7,10 +7,10 @@ import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.exhaustive
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_FILTER
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
@@ -36,15 +36,13 @@ interface ChannelsViewModel {
 
     companion object {
         @JvmField
-        val DEFAULT_FILTER: FilterObject = eq("type", "messaging")
-        @JvmField
         val DEFAULT_SORT: QuerySort = QuerySort().desc("last_message_at")
     }
 }
 
 class ChannelsViewModelImpl(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
-    private val filter: FilterObject = DEFAULT_FILTER,
+    private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
     private val sort: QuerySort = DEFAULT_SORT
 ) : ChannelsViewModel, ViewModel() {
     private val channelsData: LiveData<ChannelsViewModel.State>

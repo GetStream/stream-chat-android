@@ -8,14 +8,14 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
-    var viewHolderFactory: MessageViewHolderFactory,
-    var channel: Channel? = null,
+    val channel: Channel,
+    val viewHolderFactory: MessageViewHolderFactory,
+    val bubbleHelper: BubbleHelper,
+    val style: MessageListViewStyle,
     private var messageListItemList: List<MessageListItem> = emptyList()
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
 
-    var bubbleHelper: BubbleHelper? = null
     var isThread = false
-    var style: MessageListViewStyle? = null
 
     fun replaceEntities(newEntities: List<MessageListItem>) {
         val result = DiffUtil.calculateDiff(
@@ -47,11 +47,11 @@ class MessageListItemAdapter @JvmOverloads constructor(
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(
-            requireNotNull(channel) { "Channel was not set" },
-            messageListItemList[position],
-            requireNotNull(bubbleHelper) { "BubbleHelper was not set" },
-            viewHolderFactory,
-            position
+            channel = channel,
+            messageListItem = messageListItemList[position],
+            bubbleHelper = bubbleHelper,
+            factory = viewHolderFactory,
+            position = position
         )
     }
 }

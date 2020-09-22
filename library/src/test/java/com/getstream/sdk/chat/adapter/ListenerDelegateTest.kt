@@ -17,7 +17,7 @@ class ListenerDelegateTest {
     private var listener1: TestListener = mock()
     private var listener2: TestListener = mock()
 
-    private var delegate: TestListener by ListenerContainer.ListenerDelegate(
+    private var delegate: TestListener by ListenerContainerImpl.ListenerDelegate(
         initialValue = listener1,
         wrap = { realListener ->
             object : TestListener {

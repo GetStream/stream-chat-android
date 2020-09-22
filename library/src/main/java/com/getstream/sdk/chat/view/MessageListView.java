@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
+import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
@@ -50,11 +52,12 @@ public class MessageListView extends RecyclerView {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
     protected MessageListViewStyle style;
-    private MessageListItemAdapter adapter;
+
+    @Nullable
+    private MessageListItemAdapter adapter = null;
     private LinearLayoutManager layoutManager;
 
     private boolean hasScrolledUp;
-    private BubbleHelper bubbleHelper;
     private int threadParentPosition;
     private Function0<Unit> endRegionReachedHandler = () -> {
         throw new IllegalStateException("endRegionReachedHandler must be set.");
@@ -142,7 +145,7 @@ public class MessageListView extends RecyclerView {
         onSendGiphyHandler.invoke(message, action);
     };
 
-    private final ListenerContainer listenerContainer = new ListenerContainer(
+    private final ListenerContainer listenerContainer = new ListenerContainerImpl(
             DEFAULT_MESSAGE_CLICK_LISTENER,
             DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
             DEFAULT_ATTACHMENT_CLICK_LISTENER,
@@ -151,6 +154,8 @@ public class MessageListView extends RecyclerView {
             DEFAULT_READ_STATE_CLICK_LISTENER,
             DEFAULT_GIPHY_SEND_LISTENER
     );
+
+    private BubbleHelper bubbleHelper;
     private MessageViewHolderFactory viewHolderFactory;
 
     // region Constructor
@@ -177,7 +182,6 @@ public class MessageListView extends RecyclerView {
 
         this.setLayoutManager(layoutManager);
         hasScrolledUp = false;
-        setBubbleHelper(DefaultBubbleHelper.initDefaultBubbleHelper(style, context));
         setHasFixedSize(true);
         setItemViewCacheSize(20);
     }
@@ -190,14 +194,12 @@ public class MessageListView extends RecyclerView {
 
     // set the adapter and apply the style.
     @Override
-    public void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setAdapterWithStyle instead please");
+    @Deprecated
+    public final void setAdapter(Adapter adapter) {
+        throw new IllegalArgumentException("Use setMessageListItemAdapter instead please");
     }
 
-    private void setAdapterWithStyle(MessageListItemAdapter adapter) {
-        adapter.setStyle(style);
-        adapter.setChannel(channel);
-
+    private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
         this.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -231,21 +233,43 @@ public class MessageListView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
+    public void init(Channel channel, User currentUser) {
+        this.currentUser = currentUser;
+        this.channel = channel;
+        initAdapter();
+    }
+
     private void initAdapter() {
-        // Setup a default adapter and pass the style
+        // Set default ViewHolderFactory if needed
         if (viewHolderFactory == null) {
-            viewHolderFactory = new MessageViewHolderFactory(listenerContainer);
+            viewHolderFactory = new MessageViewHolderFactory();
         }
-        adapter = new MessageListItemAdapter(viewHolderFactory);
+        // Inject factory
+        viewHolderFactory.setListenerContainer(listenerContainer);
+
+        // Set default BubbleHelper if needed
+        if (bubbleHelper == null) {
+            bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
+        }
+
+        adapter = new MessageListItemAdapter(channel, viewHolderFactory, bubbleHelper, style);
         adapter.setHasStableIds(true);
 
-        adapter.setViewHolderFactory(viewHolderFactory);
+        this.setMessageListItemAdapter(adapter);
+    }
 
-        if (bubbleHelper != null) {
-            adapter.setBubbleHelper(bubbleHelper);
+    public void setViewHolderFactory(MessageViewHolderFactory factory) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set ViewHolderFactory first");
         }
+        this.viewHolderFactory = factory;
+    }
 
-        this.setAdapterWithStyle(adapter);
+    public void setBubbleHelper(BubbleHelper bubbleHelper) {
+        if (adapter != null) {
+            throw new IllegalStateException("Adapter was already inited, please set BubbleHelper first");
+        }
+        this.bubbleHelper = bubbleHelper;
     }
 
     public void displayNewMessage(MessageListItemWrapper listItem) {
@@ -279,6 +303,9 @@ public class MessageListView extends RecyclerView {
             final MessageListItem lastListItem = entities.get(entities.size() - 1);
             if (lastListItem instanceof MessageListItem.MessageItem) {
                 final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
+                // Checks if we should scroll to bottom because last message was updated.
+                // If it's a new message it will be marked as read in "else" branch, otherwise it
+                // should be already marked as read.
                 if (scrolledBottom() && justUpdated(lastMessage)) {
                     int newPosition = adapter.getItemCount() - 1;
                     logger.logI("just update last message");
@@ -304,6 +331,7 @@ public class MessageListView extends RecyclerView {
             int newPosition = adapter.getItemCount() - 1;
             layoutManager.scrollToPosition(newPosition);
             logger.logI(String.format("Scroll: First load scrolling down to bottom %d", newPosition));
+            lastMessageReadHandler.invoke();
         } else if (listItem.getLoadingMore()) {
             // the load more behaviour is different, scroll positions starts out at 0
             // to stay at the relative 0 we should go to 0 + size of new messages...
@@ -333,13 +361,6 @@ public class MessageListView extends RecyclerView {
             // we can't always run it since read and typing events also influence this list..
             //viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke();
-        }
-    }
-
-    public void setViewHolderFactory(MessageViewHolderFactory factory) {
-        this.viewHolderFactory = factory;
-        if (adapter != null) {
-            adapter.setViewHolderFactory(factory);
         }
     }
 
@@ -430,19 +451,6 @@ public class MessageListView extends RecyclerView {
             readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER;
         }
         listenerContainer.setReadStateClickListener(readStateClickListener);
-    }
-
-    public void setBubbleHelper(BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-        if (adapter != null) {
-            adapter.setBubbleHelper(bubbleHelper);
-        }
-    }
-
-    public void init(Channel channel, User currentUser) {
-        this.currentUser = currentUser;
-        this.channel = channel;
-        initAdapter();
     }
 
     public void setEndRegionReachedHandler(Function0<Unit> endRegionReachedHandler) {

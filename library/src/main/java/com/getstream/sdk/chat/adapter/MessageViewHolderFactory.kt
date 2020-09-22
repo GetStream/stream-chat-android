@@ -8,14 +8,11 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.Attachment
 
 /**
  * Allows you to easily customize message rendering or message attachment rendering
  */
-open class MessageViewHolderFactory(
-    protected val listenerContainer: ListenerContainer
-) {
+open class MessageViewHolderFactory {
     companion object {
         const val MESSAGEITEM_DATE_SEPARATOR = 1
         const val MESSAGEITEM_MESSAGE = 2
@@ -29,6 +26,8 @@ open class MessageViewHolderFactory(
         const val FILE_ATTACHMENT = 4
     }
 
+    lateinit var listenerContainer: ListenerContainer
+
     open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
             is DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
@@ -40,9 +39,9 @@ open class MessageViewHolderFactory(
     }
 
     open fun getAttachmentViewType(
-        attachment: Attachment
+        attachmentItem: AttachmentListItem
     ): Int {
-        return when (attachment.type) {
+        return when (attachmentItem.attachment.type) {
             null ->
                 GENERIC_ATTACHMENT
             ModelType.attach_video ->

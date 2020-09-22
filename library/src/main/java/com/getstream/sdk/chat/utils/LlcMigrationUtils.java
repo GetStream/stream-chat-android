@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import androidx.annotation.Nullable;
-import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
@@ -87,20 +86,6 @@ public class LlcMigrationUtils {
         final String[] units = new String[]{"B", "kB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-    public static String getImage(Channel channel) {
-
-        if (!channel.getExtraData().containsKey("image")) {
-            return null;
-        } else {
-            Object image = channel.getExtraData().get("image");
-            if (image instanceof String) {
-                return (String) image;
-            }
-            return null;
-        }
-
     }
 
     public static boolean readLastMessage(Channel channel) {
@@ -222,27 +207,6 @@ public class LlcMigrationUtils {
         else return channel.getRead().get(idx);
     }
 
-    public static boolean equalsUserReads(Channel chA, Channel chB) {
-
-        List<ChannelUserRead> a = LlcMigrationUtils.getLastMessageReads(chA);
-        List<ChannelUserRead> b = LlcMigrationUtils.getLastMessageReads(chB);
-
-        if (a.size() != b.size()) return false;
-        if (a.size() == 0 && b.size() == 0) return true;
-
-        for (int i = 0; i < a.size(); i++) {
-            ChannelUserRead readA = a.get(i);
-            ChannelUserRead readB = b.get(i);
-
-            boolean dates = readA.getLastRead().equals(readB.getLastRead());
-            if (!dates) return false;
-            boolean users = readA.getUser().getId().equals(readB.getUser().getId());
-            if (!users) return false;
-
-        }
-        return true;
-    }
-
     public static boolean lastMessagesAreTheSame(Channel a, Channel b) {
         Message oldLastMessage = computeLastMessage(a);
         Message newLastMessage = computeLastMessage(b);
@@ -254,51 +218,6 @@ public class LlcMigrationUtils {
             return false;
         } else {
             return true;
-        }
-    }
-
-    public static boolean equalsLastReaders(Channel a, Channel b) {
-        User oldLastReader = getLastReader(a);
-        User newLastReader = getLastReader(b);
-
-        if (oldLastReader == null && newLastReader == null) return true;
-        if (oldLastReader == null) return false;
-        if (newLastReader == null) return false;
-        return oldLastReader.getId().equals(newLastReader.getId());
-    }
-
-    public static User getLastReader(Channel channel) {
-        List<ChannelUserRead> read = channel.getRead();
-        if (read == null || read.isEmpty()) return null;
-        User lastReadUser = null;
-        for (int i = read.size() - 1; i >= 0; i--) {
-
-            User currentUser = getCurrentUser();
-
-            ChannelUserRead channelUserRead = read.get(i);
-
-            if (currentUser != null) {
-                String id = currentUser.getId();
-                String readUserId = channelUserRead.getUser().getId();
-
-                if (!id.equals(readUserId)) {
-                    lastReadUser = channelUserRead.getUser();
-                    break;
-                }
-            }
-        }
-        return lastReadUser;
-    }
-
-    public static void updateReadState(Channel channel, User user, Date date) {
-
-        int indexOfRead = indexOfRead(channel, user.getId());
-        ChannelUserRead read = new ChannelUserRead(user, date, 0);
-
-        if (indexOfRead == -1) {
-            channel.getRead().add(read);
-        } else {
-            channel.getRead().set(indexOfRead, read);
         }
     }
 
@@ -442,58 +361,6 @@ public class LlcMigrationUtils {
         return userId.equals(currentUser.getId());
     }
 
-    public static Map<String, ChannelUserRead> getReadsByUser(Channel channel) {
-        Map<String, ChannelUserRead> result = new HashMap<>();
-        for (ChannelUserRead r : channel.getRead()) result.put(r.getUserId(), r);
-        return result;
-    }
-
-    @Nullable
-    public static String getOldestMessageId(Channel channel) {
-        Message oldestMessage = getOldestMessage(channel.getMessages());
-        if (oldestMessage == null) {
-            return null;
-        } else {
-            return oldestMessage.getId();
-        }
-    }
-
-    @Nullable
-    public static String getOldestMessageId(List<Message> messages) {
-        Message message = getOldestMessage(messages);
-        if (message == null) return null;
-        else return message.getId();
-    }
-
-    @Nullable
-    public static Message getOldestMessage(List<Message> messages) {
-        if (messages == null || messages.isEmpty()) {
-            return null;
-        }
-
-        return messages.get(0);
-    }
-
-    public static int getUnreadMessageCount(String userId, Channel channel) {
-        int unreadMessageCount = 0;
-        List<ChannelUserRead> read = channel.getRead();
-        if (read == null || read.isEmpty()) return unreadMessageCount;
-
-        Date lastReadDate = getReadDateOfChannelLastMessage(userId, channel);
-        if (lastReadDate == null) return unreadMessageCount;
-
-        List<io.getstream.chat.android.client.models.Message> messages = channel.getMessages();
-
-        for (int i = messages.size() - 1; i >= 0; i--) {
-            Message message = messages.get(i);
-            if (message.getUser().getId().equals(userId)) continue;
-            if (message.getDeletedAt() != null) continue;
-            if (message.getCreatedAt().getTime() > lastReadDate.getTime())
-                unreadMessageCount++;
-        }
-        return unreadMessageCount;
-    }
-
     public static Date getReadDateOfChannelLastMessage(String userId, Channel channel) {
         List<ChannelUserRead> read = channel.getRead();
         if (read == null || read.isEmpty()) return null;
@@ -524,62 +391,9 @@ public class LlcMigrationUtils {
                 break;
             }
         }
-        setStartDay(Collections.singletonList(lastMessage), null);
-
         return lastMessage;
     }
 
-    public static void setStartDay(List<Message> messages, @Nullable Message preMessage0) {
-        if (messages == null) return;
-        if (messages.size() == 0) return;
-
-        Message preMessage = (preMessage0 != null) ? preMessage0 : messages.get(0);
-        setFormattedDate(preMessage);
-        int startIndex = (preMessage0 != null) ? 0 : 1;
-        for (int i = startIndex; i < messages.size(); i++) {
-            if (i != startIndex) {
-                preMessage = messages.get(i - 1);
-            }
-
-            Message message = messages.get(i);
-            setFormattedDate(message);
-            message.setStartDay(!message.getDate().equals(preMessage.getDate()));
-        }
-    }
-
-    public static int indexOf(List<Message> messages, Message message) {
-        String id = message.getId();
-        for (int i = 0; i < messages.size(); i++)
-            if (id.equals(messages.get(i).getId())) return i;
-        return -1;
-    }
-
-    private static void setFormattedDate(Message message) {
-        if (message == null || message.getDate() != null) return;
-        Utils.messageDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        Calendar smsTime = Calendar.getInstance();
-        smsTime.setTimeInMillis(message.getCreatedAt().getTime());
-
-        Calendar now = Calendar.getInstance();
-
-        if (now.get(Calendar.DATE) == smsTime.get(Calendar.DATE)) {
-            message.setToday(true);
-            message.setDate(TODAY.getLabel());
-        } else if (now.get(Calendar.DATE) - smsTime.get(Calendar.DATE) == 1) {
-            message.setYesterday(true);
-            message.setDate(YESTERDAY.getLabel());
-        } else if (now.get(Calendar.WEEK_OF_YEAR) == smsTime.get(Calendar.WEEK_OF_YEAR)) {
-            DateFormat dayName = new SimpleDateFormat("EEEE");
-            message.setDate(dayName.format(message.getCreatedAt()));
-        } else {
-            DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.LONG);
-            message.setDate(dateFormat.format(message.getCreatedAt()));
-        }
-        DateFormat timeFormat = SimpleDateFormat.getTimeInstance(DateFormat.SHORT);
-        message.setTime(timeFormat.format(message.getCreatedAt()));
-    }
-    
     public static User getCurrentUser(){
         return ChatDomain.instance().getCurrentUser();
     }
