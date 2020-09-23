@@ -3,6 +3,7 @@
 - Convert ChatError to plain class. Changes in ChatLogger interface.
 - Update events fields related to read status - remove "unread_messages" field and add "unread_channels" to NewMessageEvent, NotificationMarkReadEvent, and NotificationMessageNewEvent
 - Mark ChatEvents containing the user property by the UserEvent interface.
+- Simplified the event handling APIs, deprecated `ChatObservable`. See [the migration guide](https://github.com/GetStream/stream-chat-android-client/wiki/Migrating-from-the-old-event-subscription-APIs) for details on how to easily adopt the new APIs.
 
 # 1.15.5 - Fri 18 Sep 2020
 

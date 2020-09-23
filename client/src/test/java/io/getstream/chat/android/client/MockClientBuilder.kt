@@ -14,10 +14,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParserImpl
-import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.client.utils.observable.JustObservable
-import org.mockito.Mockito
+import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import org.mockito.Mockito.mock
 import java.util.Date
 
@@ -43,7 +41,7 @@ class MockClientBuilder {
     )
 
     lateinit var api: ChatApi
-    lateinit var socket: ChatSocket
+    lateinit var socket: FakeChatSocket
     lateinit var retrofitApi: RetrofitApi
     lateinit var retrofitCdnApi: RetrofitCdnApi
     lateinit var notificationsManager: ChatNotifications
@@ -66,7 +64,7 @@ class MockClientBuilder {
             ChatNotificationHandler(context)
         )
 
-        socket = mock(ChatSocket::class.java)
+        socket = FakeChatSocket()
         retrofitApi = mock(RetrofitApi::class.java)
         retrofitCdnApi = mock(RetrofitCdnApi::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
@@ -78,10 +76,10 @@ class MockClientBuilder {
             UuidGeneratorImpl()
         )
 
-        Mockito.`when`(socket.events()).thenReturn(JustObservable(connectedEvent))
-
         client = ChatClientImpl(config, api, socket, notificationsManager)
         client.setUser(user, token)
+
+        socket.sendEvent(connectedEvent)
 
         return client
     }

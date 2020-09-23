@@ -105,7 +105,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setRegularUser() {
         // testUserApiLoadingShapeContainer.makeVisible()
 
-        client.events().subscribe {
+        client.subscribe {
             if (it is ConnectedEvent) {
                 registerDevice()
                 initButtons()

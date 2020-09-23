@@ -13,7 +13,8 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.subscribeForSingle
+import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
 import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
 import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
@@ -24,7 +25,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
-    var subs = mutableListOf<Subscription>()
+    var disposables = mutableListOf<Disposable>()
 
     val token =
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
@@ -40,39 +41,32 @@ class SocketTestActivity : AppCompatActivity() {
 
             textSocketState.text = "Connecting..."
 
-            subs.add(
-                client
-                    .events()
-                    .filter(ConnectedEvent::class.java)
-                    .first()
-                    .subscribe {
-                        Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
-                    }
+            disposables.add(
+                client.subscribeForSingle<ConnectedEvent> {
+                    Toast.makeText(this, "First connection", Toast.LENGTH_SHORT).show()
+                }
             )
 
-            subs.add(
-                client
-                    .events()
-                    .subscribe {
+            disposables.add(
+                client.subscribe {
+                    Log.d("evt", it::class.java.simpleName)
+                    appendEvent(it)
 
-                        Log.d("evt", it::class.java.simpleName)
-                        appendEvent(it)
-
-                        when (it) {
-                            is ConnectedEvent -> {
-                                textSocketState.text = "Connected"
-                            }
-                            is ErrorEvent -> {
-                                textSocketState.text = "Error: " + it.error.toString()
-                            }
-                            is ConnectingEvent -> {
-                                textSocketState.text = "Connecting..."
-                            }
-                            is DisconnectedEvent -> {
-                                textSocketState.text = "Disconnected"
-                            }
+                    when (it) {
+                        is ConnectedEvent -> {
+                            textSocketState.text = "Connected"
+                        }
+                        is ErrorEvent -> {
+                            textSocketState.text = "Error: " + it.error.toString()
+                        }
+                        is ConnectingEvent -> {
+                            textSocketState.text = "Connecting..."
+                        }
+                        is DisconnectedEvent -> {
+                            textSocketState.text = "Disconnected"
                         }
                     }
+                }
             )
 
             client.setUser(User("bender"), token)
@@ -81,14 +75,14 @@ class SocketTestActivity : AppCompatActivity() {
         btnDisconnect.setOnClickListener {
             textSocketState.text = "Disconnected"
             client.disconnect()
-            subs.forEach { it.unsubscribe() }
-            subs.clear()
+            disposables.forEach { it.dispose() }
+            disposables.clear()
         }
     }
 
     override fun onDestroy() {
-        subs.forEach { it.unsubscribe() }
-        subs.clear()
+        disposables.forEach { it.dispose() }
+        disposables.clear()
         super.onDestroy()
     }
 

@@ -67,6 +67,7 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
 internal class ChannelControllerImpl(
@@ -86,60 +87,104 @@ internal class ChannelControllerImpl(
     }
 
     override fun events(): ChatObservable {
-        return client.events().filter { event ->
-            when (event) {
-                is ChannelCreatedEvent -> event.cid == cid
-                is ChannelDeletedEvent -> event.cid == cid
-                is ChannelHiddenEvent -> event.cid == cid
-                is ChannelMuteEvent -> event.channelMute.channel.cid == cid
-                is ChannelsMuteEvent -> event.channelsMute.any { it.channel.cid == cid }
-                is ChannelTruncatedEvent -> event.cid == cid
-                is ChannelUnmuteEvent -> event.channelMute.channel.cid == cid
-                is ChannelsUnmuteEvent -> event.channelsMute.any { it.channel.cid == cid }
-                is ChannelUpdatedEvent -> event.cid == cid
-                is ChannelVisibleEvent -> event.cid == cid
-                is MemberAddedEvent -> event.cid == cid
-                is MemberRemovedEvent -> event.cid == cid
-                is MemberUpdatedEvent -> event.cid == cid
-                is MessageDeletedEvent -> event.cid == cid
-                is MessageReadEvent -> event.cid == cid
-                is MessageUpdatedEvent -> event.cid == cid
-                is NewMessageEvent -> event.cid == cid
-                is NotificationAddedToChannelEvent -> event.cid == cid
-                is NotificationChannelDeletedEvent -> event.cid == cid
-                is NotificationChannelTruncatedEvent -> event.cid == cid
-                is NotificationInviteAcceptedEvent -> event.cid == cid
-                is NotificationInvitedEvent -> event.cid == cid
-                is NotificationMarkReadEvent -> event.cid == cid
-                is NotificationMessageNewEvent -> event.cid == cid
-                is NotificationRemovedFromChannelEvent -> event.cid == cid
-                is ReactionDeletedEvent -> event.cid == cid
-                is ReactionNewEvent -> event.cid == cid
-                is ReactionUpdateEvent -> event.cid == cid
-                is TypingStartEvent -> event.cid == cid
-                is TypingStopEvent -> event.cid == cid
-                is ChannelUserBannedEvent -> event.cid == cid
-                is UserStartWatchingEvent -> event.cid == cid
-                is UserStopWatchingEvent -> event.cid == cid
-                is ChannelUserUnbannedEvent -> event.cid == cid
-                is UnknownEvent -> event.rawData["cid"] == cid
-                is HealthEvent,
-                is NotificationChannelMutesUpdatedEvent,
-                is NotificationMutesUpdatedEvent,
-                is GlobalUserBannedEvent,
-                is UserDeletedEvent,
-                is UserMutedEvent,
-                is UsersMutedEvent,
-                is UserPresenceChangedEvent,
-                is GlobalUserUnbannedEvent,
-                is UserUnmutedEvent,
-                is UsersUnmutedEvent,
-                is UserUpdatedEvent,
-                is ConnectedEvent,
-                is ConnectingEvent,
-                is DisconnectedEvent,
-                is ErrorEvent -> false
+        return client.events().filter(this::isRelevantForChannel)
+    }
+
+    override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
+        return client.subscribe(filterRelevantEvents(listener))
+    }
+
+    override fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable {
+        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
+    }
+
+    override fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable {
+        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
+    }
+
+    override fun subscribeForSingle(
+        eventType: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable {
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
+    override fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: (event: T) -> Unit
+    ): Disposable {
+        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
+    }
+
+    private fun <T : ChatEvent> filterRelevantEvents(
+        listener: (event: T) -> Unit
+    ): (T) -> Unit {
+        return { event: T ->
+            if (isRelevantForChannel(event)) {
+                listener.invoke(event)
             }
+        }
+    }
+
+    private fun isRelevantForChannel(event: ChatEvent): Boolean {
+        return when (event) {
+            is ChannelCreatedEvent -> event.cid == cid
+            is ChannelDeletedEvent -> event.cid == cid
+            is ChannelHiddenEvent -> event.cid == cid
+            is ChannelMuteEvent -> event.channelMute.channel.cid == cid
+            is ChannelsMuteEvent -> event.channelsMute.any { it.channel.cid == cid }
+            is ChannelTruncatedEvent -> event.cid == cid
+            is ChannelUnmuteEvent -> event.channelMute.channel.cid == cid
+            is ChannelsUnmuteEvent -> event.channelsMute.any { it.channel.cid == cid }
+            is ChannelUpdatedEvent -> event.cid == cid
+            is ChannelVisibleEvent -> event.cid == cid
+            is MemberAddedEvent -> event.cid == cid
+            is MemberRemovedEvent -> event.cid == cid
+            is MemberUpdatedEvent -> event.cid == cid
+            is MessageDeletedEvent -> event.cid == cid
+            is MessageReadEvent -> event.cid == cid
+            is MessageUpdatedEvent -> event.cid == cid
+            is NewMessageEvent -> event.cid == cid
+            is NotificationAddedToChannelEvent -> event.cid == cid
+            is NotificationChannelDeletedEvent -> event.cid == cid
+            is NotificationChannelTruncatedEvent -> event.cid == cid
+            is NotificationInviteAcceptedEvent -> event.cid == cid
+            is NotificationInvitedEvent -> event.cid == cid
+            is NotificationMarkReadEvent -> event.cid == cid
+            is NotificationMessageNewEvent -> event.cid == cid
+            is NotificationRemovedFromChannelEvent -> event.cid == cid
+            is ReactionDeletedEvent -> event.cid == cid
+            is ReactionNewEvent -> event.cid == cid
+            is ReactionUpdateEvent -> event.cid == cid
+            is TypingStartEvent -> event.cid == cid
+            is TypingStopEvent -> event.cid == cid
+            is ChannelUserBannedEvent -> event.cid == cid
+            is UserStartWatchingEvent -> event.cid == cid
+            is UserStopWatchingEvent -> event.cid == cid
+            is ChannelUserUnbannedEvent -> event.cid == cid
+            is UnknownEvent -> event.rawData["cid"] == cid
+            is HealthEvent,
+            is NotificationChannelMutesUpdatedEvent,
+            is NotificationMutesUpdatedEvent,
+            is GlobalUserBannedEvent,
+            is UserDeletedEvent,
+            is UserMutedEvent,
+            is UsersMutedEvent,
+            is UserPresenceChangedEvent,
+            is GlobalUserUnbannedEvent,
+            is UserUnmutedEvent,
+            is UsersUnmutedEvent,
+            is UserUpdatedEvent,
+            is ConnectedEvent,
+            is ConnectingEvent,
+            is DisconnectedEvent,
+            is ErrorEvent -> false
         }
     }
 
