@@ -19,6 +19,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.models.Channel
@@ -33,7 +34,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.livedata.utils.JustObservable
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
@@ -117,7 +117,11 @@ open class BaseDomainTest {
             )
         }
         val client = mock<ChatClient> {
-            on { events() } doReturn JustObservable(connectedEvent)
+            on { subscribe(any()) } doAnswer { invocation ->
+                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
+                listener.invoke(connectedEvent)
+                null
+            }
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
@@ -161,7 +165,11 @@ open class BaseDomainTest {
             )
         }
         val client = mock<ChatClient> {
-            on { events() } doReturn JustObservable(connectedEvent)
+            on { subscribe(any()) } doAnswer { invocation ->
+                val listener = invocation.arguments[0] as (ChatEvent) -> Unit
+                listener.invoke(connectedEvent)
+                null
+            }
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)

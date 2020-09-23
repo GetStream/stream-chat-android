@@ -22,9 +22,7 @@ internal class ChatDomainImplTest {
 
     @BeforeEach
     fun setUp() {
-        val client: ChatClient = mock {
-            on { events() } doReturn mock()
-        }
+        val client: ChatClient = mock()
         val currentUser = randomUser()
         val db: ChatDatabase = mock {
             on { userDao() } doReturn mock()

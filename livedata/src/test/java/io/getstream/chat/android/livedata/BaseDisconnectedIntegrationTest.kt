@@ -31,7 +31,7 @@ open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
                     .logLevel(
                         logLevel
                     ).loggerHandler(TestLoggerHandler()).build()
-            client.events().subscribe {
+            client.subscribe {
                 if (it is ConnectedEvent) {
                     System.out.println("connceted")
                 }

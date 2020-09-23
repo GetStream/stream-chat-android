@@ -17,7 +17,7 @@ class DeleteMessageImplTest : BaseConnectedIntegrationTest() {
     @Ignore("test occasionally fails, not sure why")
     fun deleteMessageUseCase() = runBlocking(Dispatchers.IO) {
         val message1 = data.createMessage()
-        client.events().subscribe { println(it.type) }
+        client.subscribe { println(it.type) }
         var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         var result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result)
