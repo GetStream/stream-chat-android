@@ -194,6 +194,9 @@ class QueryChannelsControllerImpl(
             recoveryNeeded = true
             output = Result(channels, null)
         }
+        if (!output.isSuccess) {
+            _channels.postValue(emptyMap())
+        }
         loader.postValue(false)
         return output
     }

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
@@ -339,7 +339,7 @@ class ChatDomainImpl private constructor(
     }
 
     /** the event subscription, cancel using repo.stopListening */
-    private var eventSubscription: Subscription? = null
+    private var eventSubscription: Disposable? = null
 
     /** stores the mapping from cid to channelRepository */
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
@@ -378,7 +378,7 @@ class ChatDomainImpl private constructor(
         if (eventSubscription != null) {
             return
         }
-        eventSubscription = client.events().subscribe {
+        eventSubscription = client.subscribe {
             eventHandler.handleEvents(listOf(it))
         }
     }
@@ -387,7 +387,7 @@ class ChatDomainImpl private constructor(
      * Stop listening to chat events
      */
     fun stopListening() {
-        eventSubscription?.let { it.unsubscribe() }
+        eventSubscription?.dispose()
     }
 
     internal fun channel(c: Channel): ChannelControllerImpl {
@@ -481,7 +481,7 @@ class ChatDomainImpl private constructor(
     private fun queryEvents(cids: List<String>): List<ChatEvent> {
         val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
         if (response.isError) {
-            throw response.error()
+            throw response.error().cause ?: IllegalStateException(response.error().message)
         }
         return response.data()
     }

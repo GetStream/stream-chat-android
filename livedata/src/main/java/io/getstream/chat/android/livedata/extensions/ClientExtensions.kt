@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
@@ -15,9 +16,12 @@ import kotlin.reflect.full.declaredMemberProperties
 
 private const val EQUAL_ON_COMPARISON = 0
 
-internal fun Message.users() = latestReactions.mapNotNull(Reaction::user) + user
+internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user
 
-internal fun Channel.users() = members.map(Member::user) + read.map(ChannelUserRead::user) + createdBy
+internal fun Channel.users(): List<User> = members.map(Member::user) +
+    read.map(ChannelUserRead::user) +
+    createdBy +
+    messages.flatMap { it.users() }
 
 internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 

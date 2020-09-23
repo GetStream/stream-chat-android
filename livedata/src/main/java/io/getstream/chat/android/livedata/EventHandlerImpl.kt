@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserMutedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -90,6 +91,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
         val messagesToFetch = mutableSetOf<String>()
 
         events.filterIsInstance<CidEvent>().onEach { channelsToFetch += it.cid }
+        users += events.filterIsInstance<UserEvent>().map { UserEntity(it.user) }.associateBy { it.id }
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -125,7 +127,6 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 is DisconnectedEvent,
                 is ErrorEvent,
                 is UnknownEvent,
-                is NotificationMessageNewEvent,
                 is NotificationChannelDeletedEvent,
                 is NotificationChannelTruncatedEvent,
                 is NotificationMarkReadEvent,
