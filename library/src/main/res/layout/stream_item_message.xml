@@ -41,9 +41,11 @@
         android:id="@+id/reactionsRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:paddingStart="@dimen/stream_reaction_margin"
         android:paddingEnd="@dimen/stream_reaction_margin"
         android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space_same_user"
@@ -94,8 +96,8 @@
         android:layout_height="@dimen/stream_message_reply_height"
         android:layout_marginTop="@dimen/stream_message_reply_margin_top"
         android:layout_marginBottom="@dimen/stream_message_reply_margin_bottom"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_text"
         tools:ignore="ContentDescription" />
 
@@ -107,16 +109,16 @@
         android:paddingStart="@dimen/stream_message_reply_padding"
         android:paddingEnd="@dimen/stream_message_reply_padding"
         android:textColor="@color/stream_message_reply_text"
-        app:layout_constraintTop_toTopOf="@+id/iv_reply"
         app:layout_constraintBottom_toBottomOf="@+id/iv_reply"
-        app:layout_constraintStart_toEndOf="@+id/iv_reply" />
+        app:layout_constraintStart_toEndOf="@+id/iv_reply"
+        app:layout_constraintTop_toTopOf="@+id/iv_reply" />
 
     <TextView
         android:id="@+id/tv_username"
         style="@style/text_s"
-        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_reply" />

@@ -24,7 +24,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.Chat;
@@ -56,24 +55,34 @@ import top.defaults.drawabletoolbox.DrawableBuilder;
 
 public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<MessageListItem.MessageItem> {
     private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm");
-    @DimenRes
-    int avatarWidth;
-    protected TextView tv_text;
-    protected RecyclerView rv_reaction;
-    protected AvatarView avatar;
-    protected ImageView iv_tail;
-    protected Space space_reaction_tail, space_header, space_same_user, space_reaction, space_attachment;
-    protected TextView tv_username, tv_messagedate;
-    // Delivered Indicator
-    protected ReadStateView<MessageListViewStyle> read_state;
-    protected ProgressBar pb_deliver;
-    protected ImageView iv_deliver;
-    protected AttachmentListView attachmentview;
-    // Replay
-    protected ImageView iv_reply;
-    protected TextView tv_reply;
 
-    protected RecyclerView.LayoutManager mLayoutManager;
+    protected final TextView tv_text;
+    protected final RecyclerView rv_reaction;
+    protected final AvatarView avatar;
+    protected final ImageView iv_tail;
+    protected final Space space_reaction_tail, space_header, space_same_user, space_reaction, space_attachment;
+    protected final TextView tv_username, tv_messagedate;
+    protected final ReadStateView<MessageListViewStyle> read_state;
+    protected final ProgressBar pb_deliver;
+    protected final ImageView iv_deliver;
+    protected final AttachmentListView attachmentview;
+    protected final ImageView iv_reply;
+    protected final TextView tv_reply;
+
+    @NonNull
+    protected final MessageListView.MessageClickListener messageClickListener;
+    @NonNull
+    protected final MessageListView.MessageLongClickListener messageLongClickListener;
+    @NonNull
+    protected final MessageListView.AttachmentClickListener attachmentClickListener;
+    @NonNull
+    protected final MessageListView.ReactionViewClickListener reactionViewClickListener;
+    @NonNull
+    protected final MessageListView.UserClickListener userClickListener;
+    @NonNull
+    protected final MessageListView.ReadStateClickListener readStateClickListener;
+    @NonNull
+    protected final MessageListView.GiphySendListener giphySendListener;
 
     protected final Channel channel;
     protected final MessageListViewStyle style;
@@ -84,23 +93,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
 
-    @NonNull
-    protected MessageListView.MessageClickListener messageClickListener;
-    @NonNull
-    protected MessageListView.MessageLongClickListener messageLongClickListener;
-    @NonNull
-    protected MessageListView.AttachmentClickListener attachmentClickListener;
-    @NonNull
-    protected MessageListView.ReactionViewClickListener reactionViewClickListener;
-    @NonNull
-    protected MessageListView.UserClickListener userClickListener;
-    @NonNull
-    protected MessageListView.ReadStateClickListener readStateClickListener;
-    @NonNull
-    protected MessageListView.GiphySendListener giphySendListener;
-
     protected List<MessageViewHolderFactory.Position> positions;
-
     protected ConstraintSet set;
 
     public MessageListItemViewHolder(
@@ -155,9 +148,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         read_state = itemView.findViewById(R.id.read_state);
         pb_deliver = itemView.findViewById(R.id.pb_deliver);
         iv_deliver = itemView.findViewById(R.id.iv_deliver);
-
-        mLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL, false);
-        rv_reaction.setLayoutManager(mLayoutManager);
     }
 
     @Override
@@ -169,7 +159,6 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         this.message = messageListItem.getMessage();
         this.positions = messageListItem.getPositions();
         this.set = new ConstraintSet();
-        this.avatarWidth = style.getAvatarWidth();
         init();
     }
 
@@ -203,7 +192,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     // region Config
     // extra spacing
     protected void configSpaces() {
-        if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+        if (isTopPosition()) {
             // TOP
             space_header.setVisibility(View.VISIBLE);
             space_same_user.setVisibility(View.GONE);
@@ -264,6 +253,10 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
         } else {
             style.messageDateTextTheirs.apply(tv_messagedate);
         }
+    }
+
+    private boolean isTopPosition() {
+        return positions.contains(MessageViewHolderFactory.Position.TOP);
     }
 
     protected boolean isBottomPosition() {
@@ -516,6 +509,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     }
 
     protected void configMarginStartEnd_(View view) {
+        int avatarWidth = style.getAvatarWidth();
+
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
         if (view.equals(tv_username)) {
             params.leftMargin = Utils.dpToPx(10 + 5) + avatarWidth;
