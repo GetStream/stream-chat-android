@@ -6,9 +6,7 @@
   <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png" width="60%" /></a>
 </p>
 
-## Beta or Stable
-
-- Stable version: [4.x.x](https://github.com/GetStream/stream-chat-android)
+## 4.x
 
 4.x is based on Kotlin and splits out the client, offline support and UX components. It adds seamless offline support, improved performance, makes it easier to integrate and has better test coverage. 
 
