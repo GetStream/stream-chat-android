@@ -1,5 +1,8 @@
 # To be released:
+
+# Sep 23rd, 2020 - 4.2.11-beta-13
 - Adjust ChatSocketListener to new events(NewMessageEvent, NotificationMarkReadEvent, NotificationMessageNewEvent) properties.
+- Fix "load more channels"
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.6
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.7
 
