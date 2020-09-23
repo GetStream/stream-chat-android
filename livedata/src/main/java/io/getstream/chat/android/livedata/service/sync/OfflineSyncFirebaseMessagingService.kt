@@ -134,7 +134,8 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
                     }
 
                     override fun onError(error: ChatError) {
-                        continuation.resumeWithException(error)
+                        val cause = error.cause ?: IllegalStateException(error.message)
+                        continuation.resumeWithException(cause)
                     }
                 }
             )
