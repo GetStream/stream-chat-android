@@ -150,10 +150,10 @@ internal class EventAdapter(
             //region Channels
 
             EventType.CHANNEL_CREATED -> {
-                gson.fromJson(data, ChannelCreatedEvent::class.java)
+                gson.fromJson(data, ChannelCreatedEvent::class.java).apply { message?.cid = cid }
             }
             EventType.CHANNEL_UPDATED -> {
-                gson.fromJson(data, ChannelUpdatedEvent::class.java)
+                gson.fromJson(data, ChannelUpdatedEvent::class.java).apply { message?.cid = cid }
             }
             EventType.CHANNEL_HIDDEN -> {
                 gson.fromJson(data, ChannelHiddenEvent::class.java)
