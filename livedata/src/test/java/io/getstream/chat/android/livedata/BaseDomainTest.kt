@@ -34,7 +34,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.livedata.utils.JustObservable
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
