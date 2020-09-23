@@ -20,11 +20,6 @@ open class MessageViewHolderFactory {
         const val MESSAGEITEM_TYPING = 3
         const val MESSAGEITEM_THREAD_SEPARATOR = 4
         const val MESSAGEITEM_NOT_FOUND = 5
-
-        const val GENERIC_ATTACHMENT = 1
-        const val IMAGE_ATTACHMENT = 2
-        const val VIDEO_ATTACHMENT = 3
-        const val FILE_ATTACHMENT = 4
     }
 
     lateinit var listenerContainer: ListenerContainer

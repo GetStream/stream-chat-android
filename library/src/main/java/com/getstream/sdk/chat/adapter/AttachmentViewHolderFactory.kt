@@ -5,6 +5,14 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.model.ModelType
 
 open class AttachmentViewHolderFactory {
+
+    companion object {
+        const val GENERIC_ATTACHMENT = 1
+        const val IMAGE_ATTACHMENT = 2
+        const val VIDEO_ATTACHMENT = 3
+        const val FILE_ATTACHMENT = 4
+    }
+
     lateinit var listenerContainer: ListenerContainer
 
     open fun getAttachmentViewType(
@@ -12,15 +20,15 @@ open class AttachmentViewHolderFactory {
     ): Int {
         return when (attachmentItem.attachment.type) {
             null ->
-                MessageViewHolderFactory.GENERIC_ATTACHMENT
+                GENERIC_ATTACHMENT
             ModelType.attach_video ->
-                MessageViewHolderFactory.VIDEO_ATTACHMENT
+                VIDEO_ATTACHMENT
             ModelType.attach_image, ModelType.attach_giphy ->
-                MessageViewHolderFactory.IMAGE_ATTACHMENT
+                IMAGE_ATTACHMENT
             ModelType.attach_file ->
-                MessageViewHolderFactory.FILE_ATTACHMENT
+                FILE_ATTACHMENT
             else ->
-                MessageViewHolderFactory.GENERIC_ATTACHMENT
+                GENERIC_ATTACHMENT
         }
     }
 
@@ -30,13 +38,13 @@ open class AttachmentViewHolderFactory {
         viewType: Int
     ): BaseAttachmentViewHolder {
         return when (viewType) {
-            MessageViewHolderFactory.VIDEO_ATTACHMENT, MessageViewHolderFactory.IMAGE_ATTACHMENT ->
+            VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
                 AttachmentViewHolderMedia(
                     R.layout.stream_item_attach_media,
                     parent,
                     listenerContainer.giphySendListener
                 )
-            MessageViewHolderFactory.FILE_ATTACHMENT ->
+            FILE_ATTACHMENT ->
                 AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
             else ->
                 AttachmentViewHolder(R.layout.stream_item_attachment, parent)
