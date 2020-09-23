@@ -4,6 +4,9 @@ import android.view.ViewGroup
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.model.ModelType
 
+/**
+ * Allows you to easily customize attachment rendering
+ */
 open class AttachmentViewHolderFactory {
 
     companion object {

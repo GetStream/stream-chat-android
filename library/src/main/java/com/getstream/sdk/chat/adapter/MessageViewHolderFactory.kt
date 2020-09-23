@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 /**
- * Allows you to easily customize message rendering or message attachment rendering
+ * Allows you to easily customize message rendering
  */
 open class MessageViewHolderFactory {
     companion object {
