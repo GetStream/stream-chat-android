@@ -40,8 +40,6 @@ public class ReactionDialogAdapter extends RecyclerView.Adapter<ReactionDialogAd
         this.clickListener = clickListener;
         if (!message.getCid().equals("")) {
             cid = message.getCid();
-        } else if (!message.getChannel().getCid().equals("")) {
-            cid = message.getChannel().getCid();
         }
     }
 

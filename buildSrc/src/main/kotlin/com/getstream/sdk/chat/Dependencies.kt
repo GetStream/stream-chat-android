@@ -123,7 +123,7 @@ object Dependencies {
     val recyclerview = "androidx.recyclerview:recyclerview:$RECYCLERVIEW_VERSION"
     val retrofit = "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
     val roomRuntime = "androidx.room:room-runtime:$ROOM_VERSION"
-    val streamLivedata = "com.github.GetStream:stream-chat-android-livedata:$STREAM_LIVEDATA_VERSION"
+    val streamLivedata = "com.github.getstream:stream-chat-android-livedata:$STREAM_LIVEDATA_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

@@ -113,6 +113,7 @@ android {
 
 dependencies {
     implementation project(":library")
+
     implementation Dependencies.kotlinSTDLib
 
     implementation Dependencies.appCompat
