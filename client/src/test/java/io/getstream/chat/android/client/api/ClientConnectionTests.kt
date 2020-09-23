@@ -1,6 +1,9 @@
 package io.getstream.chat.android.client.api
 
 import android.content.Context
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
@@ -15,13 +18,12 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.client.utils.observable.JustObservable
 import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
@@ -30,13 +32,13 @@ import java.util.Date
 
 internal class ClientConnectionTests {
 
-    val userId = "test-id"
-    val connectionId = "connection-id"
-    val user = User().apply { id = userId }
-    val token = "token"
-    val context = mock(Context::class.java)
+    private val userId = "test-id"
+    private val connectionId = "connection-id"
+    private val user = User().apply { id = userId }
+    private val token = "token"
+    private val context = mock(Context::class.java)
 
-    val config = ChatClientConfig(
+    private val config = ChatClientConfig(
         "api-key",
         "hello.http",
         "cdn.http",
@@ -49,22 +51,23 @@ internal class ClientConnectionTests {
         FakeTokenManager(token)
     )
 
-    val connectedEvent = ConnectedEvent(
+    private val connectedEvent = ConnectedEvent(
         EventType.HEALTH_CHECK,
         Date(),
         user,
         connectionId
     )
+    private val disconnectedEvent = DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
 
-    lateinit var api: ChatApi
-    lateinit var socket: ChatSocket
-    lateinit var retrofitApi: RetrofitApi
-    lateinit var retrofitCdnApi: RetrofitCdnApi
-    lateinit var client: ChatClient
-    lateinit var logger: ChatLogger
-    lateinit var notificationsManager: ChatNotifications
-    lateinit var initConnectionListener: InitConnectionListener
-    lateinit var observable: JustObservable
+    private lateinit var api: ChatApi
+    private lateinit var socket: ChatSocket
+    private lateinit var retrofitApi: RetrofitApi
+    private lateinit var retrofitCdnApi: RetrofitCdnApi
+    private lateinit var client: ChatClient
+    private lateinit var logger: ChatLogger
+    private lateinit var notificationsManager: ChatNotifications
+    private lateinit var initConnectionListener: InitConnectionListener
+    private lateinit var socketListener: SocketListener
 
     @Before
     fun before() {
@@ -81,8 +84,11 @@ internal class ClientConnectionTests {
             ChatParserImpl(),
             UuidGeneratorImpl()
         )
-        observable = JustObservable(DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date()))
-        `when`(socket.events()).thenReturn(observable)
+
+        whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
+            socketListener = invocationOnMock.getArgument<SocketListener>(0)
+            socketListener.onEvent(disconnectedEvent)
+        }
 
         client = ChatClientImpl(
             config,
@@ -101,7 +107,7 @@ internal class ClientConnectionTests {
 
     @Test
     fun `Should not connect and report error when user is already set`() {
-        observable.subscription.onNext(connectedEvent)
+        socketListener.onEvent(connectedEvent)
 
         client.setUser(user, token, initConnectionListener)
 

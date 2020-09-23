@@ -41,7 +41,7 @@ import io.getstream.chat.android.client.utils.ChatUtils;
 import io.getstream.chat.android.client.utils.FilterObject;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.chat.android.client.utils.Result;
-import io.getstream.chat.android.client.utils.observable.Subscription;
+import io.getstream.chat.android.client.utils.observable.Disposable;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -108,7 +108,9 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        error.printStackTrace();
+                       if (error.getCause() != null) {
+                           error.getCause().printStackTrace();
+                       }
                     }
                 });
             }
@@ -131,7 +133,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Channel channel = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
 
                     return Unit.INSTANCE;
@@ -150,7 +155,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Message msg = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
 
                     return Unit.INSTANCE;
@@ -159,7 +167,7 @@ public class DocumentationSamplesJava {
 
             static void events() {
                 // Subscribe
-                Subscription subscription = client.events().subscribe(event -> {
+                Disposable disposable = client.subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
                         NewMessageEvent newMessageEvent = (NewMessageEvent) event;
@@ -169,7 +177,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.unsubscribe();
+                disposable.dispose();
             }
         }
 
@@ -195,7 +203,9 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        error.printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
+                        }
                     }
                 });
             }
@@ -216,7 +226,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Channel channel = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
 
                     return Unit.INSTANCE;
@@ -232,7 +245,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         Message msg = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
 
                     return Unit.INSTANCE;
@@ -241,7 +257,7 @@ public class DocumentationSamplesJava {
 
             static void events() {
                 // Subscribe
-                Subscription subscription = client.events().subscribe(event -> {
+                Disposable disposable = client.subscribe(event -> {
 
                     if (event instanceof NewMessageEvent) {
                         NewMessageEvent newMessageEvent = (NewMessageEvent) event;
@@ -251,7 +267,7 @@ public class DocumentationSamplesJava {
                     return Unit.INSTANCE;
                 });
                 // Unsubscribe
-                subscription.unsubscribe();
+                disposable.dispose();
             }
         }
 
@@ -289,7 +305,9 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        error.printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
+                        }
                     }
                 });
             }
@@ -312,7 +330,9 @@ public class DocumentationSamplesJava {
 
                     @Override
                     public void onError(@NotNull ChatError error) {
-                        error.printStackTrace();
+                        if (error.getCause() != null) {
+                            error.getCause().printStackTrace();
+                        }
                     }
                 });
             }
@@ -604,26 +624,24 @@ public class DocumentationSamplesJava {
 
         static class ListeningForEvents {
             {
-                Subscription subscription = channelController
-                        .events()
-                        .filter("message.deleted")
-                        .subscribe(messageDeletedEvent -> {
+                Disposable disposable = channelController.subscribeFor(
+                        new String[]{"message.deleted"},
+                        (ChatEvent event) -> {
                             return Unit.INSTANCE;
                         });
 
-                subscription.unsubscribe();
+                disposable.dispose();
             }
 
             {
-                Subscription subscription = channelController
-                        .events()
+                Disposable disposable = channelController
                         .subscribe(chatEvent -> Unit.INSTANCE);
 
-                subscription.unsubscribe();
+                disposable.dispose();
             }
 
             static void clientEvents() {
-                client.events().subscribe(event -> {
+                client.subscribe(event -> {
 
                     if (event instanceof ConnectedEvent) {
                         ConnectedEvent connectedEvent = (ConnectedEvent) event;
@@ -637,7 +655,7 @@ public class DocumentationSamplesJava {
             }
 
             static void connectionEvents() {
-                client.events().subscribe(new Function1<ChatEvent, Unit>() {
+                client.subscribe(new Function1<ChatEvent, Unit>() {
                     @Override
                     public Unit invoke(ChatEvent event) {
 
@@ -655,8 +673,8 @@ public class DocumentationSamplesJava {
             }
 
             static void stopListeningForEvents() {
-                Subscription subscription = channelController.events().subscribe(chatEvent -> Unit.INSTANCE);
-                subscription.unsubscribe();
+                Disposable disposable = channelController.subscribe(chatEvent -> Unit.INSTANCE);
+                disposable.dispose();
 
             }
         }
@@ -676,9 +694,10 @@ public class DocumentationSamplesJava {
 
         static class NotificationEvents {
             {
-                channelController.events()
-                        .filter("notification.added_to_channel")
-                        .subscribe(addToChannel -> Unit.INSTANCE);
+                channelController.subscribeFor(
+                        new String[]{"notification.added_to_channel"},
+                        addToChannel -> Unit.INSTANCE
+                );
             }
         }
 
@@ -969,7 +988,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         //channel is muted
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
                     return Unit.INSTANCE;
                 });
@@ -985,18 +1007,15 @@ public class DocumentationSamplesJava {
                 });
 
                 // get updates about muted channels
-                client
-                        .events()
-                        .subscribe(event -> {
+                client.subscribe(event -> {
+                    if (event instanceof NotificationChannelMutesUpdatedEvent) {
+                        List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
+                    } else if (event instanceof NotificationMutesUpdatedEvent) {
+                        List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
+                    }
 
-                            if (event instanceof NotificationChannelMutesUpdatedEvent) {
-                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
-                            } else if (event instanceof NotificationMutesUpdatedEvent) {
-                                List<ChannelMute> mutes = ((NotificationChannelMutesUpdatedEvent) event).getMe().getChannelMutes();
-                            }
-
-                            return Unit.INSTANCE;
-                        });
+                    return Unit.INSTANCE;
+                });
             }
 
             static void queryMutedChannels() {
@@ -1015,7 +1034,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
                     return Unit.INSTANCE;
                 });
@@ -1030,7 +1052,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         List<Channel> channels = result.data();
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
                     return Unit.INSTANCE;
                 });
@@ -1042,7 +1067,10 @@ public class DocumentationSamplesJava {
                     if (result.isSuccess()) {
                         // channel is unmuted
                     } else {
-                        result.error().printStackTrace();
+                        Throwable throwable = result.error().getCause();
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
                     }
                     return Unit.INSTANCE;
                 });
@@ -1161,10 +1189,10 @@ public class DocumentationSamplesJava {
 
                 static void receivingTypingIndicatorEvents() {
                     // add typing start event handling
-                    channelController.events().filter(EventType.TYPING_START).subscribe(startedTyping -> Unit.INSTANCE);
+                    channelController.subscribeFor(new String[]{EventType.TYPING_START}, startedTyping -> Unit.INSTANCE);
 
-                    // add typing top event handling
-                    channelController.events().filter(EventType.TYPING_STOP).subscribe(startedTyping -> Unit.INSTANCE);
+                    // add typing stop event handling
+                    channelController.subscribeFor(new String[]{EventType.TYPING_STOP}, startedTyping -> Unit.INSTANCE);
                 }
             }
         }

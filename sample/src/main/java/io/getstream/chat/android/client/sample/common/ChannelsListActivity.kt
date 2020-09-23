@@ -9,19 +9,19 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
-import io.getstream.chat.android.client.utils.observable.Subscription
+import io.getstream.chat.android.client.utils.observable.Disposable
 
 class ChannelsListActivity : AppCompatActivity() {
 
     val client = App.client
-    var sub: Subscription? = null
+    var disposable: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_channels)
 
-        sub = client.events().subscribe {
+        disposable = client.subscribe {
 
 //            if (it is ErrorEvent) {
 //
@@ -47,7 +47,7 @@ class ChannelsListActivity : AppCompatActivity() {
 
         client.setUser(User("bender"), token)
 
-        client.events().subscribe {
+        client.subscribe {
             Log.d("chat-events", it.toString())
         }
 
@@ -100,7 +100,7 @@ class ChannelsListActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        sub?.unsubscribe()
+        disposable?.dispose()
         client.disconnect()
         super.onDestroy()
     }

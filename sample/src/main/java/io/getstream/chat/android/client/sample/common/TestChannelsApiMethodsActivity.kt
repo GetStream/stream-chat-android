@@ -22,8 +22,20 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.activity_test_api.*
+import io.getstream.chat.android.client.utils.observable.Disposable
+import kotlinx.android.synthetic.main.activity_test_api.btnAcceptInvite
+import kotlinx.android.synthetic.main.activity_test_api.btnCheckTyping
+import kotlinx.android.synthetic.main.activity_test_api.btnGetMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnHideChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnMarkReadMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnQueryChannels
+import kotlinx.android.synthetic.main.activity_test_api.btnRejectInvite
+import kotlinx.android.synthetic.main.activity_test_api.btnShowChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnStopWatching
+import kotlinx.android.synthetic.main.activity_test_api.btnUpdateChannel
+import kotlinx.android.synthetic.main.activity_test_api.btnUpdateMessage
+import kotlinx.android.synthetic.main.activity_test_api.btnWatchChannel
+import kotlinx.android.synthetic.main.activity_test_api.buttonsContainer
 
 class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
@@ -31,7 +43,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val channelId = "general"
     val channelType = "team"
 
-    var chatSub: Subscription? = null
+    var chatDisposable: Disposable? = null
     var watchingChannel: Channel? = null
 
     val benderUserId = "bender"
@@ -64,8 +76,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             it.isEnabled = false
         }
 
-        chatSub = client.events().subscribe {
-
+        chatDisposable = client.subscribe {
             if (it is ConnectedEvent) {
                 initButtons()
             } else if (it is ErrorEvent) {
@@ -94,7 +105,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        chatSub?.unsubscribe()
+        chatDisposable?.dispose()
         client.disconnect()
         super.onDestroy()
     }
@@ -120,41 +131,41 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun updatedMessage() {
-        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1)).enqueue { queryResult ->
+        client.queryChannels(QueryChannelsRequest(FilterObject(), 0, 1).withMessages(1))
+            .enqueue { queryResult ->
 
-            if (queryResult.isSuccess) {
-                val channel = queryResult.data()[0]
-                val message = channel.messages[0]
-                message.text = message.text + "a"
-                client.updateMessage(message).enqueue { updateResult ->
-                    if (updateResult.isSuccess) {
+                if (queryResult.isSuccess) {
+                    val channel = queryResult.data()[0]
+                    val message = channel.messages[0]
+                    message.text = message.text + "a"
+                    client.updateMessage(message).enqueue { updateResult ->
+                        if (updateResult.isSuccess) {
+                        }
                     }
                 }
             }
-        }
     }
 
     private fun checkTyping() {
-        client.events()
-            .filter(TypingStartEvent::class.java)
-            .subscribe {
-                println("checkTyping: received")
-            }
+        client.subscribeFor(TypingStartEvent::class.java) {
+            println("checkTyping: received")
+        }
 
-        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1)).enqueue {
-            val channel = it.data()[0]
+        client.queryChannels(QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1))
+            .enqueue {
+                val channel = it.data()[0]
 
-            val controller = client.channel(channel.cid)
+                val controller = client.channel(channel.cid)
 
-            controller.watch().enqueue {
-                controller.keystroke().enqueue {
-                    if (it.isSuccess)
-                        println("checkTyping: sent")
-                    else
-                        it.error().printStackTrace()
+                controller.watch().enqueue {
+                    controller.keystroke().enqueue {
+                        if (it.isSuccess)
+                            println("checkTyping: sent")
+                        else
+                            it.error().cause?.printStackTrace()
+                    }
                 }
             }
-        }
     }
 
     private fun watchChannel() {
@@ -246,7 +257,8 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     private fun getMessage() {
         Thread {
 
-            val request = QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1).withMessages(1)
+            val request =
+                QueryChannelsRequest(FilterObject("type", "messaging"), 0, 1).withMessages(1)
 
             val channelsResult = client.queryChannels(request).execute()
 
@@ -293,7 +305,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
 
                 val message = result.error().message
                 Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT).show()

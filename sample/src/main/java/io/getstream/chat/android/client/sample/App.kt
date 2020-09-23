@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.sample.common.KeyValue
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryLive
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
+import io.getstream.chat.android.client.subscribeFor
 import kotlin.time.ExperimentalTime
 
 class App : Application() {
@@ -86,17 +87,13 @@ class App : Application() {
             .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()
 
-        client.events()
-            .filter(ErrorEvent::class.java)
-            .subscribe {
-                println(it)
-            }
+        client.subscribeFor<ErrorEvent> { errorEvent ->
+            println(errorEvent)
+        }
 
-        client.events()
-            .filter("newMessage")
-            .subscribe {
-                println(it)
-            }
+        client.subscribeFor("newMessage") {
+            println(it)
+        }
 
         keyValue = KeyValue(this)
         cache = ChannelsCache(db.channels())
@@ -140,7 +137,11 @@ class App : Application() {
     @UseExperimental(ExperimentalTime::class)
     private fun provideNotificationConfig() = object : ChatNotificationHandler(this) {
 
-        override fun getNewMessageIntent(messageId: String, channelType: String, channelId: String): Intent {
+        override fun getNewMessageIntent(
+            messageId: String,
+            channelType: String,
+            channelId: String
+        ): Intent {
 
             val intent = Intent(context, HomeActivity::class.java)
             intent.apply {

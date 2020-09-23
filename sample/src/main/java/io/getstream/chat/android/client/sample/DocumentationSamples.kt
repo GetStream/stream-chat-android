@@ -78,7 +78,7 @@ fun setUser() {
             }
 
             override fun onError(error: ChatError) {
-                error.printStackTrace()
+                error.cause?.printStackTrace()
             }
         }
     )
@@ -114,7 +114,7 @@ fun channel() {
         if (it.isSuccess) {
             val channel = it.data()
         } else {
-            it.error().printStackTrace()
+            it.error().cause?.printStackTrace()
         }
     }
 }
@@ -130,18 +130,18 @@ fun sendMessage() {
         if (it.isSuccess) {
             val message = it.data()
         } else {
-            it.error().printStackTrace()
+            it.error().cause?.printStackTrace()
         }
     }
 }
 
 fun events() {
-    val subscription = client.events().subscribe { event ->
+    val disposable = client.subscribe { event ->
         if (event is NewMessageEvent) {
             val message = event.message
         }
     }
-    subscription.unsubscribe()
+    disposable.dispose()
 }
 
 fun initClient() {
@@ -172,7 +172,7 @@ fun initClient() {
             }
 
             override fun onError(error: ChatError) {
-                error.printStackTrace()
+                error.cause?.printStackTrace()
             }
         }
     )
@@ -395,24 +395,22 @@ fun search() {
 }
 
 fun listeningSomeEvent() {
-    val subscription = channelController
-        .events()
-        .filter("message.deleted")
-        .subscribe { messageDeletedEvent ->
+    val disposable = channelController
+        .subscribeFor("message.deleted") { messageDeletedEvent ->
         }
-    subscription.unsubscribe()
+    disposable.dispose()
 }
 
 fun listenAllEvents() {
-    val subscription = channelController.events().subscribe { event ->
+    val disposable = channelController.subscribe { event ->
         if (event is NewMessageEvent) {
         }
     }
-    subscription.unsubscribe()
+    disposable.dispose()
 }
 
 fun connectionEvents() {
-    client.events().subscribe { event ->
+    client.subscribe { event ->
         when (event) {
             is ConnectedEvent -> {
                 // socket is connected
@@ -428,15 +426,13 @@ fun connectionEvents() {
 }
 
 fun stopListening() {
-    val subscription = channelController.events().subscribe { event -> }
-    subscription.unsubscribe()
+    val disposable = channelController.subscribe { event -> }
+    disposable.dispose()
 }
 
 fun notificationEvents() {
     channelController
-        .events()
-        .filter("notification.added_to_channel")
-        .subscribe { notificationEvent ->
+        .subscribeFor("notification.added_to_channel") { notificationEvent ->
             notificationEvent
         }
 }
@@ -612,7 +608,7 @@ fun muting() {
             if (result.isSuccess) {
                 // channel is muted
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 
@@ -630,15 +626,13 @@ fun muting() {
     )
 
     // get updates about muted channels
-    client
-        .events()
-        .subscribe { event: ChatEvent? ->
-            if (event is NotificationChannelMutesUpdatedEvent) {
-                val mutes = event.me.channelMutes
-            } else if (event is NotificationMutesUpdatedEvent) {
-                val mutes = event.me.channelMutes
-            }
+    client.subscribe { event: ChatEvent ->
+        if (event is NotificationChannelMutesUpdatedEvent) {
+            val mutes = event.me.channelMutes
+        } else if (event is NotificationMutesUpdatedEvent) {
+            val mutes = event.me.channelMutes
         }
+    }
 }
 
 fun queryMuted() {
@@ -657,7 +651,7 @@ fun queryMuted() {
             if (result.isSuccess) {
                 val channels = result.data()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 
@@ -671,7 +665,7 @@ fun queryMuted() {
             if (result.isSuccess) {
                 val channels = result.data()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
             }
         }
 }
@@ -682,7 +676,7 @@ fun unmute() {
         if (result.isSuccess) {
             // channel is unmuted
         } else {
-            result.error().printStackTrace()
+            result.error().cause?.printStackTrace()
         }
     }
 }
@@ -737,10 +731,10 @@ fun startAndStopTyping() {
 
 fun reveivingTypingEvents() {
     // add typing start event handling
-    channelController.events().filter(EventType.TYPING_START).subscribe { startTyping ->
+    channelController.subscribeFor(EventType.TYPING_START) { startTyping ->
     }
     // add typing top event handling
-    channelController.events().filter(EventType.TYPING_STOP).subscribe { startTyping ->
+    channelController.subscribeFor(EventType.TYPING_STOP) { startTyping ->
     }
 }
 

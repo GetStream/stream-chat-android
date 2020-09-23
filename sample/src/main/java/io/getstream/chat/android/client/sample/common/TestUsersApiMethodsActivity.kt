@@ -105,7 +105,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private fun setRegularUser() {
         // testUserApiLoadingShapeContainer.makeVisible()
 
-        client.events().subscribe {
+        client.subscribe {
             if (it is ConnectedEvent) {
                 registerDevice()
                 initButtons()
@@ -140,7 +140,7 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
                 Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
             }
 

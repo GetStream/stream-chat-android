@@ -4,8 +4,13 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 
 interface ChatSocket {
+    val state: ChatSocketService.State
     fun connect(user: User)
     fun connectAnonymously()
+    @Deprecated(
+        message = "Use addListener and removeListener directly instead (or the subscribe methods of ChatClient)",
+        level = DeprecationLevel.WARNING
+    )
     fun events(): ChatObservable
     fun addListener(listener: SocketListener)
     fun removeListener(listener: SocketListener)

@@ -30,10 +30,37 @@ import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.observable.Subscription
-import kotlinx.android.synthetic.main.layout_commands.view.*
+import io.getstream.chat.android.client.utils.observable.Disposable
+import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnDisconnect
+import kotlinx.android.synthetic.main.layout_commands.view.btnGet5MinSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetAllSyncHistory
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetMessages
+import kotlinx.android.synthetic.main.layout_commands.view.btnGetOrCreateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkAllRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMarkChannelRead
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnMuteUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryMembers
+import kotlinx.android.synthetic.main.layout_commands.view.btnQueryUsers
+import kotlinx.android.synthetic.main.layout_commands.view.btnRemoveDevice
+import kotlinx.android.synthetic.main.layout_commands.view.btnSearchMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnSendMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnStartWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnStopWatchingChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnTranslateMessage
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnMuteChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUnbanUser
+import kotlinx.android.synthetic.main.layout_commands.view.btnUpdateChannel
+import kotlinx.android.synthetic.main.layout_commands.view.btnUploadImage
+import kotlinx.android.synthetic.main.layout_commands.view.textStatus
+import kotlinx.android.synthetic.main.layout_commands.view.textUserId
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -43,7 +70,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
         LayoutInflater.from(context).inflate(R.layout.layout_commands, this, true)
     }
 
-    private val subs = mutableListOf<Subscription>()
+    private val disposables = mutableListOf<Disposable>()
     lateinit var client: ChatClient
 
     val filter = FilterObject("type", "messaging")
@@ -96,49 +123,47 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 .build()
         }
 
-        subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .subscribe {
-                    println(it)
-                }
+        disposables.add(
+            client.subscribeFor(ConnectedEvent::class) {
+                println(it)
+            }
         )
 
-        subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .filter(NotificationChannelMutesUpdatedEvent::class.java)
-                .subscribe {
-                    var mutedChannels: List<ChannelMute> = emptyList()
-                    if (it is ConnectedEvent) {
-                        mutedChannels = it.me.channelMutes
-                    } else if (it is NotificationChannelMutesUpdatedEvent) {
-                        mutedChannels = it.me.channelMutes
-                    }
-                    println(mutedChannels)
+        disposables.add(
+            client.subscribeFor(
+                ConnectedEvent::class,
+                NotificationChannelMutesUpdatedEvent::class
+            ) {
+                var mutedChannels: List<ChannelMute> = emptyList()
+                if (it is ConnectedEvent) {
+                    mutedChannels = it.me.channelMutes
+                } else if (it is NotificationChannelMutesUpdatedEvent) {
+                    mutedChannels = it.me.channelMutes
                 }
+                println(mutedChannels)
+            }
         )
 
-        subs.add(
-            client.events()
-                .filter(ConnectedEvent::class.java)
-                .filter(DisconnectedEvent::class.java)
-                .filter(ConnectingEvent::class.java)
-                .subscribe { event ->
-                    textStatus.text = event.type
-                    Log.d("connection-events", event::class.java.simpleName)
-                }
+        disposables.add(
+            client.subscribeFor(
+                ConnectedEvent::class,
+                ConnectingEvent::class,
+                DisconnectedEvent::class
+            ) { event ->
+                textStatus.text = event.type
+                Log.d("connection-events", event::class.java.simpleName)
+            }
         )
 
-        subs.add(
-            client.events()
-                .filter(ChannelUserUnbannedEvent::class.java)
-                .filter(GlobalUserUnbannedEvent::class.java)
-                .filter(ChannelUserBannedEvent::class.java)
-                .filter(GlobalUserBannedEvent::class.java)
-                .subscribe {
-                    println("ban/unban for " + config.userId + ": " + it.type)
-                }
+        disposables.add(
+            client.subscribeFor(
+                ChannelUserUnbannedEvent::class,
+                GlobalUserUnbannedEvent::class,
+                ChannelUserBannedEvent::class,
+                GlobalUserBannedEvent::class
+            ) {
+                println("ban/unban for " + config.userId + ": " + it.type)
+            }
         )
 
         textUserId.text = "UserId: ${config.userId}"
@@ -305,7 +330,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
 
                 if (it.isError) {
-                    it.error().printStackTrace()
+                    it.error().cause?.printStackTrace()
                 }
 
                 UtilsMessages.show("query success", "query error", it)
@@ -401,7 +426,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     }
 
     fun destroy() {
-        subs.forEach { it.unsubscribe() }
+        disposables.forEach { it.dispose() }
         client.disconnect()
     }
 }

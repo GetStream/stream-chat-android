@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -32,6 +31,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
+import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
@@ -65,7 +65,11 @@ interface ChatClient {
 
     fun createChannel(channelType: String, members: List<String>): Call<Channel>
 
-    fun createChannel(channelType: String, members: List<String>, extraData: Map<String, Any>): Call<Channel>
+    fun createChannel(
+        channelType: String,
+        members: List<String>,
+        extraData: Map<String, Any>
+    ): Call<Channel>
 
     fun createChannel(
         channelType: String,
@@ -74,7 +78,11 @@ interface ChatClient {
         extraData: Map<String, Any>
     ): Call<Channel>
 
-    fun createChannel(channelType: String, channelId: String, extraData: Map<String, Any>): Call<Channel>
+    fun createChannel(
+        channelType: String,
+        channelId: String,
+        extraData: Map<String, Any>
+    ): Call<Channel>
 
     fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
@@ -112,7 +120,12 @@ interface ChatClient {
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun replayEvents(channelIds: List<String>, since: Date?, limit: Int = 100, offset: Int = 0): Call<List<ChatEvent>>
+    fun replayEvents(
+        channelIds: List<String>,
+        since: Date?,
+        limit: Int = 100,
+        offset: Int = 0
+    ): Call<List<ChatEvent>>
 
     //endregion
 
@@ -122,7 +135,33 @@ interface ChatClient {
 
     fun removeSocketListener(listener: SocketListener)
 
+    @Deprecated(
+        message = "Use subscribe() on the client directly instead",
+        level = DeprecationLevel.WARNING
+    )
     fun events(): ChatObservable
+
+    fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
+
+    fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    fun subscribeForSingle(
+        eventType: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    fun <T : ChatEvent> subscribeForSingle(
+        eventType: Class<T>,
+        listener: (event: T) -> Unit
+    ): Disposable
 
     //endregion
 
@@ -341,7 +380,7 @@ interface ChatClient {
         fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
-                throw ChatError("apiKey is not defined in " + this::class.java.simpleName)
+                throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
             val config = ChatClientConfig(
