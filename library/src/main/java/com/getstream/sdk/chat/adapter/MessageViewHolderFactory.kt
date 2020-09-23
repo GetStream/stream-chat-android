@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.client.models.Channel
 
 /**
  * Allows you to easily customize message rendering or message attachment rendering
@@ -49,7 +50,8 @@ open class MessageViewHolderFactory {
     open fun createMessageViewHolder(
         parent: ViewGroup,
         viewType: Int,
-        style: MessageListViewStyle
+        style: MessageListViewStyle,
+        channel: Channel
     ): BaseMessageListItemViewHolder<*> {
         return when (viewType) {
             MESSAGEITEM_DATE_SEPARATOR ->
@@ -59,6 +61,7 @@ open class MessageViewHolderFactory {
                     R.layout.stream_item_message,
                     parent,
                     style,
+                    channel,
                     attachmentViewHolderFactory,
                     bubbleHelper,
                     listenerContainer.messageClickListener,

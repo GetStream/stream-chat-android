@@ -36,12 +36,11 @@ class MessageListItemAdapter @JvmOverloads constructor(
         parent: ViewGroup,
         viewType: Int
     ): BaseMessageListItemViewHolder<*> {
-        return viewHolderFactory.createMessageViewHolder(parent, viewType, style)
+        return viewHolderFactory.createMessageViewHolder(parent, viewType, style, channel)
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(
-            channel = channel,
             messageListItem = messageListItemList[position],
             position = position
         )

@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.Channel
 
 class TypingIndicatorViewHolder(
     resId: Int,
@@ -22,7 +21,6 @@ class TypingIndicatorViewHolder(
     private val ll_typingusers: LinearLayout = itemView.findViewById(R.id.ll_typing_indicator)
 
     override fun bind(
-        channel: Channel,
         messageListItem: TypingItem,
         position: Int
     ) {

@@ -75,10 +75,11 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
     protected RecyclerView.LayoutManager mLayoutManager;
 
-    protected Channel channel;
+    protected final Channel channel;
     protected final MessageListViewStyle style;
-    protected MessageListView.BubbleHelper bubbleHelper;
-    protected AttachmentViewHolderFactory viewHolderFactory;
+    protected final MessageListView.BubbleHelper bubbleHelper;
+    protected final AttachmentViewHolderFactory viewHolderFactory;
+
     protected int position;
     protected Message message;
     protected MessageListItem.MessageItem messageListItem;
@@ -104,8 +105,9 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
 
     public MessageListItemViewHolder(
             int resId,
-            ViewGroup viewGroup,
-            MessageListViewStyle style,
+            @NonNull ViewGroup viewGroup,
+            @NonNull MessageListViewStyle style,
+            @NonNull Channel channel,
             @NonNull AttachmentViewHolderFactory factory,
             @NonNull MessageListView.BubbleHelper bubbleHelper,
             @NonNull MessageListView.MessageClickListener messageClickListener,
@@ -118,6 +120,7 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     ) {
         super(resId, viewGroup);
         this.style = style;
+        this.channel = channel;
         this.viewHolderFactory = factory;
         this.bubbleHelper = bubbleHelper;
         this.messageClickListener = messageClickListener;
@@ -158,12 +161,8 @@ public class MessageListItemViewHolder extends BaseMessageListItemViewHolder<Mes
     }
 
     @Override
-    public void bind(@NonNull Channel channel,
-                     @NonNull MessageListItem.MessageItem messageListItem,
-                     int position) {
-
+    public void bind(@NonNull MessageListItem.MessageItem messageListItem, int position) {
         // set binding
-        this.channel = channel;
         this.messageListItem = messageListItem;
         this.position = position;
 

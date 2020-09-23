@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.enums.Dates
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.Channel
 import java.util.Date
 
 class DateSeparatorViewHolder(
@@ -26,7 +25,6 @@ class DateSeparatorViewHolder(
     private val iv_line_left: ImageView = itemView.findViewById(R.id.iv_line_left)
 
     override fun bind(
-        channel: Channel,
         messageListItem: DateSeparatorItem,
         position: Int
     ) {
