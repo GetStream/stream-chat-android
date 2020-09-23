@@ -79,10 +79,10 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         val message1 = data.createMessage()
         channelControllerImpl.sendMessage(message1)
         // get the message and channel state both live and offline versions
-        var roomChannel = chatDomainImpl.repos.channels.select(message1.channel.cid)
+        var roomChannel = chatDomainImpl.repos.channels.select(message1.cid)
         var liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
-            message1.channel.cid,
+            message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
@@ -105,7 +105,7 @@ class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
-            message1.channel.cid,
+            message1.cid,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()
