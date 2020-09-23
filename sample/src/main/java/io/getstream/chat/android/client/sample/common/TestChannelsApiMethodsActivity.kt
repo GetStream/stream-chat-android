@@ -156,15 +156,15 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
                 val controller = client.channel(channel.cid)
 
-            controller.watch().enqueue {
-                controller.keystroke().enqueue {
-                    if (it.isSuccess)
-                        println("checkTyping: sent")
-                    else
-                        it.error().cause?.printStackTrace()
+                controller.watch().enqueue {
+                    controller.keystroke().enqueue {
+                        if (it.isSuccess)
+                            println("checkTyping: sent")
+                        else
+                            it.error().cause?.printStackTrace()
+                    }
                 }
             }
-        }
     }
 
     private fun watchChannel() {
