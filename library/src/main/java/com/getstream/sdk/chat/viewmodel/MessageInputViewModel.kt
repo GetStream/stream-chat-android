@@ -48,7 +48,6 @@ class MessageInputViewModel @JvmOverloads constructor(
         val message = Message(cid = cid, text = messageText)
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
-        message.channel = channelController.toChannel()
         chatDomain.useCases.sendMessage(message.apply(messageTransformer)).execute()
     }
 
