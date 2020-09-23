@@ -76,7 +76,4 @@ data class Message(
     @SerializedName("show_in_channel")
     var showInChannel: Boolean = false
 
-) : CustomObject {
-    @IgnoreSerialisation
-    var channel: Channel = Channel()
-}
+) : CustomObject

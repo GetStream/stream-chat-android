@@ -102,13 +102,13 @@ internal class EventAdapter(
             //region Messages
 
             EventType.MESSAGE_NEW -> {
-                gson.fromJson(data, NewMessageEvent::class.java)
+                gson.fromJson(data, NewMessageEvent::class.java).apply { message.cid = cid }
             }
             EventType.MESSAGE_DELETED -> {
-                gson.fromJson(data, MessageDeletedEvent::class.java)
+                gson.fromJson(data, MessageDeletedEvent::class.java).apply { message.cid = cid }
             }
             EventType.MESSAGE_UPDATED -> {
-                gson.fromJson(data, MessageUpdatedEvent::class.java)
+                gson.fromJson(data, MessageUpdatedEvent::class.java).apply { message.cid = cid }
             }
             EventType.MESSAGE_READ -> {
                 gson.fromJson(data, MessageReadEvent::class.java)
@@ -126,13 +126,13 @@ internal class EventAdapter(
             //region Reactions
 
             EventType.REACTION_NEW -> {
-                gson.fromJson(data, ReactionNewEvent::class.java)
+                gson.fromJson(data, ReactionNewEvent::class.java).apply { message.cid = cid }
             }
             EventType.REACTION_UPDATED -> {
-                gson.fromJson(data, ReactionUpdateEvent::class.java)
+                gson.fromJson(data, ReactionUpdateEvent::class.java).apply { message.cid = cid }
             }
             EventType.REACTION_DELETED -> {
-                gson.fromJson(data, ReactionDeletedEvent::class.java)
+                gson.fromJson(data, ReactionDeletedEvent::class.java).apply { message.cid = cid }
             }
 
             //region Members
@@ -204,7 +204,7 @@ internal class EventAdapter(
             }
 
             EventType.NOTIFICATION_MESSAGE_NEW -> {
-                gson.fromJson(data, NotificationMessageNewEvent::class.java)
+                gson.fromJson(data, NotificationMessageNewEvent::class.java).apply { message.cid = cid }
             }
 
             EventType.NOTIFICATION_INVITED -> {

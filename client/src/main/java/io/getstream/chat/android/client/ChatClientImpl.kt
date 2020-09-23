@@ -301,11 +301,19 @@ internal class ChatClientImpl(
         channelId: String,
         request: QueryChannelRequest
     ): Call<Channel> {
+        // for convenience we add the message.cid field
         return api.queryChannel(channelType, channelId, request)
             .map { channel ->
-                channel.messages.forEach { message -> message.channel = channel }
+                channel.messages.forEach { message -> message.cid = channel.cid }
                 channel
             }
+    }
+
+    override fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
+        return api.queryChannels(request).map { channels ->
+            channels.map { channel -> channel.messages.forEach { message -> message.cid = channel.cid } }
+            channels
+        }
     }
 
     override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
@@ -334,10 +342,6 @@ internal class ChatClientImpl(
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> {
         return api.stopWatching(channelType, channelId)
-    }
-
-    override fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request)
     }
 
     override fun updateChannel(
