@@ -25,14 +25,11 @@ class DateSeparatorViewHolder(
     private val iv_line_right: ImageView = itemView.findViewById(R.id.iv_line_right)
     private val iv_line_left: ImageView = itemView.findViewById(R.id.iv_line_left)
 
-    private var messageListItem: DateSeparatorItem? = null
-
     override fun bind(
         channel: Channel,
         messageListItem: DateSeparatorItem,
         position: Int
     ) {
-        this.messageListItem = messageListItem
         configDate(messageListItem)
         applyStyle()
     }
