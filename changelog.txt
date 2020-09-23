@@ -1,5 +1,7 @@
 # To be released:
 
+# 1.15.6 - Fri 23 Sep 2020
+
 - Convert ChatError to plain class. Changes in ChatLogger interface.
 - Update events fields related to read status - remove "unread_messages" field and add "unread_channels" to NewMessageEvent, NotificationMarkReadEvent, and NotificationMessageNewEvent
 - Mark ChatEvents containing the user property by the UserEvent interface.
