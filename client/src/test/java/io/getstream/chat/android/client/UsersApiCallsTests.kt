@@ -41,7 +41,8 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.banUser(
-                mock.apiKey, mock.connectionId,
+                mock.apiKey,
+                mock.connectionId,
                 BanUserRequest(targetUserId, timeout, reason, mock.channelType, mock.channelId)
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
@@ -67,8 +68,11 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.unBanUser(
-                mock.apiKey, mock.connectionId,
-                targetUserId, mock.channelType, mock.channelId
+                mock.apiKey,
+                mock.connectionId,
+                targetUserId,
+                mock.channelType,
+                mock.channelId
             )
         ).thenReturn(RetroSuccess(CompletableResponse()))
 
@@ -106,7 +110,9 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey, mock.userId, mock.connectionId,
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
         ).thenReturn(RetroSuccess(FlagResponse(flag)))
@@ -140,7 +146,9 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey, mock.userId, mock.connectionId,
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
         ).thenReturn(RetroSuccess(FlagResponse(flag)))
@@ -171,7 +179,9 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.flag(
-                mock.apiKey, mock.userId, mock.connectionId,
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 mapOf(Pair("target_message_id", targetMessageId))
             )
         ).thenReturn(RetroSuccess(FlagResponse(flag)))
@@ -190,7 +200,8 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.queryUsers(
-                mock.apiKey, mock.connectionId,
+                mock.apiKey,
+                mock.connectionId,
                 request
             )
         ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))))
@@ -210,7 +221,10 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.removeMembers(
-                mock.channelType, mock.channelId, mock.apiKey, mock.connectionId,
+                mock.channelType,
+                mock.channelId,
+                mock.apiKey,
+                mock.connectionId,
                 RemoveMembersRequest(listOf("a-id", "b-id"))
             )
         ).thenReturn(RetroSuccess(ChannelResponse(channel)))
@@ -234,7 +248,9 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.muteUser(
-                mock.apiKey, mock.userId, mock.connectionId,
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
         ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)))
@@ -257,7 +273,9 @@ class UsersApiCallsTests {
 
         Mockito.`when`(
             mock.retrofitApi.unMuteUser(
-                mock.apiKey, mock.userId, mock.connectionId,
+                mock.apiKey,
+                mock.userId,
+                mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
         ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)))

@@ -1,6 +1,22 @@
 # To be released:
 
-# 1.15.6 - Fri 23 Sep 2020
+# 1.16.0 - Wed 23 Sep 2020
+
+- Removed message.channel, this is a backwards incompatible change
+- Ensure that message.cid is always available
+
+The SDK was providing message.cid and message.channel in some cases, but not always.
+Code that relied on those fields being populated caused bugs in production.
+
+If you were relying on message.channel it's likely that you were running into bugs.
+We recommend using one of these alternatives:
+
+- message.cid if you just need a reference to the channel
+- the channel object provided by client.queryChannel(s) if you need the full channel data
+- channelController.channelData livedata object provided by the livedata package (automatically updated if channel data changes)
+- channelController.toChannel() function provided by the livedata package
+
+# 1.15.6 - Wed 23 Sep 2020
 
 - Convert ChatError to plain class. Changes in ChatLogger interface.
 - Update events fields related to read status - remove "unread_messages" field and add "unread_channels" to NewMessageEvent, NotificationMarkReadEvent, and NotificationMessageNewEvent

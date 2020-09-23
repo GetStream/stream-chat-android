@@ -21,24 +21,28 @@ class ChatParserImpl : ChatParser {
     val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
-            .addSerializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
+            .addSerializationExclusionStrategy(
+                object : ExclusionStrategy {
+                    override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                        return false
+                    }
 
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.getAnnotation(IgnoreSerialisation::class.java) != null
+                    override fun shouldSkipField(f: FieldAttributes): Boolean {
+                        return f.getAnnotation(IgnoreSerialisation::class.java) != null
+                    }
                 }
-            })
-            .addDeserializationExclusionStrategy(object : ExclusionStrategy {
-                override fun shouldSkipClass(clazz: Class<*>): Boolean {
-                    return false
-                }
+            )
+            .addDeserializationExclusionStrategy(
+                object : ExclusionStrategy {
+                    override fun shouldSkipClass(clazz: Class<*>): Boolean {
+                        return false
+                    }
 
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.getAnnotation(IgnoreDeserialisation::class.java) != null
+                    override fun shouldSkipField(f: FieldAttributes): Boolean {
+                        return f.getAnnotation(IgnoreDeserialisation::class.java) != null
+                    }
                 }
-            })
+            )
             .create()
     }
 

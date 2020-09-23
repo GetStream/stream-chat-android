@@ -40,15 +40,17 @@ class OkHttpCall<T>(val call: Call, val converter: (InputStream) -> T) : ChatCal
 
     private fun enqueue(call: Call, callback: (Result<T>) -> Unit) {
 
-        call.enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                callback(failedResult(e))
-            }
+        call.enqueue(
+            object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    callback(failedResult(e))
+                }
 
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                callback(getResult(response))
+                override fun onResponse(call: Call, response: okhttp3.Response) {
+                    callback(getResult(response))
+                }
             }
-        })
+        )
     }
 
     private fun failedResult(t: Throwable): Result<T> {

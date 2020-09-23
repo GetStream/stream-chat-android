@@ -78,7 +78,8 @@ internal class HealthMonitor(val socket: ChatSocketServiceImpl) {
     private fun getRetryInterval(consecutiveFailures: Int): Long {
         val max = min(500 + consecutiveFailures * 2000, 25000)
         val min = min(
-            max(250, (consecutiveFailures - 1) * 2000), 25000
+            max(250, (consecutiveFailures - 1) * 2000),
+            25000
         )
         return floor(Math.random() * (max - min) + min).toLong()
     }

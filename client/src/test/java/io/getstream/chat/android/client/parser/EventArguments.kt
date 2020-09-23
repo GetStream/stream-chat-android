@@ -130,13 +130,7 @@ object EventArguments {
         totalUnreadCount = 26,
         extraData = mutableMapOf("name" to "Bender", "image" to "https://api.adorable.io/avatars/285/bender.png")
     )
-    private val message = Message(
-        id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
-        text = "Hello",
-        user = user,
-        createdAt = date,
-        updatedAt = date
-    )
+
     private val member = Member(user, role = "user", createdAt = date, updatedAt = date)
     private val giphyCommand = Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
     private val config = Config(
@@ -166,6 +160,14 @@ object EventArguments {
         members = listOf(member),
         memberCount = 1,
         config = config
+    )
+    private val message = Message(
+        id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
+        text = "Hello",
+        user = user,
+        createdAt = date,
+        updatedAt = date,
+        cid = channel.cid
     )
     private val reaction = Reaction(
         messageId = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",

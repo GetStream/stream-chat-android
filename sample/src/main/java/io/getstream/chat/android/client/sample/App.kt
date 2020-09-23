@@ -60,28 +60,30 @@ class App : Application() {
 
         client = ChatClient.Builder(apiKey, this)
             .notifications(provideNotificationConfig())
-            .loggerHandler(object : ChatLoggerHandler {
-                override fun logT(throwable: Throwable) {
-                }
+            .loggerHandler(
+                object : ChatLoggerHandler {
+                    override fun logT(throwable: Throwable) {
+                    }
 
-                override fun logT(tag: Any, throwable: Throwable) {
-                }
+                    override fun logT(tag: Any, throwable: Throwable) {
+                    }
 
-                override fun logI(tag: Any, message: String) {
-                }
+                    override fun logI(tag: Any, message: String) {
+                    }
 
-                override fun logD(tag: Any, message: String) {
-                }
+                    override fun logD(tag: Any, message: String) {
+                    }
 
-                override fun logW(tag: Any, message: String) {
-                }
+                    override fun logW(tag: Any, message: String) {
+                    }
 
-                override fun logE(tag: Any, message: String) {
-                }
+                    override fun logE(tag: Any, message: String) {
+                    }
 
-                override fun logE(tag: Any, message: String, throwable: Throwable) {
+                    override fun logE(tag: Any, message: String, throwable: Throwable) {
+                    }
                 }
-            })
+            )
             .logLevel(if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING)
             .build()
 
@@ -105,29 +107,31 @@ class App : Application() {
     var latestResumed: Activity? = null
 
     private fun initActivityListener() {
-        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityResumed(activity: Activity) {
-                latestResumed = activity
-            }
+        registerActivityLifecycleCallbacks(
+            object : ActivityLifecycleCallbacks {
+                override fun onActivityResumed(activity: Activity) {
+                    latestResumed = activity
+                }
 
-            override fun onActivityPaused(activity: Activity) {
-            }
+                override fun onActivityPaused(activity: Activity) {
+                }
 
-            override fun onActivityStarted(activity: Activity) {
-            }
+                override fun onActivityStarted(activity: Activity) {
+                }
 
-            override fun onActivityDestroyed(activity: Activity) {
-            }
+                override fun onActivityDestroyed(activity: Activity) {
+                }
 
-            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            }
+                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                }
 
-            override fun onActivityStopped(activity: Activity) {
-            }
+                override fun onActivityStopped(activity: Activity) {
+                }
 
-            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                }
             }
-        })
+        )
     }
 
     @UseExperimental(ExperimentalTime::class)

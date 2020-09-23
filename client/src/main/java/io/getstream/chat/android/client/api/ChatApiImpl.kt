@@ -261,7 +261,11 @@ internal class ChatApiImpl(
 
         return callMapper.map(
             retrofitApi.sendReaction(
-                reaction.messageId, apiKey, userId, connectionId, ReactionRequest(reaction)
+                reaction.messageId,
+                apiKey,
+                userId,
+                connectionId,
+                ReactionRequest(reaction)
             )
         ).map {
             it.reaction
@@ -302,7 +306,11 @@ internal class ChatApiImpl(
     override fun sendAction(request: SendActionRequest): Call<Message> {
         return callMapper.map(
             retrofitApi.sendAction(
-                request.messageId, apiKey, userId, connectionId, request
+                request.messageId,
+                apiKey,
+                userId,
+                connectionId,
+                request
             )
         ).map {
             it.message
@@ -526,7 +534,11 @@ internal class ChatApiImpl(
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return callMapper.map(
             retrofitApi.rejectInvite(
-                channelType, channelId, apiKey, connectionId, RejectInviteRequest()
+                channelType,
+                channelId,
+                apiKey,
+                connectionId,
+                RejectInviteRequest()
             )
         ).map {
             flattenChannel(it)
@@ -637,7 +649,8 @@ internal class ChatApiImpl(
     ): Call<List<Member>> {
         return callMapper.map(
             retrofitApi.queryMembers(
-                apiKey, connectionId,
+                apiKey,
+                connectionId,
                 QueryMembersRequest(
                     channelType,
                     channelId,

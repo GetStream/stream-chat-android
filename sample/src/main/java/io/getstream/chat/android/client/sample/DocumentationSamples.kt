@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.and
 import io.getstream.chat.android.client.models.Filters.contains
-import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
@@ -70,7 +69,8 @@ fun setUser() {
     user.extraData["image"] = "https://bit.ly/321RmWb"
 
     client.setUser(
-        user, token,
+        user,
+        token,
         object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val user = data.user
@@ -162,7 +162,8 @@ fun initClient() {
     user.extraData["name"] = "Bender"
 
     client.setUser(
-        user, token,
+        user,
+        token,
         object : InitConnectionListener() {
 
             override fun onSuccess(data: ConnectionData) {
@@ -613,7 +614,8 @@ fun muting() {
 
     // get list of muted channels when user is connected
     client.setUser(
-        user, token,
+        user,
+        token,
         object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val user = data.user
@@ -640,7 +642,7 @@ fun queryMuted() {
     val messageLimit = 0
     val sort = QuerySort()
 
-    val mutedFiler = eq("muted", false)
+    val mutedFiler = Filters.eq("muted", false)
 
     client.queryChannels(
         QueryChannelsRequest(mutedFiler, offset, limit, sort, messageLimit)
@@ -654,7 +656,7 @@ fun queryMuted() {
         }
 
     // retrieve muted channels
-    val unmutedFilter = eq("muted", true)
+    val unmutedFilter = Filters.eq("muted", true)
 
     client.queryChannels(
         QueryChannelsRequest(unmutedFilter, offset, limit, sort, messageLimit)
@@ -738,7 +740,8 @@ fun reveivingTypingEvents() {
 
 fun unreadSetUser() {
     client.setUser(
-        User(userId), "{{ chat_user_token }}",
+        User(userId),
+        "{{ chat_user_token }}",
         object : InitConnectionListener() {
             override fun onSuccess(data: ConnectionData) {
                 val user = data.user
@@ -816,8 +819,8 @@ class MultiTenantAndTeams {
 
     fun userSearch() {
         val filter = and(
-            eq("name", "Jordan"),
-            eq("teams", contains("red"))
+            Filters.eq("name", "Jordan"),
+            Filters.eq("teams", contains("red"))
         )
         val offset = 0
         val limit = 1

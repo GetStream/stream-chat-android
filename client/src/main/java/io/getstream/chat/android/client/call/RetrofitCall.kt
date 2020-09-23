@@ -36,16 +36,18 @@ class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : Cha
     }
 
     private fun enqueue(call: retrofit2.Call<T>, callback: (Result<T>) -> Unit) {
-        call.enqueue(object : retrofit2.Callback<T> {
+        call.enqueue(
+            object : retrofit2.Callback<T> {
 
-            override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
-                callback(getResult(response))
-            }
+                override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
+                    callback(getResult(response))
+                }
 
-            override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
-                callback(failedResult(t))
+                override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
+                    callback(failedResult(t))
+                }
             }
-        })
+        )
     }
 
     private fun failedResult(t: Throwable): Result<T> {
