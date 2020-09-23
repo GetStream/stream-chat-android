@@ -3,10 +3,7 @@ package io.getstream.chat.android.livedata.utils
 import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.utils.Result
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 
 interface Call2<T> {
 
@@ -17,6 +14,7 @@ interface Call2<T> {
     fun enqueue(callback: (Result<T>) -> Unit = {})
 
     fun cancel()
+    suspend fun invoke(): Result<T>
 }
 
 class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) :
@@ -30,6 +28,10 @@ class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineSc
     override fun execute(): Result<T> {
         val result = runBlocking(scope.coroutineContext) { runnable() }
         return result
+    }
+
+    override suspend fun invoke(): Result<T> = withContext(scope.coroutineContext) {
+        runnable()
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {

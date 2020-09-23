@@ -50,7 +50,6 @@ import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
-import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -104,7 +103,7 @@ class ChannelControllerImpl(
             .filter { it.parentId == null || it.showInChannel }
             .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
             .sortedBy { it.createdAt }
-            .toList().map { it.copy(cid = cid) }
+            .toList().map { it.copy() }
     }
 
     /** the number of people currently watching the channel */
@@ -443,7 +442,7 @@ class ChannelControllerImpl(
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insertMessage(message)
 
-        val channelStateEntity = domainImpl.repos.channels.select(message.getCid())
+        val channelStateEntity = domainImpl.repos.channels.select(message.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.addMessage(messageEntity)

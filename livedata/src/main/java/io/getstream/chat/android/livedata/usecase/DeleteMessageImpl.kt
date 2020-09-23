@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
@@ -19,7 +18,7 @@ interface DeleteMessage {
 
 class DeleteMessageImpl(var domainImpl: ChatDomainImpl) : DeleteMessage {
     override operator fun invoke(message: Message): Call2<Message> {
-        val cid = message.getCid()
+        val cid = message.cid
         validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)

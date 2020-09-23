@@ -28,9 +28,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        enabled = true
-        enabledForTests = true
+
+    buildFeatures {
+        dataBinding true
     }
     testOptions.unitTests {
         includeAndroidResources = true

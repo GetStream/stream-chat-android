@@ -120,7 +120,7 @@ class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun eventReaction() {
-        val messageWithCid = data.reactionEvent.message.copy(cid = data.reactionEvent.cid)
+        val messageWithCid = data.reactionEvent.message
 
         channelControllerImpl.handleEvent(data.reactionEvent)
 

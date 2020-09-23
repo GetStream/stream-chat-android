@@ -162,7 +162,7 @@ class TestDataHelper {
     val reaction2 = Reaction("message-1", "like", 1).apply { user = user2 }
 
     val message1 = Message().apply {
-        this.channel = channel1; cid = channel1.cid; text = "hi there"; id = "message-1"; user =
+        cid = channel1.cid; text = "hi there"; id = "message-1"; user =
             user1; createdAt = calendar(2020, 1, 1)
     }
 
@@ -174,28 +174,29 @@ class TestDataHelper {
     fun createMessage(): Message {
         val text = "hi there " + UUID.randomUUID().toString()
         val message = Message().apply {
-            this.channel = channel1; cid = channel1.cid; this.text = text; id = ""; user =
+            cid = channel1.cid; this.text = text; id = ""; user =
                 user1; createdAt = Date()
         }
         return message
     }
 
     val message1Updated = Message().apply {
-        channel = channel1; cid = channel1.cid; text = "im update now"; id = "message-1"; user =
+        cid = channel1.cid; text = "im update now"; id = "message-1"; user =
             user1; createdAt = calendar(2020, 1, 1)
     }
     val reactionMessage = Message().apply {
-        channel = channel1; text = "im update now"; id = "message-1"; user = user1
+        text = "im update now"; id = "message-1"; user = user1
+        cid = channel1.cid
         reactionScores = mutableMapOf("like" to 10)
         reactionCounts = mutableMapOf("like" to 1); ownReactions =
             mutableListOf(reaction1); latestReactions = mutableListOf(reaction1)
     }
     val message2Older = Message().apply {
-        this.channel = channel1; text = "message2"; id = "message-2"; user = user1; createdAt =
+        text = "message2"; id = "message-2"; user = user1; createdAt =
             calendar(2019, 1, 1)
     }
     val messageFromUser2 = Message().apply {
-        this.channel = channel1; text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
+        text = "messageFromUser2"; id = "message-2"; user = user2; createdAt =
             calendar(2020, 2, 1)
     }
 

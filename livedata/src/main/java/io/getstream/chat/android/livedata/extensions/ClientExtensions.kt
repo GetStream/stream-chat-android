@@ -15,16 +15,6 @@ import kotlin.reflect.full.declaredMemberProperties
 
 private const val EQUAL_ON_COMPARISON = 0
 
-/**
- * cid is sometimes devent as message.cid other times as message.channel.cid
- */
-internal fun Message.getCid(): String =
-    if (this.cid.isEmpty()) {
-        this.channel.cid
-    } else {
-        this.cid
-    }
-
 internal fun Message.users() = latestReactions.mapNotNull(Reaction::user) + user
 
 internal fun Channel.users() = members.map(Member::user) + read.map(ChannelUserRead::user) + createdBy

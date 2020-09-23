@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
@@ -16,7 +15,7 @@ import io.getstream.chat.android.livedata.utils.validateCid
  */
 class CancelMessage(var domainImpl: ChatDomainImpl) {
     operator fun invoke(message: Message): Call2<Boolean> {
-        val cid = message.getCid()
+        val cid = message.cid
         validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)

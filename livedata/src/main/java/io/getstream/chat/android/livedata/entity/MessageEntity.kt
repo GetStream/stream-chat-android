@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.extensions.getCid
 import java.util.Date
 
 /**
@@ -120,7 +119,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
     }
 
     /** create a messageEntity from a message object */
-    constructor(m: Message) : this(m.id, m.getCid(), m.user.id) {
+    constructor(m: Message) : this(m.id, m.cid, m.user.id) {
         text = m.text
         attachments = m.attachments
         syncStatus = m.syncStatus ?: SyncStatus.COMPLETED
@@ -134,9 +133,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
         reactionScores = m.reactionScores ?: mutableMapOf()
-        if (cid.isEmpty()) {
-            cid = m.channel.cid
-        }
 
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()

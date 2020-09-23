@@ -630,6 +630,9 @@ class ChatDomainImpl private constructor(
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
         val channelMessagesMap = if (pagination.memberLimit > 0) {
+            // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
+            // sqlite has window functions: https://sqlite.org/windowfunctions.html
+            // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
         } else {
             emptyMap()

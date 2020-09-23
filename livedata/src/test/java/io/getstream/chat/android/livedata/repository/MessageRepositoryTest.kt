@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.extensions.getCid
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,6 @@ class MessageRepositoryTest : BaseDomainTest() {
         val entity = repo.select(data.message1.id)
         val message = entity!!.toMessage(data.userMap)
         // ignore the channel field, we don't have that information at the message repository level
-        message.channel = data.message1.channel
         Truth.assertThat(message).isEqualTo(data.message1)
     }
 
@@ -56,7 +54,6 @@ class MessageRepositoryTest : BaseDomainTest() {
 
         val entity = repo.select(data.message1Updated.id)
         val message = entity!!.toMessage(data.userMap)
-        message.channel = data.message1Updated.channel
         Truth.assertThat(message).isEqualTo(data.message1Updated)
         Truth.assertThat(repo.messageCache.size()).isEqualTo(1)
     }
@@ -109,12 +106,12 @@ class MessageRepositoryTest : BaseDomainTest() {
         // this should select the first message
         var pagination = AnyChannelPaginationRequest(1)
         pagination.setFilter(Pagination.GREATER_THAN, message2.id)
-        var messages = repo.selectMessagesForChannel(data.message1.getCid(), pagination)
+        var messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message1.id)
         // this should select the third message
         pagination.setFilter(Pagination.LESS_THAN, message2.id)
-        messages = repo.selectMessagesForChannel(data.message1.getCid(), pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
 
@@ -123,12 +120,12 @@ class MessageRepositoryTest : BaseDomainTest() {
         // filter on 2 and older
         pagination.setFilter(Pagination.LESS_THAN_OR_EQUAL, message2.id)
         // should return message 2 and message 3, with message 3 (the oldest message as the first element)
-        messages = repo.selectMessagesForChannel(data.message1.getCid(), pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
         // request 2 and newer, message 2 (the oldest) should be first
         pagination.setFilter(Pagination.GREATER_THAN_OR_EQUAL, message2.id)
-        messages = repo.selectMessagesForChannel(data.message1.getCid(), pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message2.id)
     }
