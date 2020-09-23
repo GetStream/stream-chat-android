@@ -1,4 +1,6 @@
 # To be released:
+
+# Sep 23rd, 2020 - 0.7.7
 - Fix crash when map channels DB entity to Channel
 - Add posting empty channels map when queryChannels fails either offline and online which prevents infinite loader
 
