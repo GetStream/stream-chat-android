@@ -80,15 +80,15 @@ internal class ChatSocketListener(
         when (event) {
             is NewMessageEvent -> {
                 event.totalUnreadCount?.let(onTotalUnreadCountListener)
-                event.unreadMessages?.let(onUnreadChannels)
+                event.unreadChannels?.let(onUnreadChannels)
             }
             is NotificationMarkReadEvent -> {
                 event.totalUnreadCount?.let(onTotalUnreadCountListener)
-                event.unreadMessages?.let(onUnreadChannels)
+                event.unreadChannels?.let(onUnreadChannels)
             }
             is NotificationMessageNewEvent -> {
                 event.totalUnreadCount?.let(onTotalUnreadCountListener)
-                event.unreadMessages?.let(onUnreadChannels)
+                event.unreadChannels?.let(onUnreadChannels)
             }
             is ConnectedEvent -> {
                 onConnected(event)
