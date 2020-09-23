@@ -1,5 +1,7 @@
 # To be released:
 - Adjust ChatSocketListener to new events(NewMessageEvent, NotificationMarkReadEvent, NotificationMessageNewEvent) properties.
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.6
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.7
 
 # Sep 18th, 2020 - 4.2.11-beta-12
 - Implement Giphy actions handler
