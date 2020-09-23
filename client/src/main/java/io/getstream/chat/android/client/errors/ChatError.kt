@@ -1,7 +1,8 @@
 package io.getstream.chat.android.client.errors
 
-open class ChatError : RuntimeException {
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+open class ChatError(
+    val message: String?,
+    val cause: Throwable? = null
+) {
+    constructor(throwable: Throwable?) : this(null, throwable)
 }

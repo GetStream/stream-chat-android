@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.logger
 
 import android.util.Log
+import io.getstream.chat.android.client.errors.ChatError
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -24,6 +25,26 @@ internal class ChatLoggerImpl constructor(
             Log.e(getTag(tag), getStackString(throwable))
         }
         handler?.logT(getTag(tag), throwable)
+    }
+
+    override fun logE(tag: Any, chatError: ChatError) {
+        when {
+            chatError.cause != null && chatError.message != null -> logE(
+                tag,
+                chatError.message,
+                chatError.cause
+            )
+            chatError.cause != null -> logE(tag, chatError.cause)
+            else -> logE(tag, chatError.message.orEmpty())
+        }
+    }
+
+    override fun logE(tag: Any, message: String, chatError: ChatError) {
+        if (chatError.cause != null) {
+            logE(tag, message, chatError.cause)
+        } else {
+            logE(tag, message)
+        }
     }
 
     override fun logI(tag: Any, message: String) {

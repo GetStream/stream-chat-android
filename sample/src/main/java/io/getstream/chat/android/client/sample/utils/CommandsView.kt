@@ -330,7 +330,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
 
                 if (it.isError) {
-                    it.error().printStackTrace()
+                    it.error().cause?.printStackTrace()
                 }
 
                 UtilsMessages.show("query success", "query error", it)

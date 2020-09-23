@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client.logger
 
+import io.getstream.chat.android.client.errors.ChatError
+
 interface TaggedLogger {
     fun logI(message: String)
 
@@ -11,7 +13,11 @@ interface TaggedLogger {
 
     fun logE(throwable: Throwable)
 
+    fun logE(chatError: ChatError)
+
     fun logE(message: String, throwable: Throwable)
+
+    fun logE(message: String, chatError: ChatError)
 
     fun getLevel(): ChatLogLevel
 }

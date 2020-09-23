@@ -1,5 +1,7 @@
 package io.getstream.chat.android.client.logger
 
+import io.getstream.chat.android.client.errors.ChatError
+
 internal class TaggedLoggerImpl(val tag: Any, val logger: ChatLogger) : TaggedLogger {
 
     override fun logI(message: String) {
@@ -28,5 +30,13 @@ internal class TaggedLoggerImpl(val tag: Any, val logger: ChatLogger) : TaggedLo
 
     override fun getLevel(): ChatLogLevel {
         return logger.getLevel()
+    }
+
+    override fun logE(message: String, chatError: ChatError) {
+        logger.logE(tag, message, chatError)
+    }
+
+    override fun logE(chatError: ChatError) {
+        logger.logE(tag, chatError)
     }
 }

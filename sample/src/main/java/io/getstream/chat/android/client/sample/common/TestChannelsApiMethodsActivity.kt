@@ -156,15 +156,15 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
                 val controller = client.channel(channel.cid)
 
-                controller.watch().enqueue {
-                    controller.keystroke().enqueue {
-                        if (it.isSuccess)
-                            println("checkTyping: sent")
-                        else
-                            it.error().printStackTrace()
-                    }
+            controller.watch().enqueue {
+                controller.keystroke().enqueue {
+                    if (it.isSuccess)
+                        println("checkTyping: sent")
+                    else
+                        it.error().cause?.printStackTrace()
                 }
             }
+        }
     }
 
     private fun watchChannel() {
@@ -302,7 +302,7 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
             if (result.isSuccess) {
                 Toast.makeText(this, success, Toast.LENGTH_SHORT).show()
             } else {
-                result.error().printStackTrace()
+                result.error().cause?.printStackTrace()
 
                 val message = result.error().message
                 Toast.makeText(this, "$error: $message", Toast.LENGTH_SHORT).show()
