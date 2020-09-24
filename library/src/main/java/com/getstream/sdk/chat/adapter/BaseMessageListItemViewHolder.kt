@@ -1,16 +1,12 @@
 package com.getstream.sdk.chat.adapter
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
-    resId: Int,
-    parent: ViewGroup
-) : RecyclerView.ViewHolder(
-    LayoutInflater.from(parent.context).inflate(resId, parent, false)
-) {
+    itemView: View
+) : RecyclerView.ViewHolder(itemView) {
 
     /**
      * Workaround to allow a downcast of the MessageListItem to T
