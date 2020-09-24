@@ -6,12 +6,9 @@
   <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png" width="60%" /></a>
 </p>
 
-## Beta or Stable
+## 4.x
 
-- Stable version: [3.x.x](https://github.com/GetStream/stream-chat-android/tree/ver/3.x.x)
-- Beta version: [4.x.x](https://github.com/GetStream/stream-chat-android)
-
-The beta version is based on Kotlin and splits out the client, offline support and UX components. It adds seamless offline support, improved performance, makes it easier to integrate and has better test coverage. It is however not 100% stable just yet. A first stable release is days away. For new apps we recommend using the 4.x branch.
+4.x is based on Kotlin and splits out the client, offline support and UX components. It adds seamless offline support, improved performance, makes it easier to integrate and has better test coverage. 
 
 [stream-chat-android](https://github.com/GetStream/stream-chat-android) is the official Android SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
 
