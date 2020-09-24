@@ -3,6 +3,16 @@
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
 - Removed `position` parameter from `MessageClickListener`
 
+# Sep 23rd, 2020 - 4.3.0-beta-1
+
+- Update livedata/client to latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.0
+
+# Sep 23rd, 2020 - 4.2.11-beta-13
+- Adjust ChatSocketListener to new events(NewMessageEvent, NotificationMarkReadEvent, NotificationMessageNewEvent) properties.
+- Fix "load more channels"
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.6
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.7
+
 # Sep 18th, 2020 - 4.2.11-beta-12
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
