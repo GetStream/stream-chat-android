@@ -12,7 +12,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 internal class ListenerContainerImpl(
-    messageClickListener: MessageListView.MessageClickListener = MessageClickListener(EmptyFunctions.TWO_PARAM),
+    messageClickListener: MessageListView.MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
     messageLongClickListener: MessageListView.MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
     attachmentClickListener: MessageListView.AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
     reactionViewClickListener: MessageListView.ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
@@ -28,8 +28,8 @@ internal class ListenerContainerImpl(
     override var messageClickListener: MessageListView.MessageClickListener by ListenerDelegate(
         messageClickListener
     ) { realListener ->
-        MessageClickListener { message, position ->
-            realListener().onMessageClick(message, position)
+        MessageClickListener { message ->
+            realListener().onMessageClick(message)
         }
     }
 

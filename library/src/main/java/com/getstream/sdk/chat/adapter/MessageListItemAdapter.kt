@@ -1,18 +1,14 @@
 package com.getstream.sdk.chat.adapter
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter @JvmOverloads constructor(
-    private var context: Context,
     val channel: Channel,
     val viewHolderFactory: MessageViewHolderFactory,
-    val bubbleHelper: BubbleHelper,
     val style: MessageListViewStyle,
     private var messageListItemList: List<MessageListItem> = emptyList()
 ) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
@@ -40,17 +36,12 @@ class MessageListItemAdapter @JvmOverloads constructor(
         parent: ViewGroup,
         viewType: Int
     ): BaseMessageListItemViewHolder<*> {
-        return viewHolderFactory.createMessageViewHolder(parent, viewType)
+        return viewHolderFactory.createMessageViewHolder(parent, viewType, style, channel)
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
         holder.bindListItem(
-            context = context,
-            channel = channel,
             messageListItem = messageListItemList[position],
-            style = style,
-            bubbleHelper = bubbleHelper,
-            factory = viewHolderFactory,
             position = position
         )
     }

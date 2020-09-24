@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter;
+import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
 import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 
 public class AttachmentListView extends RecyclerView {
     final String TAG = AttachmentListView.class.getSimpleName();
 
-    private MessageViewHolderFactory viewHolderFactory;
+    private AttachmentViewHolderFactory viewHolderFactory;
     private RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
     private MessageListViewStyle style;
     private Context context;
@@ -48,7 +48,7 @@ public class AttachmentListView extends RecyclerView {
         this.style = style;
     }
 
-    public void setViewHolderFactory(MessageViewHolderFactory viewHolderFactory) {
+    public void setViewHolderFactory(AttachmentViewHolderFactory viewHolderFactory) {
         this.viewHolderFactory = viewHolderFactory;
     }
 
