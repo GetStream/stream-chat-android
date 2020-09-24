@@ -202,22 +202,22 @@ class MessageListItemViewHolder(
 
         val lastMessage = LlcMigrationUtils.computeLastMessage(channel)
 
-        if (isDeletedMessage()
-            || isFailedMessage()
-            || lastMessage == null
-            || message.id.isEmpty()
-            || !isBottomPosition()
-            || messageListItem.messageReadBy.isNotEmpty()
-            || !messageListItem.isMine
-            || message.createdAt!!.time < lastMessage.createdAt!!.time
-            || message.type == ModelType.message_ephemeral
-            || isThread()
-            || isEphemeral()
+        if (isDeletedMessage() ||
+            isFailedMessage() ||
+            lastMessage == null ||
+            message.id.isEmpty() ||
+            !isBottomPosition() ||
+            messageListItem.messageReadBy.isNotEmpty() ||
+            !messageListItem.isMine ||
+            message.createdAt!!.time < lastMessage.createdAt!!.time ||
+            message.type == ModelType.message_ephemeral ||
+            isThread() ||
+            isEphemeral()
         ) {
             return
         }
 
-        //TODO: llc add sync
+        // TODO: llc add sync
         //
         // switch (this.message.getSyncStatus()) {
         //     case Sync.LOCAL_ONLY:
@@ -239,11 +239,11 @@ class MessageListItemViewHolder(
     protected fun configReadIndicator() {
         val readBy: List<ChannelUserRead> = messageListItem.messageReadBy
 
-        if (isDeletedMessage()
-            || isFailedMessage()
-            || readBy.isEmpty()
-            || isThread()
-            || isEphemeral()
+        if (isDeletedMessage() ||
+            isFailedMessage() ||
+            readBy.isEmpty() ||
+            isThread() ||
+            isEphemeral()
         ) {
             read_state.visibility = View.GONE
             return
@@ -415,11 +415,11 @@ class MessageListItemViewHolder(
     }
 
     protected fun configReactionView() {
-        if (isDeletedMessage()
-            || isFailedMessage()
-            || !style.isReactionEnabled
-            || !channel.config.isReactionsEnabled
-            || message.reactionCounts.isEmpty()
+        if (isDeletedMessage() ||
+            isFailedMessage() ||
+            !style.isReactionEnabled ||
+            !channel.config.isReactionsEnabled ||
+            message.reactionCounts.isEmpty()
         ) {
             rv_reaction.visibility = View.GONE
             iv_tail.visibility = View.GONE
@@ -448,12 +448,12 @@ class MessageListItemViewHolder(
     protected fun configReplyView() {
         val replyCount = message.replyCount
 
-        if (!style.isThreadEnabled
-            || !channel.config.isRepliesEnabled
-            || (bindingPosition == 0 && message.id.isEmpty())
-            || isDeletedMessage()
-            || isFailedMessage()
-            || replyCount == 0 || isThread()
+        if (!style.isThreadEnabled ||
+            !channel.config.isRepliesEnabled ||
+            (bindingPosition == 0 && message.id.isEmpty()) ||
+            isDeletedMessage() ||
+            isFailedMessage() ||
+            replyCount == 0 || isThread()
         ) {
             iv_reply.visibility = View.GONE
             tv_reply.visibility = View.GONE
