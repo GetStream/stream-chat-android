@@ -258,7 +258,7 @@ open class ChatNotificationHandler @JvmOverloads constructor(
     }
 
     open fun getFirebaseInstanceId(): FirebaseInstanceId? =
-        if (FirebaseApp.getApps(context).isNotEmpty()) {
+        if (config.useProvidedFirebaseInstance && FirebaseApp.getApps(context).isNotEmpty()) {
             FirebaseInstanceId.getInstance()
         } else {
             null

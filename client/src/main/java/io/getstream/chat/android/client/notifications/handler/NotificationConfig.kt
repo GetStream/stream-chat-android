@@ -10,5 +10,6 @@ data class NotificationConfig(
     val firebaseChannelIdKey: String = "stream-chat-channel-id",
     val firebaseChannelTypeKey: String = "stream-chat-channel-type",
     val errorCaseNotificationTitle: Int = R.string.stream_chat_notification_title,
-    val errorCaseNotificationContent: Int = R.string.stream_chat_notification_content
+    val errorCaseNotificationContent: Int = R.string.stream_chat_notification_content,
+    val useProvidedFirebaseInstance: Boolean = true
 )
