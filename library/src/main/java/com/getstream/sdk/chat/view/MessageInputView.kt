@@ -96,7 +96,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         (context as? ComponentActivity)
             ?.registerForActivityResult(DocumentTreeAccessContract()) { uri: Uri? ->
                 messageInputController.onClickOpenSelectView(
-                    null,
                     false,
                     uri
                 )
@@ -189,18 +188,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private fun configAttachmentUI() {
         // TODO: make the attachment UI into it's own view and allow you to change it.
-        binding.rvComposer.layoutManager =
+        binding.mediaComposer.layoutManager =
             GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
         binding.btnClose.setOnClickListener {
             messageInputController.onClickCloseBackGroundView()
             Utils.hideSoftKeyboard(context as Activity)
         }
-        binding.llMedia.setOnClickListener {
-            messageInputController.onClickOpenSelectView(
-                null,
-                true
-            )
-        }
+        binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(true) }
         binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
         binding.llFile.setOnClickListener {
             documentTreeAccessContract?.launch(Unit)
@@ -312,7 +306,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         attachment.titleLink = url
         attachment.title = inputContentInfo.description.label.toString()
         attachment.type = ModelType.attach_giphy
-        messageInputController.setSelectedAttachments(mutableListOf(AttachmentMetaData(attachment)))
+        messageInputController.setSelectedAttachments(setOf(AttachmentMetaData(attachment)))
         binding.messageTextInput.setText("")
         onSendMessage()
         return true

@@ -27,7 +27,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.util.ArrayList
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
 
@@ -41,15 +40,22 @@ internal class MessageInputController(
     private val view: MessageInputView,
     private val style: MessageInputStyle
 ) {
+
+    private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
+    private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
+
+    init {
+        binding.rvMedia.layoutManager = gridLayoutManager
+        binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
+    }
+
     private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
     private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
     private var fileAttachmentAdapter: FileAttachmentListAdapter? = null
     private var selectedFileAttachmentAdapter: AttachmentListAdapter? = null
     private var messageInputType: MessageInputType? = null
-    private var selectedAttachments: MutableList<AttachmentMetaData> = ArrayList()
-    private var attachmentData: List<AttachmentMetaData> = emptyList()
-    private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
-    private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
+    private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
+    private var attachmentData: Set<AttachmentMetaData> = emptySet()
     internal var members: List<Member> = listOf()
     internal var channelCommands: List<Command> = listOf()
     internal var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, newValue ->
@@ -85,12 +91,12 @@ internal class MessageInputController(
         binding.cbSendAlsoToChannel.visible(false)
     }
 
-    internal fun getSelectedAttachments(): List<AttachmentMetaData> {
+    internal fun getSelectedAttachments(): Set<AttachmentMetaData> {
         return selectedAttachments
     }
 
-    internal fun setSelectedAttachments(selectedAttachments: MutableList<AttachmentMetaData>) {
-        this.selectedAttachments = selectedAttachments
+    internal fun setSelectedAttachments(selectedAttachments: Set<AttachmentMetaData>) {
+        this.selectedAttachments += selectedAttachments
     }
 
     internal fun onSendMessageClick(message: String) = when (val im = inputMode) {
@@ -131,19 +137,13 @@ internal class MessageInputController(
         binding.clAddFile.visibility = View.GONE
         binding.clSelectPhoto.visibility = View.GONE
         when (type) {
-            MessageInputType.EDIT_MESSAGE -> {
-            }
-            MessageInputType.ADD_FILE -> {
-                if (selectedAttachments.isNotEmpty()) return
-                binding.clAddFile.visibility = View.VISIBLE
-            }
+            MessageInputType.EDIT_MESSAGE -> Unit
+            MessageInputType.ADD_FILE -> binding.clAddFile.visibility = View.VISIBLE
             MessageInputType.UPLOAD_MEDIA, MessageInputType.UPLOAD_FILE -> {
                 binding.clSelectPhoto.visibility = View.VISIBLE
                 configAttachmentButtonVisible(false)
             }
-            MessageInputType.COMMAND, MessageInputType.MENTION -> {
-                binding.btnClose.visibility = View.GONE
-            }
+            MessageInputType.COMMAND, MessageInputType.MENTION -> binding.btnClose.visibility = View.GONE
         }
         binding.tvTitle.text = type.getLabel(view.context)
         messageInputType = type
@@ -176,37 +176,37 @@ internal class MessageInputController(
         binding.clSelectPhoto.visibility = View.GONE
         binding.root.setBackgroundResource(0)
         messageInputType = null
+        attachmentData = emptySet()
         configAttachmentButtonVisible(true)
     }
 
     private fun configSelectAttachView(isMedia: Boolean, treeUri: Uri? = null) {
         GlobalScope.launch(Dispatchers.Main) {
+            binding.progressBarFileLoader.visibility = View.VISIBLE
             attachmentData = getAttachmentsFromLocal(isMedia, treeUri)
             if (selectedAttachments.isEmpty()) {
                 setAttachmentAdapters(isMedia)
                 if (attachmentData.isEmpty()) {
-                    Utils.showMessage(
-                        view.context,
-                        view.context.getResources().getString(R.string.stream_no_media_error)
-                    )
+                    Utils.showMessage(view.context, R.string.stream_no_media_error)
                     onClickCloseBackGroundView()
                 }
-                binding.progressBarFileLoader.visibility = View.GONE
             } else {
-                showHideComposerAttachmentGalleryView(true, isMedia)
+                showComposerAttachmentGalleryView(isMedia)
                 setSelectedAttachmentAdapter(false, isMedia)
             }
+
+            binding.progressBarFileLoader.visibility = View.GONE
         }
     }
 
     private suspend fun getAttachmentsFromLocal(
         isMedia: Boolean,
         treeUri: Uri? = null
-    ): List<AttachmentMetaData> =
+    ): Set<AttachmentMetaData> =
         withContext(Dispatchers.IO) {
             when (isMedia) {
-                true -> StorageUtils.getMediaAttachments(view.context)
-                false -> StorageUtils.getFileAttachments(view.context, treeUri)
+                true -> StorageUtils.getMediaAttachments(view.context).toSet()
+                false -> StorageUtils.getFileAttachments(view.context, treeUri).toSet()
             }
         }
 
@@ -215,13 +215,13 @@ internal class MessageInputController(
             gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
             gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
             mediaAttachmentAdapter =
-                MediaAttachmentAdapter(attachmentData) { updateAttachment(it, isMedia) }
+                MediaAttachmentAdapter(attachmentData.toList()) { updateAttachment(it, isMedia) }
             binding.rvMedia.adapter = mediaAttachmentAdapter
         } else {
             gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
             gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
             fileAttachmentAdapter =
-                FileAttachmentListAdapter(attachmentData) { updateAttachment(it, isMedia) }
+                FileAttachmentListAdapter(attachmentData.toList()) { updateAttachment(it, isMedia) }
             binding.rvMedia.adapter = fileAttachmentAdapter
         }
     }
@@ -229,21 +229,22 @@ internal class MessageInputController(
     private fun setSelectedAttachmentAdapter(fromGallery: Boolean, isMedia: Boolean) {
         if (isMedia) {
             selectedMediaAttachmentAdapter = MediaAttachmentSelectedAdapter(
-                view.context,
-                selectedAttachments,
-                MediaAttachmentSelectedAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData ->
-                    cancelAttachment(
-                        attachment,
-                        fromGallery,
-                        isMedia
-                    )
+                selectedAttachments.toList(),
+                object : MediaAttachmentSelectedAdapter.OnAttachmentCancelListener {
+                    override fun onCancel(attachment: AttachmentMetaData) {
+                        cancelAttachment(
+                            attachment,
+                            fromGallery,
+                            isMedia
+                        )
+                    }
                 }
             )
-            binding.rvComposer.adapter = selectedMediaAttachmentAdapter
+            binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
         } else {
             selectedFileAttachmentAdapter = AttachmentListAdapter(
                 view.context,
-                selectedAttachments,
+                selectedAttachments.toList(),
                 true,
                 false,
                 AttachmentListAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData ->
@@ -254,7 +255,7 @@ internal class MessageInputController(
                     )
                 }
             )
-            binding.lvComposer.adapter = selectedFileAttachmentAdapter
+            binding.fileComposer.adapter = selectedFileAttachmentAdapter
         }
     }
 
@@ -266,8 +267,8 @@ internal class MessageInputController(
 
     private fun unselectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
         attachment.isSelected = false
-        selectedAttachments.remove(attachment)
-        selectedAttachmentAdapterChanged(null, true, isMedia)
+        selectedAttachments = selectedAttachments - attachment
+        removeAttachmentFromAdapter(attachment, true, isMedia)
         configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
             true
@@ -279,10 +280,10 @@ internal class MessageInputController(
             Utils.showMessage(view.context, R.string.stream_large_size_file_error)
         } else {
             attachment.isSelected = true
-            selectedAttachments.add(attachment)
-            showHideComposerAttachmentGalleryView(true, isMedia)
+            selectedAttachments = selectedAttachments + attachment
+            showComposerAttachmentGalleryView(isMedia)
             configSendButtonEnableState()
-            selectedAttachmentAdapterChanged(attachment, true, isMedia)
+            addAttachmentToAdapter(attachment, true, isMedia)
         }
     }
 
@@ -292,9 +293,9 @@ internal class MessageInputController(
         isMedia: Boolean
     ) {
         attachment.isSelected = false
-        selectedAttachments.remove(attachment)
+        selectedAttachments = selectedAttachments - attachment
         if (fromGallery) totalAttachmentAdapterChanged(null, isMedia)
-        selectedAttachmentAdapterChanged(null, fromGallery, isMedia)
+        removeAttachmentFromAdapter(attachment, fromGallery, isMedia)
         configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
             true
@@ -306,10 +307,12 @@ internal class MessageInputController(
         binding.ivOpenAttach.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
-    private fun showHideComposerAttachmentGalleryView(show: Boolean, isMedia: Boolean) {
-        if (isMedia) binding.rvComposer.visibility =
-            if (show) View.VISIBLE else View.GONE else binding.lvComposer.visibility =
-            if (show) View.VISIBLE else View.GONE
+    private fun showComposerAttachmentGalleryView(isMedia: Boolean) {
+        if (isMedia) {
+            binding.mediaComposer.visibility = View.VISIBLE
+        } else {
+            binding.fileComposer.visibility = View.VISIBLE
+        }
     }
 
     internal fun onCameraClick() {
@@ -320,28 +323,31 @@ internal class MessageInputController(
         }
     }
 
-    internal fun onClickOpenSelectView(editAttachments: MutableList<AttachmentMetaData>?, isMedia: Boolean, treeUri: Uri? = null) {
+    internal fun onClickOpenSelectView(isMedia: Boolean, treeUri: Uri? = null) =
+        openSelectView(selectedAttachments, isMedia, treeUri)
+
+    private fun openSelectView(
+        editAttachments: Set<AttachmentMetaData>,
+        isMedia: Boolean,
+        treeUri: Uri? = null
+    ) {
         if (isMedia && !PermissionChecker.isGrantedStoragePermissions(view.context)) {
             PermissionChecker.checkStoragePermissions(view) {
-                onClickOpenSelectView(
-                    editAttachments,
-                    isMedia
-                )
+                openSelectView(editAttachments, isMedia)
             }
             return
         } else if (!isMedia && treeUri == null) {
             Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
             return
         }
-        initAdapter()
-        if (editAttachments != null && editAttachments.isNotEmpty()) setSelectedAttachments(
-            editAttachments
-        )
-        configSelectAttachView(isMedia, treeUri)
-        if (selectedAttachments.isEmpty()) {
-            binding.progressBarFileLoader.visibility = View.VISIBLE
-            onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
+        //disposeAdapters()
+        if (editAttachments.isNotEmpty()) {
+            setSelectedAttachments(editAttachments)
         }
+        configSelectAttachView(isMedia, treeUri)
+        //if (selectedAttachments.isEmpty()) {
+        onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
+        //}
     }
 
     private fun totalAttachmentAdapterChanged(attachment: AttachmentMetaData?, isMedia: Boolean) {
@@ -353,6 +359,44 @@ internal class MessageInputController(
             val index = attachmentData.indexOf(attachment)
             if (index != -1) mediaAttachmentAdapter?.notifyItemChanged(index)
         } else fileAttachmentAdapter?.notifyDataSetChanged()
+    }
+
+    private fun removeAttachmentFromAdapter(
+        attachment: AttachmentMetaData,
+        fromGallery: Boolean,
+        isMedia: Boolean
+    ) {
+        if (isMedia) {
+            selectedMediaAttachmentAdapter?.removeAttachment(attachment) ?: setSelectedAttachmentAdapter(
+                fromGallery,
+                isMedia
+            )
+        } else {
+            if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
+                fromGallery,
+                isMedia
+            )
+            selectedFileAttachmentAdapter!!.notifyDataSetChanged()
+        }
+    }
+
+    private fun addAttachmentToAdapter(
+        attachment: AttachmentMetaData,
+        fromGallery: Boolean,
+        isMedia: Boolean
+    ) {
+        if (isMedia) {
+            selectedMediaAttachmentAdapter?.addAttachment(attachment) ?: setSelectedAttachmentAdapter(
+                fromGallery,
+                isMedia
+            )
+        } else {
+            if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
+                fromGallery,
+                isMedia
+            )
+            selectedFileAttachmentAdapter!!.notifyDataSetChanged()
+        }
     }
 
     private fun selectedAttachmentAdapterChanged(
@@ -370,7 +414,11 @@ internal class MessageInputController(
                 return
             }
             val index = selectedAttachments.indexOf(attachment)
-            if (index != -1) selectedMediaAttachmentAdapter!!.notifyItemChanged(index)
+            if (index != -1) {
+                selectedMediaAttachmentAdapter!!.notifyItemChanged(index)
+            } else {
+                selectedMediaAttachmentAdapter!!.notifyDataSetChanged()
+            }
         } else {
             if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
                 fromGallery,
@@ -390,22 +438,16 @@ internal class MessageInputController(
 
     internal fun initSendMessage() {
         binding.messageTextInput.setText("")
-        initAdapter()
+        disposeAdapters()
         onClickCloseBackGroundView()
     }
 
-    private fun initAdapter() {
-        binding.lvComposer.removeAllViewsInLayout()
-        binding.rvComposer.removeAllViewsInLayout()
-        binding.lvComposer.visibility = View.GONE
-        binding.rvComposer.visibility = View.GONE
-        binding.rvMedia.layoutManager = gridLayoutManager
-        binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
-        mediaAttachmentAdapter?.clear()
-        fileAttachmentAdapter?.clear()
-        selectedAttachments.clear()
+    private fun disposeAdapters() {
+        binding.fileComposer.removeAllViewsInLayout()
+        binding.mediaComposer.removeAllViewsInLayout()
+        binding.fileComposer.visibility = View.GONE
+        binding.mediaComposer.visibility = View.GONE
         mediaAttachmentAdapter = null
-        selectedMediaAttachmentAdapter = null
         fileAttachmentAdapter = null
         selectedFileAttachmentAdapter = null
     }

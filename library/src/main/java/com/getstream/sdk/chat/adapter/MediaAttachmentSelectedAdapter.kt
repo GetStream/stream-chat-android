@@ -1,113 +1,114 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
-import android.content.Context;
-import android.graphics.Color;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.graphics.Color
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
+import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.StringUtility
+import io.getstream.chat.android.client.logger.ChatLogger
+import top.defaults.drawabletoolbox.DrawableBuilder
 
-import androidx.recyclerview.widget.RecyclerView;
+class MediaAttachmentSelectedAdapter(
+    private var attachments: List<AttachmentMetaData>
+) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
+    private var cancelListener: OnAttachmentCancelListener? = null
 
-import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding;
-import com.getstream.sdk.chat.model.AttachmentMetaData;
-import com.getstream.sdk.chat.model.ModelType;
-import com.getstream.sdk.chat.utils.StringUtility;
-
-import java.util.List;
-
-import io.getstream.chat.android.client.logger.ChatLogger;
-import top.defaults.drawabletoolbox.DrawableBuilder;
-
-public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder> {
-
-    private final String TAG = MediaAttachmentSelectedAdapter.class.getSimpleName();
-    private OnAttachmentCancelListener cancelListener;
-    private Context context;
-    private List<AttachmentMetaData> attachments;
-
-    public MediaAttachmentSelectedAdapter(Context context, List<AttachmentMetaData> attachments) {
-        this.context = context;
-        this.attachments = attachments;
+    constructor(
+        attachments: List<AttachmentMetaData>,
+        listener: OnAttachmentCancelListener
+    ) : this(attachments) {
+        cancelListener = listener
     }
 
-    public MediaAttachmentSelectedAdapter(Context context,
-                                          List<AttachmentMetaData> attachments,
-                                          OnAttachmentCancelListener listener) {
-        this(context, attachments);
-        this.cancelListener = listener;
-    }
-
-    @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent,
-                                           int viewType) {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MyViewHolder {
         // create a new view
-        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        StreamItemAttachedMediaBinding itemBinding =
-                StreamItemAttachedMediaBinding.inflate(layoutInflater, parent, false);
-        return new MyViewHolder(itemBinding);
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val itemBinding = StreamItemAttachedMediaBinding.inflate(layoutInflater, parent, false)
+        return MyViewHolder(itemBinding)
     }
 
-    @Override
-    public void onBindViewHolder(final MyViewHolder holder, int position) {
-        holder.bind(attachments.get(position), cancelListener);
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        holder.bind(attachments[position], cancelListener)
     }
 
-    @Override
-    public int getItemCount() {
-        return attachments.size();
+    override fun getItemCount(): Int {
+        return attachments.size
     }
 
-    public interface OnAttachmentCancelListener {
-        void onCancel(AttachmentMetaData attachment);
+    internal fun setAttachments(attachments: List<AttachmentMetaData>) {
+        this.attachments = attachments
+        notifyDataSetChanged()
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        private final StreamItemAttachedMediaBinding binding;
-
-        public MyViewHolder(StreamItemAttachedMediaBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
+    fun removeAttachment(attachment: AttachmentMetaData) {
+        val index = attachments.indexOf(attachment)
+        attachments = attachments - attachment
+        if (index != -1) {
+            notifyItemRemoved(index)
+        } else {
+            notifyDataSetChanged()
         }
+    }
 
-        public void bind(AttachmentMetaData attachment, final OnAttachmentCancelListener cancelListener) {
-            int cornerRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_input_upload_media_radius);
+    fun addAttachment(attachment: AttachmentMetaData) {
+        attachments = attachments + attachment
+        notifyItemInserted(attachments.lastIndex)
+    }
 
-            binding.ivMedia.setShape(context, new DrawableBuilder()
+    interface OnAttachmentCancelListener {
+        fun onCancel(attachment: AttachmentMetaData)
+    }
+
+    inner class MyViewHolder(private val binding: StreamItemAttachedMediaBinding) : RecyclerView.ViewHolder(
+        binding.root
+    ) {
+        fun bind(attachment: AttachmentMetaData, cancelListener: OnAttachmentCancelListener?) {
+            val cornerRadius =
+                itemView.context.resources.getDimensionPixelSize(R.dimen.stream_input_upload_media_radius)
+            binding.ivMedia.setShape(
+                itemView.context, DrawableBuilder()
                     .rectangle()
                     .solidColor(Color.BLACK)
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-                    .build());
-
+                    .build()
+            )
             if (attachment.uri != null) {
-                Glide.with(context)
-                        .load(attachment.uri)
-                        .into(binding.ivMedia);
+                Glide.with(itemView.context)
+                    .load(attachment.uri)
+                    .into(binding.ivMedia)
             } else {
                 try {
-                    if (attachment.mimeType.equals(ModelType.attach_mime_mov) ||
-                            attachment.mimeType.equals(ModelType.attach_mime_mp4)) {
-                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
+                    if (attachment.mimeType == ModelType.attach_mime_mov ||
+                        attachment.mimeType == ModelType.attach_mime_mp4
+                    ) {
+                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder)
                     }
-                } catch (Exception e) {
-                    ChatLogger.Companion.getInstance().logE(TAG, e);
+                } catch (e: Exception) {
+                    ChatLogger.instance.logE(TAG, e)
                 }
             }
-
-            if (ModelType.attach_video.equals(attachment.type)) {
-                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
+            if (ModelType.attach_video == attachment.type) {
+                binding.tvLength.text = StringUtility.convertVideoLength(attachment.videoLength)
             } else {
-                binding.tvLength.setText("");
+                binding.tvLength.text = ""
             }
-            binding.btnClose.setOnClickListener(view -> {
-                if (cancelListener != null)
-                    cancelListener.onCancel(attachment);
-            });
-
-            binding.ivMask.setVisibility(View.INVISIBLE);
-            binding.progressBar.setVisibility(View.INVISIBLE);
-            binding.executePendingBindings();
+            binding.btnClose.setOnClickListener { cancelListener?.onCancel(attachment) }
+            binding.ivMask.visibility = View.INVISIBLE
+            binding.progressBar.visibility = View.INVISIBLE
+            binding.executePendingBindings()
         }
+    }
+
+    companion object {
+        private val TAG = MediaAttachmentSelectedAdapter::class.java.simpleName
     }
 }
