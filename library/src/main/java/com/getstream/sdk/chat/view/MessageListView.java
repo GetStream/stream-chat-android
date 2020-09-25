@@ -314,7 +314,10 @@ public class MessageListView extends ConstraintLayout {
             bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
         }
 
-        // Inject factory
+        // Inject Attachment factory
+        attachmentViewHolderFactory.setListenerContainerInternal(listenerContainer);
+
+        // Inject Message factory
         messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
         messageViewHolderFactory.setAttachmentViewHolderFactoryInternal(attachmentViewHolderFactory);
         messageViewHolderFactory.setBubbleHelperInternal(bubbleHelper);
