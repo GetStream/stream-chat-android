@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
-import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
@@ -61,7 +60,7 @@ internal open class ChatModules(val config: ChatClientConfig) {
         handler: ChatNotificationHandler,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotificationsImpl(handler, api, handler.context)
+        return ChatNotifications.create(handler, api, handler.context)
     }
 
     private fun buildRetrofit(
