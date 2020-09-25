@@ -1,12 +1,6 @@
 name: Android CI
 
-on:
-  pull_request:
-    branches:
-      - '*'
-  push:
-    branches:
-      - '*'
+on: [push, pull_request]
 
 jobs:
   test:
@@ -39,4 +33,3 @@ jobs:
         with:
           name: testReleaseUnitTest
           path: client/build/reports/tests/testReleaseUnitTest
-
