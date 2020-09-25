@@ -18,10 +18,7 @@ class TypingIndicatorViewHolder(
         StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<TypingItem>(binding.root) {
 
-    override fun bind(
-        messageListItem: TypingItem,
-        position: Int
-    ) {
+    override fun bind(messageListItem: TypingItem) {
         binding.llTypingIndicator.visibility = View.VISIBLE
         binding.ivTypingIndicator.visibility = View.VISIBLE
         binding.llTypingIndicator.removeAllViews()
