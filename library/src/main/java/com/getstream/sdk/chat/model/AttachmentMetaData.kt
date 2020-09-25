@@ -1,42 +1,34 @@
-package com.getstream.sdk.chat.model;
+package com.getstream.sdk.chat.model
 
-import android.net.Uri;
+import android.net.Uri
+import com.getstream.sdk.chat.utils.Utils
+import io.getstream.chat.android.client.models.Attachment
+import java.io.File
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+class AttachmentMetaData {
+    var isSelected = false
+    var videoLength: Long = 0
+    var size: Long = 0
+    var uri: Uri? = null
+    var type: String? = null
+    var mimeType: String?
+    var title: String? = null
+    var file: File? = null
 
-import com.getstream.sdk.chat.utils.Utils;
-
-import java.io.File;
-
-import io.getstream.chat.android.client.models.Attachment;
-
-public class AttachmentMetaData {
-    public boolean isSelected;
-    public long videoLength;
-    public long size;
-    @Nullable
-    public Uri uri;
-    public String type;
-    public String mimeType;
-    public String title;
-    @Nullable
-    public File file;
-
-    public AttachmentMetaData(Attachment attachment) {
-        this.type = attachment.getType();
-        this.mimeType = attachment.getMimeType();
-        this.title = attachment.getTitle();
+    constructor(attachment: Attachment) {
+        this.type = attachment.type
+        this.mimeType = attachment.mimeType
+        this.title = attachment.title
     }
 
-    public AttachmentMetaData(@NonNull File file) {
-        this.file = file;
-        this.uri = Uri.fromFile(file);
-        this.mimeType = Utils.getMimeType(file);
+    constructor(file: File) {
+        this.file = file
+        this.uri = Uri.fromFile(file)
+        this.mimeType = Utils.getMimeType(file)
     }
 
-    public AttachmentMetaData(@NonNull Uri uri, String mimeType) {
-        this.uri = uri;
-        this.mimeType = mimeType;
+    constructor(uri: Uri, mimeType: String?) {
+        this.uri = uri
+        this.mimeType = mimeType
     }
 }

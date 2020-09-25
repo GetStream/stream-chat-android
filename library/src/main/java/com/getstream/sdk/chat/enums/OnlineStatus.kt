@@ -1,8 +1,8 @@
-package com.getstream.sdk.chat.enums;
+package com.getstream.sdk.chat.enums
 
-public enum OnlineStatus {
+enum class OnlineStatus {
     CONNECTED,
     CONNECTING,
     NOT_INITIALIZED,
-    FAILED,
+    FAILED
 }

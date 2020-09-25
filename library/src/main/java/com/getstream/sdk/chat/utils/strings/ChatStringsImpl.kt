@@ -1,23 +1,13 @@
-package com.getstream.sdk.chat.utils.strings;
+package com.getstream.sdk.chat.utils.strings
 
-import android.content.Context;
+import android.content.Context
 
-public class ChatStringsImpl implements ChatStrings {
-
-    private final Context appContext;
-
-    public ChatStringsImpl(Context appContext) {
-
-        this.appContext = appContext;
+class ChatStringsImpl(private val appContext: Context) : ChatStrings {
+    override fun get(resId: Int): String {
+        return appContext.getString(resId)
     }
 
-    @Override
-    public String get(int resId) {
-        return appContext.getString(resId);
-    }
-
-    @Override
-    public String get(int resId, Object... formatArgs) {
-        return appContext.getString(resId, formatArgs);
+    override fun get(resId: Int, vararg formatArgs: Any?): String {
+        return appContext.getString(resId, *formatArgs)
     }
 }

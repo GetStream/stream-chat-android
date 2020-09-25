@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
+import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.view.MessageInputStyle
@@ -145,7 +146,7 @@ internal class MessageInputController(
                 binding.btnClose.visibility = View.GONE
             }
         }
-        binding.tvTitle.text = type.getLabel(view.context)
+        binding.tvTitle.text = type.label
         messageInputType = type
         configPermissions()
     }

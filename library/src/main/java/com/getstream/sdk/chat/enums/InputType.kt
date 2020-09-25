@@ -1,6 +1,6 @@
-package com.getstream.sdk.chat.enums;
+package com.getstream.sdk.chat.enums
 
-public enum InputType {
+enum class InputType {
     DEFAULT,
     SELECT,
     EDIT

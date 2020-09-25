@@ -1,8 +1,8 @@
-package com.getstream.sdk.chat.utils.strings;
+package com.getstream.sdk.chat.utils.strings
 
-import androidx.annotation.StringRes;
+import androidx.annotation.StringRes
 
-public interface ChatStrings {
-    String get(@StringRes int resId);
-    String get(@StringRes int resId, Object... formatArgs);
+interface ChatStrings {
+    fun get(@StringRes resId: Int): String
+    fun get(@StringRes resId: Int, vararg formatArgs: Any?): String
 }
