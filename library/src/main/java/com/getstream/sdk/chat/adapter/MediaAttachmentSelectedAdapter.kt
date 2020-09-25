@@ -64,6 +64,11 @@ class MediaAttachmentSelectedAdapter(
         notifyItemInserted(attachments.lastIndex)
     }
 
+    fun clear() {
+        attachments = emptyList()
+        notifyDataSetChanged()
+    }
+
     interface OnAttachmentCancelListener {
         fun onCancel(attachment: AttachmentMetaData)
     }

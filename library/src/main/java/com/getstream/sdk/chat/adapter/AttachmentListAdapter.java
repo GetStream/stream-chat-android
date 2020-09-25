@@ -22,10 +22,10 @@ public class AttachmentListAdapter extends BaseAdapter {
 
     private final String TAG = AttachmentListAdapter.class.getSimpleName();
 
-    private LayoutInflater layoutInflater;
-    private List<AttachmentMetaData> attachments;
-    private boolean localAttach;
-    private boolean isTotalFileAdapter;
+    private final LayoutInflater layoutInflater;
+    private final List<AttachmentMetaData> attachments;
+    private final boolean localAttach;
+    private final boolean isTotalFileAdapter;
     private OnAttachmentCancelListener cancelListener;
 
     public AttachmentListAdapter(Context context,
@@ -128,6 +128,11 @@ public class AttachmentListAdapter extends BaseAdapter {
                     cancelListener.onCancel(attachment);
             });
         }
+    }
+
+    public void clear() {
+        attachments.clear();
+        notifyDataSetChanged();
     }
 
     // endregion

@@ -31,7 +31,7 @@ class FileAttachmentListAdapter(
 
     override fun getItemCount(): Int = attachments.size
     fun clear() {
-        attachments = listOf()
+        attachments = emptyList()
         notifyDataSetChanged()
     }
 

@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.view.common.visible
 
 class MediaAttachmentAdapter(
-    private val attachments: List<AttachmentMetaData>,
+    private var attachments: List<AttachmentMetaData>,
     private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {
 
@@ -39,6 +39,11 @@ class MediaAttachmentAdapter(
             attachments[index].isSelected = isSelected
             notifyItemChanged(index)
         }
+    }
+
+    fun clear() {
+        attachments = emptyList()
+        notifyDataSetChanged()
     }
 
     class MyViewHolder(

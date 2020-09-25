@@ -339,14 +339,11 @@ internal class MessageInputController(
             Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
             return
         }
-        //disposeAdapters()
         if (editAttachments.isNotEmpty()) {
             setSelectedAttachments(editAttachments)
         }
         configSelectAttachView(isMedia, treeUri)
-        //if (selectedAttachments.isEmpty()) {
         onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
-        //}
     }
 
     private fun totalAttachmentAdapterChanged(attachment: AttachmentMetaData?, isMedia: Boolean) {
@@ -414,13 +411,12 @@ internal class MessageInputController(
     }
 
     private fun disposeAdapters() {
-        binding.fileComposer.removeAllViewsInLayout()
-        binding.mediaComposer.removeAllViewsInLayout()
         binding.fileComposer.visibility = View.GONE
         binding.mediaComposer.visibility = View.GONE
-        totalMediaAttachmentAdapter = null
-        totalFileAttachmentAdapter = null
-        selectedFileAttachmentAdapter = null
+        totalMediaAttachmentAdapter?.clear()
+        totalFileAttachmentAdapter?.clear()
+        selectedFileAttachmentAdapter?.clear()
+        selectedMediaAttachmentAdapter?.clear()
     }
 
     internal fun onFileCaptured(file: File) {
