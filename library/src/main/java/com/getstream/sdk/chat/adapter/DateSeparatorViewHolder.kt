@@ -9,6 +9,7 @@ import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.databinding.StreamItemDateSeparatorBinding
 import com.getstream.sdk.chat.enums.Dates
+import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import java.util.Date
 

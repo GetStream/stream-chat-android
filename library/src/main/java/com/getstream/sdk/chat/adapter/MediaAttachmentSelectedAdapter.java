@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,14 +81,16 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                     .cornerRadii(cornerRadius, cornerRadius, cornerRadius, cornerRadius)
                     .build());
 
-            if (attachment.uri != null) {
+            final Uri uri = attachment.getUri();
+            if (uri != null) {
                 Glide.with(context)
-                        .load(attachment.uri)
+                        .load(uri)
                         .into(binding.ivMedia);
             } else {
                 try {
-                    if (attachment.mimeType.equals(ModelType.attach_mime_mov) ||
-                            attachment.mimeType.equals(ModelType.attach_mime_mp4)) {
+                    final String mimeType = attachment.getMimeType();
+                    if (mimeType.equals(ModelType.attach_mime_mov) ||
+                            mimeType.equals(ModelType.attach_mime_mp4)) {
                         binding.ivMedia.setImageResource(R.drawable.stream_placeholder);
                     }
                 } catch (Exception e) {
@@ -95,8 +98,8 @@ public class MediaAttachmentSelectedAdapter extends RecyclerView.Adapter<MediaAt
                 }
             }
 
-            if (ModelType.attach_video.equals(attachment.type)) {
-                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.videoLength));
+            if (ModelType.attach_video.equals(attachment.getType())) {
+                binding.tvLength.setText(StringUtility.convertVideoLength(attachment.getVideoLength()));
             } else {
                 binding.tvLength.setText("");
             }
