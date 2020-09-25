@@ -19,6 +19,10 @@ sealed class CidEvent : ChatEvent() {
     abstract val cid: String
 }
 
+interface UserEvent {
+    val user: User
+}
+
 data class ChannelCreatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
