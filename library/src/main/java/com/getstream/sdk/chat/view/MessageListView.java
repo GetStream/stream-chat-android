@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
 import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
@@ -25,6 +30,7 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 import java.util.List;
@@ -49,10 +55,17 @@ import kotlin.jvm.functions.Function2;
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView extends RecyclerView {
+public class MessageListView extends ConstraintLayout {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
     protected MessageListViewStyle style;
+
+    private RecyclerView messagesRV;
+    private FloatingActionButton unseenMessagesBtn;
+    private TextView unseenMessagesCountTV;
+    private int lastViewedPosition = 0;
+
+    private int unseenItems = 0;
 
     @Nullable
     private MessageListItemAdapter adapter = null;
@@ -179,14 +192,39 @@ public class MessageListView extends RecyclerView {
     }
 
     private void init(Context context) {
-        layoutManager = new LinearLayoutManager(context);
+        LayoutInflater.from(context).inflate(R.layout.stream_message_list_view, this, true);
+
+        initRecyclerView();
+        initUnseenMessagesButton();
+        initUnseenMessagesView();
+
+        hasScrolledUp = false;
+    }
+
+    private void initRecyclerView() {
+        messagesRV = findViewById(R.id.chatMessagesRV);
+
+        layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setStackFromEnd(true);
 
-        this.setLayoutManager(layoutManager);
-        hasScrolledUp = false;
-        setHasFixedSize(true);
-        setItemViewCacheSize(20);
+        messagesRV.setLayoutManager(layoutManager);
+        messagesRV.setHasFixedSize(true);
+        messagesRV.setItemViewCacheSize(20);
     }
+
+    private void initUnseenMessagesButton() {
+        unseenMessagesBtn = findViewById(R.id.unseenMessagesBtn);
+        unseenMessagesBtn.hide();
+        unseenMessagesBtn.setOnClickListener(view ->
+                messagesRV.smoothScrollToPosition(lastPosition())
+        );
+    }
+
+    private void initUnseenMessagesView() {
+        unseenMessagesCountTV = findViewById(R.id.unseenMessagesCountTV);
+        unseenMessagesCountTV.setVisibility(View.GONE);
+    }
+
 
     // region Init
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
@@ -194,15 +232,13 @@ public class MessageListView extends RecyclerView {
         style = new MessageListViewStyle(context, attrs);
     }
 
-    // set the adapter and apply the style.
-    @Override
-    @Deprecated
-    public final void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setMessageListItemAdapter instead please");
+    //private methods
+    private int lastPosition() {
+        return adapter.getItemCount() - 1;
     }
 
     private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
-        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        messagesRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (layoutManager != null) {
@@ -212,10 +248,32 @@ public class MessageListView extends RecyclerView {
                         endRegionReachedHandler.invoke();
                     }
 
-                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3); //TODO: investigate magic number 3
+                    hasScrolledUp = currentLastVisible < lastPosition();
                     lVPosition = currentLastVisible;
                     fVPosition = currentFirstVisible;
-                    threadParentPosition = lVPosition;
+
+                    lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition);
+
+                    unseenItems = adapter.getItemCount() - 1 - lastViewedPosition;
+
+                    if (unseenItems <= 0) {
+                        lastMessageReadHandler.invoke();
+                        unseenMessagesCountTV.setVisibility(View.GONE);
+                    } else {
+                        unseenMessagesCountTV.setVisibility(View.VISIBLE);
+                        unseenMessagesCountTV.setText(String.valueOf(unseenItems));
+                    }
+
+                    if (hasScrolledUp) {
+                        if (!unseenMessagesBtn.isShown()) {
+                            unseenMessagesBtn.show();
+                        }
+                    } else {
+                        if (unseenMessagesBtn.isShown()) {
+                            unseenMessagesBtn.hide();
+                        }
+                    }
+
                 }
             }
         });
@@ -232,7 +290,8 @@ public class MessageListView extends RecyclerView {
                 postDelayed(() -> lockScrollUp = false, 500);
             }
         });
-        super.setAdapter(adapter);
+
+        messagesRV.setAdapter(adapter);
     }
 
     public void init(Channel channel, User currentUser) {
@@ -324,23 +383,7 @@ public class MessageListView extends RecyclerView {
             layoutManager.scrollToPosition(newPosition);
             return;
         }
-        // check lastmessage update
-        if (!entities.isEmpty()) {
-            final MessageListItem lastListItem = entities.get(entities.size() - 1);
-            if (lastListItem instanceof MessageListItem.MessageItem) {
-                final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
-                // Checks if we should scroll to bottom because last message was updated.
-                // If it's a new message it will be marked as read in "else" branch, otherwise it
-                // should be already marked as read.
-                if (scrolledBottom() && justUpdated(lastMessage)) {
-                    int newPosition = adapter.getItemCount() - 1;
-                    logger.logI("just update last message");
 
-                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
-
-                }
-            }
-        }
         int newSize = adapter.getItemCount();
         int sizeGrewBy = newSize - oldSize;
 
@@ -363,7 +406,7 @@ public class MessageListView extends RecyclerView {
             // to stay at the relative 0 we should go to 0 + size of new messages...
 
             int newPosition;// = oldPosition + sizeGrewBy;
-            newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
+            newPosition = ((LinearLayoutManager) messagesRV.getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
             layoutManager.scrollToPosition(newPosition);
         } else {
             if (newSize == 0) return;
@@ -374,13 +417,18 @@ public class MessageListView extends RecyclerView {
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
-            if (hasScrolledUp) {
-                // always scroll to bottom when current user posts a message
-                if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
-                    layoutManager.scrollToPosition(newPosition);
-                }
+            // Scroll to bottom when the user wrote the message.
+            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine()) {
+                scrollToBottom();
+            } else if (!hasScrolledUp) { //If at the screen is at bottom, it stays at the bottom.
+                scrollToBottom();
             } else {
-                layoutManager.scrollToPosition(newPosition);
+                unseenItems = newSize - 1 - lastViewedPosition;
+
+                if (unseenItems > 0) {
+                    unseenMessagesCountTV.setVisibility(View.VISIBLE);
+                    unseenMessagesCountTV.setText(String.valueOf(unseenItems));
+                }
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
@@ -395,8 +443,7 @@ public class MessageListView extends RecyclerView {
     }
 
     private boolean scrolledBottom() {
-        int itemCount = adapter.getItemCount() - 2;
-        return lVPosition >= itemCount;
+        return lVPosition >= lastPosition();
     }
 
     private boolean justUpdated(Message message) {
@@ -405,6 +452,10 @@ public class MessageListView extends RecyclerView {
         long passedTime = now.getTime() - message.getUpdatedAt().getTime();
         return message.getUpdatedAt() != null
                 && passedTime < 3000;
+    }
+
+    private void scrollToBottom() {
+        layoutManager.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     /**
