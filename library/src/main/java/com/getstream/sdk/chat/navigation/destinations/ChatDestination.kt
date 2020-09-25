@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 
-abstract class ChatDestination(protected var context: Context) {
+abstract class ChatDestination(protected val context: Context) {
     abstract fun navigate()
 
     protected fun start(intent: Intent) {
@@ -12,6 +12,9 @@ abstract class ChatDestination(protected var context: Context) {
     }
 
     protected fun startForResult(intent: Intent, requestCode: Int) {
-        (context as Activity).startActivityForResult(intent, requestCode)
+        check(context is Activity) {
+            "startForResult can only be used if your destination uses an Activity as its Context"
+        }
+        context.startActivityForResult(intent, requestCode)
     }
 }
