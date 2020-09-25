@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.view.common.visible
 
 class MediaAttachmentAdapter(
-    private var attachments: List<AttachmentMetaData>,
+    private val attachments: List<AttachmentMetaData>,
     private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {
 
@@ -29,9 +29,16 @@ class MediaAttachmentAdapter(
 
     override fun getItemCount(): Int = attachments.size
 
-    fun clear() {
-        attachments = listOf()
-        notifyDataSetChanged()
+    fun selectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, true)
+
+    fun unselectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, false)
+
+    private fun toggleSelection(attachment: AttachmentMetaData, isSelected: Boolean) {
+        val index = attachments.indexOf(attachment)
+        if (index != -1) {
+            attachments[index].isSelected = isSelected
+            notifyItemChanged(index)
+        }
     }
 
     class MyViewHolder(

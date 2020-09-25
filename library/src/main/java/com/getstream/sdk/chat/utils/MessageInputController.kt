@@ -49,13 +49,13 @@ internal class MessageInputController(
         binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
     }
 
-    private var mediaAttachmentAdapter: MediaAttachmentAdapter? = null
+    private var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
     private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
-    private var fileAttachmentAdapter: FileAttachmentListAdapter? = null
+    private var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
     private var selectedFileAttachmentAdapter: AttachmentListAdapter? = null
     private var messageInputType: MessageInputType? = null
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
-    private var attachmentData: Set<AttachmentMetaData> = emptySet()
+    private var totalAttachments: Set<AttachmentMetaData> = emptySet()
     internal var members: List<Member> = listOf()
     internal var channelCommands: List<Command> = listOf()
     internal var inputMode: InputMode by Delegates.observable(InputMode.Normal as InputMode) { _, _, newValue ->
@@ -176,17 +176,17 @@ internal class MessageInputController(
         binding.clSelectPhoto.visibility = View.GONE
         binding.root.setBackgroundResource(0)
         messageInputType = null
-        attachmentData = emptySet()
+        totalAttachments = emptySet()
         configAttachmentButtonVisible(true)
     }
 
     private fun configSelectAttachView(isMedia: Boolean, treeUri: Uri? = null) {
         GlobalScope.launch(Dispatchers.Main) {
             binding.progressBarFileLoader.visibility = View.VISIBLE
-            attachmentData = getAttachmentsFromLocal(isMedia, treeUri)
+            totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
             if (selectedAttachments.isEmpty()) {
-                setAttachmentAdapters(isMedia)
-                if (attachmentData.isEmpty()) {
+                setTotalAttachmentAdapters(isMedia, totalAttachments.toList())
+                if (totalAttachments.isEmpty()) {
                     Utils.showMessage(view.context, R.string.stream_no_media_error)
                     onClickCloseBackGroundView()
                 }
@@ -210,19 +210,19 @@ internal class MessageInputController(
             }
         }
 
-    private fun setAttachmentAdapters(isMedia: Boolean) {
+    private fun setTotalAttachmentAdapters(isMedia: Boolean, totalAttachment: List<AttachmentMetaData>) {
         if (isMedia) {
             gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
             gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
-            mediaAttachmentAdapter =
-                MediaAttachmentAdapter(attachmentData.toList()) { updateAttachment(it, isMedia) }
-            binding.rvMedia.adapter = mediaAttachmentAdapter
+            totalMediaAttachmentAdapter =
+                MediaAttachmentAdapter(totalAttachment) { updateAttachment(it, isMedia) }
+            binding.rvMedia.adapter = totalMediaAttachmentAdapter
         } else {
             gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
             gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
-            fileAttachmentAdapter =
-                FileAttachmentListAdapter(attachmentData.toList()) { updateAttachment(it, isMedia) }
-            binding.rvMedia.adapter = fileAttachmentAdapter
+            totalFileAttachmentAdapter =
+                FileAttachmentListAdapter(totalAttachment) { updateAttachment(it, isMedia) }
+            binding.rvMedia.adapter = totalFileAttachmentAdapter
         }
     }
 
@@ -268,7 +268,7 @@ internal class MessageInputController(
     private fun unselectAttachment(attachment: AttachmentMetaData, isMedia: Boolean) {
         attachment.isSelected = false
         selectedAttachments = selectedAttachments - attachment
-        removeAttachmentFromAdapter(attachment, true, isMedia)
+        removeAttachmentFromAdapters(attachment, true, isMedia)
         configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
             true
@@ -283,7 +283,7 @@ internal class MessageInputController(
             selectedAttachments = selectedAttachments + attachment
             showComposerAttachmentGalleryView(isMedia)
             configSendButtonEnableState()
-            addAttachmentToAdapter(attachment, true, isMedia)
+            addAttachmentToAdapter(attachment, isMedia)
         }
     }
 
@@ -292,10 +292,9 @@ internal class MessageInputController(
         fromGallery: Boolean,
         isMedia: Boolean
     ) {
-        attachment.isSelected = false
         selectedAttachments = selectedAttachments - attachment
         if (fromGallery) totalAttachmentAdapterChanged(null, isMedia)
-        removeAttachmentFromAdapter(attachment, fromGallery, isMedia)
+        removeAttachmentFromAdapters(attachment, fromGallery, isMedia)
         configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
             true
@@ -353,15 +352,15 @@ internal class MessageInputController(
     private fun totalAttachmentAdapterChanged(attachment: AttachmentMetaData?, isMedia: Boolean) {
         if (isMedia) {
             if (attachment == null) {
-                mediaAttachmentAdapter?.notifyDataSetChanged()
+                totalMediaAttachmentAdapter?.notifyDataSetChanged()
                 return
             }
-            val index = attachmentData.indexOf(attachment)
-            if (index != -1) mediaAttachmentAdapter?.notifyItemChanged(index)
-        } else fileAttachmentAdapter?.notifyDataSetChanged()
+            val index = totalAttachments.indexOf(attachment)
+            if (index != -1) totalMediaAttachmentAdapter?.notifyItemChanged(index)
+        } else totalFileAttachmentAdapter?.notifyDataSetChanged()
     }
 
-    private fun removeAttachmentFromAdapter(
+    private fun removeAttachmentFromAdapters(
         attachment: AttachmentMetaData,
         fromGallery: Boolean,
         isMedia: Boolean
@@ -371,6 +370,7 @@ internal class MessageInputController(
                 fromGallery,
                 isMedia
             )
+            totalMediaAttachmentAdapter?.unselectAttachment(attachment) ?: setTotalAttachmentAdapters(isMedia, totalAttachments.toList())
         } else {
             if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
                 fromGallery,
@@ -382,46 +382,17 @@ internal class MessageInputController(
 
     private fun addAttachmentToAdapter(
         attachment: AttachmentMetaData,
-        fromGallery: Boolean,
         isMedia: Boolean
     ) {
         if (isMedia) {
             selectedMediaAttachmentAdapter?.addAttachment(attachment) ?: setSelectedAttachmentAdapter(
-                fromGallery,
+                true,
                 isMedia
             )
+            totalMediaAttachmentAdapter?.selectAttachment(attachment) ?: setTotalAttachmentAdapters(isMedia, totalAttachments.toList())
         } else {
             if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
-                fromGallery,
-                isMedia
-            )
-            selectedFileAttachmentAdapter!!.notifyDataSetChanged()
-        }
-    }
-
-    private fun selectedAttachmentAdapterChanged(
-        attachment: AttachmentMetaData?,
-        fromGallery: Boolean,
-        isMedia: Boolean
-    ) {
-        if (isMedia) {
-            if (selectedMediaAttachmentAdapter == null) setSelectedAttachmentAdapter(
-                fromGallery,
-                isMedia
-            )
-            if (attachment == null) {
-                selectedMediaAttachmentAdapter!!.notifyDataSetChanged()
-                return
-            }
-            val index = selectedAttachments.indexOf(attachment)
-            if (index != -1) {
-                selectedMediaAttachmentAdapter!!.notifyItemChanged(index)
-            } else {
-                selectedMediaAttachmentAdapter!!.notifyDataSetChanged()
-            }
-        } else {
-            if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
-                fromGallery,
+                true,
                 isMedia
             )
             selectedFileAttachmentAdapter!!.notifyDataSetChanged()
@@ -447,8 +418,8 @@ internal class MessageInputController(
         binding.mediaComposer.removeAllViewsInLayout()
         binding.fileComposer.visibility = View.GONE
         binding.mediaComposer.visibility = View.GONE
-        mediaAttachmentAdapter = null
-        fileAttachmentAdapter = null
+        totalMediaAttachmentAdapter = null
+        totalFileAttachmentAdapter = null
         selectedFileAttachmentAdapter = null
     }
 
