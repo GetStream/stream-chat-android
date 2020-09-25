@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -102,6 +103,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 is NotificationRemovedFromChannelEvent,
                 is MemberUpdatedEvent,
                 is ChannelUpdatedEvent,
+                is ChannelUpdatedByUserEvent,
                 is ChannelDeletedEvent,
                 is ChannelHiddenEvent,
                 is ChannelVisibleEvent,
@@ -288,6 +290,10 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     }
                 }
                 is ChannelUpdatedEvent -> {
+                    channels[event.cid] = ChannelEntity(event.channel)
+                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                }
+                is ChannelUpdatedByUserEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
                     users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
                 }
