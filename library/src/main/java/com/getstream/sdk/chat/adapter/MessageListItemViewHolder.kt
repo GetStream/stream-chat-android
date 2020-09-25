@@ -47,7 +47,7 @@ import java.text.SimpleDateFormat
 import java.util.Arrays
 
 class MessageListItemViewHolder(
-    private val binding: StreamItemMessageBinding,
+    parent: ViewGroup,
     protected val style: MessageListViewStyle,
     protected val channel: Channel,
     protected val viewHolderFactory: AttachmentViewHolderFactory,
@@ -58,7 +58,9 @@ class MessageListItemViewHolder(
     protected val reactionViewClickListener: ReactionViewClickListener,
     protected val userClickListener: MessageListView.UserClickListener,
     protected val readStateClickListener: ReadStateClickListener,
-    protected val giphySendListener: GiphySendListener
+    protected val giphySendListener: GiphySendListener,
+    private val binding: StreamItemMessageBinding =
+        StreamItemMessageBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
 
     protected var bindingPosition = 0
@@ -731,9 +733,5 @@ class MessageListItemViewHolder(
 
     companion object {
         private val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm")
-
-        fun binding(parent: ViewGroup): StreamItemMessageBinding {
-            return StreamItemMessageBinding.inflate(parent.inflater, parent, false)
-        }
     }
 }

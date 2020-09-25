@@ -13,15 +13,11 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import java.util.Date
 
 class DateSeparatorViewHolder(
-    private val binding: StreamItemDateSeparatorBinding,
-    private val style: MessageListViewStyle
+    parent: ViewGroup,
+    private val style: MessageListViewStyle,
+    private val binding: StreamItemDateSeparatorBinding =
+        StreamItemDateSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<DateSeparatorItem>(binding.root) {
-
-    companion object {
-        fun binding(parent: ViewGroup): StreamItemDateSeparatorBinding {
-            return StreamItemDateSeparatorBinding.inflate(parent.inflater, parent, false)
-        }
-    }
 
     override fun bind(
         messageListItem: DateSeparatorItem,

@@ -5,14 +5,10 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.databinding.StreamItemThreadSeparatorBinding
 
 class ThreadSeparatorViewHolder(
-    private val binding: StreamItemThreadSeparatorBinding
+    parent: ViewGroup,
+    private val binding: StreamItemThreadSeparatorBinding =
+        StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<ThreadSeparatorItem>(binding.root) {
-
-    companion object {
-        fun binding(parent: ViewGroup): StreamItemThreadSeparatorBinding {
-            return StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)
-        }
-    }
 
     override fun bind(
         messageListItem: ThreadSeparatorItem,

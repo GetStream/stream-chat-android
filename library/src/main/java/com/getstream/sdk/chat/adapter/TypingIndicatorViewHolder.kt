@@ -12,15 +12,11 @@ import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 
 class TypingIndicatorViewHolder(
-    private val binding: StreamItemTypeIndicatorBinding,
-    private val style: MessageListViewStyle
+    parent: ViewGroup,
+    private val style: MessageListViewStyle,
+    private val binding: StreamItemTypeIndicatorBinding =
+        StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<TypingItem>(binding.root) {
-
-    companion object {
-        fun binding(parent: ViewGroup): StreamItemTypeIndicatorBinding {
-            return StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
-        }
-    }
 
     override fun bind(
         messageListItem: TypingItem,

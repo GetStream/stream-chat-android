@@ -49,10 +49,13 @@ open class MessageViewHolderFactory {
     ): BaseMessageListItemViewHolder<*> {
         return when (viewType) {
             MESSAGEITEM_DATE_SEPARATOR ->
-                DateSeparatorViewHolder(DateSeparatorViewHolder.binding(parent), style)
-            MESSAGEITEM_MESSAGE -> {
+                DateSeparatorViewHolder(
+                    parent,
+                    style
+                )
+            MESSAGEITEM_MESSAGE ->
                 MessageListItemViewHolder(
-                    MessageListItemViewHolder.binding(parent),
+                    parent,
                     style,
                     channel,
                     attachmentViewHolderFactory,
@@ -65,11 +68,10 @@ open class MessageViewHolderFactory {
                     listenerContainer.readStateClickListener,
                     listenerContainer.giphySendListener
                 )
-            }
             MESSAGEITEM_TYPING ->
-                TypingIndicatorViewHolder(TypingIndicatorViewHolder.binding(parent), style)
+                TypingIndicatorViewHolder(parent, style)
             MESSAGEITEM_THREAD_SEPARATOR ->
-                ThreadSeparatorViewHolder(ThreadSeparatorViewHolder.binding(parent))
+                ThreadSeparatorViewHolder(parent)
             else ->
                 throw IllegalArgumentException("Unhandled viewType ($viewType)")
         }
