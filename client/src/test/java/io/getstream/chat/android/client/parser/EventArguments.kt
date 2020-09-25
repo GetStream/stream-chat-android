@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.createChannelHiddenEventStringJson
 import io.getstream.chat.android.client.createChannelMuteEventStringJson
 import io.getstream.chat.android.client.createChannelTruncatedEventStringJson
 import io.getstream.chat.android.client.createChannelUnmuteEventStringJson
+import io.getstream.chat.android.client.createChannelUpdatedByUserEventStringJson
 import io.getstream.chat.android.client.createChannelUpdatedEventStringJson
 import io.getstream.chat.android.client.createChannelUserBannedEventStringJson
 import io.getstream.chat.android.client.createChannelUserUnbannedEventStringJson
@@ -54,6 +55,7 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -186,7 +188,8 @@ object EventArguments {
     private val channelTruncatedEvent = ChannelTruncatedEvent(EventType.CHANNEL_TRUNCATED, date, cid, channelType, channelId, user, channel)
     private val channelUnmuteEvent = ChannelUnmuteEvent(EventType.CHANNEL_UNMUTED, date, channelMute)
     private val channelsUnmuteEvent = ChannelsUnmuteEvent(EventType.CHANNEL_UNMUTED, date, listOf(channelMute))
-    private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
+    private val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, message, channel)
+    private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(EventType.CHANNEL_UPDATED, date, cid, channelType, channelId, user, message, channel)
     private val channelVisibleEvent = ChannelVisibleEvent(EventType.CHANNEL_VISIBLE, date, cid, channelType, channelId, user)
     private val memberAddedEvent = MemberAddedEvent(EventType.MEMBER_ADDED, date, user, cid, channelType, channelId, member)
     private val memberRemovedEvent = MemberRemovedEvent(EventType.MEMBER_REMOVED, date, user, cid, channelType, channelId)
@@ -233,6 +236,7 @@ object EventArguments {
         Arguments.of(createChannelUnmuteEventStringJson(), channelUnmuteEvent),
         Arguments.of(createChannelsUnmuteEventStringJson(), channelsUnmuteEvent),
         Arguments.of(createChannelUpdatedEventStringJson(), channelUpdatedEvent),
+        Arguments.of(createChannelUpdatedByUserEventStringJson(), channelUpdatedByUserEvent),
         Arguments.of(createChannelVisibleEventStringJson(), channelVisibleEvent),
         Arguments.of(createMemberAddedEventStringJson(), memberAddedEvent),
         Arguments.of(createMemberRemovedEventStringJson(), memberRemovedEvent),

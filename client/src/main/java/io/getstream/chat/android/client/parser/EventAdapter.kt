@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -153,7 +154,11 @@ internal class EventAdapter(
                 gson.fromJson(data, ChannelCreatedEvent::class.java).apply { message?.cid = cid }
             }
             EventType.CHANNEL_UPDATED -> {
-                gson.fromJson(data, ChannelUpdatedEvent::class.java).apply { message?.cid = cid }
+                if (mapData.containsKey("user")) {
+                    gson.fromJson(data, ChannelUpdatedByUserEvent::class.java).apply { message?.cid = cid }
+                } else {
+                    gson.fromJson(data, ChannelUpdatedEvent::class.java).apply { message?.cid = cid }
+                }
             }
             EventType.CHANNEL_HIDDEN -> {
                 gson.fromJson(data, ChannelHiddenEvent::class.java)

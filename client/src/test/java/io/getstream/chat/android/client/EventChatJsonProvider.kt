@@ -90,6 +90,18 @@ fun createChannelUpdatedEventStringJson() =
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
+            "message": ${createMessageJsonString()},
+            "channel": ${createChannelJsonString()}
+        """.trimIndent()
+    )
+
+fun createChannelUpdatedByUserEventStringJson() =
+    createChatEventStringJson(
+        "channel.updated",
+        """
+            "channel_type": "channelType",
+            "channel_id": "channelId",
+            "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "message": ${createMessageJsonString()},
             "channel": ${createChannelJsonString()}

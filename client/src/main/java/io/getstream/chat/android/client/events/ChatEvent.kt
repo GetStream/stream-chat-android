@@ -94,10 +94,9 @@ data class ChannelUpdatedEvent(
     override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
-    override val user: User,
     val message: Message?,
     val channel: Channel
-) : CidEvent(), UserEvent
+) : CidEvent()
 
 data class ChannelUpdatedByUserEvent(
     override val type: String,
