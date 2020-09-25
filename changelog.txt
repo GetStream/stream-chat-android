@@ -1,5 +1,8 @@
 # To be released:
 
+- Remove `User` field on `ChannelUpdatedEvent`
+- Add new chat event type -> `ChannelUpdatedByUserEvent`
+
 # 1.16.0 - Wed 23 Sep 2020
 
 - Removed message.channel, this is a backwards incompatible change

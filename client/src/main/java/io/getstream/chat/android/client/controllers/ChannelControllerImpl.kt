@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -143,6 +144,7 @@ internal class ChannelControllerImpl(
             is ChannelUnmuteEvent -> event.channelMute.channel.cid == cid
             is ChannelsUnmuteEvent -> event.channelsMute.any { it.channel.cid == cid }
             is ChannelUpdatedEvent -> event.cid == cid
+            is ChannelUpdatedByUserEvent -> event.cid == cid
             is ChannelVisibleEvent -> event.cid == cid
             is MemberAddedEvent -> event.cid == cid
             is MemberRemovedEvent -> event.cid == cid
