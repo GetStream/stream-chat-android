@@ -15,7 +15,6 @@ import com.getstream.sdk.chat.utils.Constant;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 
-import java.io.File;
 import java.util.List;
 
 public class AttachmentListAdapter extends BaseAdapter {
@@ -104,21 +103,21 @@ public class AttachmentListAdapter extends BaseAdapter {
 
     private void configureFileAttach(ViewHolder holder, AttachmentMetaData attachment) {
 
-        holder.iv_file_thumb.setImageResource(LlcMigrationUtils.getIcon(attachment.mimeType));
-        holder.tv_file_title.setText(attachment.title);
+        holder.iv_file_thumb.setImageResource(LlcMigrationUtils.getIcon(attachment.getMimeType()));
+        holder.tv_file_title.setText(attachment.getTitle());
 
         holder.iv_large_file_mark.setVisibility(View.INVISIBLE);
         holder.iv_select_mark.setVisibility(View.GONE);
         holder.tv_close.setVisibility(View.INVISIBLE);
         holder.progressBar.setVisibility(View.GONE);
 
-        long fileSize = attachment.size;
+        long fileSize = attachment.getSize();
         holder.tv_file_size.setText(StringUtility.convertFileSizeByteCount(fileSize));
 
         if (!this.localAttach) return;
 
         if (this.isTotalFileAdapter) {
-            if (attachment.isSelected)
+            if (attachment.isSelected())
                 holder.iv_select_mark.setVisibility(View.VISIBLE);
             holder.iv_large_file_mark.setVisibility(fileSize > Constant.MAX_UPLOAD_FILE_SIZE ? View.VISIBLE : View.INVISIBLE);
         } else {
