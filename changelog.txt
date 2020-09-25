@@ -2,6 +2,8 @@
 
 - Remove `User` field on `ChannelUpdatedEvent`
 - Add new chat event type -> `ChannelUpdatedByUserEvent`
+- Add `ChatNotificationHandler::getFirebaseInstanceId` method to provide a custom `FirebaseInstanceId`
+- Add `NotificationConfig::useProvidedFirebaseInstance` conf
 
 # 1.16.0 - Wed 23 Sep 2020
 
