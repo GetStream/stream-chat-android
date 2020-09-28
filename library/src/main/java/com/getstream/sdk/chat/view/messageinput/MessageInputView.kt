@@ -53,6 +53,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private var isKeyboardEventListenerInitialized = false
 
+    var messageText: String
+        get() = binding.messageTextInput.text.toString()
+        set(text) {
+            if (TextUtils.isEmpty(text)) return
+            binding.messageTextInput.requestFocus()
+            binding.messageTextInput.setText(text)
+            binding.messageTextInput.setSelection(binding.messageTextInput.text.length)
+        }
+
     var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
         override fun sendMessage(messageText: String) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
@@ -220,15 +229,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     override fun clearFocus() {
         binding.messageTextInput.clearFocus()
     }
-
-    var messageText: String
-        get() = binding.messageTextInput.text.toString()
-        set(text) {
-            if (TextUtils.isEmpty(text)) return
-            binding.messageTextInput.requestFocus()
-            binding.messageTextInput.setText(text)
-            binding.messageTextInput.setSelection(binding.messageTextInput.text.length)
-        }
 
     fun configureMembers(members: List<Member>) {
         messageInputController.members = members
