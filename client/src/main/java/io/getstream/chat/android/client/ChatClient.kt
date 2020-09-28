@@ -269,6 +269,17 @@ interface ChatClient {
         channelExtraData: Map<String, Any> = emptyMap()
     ): Call<Channel>
 
+    fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel>
+
+    fun disableSlowMode(
+        channelType: String,
+        channelId: String
+    ): Call<Channel>
+
     fun rejectInvite(channelType: String, channelId: String): Call<Channel>
     fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
     fun markRead(channelType: String, channelId: String): Call<Unit>
