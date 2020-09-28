@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding
 import com.getstream.sdk.chat.view.BaseStyle
-import com.getstream.sdk.chat.view.MessageInputStyle
+import com.getstream.sdk.chat.view.messageinput.MessageInputStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 

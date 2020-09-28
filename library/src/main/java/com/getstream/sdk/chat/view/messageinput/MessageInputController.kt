@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.utils
+package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
@@ -13,8 +13,12 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.view.MessageInputStyle
-import com.getstream.sdk.chat.view.MessageInputView
+import com.getstream.sdk.chat.utils.Constant
+import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
+import com.getstream.sdk.chat.utils.PermissionChecker
+import com.getstream.sdk.chat.utils.StorageUtils
+import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Command
@@ -241,13 +245,18 @@ internal class MessageInputController(
                 }
             )
             binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
+            binding.mediaComposer.visibility = View.VISIBLE
+            binding.fileComposer.visibility = View.GONE
+            binding.fileComposer.adapter = null
+            selectedFileAttachmentAdapter?.clear()
+            selectedFileAttachmentAdapter = null
         } else {
             selectedFileAttachmentAdapter = AttachmentListAdapter(
                 view.context,
                 selectedAttachments.toList(),
                 true,
                 false,
-                AttachmentListAdapter.OnAttachmentCancelListener { attachment: AttachmentMetaData ->
+                { attachment: AttachmentMetaData ->
                     cancelAttachment(
                         attachment,
                         fromGallery,
@@ -256,6 +265,11 @@ internal class MessageInputController(
                 }
             )
             binding.fileComposer.adapter = selectedFileAttachmentAdapter
+            binding.fileComposer.visibility = View.VISIBLE
+            binding.mediaComposer.visibility = View.GONE
+            binding.mediaComposer.adapter = null
+            selectedMediaAttachmentAdapter?.clear()
+            selectedMediaAttachmentAdapter = null
         }
     }
 
@@ -293,7 +307,7 @@ internal class MessageInputController(
         isMedia: Boolean
     ) {
         selectedAttachments = selectedAttachments - attachment
-        if (fromGallery) totalAttachmentAdapterChanged(null, isMedia)
+        if (fromGallery) totalAttachmentAdapterChanged(isMedia)
         removeAttachmentFromAdapters(attachment, fromGallery, isMedia)
         configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
@@ -346,15 +360,8 @@ internal class MessageInputController(
         onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
     }
 
-    private fun totalAttachmentAdapterChanged(attachment: AttachmentMetaData?, isMedia: Boolean) {
-        if (isMedia) {
-            if (attachment == null) {
-                totalMediaAttachmentAdapter?.notifyDataSetChanged()
-                return
-            }
-            val index = totalAttachments.indexOf(attachment)
-            if (index != -1) totalMediaAttachmentAdapter?.notifyItemChanged(index)
-        } else totalFileAttachmentAdapter?.notifyDataSetChanged()
+    private fun totalAttachmentAdapterChanged(isMedia: Boolean) {
+        if (isMedia) totalMediaAttachmentAdapter?.notifyDataSetChanged() else totalFileAttachmentAdapter?.notifyDataSetChanged()
     }
 
     private fun removeAttachmentFromAdapters(
@@ -367,7 +374,10 @@ internal class MessageInputController(
                 fromGallery,
                 isMedia
             )
-            totalMediaAttachmentAdapter?.unselectAttachment(attachment) ?: setTotalAttachmentAdapters(isMedia, totalAttachments.toList())
+            totalMediaAttachmentAdapter?.unselectAttachment(attachment) ?: setTotalAttachmentAdapters(
+                isMedia,
+                totalAttachments.toList()
+            )
         } else {
             if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
                 fromGallery,
@@ -386,7 +396,10 @@ internal class MessageInputController(
                 true,
                 isMedia
             )
-            totalMediaAttachmentAdapter?.selectAttachment(attachment) ?: setTotalAttachmentAdapters(isMedia, totalAttachments.toList())
+            totalMediaAttachmentAdapter?.selectAttachment(attachment) ?: setTotalAttachmentAdapters(
+                isMedia,
+                totalAttachments.toList()
+            )
         } else {
             if (selectedFileAttachmentAdapter == null) setSelectedAttachmentAdapter(
                 true,

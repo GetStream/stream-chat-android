@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view
+package com.getstream.sdk.chat.view.messageinput
 
 import android.app.Activity
 import android.content.Context
@@ -28,8 +28,6 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.InputMode
-import com.getstream.sdk.chat.utils.MessageInputController
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils

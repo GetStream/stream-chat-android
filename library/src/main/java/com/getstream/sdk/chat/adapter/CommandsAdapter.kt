@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding
 import com.getstream.sdk.chat.view.BaseStyle
-import com.getstream.sdk.chat.view.MessageInputStyle
+import com.getstream.sdk.chat.view.messageinput.MessageInputStyle
 import io.getstream.chat.android.client.models.Command
 
 class CommandsAdapter(
