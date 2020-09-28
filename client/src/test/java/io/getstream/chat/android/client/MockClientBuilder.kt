@@ -41,9 +41,9 @@ class MockClientBuilder {
     )
 
     lateinit var socket: FakeChatSocket
-    lateinit var retrofitApi: RetrofitApi
     lateinit var retrofitCdnApi: RetrofitCdnApi
 
+    internal lateinit var retrofitApi: RetrofitApi
     private lateinit var api: ChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient

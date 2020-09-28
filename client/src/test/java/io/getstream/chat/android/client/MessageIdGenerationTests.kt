@@ -28,7 +28,7 @@ class MessageIdGenerationTests {
     val messageText = "message-text"
 
     lateinit var uuidGenerator: UuidGenerator
-    lateinit var retroApi: RetrofitApi
+    private lateinit var retroApi: RetrofitApi
     private lateinit var api: ChatApi
 
     @Before
