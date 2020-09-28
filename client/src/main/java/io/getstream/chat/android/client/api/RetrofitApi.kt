@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.api.models.SendEventRequest
 import io.getstream.chat.android.client.api.models.TokenResponse
 import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
+import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersResponse
 import io.getstream.chat.android.client.parser.UrlQueryPayload
@@ -105,6 +106,15 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: UpdateChannelRequest
+    ): Call<ChannelResponse>
+
+    @POST("/channels/{type}/{id}")
+    fun updateCooldown(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("api_key") apiKey: String,
+        @Query("client_id") clientID: String,
+        @Body body: UpdateCooldownRequest
     ): Call<ChannelResponse>
 
     @DELETE("/channels/{type}/{id}")
