@@ -215,7 +215,7 @@ class TestDataHelper {
     val reactionEvent = ReactionNewEvent(EventType.REACTION_NEW, Date(), user1, channel1.cid, channel1.type, channel1.id, reactionMessage, reaction1)
     val reactionEvent2 = ReactionNewEvent(EventType.REACTION_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, reactionMessage, reaction2)
 
-    val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, user1, null, channel1Updated)
+    val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, null, channel1Updated)
     val user1TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user1, channel1.cid, channel1.type, channel1.id)
     val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, getOldDate(), user3, channel1.cid, channel1.type, channel1.id)
 
