@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.SendEventRequest
 import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
+import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
@@ -485,6 +486,32 @@ internal class ChatApiImpl(
             )
         ).map { flattenChannel(it) }
     }
+
+    override fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel> = updateCooldown(channelType, channelId, cooldownTimeInSeconds)
+
+    override fun disableSlowMode(
+        channelType: String,
+        channelId: String
+    ): Call<Channel> = updateCooldown(channelType, channelId, 0)
+
+    private fun updateCooldown(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel> =
+        callMapper.map(
+            retrofitApi.updateCooldown(
+                channelType,
+                channelId,
+                apiKey,
+                connectionId,
+                UpdateCooldownRequest(cooldownTimeInSeconds)
+            )
+        ).map { flattenChannel(it) }
 
     override fun markRead(
         channelType: String,

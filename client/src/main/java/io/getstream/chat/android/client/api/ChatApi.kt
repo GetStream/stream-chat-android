@@ -108,6 +108,17 @@ internal interface ChatApi {
         request: UpdateChannelRequest
     ): Call<Channel>
 
+    fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel>
+
+    fun disableSlowMode(
+        channelType: String,
+        channelId: String
+    ): Call<Channel>
+
     fun markRead(channelType: String, channelId: String, messageId: String = ""): Call<Unit>
     fun showChannel(channelType: String, channelId: String): Call<Unit>
     fun hideChannel(
