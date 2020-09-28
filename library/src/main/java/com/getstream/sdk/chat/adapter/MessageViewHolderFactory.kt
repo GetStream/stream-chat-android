@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
@@ -50,10 +49,12 @@ open class MessageViewHolderFactory {
     ): BaseMessageListItemViewHolder<*> {
         return when (viewType) {
             MESSAGEITEM_DATE_SEPARATOR ->
-                DateSeparatorViewHolder(R.layout.stream_item_date_separator, parent, style)
+                DateSeparatorViewHolder(
+                    parent,
+                    style
+                )
             MESSAGEITEM_MESSAGE ->
                 MessageListItemViewHolder(
-                    R.layout.stream_item_message,
                     parent,
                     style,
                     channel,
@@ -68,9 +69,9 @@ open class MessageViewHolderFactory {
                     listenerContainer.giphySendListener
                 )
             MESSAGEITEM_TYPING ->
-                TypingIndicatorViewHolder(R.layout.stream_item_type_indicator, parent, style)
+                TypingIndicatorViewHolder(parent, style)
             MESSAGEITEM_THREAD_SEPARATOR ->
-                ThreadSeparatorViewHolder(R.layout.stream_item_thread_separator, parent)
+                ThreadSeparatorViewHolder(parent)
             else ->
                 throw IllegalArgumentException("Unhandled viewType ($viewType)")
         }
