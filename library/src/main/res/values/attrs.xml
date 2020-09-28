@@ -170,6 +170,12 @@
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
+        <!--Scroll buttom-->
+        <attr name="streamButtonBackground" format="reference" />
+        <attr name="streamScrollButtonEnabled" format="boolean" />
+        <attr name="streamNewMessagesTextSingle" format="string" />
+        <attr name="streamNewMessagesTextPlural" format="string" />
+        <attr name="streamNewMessagesBehaviour" format="enum" />
         <!--AvatarGroupView-->
         <attr name="streamAvatarWidth"/>
         <attr name="streamAvatarHeight"/>

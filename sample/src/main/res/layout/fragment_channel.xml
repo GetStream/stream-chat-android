@@ -22,7 +22,11 @@
         app:layout_constraintTop_toBottomOf="@+id/channelHeaderView"
         app:streamMessageDateShow="true"
         android:clipToPadding="false"
-        android:paddingBottom="@dimen/padding_medium" />
+        android:paddingBottom="@dimen/padding_medium"
+        app:streamButtonBackground="@android:color/holo_red_light"
+        app:streamNewMessagesTextSingle="@string/new_messages_single"
+        app:streamNewMessagesTextPlural="@string/new_messages_plural"
+        />
 
     <ProgressBar
         android:id="@+id/progressBar"

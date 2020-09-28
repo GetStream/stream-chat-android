@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -62,6 +63,8 @@ public class MessageListView extends ConstraintLayout {
     private ConstraintLayout unseenBottomBtn;
     private TextView newMessagesTextTV;
     private int lastViewedPosition = 0;
+    private String newMessagesTextSingle;
+    private String newMessagesTextPlural;
 
     private int unseenItems = 0;
 
@@ -181,12 +184,14 @@ public class MessageListView extends ConstraintLayout {
         super(context, attrs);
         this.parseAttr(context, attrs);
         init(context);
+        configureAttributes(attrs);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
         init(context);
+        configureAttributes(attrs);
     }
 
     private void init(Context context) {
@@ -197,6 +202,23 @@ public class MessageListView extends ConstraintLayout {
         initUnseenMessagesView();
 
         hasScrolledUp = false;
+    }
+
+    private void configureAttributes(AttributeSet attributeSet) {
+        TypedArray tArray = getContext()
+                .obtainStyledAttributes(attributeSet, R.styleable.MessageListView);
+
+        int backgroundRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonBackground,
+                R.drawable.stream_shape_round);
+
+        unseenBottomBtn.setBackgroundResource(backgroundRes);
+        newMessagesTextSingle =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
+        newMessagesTextPlural =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
+
+        tArray.recycle();
     }
 
     private void initRecyclerView() {
@@ -258,7 +280,7 @@ public class MessageListView extends ConstraintLayout {
                         newMessagesTextTV.setVisibility(View.GONE);
                     } else {
                         newMessagesTextTV.setVisibility(View.VISIBLE);
-                        newMessagesTextTV.setText(String.valueOf(unseenItems));
+                        newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
                     }
 
                     if (hasScrolledUp) {
@@ -289,6 +311,14 @@ public class MessageListView extends ConstraintLayout {
         });
 
         messagesRV.setAdapter(adapter);
+    }
+
+    private String parseNewMessagesText(int unseenItems) {
+        if (unseenItems == 1) {
+            return String.format(newMessagesTextSingle, unseenItems);
+        } else {
+            return String.format(newMessagesTextPlural, unseenItems);
+        }
     }
 
     public void init(Channel channel, User currentUser) {
@@ -427,7 +457,7 @@ public class MessageListView extends ConstraintLayout {
 
                 if (unseenItems > 0) {
                     newMessagesTextTV.setVisibility(View.VISIBLE);
-                    newMessagesTextTV.setText(String.valueOf(unseenItems));
+                    newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
                 }
             }
             // we want to mark read if there is a new message
