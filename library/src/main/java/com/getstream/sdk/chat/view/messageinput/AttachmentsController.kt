@@ -46,20 +46,21 @@ internal class AttachmentsController(
         configAttachmentButtonVisible(true)
     }
 
-    private fun configSelectAttachView(messageInputType: MessageInputType?, isMedia: Boolean, treeUri: Uri? = null) {
+    private fun fillTotalAttachmentsView(
+        messageInputType: MessageInputType?,
+        isMedia: Boolean,
+        treeUri: Uri? = null
+    ) {
         GlobalScope.launch(Dispatchers.Main) {
             view.showLoadingTotalAttachments(true)
             totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
-            if (selectedAttachments.isEmpty()) {
-                setTotalAttachmentAdapters(totalAttachments.toList(), messageInputType, isMedia)
-                if (totalAttachments.isEmpty()) {
-                    Utils.showMessage(view.context, R.string.stream_no_media_error)
-                    onClickCloseAttachmentSelectionMenu()
-                }
+            if (totalAttachments.isEmpty()) {
+                Utils.showMessage(view.context, R.string.stream_no_media_error)
+                onClickCloseAttachmentSelectionMenu()
             } else {
-                showComposerAttachmentGalleryView(isMedia)
-                setSelectedAttachmentAdapter(messageInputType, false, isMedia)
+                setTotalAttachmentAdapters(totalAttachments.toList(), messageInputType, isMedia)
             }
+            setSelectedAttachmentAdapter(messageInputType, false, isMedia)
             view.showLoadingTotalAttachments(false)
         }
     }
@@ -95,7 +96,7 @@ internal class AttachmentsController(
         )
     }
 
-    private fun showComposerAttachmentGalleryView(isMedia: Boolean) {
+    private fun showSelectedAttachments(isMedia: Boolean) {
         if (isMedia) {
             view.showMediaAttachments()
         } else {
@@ -129,10 +130,8 @@ internal class AttachmentsController(
             Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
             return
         }
-        if (editAttachments.isNotEmpty()) {
-            setSelectedAttachments(editAttachments)
-        }
-        configSelectAttachView(messageInputType, isMedia, treeUri)
+        setSelectedAttachments(editAttachments)
+        fillTotalAttachmentsView(messageInputType, isMedia, treeUri)
     }
 
     private fun totalAttachmentAdapterChanged(isMedia: Boolean) {
@@ -283,7 +282,7 @@ internal class AttachmentsController(
         } else {
             attachment.isSelected = true
             selectedAttachments = selectedAttachments + attachment
-            showComposerAttachmentGalleryView(isMedia)
+            showSelectedAttachments(isMedia)
             rootController.configSendButtonEnableState()
             addAttachmentToAdapter(attachment, messageInputType, isMedia)
         }

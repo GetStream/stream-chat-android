@@ -211,9 +211,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             messageInputController.onClickCloseAttachmentSelectionMenu()
             Utils.hideSoftKeyboard(context as Activity)
         }
-        binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(true) }
-        binding.llCamera.setOnClickListener { messageInputController.onCameraClick() }
-        binding.llFile.setOnClickListener {
+        binding.selectMedia.setOnClickListener { messageInputController.onClickOpenSelectView(true) }
+        binding.selectCamera.setOnClickListener { messageInputController.onCameraClick() }
+        binding.selectFile.setOnClickListener {
             documentTreeAccessContract?.launch(Unit)
         }
     }
