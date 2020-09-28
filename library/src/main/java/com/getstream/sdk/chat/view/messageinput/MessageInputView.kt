@@ -22,12 +22,18 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.DocumentTreeAccessContract
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.AttachmentListAdapter
 import com.getstream.sdk.chat.adapter.CommandsAdapter
+import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
+import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
+import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MentionsAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
@@ -50,6 +56,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
      * Styling class for the MessageInput
      */
     private val style: MessageInputStyle = MessageInputStyle(context, attrs)
+    private val gridLayoutManager = GridLayoutManager(context, 4, RecyclerView.VERTICAL, false)
+    private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
 
     private var isKeyboardEventListenerInitialized = false
 
@@ -149,12 +157,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         style.inputBackgroundText.apply(binding.tvUploadPhotoVideo)
         style.inputBackgroundText.apply(binding.tvUploadFile)
         style.inputBackgroundText.apply(binding.tvUploadCamera)
+        binding.rvMedia.layoutManager = gridLayoutManager
+        binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
     }
 
     private fun configOnClickListener() {
         binding.sendButton.setOnClickListener { onSendMessage() }
         binding.ivOpenAttach.setOnClickListener {
-            messageInputController.onClickOpenBackGroundView(MessageInputType.ADD_FILE)
+            messageInputController.onClickOpenAttachmentSelectionMenu(MessageInputType.ADD_FILE)
         }
     }
 
@@ -198,7 +208,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.mediaComposer.layoutManager =
             GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
         binding.btnClose.setOnClickListener {
-            messageInputController.onClickCloseBackGroundView()
+            messageInputController.onClickCloseAttachmentSelectionMenu()
             Utils.hideSoftKeyboard(context as Activity)
         }
         binding.llMedia.setOnClickListener { messageInputController.onClickOpenSelectView(true) }
@@ -330,6 +340,64 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         messageInputController.inputMode = InputMode.Edit(oldMessage)
     }
 
+    fun showSelectedMediaAttachments(selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter) {
+        binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
+        binding.mediaComposer.visible(true)
+        binding.fileComposer.visible(false)
+        binding.fileComposer.adapter = null
+    }
+
+    fun showSelectedFileAttachments(selectedFileAttachmentAdapter: AttachmentListAdapter) {
+        binding.fileComposer.adapter = selectedFileAttachmentAdapter
+        binding.fileComposer.visible(true)
+        binding.mediaComposer.visible(false)
+        binding.mediaComposer.adapter = null
+    }
+
+    fun showTotalMediaAttachments(totalMediaAttachmentAdapter: MediaAttachmentAdapter) {
+        binding.rvMedia.adapter = totalMediaAttachmentAdapter
+        gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
+        gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
+    }
+
+    fun showTotalFileAttachments(totalFileAttachmentAdapter: FileAttachmentListAdapter) {
+        gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
+        gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
+        binding.rvMedia.adapter = totalFileAttachmentAdapter
+    }
+
+    fun showMediaAttachments() {
+        binding.mediaComposer.visible(true)
+        binding.fileComposer.visible(false)
+    }
+
+    fun showFileAttachments() {
+        binding.mediaComposer.visible(false)
+        binding.fileComposer.visible(true)
+    }
+
+    fun showMediaPermissions(shouldBeVisible: Boolean) = binding.ivMediaPermission.visible(shouldBeVisible)
+    fun showCameraPermissions(shouldBeVisible: Boolean) = binding.ivCameraPermission.visible(shouldBeVisible)
+    fun showFilePermissions(shouldBeVisible: Boolean) = binding.ivFilePermission.visible(shouldBeVisible)
+
+    fun hideAttachmentsMenu() {
+        binding.clTitle.visible(false)
+        binding.clAddFile.visible(false)
+        binding.clSelectPhoto.visible(false)
+        binding.root.setBackgroundResource(0)
+    }
+
+    fun showAttachmentsMenu() {
+        binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
+        binding.clTitle.visibility = View.VISIBLE
+        binding.btnClose.visibility = View.VISIBLE
+        binding.clAddFile.visibility = View.GONE
+        binding.clSelectPhoto.visibility = View.GONE
+    }
+
+    fun showLoadingTotalAttachments(shouldBeVisible: Boolean) = binding.progressBarFileLoader.visible(shouldBeVisible)
+    fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) = binding.ivOpenAttach.visible(shouldBeVisible)
+
     interface TypeListener {
         fun onKeystroke()
         fun onStopTyping()
@@ -356,5 +424,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
+    }
+
+    companion object {
+        private const val MEDIA_ITEMS_PER_ROW = 4
+        private const val FILE_ITEMS_PER_ROW = 1
     }
 }

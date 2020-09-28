@@ -1,19 +1,14 @@
 package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
-import android.view.View
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
-import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Constant
-import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageUtils
 import com.getstream.sdk.chat.utils.Utils
@@ -24,13 +19,9 @@ import kotlinx.coroutines.withContext
 
 internal class AttachmentsController(
     private val rootController: MessageInputController,
-    private val binding: StreamViewMessageInputBinding,
     private val view: MessageInputView,
-    private val style: MessageInputStyle
+    private val showOpenAttachmentsMenuConfig: Boolean
 ) {
-
-    private val gridLayoutManager = GridLayoutManager(view.context, 4, RecyclerView.VERTICAL, false)
-    private val gridSpacingItemDecoration = GridSpacingItemDecoration(4, 2, false)
 
     private var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
     private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
@@ -41,40 +32,35 @@ internal class AttachmentsController(
         private set
     private var totalAttachments: Set<AttachmentMetaData> = emptySet()
 
-    init {
-        binding.rvMedia.layoutManager = gridLayoutManager
-        binding.rvMedia.addItemDecoration(gridSpacingItemDecoration)
-    }
-
     internal fun setSelectedAttachments(selectedAttachments: Set<AttachmentMetaData>) {
         this.selectedAttachments += selectedAttachments
     }
 
-    internal fun onClickCloseBackGroundView() {
-        binding.clTitle.visibility = View.GONE
-        binding.clAddFile.visibility = View.GONE
-        binding.clSelectPhoto.visibility = View.GONE
-        binding.root.setBackgroundResource(0)
+    internal fun onClickCloseAttachmentSelectionMenu() {
+        view.hideAttachmentsMenu()
         totalAttachments = emptySet()
+        totalFileAttachmentAdapter?.clear()
+        totalMediaAttachmentAdapter?.clear()
+        totalFileAttachmentAdapter = null
+        totalMediaAttachmentAdapter = null
         configAttachmentButtonVisible(true)
     }
 
     private fun configSelectAttachView(messageInputType: MessageInputType?, isMedia: Boolean, treeUri: Uri? = null) {
         GlobalScope.launch(Dispatchers.Main) {
-            binding.progressBarFileLoader.visibility = View.VISIBLE
+            view.showLoadingTotalAttachments(true)
             totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
             if (selectedAttachments.isEmpty()) {
                 setTotalAttachmentAdapters(totalAttachments.toList(), messageInputType, isMedia)
                 if (totalAttachments.isEmpty()) {
                     Utils.showMessage(view.context, R.string.stream_no_media_error)
-                    onClickCloseBackGroundView()
+                    onClickCloseAttachmentSelectionMenu()
                 }
             } else {
                 showComposerAttachmentGalleryView(isMedia)
                 setSelectedAttachmentAdapter(messageInputType, false, isMedia)
             }
-
-            binding.progressBarFileLoader.visibility = View.GONE
+            view.showLoadingTotalAttachments(false)
         }
     }
 
@@ -90,8 +76,8 @@ internal class AttachmentsController(
         }
 
     internal fun configAttachmentButtonVisible(visible: Boolean) {
-        if (!style.isShowAttachmentButton) return
-        binding.ivOpenAttach.visibility = if (visible) View.VISIBLE else View.GONE
+        if (!showOpenAttachmentsMenuConfig) return
+        view.showOpenAttachmentsMenuButton(visible)
     }
 
     private fun cancelAttachment(
@@ -111,9 +97,9 @@ internal class AttachmentsController(
 
     private fun showComposerAttachmentGalleryView(isMedia: Boolean) {
         if (isMedia) {
-            binding.mediaComposer.visibility = View.VISIBLE
+            view.showMediaAttachments()
         } else {
-            binding.fileComposer.visibility = View.VISIBLE
+            view.showFileAttachments()
         }
     }
 
@@ -212,17 +198,13 @@ internal class AttachmentsController(
         isMedia: Boolean
     ) {
         if (isMedia) {
-            gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
-            gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
             totalMediaAttachmentAdapter =
                 MediaAttachmentAdapter(totalAttachment) { updateAttachment(it, messageInputType, isMedia) }
-            binding.rvMedia.adapter = totalMediaAttachmentAdapter
+            view.showTotalMediaAttachments(totalMediaAttachmentAdapter!!)
         } else {
-            gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
-            gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
             totalFileAttachmentAdapter =
                 FileAttachmentListAdapter(totalAttachment) { updateAttachment(it, messageInputType, isMedia) }
-            binding.rvMedia.adapter = totalFileAttachmentAdapter
+            view.showTotalFileAttachments(totalFileAttachmentAdapter!!)
         }
     }
 
@@ -245,10 +227,7 @@ internal class AttachmentsController(
                     }
                 }
             )
-            binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
-            binding.mediaComposer.visibility = View.VISIBLE
-            binding.fileComposer.visibility = View.GONE
-            binding.fileComposer.adapter = null
+            view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter!!)
             selectedFileAttachmentAdapter?.clear()
             selectedFileAttachmentAdapter = null
         } else {
@@ -265,10 +244,7 @@ internal class AttachmentsController(
                     isMedia
                 )
             }
-            binding.fileComposer.adapter = selectedFileAttachmentAdapter
-            binding.fileComposer.visibility = View.VISIBLE
-            binding.mediaComposer.visibility = View.GONE
-            binding.mediaComposer.adapter = null
+            view.showSelectedFileAttachments(selectedFileAttachmentAdapter!!)
             selectedMediaAttachmentAdapter?.clear()
             selectedMediaAttachmentAdapter = null
         }
@@ -313,29 +289,28 @@ internal class AttachmentsController(
         }
     }
 
-    internal fun checkPermissions() {
+    private fun checkPermissions() {
         when {
             PermissionChecker.isGrantedCameraPermissions(view.context) -> {
-                binding.ivMediaPermission.visibility = View.GONE
-                binding.ivCameraPermission.visibility = View.GONE
-                binding.ivFilePermission.visibility = View.VISIBLE
+                view.showMediaPermissions(false)
+                view.showCameraPermissions(false)
+                view.showFilePermissions(true)
             }
             PermissionChecker.isGrantedStoragePermissions(view.context) -> {
-                binding.ivMediaPermission.visibility = View.GONE
-                binding.ivCameraPermission.visibility = View.VISIBLE
-                binding.ivFilePermission.visibility = View.VISIBLE
+                view.showMediaPermissions(false)
+                view.showCameraPermissions(true)
+                view.showFilePermissions(true)
             }
             else -> {
-                binding.ivMediaPermission.visibility = View.VISIBLE
-                binding.ivCameraPermission.visibility = View.VISIBLE
-                binding.ivFilePermission.visibility = View.VISIBLE
+                view.showMediaPermissions(true)
+                view.showCameraPermissions(true)
+                view.showFilePermissions(true)
             }
         }
     }
 
     internal fun clearState() {
-        binding.fileComposer.visibility = View.GONE
-        binding.mediaComposer.visibility = View.GONE
+        view.hideAttachmentsMenu()
         selectedAttachments = emptySet()
         totalMediaAttachmentAdapter?.clear()
         totalFileAttachmentAdapter?.clear()
@@ -343,8 +318,8 @@ internal class AttachmentsController(
         selectedMediaAttachmentAdapter?.clear()
     }
 
-    companion object {
-        private const val MEDIA_ITEMS_PER_ROW = 4
-        private const val FILE_ITEMS_PER_ROW = 1
+    fun onClickOpenAttachmentSelectionMenu() {
+        view.showAttachmentsMenu()
+        checkPermissions()
     }
 }

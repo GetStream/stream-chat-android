@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.exhaustive
@@ -29,7 +28,7 @@ internal class MessageInputController(
     private val style: MessageInputStyle
 ) {
 
-    internal val attachmentsController = AttachmentsController(this, binding, view, style)
+    internal val attachmentsController = AttachmentsController(this, view, style.isShowAttachmentButton)
 
     private var messageInputType: MessageInputType? = null
     internal var members: List<Member> = listOf()
@@ -98,17 +97,13 @@ internal class MessageInputController(
         view.editMessage(message, messageText)
     }
 
-    internal fun onClickCloseBackGroundView() {
+    internal fun onClickCloseAttachmentSelectionMenu() {
         messageInputType = null
-        attachmentsController.onClickCloseBackGroundView()
+        attachmentsController.onClickCloseAttachmentSelectionMenu()
     }
 
-    internal fun onClickOpenBackGroundView(type: MessageInputType) {
-        binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
-        binding.clTitle.visibility = View.VISIBLE
-        binding.btnClose.visibility = View.VISIBLE
-        binding.clAddFile.visibility = View.GONE
-        binding.clSelectPhoto.visibility = View.GONE
+    internal fun onClickOpenAttachmentSelectionMenu(type: MessageInputType) {
+        attachmentsController.onClickOpenAttachmentSelectionMenu()
         when (type) {
             MessageInputType.EDIT_MESSAGE -> Unit
             MessageInputType.ADD_FILE -> binding.clAddFile.visibility = View.VISIBLE
@@ -120,7 +115,6 @@ internal class MessageInputController(
         }
         binding.tvTitle.text = type.getLabel(view.context)
         messageInputType = type
-        attachmentsController.checkPermissions()
     }
 
     internal fun configSendButtonEnableState() {
@@ -134,7 +128,7 @@ internal class MessageInputController(
     internal fun initSendMessage() {
         binding.messageTextInput.setText("")
         attachmentsController.clearState()
-        onClickCloseBackGroundView()
+        onClickCloseAttachmentSelectionMenu()
     }
 
     internal fun onFileCaptured(file: File) {
@@ -171,7 +165,7 @@ internal class MessageInputController(
     fun getSelectedAttachments() = attachmentsController.selectedAttachments
     fun onClickOpenSelectView(isMedia: Boolean, treeUri: Uri? = null) {
         attachmentsController.onClickOpenSelectView(messageInputType, isMedia, treeUri)
-        onClickOpenBackGroundView(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
+        onClickOpenAttachmentSelectionMenu(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
     }
     fun onCameraClick() = attachmentsController.onCameraClick()
     fun setSelectedAttachments(attachments: Set<AttachmentMetaData>) =
