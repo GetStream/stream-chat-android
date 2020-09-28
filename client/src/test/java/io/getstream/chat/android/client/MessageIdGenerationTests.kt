@@ -29,7 +29,7 @@ class MessageIdGenerationTests {
 
     lateinit var uuidGenerator: UuidGenerator
     lateinit var retroApi: RetrofitApi
-    lateinit var api: ChatApi
+    private lateinit var api: ChatApi
 
     @Before
     fun before() {

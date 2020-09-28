@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.Date
 
-interface ChatApi {
+internal interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)
 
