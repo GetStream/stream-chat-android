@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -30,7 +29,6 @@ import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Date;
 import java.util.List;
@@ -61,8 +59,8 @@ public class MessageListView extends ConstraintLayout {
     protected MessageListViewStyle style;
 
     private RecyclerView messagesRV;
-    private FloatingActionButton unseenMessagesBtn;
-    private TextView unseenMessagesCountTV;
+    private ConstraintLayout unseenBottomBtn;
+    private TextView newMessagesTextTV;
     private int lastViewedPosition = 0;
 
     private int unseenItems = 0;
@@ -213,16 +211,15 @@ public class MessageListView extends ConstraintLayout {
     }
 
     private void initUnseenMessagesButton() {
-        unseenMessagesBtn = findViewById(R.id.unseenMessagesBtn);
-        unseenMessagesBtn.hide();
-        unseenMessagesBtn.setOnClickListener(view ->
+        unseenBottomBtn = findViewById(R.id.scrollBottomBtn);
+        unseenBottomBtn.setOnClickListener(view ->
                 messagesRV.smoothScrollToPosition(lastPosition())
         );
     }
 
     private void initUnseenMessagesView() {
-        unseenMessagesCountTV = findViewById(R.id.unseenMessagesCountTV);
-        unseenMessagesCountTV.setVisibility(View.GONE);
+        newMessagesTextTV = findViewById(R.id.newMessagesTV);
+        newMessagesTextTV.setVisibility(View.GONE);
     }
 
 
@@ -258,19 +255,19 @@ public class MessageListView extends ConstraintLayout {
 
                     if (unseenItems <= 0) {
                         lastMessageReadHandler.invoke();
-                        unseenMessagesCountTV.setVisibility(View.GONE);
+                        newMessagesTextTV.setVisibility(View.GONE);
                     } else {
-                        unseenMessagesCountTV.setVisibility(View.VISIBLE);
-                        unseenMessagesCountTV.setText(String.valueOf(unseenItems));
+                        newMessagesTextTV.setVisibility(View.VISIBLE);
+                        newMessagesTextTV.setText(String.valueOf(unseenItems));
                     }
 
                     if (hasScrolledUp) {
-                        if (!unseenMessagesBtn.isShown()) {
-                            unseenMessagesBtn.show();
+                        if (!unseenBottomBtn.isShown()) {
+                            unseenBottomBtn.setVisibility(View.VISIBLE);
                         }
                     } else {
-                        if (unseenMessagesBtn.isShown()) {
-                            unseenMessagesBtn.hide();
+                        if (unseenBottomBtn.isShown()) {
+                            unseenBottomBtn.setVisibility(View.GONE);
                         }
                     }
 
@@ -421,7 +418,7 @@ public class MessageListView extends ConstraintLayout {
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
             // Scroll to bottom when the user wrote the message.
-            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine()) {
+            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() && false) {
                 scrollToBottom();
             } else if (!hasScrolledUp) { //If at the screen is at bottom, it stays at the bottom.
                 scrollToBottom();
@@ -429,8 +426,8 @@ public class MessageListView extends ConstraintLayout {
                 unseenItems = newSize - 1 - lastViewedPosition;
 
                 if (unseenItems > 0) {
-                    unseenMessagesCountTV.setVisibility(View.VISIBLE);
-                    unseenMessagesCountTV.setText(String.valueOf(unseenItems));
+                    newMessagesTextTV.setVisibility(View.VISIBLE);
+                    newMessagesTextTV.setText(String.valueOf(unseenItems));
                 }
             }
             // we want to mark read if there is a new message
