@@ -12,8 +12,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.token.TokenManager
 import kotlin.properties.Delegates
 
-internal class ChatSocketServiceImpl(
-    eventsParser: EventsParser,
+internal class ChatSocketServiceImpl private constructor(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory
 ) : ChatSocketService {
@@ -64,10 +63,6 @@ internal class ChatSocketServiceImpl(
             }
         }
     )
-
-    init {
-        eventsParser.setSocketService(this)
-    }
 
     override fun onSocketError(error: ChatError) {
         logger.logE(error)
@@ -152,5 +147,13 @@ internal class ChatSocketServiceImpl(
         data class Connected(val event: ConnectedEvent) : State()
         data class Disconnected(val connectionWillFollow: Boolean) : State()
         data class Error(val error: ChatError) : State()
+    }
+
+    companion object {
+        fun create(
+            tokenManager: TokenManager,
+            socketFactory: SocketFactory,
+            eventsParser: EventsParser
+        ): ChatSocketServiceImpl = ChatSocketServiceImpl(tokenManager, socketFactory).also { eventsParser.setSocketService(it) }
     }
 }
