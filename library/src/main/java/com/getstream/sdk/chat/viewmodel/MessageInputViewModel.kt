@@ -60,7 +60,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         messageTransformer: Message.() -> Unit = { }
     ) {
         // TODO: send message & send message with Attachments should be merged
-        // Send message should not be cancelled
+        // Send message should not be cancelled when viewModel.onCleared is called
         GlobalScope.launch {
             chatDomain.useCases.sendMessageWithAttachments(
                 cid,
