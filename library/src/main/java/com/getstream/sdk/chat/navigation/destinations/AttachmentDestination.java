@@ -84,13 +84,13 @@ public class AttachmentDestination extends ChatDestination {
                         imageUrls.add(a.getImageUrl());
                     }
                     if (imageUrls.isEmpty()) {
-                        Utils.showMessage(context, "Invalid image(s)!");
+                        Utils.showMessage(getContext(), "Invalid image(s)!");
                         return;
                     }
 
                     int position = message.getAttachments().indexOf(attachment);
                     if (position > imageUrls.size() - 1) position = 0;
-                    new ImageViewer.Builder<>(context, imageUrls)
+                    new ImageViewer.Builder<>(getContext(), imageUrls)
                             .setStartPosition(position)
                             .show();
                     return;
@@ -107,12 +107,12 @@ public class AttachmentDestination extends ChatDestination {
                 break;
         }
         if (TextUtils.isEmpty(url)) {
-            Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_url));
+            Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_url));
             return;
         }
 
         if (type == null) type = attachment.getType();
-        Intent intent = new Intent(context, AttachmentActivity.class);
+        Intent intent = new Intent(getContext(), AttachmentActivity.class);
         intent.putExtra("type", type);
         intent.putExtra("url", url);
         start(intent);
@@ -125,12 +125,12 @@ public class AttachmentDestination extends ChatDestination {
 
         if (mimeType == null) {
             ChatLogger.Companion.getInstance().logE("AttachmentDestination", "MimeType is null for url" + url);
-            Utils.showMessage(context, context.getString(R.string.stream_attachment_invalid_mime_type, attachment.getName()));
+            Utils.showMessage(getContext(), getContext().getString(R.string.stream_attachment_invalid_mime_type, attachment.getName()));
         } else {
             // Media
             if (mimeType.contains("audio") ||
                     mimeType.contains("video")) {
-                Intent intent = new Intent(context, AttachmentMediaActivity.class);
+                Intent intent = new Intent(getContext(), AttachmentMediaActivity.class);
                 intent.putExtra(AttachmentMediaActivity.TYPE_KEY, mimeType);
                 intent.putExtra(AttachmentMediaActivity.URL_KEY, url);
                 start(intent);
@@ -139,7 +139,7 @@ public class AttachmentDestination extends ChatDestination {
                     mimeType.equals(ModelType.attach_mime_pdf) ||
                     mimeType.contains("application/vnd")) {
 
-                Intent intent = new Intent(context, AttachmentDocumentActivity.class);
+                Intent intent = new Intent(getContext(), AttachmentDocumentActivity.class);
                 intent.putExtra("url", url);
                 start(intent);
             }
