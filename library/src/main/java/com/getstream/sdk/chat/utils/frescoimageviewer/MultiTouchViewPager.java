@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 
-class MultiTouchViewPager extends ViewPager {
+public class MultiTouchViewPager extends ViewPager {
 
     private boolean isDisallowIntercept, isScrolled = true;
 

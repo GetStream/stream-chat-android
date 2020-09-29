@@ -17,6 +17,8 @@ open class AttachmentViewHolderFactory {
     }
 
     lateinit var listenerContainer: ListenerContainer
+        @JvmName("setListenerContainerInternal")
+        internal set
 
     open fun getAttachmentViewType(
         attachmentItem: AttachmentListItem

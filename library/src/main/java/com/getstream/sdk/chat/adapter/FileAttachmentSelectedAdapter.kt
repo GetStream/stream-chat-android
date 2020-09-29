@@ -31,10 +31,8 @@ internal class FileAttachmentSelectedAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.stream_item_attach_file, null)
-        val attachment = attachments[position]
-        view.tag = attachment
         val binding = StreamItemAttachFileBinding.bind(view)
-        configureFileAttach(binding, attachment)
+        configureFileAttach(binding, attachments[position])
         return view
     }
 
@@ -65,9 +63,5 @@ internal class FileAttachmentSelectedAdapter(
 
     interface OnAttachmentCancelListener {
         fun onCancel(attachment: AttachmentMetaData)
-    }
-
-    companion object {
-        private const val TAG = "AttachmentListAdapter"
     }
 }

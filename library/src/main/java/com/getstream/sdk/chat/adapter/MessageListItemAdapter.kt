@@ -40,9 +40,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
-        holder.bindListItem(
-            messageListItem = messageListItemList[position],
-            position = position
-        )
+        holder.bindListItem(messageListItemList[position])
     }
 }

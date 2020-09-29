@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.View
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
+import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.StorageUtils
@@ -113,7 +114,7 @@ internal class MessageInputController(
             }
             MessageInputType.COMMAND, MessageInputType.MENTION -> binding.btnClose.visibility = View.GONE
         }
-        binding.tvTitle.text = type.getLabel(view.context)
+        binding.tvTitle.text = type.label
         messageInputType = type
     }
 
