@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.DrawableWrapper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -73,7 +73,7 @@ public class MessageListView extends ConstraintLayout {
     private String newMessagesTextSingle;
     private String newMessagesTextPlural;
     private int newMessagesBehaviour;
-    private ScrollButtonBehaviour buttonBehaviour;
+    private ScrollButtonBehaviour scrollButtonBehaviour;
 
     private int unseenItems = 0;
 
@@ -219,11 +219,17 @@ public class MessageListView extends ConstraintLayout {
         initRecyclerView();
         initUnseenMessagesButton();
         initUnseenMessagesView();
+        initScrollButtonBehaviour();
 
         hasScrolledUp = false;
     }
 
     // region Init
+    private void initScrollButtonBehaviour() {
+        scrollButtonBehaviour =
+                new DefaultScrollButtonBehaviour(unseenBottomBtn, newMessagesTextTV);
+    }
+
     private void initRecyclerView() {
         messagesRV = findViewById(R.id.chatMessagesRV);
 
@@ -303,25 +309,13 @@ public class MessageListView extends ConstraintLayout {
                     lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition);
 
                     unseenItems = adapter.getItemCount() - 1 - lastViewedPosition;
-
-                    if (unseenItems <= 0) {
-                        lastMessageReadHandler.invoke();
-                        newMessagesTextTV.setVisibility(View.GONE);
-                    } else {
-                        newMessagesTextTV.setVisibility(View.VISIBLE);
-                        newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
-                    }
+                    scrollButtonBehaviour.unreadMessages(unseenItems);
 
                     if (hasScrolledUp) {
-                        if (!unseenBottomBtn.isShown()) {
-                            unseenBottomBtn.setVisibility(View.VISIBLE);
-                        }
+                        scrollButtonBehaviour.userScrolledUp();
                     } else {
-                        if (unseenBottomBtn.isShown()) {
-                            unseenBottomBtn.setVisibility(View.GONE);
-                        }
+                        scrollButtonBehaviour.userScrolledToTheBottom();
                     }
-
                 }
             }
         });
@@ -382,6 +376,10 @@ public class MessageListView extends ConstraintLayout {
         adapter.setHasStableIds(true);
 
         this.setMessageListItemAdapter(adapter);
+    }
+
+    public void setScrollButtonBehaviour(ScrollButtonBehaviour scrollButtonBehaviour) {
+        this.scrollButtonBehaviour = scrollButtonBehaviour;
     }
 
     public void setNewMessagesBehaviour(int newMessagesBehaviour) {
@@ -503,17 +501,13 @@ public class MessageListView extends ConstraintLayout {
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
             // Scroll to bottom when the user wrote the message.
-            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
+            if (false && entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == SCROLL_TO_BOTTOM) {
                 scrollToBottom();
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
-
-                if (unseenItems > 0) {
-                    newMessagesTextTV.setVisibility(View.VISIBLE);
-                    newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
-                }
+                scrollButtonBehaviour.unreadMessages(unseenItems);
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
@@ -539,7 +533,7 @@ public class MessageListView extends ConstraintLayout {
                 && passedTime < 3000;
     }
 
-    private void scrollToBottom() {
+    public void scrollToBottom() {
         layoutManager.scrollToPosition(adapter.getItemCount() - 1);
     }
 
@@ -697,7 +691,42 @@ public class MessageListView extends ConstraintLayout {
 
         void userScrolledToTheBottom();
 
-        void newMessagesArrived(int count);
+        void unreadMessages(int count);
 
+    }
+
+    private class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
+
+        private ViewGroup unseenBottomBtn;
+        private TextView newMessagesTextTV;
+
+        public DefaultScrollButtonBehaviour(ViewGroup unseenBottomBtn, TextView newMessagesTextTV) {
+            this.unseenBottomBtn = unseenBottomBtn;
+            this.newMessagesTextTV = newMessagesTextTV;
+        }
+
+        @Override
+        public void userScrolledUp() {
+            if (!unseenBottomBtn.isShown()) {
+                unseenBottomBtn.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void userScrolledToTheBottom() {
+            if (unseenBottomBtn.isShown()) {
+                unseenBottomBtn.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void unreadMessages(int count) {
+            if (unseenItems <= 0) {
+                newMessagesTextTV.setVisibility(View.GONE);
+            } else {
+                newMessagesTextTV.setVisibility(View.VISIBLE);
+                newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
+            }
+        }
     }
 }

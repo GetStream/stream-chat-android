@@ -23,11 +23,11 @@
         app:streamMessageDateShow="true"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/padding_medium"
-        app:streamButtonBackground="@android:color/holo_red_light"
+        app:streamButtonBackground="@drawable/stream_shape_round"
         app:streamNewMessagesTextSingle="@string/new_messages_single"
         app:streamNewMessagesTextPlural="@string/new_messages_plural"
         app:streamNewMessagesBehaviour="count_new_messages"
-        app:streamButtonIcon="@drawable/stream_arrow_left"
+        app:streamButtonIcon="@drawable/stream_bottom_arrow"
         />
 
     <ProgressBar
