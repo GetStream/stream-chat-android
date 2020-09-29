@@ -30,7 +30,8 @@ internal class FileAttachmentSelectedAdapter(
     override fun getItemId(position: Int) = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view = convertView ?: LayoutInflater.from(parent.context).inflate(R.layout.stream_item_attach_file, null)
+        val view = convertView ?: LayoutInflater.from(parent.context)
+            .inflate(R.layout.stream_item_attach_file, parent, false)
         val binding = StreamItemAttachFileBinding.bind(view)
         configureFileAttach(binding, attachments[position])
         return view

@@ -61,7 +61,6 @@ class FileAttachmentListAdapter(
             binding.tvFileSize.text =
                 StringUtility.convertFileSizeByteCount(attachment.size)
             itemView.setOnClickListener { listener(attachment) }
-            binding.executePendingBindings()
         }
     }
 }
