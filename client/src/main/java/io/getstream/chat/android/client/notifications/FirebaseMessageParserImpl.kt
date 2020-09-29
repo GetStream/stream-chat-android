@@ -27,9 +27,9 @@ internal class FirebaseMessageParserImpl(val handler: ChatNotificationHandler) :
         val channelId = message.data[channelIdKey]
         val channelType = message.data[channelTypeKey]
 
-        return message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey)
-            && !messageId.isNullOrEmpty()
-            && !channelId.isNullOrEmpty()
-            && !channelType.isNullOrEmpty()
+        return message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey) &&
+            !messageId.isNullOrEmpty() &&
+            !channelId.isNullOrEmpty() &&
+            !channelType.isNullOrEmpty()
     }
 }
