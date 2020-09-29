@@ -183,16 +183,6 @@ public class MessageListView extends ConstraintLayout {
     private AttachmentViewHolderFactory attachmentViewHolderFactory;
     private MessageViewHolderFactory messageViewHolderFactory;
 
-    // Constants
-    public static final int WINTER = 0;
-    public static final int SPRING = 1;
-
-    // Declare the @IntDef for these constants
-    @IntDef({WINTER, SPRING})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Season {
-    }
-
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -334,14 +324,6 @@ public class MessageListView extends ConstraintLayout {
         });
 
         messagesRV.setAdapter(adapter);
-    }
-
-    private String parseNewMessagesText(int unseenItems) {
-        if (unseenItems == 1) {
-            return String.format(newMessagesTextSingle, unseenItems);
-        } else {
-            return String.format(newMessagesTextPlural, unseenItems);
-        }
     }
 
     public void init(Channel channel, User currentUser) {
@@ -726,6 +708,14 @@ public class MessageListView extends ConstraintLayout {
             } else {
                 newMessagesTextTV.setVisibility(View.VISIBLE);
                 newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
+            }
+        }
+
+        private String parseNewMessagesText(int unseenItems) {
+            if (unseenItems == 1) {
+                return String.format(newMessagesTextSingle, unseenItems);
+            } else {
+                return String.format(newMessagesTextPlural, unseenItems);
             }
         }
     }
