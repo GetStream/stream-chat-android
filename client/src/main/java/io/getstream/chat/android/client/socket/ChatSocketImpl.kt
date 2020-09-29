@@ -21,9 +21,6 @@ internal class ChatSocketImpl(
         SocketFactory(eventsParser, parser, tokenManager)
     )
 
-    override val state: ChatSocketService.State
-        get() = service.state
-
     override fun connectAnonymously() {
         service.connect(wssUrl, apiKey, null)
     }

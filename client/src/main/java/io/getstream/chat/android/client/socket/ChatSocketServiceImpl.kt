@@ -36,7 +36,7 @@ internal class ChatSocketServiceImpl(
         }
     )
 
-    override var state: State by Delegates.observable(
+    private var state: State by Delegates.observable(
         State.Disconnected(true) as State,
         { _, oldState, newState ->
             if (oldState != newState) {

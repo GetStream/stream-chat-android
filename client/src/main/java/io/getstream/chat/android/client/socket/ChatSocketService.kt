@@ -7,8 +7,6 @@ import io.getstream.chat.android.client.models.User
 
 internal interface ChatSocketService {
 
-    var state: State
-
     fun connect(endpoint: String, apiKey: String, user: User?)
 
     fun disconnect()

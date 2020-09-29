@@ -4,7 +4,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.observable.ChatObservable
 
 internal interface ChatSocket {
-    val state: ChatSocketService.State
     fun connect(user: User)
     fun connectAnonymously()
     @Deprecated(

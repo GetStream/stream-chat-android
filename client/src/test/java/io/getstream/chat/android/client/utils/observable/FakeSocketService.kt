@@ -14,8 +14,6 @@ internal class FakeSocketService(
 
     private var connectionUserId: String? = null
 
-    override var state: ChatSocketService.State = ChatSocketService.State.Disconnected(false)
-
     override fun connect(endpoint: String, apiKey: String, user: User?) {
     }
 
