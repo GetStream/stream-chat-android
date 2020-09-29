@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageUtils
@@ -65,8 +66,17 @@ internal class AttachmentsController(
                     isMedia
                 )
             }
+            selectedAttachments = filterMediaFiles(isMedia, selectedAttachments)
             setSelectedAttachmentAdapter(messageInputType, isMedia)
             view.showLoadingTotalAttachments(false)
+        }
+    }
+
+    private fun filterMediaFiles(isMedia: Boolean, filesToFilter: Set<AttachmentMetaData>): Set<AttachmentMetaData> {
+        return if (!isMedia) {
+            filesToFilter
+        } else {
+            filesToFilter.filter(mediaAttachmentsPredicate).toSet()
         }
     }
 
@@ -328,5 +338,10 @@ internal class AttachmentsController(
     fun onClickOpenAttachmentSelectionMenu() {
         view.showAttachmentsMenu()
         checkPermissions()
+    }
+
+    companion object {
+        private val listOfMediaTypes = listOf(ModelType.attach_image, ModelType.attach_video)
+        private val mediaAttachmentsPredicate: (AttachmentMetaData) -> Boolean = { it.type in listOfMediaTypes }
     }
 }
