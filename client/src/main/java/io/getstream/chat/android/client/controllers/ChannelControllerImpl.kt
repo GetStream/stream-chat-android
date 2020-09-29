@@ -300,6 +300,12 @@ internal class ChannelControllerImpl(
         return client.updateChannel(channelType, channelId, message, extraData)
     }
 
+    override fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
+        client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+
+    override fun disableSlowMode(): Call<Channel> =
+        client.disableSlowMode(channelType, channelId)
+
     override fun addMembers(vararg userIds: String): Call<Channel> {
         return client.addMembers(channelType, channelId, userIds.toList())
     }

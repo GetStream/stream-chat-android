@@ -411,6 +411,19 @@ internal class ChatClientImpl(
             UpdateChannelRequest(channelExtraData, updateMessage)
         )
 
+    override fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel> =
+        api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+
+    override fun disableSlowMode(
+        channelType: String,
+        channelId: String
+    ): Call<Channel> =
+        api.disableSlowMode(channelType, channelId)
+
     override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId)
     }
