@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 
-class FakeChatSocket : ChatSocket {
+internal class FakeChatSocket : ChatSocket {
 
     override val state: ChatSocketService.State
         get() = ChatSocketService.State.Error(ChatError(""))

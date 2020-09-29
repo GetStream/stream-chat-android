@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.socket.SocketListener
 import org.assertj.core.api.Assertions.assertThat
 import java.util.Date
 
-class FakeSocketService(
+internal class FakeSocketService(
     val eventsCollector: MutableList<ChatEvent> = mutableListOf()
 ) : ChatSocketService {
 

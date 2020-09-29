@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import java.util.Date
 
-interface ChatSocketService {
+internal interface ChatSocketService {
 
     var state: State
 
