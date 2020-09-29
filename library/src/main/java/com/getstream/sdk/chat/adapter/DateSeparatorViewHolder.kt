@@ -20,10 +20,7 @@ class DateSeparatorViewHolder(
         StreamItemDateSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<DateSeparatorItem>(binding.root) {
 
-    override fun bind(
-        messageListItem: DateSeparatorItem,
-        position: Int
-    ) {
+    override fun bind(messageListItem: DateSeparatorItem) {
         configDate(messageListItem)
         applyStyle()
     }

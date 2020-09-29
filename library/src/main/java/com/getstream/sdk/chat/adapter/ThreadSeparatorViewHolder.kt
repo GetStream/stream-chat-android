@@ -10,10 +10,7 @@ class ThreadSeparatorViewHolder(
         StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<ThreadSeparatorItem>(binding.root) {
 
-    override fun bind(
-        messageListItem: ThreadSeparatorItem,
-        position: Int
-    ) {
+    override fun bind(messageListItem: ThreadSeparatorItem) {
         /* Empty */
     }
 }
