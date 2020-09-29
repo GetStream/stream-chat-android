@@ -85,7 +85,7 @@ internal class ChatNotifications private constructor(
 
         if (firebaseParser.isValid(message)) {
             val data = firebaseParser.parse(message)
-            if (checkIfNotificationShowed(data.messageId)) {
+            if (!wasNotificationShowed(data.messageId)) {
                 showedNotifications.add(data.messageId)
                 loadRequiredData(data.channelType, data.channelId, data.messageId)
             }
@@ -97,13 +97,13 @@ internal class ChatNotifications private constructor(
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
 
-        if (!checkIfNotificationShowed(messageId)) {
+        if (!wasNotificationShowed(messageId)) {
             showedNotifications.add(messageId)
             loadRequiredData(event.channelType, event.channelId, messageId)
         }
     }
 
-    private fun checkIfNotificationShowed(messageId: String) = showedNotifications.contains(messageId)
+    private fun wasNotificationShowed(messageId: String) = showedNotifications.contains(messageId)
 
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
 
