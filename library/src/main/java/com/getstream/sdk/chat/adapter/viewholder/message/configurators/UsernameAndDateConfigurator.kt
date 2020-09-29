@@ -1,10 +1,9 @@
 package com.getstream.sdk.chat.adapter.viewholder.message.configurators
 
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -28,23 +27,23 @@ internal class UsernameAndDateConfigurator(
 
     private fun configUserNameAndMessageDateStyle(messageItem: MessageItem) {
         if (BOTTOM !in messageItem.positions || (!style.isUserNameShow && !style.isMessageDateShow)) {
-            binding.tvUsername.visibility = GONE
-            binding.tvMessagedate.visibility = GONE
+            binding.tvUsername.isVisible = false
+            binding.tvMessagedate.isVisible = false
             return
         }
 
         if (style.isUserNameShow && messageItem.isTheirs()) {
-            binding.tvUsername.visibility = VISIBLE
+            binding.tvUsername.isVisible = true
             binding.tvUsername.text = messageItem.message.user.getExtraValue("name", "")
         } else {
-            binding.tvUsername.visibility = GONE
+            binding.tvUsername.isVisible = false
         }
 
         if (style.isMessageDateShow) {
-            binding.tvMessagedate.visibility = VISIBLE
+            binding.tvMessagedate.isVisible = true
             binding.tvMessagedate.text = TIME_DATEFORMAT.format(messageItem.message.createdAt)
         } else {
-            binding.tvMessagedate.visibility = GONE
+            binding.tvMessagedate.isVisible = false
         }
         style.messageUserNameText.apply(binding.tvUsername)
 
