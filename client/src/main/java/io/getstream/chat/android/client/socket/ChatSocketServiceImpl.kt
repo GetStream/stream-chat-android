@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService.State
 import io.getstream.chat.android.client.token.TokenManager
+import kotlin.properties.Delegates
 
 internal class ChatSocketServiceImpl(
     eventsParser: EventsParser,
@@ -27,9 +28,26 @@ internal class ChatSocketServiceImpl(
     private val listeners = mutableListOf<SocketListener>()
 
     private val eventUiHandler = Handler(Looper.getMainLooper())
-    private val healthMonitor = HealthMonitor(this)
+    private val healthMonitor = HealthMonitor(
+        object : HealthMonitor.HealthCallback {
+            override fun check() {
+                (state as? State.Connected)?.let { sendEvent(it.event) }
+            }
+            override fun reconnect() = setupSocket()
+        }
+    )
 
-    override var state: State = State.Disconnected(false)
+    override var state: State by Delegates.observable(
+        State.Disconnected(false) as State,
+        { _, _, newState ->
+            when (newState) {
+                is State.Connecting -> { }
+                is State.Connected -> { }
+                is State.Disconnected -> { }
+                is State.Error -> { }
+            }
+        }
+    )
 
     init {
         eventsParser.setSocketService(this)
@@ -91,7 +109,7 @@ internal class ChatSocketServiceImpl(
         this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
-        this.healthMonitor.reset()
+        this.healthMonitor.stop()
         setupSocket()
     }
 
@@ -106,6 +124,7 @@ internal class ChatSocketServiceImpl(
     }
 
     override fun onEvent(event: ChatEvent) {
+        healthMonitor.ack()
         callListeners { listener -> listener.onEvent(event) }
     }
 
@@ -113,14 +132,14 @@ internal class ChatSocketServiceImpl(
         socket?.send(event)
     }
 
-    internal fun setupSocket() {
+    private fun setupSocket() {
         logger.logI("setupSocket")
         updateState(State.Connecting)
         socket = socketFactory.create(endpoint, apiKey, user)
     }
 
     private fun clearState() {
-        healthMonitor.reset()
+        healthMonitor.stop()
         socket?.close(1000, "bye")
         socket = null
     }
