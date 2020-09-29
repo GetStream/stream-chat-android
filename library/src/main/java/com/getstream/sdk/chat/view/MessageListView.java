@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableWrapper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,6 +34,8 @@ import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +62,8 @@ import kotlin.jvm.functions.Function2;
 public class MessageListView extends ConstraintLayout {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
+    public static final int SCROLL_TO_BOTTOM = 0;
+    public static final int COUNT_UPDATE = 1;
     protected MessageListViewStyle style;
 
     private RecyclerView messagesRV;
@@ -65,6 +72,8 @@ public class MessageListView extends ConstraintLayout {
     private int lastViewedPosition = 0;
     private String newMessagesTextSingle;
     private String newMessagesTextPlural;
+    private int newMessagesBehaviour;
+    private ScrollButtonBehaviour buttonBehaviour;
 
     private int unseenItems = 0;
 
@@ -174,6 +183,16 @@ public class MessageListView extends ConstraintLayout {
     private AttachmentViewHolderFactory attachmentViewHolderFactory;
     private MessageViewHolderFactory messageViewHolderFactory;
 
+    // Constants
+    public static final int WINTER = 0;
+    public static final int SPRING = 1;
+
+    // Declare the @IntDef for these constants
+    @IntDef({WINTER, SPRING})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Season {
+    }
+
     // region Constructor
     public MessageListView(Context context) {
         super(context);
@@ -204,23 +223,7 @@ public class MessageListView extends ConstraintLayout {
         hasScrolledUp = false;
     }
 
-    private void configureAttributes(AttributeSet attributeSet) {
-        TypedArray tArray = getContext()
-                .obtainStyledAttributes(attributeSet, R.styleable.MessageListView);
-
-        int backgroundRes = tArray.getResourceId(
-                R.styleable.MessageListView_streamButtonBackground,
-                R.drawable.stream_shape_round);
-
-        unseenBottomBtn.setBackgroundResource(backgroundRes);
-        newMessagesTextSingle =
-                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
-        newMessagesTextPlural =
-                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
-
-        tArray.recycle();
-    }
-
+    // region Init
     private void initRecyclerView() {
         messagesRV = findViewById(R.id.chatMessagesRV);
 
@@ -244,14 +247,40 @@ public class MessageListView extends ConstraintLayout {
         newMessagesTextTV.setVisibility(View.GONE);
     }
 
-
-    // region Init
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new MessageListViewStyle(context, attrs);
     }
 
     //private methods
+    private void configureAttributes(AttributeSet attributeSet) {
+        TypedArray tArray = getContext()
+                .obtainStyledAttributes(attributeSet, R.styleable.MessageListView);
+
+        int backgroundRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonBackground,
+                R.drawable.stream_shape_round);
+
+        unseenBottomBtn.setBackgroundResource(backgroundRes);
+        newMessagesTextSingle =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
+        newMessagesTextPlural =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
+
+        newMessagesBehaviour = tArray.getInt(
+                R.styleable.MessageListView_streamNewMessagesBehaviour,
+                COUNT_UPDATE);
+
+        int arrowIconRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonIcon,
+                R.drawable.stream_bottom_arrow);
+
+        ImageView scrollButtonArrow = findViewById(R.id.scrollIconIV);
+        scrollButtonArrow.setImageResource(arrowIconRes);
+
+        tArray.recycle();
+    }
+
     private int lastPosition() {
         return adapter.getItemCount() - 1;
     }
@@ -355,6 +384,32 @@ public class MessageListView extends ConstraintLayout {
         this.setMessageListItemAdapter(adapter);
     }
 
+    public void setNewMessagesBehaviour(int newMessagesBehaviour) {
+        if (newMessagesBehaviour == SCROLL_TO_BOTTOM || newMessagesBehaviour == COUNT_UPDATE) {
+            this.newMessagesBehaviour = newMessagesBehaviour;
+        } else {
+            throw new IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)");
+        }
+    }
+
+    public void setScrollButtonBackgroundResource(int backgroundRes) {
+        unseenBottomBtn.setBackgroundResource(backgroundRes);
+    }
+
+    public void setScrollButtonBackground(Drawable drawable) {
+        unseenBottomBtn.setBackground(drawable);
+    }
+
+    public void setScrollButtonIconResource(int backgroundRes) {
+        ImageView icon = findViewById(R.id.scrollIconIV);
+        icon.setImageResource(backgroundRes);
+    }
+
+    public void setScrollButtonIcon(Drawable drawable) {
+        ImageView icon = findViewById(R.id.scrollIconIV);
+        icon.setImageDrawable(drawable);
+    }
+
     public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
         if (adapter != null) {
             throw new IllegalStateException("Adapter was already inited, please set AttachmentViewHolderFactory first");
@@ -448,9 +503,9 @@ public class MessageListView extends ConstraintLayout {
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
             // Scroll to bottom when the user wrote the message.
-            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() && false) {
-                scrollToBottom();
-            } else if (!hasScrolledUp) { //If at the screen is at bottom, it stays at the bottom.
+            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
+                    !hasScrolledUp ||
+                    newMessagesBehaviour == SCROLL_TO_BOTTOM) {
                 scrollToBottom();
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
@@ -634,5 +689,15 @@ public class MessageListView extends ConstraintLayout {
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
 
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+    }
+
+    public interface ScrollButtonBehaviour {
+
+        void userScrolledUp();
+
+        void userScrolledToTheBottom();
+
+        void newMessagesArrived(int count);
+
     }
 }

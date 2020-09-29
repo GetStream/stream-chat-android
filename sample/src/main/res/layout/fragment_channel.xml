@@ -26,6 +26,8 @@
         app:streamButtonBackground="@android:color/holo_red_light"
         app:streamNewMessagesTextSingle="@string/new_messages_single"
         app:streamNewMessagesTextPlural="@string/new_messages_plural"
+        app:streamNewMessagesBehaviour="count_new_messages"
+        app:streamButtonIcon="@drawable/stream_arrow_left"
         />
 
     <ProgressBar
