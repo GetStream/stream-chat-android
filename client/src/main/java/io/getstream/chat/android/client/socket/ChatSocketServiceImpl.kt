@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocketService.State
 import io.getstream.chat.android.client.token.TokenManager
-import java.util.Date
 
 internal class ChatSocketServiceImpl(
     eventsParser: EventsParser,
@@ -34,10 +33,6 @@ internal class ChatSocketServiceImpl(
 
     init {
         eventsParser.setSocketService(this)
-    }
-
-    override fun setLastEventDate(date: Date) {
-        healthMonitor.lastEventDate = date
     }
 
     override fun onSocketError(error: ChatError) {
