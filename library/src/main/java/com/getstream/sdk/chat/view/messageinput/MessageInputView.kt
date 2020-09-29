@@ -23,9 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.DocumentTreeAccessContract
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.AttachmentListAdapter
 import com.getstream.sdk.chat.adapter.CommandsAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
+import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MentionsAdapter
@@ -340,54 +340,54 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         messageInputController.inputMode = InputMode.Edit(oldMessage)
     }
 
-    fun showSelectedMediaAttachments(selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter) {
+    internal fun showSelectedMediaAttachments(selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter) {
         binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
         binding.mediaComposer.visible(true)
         binding.fileComposer.visible(false)
         binding.fileComposer.adapter = null
     }
 
-    fun showSelectedFileAttachments(selectedFileAttachmentAdapter: AttachmentListAdapter) {
+    internal fun showSelectedFileAttachments(selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter) {
         binding.fileComposer.adapter = selectedFileAttachmentAdapter
         binding.fileComposer.visible(true)
         binding.mediaComposer.visible(false)
         binding.mediaComposer.adapter = null
     }
 
-    fun showTotalMediaAttachments(totalMediaAttachmentAdapter: MediaAttachmentAdapter) {
+    internal fun showTotalMediaAttachments(totalMediaAttachmentAdapter: MediaAttachmentAdapter) {
         binding.rvMedia.adapter = totalMediaAttachmentAdapter
         gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
         gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
     }
 
-    fun showTotalFileAttachments(totalFileAttachmentAdapter: FileAttachmentListAdapter) {
+    internal fun showTotalFileAttachments(totalFileAttachmentAdapter: FileAttachmentListAdapter) {
         gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
         gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
         binding.rvMedia.adapter = totalFileAttachmentAdapter
     }
 
-    fun showMediaAttachments() {
+    internal fun showMediaAttachments() {
         binding.mediaComposer.visible(true)
         binding.fileComposer.visible(false)
     }
 
-    fun showFileAttachments() {
+    internal fun showFileAttachments() {
         binding.mediaComposer.visible(false)
         binding.fileComposer.visible(true)
     }
 
-    fun showMediaPermissions(shouldBeVisible: Boolean) = binding.ivMediaPermission.visible(shouldBeVisible)
-    fun showCameraPermissions(shouldBeVisible: Boolean) = binding.ivCameraPermission.visible(shouldBeVisible)
-    fun showFilePermissions(shouldBeVisible: Boolean) = binding.ivFilePermission.visible(shouldBeVisible)
+    internal fun showMediaPermissions(shouldBeVisible: Boolean) = binding.ivMediaPermission.visible(shouldBeVisible)
+    internal fun showCameraPermissions(shouldBeVisible: Boolean) = binding.ivCameraPermission.visible(shouldBeVisible)
+    internal fun showFilePermissions(shouldBeVisible: Boolean) = binding.ivFilePermission.visible(shouldBeVisible)
 
-    fun hideAttachmentsMenu() {
+    internal fun hideAttachmentsMenu() {
         binding.clTitle.visible(false)
         binding.clAddFile.visible(false)
         binding.clSelectPhoto.visible(false)
         binding.root.setBackgroundResource(0)
     }
 
-    fun showAttachmentsMenu() {
+    internal fun showAttachmentsMenu() {
         binding.root.setBackgroundResource(R.drawable.stream_round_thread_toolbar)
         binding.clTitle.visibility = View.VISIBLE
         binding.btnClose.visibility = View.VISIBLE
@@ -395,8 +395,8 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.clSelectPhoto.visibility = View.GONE
     }
 
-    fun showLoadingTotalAttachments(shouldBeVisible: Boolean) = binding.progressBarFileLoader.visible(shouldBeVisible)
-    fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) = binding.ivOpenAttach.visible(shouldBeVisible)
+    internal fun showLoadingTotalAttachments(shouldBeVisible: Boolean) = binding.progressBarFileLoader.visible(shouldBeVisible)
+    internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) = binding.ivOpenAttach.visible(shouldBeVisible)
 
     interface TypeListener {
         fun onKeystroke()
