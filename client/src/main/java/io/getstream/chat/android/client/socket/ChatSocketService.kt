@@ -17,11 +17,4 @@ internal interface ChatSocketService {
     fun onSocketError(error: ChatError)
     fun onConnectionResolved(event: ConnectedEvent)
     fun onEvent(event: ChatEvent)
-
-    sealed class State {
-        object Connecting : State()
-        data class Connected(val event: ConnectedEvent) : State()
-        data class Disconnected(val connectionWillFollow: Boolean) : State()
-        data class Error(val error: ChatError) : State()
-    }
 }

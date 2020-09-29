@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.socket.ChatSocketService.State
 import io.getstream.chat.android.client.token.TokenManager
 import kotlin.properties.Delegates
 
@@ -146,5 +145,12 @@ internal class ChatSocketServiceImpl(
                 eventUiHandler.post { call(listener) }
             }
         }
+    }
+
+    private sealed class State {
+        object Connecting : State()
+        data class Connected(val event: ConnectedEvent) : State()
+        data class Disconnected(val connectionWillFollow: Boolean) : State()
+        data class Error(val error: ChatError) : State()
     }
 }
