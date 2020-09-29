@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.events.ChatEvent;
 import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.notifications.ChatNotifications;
-import io.getstream.chat.android.client.notifications.ChatNotificationsImpl;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.socket.InitConnectionListener;

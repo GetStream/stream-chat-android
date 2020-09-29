@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
@@ -48,7 +49,10 @@ class MessageInputViewModel @JvmOverloads constructor(
         val message = Message(cid = cid, text = messageText)
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
-        chatDomain.useCases.sendMessage(message.apply(messageTransformer)).execute()
+
+        GlobalScope.launch {
+            chatDomain.useCases.sendMessage(message.apply(messageTransformer)).invoke()
+        }
     }
 
     fun sendMessageWithAttachments(
@@ -56,14 +60,17 @@ class MessageInputViewModel @JvmOverloads constructor(
         attachmentFiles: List<File>,
         messageTransformer: Message.() -> Unit = { }
     ) {
-        GlobalScope.launch(Dispatchers.IO) {
+        // TODO: send message & send message with Attachments should be merged
+        // Send message should not be cancelled
+        GlobalScope.launch {
             chatDomain.useCases.sendMessageWithAttachments(
-                cid,
-                Message(cid = cid, text = message).apply(messageTransformer),
-                attachmentFiles
+                    cid,
+                    Message(cid = cid, text = message).apply(messageTransformer),
+                    attachmentFiles
             )
-                .execute()
+                    .invoke()
         }
+
     }
 
     /**
@@ -73,7 +80,10 @@ class MessageInputViewModel @JvmOverloads constructor(
      */
     fun editMessage(message: Message) {
         stopTyping()
-        chatDomain.useCases.editMessage(message).execute()
+
+        viewModelScope.launch {
+            chatDomain.useCases.editMessage(message).invoke()
+        }
     }
 
     /**
@@ -83,7 +93,11 @@ class MessageInputViewModel @JvmOverloads constructor(
     @Synchronized
     fun keystroke() {
         if (isThread) return
-        chatDomain.useCases.keystroke(cid).execute()
+
+        viewModelScope.launch {
+            chatDomain.useCases.keystroke(cid).invoke()
+        }
+
     }
 
     /**
@@ -91,6 +105,8 @@ class MessageInputViewModel @JvmOverloads constructor(
      */
     fun stopTyping() {
         if (isThread) return
-        chatDomain.useCases.stopTyping(cid).execute()
+        viewModelScope.launch {
+            chatDomain.useCases.stopTyping(cid).invoke()
+        }
     }
 }

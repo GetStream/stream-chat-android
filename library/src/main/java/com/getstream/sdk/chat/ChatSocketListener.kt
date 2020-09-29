@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelMuteEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUnmuteEvent
+import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -140,6 +141,7 @@ internal class ChatSocketListener(
             is DisconnectedEvent,
             is ErrorEvent,
             is UnknownEvent -> { }
+            is ChannelUpdatedByUserEvent -> TODO()
         }.exhaustive
     }
 }
