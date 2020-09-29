@@ -63,15 +63,13 @@ class MessageListItemViewHolder(
         StreamItemMessageBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
 
-    protected var bindingPosition = 0
     protected lateinit var message: Message
     protected lateinit var messageListItem: MessageItem
     protected lateinit var positions: List<MessageViewHolderFactory.Position>
     protected lateinit var set: ConstraintSet
 
-    override fun bind(messageListItem: MessageItem, position: Int) {
+    override fun bind(messageListItem: MessageItem) {
         this.messageListItem = messageListItem
-        this.bindingPosition = position
         this.message = messageListItem.message
         this.positions = messageListItem.positions
         this.set = ConstraintSet()
@@ -426,7 +424,7 @@ class MessageListItemViewHolder(
 
         if (!style.isThreadEnabled ||
             !channel.config.isRepliesEnabled ||
-            (bindingPosition == 0 && message.id.isEmpty()) ||
+            (bindingAdapterPosition == 0 && message.id.isEmpty()) ||
             isDeletedMessage() ||
             isFailedMessage() ||
             replyCount == 0 || isThread()
