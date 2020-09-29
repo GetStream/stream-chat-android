@@ -37,7 +37,7 @@ internal class ReactionConfigurator(
         configReactionView(messageItem)
         configParamsReactionSpace(messageItem)
         configParamsReactionTail(messageItem)
-        configParamsReactionRecycleView(messageItem)
+        configParamsReactionRecyclerView(messageItem)
     }
 
     private fun configReactionView(messageItem: MessageItem) {
@@ -147,7 +147,7 @@ internal class ReactionConfigurator(
         }
     }
 
-    private fun configParamsReactionRecycleView(messageItem: MessageItem) {
+    private fun configParamsReactionRecyclerView(messageItem: MessageItem) {
         if (binding.reactionsRecyclerView.visibility != View.VISIBLE) {
             return
         }

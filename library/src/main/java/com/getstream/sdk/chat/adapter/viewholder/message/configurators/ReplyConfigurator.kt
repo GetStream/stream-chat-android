@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -56,12 +57,13 @@ internal class ReplyConfigurator(
             replyCount
         )
 
-        binding.ivReply.setOnClickListener { messageClickListener.onMessageClick(message) }
-        binding.tvReply.setOnClickListener { messageClickListener.onMessageClick(message) }
+        val clickListener: (View) -> Unit = { messageClickListener.onMessageClick(message) }
+        binding.ivReply.setOnClickListener(clickListener)
+        binding.tvReply.setOnClickListener(clickListener)
     }
 
     private fun configParamsReply(messageItem: MessageItem) {
-        if (binding.ivReply.visibility != View.VISIBLE) {
+        if (binding.ivReply.isGone) {
             return
         }
 
