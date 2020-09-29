@@ -22,8 +22,8 @@ internal interface ChatSocketService {
 
     sealed class State {
         object Connecting : State()
-        class Connected(val event: ConnectedEvent) : State()
-        class Disconnected(val connectionWillFollow: Boolean) : State()
-        class Error(val error: ChatError) : State()
+        data class Connected(val event: ConnectedEvent) : State()
+        data class Disconnected(val connectionWillFollow: Boolean) : State()
+        data class Error(val error: ChatError) : State()
     }
 }
