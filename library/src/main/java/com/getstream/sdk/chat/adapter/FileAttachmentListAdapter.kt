@@ -35,6 +35,18 @@ class FileAttachmentListAdapter(
         notifyDataSetChanged()
     }
 
+    fun selectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, true)
+
+    fun unselectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, false)
+
+    private fun toggleSelection(attachment: AttachmentMetaData, isSelected: Boolean) {
+        val index = attachments.indexOf(attachment)
+        if (index != -1) {
+            attachments[index].isSelected = isSelected
+            notifyItemChanged(index)
+        }
+    }
+
     class MyViewHolder(
         private val binding: StreamItemAttachFileBinding,
         private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit

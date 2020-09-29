@@ -158,6 +158,12 @@ internal class AttachmentsController(
                 messageInputType,
                 isMedia
             )
+            totalFileAttachmentAdapter?.unselectAttachment(attachment) ?: setTotalAttachmentAdapters(
+                totalAttachments.toList(),
+                selectedAttachments.toList(),
+                messageInputType,
+                isMedia
+            )
         }
     }
 
@@ -179,6 +185,12 @@ internal class AttachmentsController(
             )
         } else {
             selectedFileAttachmentAdapter?.setAttachments(selectedAttachments.toList()) ?: setSelectedAttachmentAdapter(
+                messageInputType,
+                isMedia
+            )
+            totalFileAttachmentAdapter?.selectAttachment(attachment) ?: setTotalAttachmentAdapters(
+                totalAttachments.toList(),
+                selectedAttachments.toList(),
                 messageInputType,
                 isMedia
             )
