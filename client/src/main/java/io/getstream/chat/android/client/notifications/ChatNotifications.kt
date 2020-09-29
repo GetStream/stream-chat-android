@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.utils.getOr
 
 internal class ChatNotifications private constructor(
     private val handler: ChatNotificationHandler,
@@ -85,7 +84,7 @@ internal class ChatNotifications private constructor(
 
         if (firebaseParser.isValid(message)) {
             val data = firebaseParser.parse(message)
-            if (!wasNotificationShowed(data.messageId)) {
+            if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
                 loadRequiredData(data.channelType, data.channelId, data.messageId)
             }
@@ -97,13 +96,13 @@ internal class ChatNotifications private constructor(
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
 
-        if (!wasNotificationShowed(messageId)) {
+        if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
             loadRequiredData(event.channelType, event.channelId, messageId)
         }
     }
 
-    private fun wasNotificationShowed(messageId: String) = showedNotifications.contains(messageId)
+    private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
 
@@ -135,7 +134,7 @@ internal class ChatNotifications private constructor(
 
         val notification = handler.buildNotification(
             notificationId,
-            channel.extraData.getOr("name", "").toString(),
+            channel.extraData["name"].toString(),
             message.text,
             messageId,
             channel.type,
