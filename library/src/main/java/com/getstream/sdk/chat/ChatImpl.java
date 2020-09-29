@@ -13,23 +13,18 @@ import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
-import io.getstream.chat.android.client.events.ChatEvent;
-import io.getstream.chat.android.client.events.ConnectedEvent;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.User;
-import io.getstream.chat.android.client.notifications.ChatNotifications;
-import io.getstream.chat.android.client.notifications.ChatNotificationsImpl;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
-import io.getstream.chat.android.client.socket.SocketListener;
 import io.getstream.chat.android.livedata.ChatDomain;
 import kotlin.UninitializedPropertyAccessException;
 import kotlin.Unit;
-import kotlin.jvm.functions.Function1;
 import kotlinx.coroutines.BuildersKt;
 import kotlinx.coroutines.CoroutineStart;
 import kotlinx.coroutines.Dispatchers;
@@ -53,7 +48,7 @@ class ChatImpl implements Chat {
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
-             ChatNavigationHandler navigationHandler,
+             @Nullable ChatNavigationHandler navigationHandler,
              UrlSigner urlSigner,
              ChatMarkdown markdown,
              String apiKey,
@@ -69,10 +64,12 @@ class ChatImpl implements Chat {
         this.offlineEnabled = offlineEnabled;
         this.notificationConfig = notificationConfig;
 
-        navigator.setHandler(navigationHandler);
+        if (navigationHandler != null) {
+            navigator.setHandler(navigationHandler);
+        }
         new ChatClient.Builder(this.apiKey, context)
-                        .notifications(new ChatNotificationHandler(context, notificationConfig))
-                        .build();
+                .notifications(new ChatNotificationHandler(context, notificationConfig))
+                .build();
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
@@ -172,7 +169,7 @@ class ChatImpl implements Chat {
                     Dispatchers.getIO(),
                     CoroutineStart.DEFAULT,
                     (scope, continuation) -> chatDomain.disconnect(continuation));
-        } catch(UninitializedPropertyAccessException e) {
+        } catch (UninitializedPropertyAccessException e) {
             ChatLogger.Companion.get("ChatImpl").logD("ChatDomain was not initialized yet. No need to disconnect.");
         }
     }
