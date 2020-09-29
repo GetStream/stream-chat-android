@@ -13,6 +13,7 @@ import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.strings.ChatStrings;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
@@ -53,7 +54,7 @@ class ChatImpl implements Chat {
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
-             ChatNavigationHandler navigationHandler,
+             @Nullable ChatNavigationHandler navigationHandler,
              UrlSigner urlSigner,
              ChatMarkdown markdown,
              String apiKey,
@@ -69,7 +70,9 @@ class ChatImpl implements Chat {
         this.offlineEnabled = offlineEnabled;
         this.notificationConfig = notificationConfig;
 
-        navigator.setHandler(navigationHandler);
+        if (navigationHandler != null) {
+            navigator.setHandler(navigationHandler);
+        }
         new ChatClient.Builder(this.apiKey, context)
                         .notifications(new ChatNotificationHandler(context, notificationConfig))
                         .build();
