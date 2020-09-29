@@ -18,33 +18,50 @@ internal class ChatSocketServiceImpl(
     private val tokenManager: TokenManager,
     private val socketFactory: SocketFactory
 ) : ChatSocketService {
-
     private val logger = ChatLogger.get("SocketService")
-
     private var endpoint: String = ""
     private var apiKey: String = ""
     private var user: User? = null
     private var socket: Socket? = null
     private val listeners = mutableListOf<SocketListener>()
-
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         object : HealthMonitor.HealthCallback {
-            override fun check() {
-                (state as? State.Connected)?.let { sendEvent(it.event) }
-            }
             override fun reconnect() = setupSocket()
+            override fun check() {
+                (state as? State.Connected)?.let {
+                    sendEvent(it.event)
+                }
+            }
         }
     )
 
     override var state: State by Delegates.observable(
-        State.Disconnected(false) as State,
-        { _, _, newState ->
-            when (newState) {
-                is State.Connecting -> { }
-                is State.Connected -> { }
-                is State.Disconnected -> { }
-                is State.Error -> { }
+        State.Disconnected(true) as State,
+        { _, oldState, newState ->
+            if (oldState != newState) {
+                logger.logI("updateState: ${newState.javaClass.simpleName}")
+                when (newState) {
+                    is State.Error -> {
+                        healthMonitor.onError()
+                        callListeners { it.onError(newState.error) }
+                    }
+                    is State.Connecting -> {
+                        healthMonitor.stop()
+                        callListeners { it.onConnecting() }
+                    }
+                    is State.Connected -> {
+                        healthMonitor.start()
+                        callListeners { it.onConnected(newState.event) }
+                    }
+                    is State.Disconnected -> {
+                        if (!newState.connectionWillFollow) {
+                            healthMonitor.stop()
+                        }
+                        releaseSocket()
+                        callListeners { it.onDisconnected() }
+                    }
+                }
             }
         }
     )
@@ -54,30 +71,18 @@ internal class ChatSocketServiceImpl(
     }
 
     override fun onSocketError(error: ChatError) {
-
         logger.logE(error)
-
         if (error is ChatNetworkError && error.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
-            updateState(State.Error(error))
+            state = State.Error(error)
             tokenManager.expireToken()
             tokenManager.loadSync()
-
-            // check if it's still in the current state
-            if (state is State.Error) {
-                updateState(State.Disconnected(true))
-                clearState()
-                healthMonitor.onError()
-            }
         } else if (error is ChatNetworkError && error.streamCode == ChatErrorCode.API_KEY_NOT_FOUND.code) {
-            updateState(State.Error(error))
-            updateState(State.Disconnected(false))
-            clearState()
+            state = State.Error(error)
+            state = State.Disconnected(false)
         } else {
             if (state is State.Connected || state is State.Connecting) {
-                updateState(State.Error(error))
-                updateState(State.Disconnected(true))
-                clearState()
-                healthMonitor.onError()
+                state = State.Error(error)
+                state = State.Disconnected(true)
             }
         }
     }
@@ -99,28 +104,20 @@ internal class ChatSocketServiceImpl(
         apiKey: String,
         user: User?
     ) {
+        state = State.Disconnected(true)
         logger.logI("connect")
-
-        if (state is State.Connecting || state is State.Connected) {
-            updateState(State.Disconnected(true))
-            clearState()
-        }
-
         this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
-        this.healthMonitor.stop()
         setupSocket()
     }
 
     override fun disconnect() {
-        updateState(State.Disconnected(false))
-        clearState()
+        state = State.Disconnected(false)
     }
 
     override fun onConnectionResolved(event: ConnectedEvent) {
-        updateState(State.Connected(event))
-        startMonitor()
+        state = State.Connected(event)
     }
 
     override fun onEvent(event: ChatEvent) {
@@ -134,44 +131,16 @@ internal class ChatSocketServiceImpl(
 
     private fun setupSocket() {
         logger.logI("setupSocket")
-        updateState(State.Connecting)
+        state = State.Connecting
         socket = socketFactory.create(endpoint, apiKey, user)
     }
 
-    private fun clearState() {
-        healthMonitor.stop()
+    private fun releaseSocket() {
         socket?.close(1000, "bye")
         socket = null
     }
 
-    private fun startMonitor() {
-        healthMonitor.start()
-    }
-
-    private fun updateState(state: State) {
-
-        logger.logI("updateState: ${state.javaClass.simpleName}")
-
-        this.state = state
-
-        when (state) {
-            is State.Error -> {
-                callListeners { it.onError(state.error) }
-            }
-            is State.Connecting -> {
-                callListeners { it.onConnecting() }
-            }
-            is State.Connected -> {
-                callListeners { it.onConnected(state.event) }
-            }
-            is State.Disconnected -> {
-                callListeners { it.onDisconnected() }
-            }
-        }
-    }
-
     private fun callListeners(call: (SocketListener) -> Unit) {
-
         synchronized(listeners) {
             listeners.forEach { listener ->
                 eventUiHandler.post { call(listener) }
