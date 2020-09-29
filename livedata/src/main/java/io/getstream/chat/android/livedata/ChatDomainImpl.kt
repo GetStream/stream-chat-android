@@ -451,7 +451,7 @@ class ChatDomainImpl private constructor(
 
     override fun isOnline(): Boolean = isOnline
 
-    override fun isOffline(): Boolean  = !isOnline
+    override fun isOffline(): Boolean = !isOnline
 
     override fun isInitialized(): Boolean {
         return _initialized.value ?: false
