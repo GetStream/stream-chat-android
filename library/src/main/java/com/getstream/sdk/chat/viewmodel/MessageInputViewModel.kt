@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -64,13 +63,12 @@ class MessageInputViewModel @JvmOverloads constructor(
         // Send message should not be cancelled
         GlobalScope.launch {
             chatDomain.useCases.sendMessageWithAttachments(
-                    cid,
-                    Message(cid = cid, text = message).apply(messageTransformer),
-                    attachmentFiles
+                cid,
+                Message(cid = cid, text = message).apply(messageTransformer),
+                attachmentFiles
             )
-                    .invoke()
+                .invoke()
         }
-
     }
 
     /**
@@ -97,7 +95,6 @@ class MessageInputViewModel @JvmOverloads constructor(
         viewModelScope.launch {
             chatDomain.useCases.keystroke(cid).invoke()
         }
-
     }
 
     /**
