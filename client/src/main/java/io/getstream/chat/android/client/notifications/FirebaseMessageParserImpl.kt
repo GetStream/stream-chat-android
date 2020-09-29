@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.notifications
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.utils.containsKeys
-import io.getstream.chat.android.client.utils.isNullOrEmpty
 
 internal class FirebaseMessageParserImpl(val handler: ChatNotificationHandler) : FirebaseMessageParser {
 
@@ -24,15 +23,13 @@ internal class FirebaseMessageParserImpl(val handler: ChatNotificationHandler) :
     }
 
     private fun verifyPayload(message: RemoteMessage): Boolean {
-
         val messageId = message.data[messageIdKey]
         val channelId = message.data[channelIdKey]
         val channelType = message.data[channelTypeKey]
 
-        return message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey) && !isNullOrEmpty(
-            messageId,
-            channelId,
-            channelType
-        )
+        return message.data.containsKeys(messageIdKey, channelTypeKey, channelIdKey)
+            && !messageId.isNullOrEmpty()
+            && !channelId.isNullOrEmpty()
+            && !channelType.isNullOrEmpty()
     }
 }
