@@ -1,14 +1,14 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import android.widget.TextView
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
+import com.getstream.sdk.chat.databinding.StreamItemThreadSeparatorBinding
 
-class ThreadSeparatorViewHolder(resId: Int, viewGroup: ViewGroup) :
-    BaseMessageListItemViewHolder<ThreadSeparatorItem>(resId, viewGroup) {
-
-    private val tv_text: TextView = itemView.findViewById(R.id.tv_text)
+class ThreadSeparatorViewHolder(
+    parent: ViewGroup,
+    private val binding: StreamItemThreadSeparatorBinding =
+        StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)
+) : BaseMessageListItemViewHolder<ThreadSeparatorItem>(binding.root) {
 
     override fun bind(
         messageListItem: ThreadSeparatorItem,
