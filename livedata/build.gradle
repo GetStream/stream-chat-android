@@ -68,7 +68,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.16.1"
+    api "com.github.getstream:stream-chat-android-client:1.16.4-SNAPSHOT"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
@@ -139,7 +139,7 @@ afterEvaluate {
                 // Adds sources as separate jars.
                 artifact androidSourcesJar
                 // Custom attributes of the publication
-                groupId = project.group
+                groupId = 'com.github.getstream'
                 artifactId = 'stream-chat-android-livedata'
                 version = '0.8.1-SNAPSHOT'
             }
