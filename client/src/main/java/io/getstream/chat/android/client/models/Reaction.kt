@@ -17,10 +17,21 @@ data class Reaction(
     @SerializedName("created_at")
     var createdAt: Date? = null,
 
+    @SerializedName("updated_at")
+    var updatedAt: Date? = null,
+
     @IgnoreSerialisation
     var syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
-) : CustomObject
+
+) : CustomObject {
+    // this is a workaround around a backend issue
+    // for some reason we sometimes only get the user id and not the user object
+    // this needs more investigation on the backend side of things
+    fun fetchUserId(): String {
+        return user?.id ?: userId
+    }
+}

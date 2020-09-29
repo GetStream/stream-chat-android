@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 import java.util.Date
 
-interface ChatApi {
+internal interface ChatApi {
 
     fun setConnection(userId: String, connectionId: String)
 
@@ -106,6 +106,17 @@ interface ChatApi {
         channelType: String,
         channelId: String,
         request: UpdateChannelRequest
+    ): Call<Channel>
+
+    fun enableSlowMode(
+        channelType: String,
+        channelId: String,
+        cooldownTimeInSeconds: Int
+    ): Call<Channel>
+
+    fun disableSlowMode(
+        channelType: String,
+        channelId: String
     ): Call<Channel>
 
     fun markRead(channelType: String, channelId: String, messageId: String = ""): Call<Unit>

@@ -51,6 +51,6 @@ data class Channel(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    var hiddenMessagesBefore: Date? = null
-
+    var hiddenMessagesBefore: Date? = null,
+    val cooldown: Int = 0
 ) : CustomObject

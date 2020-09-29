@@ -73,6 +73,8 @@ interface ChannelController {
     ): Disposable
 
     fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+    fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel>
+    fun disableSlowMode(): Call<Channel>
     fun addMembers(vararg userIds: String): Call<Channel>
     fun removeMembers(vararg userIds: String): Call<Channel>
     fun acceptInvite(message: String): Call<Channel>

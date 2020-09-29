@@ -1,4 +1,9 @@
 # To be released:
+- Add `ChatClient::enableSlowMode` method to enable slow mode
+- Add `ChatClient::disableSlowMode` method to disable slow mode
+- Add `ChannelController::enableSlowMode` method to enable slow mode
+- Add `ChannelController::disableSlowMode` method to disable slow mode
+- Add `Channel::cooldown` property to know how configured `cooldown` time for the channel
 - Fix FirebaseMessageParserImpl.verifyPayload() logic
 - Fix notification display condition
 
