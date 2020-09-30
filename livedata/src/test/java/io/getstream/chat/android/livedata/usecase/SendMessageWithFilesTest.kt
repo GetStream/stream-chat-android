@@ -2,21 +2,19 @@ package io.getstream.chat.android.livedata.usecase
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
+import io.getstream.chat.android.livedata.TestResultCall
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.`with message`
 import org.amshove.kluent.calling
@@ -31,20 +29,36 @@ import java.security.InvalidParameterException
 @RunWith(AndroidJUnit4::class)
 class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
-    val channelController: ChannelControllerImpl = mock()
-    val chatDomain: ChatDomainImpl = mock()
-    val sendMessageWithFile = SendMessageImpl(chatDomain)
+    val sendMessageWithFile: SendMessage by lazy { chatDomain.useCases.sendMessage }
 
     @Before
-    fun setup() {
+    override fun setup() {
+        super.setup()
         shadowOf(MimeTypeMap.getSingleton()).addExtensionMimeTypMapping("jpg", "image/jpeg")
-        When calling chatDomain.channel(any<String>()) doReturn channelController
+    }
+
+    private fun mockFileUploads(files: List<File>) {
+        for (file in files) {
+            val result = Result(file.absolutePath)
+            When calling client.sendFile(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+            When calling client.sendImage(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+        }
+    }
+
+    private fun mockFileUploadsFailure(files: List<File>) {
+        for (file in files) {
+            val path: String? = null
+            val result = Result(path, file.toChatError())
+            When calling client.sendFile(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+            When calling client.sendImage(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+        }
     }
 
     @Test
     fun `Should return message sending files`() {
         runBlocking(Dispatchers.IO) {
             val message = randomMessage()
+            message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
             val expectedAttachments = message.attachments.map { it.copy(assetUrl = it.upload!!.absolutePath, upload = null, type = "file") }
@@ -54,13 +68,61 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                     attachments = expectedAttachments.toMutableList()
                 )
             )
-            When calling channelController.scope doReturn this
             val files: List<File> = message.attachments.map { it.upload!! }
-            channelController.configureSuccessResultSendingFiles(files)
+
+            When calling channelMock.sendMessage(any()) doReturn TestResultCall(expectedResult)
+
+            mockFileUploads(files)
+
+            val result = sendMessageWithFile(message).execute()
+
+            Truth.assertThat(result).isEqualTo(expectedResult)
+        }
+    }
+
+    /*
+    // TODO: mocks for files don't seem to be specific to that file, but instead match any()
+    @Test
+    fun `Errors should still return the attachments`() {
+        runBlocking(Dispatchers.IO) {
+            val message = randomMessage()
+            message.cid = channelControllerImpl.cid
+            message.attachments = randomAttachmentsWithFile().toMutableList()
+
+            val expectedResult = Result(
+                    message
+            )
+            val files: List<File> = message.attachments.map { it.upload!! }
+
+            When calling channelMock.sendMessage(any()) doReturn TestResultCall(expectedResult)
+
+            mockFileUploadsFailure(files)
 
             val result = sendMessageWithFile(message).execute()
 
             result `should be equal to` expectedResult
+        }
+    }*/
+
+    @Test
+    fun `Should return apply the right transformation to attachments`() {
+        runBlocking(Dispatchers.IO) {
+            val message = randomMessage()
+            message.cid = channelControllerImpl.cid
+            message.attachments = randomAttachmentsWithFile().toMutableList()
+            val extra = mutableMapOf<String, Any>("the answer" to 42)
+
+            val files: List<File> = message.attachments.map { it.upload!! }
+
+            mockFileUploads(files)
+
+            val result = channelControllerImpl.uploadAttachment(message.attachments.first()) {
+                attachment, _, _ ->
+                attachment.copy(extraData = extra)
+            }
+            val uploadedAttachment = result.data()
+
+            Truth.assertThat(uploadedAttachment.extraData).isEqualTo(extra)
         }
     }
 
@@ -85,184 +147,12 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             sendMessageWithFile(message)
         } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
     }
-
-    /*
-    @Test
-    fun `Should return error sending files`() {
-        runBlocking {
-            val badFile = randomFile()
-            val files = randomFiles()
-            val expectedResult = Result<Message>(badFile.toCharError())
-            When calling channelController.scope doReturn this
-            channelController.configureSuccessResultSendingFiles(files)
-            channelController.configureFailureResultSendingFile(badFile)
-
-            val result = sendMessageWithAttachemen(
-                    randomCID(),
-                    randomMessage(),
-                    (files + badFile).shuffled()
-            ).execute()
-
-            result `should be equal to result` expectedResult
-        }
-    }
-
-    @Test
-    fun `Should return error sending Images`() {
-        runBlocking {
-            val badImage = randomImageFile()
-            val images = randomFiles { randomImageFile() }
-            val expectedResult = Result<Message>(badImage.toCharError())
-            When calling channelController.scope doReturn this
-            channelController.configureSuccessResultSendingImages(images)
-            channelController.configureFailureResultSendingImage(badImage)
-
-            val result = sendMessageWithAttachemen(randomCID(), randomMessage(), (images + badImage).shuffled()).execute()
-
-            result `should be equal to result` expectedResult
-        }
-    }*/
-
-    /*
-    @Test
-    fun `Should return message sending Images`() {
-        runBlocking {
-            val images = randomFiles { randomImageFile() }
-            val cid = randomCID()
-            val message = randomMessage()
-            val expectedResult = Result(
-                    message.copy(
-                            cid = cid,
-                            attachments = (
-                                    message.attachments + images.map {
-                                        it.toAttachment("image/jpeg").apply {
-                                            imageUrl = it.absolutePath
-                                            type = "image"
-                                        }
-                                    }
-                                    ).toMutableList()
-                    )
-            )
-            When calling channelController.scope doReturn this
-            channelController.configureSuccessResultSendingImages(images)
-
-            val result = sendMessageWithAttachemen(cid, message, images).execute()
-
-            result `should be equal to result` expectedResult
-        }
-    }
-
-    @Test
-    fun `Should apply transformations to attachments from image files`() {
-        runBlocking {
-            val images = randomFiles { randomImageFile() }
-            val cid = randomCID()
-            val message = randomMessage()
-            val extraDataKey = randomString()
-            val attachmentTransformation: Attachment.(file: File) -> Unit = { file ->
-                this.extraData[extraDataKey] = file.name
-            }
-            val transformationSpy: Attachment.(File) -> Unit = spy(attachmentTransformation)
-            val expectedResult = Result(
-                    message.copy(
-                            cid = cid,
-                            attachments = (
-                                    message.attachments + images.map {
-                                        it.toAttachment("image/jpeg").apply {
-                                            imageUrl = it.absolutePath
-                                            type = "image"
-                                            extraData[extraDataKey] = it.name
-                                        }
-                                    }
-                                    ).toMutableList()
-                    )
-            )
-            When calling channelController.scope doReturn this
-            channelController.configureSuccessResultSendingImages(images)
-
-            val result = sendMessageWithAttachemen(cid, message, images, transformationSpy).execute()
-
-            result `should be equal to result` expectedResult
-            images.forEach {
-                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
-            }
-        }
-    }
-
-    @Test
-    fun `Should apply transformations to attachments from files`() {
-        runBlocking {
-            val files = randomFiles()
-            val cid = randomCID()
-            val message = randomMessage()
-            val extraDataKey = randomString()
-            val attachmentTransformation: Attachment.(file: File) -> Unit = { file ->
-                this.extraData[extraDataKey] = file.name
-            }
-            val transformationSpy: Attachment.(File) -> Unit = spy(attachmentTransformation)
-            val expectedResult = Result(
-                    message.copy(
-                            cid = cid,
-                            attachments = (
-                                    message.attachments + files.map {
-                                        it.toAttachment(null).apply {
-                                            assetUrl = it.absolutePath
-                                            type = "file"
-                                            extraData[extraDataKey] = it.name
-                                        }
-                                    }
-                                    ).toMutableList()
-                    )
-            )
-            When calling channelController.scope doReturn this
-            channelController.configureSuccessResultSendingFiles(files)
-
-            val result = sendMessageWithAttachemen(cid, message, files, transformationSpy).execute()
-
-            result `should be equal to result` expectedResult
-            files.forEach {
-                Verify on transformationSpy that transformationSpy(any(), eq(it)) was called
-            }
-        }
-    }*/
 }
 
-private fun File.toCharError(): ChatError = ChatError(absolutePath)
+private fun File.toChatError(): ChatError = ChatError(absolutePath)
 private fun File.toAttachment(mimetype: String?) = Attachment(
     name = name,
     fileSize = length().toInt(),
     mimeType = mimetype,
     url = absolutePath
 )
-
-private suspend fun ChannelControllerImpl.configureSuccessResultSendingFiles(files: List<File>) {
-    files.forEach { configureSuccessResultSendingFile(it) }
-}
-
-private suspend fun ChannelControllerImpl.configureSuccessResultSendingFile(file: File) {
-    configureResultSendingFile(file, Result(file.absolutePath))
-}
-
-private suspend fun ChannelControllerImpl.configureFailureResultSendingFile(file: File) {
-    configureResultSendingFile(file, Result(file.toCharError()))
-}
-
-private suspend fun ChannelControllerImpl.configureResultSendingFile(file: File, result: Result<String>) {
-    When calling sendFile(file) doReturn result
-}
-
-private suspend fun ChannelControllerImpl.configureSuccessResultSendingImages(files: List<File>) {
-    files.forEach { configureSuccessResultSendingImage(it) }
-}
-
-private suspend fun ChannelControllerImpl.configureSuccessResultSendingImage(file: File) {
-    configureResultSendingImage(file, Result(file.absolutePath))
-}
-
-private suspend fun ChannelControllerImpl.configureFailureResultSendingImage(file: File) {
-    configureResultSendingImage(file, Result(file.toCharError()))
-}
-
-private suspend fun ChannelControllerImpl.configureResultSendingImage(file: File, result: Result<String>) {
-    When calling sendImage(file) doReturn result
-}

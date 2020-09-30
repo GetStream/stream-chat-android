@@ -423,7 +423,7 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -501,45 +501,38 @@ class ChannelControllerImpl(
         }
     }
 
-    private suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment) -> Attachment)? = null): Result<Attachment> {
+    /**
+     * Upload the attachment.upload file for the given attachment
+     * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
+     */
+    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)? = null): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+        val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
+        val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
 
-        val result = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension).let { mimetype ->
-            val pathResult = when (mimetype.isImageMimetype()) {
-                true -> sendImage(file)
-                false -> sendFile(file)
-            }
-            if (pathResult.isError) {
-                Result(pathResult.error())
-            } else {
-                val path = pathResult.data()
-                var newAttachment = Attachment(
-                    name = file.name,
-                    fileSize = file.length().toInt(),
-                    mimeType = mimetype,
-                    url = path
-                ).apply {
-                    when (mimetype.isImageMimetype()) {
-                        true -> {
-                            imageUrl = path
-                            type = "image"
-                        }
-                        false -> {
-                            assetUrl = path
-                            type = "file"
-                        }
-                    }
+        return if (pathResult.isError) {
+            Result(pathResult.error())
+        } else {
+            val path = pathResult.data()
+            var newAttachment = Attachment(
+                name = file.name,
+                fileSize = file.length().toInt(),
+                mimeType = mimeType?.toString() ?: "",
+                url = path,
+                type = attachmentType
+            ).apply {
+                if (attachmentType == "image") {
+                    imageUrl = path
+                } else {
+                    assetUrl = path
                 }
-                if (attachmentTransformer != null) {
-                    newAttachment = attachmentTransformer(newAttachment)
-                }
-                Result(
-                    newAttachment
-                )
             }
+            if (attachmentTransformer != null) {
+                newAttachment = attachmentTransformer(newAttachment, path, file)
+            }
+            Result(newAttachment)
         }
-
-        return result
     }
 
     /**
