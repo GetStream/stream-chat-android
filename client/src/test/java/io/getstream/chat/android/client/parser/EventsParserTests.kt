@@ -15,13 +15,12 @@ import org.mockito.Mockito
 
 class EventsParserTests {
 
-    val socket = Mockito.mock(WebSocket::class.java)
-    lateinit var eventsCollector: MutableList<ChatEvent>
-    lateinit var service: FakeSocketService
+    private val socket = Mockito.mock(WebSocket::class.java)
+    private lateinit var eventsCollector: MutableList<ChatEvent>
+    private lateinit var service: FakeSocketService
     private lateinit var parser: EventsParser
-
-    val userId = "hello-user"
-    val eventType = EventType.HEALTH_CHECK
+    private val userId = "hello-user"
+    private val eventType = EventType.HEALTH_CHECK
 
     @Before
     fun before() {

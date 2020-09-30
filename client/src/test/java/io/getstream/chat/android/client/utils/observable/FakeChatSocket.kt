@@ -1,16 +1,11 @@
 package io.getstream.chat.android.client.utils.observable
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 
-class FakeChatSocket : ChatSocket {
-
-    override val state: ChatSocketService.State
-        get() = ChatSocketService.State.Error(ChatError(""))
+internal class FakeChatSocket : ChatSocket {
 
     private val listeners = mutableSetOf<SocketListener>()
 

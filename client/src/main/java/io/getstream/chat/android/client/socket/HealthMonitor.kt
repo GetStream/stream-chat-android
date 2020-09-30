@@ -8,72 +8,74 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 
-internal class HealthMonitor(val socket: ChatSocketServiceImpl) {
+private const val HEALTH_CHECK_INTERVAL = 10 * 1000L
+private const val MONITOR_INTERVAL = 1000L
+private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
+internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     private val delayHandler = Handler(Looper.getMainLooper())
-    private val healthCheckInterval = 30 * 1000L
     private var consecutiveFailures = 0
-    var lastEventDate: Date? = null
+    private var disconnected = false
+    private var lastEventDate: Date = Date()
 
     private val logger = ChatLogger.get("SocketMonitor")
 
     private val reconnect = Runnable {
-        socket.setupSocket()
-    }
-
-    private val healthCheck: Runnable = Runnable {
-        (socket.state as? ChatSocketService.State.Connected)?.let {
-            logger.logI("Ok")
-            consecutiveFailures = 0
-            socket.sendEvent(it.event)
-            delayHandler.postDelayed(monitor, healthCheckInterval)
+        if (needToReconnect()) {
+            healthCallback.reconnect()
         }
     }
 
+    private val healthCheck: Runnable = Runnable {
+        healthCallback.check()
+        delayHandler.postDelayed(monitor, HEALTH_CHECK_INTERVAL)
+    }
+
     private val monitor = Runnable {
-        if (socket.state is ChatSocketService.State.Connected) {
-            val millisNow = Date().time
-            val monitorInterval = 1000L
-
-            lastEventDate?.let {
-                val diff = millisNow - it.time
-                val checkInterval = healthCheckInterval + 10 * 1000
-                if (diff > checkInterval) {
-                    consecutiveFailures += 1
-                    reconnect()
-                }
-            }
-
-            delayHandler.postDelayed(healthCheck, monitorInterval)
+        if (needToReconnect()) {
+            reconnect()
+        } else {
+            delayHandler.postDelayed(healthCheck, MONITOR_INTERVAL)
         }
     }
 
     fun start() {
-        logger.logI("Start")
-        monitor.run()
+        lastEventDate = Date()
+        disconnected = false
+        resetHealthMonitor()
     }
 
-    fun reset() {
+    fun stop() {
         delayHandler.removeCallbacks(monitor)
         delayHandler.removeCallbacks(reconnect)
         delayHandler.removeCallbacks(healthCheck)
-        lastEventDate = null
     }
 
-    fun onError() {
-        logger.logI("Error")
-        consecutiveFailures++
-        reconnect()
+    fun ack() {
+        lastEventDate = Date()
+        delayHandler.removeCallbacks(reconnect)
+        disconnected = false
+        consecutiveFailures = 0
+    }
+
+    fun onDisconnected() {
+        disconnected = true
+        resetHealthMonitor()
+    }
+
+    private fun resetHealthMonitor() {
+        stop()
+        monitor.run()
     }
 
     private fun reconnect() {
-        val retryInterval = getRetryInterval(consecutiveFailures)
+        stop()
+        val retryInterval = getRetryInterval(++consecutiveFailures)
         logger.logI("Next connection attempt in $retryInterval ms")
-        delayHandler.postDelayed(
-            reconnect,
-            retryInterval
-        )
+        delayHandler.postDelayed(reconnect, retryInterval)
     }
+
+    private fun needToReconnect() = disconnected || (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
 
     private fun getRetryInterval(consecutiveFailures: Int): Long {
         val max = min(500 + consecutiveFailures * 2000, 25000)
@@ -82,5 +84,10 @@ internal class HealthMonitor(val socket: ChatSocketServiceImpl) {
             25000
         )
         return floor(Math.random() * (max - min) + min).toLong()
+    }
+
+    interface HealthCallback {
+        fun check()
+        fun reconnect()
     }
 }

@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.socket.ChatSocketService
 import io.getstream.chat.android.client.socket.SocketListener
 import java.util.Date
 
@@ -59,23 +58,7 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
 
         subscriptions.add(subscription)
 
-        deliverInitState(subscription)
-
         return subscription
-    }
-
-    private fun deliverInitState(subscription: EventSubscription) {
-        val firstEvent: ChatEvent = when (val state = socket.state) {
-            is ChatSocketService.State.Connected ->
-                state.event
-            is ChatSocketService.State.Connecting ->
-                ConnectingEvent(EventType.CONNECTION_CONNECTING, Date())
-            is ChatSocketService.State.Disconnected ->
-                DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date())
-            else -> return
-        }
-
-        subscription.onNext(firstEvent)
     }
 
     /**
