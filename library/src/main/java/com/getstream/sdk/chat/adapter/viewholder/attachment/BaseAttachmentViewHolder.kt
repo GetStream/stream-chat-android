@@ -1,8 +1,7 @@
 package com.getstream.sdk.chat.adapter.viewholder.attachment
 
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.ViewGroup
+import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -12,10 +11,7 @@ import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Message
 
-abstract class BaseAttachmentViewHolder(resId: Int, parent: ViewGroup) :
-    RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(resId, parent, false)
-    ) {
+abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     abstract fun bind(
         context: Context,

@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderFile
 import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderMedia
@@ -49,14 +48,13 @@ open class AttachmentViewHolderFactory {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
                 AttachmentViewHolderMedia(
-                    R.layout.stream_item_attach_media,
                     parent,
                     listenerContainer.giphySendListener
                 )
             FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
+                AttachmentViewHolderFile(parent)
             else ->
-                AttachmentViewHolder(R.layout.stream_item_attachment, parent)
+                AttachmentViewHolder(parent)
         }
     }
 }
