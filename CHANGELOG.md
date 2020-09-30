@@ -1,4 +1,6 @@
 # To be released:
+
+# Sep 30th, 2020 - 0.8.1
 - Handle the new `ChannelUpdatedByUserEvent` 
 - Update client to 1.16.1: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
 - Improve online status handling
