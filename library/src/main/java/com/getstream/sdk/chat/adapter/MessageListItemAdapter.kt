@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
