@@ -92,5 +92,4 @@ internal class DefaultScrollButtonBehaviourTest {
 
         verify(newMessagesTextTV).text = count.toString()
     }
-
 }
