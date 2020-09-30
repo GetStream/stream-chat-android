@@ -2,6 +2,7 @@
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
 - Removed `position` parameter from `MessageClickListener`
+- Moved `BaseMessageListItemViewHolder` to a new package
 
 # Sep 23rd, 2020 - 4.3.0-beta-1
 
