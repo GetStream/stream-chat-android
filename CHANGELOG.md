@@ -1,8 +1,12 @@
 # To be released:
+
+# Sep 30th, 2020 - 4.3.0-beta-2
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
 - Removed `position` parameter from `MessageClickListener`
 - Moved `BaseMessageListItemViewHolder` to a new package
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.1
 
 # Sep 23rd, 2020 - 4.3.0-beta-1
 
