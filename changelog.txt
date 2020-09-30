@@ -1,4 +1,6 @@
 # To be released:
+
+# 1.16.2 - Wed 30 Sep 2020
 - Add `ChatClient::enableSlowMode` method to enable slow mode
 - Add `ChatClient::disableSlowMode` method to disable slow mode
 - Add `ChannelController::enableSlowMode` method to enable slow mode
