@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
-import com.getstream.sdk.chat.utils.PermissionChecker
+import com.getstream.sdk.chat.utils.PermissionHelper
 import com.getstream.sdk.chat.utils.StorageUtils
 import com.getstream.sdk.chat.utils.Utils
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 
 internal class AttachmentsController(
     private val rootController: MessageInputController,
+    private val permissionHelper: PermissionHelper,
     private val view: MessageInputView,
     private val showOpenAttachmentsMenuConfig: Boolean
 ) {
@@ -118,8 +119,8 @@ internal class AttachmentsController(
     }
 
     internal fun onCameraClick() {
-        if (!PermissionChecker.isGrantedCameraPermissions(view.context)) {
-            PermissionChecker.checkCameraPermissions(view) { onCameraClick() }
+        if (!permissionHelper.isGrantedCameraPermissions(view.context)) {
+            permissionHelper.checkCameraPermissions(view) { onCameraClick() }
         } else {
             view.showCameraOptions()
         }
@@ -134,8 +135,8 @@ internal class AttachmentsController(
         isMedia: Boolean,
         treeUri: Uri? = null
     ) {
-        if (isMedia && !PermissionChecker.isGrantedStoragePermissions(view.context)) {
-            PermissionChecker.checkStoragePermissions(view) {
+        if (isMedia && !permissionHelper.isGrantedStoragePermissions(view.context)) {
+            permissionHelper.checkStoragePermissions(view) {
                 openSelectView(editAttachments, messageInputType, isMedia)
             }
             return
@@ -308,12 +309,12 @@ internal class AttachmentsController(
 
     private fun checkPermissions() {
         when {
-            PermissionChecker.isGrantedCameraPermissions(view.context) -> {
+            permissionHelper.isGrantedCameraPermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(false)
                 view.showFilePermissions(true)
             }
-            PermissionChecker.isGrantedStoragePermissions(view.context) -> {
+            permissionHelper.isGrantedStoragePermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(true)
                 view.showFilePermissions(true)

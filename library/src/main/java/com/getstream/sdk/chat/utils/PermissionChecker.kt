@@ -13,16 +13,16 @@ import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.DialogOnAnyDeniedMultiplePermissionsListener
 import com.karumi.dexter.listener.multi.SnackbarOnAnyDeniedMultiplePermissionsListener
 
-object PermissionChecker {
+object PermissionChecker : PermissionHelper {
 
-    fun isGrantedStoragePermissions(context: Context): Boolean =
+    override fun isGrantedStoragePermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
             ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
 
-    fun isGrantedCameraPermissions(context: Context): Boolean =
+    override fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
             listOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -35,9 +35,9 @@ object PermissionChecker {
                     ) == PackageManager.PERMISSION_GRANTED
                 }
 
-    fun checkStoragePermissions(
+    override fun checkStoragePermissions(
         view: View,
-        onPermissionDenied: () -> Unit = { },
+        onPermissionDenied: () -> Unit,
         onPermissionGranted: () -> Unit
     ) {
         checkPermissions(
@@ -51,9 +51,9 @@ object PermissionChecker {
         )
     }
 
-    fun checkCameraPermissions(
+    override fun checkCameraPermissions(
         view: View,
-        onPermissionDenied: () -> Unit = { },
+        onPermissionDenied: () -> Unit,
         onPermissionGranted: () -> Unit
     ) {
         checkPermissions(
@@ -128,4 +128,19 @@ object PermissionChecker {
             .withMessage(dialogMessage)
             .withButtonText(android.R.string.ok)
             .build()
+}
+
+interface PermissionHelper {
+    fun isGrantedStoragePermissions(context: Context): Boolean
+    fun isGrantedCameraPermissions(context: Context): Boolean
+    fun checkCameraPermissions(
+        view: View,
+        onPermissionDenied: () -> Unit = { },
+        onPermissionGranted: () -> Unit
+    )
+    fun checkStoragePermissions(
+        view: View,
+        onPermissionDenied: () -> Unit = { },
+        onPermissionGranted: () -> Unit
+    )
 }

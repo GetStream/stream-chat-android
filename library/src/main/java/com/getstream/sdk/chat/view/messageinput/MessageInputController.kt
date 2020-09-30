@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.model.AttachmentMetaData
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageUtils
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.view.PreviewMessageView
@@ -29,7 +30,8 @@ internal class MessageInputController(
     private val style: MessageInputStyle
 ) {
 
-    internal val attachmentsController = AttachmentsController(this, view, style.isShowAttachmentButton)
+    internal val attachmentsController =
+        AttachmentsController(this, PermissionChecker, view, style.isShowAttachmentButton)
 
     private var messageInputType: MessageInputType? = null
     internal var members: List<Member> = listOf()
@@ -168,6 +170,7 @@ internal class MessageInputController(
         attachmentsController.onClickOpenSelectView(messageInputType, isMedia, treeUri)
         onClickOpenAttachmentSelectionMenu(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
     }
+
     fun onCameraClick() = attachmentsController.onCameraClick()
     fun setSelectedAttachments(attachments: Set<AttachmentMetaData>) =
         attachmentsController.setSelectedAttachments(attachments)
