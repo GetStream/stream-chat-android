@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test
 internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsControllerTests() {
     @Test
     fun `Should invoke show attachments menu to view`() {
-        When calling view.context doReturn mock()
-
         sut.onClickOpenAttachmentSelectionMenu()
 
         verify(view).showAttachmentsMenu()
@@ -20,7 +18,6 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
     @Test
     fun `If camera permission is granted Should show file permissions and hide others`() {
-        When calling view.context doReturn mock()
         When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn true
 
         sut.onClickOpenAttachmentSelectionMenu()
@@ -32,7 +29,6 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
     @Test
     fun `If storage permission is granted and camera permission is not Should show file and camera permissions and hide media`() {
-        When calling view.context doReturn mock()
         When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn false
         When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
 
