@@ -40,10 +40,6 @@ internal class ChatSocketServiceImpl private constructor(
             if (oldState != newState) {
                 logger.logI("updateState: ${newState.javaClass.simpleName}")
                 when (newState) {
-                    is State.Error -> {
-                        healthMonitor.onError()
-                        callListeners { it.onError(newState.error) }
-                    }
                     is State.Connecting -> {
                         healthMonitor.stop()
                         callListeners { it.onConnecting() }
@@ -53,10 +49,12 @@ internal class ChatSocketServiceImpl private constructor(
                         callListeners { it.onConnected(newState.event) }
                     }
                     is State.Disconnected -> {
+                        releaseSocket()
                         if (!newState.connectionWillFollow) {
                             healthMonitor.stop()
+                        } else {
+                            healthMonitor.onDisconnected()
                         }
-                        releaseSocket()
                         callListeners { it.onDisconnected() }
                     }
                 }
@@ -66,18 +64,35 @@ internal class ChatSocketServiceImpl private constructor(
 
     override fun onSocketError(error: ChatError) {
         logger.logE(error)
-        if (error is ChatNetworkError && error.streamCode == ChatErrorCode.TOKEN_EXPIRED.code) {
-            state = State.Error(error)
+        callListeners { it.onError(error) }
+        (error as? ChatNetworkError)?.let(::onChatNetworkError)
+    }
+
+    private fun onChatNetworkError(error: ChatNetworkError) = when (error.streamCode) {
+        ChatErrorCode.PARSER_ERROR.code,
+        ChatErrorCode.CANT_PARSE_CONNECTION_EVENT.code,
+        ChatErrorCode.CANT_PARSE_EVENT.code,
+        ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code,
+        ChatErrorCode.NO_ERROR_BODY.code -> {
+            // Nothing to do on that case
+        }
+        ChatErrorCode.TOKEN_EXPIRED.code -> {
             tokenManager.expireToken()
             tokenManager.loadSync()
-        } else if (error is ChatNetworkError && error.streamCode == ChatErrorCode.API_KEY_NOT_FOUND.code) {
-            state = State.Error(error)
+            state = State.Disconnected(true)
+        }
+        ChatErrorCode.UNDEFINED_TOKEN.code,
+        ChatErrorCode.INVALID_TOKEN.code,
+        ChatErrorCode.API_KEY_NOT_FOUND.code -> {
             state = State.Disconnected(false)
-        } else {
-            if (state is State.Connected || state is State.Connecting) {
-                state = State.Error(error)
-                state = State.Disconnected(true)
-            }
+        }
+        ChatErrorCode.NETWORK_FAILED.code,
+        ChatErrorCode.SOCKET_CLOSED.code,
+        ChatErrorCode.SOCKET_FAILURE.code -> {
+            state = State.Disconnected(true)
+        }
+        else -> {
+            state = State.Disconnected(true)
         }
     }
 
@@ -151,7 +166,6 @@ internal class ChatSocketServiceImpl private constructor(
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
         data class Disconnected(val connectionWillFollow: Boolean) : State()
-        data class Error(val error: ChatError) : State()
     }
 
     companion object {

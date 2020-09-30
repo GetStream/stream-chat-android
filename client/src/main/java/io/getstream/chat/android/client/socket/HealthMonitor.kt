@@ -10,35 +10,39 @@ import kotlin.math.min
 
 private const val HEALTH_CHECK_INTERVAL = 10 * 1000L
 private const val MONITOR_INTERVAL = 1000L
-private const val NO_EVENT_INTERVAL_THRESHOLD = HEALTH_CHECK_INTERVAL + 10 * MONITOR_INTERVAL
+private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
 internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     private val delayHandler = Handler(Looper.getMainLooper())
     private var consecutiveFailures = 0
+    private var disconnected = false
     private var lastEventDate: Date = Date()
 
     private val logger = ChatLogger.get("SocketMonitor")
 
     private val reconnect = Runnable {
-        healthCallback.reconnect()
+        if (needToReconnect()) {
+            healthCallback.reconnect()
+        }
     }
 
     private val healthCheck: Runnable = Runnable {
-        logger.logI("Ok")
-        consecutiveFailures = 0
         healthCallback.check()
         delayHandler.postDelayed(monitor, HEALTH_CHECK_INTERVAL)
     }
 
     private val monitor = Runnable {
-        if (needToReconnect()) reconnect()
-        delayHandler.postDelayed(healthCheck, MONITOR_INTERVAL)
+        if (needToReconnect()) {
+            reconnect()
+        } else {
+            delayHandler.postDelayed(healthCheck, MONITOR_INTERVAL)
+        }
     }
 
     fun start() {
-        logger.logI("Start")
         lastEventDate = Date()
-        monitor.run()
+        disconnected = false
+        resetHealthMonitor()
     }
 
     fun stop() {
@@ -49,20 +53,29 @@ internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     fun ack() {
         lastEventDate = Date()
+        delayHandler.removeCallbacks(reconnect)
+        disconnected = false
+        consecutiveFailures = 0
     }
 
-    fun onError() {
-        logger.logI("Error")
-        reconnect()
+    fun onDisconnected() {
+        disconnected = true
+        resetHealthMonitor()
+    }
+
+    private fun resetHealthMonitor() {
+        stop()
+        monitor.run()
     }
 
     private fun reconnect() {
+        stop()
         val retryInterval = getRetryInterval(++consecutiveFailures)
         logger.logI("Next connection attempt in $retryInterval ms")
         delayHandler.postDelayed(reconnect, retryInterval)
     }
 
-    private fun needToReconnect() = (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
+    private fun needToReconnect() = disconnected || (Date().time - lastEventDate.time) >= NO_EVENT_INTERVAL_THRESHOLD
 
     private fun getRetryInterval(consecutiveFailures: Int): Long {
         val max = min(500 + consecutiveFailures * 2000, 25000)
