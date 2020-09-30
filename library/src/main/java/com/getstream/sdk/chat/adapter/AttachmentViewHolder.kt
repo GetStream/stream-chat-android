@@ -8,6 +8,8 @@ import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.ListView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
@@ -76,105 +78,62 @@ class AttachmentViewHolder(resId: Int, parent: ViewGroup) :
         configAttachment()
     }
 
+    private fun applyStyle() {
+        if (messageListItem.isMine) {
+            style.attachmentTitleTextMine.apply(tv_media_title)
+            style.attachmentDescriptionTextMine.apply(tv_media_des)
+        } else {
+            style.attachmentTitleTextTheirs.apply(tv_media_title)
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des)
+        }
+    }
+
     private fun configAttachment() {
         var hasFile = false
         var hasMedia = false
         for (attachment in message.attachments) {
-            if (attachment.type == ModelType.attach_file) {
-                hasFile = true
-            } else {
-                hasMedia = true
+            if (attachment.type != null) {
+                if (attachment.type == ModelType.attach_file) {
+                    hasFile = true
+                } else {
+                    hasMedia = true
+                }
             }
         }
 
         if (hasMedia) {
-            cl_attachment_media.visibility = View.VISIBLE
+            cl_attachment_media.isVisible = true
             configMediaAttach()
         } else {
-            cl_attachment_media.visibility = View.GONE
+            cl_attachment_media.isVisible = false
         }
 
         if (hasFile) {
-            lv_attachment_file.visibility = View.VISIBLE
+            lv_attachment_file.isVisible = true
             configFileAttach()
         } else {
-            lv_attachment_file.visibility = View.GONE
+            lv_attachment_file.isVisible = false
         }
 
         if (!hasMedia && !hasFile) {
-            iv_media_thumb.visibility = View.GONE
+            iv_media_thumb.isVisible = false
 
             if (!attachment.title.isNullOrEmpty()) {
-                cl_attachment_media.visibility = View.VISIBLE
-                tv_media_title.visibility = View.VISIBLE
+                cl_attachment_media.isVisible = true
+                tv_media_title.isVisible = true
                 tv_media_title.text = attachment.title
             } else {
-                tv_media_title.visibility = View.GONE
+                tv_media_title.isVisible = false
             }
 
             if (!attachment.text.isNullOrEmpty()) {
-                cl_attachment_media.visibility = View.VISIBLE
-                tv_media_des.visibility = View.VISIBLE
+                cl_attachment_media.isVisible = true
+                tv_media_des.isVisible = true
                 tv_media_des.text = attachment.text
             } else {
-                tv_media_des.visibility = View.GONE
+                tv_media_des.isVisible = false
             }
         }
-    }
-
-    private fun configImageThumbBackground() {
-        var background = bubbleHelper.getDrawableForAttachment(
-            message,
-            messageListItem.isMine,
-            messageListItem.positions,
-            attachment
-        )
-        iv_media_thumb.setShape(context, background)
-        if (tv_media_des.visibility == View.VISIBLE || tv_media_title.visibility == View.VISIBLE) {
-            background = bubbleHelper.getDrawableForAttachmentDescription(
-                messageListItem.message,
-                messageListItem.isMine,
-                messageListItem.positions
-            )
-            cl_des.background = background
-        }
-    }
-
-    private fun configAttachViewBackground(view: View) {
-        if (style.getMessageBubbleDrawable(messageListItem.isMine) != -1) {
-            view.background =
-                context.getDrawable(style.getMessageBubbleDrawable(messageListItem.isMine))
-        }
-    }
-
-    private fun configFileAttach() {
-        configAttachViewBackground(lv_attachment_file)
-
-        val attachments = message.attachments.filter {
-            it.type == ModelType.attach_file
-        }
-        val attachAdapter = AttachmentListAdapter(
-            context,
-            LlcMigrationUtils.getMetaAttachments(attachments),
-            false,
-            false
-        )
-        lv_attachment_file.adapter = attachAdapter
-        lv_attachment_file.onItemClickListener = OnItemClickListener { _, _, _, _ ->
-            clickListener?.onAttachmentClick(
-                message,
-                attachment
-            )
-        }
-        lv_attachment_file.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            longClickListener?.onMessageLongClick(message)
-            true
-        }
-
-        val params = lv_attachment_file.layoutParams as ConstraintLayout.LayoutParams
-        val height = context.resources.getDimension(R.dimen.stream_attach_file_height)
-        params.height = height.toInt() * attachments.size
-        lv_attachment_file.layoutParams = params
     }
 
     private fun configMediaAttach() {
@@ -194,10 +153,10 @@ class AttachmentViewHolder(resId: Int, parent: ViewGroup) :
         }
 
         if (attachUrl.isNullOrEmpty()) {
-            cl_attachment_media.visibility = View.GONE
+            cl_attachment_media.isVisible = false
             return
         }
-        cl_attachment_media.visibility = View.VISIBLE
+        cl_attachment_media.isVisible = true
 
         configAttachViewBackground(cl_attachment_media)
         configImageThumbBackground()
@@ -216,44 +175,81 @@ class AttachmentViewHolder(resId: Int, parent: ViewGroup) :
         tv_media_des.text = firstAttachment.text
 
         if (firstAttachment.text.isNullOrEmpty()) {
-            tv_media_des.visibility = View.GONE
+            tv_media_des.isVisible = false
         } else {
-            tv_media_des.visibility = View.VISIBLE
+            tv_media_des.isVisible = true
         }
 
         if (firstAttachment.title.isNullOrEmpty()) {
-            tv_media_title.visibility = View.GONE
+            tv_media_title.isVisible = false
         } else {
-            tv_media_title.visibility = View.VISIBLE
+            tv_media_title.isVisible = true
         }
 
         if (type == ModelType.attach_video) {
-            tv_media_play.visibility = View.VISIBLE
+            tv_media_play.isVisible = true
         } else {
-            tv_media_play.visibility = View.GONE
+            tv_media_play.isVisible = false
         }
     }
 
-    private fun applyStyle() {
-        if (messageListItem.isMine) {
-            style.attachmentTitleTextMine.apply(tv_media_title)
-            style.attachmentDescriptionTextMine.apply(tv_media_des)
-        } else {
-            style.attachmentTitleTextTheirs.apply(tv_media_title)
-            style.attachmentDescriptionTextTheirs.apply(tv_media_des)
+    private fun configAttachViewBackground(view: View) {
+        val messageBubbleDrawableRes = style.getMessageBubbleDrawable(messageListItem.isMine)
+        if (messageBubbleDrawableRes != -1) {
+            view.background = context.getDrawable(messageBubbleDrawableRes)
+        }
+    }
+
+    private fun configImageThumbBackground() {
+        var background = bubbleHelper.getDrawableForAttachment(
+            message,
+            messageListItem.isMine,
+            messageListItem.positions,
+            attachment
+        )
+        iv_media_thumb.setShape(context, background)
+
+        if (tv_media_des.isVisible || tv_media_title.isVisible) {
+            background = bubbleHelper.getDrawableForAttachmentDescription(
+                messageListItem.message,
+                messageListItem.isMine,
+                messageListItem.positions
+            )
+            cl_des.background = background
         }
     }
 
     private fun configClickListeners() {
         cl_attachment_media.setOnClickListener {
-            clickListener?.onAttachmentClick(
-                message,
-                attachment
-            )
+            clickListener?.onAttachmentClick(message, attachment)
         }
         cl_attachment_media.setOnLongClickListener {
             longClickListener?.onMessageLongClick(message)
             true
+        }
+    }
+
+    private fun configFileAttach() {
+        configAttachViewBackground(lv_attachment_file)
+
+        val attachments = message.attachments.filter { it.type == ModelType.attach_file }
+        lv_attachment_file.adapter = AttachmentListAdapter(
+            context,
+            LlcMigrationUtils.getMetaAttachments(attachments),
+            false,
+            false
+        )
+        lv_attachment_file.onItemClickListener = OnItemClickListener { _, _, _, _ ->
+            clickListener?.onAttachmentClick(message, attachment)
+        }
+        lv_attachment_file.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
+            longClickListener?.onMessageLongClick(message)
+            true
+        }
+
+        lv_attachment_file.updateLayoutParams<ConstraintLayout.LayoutParams> {
+            val fileHeight = context.resources.getDimension(R.dimen.stream_attach_file_height)
+            height = fileHeight.toInt() * attachments.size
         }
     }
 }

@@ -77,64 +77,17 @@ class AttachmentViewHolderMedia(
 
         applyStyle()
         configMediaAttach()
-        configAction()
+        configActions()
         configClickListeners()
     }
 
-    private fun configImageThumbBackground() {
-        val background = bubbleHelper.getDrawableForAttachment(
-            message,
-            messageListItem.isMine,
-            messageListItem.positions,
-            attachment
-        )
-        iv_media_thumb.setShape(context, background)
-    }
-
-    private fun configAction() {
-        if (message.type == ModelType.message_ephemeral && message.command == ModelType.attach_giphy) {
-            // set Background
-            tv_action_send.background = DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(Color.WHITE)
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(ContextCompat.getColor(context, R.color.stream_input_message_send_button))
-                .solidColorPressed(Color.LTGRAY)
-                .build()
-            tv_action_shuffle.background = DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(Color.WHITE)
-                .solidColorPressed(Color.LTGRAY)
-                .build()
-            tv_action_cancel.background = DrawableBuilder()
-                .rectangle()
-                .rounded()
-                .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
-                .strokeWidth(Utils.dpToPx(2))
-                .solidColor(Color.WHITE)
-                .solidColorPressed(Color.LTGRAY)
-                .build()
-            cl_action.visibility = View.VISIBLE
-            tv_action_send.setOnClickListener {
-                enableSendGiphyButtons(false)
-                giphySendListener.onGiphySend(message, GiphyAction.SEND)
-            }
-            tv_action_shuffle.setOnClickListener {
-                enableSendGiphyButtons(false)
-                giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE)
-            }
-            tv_action_cancel.setOnClickListener {
-                giphySendListener.onGiphySend(
-                    message,
-                    GiphyAction.CANCEL
-                )
-            }
+    private fun applyStyle() {
+        if (messageListItem.isMine) {
+            style.attachmentTitleTextMine.apply(tv_media_title)
+            style.attachmentDescriptionTextMine.apply(tv_media_des)
         } else {
-            cl_action.visibility = View.GONE
+            style.attachmentTitleTextTheirs.apply(tv_media_title)
+            style.attachmentDescriptionTextTheirs.apply(tv_media_des)
         }
     }
 
@@ -143,11 +96,7 @@ class AttachmentViewHolderMedia(
         configImageThumbBackground()
 
         val thumbUrl = attachment.thumbUrl
-        val imageUrl: String? = if (thumbUrl != null && !thumbUrl.isEmpty()) {
-            thumbUrl
-        } else {
-            attachment.imageUrl
-        }
+        val imageUrl = if (thumbUrl.isNullOrEmpty()) attachment.imageUrl else thumbUrl
 
         Glide.with(context)
             .asDrawable()
@@ -160,12 +109,12 @@ class AttachmentViewHolderMedia(
         }
 
         tv_media_des.text = attachment.text
-        tv_media_title.visibility = if (!attachment.title.isNullOrEmpty()) View.VISIBLE else View.GONE
-        tv_media_des.visibility = if (!attachment.text.isNullOrEmpty()) View.VISIBLE else View.GONE
-        tv_media_play.visibility = if (type == ModelType.attach_video) View.VISIBLE else View.GONE
-        iv_command_logo.visibility = if (type == ModelType.attach_giphy) View.VISIBLE else View.GONE
+        tv_media_title.isVisible = !attachment.title.isNullOrEmpty()
+        tv_media_des.isVisible = !attachment.text.isNullOrEmpty()
+        tv_media_play.isVisible = type == ModelType.attach_video
+        iv_command_logo.isVisible = type == ModelType.attach_giphy
 
-        if (tv_media_des.visibility == View.VISIBLE || tv_media_title.visibility == View.VISIBLE) {
+        if (tv_media_des.isVisible || tv_media_title.isVisible) {
             val background = bubbleHelper.getDrawableForAttachmentDescription(
                 messageListItem.message, messageListItem.isMine, messageListItem.positions
             )
@@ -173,13 +122,63 @@ class AttachmentViewHolderMedia(
         }
     }
 
-    private fun applyStyle() {
-        if (messageListItem.isMine) {
-            style.attachmentTitleTextMine.apply(tv_media_title)
-            style.attachmentDescriptionTextMine.apply(tv_media_des)
+    private fun configImageThumbBackground() {
+        val background = bubbleHelper.getDrawableForAttachment(
+            message,
+            messageListItem.isMine,
+            messageListItem.positions,
+            attachment
+        )
+        iv_media_thumb.setShape(context, background)
+    }
+
+    private fun configActions() {
+        if (message.type == ModelType.message_ephemeral && message.command == ModelType.attach_giphy) {
+            configGiphyAction()
         } else {
-            style.attachmentTitleTextTheirs.apply(tv_media_title)
-            style.attachmentDescriptionTextTheirs.apply(tv_media_des)
+            cl_action.visibility = View.GONE
+        }
+    }
+
+    private fun configGiphyAction() {
+        cl_action.visibility = View.VISIBLE
+        tv_action_send.background = DrawableBuilder()
+            .rectangle()
+            .rounded()
+            .strokeColor(Color.WHITE)
+            .strokeWidth(Utils.dpToPx(2))
+            .solidColor(ContextCompat.getColor(context, R.color.stream_input_message_send_button))
+            .solidColorPressed(Color.LTGRAY)
+            .build()
+        tv_action_shuffle.background = DrawableBuilder()
+            .rectangle()
+            .rounded()
+            .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
+            .strokeWidth(Utils.dpToPx(2))
+            .solidColor(Color.WHITE)
+            .solidColorPressed(Color.LTGRAY)
+            .build()
+        tv_action_cancel.background = DrawableBuilder()
+            .rectangle()
+            .rounded()
+            .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
+            .strokeWidth(Utils.dpToPx(2))
+            .solidColor(Color.WHITE)
+            .solidColorPressed(Color.LTGRAY)
+            .build()
+        tv_action_send.setOnClickListener {
+            enableSendGiphyButtons(false)
+            giphySendListener.onGiphySend(message, GiphyAction.SEND)
+        }
+        tv_action_shuffle.setOnClickListener {
+            enableSendGiphyButtons(false)
+            giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE)
+        }
+        tv_action_cancel.setOnClickListener {
+            giphySendListener.onGiphySend(
+                message,
+                GiphyAction.CANCEL
+            )
         }
     }
 
