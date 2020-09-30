@@ -152,6 +152,8 @@ class ChatDomainImpl private constructor(
     internal var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
+    private var isOnline = false
+
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
@@ -427,30 +429,29 @@ class ChatDomainImpl private constructor(
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }
 
-    fun setOffline() {
+    internal fun setOffline() {
+        isOnline = false
         _online.value = false
     }
 
-    fun postOffline() {
+    internal fun postOffline() {
+        isOnline = false
         _online.postValue(false)
     }
 
-    fun setOnline() {
+    internal fun setOnline() {
+        isOnline = true
         _online.value = true
     }
 
-    fun postOnline() {
+    internal fun postOnline() {
+        isOnline = true
         _online.postValue(true)
     }
 
-    override fun isOnline(): Boolean {
-        val online = _online.value!!
-        return online
-    }
+    override fun isOnline(): Boolean = isOnline
 
-    override fun isOffline(): Boolean {
-        return !_online.value!!
-    }
+    override fun isOffline(): Boolean = !isOnline
 
     override fun isInitialized(): Boolean {
         return _initialized.value ?: false
