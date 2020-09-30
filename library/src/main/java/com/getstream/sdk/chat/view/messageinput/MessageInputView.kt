@@ -14,6 +14,7 @@ import android.widget.RelativeLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.core.os.BuildCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
@@ -394,6 +395,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     internal fun showLoadingTotalAttachments(shouldBeVisible: Boolean) = binding.progressBarFileLoader.visible(shouldBeVisible)
     internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) = binding.ivOpenAttach.visible(shouldBeVisible)
+    fun showMessage(@StringRes messageResId: Int) = Utils.showMessage(context, messageResId)
 
     interface TypeListener {
         fun onKeystroke()

@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.PermissionHelper
-import com.getstream.sdk.chat.utils.StorageUtils
+import com.getstream.sdk.chat.utils.StorageHelper
 import com.getstream.sdk.chat.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 internal class AttachmentsController(
     private val rootController: MessageInputController,
     private val permissionHelper: PermissionHelper,
+    private val storageHelper: StorageHelper,
     private val view: MessageInputView,
     private val showOpenAttachmentsMenuConfig: Boolean
 ) {
@@ -57,7 +58,7 @@ internal class AttachmentsController(
             view.showLoadingTotalAttachments(true)
             totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
             if (totalAttachments.isEmpty()) {
-                Utils.showMessage(view.context, R.string.stream_no_media_error)
+                view.showMessage(R.string.stream_no_media_error)
                 onClickCloseAttachmentSelectionMenu()
             } else {
                 setTotalAttachmentAdapters(
@@ -87,8 +88,8 @@ internal class AttachmentsController(
     ): Set<AttachmentMetaData> =
         withContext(Dispatchers.IO) {
             when (isMedia) {
-                true -> StorageUtils.getMediaAttachments(view.context).toSet()
-                false -> StorageUtils.getFileAttachments(view.context, treeUri).toSet()
+                true -> storageHelper.getMediaAttachments(view.context).toSet()
+                false -> storageHelper.getFileAttachments(view.context, treeUri).toSet()
             }
         }
 

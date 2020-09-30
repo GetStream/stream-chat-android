@@ -31,7 +31,7 @@ internal class MessageInputController(
 ) {
 
     internal val attachmentsController =
-        AttachmentsController(this, PermissionChecker, view, style.isShowAttachmentButton)
+        AttachmentsController(this, PermissionChecker, StorageUtils, view, style.isShowAttachmentButton)
 
     private var messageInputType: MessageInputType? = null
     internal var members: List<Member> = listOf()

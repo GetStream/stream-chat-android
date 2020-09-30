@@ -11,12 +11,11 @@ import androidx.documentfile.provider.DocumentFile
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import java.io.File
-import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal object StorageUtils {
+internal object StorageUtils : StorageHelper {
 
     private val supportedFilesMimeTypes =
         listOf(
@@ -61,7 +60,7 @@ internal object StorageUtils {
         return cachedFile
     }
 
-    internal fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
+    override fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
         val columns = arrayOf(
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
@@ -90,7 +89,7 @@ internal object StorageUtils {
         return emptyList()
     }
 
-    internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
+    override fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
         if (treeUri == null) {
             throw IllegalStateException("Cannot get file attachments because treeUri doesn't exist")
         }
@@ -170,3 +169,8 @@ internal object ImageMediaType :
 
 internal object VideoMediaType :
     MediaType(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, ModelType.attach_video)
+
+internal interface StorageHelper {
+    fun getMediaAttachments(context: Context): List<AttachmentMetaData>
+    fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData>
+}
