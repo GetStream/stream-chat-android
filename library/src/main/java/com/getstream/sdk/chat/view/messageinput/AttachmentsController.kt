@@ -126,24 +126,30 @@ internal class AttachmentsController(
         }
     }
 
-    internal fun onClickOpenSelectView(messageInputType: MessageInputType?, isMedia: Boolean, treeUri: Uri? = null) =
-        openSelectView(selectedAttachments, messageInputType, isMedia, treeUri)
-
-    private fun openSelectView(
-        editAttachments: Set<AttachmentMetaData>,
-        messageInputType: MessageInputType?,
-        isMedia: Boolean,
-        treeUri: Uri? = null
-    ) {
-        if (isMedia && !permissionHelper.isGrantedStoragePermissions(view.context)) {
+    internal fun onClickOpenMediaSelectView(messageInputType: MessageInputType) {
+        if (!permissionHelper.isGrantedStoragePermissions(view.context)) {
             permissionHelper.checkStoragePermissions(view) {
-                openSelectView(editAttachments, messageInputType, isMedia)
+                onClickOpenMediaSelectView(messageInputType)
             }
             return
-        } else if (!isMedia && treeUri == null) {
+        }
+        openSelectView(selectedAttachments, messageInputType, true, null)
+    }
+
+    internal fun onClickOpenFileSelectView(messageInputType: MessageInputType, treeUri: Uri?) {
+        if (treeUri == null) {
             Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
             return
         }
+        openSelectView(selectedAttachments, messageInputType, false, treeUri)
+    }
+
+    private fun openSelectView(
+        editAttachments: Set<AttachmentMetaData>,
+        messageInputType: MessageInputType,
+        isMedia: Boolean,
+        treeUri: Uri? = null
+    ) {
         setSelectedAttachments(editAttachments)
         fillTotalAttachmentsView(messageInputType, isMedia, treeUri)
     }

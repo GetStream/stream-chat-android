@@ -32,7 +32,6 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
         When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn false
         When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
 
-
         sut.onClickOpenAttachmentSelectionMenu()
 
         verify(view).showFilePermissions(true)

@@ -117,7 +117,6 @@ internal class MessageInputController(
             MessageInputType.COMMAND, MessageInputType.MENTION -> binding.btnClose.visibility = View.GONE
         }
         binding.tvTitle.text = type.label
-        messageInputType = type
     }
 
     internal fun configSendButtonEnableState() {
@@ -166,9 +165,16 @@ internal class MessageInputController(
     }
 
     fun getSelectedAttachments() = attachmentsController.selectedAttachments
-    fun onClickOpenSelectView(isMedia: Boolean, treeUri: Uri? = null) {
-        attachmentsController.onClickOpenSelectView(messageInputType, isMedia, treeUri)
-        onClickOpenAttachmentSelectionMenu(if (isMedia) MessageInputType.UPLOAD_MEDIA else MessageInputType.UPLOAD_FILE)
+    fun onClickOpenMediaSelectView() {
+        messageInputType = MessageInputType.UPLOAD_MEDIA
+        attachmentsController.onClickOpenMediaSelectView(messageInputType!!)
+        onClickOpenAttachmentSelectionMenu(messageInputType!!)
+    }
+
+    fun onClickOpenFileSelectView(treeUri: Uri?) {
+        messageInputType = MessageInputType.UPLOAD_FILE
+        attachmentsController.onClickOpenFileSelectView(messageInputType!!, treeUri)
+        onClickOpenAttachmentSelectionMenu(messageInputType!!)
     }
 
     fun onCameraClick() = attachmentsController.onCameraClick()

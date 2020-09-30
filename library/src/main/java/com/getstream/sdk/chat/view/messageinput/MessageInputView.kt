@@ -110,10 +110,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     private val documentTreeAccessContract: ActivityResultLauncher<Unit>? =
         (context as? ComponentActivity)
             ?.registerForActivityResult(DocumentTreeAccessContract()) { uri: Uri? ->
-                messageInputController.onClickOpenSelectView(
-                    false,
-                    uri
-                )
+                messageInputController.onClickOpenFileSelectView(uri)
             }
 
     private val commandsAdapter =
@@ -211,7 +208,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             messageInputController.onClickCloseAttachmentSelectionMenu()
             Utils.hideSoftKeyboard(context as Activity)
         }
-        binding.selectMedia.setOnClickListener { messageInputController.onClickOpenSelectView(true) }
+        binding.selectMedia.setOnClickListener { messageInputController.onClickOpenMediaSelectView() }
         binding.selectCamera.setOnClickListener { messageInputController.onCameraClick() }
         binding.selectFile.setOnClickListener {
             documentTreeAccessContract?.launch(Unit)
