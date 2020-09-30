@@ -83,4 +83,4 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
         }
 }
 
-private fun String?.isImageMimetype() = this?.contains("image") ?: false
+internal fun String?.isImageMimetype() = this?.contains("image") ?: false

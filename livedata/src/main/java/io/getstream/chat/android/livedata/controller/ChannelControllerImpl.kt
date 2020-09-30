@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -50,6 +52,7 @@ import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -420,7 +423,7 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -455,6 +458,21 @@ class ChannelControllerImpl(
         }
 
         return@withContext if (online) {
+            // upload attachments
+            val newAttachments = mutableListOf<Attachment>()
+            for (attachment in newMessage.attachments) {
+                if (attachment.upload != null) {
+                    val result = uploadAttachment(attachment, attachmentTransformer)
+                    if (result.isSuccess) {
+                        newAttachments.add(result.data())
+                    }
+                } else {
+                    newAttachments.add(attachment)
+                }
+            }
+            // TODO: map would be cleaner
+            newMessage.attachments = newAttachments
+
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             val result = domainImpl.runAndRetry { channelController.sendMessage(newMessage) }
@@ -483,6 +501,47 @@ class ChannelControllerImpl(
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage, null)
         }
+    }
+
+    private suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment) -> Attachment)? = null): Result<Attachment> {
+        val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
+
+        val result = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension).let { mimetype ->
+            val pathResult = when (mimetype.isImageMimetype()) {
+                true -> sendImage(file)
+                false -> sendFile(file)
+            }
+            if (pathResult.isError) {
+                Result(pathResult.error())
+            } else {
+                val path = pathResult.data()
+                var newAttachment = Attachment(
+                    name = file.name,
+                    fileSize = file.length().toInt(),
+                    mimeType = mimetype,
+                    url = path
+                ).apply {
+                    when (mimetype.isImageMimetype()) {
+                        true -> {
+                            imageUrl = path
+                            type = "image"
+                        }
+                        false -> {
+                            assetUrl = path
+                            type = "file"
+                        }
+                    }
+                }
+                if (attachmentTransformer != null) {
+                    newAttachment = attachmentTransformer(newAttachment)
+                }
+                Result(
+                    newAttachment
+                )
+            }
+        }
+
+        return result
     }
 
     /**
