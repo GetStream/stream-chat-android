@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter.viewholder.attachment
 
-import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +30,6 @@ class AttachmentViewHolderMedia(
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 
-    private lateinit var context: Context
     private lateinit var message: Message
     private lateinit var messageListItem: MessageItem
     private lateinit var style: MessageListViewStyle
@@ -43,7 +41,6 @@ class AttachmentViewHolderMedia(
     private lateinit var attachment: Attachment
 
     override fun bind(
-        context: Context,
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
@@ -52,7 +49,6 @@ class AttachmentViewHolderMedia(
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     ) {
-        this.context = context
         this.messageListItem = messageListItem
         this.message = message
         this.style = style
