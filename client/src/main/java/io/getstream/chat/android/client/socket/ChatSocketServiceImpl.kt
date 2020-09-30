@@ -130,7 +130,7 @@ internal class ChatSocketServiceImpl private constructor(
     }
 
     private fun releaseSocket() {
-        socket?.close(1000, "bye")
+        socket?.close(1000, "Connection close by client")
         socket = null
     }
 
