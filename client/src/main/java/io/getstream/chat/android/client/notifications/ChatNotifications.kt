@@ -126,15 +126,14 @@ internal class ChatNotifications private constructor(
     }
 
     private fun onRequiredDataLoaded(channel: Channel, message: Message) {
-
         val messageId: String = message.id
         val channelId: String = channel.id
-
         val notificationId = System.currentTimeMillis().toInt()
+        val chanelName = channel.extraData["name"] ?: ""
 
         val notification = handler.buildNotification(
             notificationId,
-            channel.extraData["name"].toString(),
+            chanelName.toString(),
             message.text,
             messageId,
             channel.type,
