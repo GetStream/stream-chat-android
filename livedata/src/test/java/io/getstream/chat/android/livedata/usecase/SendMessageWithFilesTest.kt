@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
@@ -28,7 +29,7 @@ import java.io.File
 import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
-class SendMessageWithFilesTest {
+class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
     val channelController: ChannelControllerImpl = mock()
     val chatDomain: ChatDomainImpl = mock()
@@ -38,6 +39,29 @@ class SendMessageWithFilesTest {
     fun setup() {
         shadowOf(MimeTypeMap.getSingleton()).addExtensionMimeTypMapping("jpg", "image/jpeg")
         When calling chatDomain.channel(any<String>()) doReturn channelController
+    }
+
+    @Test
+    fun `Should return message sending files`() {
+        runBlocking(Dispatchers.IO) {
+            val message = randomMessage()
+            message.attachments = randomAttachmentsWithFile().toMutableList()
+
+            val expectedAttachments = message.attachments.map { it.copy(assetUrl = it.upload!!.absolutePath, upload = null, type = "file") }
+
+            val expectedResult = Result(
+                message.copy(
+                    attachments = expectedAttachments.toMutableList()
+                )
+            )
+            When calling channelController.scope doReturn this
+            val files: List<File> = message.attachments.map { it.upload!! }
+            channelController.configureSuccessResultSendingFiles(files)
+
+            val result = sendMessageWithFile(message).execute()
+
+            result `should be equal to` expectedResult
+        }
     }
 
     @Test
@@ -98,29 +122,6 @@ class SendMessageWithFilesTest {
             result `should be equal to result` expectedResult
         }
     }*/
-
-    @Test
-    fun `Should return message sending files`() {
-        runBlocking(Dispatchers.IO) {
-            val message = randomMessage()
-            message.attachments = randomAttachmentsWithFile().toMutableList()
-
-            val expectedAttachments = message.attachments.map { it.copy(assetUrl = it.upload!!.absolutePath, upload = null, type = "file") }
-
-            val expectedResult = Result(
-                message.copy(
-                    attachments = expectedAttachments.toMutableList()
-                )
-            )
-            When calling channelController.scope doReturn this
-            val files: List<File> = message.attachments.map { it.upload!! }
-            channelController.configureSuccessResultSendingFiles(files)
-
-            val result = sendMessageWithFile(message).execute()
-
-            result `should be equal to` expectedResult
-        }
-    }
 
     /*
     @Test

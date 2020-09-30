@@ -459,19 +459,17 @@ class ChannelControllerImpl(
 
         return@withContext if (online) {
             // upload attachments
-            val newAttachments = mutableListOf<Attachment>()
-            for (attachment in newMessage.attachments) {
-                if (attachment.upload != null) {
-                    val result = uploadAttachment(attachment, attachmentTransformer)
+            logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+            newMessage.attachments = newMessage.attachments.map {
+                var attachment: Attachment = it
+                if (it.upload != null) {
+                    val result = uploadAttachment(it, attachmentTransformer)
                     if (result.isSuccess) {
-                        newAttachments.add(result.data())
+                        attachment = result.data() as Attachment
                     }
-                } else {
-                    newAttachments.add(attachment)
                 }
-            }
-            // TODO: map would be cleaner
-            newMessage.attachments = newAttachments
+                attachment
+            }.toMutableList()
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
