@@ -491,7 +491,7 @@ public class MessageListView extends ConstraintLayout {
             if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == SCROLL_TO_BOTTOM) {
-                scrollToBottom();
+                messagesRV.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
                 scrollButtonBehaviour.unreadMessages(unseenItems);
@@ -518,10 +518,6 @@ public class MessageListView extends ConstraintLayout {
         long passedTime = now.getTime() - message.getUpdatedAt().getTime();
         return message.getUpdatedAt() != null
                 && passedTime < 3000;
-    }
-
-    public void scrollToBottom() {
-        layoutManager.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     /**
