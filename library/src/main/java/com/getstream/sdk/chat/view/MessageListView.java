@@ -483,7 +483,7 @@ public class MessageListView extends ConstraintLayout {
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
 
             // Scroll to bottom when the user wrote the message.
-            if (false && entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
+            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == SCROLL_TO_BOTTOM) {
                 scrollToBottom();
