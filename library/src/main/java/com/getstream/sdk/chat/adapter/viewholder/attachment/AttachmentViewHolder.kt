@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.adapter
+package com.getstream.sdk.chat.adapter.viewholder.attachment
 
 import android.content.Context
 import android.view.View
@@ -13,6 +13,8 @@ import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.AttachmentListAdapter
+import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.LlcMigrationUtils

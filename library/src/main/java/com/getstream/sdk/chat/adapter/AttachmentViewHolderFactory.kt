@@ -2,6 +2,10 @@ package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolder
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderFile
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderMedia
+import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.model.ModelType
 
 /**
