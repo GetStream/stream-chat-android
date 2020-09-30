@@ -217,7 +217,12 @@ public class MessageListView extends ConstraintLayout {
     // region Init
     private void initScrollButtonBehaviour() {
         scrollButtonBehaviour =
-                new DefaultScrollButtonBehaviour(unseenBottomBtn, newMessagesTextTV);
+                new DefaultScrollButtonBehaviour(
+                        unseenBottomBtn,
+                        newMessagesTextTV,
+                        newMessagesTextSingle,
+                        newMessagesTextPlural
+                );
     }
 
     private void initRecyclerView() {
@@ -677,14 +682,23 @@ public class MessageListView extends ConstraintLayout {
 
     }
 
-    private class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
+    static class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
 
         private ViewGroup unseenBottomBtn;
         private TextView newMessagesTextTV;
+        private String newMessagesTextSingle;
+        private String newMessagesTextPlural;
 
-        public DefaultScrollButtonBehaviour(ViewGroup unseenBottomBtn, TextView newMessagesTextTV) {
+        public DefaultScrollButtonBehaviour(
+                ViewGroup unseenBottomBtn,
+                TextView newMessagesTextTV,
+                String newMessagesTextSingle,
+                String newMessagesTextPlural
+        ) {
             this.unseenBottomBtn = unseenBottomBtn;
             this.newMessagesTextTV = newMessagesTextTV;
+            this.newMessagesTextSingle = newMessagesTextSingle;
+            this.newMessagesTextPlural = newMessagesTextPlural;
         }
 
         @Override
@@ -703,19 +717,27 @@ public class MessageListView extends ConstraintLayout {
 
         @Override
         public void unreadMessages(int count) {
-            if (unseenItems <= 0) {
+            if (count <= 0) {
                 newMessagesTextTV.setVisibility(View.GONE);
             } else {
                 newMessagesTextTV.setVisibility(View.VISIBLE);
-                newMessagesTextTV.setText(parseNewMessagesText(unseenItems));
+                newMessagesTextTV.setText(parseNewMessagesText(count));
             }
         }
 
         private String parseNewMessagesText(int unseenItems) {
             if (unseenItems == 1) {
-                return String.format(newMessagesTextSingle, unseenItems);
+                if (newMessagesTextSingle != null) {
+                    return String.format(newMessagesTextSingle, unseenItems);
+                } else {
+                    return String.valueOf(unseenItems);
+                }
             } else {
-                return String.format(newMessagesTextPlural, unseenItems);
+                if (newMessagesTextPlural != null) {
+                    return String.format(newMessagesTextPlural, unseenItems);
+                } else {
+                    return String.valueOf(unseenItems);
+                }
             }
         }
     }
