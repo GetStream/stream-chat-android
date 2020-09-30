@@ -129,11 +129,11 @@ internal class ChatNotifications private constructor(
         val messageId: String = message.id
         val channelId: String = channel.id
         val notificationId = System.currentTimeMillis().toInt()
-        val chanelName = channel.extraData["name"] ?: ""
+        val channelName = channel.extraData["name"] ?: ""
 
         val notification = handler.buildNotification(
             notificationId,
-            chanelName.toString(),
+            channelName.toString(),
             message.text,
             messageId,
             channel.type,
