@@ -25,7 +25,7 @@ internal class ChatSocketServiceImpl private constructor(
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
         object : HealthMonitor.HealthCallback {
-            override fun reconnect() = setupSocket()
+            override fun reconnect() = this@ChatSocketServiceImpl.reconnect()
             override fun check() {
                 (state as? State.Connected)?.let {
                     sendEvent(it.event)
@@ -121,6 +121,11 @@ internal class ChatSocketServiceImpl private constructor(
 
     internal fun sendEvent(event: ChatEvent) {
         socket?.send(event)
+    }
+
+    private fun reconnect() {
+        releaseSocket()
+        setupSocket()
     }
 
     private fun setupSocket() {
