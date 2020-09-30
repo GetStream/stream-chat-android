@@ -17,32 +17,37 @@ import kotlin.collections.CollectionsKt;
 
 public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Message message;
-    private AttachmentViewHolderFactory factory;
-    private MessageListItem.MessageItem messageListItem;
-    private List<AttachmentListItem> attachments;
-    private MessageListViewStyle style;
+    private final AttachmentViewHolderFactory factory;
+    private final MessageListViewStyle style;
+
+    private final MessageListItem.MessageItem messageListItem;
+    private final Message message;
+    private final List<AttachmentListItem> attachments;
+
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListView.GiphySendListener giphySendListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
     public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
-                                     @NonNull AttachmentViewHolderFactory factory) {
+                                     @NonNull AttachmentViewHolderFactory factory,
+                                     @NonNull MessageListViewStyle style,
+                                     @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
+                                     @NonNull MessageListView.MessageLongClickListener longClickListener,
+                                     @NonNull MessageListView.BubbleHelper bubbleHelper
+    ) {
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.factory = factory;
         this.attachments = CollectionsKt.map(message.getAttachments(), AttachmentListItem::new);
+        this.style = style;
+        this.attachmentClickListener = attachmentClickListener;
+        this.longClickListener = longClickListener;
+        this.bubbleHelper = bubbleHelper;
     }
 
     @Override
     public int getItemViewType(int position) {
-        try {
-            AttachmentListItem attachmentItem = attachments.get(position);
-            return factory.getAttachmentViewType(attachmentItem);
-        } catch (IndexOutOfBoundsException e) {
-            return 0;
-        }
+        return factory.getAttachmentViewType(attachments.get(position));
     }
 
     @Override
@@ -54,7 +59,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                       int viewType) {
-        return this.factory.createAttachmentViewHolder(this, parent, viewType);
+        return this.factory.createAttachmentViewHolder(parent, viewType);
     }
 
     @Override
@@ -70,27 +75,4 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 longClickListener);
     }
 
-    public void setStyle(MessageListViewStyle style) {
-        this.style = style;
-    }
-
-    public void setAttachmentClickListener(MessageListView.AttachmentClickListener attachmentClickListener) {
-        this.attachmentClickListener = attachmentClickListener;
-    }
-
-    public void setLongClickListener(MessageListView.MessageLongClickListener longClickListener) {
-        this.longClickListener = longClickListener;
-    }
-
-    public MessageListView.GiphySendListener getGiphySendListener() {
-        return giphySendListener;
-    }
-
-    public void setGiphySendListener(MessageListView.GiphySendListener giphySendListener) {
-        this.giphySendListener = giphySendListener;
-    }
-
-    public void setBubbleHelper(MessageListView.BubbleHelper bubbleHelper) {
-        this.bubbleHelper = bubbleHelper;
-    }
 }

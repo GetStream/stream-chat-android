@@ -65,8 +65,7 @@ open class MessageViewHolderFactory {
                     listenerContainer.attachmentClickListener,
                     listenerContainer.reactionViewClickListener,
                     listenerContainer.userClickListener,
-                    listenerContainer.readStateClickListener,
-                    listenerContainer.giphySendListener
+                    listenerContainer.readStateClickListener
                 )
             MESSAGEITEM_TYPING ->
                 TypingIndicatorViewHolder(parent, style)

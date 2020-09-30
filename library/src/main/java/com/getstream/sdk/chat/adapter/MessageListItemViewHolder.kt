@@ -29,7 +29,6 @@ import com.getstream.sdk.chat.utils.Utils.TextViewLinkHandler
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
@@ -58,7 +57,6 @@ class MessageListItemViewHolder(
     protected val reactionViewClickListener: ReactionViewClickListener,
     protected val userClickListener: MessageListView.UserClickListener,
     protected val readStateClickListener: ReadStateClickListener,
-    protected val giphySendListener: GiphySendListener,
     private val binding: StreamItemMessageBinding =
         StreamItemMessageBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
@@ -379,13 +377,14 @@ class MessageListItemViewHolder(
         }
 
         binding.attachmentview.visibility = View.VISIBLE
-        binding.attachmentview.setViewHolderFactory(viewHolderFactory)
-        binding.attachmentview.setStyle(style)
-        binding.attachmentview.setGiphySendListener(giphySendListener)
+        binding.attachmentview.init(
+            viewHolderFactory,
+            style,
+            bubbleHelper,
+            attachmentClickListener,
+            messageLongClickListener
+        )
         binding.attachmentview.setEntity(messageListItem)
-        binding.attachmentview.setBubbleHelper(bubbleHelper)
-        binding.attachmentview.setAttachmentClickListener(attachmentClickListener)
-        binding.attachmentview.setLongClickListener(messageLongClickListener)
     }
 
     protected fun configReactionView() {
