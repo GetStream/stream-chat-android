@@ -151,7 +151,7 @@ class MessageListItemViewHolder(
 
         if (style.isMessageDateShow) {
             binding.tvMessagedate.visibility = View.VISIBLE
-            binding.tvMessagedate.text = TIME_DATEFORMAT.format(message.createdAt)
+            binding.tvMessagedate.text = TIME_DATEFORMAT.format(message.createdAt!!)
         } else {
             binding.tvMessagedate.visibility = View.GONE
         }
@@ -280,7 +280,7 @@ class MessageListItemViewHolder(
                     .getDimensionPixelSize(R.dimen.stream_message_deleted_text_font_size)
                     .toFloat()
             )
-            binding.tvText.setTextColor(context.resources.getColor(R.color.stream_gray_dark))
+            binding.tvText.setTextColor(ContextCompat.getColor(context, R.color.stream_gray_dark))
             return
         }
 
