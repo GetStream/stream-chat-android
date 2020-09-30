@@ -54,7 +54,7 @@ public class AttachmentListView extends RecyclerView {
 
     public void setEntity(MessageListItem.MessageItem messageListItem) {
         this.setLayoutManager(mLayoutManager);
-        this.adapter = new AttachmentListItemAdapter(context, messageListItem, viewHolderFactory);
+        this.adapter = new AttachmentListItemAdapter(messageListItem, viewHolderFactory);
         this.adapter.setStyle(style);
 
         if (this.giphySendListener != null)

@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter;
 
-import android.content.Context;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,11 +16,9 @@ import kotlin.collections.CollectionsKt;
 
 
 public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final String TAG = AttachmentListItemAdapter.class.getSimpleName();
 
     private Message message;
     private AttachmentViewHolderFactory factory;
-    private Context context;
     private MessageListItem.MessageItem messageListItem;
     private List<AttachmentListItem> attachments;
     private MessageListViewStyle style;
@@ -30,11 +27,8 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private MessageListView.GiphySendListener giphySendListener;
     private MessageListView.BubbleHelper bubbleHelper;
 
-
-    public AttachmentListItemAdapter(Context context,
-                                     @NonNull MessageListItem.MessageItem messageListItem,
+    public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
                                      @NonNull AttachmentViewHolderFactory factory) {
-        this.context = context;
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.factory = factory;
