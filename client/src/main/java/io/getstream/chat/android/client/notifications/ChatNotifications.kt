@@ -15,7 +15,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.utils.getOr
 
 internal class ChatNotifications private constructor(
     private val handler: ChatNotificationHandler,
@@ -85,7 +84,7 @@ internal class ChatNotifications private constructor(
 
         if (firebaseParser.isValid(message)) {
             val data = firebaseParser.parse(message)
-            if (checkIfNotificationShowed(data.messageId)) {
+            if (!wasNotificationDisplayed(data.messageId)) {
                 showedNotifications.add(data.messageId)
                 loadRequiredData(data.channelType, data.channelId, data.messageId)
             }
@@ -97,13 +96,13 @@ internal class ChatNotifications private constructor(
     private fun handleEvent(event: NewMessageEvent) {
         val messageId = event.message.id
 
-        if (!checkIfNotificationShowed(messageId)) {
+        if (!wasNotificationDisplayed(messageId)) {
             showedNotifications.add(messageId)
             loadRequiredData(event.channelType, event.channelId, messageId)
         }
     }
 
-    private fun checkIfNotificationShowed(messageId: String) = showedNotifications.contains(messageId)
+    private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
 
@@ -127,15 +126,14 @@ internal class ChatNotifications private constructor(
     }
 
     private fun onRequiredDataLoaded(channel: Channel, message: Message) {
-
         val messageId: String = message.id
         val channelId: String = channel.id
-
         val notificationId = System.currentTimeMillis().toInt()
+        val channelName = channel.extraData["name"] ?: ""
 
         val notification = handler.buildNotification(
             notificationId,
-            channel.extraData.getOr("name", "").toString(),
+            channelName.toString(),
             message.text,
             messageId,
             channel.type,

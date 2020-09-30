@@ -4,6 +4,8 @@
 - Add `ChannelController::enableSlowMode` method to enable slow mode
 - Add `ChannelController::disableSlowMode` method to disable slow mode
 - Add `Channel::cooldown` property to know how configured `cooldown` time for the channel
+- Fix FirebaseMessageParserImpl.verifyPayload() logic
+- Fix notification display condition
 
 # 1.16.1 - Wed 25 Sep 2020
 - Remove `User` field on `ChannelUpdatedEvent`
