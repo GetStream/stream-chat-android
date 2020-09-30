@@ -491,7 +491,7 @@ public class MessageListView extends ConstraintLayout {
             if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == SCROLL_TO_BOTTOM) {
-                messagesRV.scrollToPosition(adapter.getItemCount() - 1);
+                layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
                 scrollButtonBehaviour.unreadMessages(unseenItems);
