@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -55,7 +54,7 @@ class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest
     fun watchSetsMessagesAndChannelOnline() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.setOnline()
         // setup an online message
-        val message = Message()
+        val message = data.createMessage()
         message.syncStatus = SyncStatus.SYNC_NEEDED
         // write a message
         channelControllerImpl.sendMessage(message)

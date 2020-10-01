@@ -75,23 +75,33 @@ internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
     }
 }
 
+const val HTTP_TOO_MANY_REQUESTS = 429
+const val HTTP_TIMEOUT = 408
+const val NETWORK_NOT_AVAILABLE = -1
+
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
+ *
+ * A permanent error is an error returned by Stream's API (IE a validation error on the input)
+ * Any permanent error will always have a stream error code
+ *
+ * Temporary errors are retried. Network not being available is a common example of a temporary error.
+ *
+ * See the error codes here
+ * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
 fun ChatError.isPermanent(): Boolean {
-    // errors without a networkError.streamCode should always be considered temporary
-    // errors with networkError.statusCode 429 should be considered temporary
-    // everything else is a permanent error
-    var isPermanent = true
+    var isPermanent = false
     if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
-        if (networkError.statusCode == 429 || networkError.statusCode == -1) {
-            isPermanent = false
-        } else if (networkError.streamCode == 0) {
-            isPermanent = false
+        // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
+        val temporaryStreamErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT)
+        if (networkError.streamCode > 0) {
+            isPermanent = true
+            if (networkError.statusCode in temporaryStreamErrors) {
+                isPermanent = false
+            }
         }
-    } else {
-        isPermanent = false
     }
     return isPermanent
 }

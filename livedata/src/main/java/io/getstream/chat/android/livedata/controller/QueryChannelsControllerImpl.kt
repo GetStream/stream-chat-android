@@ -192,10 +192,7 @@ class QueryChannelsControllerImpl(
             output = result
         } else {
             recoveryNeeded = true
-            output = Result(channels, null)
-        }
-        if (!output.isSuccess) {
-            _channels.postValue(emptyMap())
+            output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.postValue(false)
         return output

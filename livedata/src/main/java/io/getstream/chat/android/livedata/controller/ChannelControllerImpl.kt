@@ -365,14 +365,13 @@ class ChannelControllerImpl(
 
         // if we are online we we run the actual API call
 
-        var result = if (domainImpl.isOnline()) {
+        return if (domainImpl.isOnline()) {
             runChannelQueryOnline(pagination)
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
             Result(channel, null)
         }
-        return result
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
@@ -1047,16 +1046,13 @@ class ChannelControllerImpl(
 
     suspend fun editMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        val now = Date()
         var editedMessage = message.copy()
 
         // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
-        if (editedMessage.updatedAt == null) {
-            editedMessage.updatedAt = now
-        }
-        editedMessage.updatedAt?.let {
-            if (it.before(now)) {
-                editedMessage.updatedAt = now
+        editedMessage.apply {
+            val now = Date()
+            if (updatedAt == null || updatedAt!!.before(now)) {
+                updatedAt = now
             }
         }
 

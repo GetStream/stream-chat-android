@@ -10,6 +10,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ChatErrorTest : BaseConnectedIntegrationTest() {
+    // https://getstream.io/chat/docs/api_errors_response/?language=js
     @Test
     fun invalidMessageInput() {
         val message = Message(text = "hi", id = "thesame")
@@ -22,7 +23,13 @@ class ChatErrorTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun rateLimit() {
-        val error = ChatNetworkError.create(1, "", 429, null)
+        val error = ChatNetworkError.create(9, "", 429, null)
+        Truth.assertThat(error.isPermanent()).isFalse()
+    }
+
+    @Test
+    fun `request timeout should be temporary`() {
+        val error = ChatNetworkError.create(23, "", 408, null)
         Truth.assertThat(error.isPermanent()).isFalse()
     }
 

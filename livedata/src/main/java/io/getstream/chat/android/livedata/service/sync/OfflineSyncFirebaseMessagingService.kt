@@ -49,7 +49,7 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         createSyncNotificationChannel()
-        showForegroundNotification()
+        showForegroundNotification(syncModule.notificationConfigStore.get().smallIcon)
 
         val data = message.data
         val channelId = data["channel_id"].toString()
@@ -71,11 +71,9 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
                         syncConfig.userToken,
                         syncConfig.apiKey
                     )
-                    if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
-                        val domain = initDomain(user, client)
-                        performSync(domain, cid)
-                        client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
-                    }
+                    val domain = initDomain(user, client)
+                    performSync(domain, cid)
+                    client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
                 }
             } finally {
                 stopForeground(true)
@@ -90,9 +88,10 @@ class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun showForegroundNotification() {
+    private fun showForegroundNotification(smallIcon: Int) {
         NotificationCompat.Builder(this, CHANNEL_ID)
             .setAutoCancel(true)
+            .setSmallIcon(smallIcon)
             .build()
             .apply {
                 startForeground(NOTIFICATION_ID, this)
