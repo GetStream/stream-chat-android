@@ -1,12 +1,11 @@
-package com.getstream.sdk.chat.adapter
+package com.getstream.sdk.chat.adapter.viewholder.attachment
 
 import android.content.Context
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.inflater
+import com.getstream.sdk.chat.databinding.StreamItemAttachmentFileBinding
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
@@ -15,13 +14,11 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 
-class AttachmentViewHolderFile(resId: Int, parent: ViewGroup) :
-    BaseAttachmentViewHolder(resId, parent) {
-
-    private val cl_attachment: ConstraintLayout = itemView.findViewById(R.id.attachmentview)
-    private val iv_file_thumb: ImageView = itemView.findViewById(R.id.iv_file_thumb)
-    private val tv_file_size: TextView = itemView.findViewById(R.id.tv_file_size)
-    private val tv_file_title: TextView = itemView.findViewById(R.id.tv_file_title)
+class AttachmentViewHolderFile(
+    parent: ViewGroup,
+    private val binding: StreamItemAttachmentFileBinding =
+        StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
+) : BaseAttachmentViewHolder(binding.root) {
 
     private lateinit var messageListItem: MessageItem
     private lateinit var message: Message
@@ -59,18 +56,18 @@ class AttachmentViewHolderFile(resId: Int, parent: ViewGroup) :
 
     private fun applyStyle() {
         if (messageListItem.isMine) {
-            style.attachmentTitleTextMine.apply(tv_file_title)
-            style.attachmentFileSizeTextMine.apply(tv_file_size)
+            style.attachmentTitleTextMine.apply(binding.tvFileTitle)
+            style.attachmentFileSizeTextMine.apply(binding.tvFileSize)
         } else {
-            style.attachmentTitleTextTheirs.apply(tv_file_title)
-            style.attachmentFileSizeTextTheirs.apply(tv_file_size)
+            style.attachmentTitleTextTheirs.apply(binding.tvFileTitle)
+            style.attachmentFileSizeTextTheirs.apply(binding.tvFileSize)
         }
     }
 
     private fun configAttachment() {
-        tv_file_size.text = LlcMigrationUtils.getFileSizeHumanized(attachment)
-        iv_file_thumb.setImageResource(LlcMigrationUtils.getIcon(attachment))
-        tv_file_title.text = attachment.title
+        binding.tvFileSize.text = LlcMigrationUtils.getFileSizeHumanized(attachment)
+        binding.ivFileThumb.setImageResource(LlcMigrationUtils.getIcon(attachment))
+        binding.tvFileTitle.text = attachment.title
 
         val background = bubbleHelper.getDrawableForAttachment(
             messageListItem.message,
@@ -78,17 +75,17 @@ class AttachmentViewHolderFile(resId: Int, parent: ViewGroup) :
             messageListItem.positions,
             attachment
         )
-        cl_attachment.background = background
+        binding.attachmentview.background = background
     }
 
     private fun configClickListeners() {
-        cl_attachment.setOnClickListener {
+        binding.attachmentview.setOnClickListener {
             clickListener?.onAttachmentClick(
                 message,
                 attachment
             )
         }
-        cl_attachment.setOnLongClickListener {
+        binding.attachmentview.setOnLongClickListener {
             longClickListener?.onMessageLongClick(message)
             true
         }

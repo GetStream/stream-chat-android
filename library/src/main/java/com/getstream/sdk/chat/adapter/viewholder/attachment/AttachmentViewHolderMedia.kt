@@ -1,22 +1,20 @@
-package com.getstream.sdk.chat.adapter
+package com.getstream.sdk.chat.adapter.viewholder.attachment
 
 import android.content.Context
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.inflater
+import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
-import com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
@@ -27,22 +25,11 @@ import io.getstream.chat.android.client.models.Message
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class AttachmentViewHolderMedia(
-    resId: Int,
     parent: ViewGroup,
-    private val giphySendListener: GiphySendListener
-) : BaseAttachmentViewHolder(resId, parent) {
-
-    private val iv_media_thumb: PorterShapeImageView = itemView.findViewById(R.id.iv_media_thumb)
-    private val tv_media_title: TextView = itemView.findViewById(R.id.tv_media_title)
-    private val tv_media_play: TextView = itemView.findViewById(R.id.tv_media_play)
-    private val tv_media_des: TextView = itemView.findViewById(R.id.tv_media_des)
-    private val iv_command_logo: ImageView = itemView.findViewById(R.id.iv_command_logo)
-    private val cl_des: ConstraintLayout = itemView.findViewById(R.id.cl_des)
-    private val cl_action: ConstraintLayout = itemView.findViewById(R.id.cl_action)
-    private val tv_action_send: TextView = itemView.findViewById(R.id.tv_action_send)
-    private val tv_action_shuffle: TextView = itemView.findViewById(R.id.tv_action_shuffle)
-    private val tv_action_cancel: TextView = itemView.findViewById(R.id.tv_action_cancel)
-    private val progressBar: ProgressBar = itemView.findViewById(R.id.progressBar)
+    private val giphySendListener: GiphySendListener,
+    private val binding: StreamItemAttachMediaBinding =
+        StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
+) : BaseAttachmentViewHolder(binding.root) {
 
     private lateinit var context: Context
     private lateinit var message: Message
@@ -83,11 +70,11 @@ class AttachmentViewHolderMedia(
 
     private fun applyStyle() {
         if (messageListItem.isMine) {
-            style.attachmentTitleTextMine.apply(tv_media_title)
-            style.attachmentDescriptionTextMine.apply(tv_media_des)
+            style.attachmentTitleTextMine.apply(binding.tvMediaTitle)
+            style.attachmentDescriptionTextMine.apply(binding.tvMediaDes)
         } else {
-            style.attachmentTitleTextTheirs.apply(tv_media_title)
-            style.attachmentDescriptionTextTheirs.apply(tv_media_des)
+            style.attachmentTitleTextTheirs.apply(binding.tvMediaTitle)
+            style.attachmentDescriptionTextTheirs.apply(binding.tvMediaDes)
         }
     }
 
@@ -102,23 +89,23 @@ class AttachmentViewHolderMedia(
             .asDrawable()
             .load(imageUrl)
             .placeholder(R.drawable.stream_placeholder)
-            .into(iv_media_thumb)
+            .into(binding.ivMediaThumb)
 
         if (message.type != ModelType.message_ephemeral) {
-            tv_media_title.text = attachment.title
+            binding.tvMediaTitle.text = attachment.title
         }
 
-        tv_media_des.text = attachment.text
-        tv_media_title.isVisible = !attachment.title.isNullOrEmpty()
-        tv_media_des.isVisible = !attachment.text.isNullOrEmpty()
-        tv_media_play.isVisible = type == ModelType.attach_video
-        iv_command_logo.isVisible = type == ModelType.attach_giphy
+        binding.tvMediaDes.text = attachment.text
+        binding.tvMediaTitle.isVisible = !attachment.title.isNullOrEmpty()
+        binding.tvMediaDes.isVisible = !attachment.text.isNullOrEmpty()
+        binding.tvMediaPlay.isVisible = type == ModelType.attach_video
+        binding.ivCommandLogo.isVisible = type == ModelType.attach_giphy
 
-        if (tv_media_des.isVisible || tv_media_title.isVisible) {
+        if (binding.tvMediaDes.isVisible || binding.tvMediaTitle.isVisible) {
             val background = bubbleHelper.getDrawableForAttachmentDescription(
                 messageListItem.message, messageListItem.isMine, messageListItem.positions
             )
-            cl_des.background = background
+            binding.clDes.background = background
         }
     }
 
@@ -129,20 +116,20 @@ class AttachmentViewHolderMedia(
             messageListItem.positions,
             attachment
         )
-        iv_media_thumb.setShape(context, background)
+        binding.ivMediaThumb.setShape(context, background)
     }
 
     private fun configActions() {
         if (message.type == ModelType.message_ephemeral && message.command == ModelType.attach_giphy) {
             configGiphyAction()
         } else {
-            cl_action.visibility = View.GONE
+            binding.clAction.visibility = View.GONE
         }
     }
 
     private fun configGiphyAction() {
-        cl_action.visibility = View.VISIBLE
-        tv_action_send.background = DrawableBuilder()
+        binding.clAction.visibility = View.VISIBLE
+        binding.tvActionSend.background = DrawableBuilder()
             .rectangle()
             .rounded()
             .strokeColor(Color.WHITE)
@@ -150,7 +137,7 @@ class AttachmentViewHolderMedia(
             .solidColor(ContextCompat.getColor(context, R.color.stream_input_message_send_button))
             .solidColorPressed(Color.LTGRAY)
             .build()
-        tv_action_shuffle.background = DrawableBuilder()
+        binding.tvActionShuffle.background = DrawableBuilder()
             .rectangle()
             .rounded()
             .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
@@ -158,7 +145,7 @@ class AttachmentViewHolderMedia(
             .solidColor(Color.WHITE)
             .solidColorPressed(Color.LTGRAY)
             .build()
-        tv_action_cancel.background = DrawableBuilder()
+        binding.tvActionCancel.background = DrawableBuilder()
             .rectangle()
             .rounded()
             .strokeColor(ContextCompat.getColor(context, R.color.stream_message_stroke))
@@ -166,15 +153,15 @@ class AttachmentViewHolderMedia(
             .solidColor(Color.WHITE)
             .solidColorPressed(Color.LTGRAY)
             .build()
-        tv_action_send.setOnClickListener {
+        binding.tvActionSend.setOnClickListener {
             enableSendGiphyButtons(false)
             giphySendListener.onGiphySend(message, GiphyAction.SEND)
         }
-        tv_action_shuffle.setOnClickListener {
+        binding.tvActionShuffle.setOnClickListener {
             enableSendGiphyButtons(false)
             giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE)
         }
-        tv_action_cancel.setOnClickListener {
+        binding.tvActionCancel.setOnClickListener {
             giphySendListener.onGiphySend(
                 message,
                 GiphyAction.CANCEL
@@ -183,20 +170,20 @@ class AttachmentViewHolderMedia(
     }
 
     private fun enableSendGiphyButtons(isEnable: Boolean) {
-        progressBar.isVisible = !isEnable
-        tv_action_send.isEnabled = isEnable
-        tv_action_shuffle.isEnabled = isEnable
-        tv_action_cancel.isEnabled = isEnable
+        binding.progressBar.isVisible = !isEnable
+        binding.tvActionSend.isEnabled = isEnable
+        binding.tvActionShuffle.isEnabled = isEnable
+        binding.tvActionCancel.isEnabled = isEnable
     }
 
     private fun configClickListeners() {
-        iv_media_thumb.setOnClickListener {
+        binding.ivMediaThumb.setOnClickListener {
             clickListener?.onAttachmentClick(
                 message,
                 attachment
             )
         }
-        iv_media_thumb.setOnLongClickListener {
+        binding.ivMediaThumb.setOnLongClickListener {
             longClickListener?.onMessageLongClick(message)
             true
         }
