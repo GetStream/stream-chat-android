@@ -1,1 +1,11 @@
 include ':livedata'
+
+// the test suite uses this settings.gradle file
+if (new File(rootDir, '../stream-chat-android-client/.composite').exists()) {
+
+    includeBuild("../stream-chat-android-client") {
+        dependencySubstitution {
+            substitute(module("com.github.getstream:stream-chat-android-client:")).with(project(":client"))
+        }
+    }
+}
