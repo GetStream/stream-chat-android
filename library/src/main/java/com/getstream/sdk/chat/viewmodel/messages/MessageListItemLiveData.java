@@ -94,8 +94,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
             for (int i = messageItems.size(); i-- > 0; ) {
                 final MessageListItem.MessageItem messageListItem = messageItems.get(i);
-                // skip messages if last read message is his own one
                 if (userRead.getUserId().equals(messageListItem.getMessage().getUser().getId())) {
+                    // last read message is added by this user, so break
                     break;
                 }
                 if (!userRead.getLastRead().before(messageListItem.getMessage().getCreatedAt())) {
