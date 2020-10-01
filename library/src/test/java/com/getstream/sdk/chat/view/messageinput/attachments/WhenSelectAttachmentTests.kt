@@ -70,7 +70,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If isMedia and total media attachments already shown and contains attachment Should change selection state`() {
         val attachment = createAttachmentMetaDataWithAttachment()
-        val sut = Fixture().givenMediaSelectMenuState(listOf(attachment)).please()
+        val sut = Fixture().givenMediaAttachmentsState(listOf(attachment)).please()
 
         try {
             sut.selectAttachment(attachment, mock(), true)
@@ -94,7 +94,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If is not media and total file attachments already shown and contains attachment Should change selection state`() {
         val attachment = createAttachmentMetaDataWithAttachment()
-        val sut = Fixture().givenFileSelectMenuState(listOf(attachment)).please()
+        val sut = Fixture().givenFileAttachmentsState(listOf(attachment)).please()
 
         try {
             sut.selectAttachment(attachment, mock(), true)
@@ -110,14 +110,14 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
 
         private val attachmentsController = this@WhenSelectAttachmentTests.sut
 
-        fun givenMediaSelectMenuState(totalMediaAttachments: List<AttachmentMetaData>): Fixture {
+        fun givenMediaAttachmentsState(totalMediaAttachments: List<AttachmentMetaData>): Fixture {
             When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
             When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
             return this
         }
 
-        fun givenFileSelectMenuState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
+        fun givenFileAttachmentsState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
             When calling storageHelper.getFileAttachments(any(), any()) doReturn totalFileAttachments
             attachmentsController.onClickOpenFileSelectView(mock(), mock())
             return this

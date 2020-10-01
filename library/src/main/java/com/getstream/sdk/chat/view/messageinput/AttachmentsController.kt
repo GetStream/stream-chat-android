@@ -102,7 +102,8 @@ internal class AttachmentsController(
         view.showOpenAttachmentsMenuButton(visible)
     }
 
-    private fun cancelAttachment(
+    @VisibleForTesting
+    internal fun cancelAttachment(
         attachment: AttachmentMetaData,
         messageInputType: MessageInputType?,
         isMedia: Boolean
