@@ -30,8 +30,10 @@ internal class AttachmentsController(
     internal var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
     @VisibleForTesting
     internal var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
-    private var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
-    private var selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter? = null
+    @VisibleForTesting
+    internal var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
+    @VisibleForTesting
+    internal var selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter? = null
 
     internal var selectedAttachments: Set<AttachmentMetaData> = emptySet()
         private set

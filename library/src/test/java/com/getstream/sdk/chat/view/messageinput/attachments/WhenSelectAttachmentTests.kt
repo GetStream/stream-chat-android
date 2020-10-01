@@ -81,6 +81,31 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         sut.totalMediaAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
         sut.totalMediaAttachmentAdapter?.attachments?.first()?.isSelected shouldBeEqualTo true
     }
+
+    @Test
+    fun `If is not media Should add attachments to selected file attachments adapter`() {
+        val attachment = createAttachmentMetaDataWithAttachment()
+
+        sut.selectAttachment(attachment, mock(), false)
+
+        sut.selectedFileAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `If is not media and total file attachments already shown and contains attachment Should change selection state`() {
+        val attachment = createAttachmentMetaDataWithAttachment()
+        val sut = Fixture().givenFileSelectMenuState(listOf(attachment)).please()
+
+        try {
+            sut.selectAttachment(attachment, mock(), true)
+        } catch (e: NullPointerException) {
+            // expected because adapter not attached to recycler
+        }
+
+        sut.totalMediaAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
+        sut.totalMediaAttachmentAdapter?.attachments?.first()?.isSelected shouldBeEqualTo true
+    }
+
     private inner class Fixture {
 
         private val attachmentsController = this@WhenSelectAttachmentTests.sut
@@ -92,7 +117,8 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
             return this
         }
 
-        fun givenFileSelectMenuState(): Fixture {
+        fun givenFileSelectMenuState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
+            When calling storageHelper.getFileAttachments(any(), any()) doReturn totalFileAttachments
             attachmentsController.onClickOpenFileSelectView(mock(), mock())
             return this
         }
