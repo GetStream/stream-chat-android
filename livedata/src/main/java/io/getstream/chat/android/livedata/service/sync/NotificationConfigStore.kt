@@ -9,7 +9,9 @@ private const val KEY_ERROR_CONTENT = "key_error_content"
 private const val KEY_ERROR_TITLE = "key_error_title"
 private const val KEY_FIREBASE_CHANNEL_ID_KEY = "key_firebase_channel_id"
 private const val KEY_FIREBASE_CHANNEL_TYPE_KEY = "key_firebase_channel_type_key"
+private const val KEY_FIREBASE_CHANNEL_NAME_KEY = "key_firebase_channel_name_key"
 private const val KEY_FIREBASE_MESSAGE_ID_KEY = "key_firebase_message_id_key"
+private const val KEY_FIREBASE_MESSAGE_TEXT_KEY = "key_firebase_message_text_key"
 private const val KEY_NOTIFICATION_CHANNEL_ID = "key_firebase_notification_channel_id"
 private const val KEY_NOTIFICATION_CHANNEL_NAME = "key_notification_channel_name"
 private const val KEY_SMALL_ICON = "key_small_icon"
@@ -42,15 +44,19 @@ internal class NotificationConfigStore(context: Context) {
         val smallIconDrawableResId = prefs.getInt(KEY_SMALL_ICON, DEFAULT_INT)
         val firebaseChannelIdKey = prefs.getString(KEY_FIREBASE_CHANNEL_ID_KEY, "")
         val firebaseChannelTypeKey = prefs.getString(KEY_FIREBASE_CHANNEL_TYPE_KEY, "")
+        val firebaseChannelNameKey = prefs.getString(KEY_FIREBASE_CHANNEL_NAME_KEY, "")
         val firebaseMessageIdKey = prefs.getString(KEY_FIREBASE_MESSAGE_ID_KEY, "")
+        val firebaseMessageTextKey = prefs.getString(KEY_FIREBASE_MESSAGE_TEXT_KEY, "")
 
         return NotificationConfig(
             notificationChannelIdResId,
             notificationChannelNameResId,
             smallIconDrawableResId,
             firebaseMessageIdKey,
+            firebaseMessageTextKey,
             firebaseChannelIdKey,
             firebaseChannelTypeKey,
+            firebaseChannelNameKey,
             errorCaseTitleResId,
             errorContentResId
         )
@@ -63,6 +69,8 @@ internal class NotificationConfigStore(context: Context) {
             DEFAULT_INT,
             DEFAULT_INT,
             DEFAULT_INT,
+            "",
+            "",
             "",
             "",
             "",
