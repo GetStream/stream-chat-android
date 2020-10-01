@@ -116,12 +116,15 @@ open class BaseDomainTest {
                 )
             )
         }
+        val events = listOf<ChatEvent>()
+        val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
                 null
             }
+            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
@@ -164,12 +167,15 @@ open class BaseDomainTest {
                 )
             )
         }
+        val events = listOf<ChatEvent>()
+        val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
                 null
             }
+            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)

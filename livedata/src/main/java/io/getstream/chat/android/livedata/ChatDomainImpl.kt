@@ -480,7 +480,7 @@ class ChatDomainImpl private constructor(
         }
 
     private fun queryEvents(cids: List<String>): List<ChatEvent> {
-        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
+        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
         if (response.isError) {
             throw response.error().cause ?: IllegalStateException(response.error().message)
         }

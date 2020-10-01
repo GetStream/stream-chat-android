@@ -85,6 +85,7 @@ fun ChatError.isPermanent(): Boolean {
     var isPermanent = true
     if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
+
         if (networkError.statusCode == 429 || networkError.statusCode == -1) {
             isPermanent = false
         } else if (networkError.streamCode == 0) {
