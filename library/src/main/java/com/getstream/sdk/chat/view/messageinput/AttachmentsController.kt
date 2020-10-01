@@ -139,7 +139,7 @@ internal class AttachmentsController(
 
     internal fun onClickOpenFileSelectView(messageInputType: MessageInputType, treeUri: Uri?) {
         if (treeUri == null) {
-            Utils.showMessage(view.context, R.string.stream_permissions_storage_message)
+            view.showMessage(R.string.stream_permissions_storage_message)
             return
         }
         openSelectView(selectedAttachments, messageInputType, false, treeUri)
