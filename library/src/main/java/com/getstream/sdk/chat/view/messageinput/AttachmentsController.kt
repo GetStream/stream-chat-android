@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
+import androidx.annotation.VisibleForTesting
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
@@ -13,7 +14,6 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.PermissionHelper
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,8 +26,10 @@ internal class AttachmentsController(
     private val view: MessageInputView,
     private val showOpenAttachmentsMenuConfig: Boolean
 ) {
-    private var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
-    private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
+    @VisibleForTesting
+    internal var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
+    @VisibleForTesting
+    internal var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
     private var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
     private var selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter? = null
 
@@ -302,7 +304,7 @@ internal class AttachmentsController(
         isMedia: Boolean
     ) {
         if (attachment.size > Constant.MAX_UPLOAD_FILE_SIZE) {
-            Utils.showMessage(view.context, R.string.stream_large_size_file_error)
+            view.showMessage(R.string.stream_large_size_file_error)
         } else {
             if (!selectedAttachments.contains(attachment)) {
                 attachment.isSelected = true

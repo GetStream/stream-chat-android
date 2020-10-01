@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
@@ -15,7 +16,8 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class MediaAttachmentSelectedAdapter(
-    private var attachments: List<AttachmentMetaData>
+    @VisibleForTesting
+    internal var selectedAttachments: List<AttachmentMetaData>
 ) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
     private var cancelListener: OnAttachmentCancelListener? = null
 
@@ -37,21 +39,21 @@ class MediaAttachmentSelectedAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(attachments[position], cancelListener)
+        holder.bind(selectedAttachments[position], cancelListener)
     }
 
     override fun getItemCount(): Int {
-        return attachments.size
+        return selectedAttachments.size
     }
 
     internal fun setAttachments(attachments: List<AttachmentMetaData>) {
-        this.attachments = attachments
+        this.selectedAttachments = attachments
         notifyDataSetChanged()
     }
 
     fun removeAttachment(attachment: AttachmentMetaData) {
-        val index = attachments.indexOf(attachment)
-        attachments = attachments - attachment
+        val index = selectedAttachments.indexOf(attachment)
+        selectedAttachments = selectedAttachments - attachment
         if (index != -1) {
             notifyItemRemoved(index)
         } else {
@@ -60,12 +62,12 @@ class MediaAttachmentSelectedAdapter(
     }
 
     fun addAttachment(attachment: AttachmentMetaData) {
-        attachments = attachments + attachment
-        notifyItemInserted(attachments.lastIndex)
+        selectedAttachments = selectedAttachments + attachment
+        notifyItemInserted(selectedAttachments.lastIndex)
     }
 
     fun clear() {
-        attachments = emptyList()
+        selectedAttachments = emptyList()
         notifyDataSetChanged()
     }
 
