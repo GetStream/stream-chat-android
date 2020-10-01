@@ -75,6 +75,9 @@ internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
     }
 }
 
+const val HTTP_TOO_MANY_REQUESTS = 429
+const val NETWORK_NOT_AVAILABLE = -1
+
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
  */
@@ -86,7 +89,7 @@ fun ChatError.isPermanent(): Boolean {
     if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
 
-        if (networkError.statusCode == 429 || networkError.statusCode == -1) {
+        if (networkError.statusCode == HTTP_TOO_MANY_REQUESTS || networkError.statusCode == NETWORK_NOT_AVAILABLE) {
             isPermanent = false
         } else if (networkError.streamCode == 0) {
             isPermanent = false
