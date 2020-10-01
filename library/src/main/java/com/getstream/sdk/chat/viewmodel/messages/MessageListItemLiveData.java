@@ -98,7 +98,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 if (userRead.getUserId().equals(messageListItem.getMessage().getUser().getId())) {
                     continue;
                 }
-                if (userRead.getLastRead().after(messageListItem.getMessage().getCreatedAt())) {
+                if (!userRead.getLastRead().before(messageListItem.getMessage().getCreatedAt())) {
                     // set the read state on this entity
                     messageListItem.getMessageReadBy().add(userRead);
                     // we only show it for the last message, so break
