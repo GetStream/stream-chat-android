@@ -1,8 +1,10 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import java.io.File
 
 data class Attachment(
 
@@ -29,6 +31,14 @@ data class Attachment(
     var url: String? = null,
     var name: String? = null,
     var fallback: String? = null,
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var upload: File? = null,
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var uploadError: ChatError? = null,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
