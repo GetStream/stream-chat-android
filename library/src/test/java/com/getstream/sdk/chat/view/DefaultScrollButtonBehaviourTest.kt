@@ -4,19 +4,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Test
-import org.mockito.Mockito
 
 private const val NEW_MESSAGE_SINGULAR: String = "%s New Message"
 private const val NEW_MESSAGES_PLURAL: String = "%s New Messages"
 
 internal class DefaultScrollButtonBehaviourTest {
 
-    private val unseenBottomBtn: ViewGroup = Mockito.mock(ViewGroup::class.java)
-    private val newMessagesTextTV: TextView = Mockito.mock(TextView::class.java)
+    private val unseenBottomBtn: ViewGroup = mock()
+    private val newMessagesTextTV: TextView = mock()
 
     private val behaviour = MessageListView.DefaultScrollButtonBehaviour(
         unseenBottomBtn,
@@ -57,7 +57,7 @@ internal class DefaultScrollButtonBehaviourTest {
     fun `proves that the correct message is shown for a single new message`() {
         val newMessagesCount = 1
 
-        behaviour.unreadMessages(newMessagesCount)
+        behaviour.onUnreadMessageCountChanged(newMessagesCount)
 
         verify(newMessagesTextTV).text = "$newMessagesCount New Message"
     }
@@ -65,7 +65,7 @@ internal class DefaultScrollButtonBehaviourTest {
     @Test
     fun `proves that the correct message is shown for a many new messages`() {
         val newMessagesCount = 12
-        behaviour.unreadMessages(newMessagesCount)
+        behaviour.onUnreadMessageCountChanged(newMessagesCount)
 
         verify(newMessagesTextTV).text = "$newMessagesCount New Messages"
     }
@@ -88,7 +88,7 @@ internal class DefaultScrollButtonBehaviourTest {
             null
         )
 
-        behaviour.unreadMessages(count)
+        behaviour.onUnreadMessageCountChanged(count)
 
         verify(newMessagesTextTV).text = count.toString()
     }

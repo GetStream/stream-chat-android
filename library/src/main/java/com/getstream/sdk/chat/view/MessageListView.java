@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.IntDef;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -34,8 +34,6 @@ import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 import java.util.List;
 
@@ -304,7 +302,7 @@ public class MessageListView extends ConstraintLayout {
                     lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition);
 
                     unseenItems = adapter.getItemCount() - 1 - lastViewedPosition;
-                    scrollButtonBehaviour.unreadMessages(unseenItems);
+                    scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
 
                     if (hasScrolledUp) {
                         scrollButtonBehaviour.userScrolledUp();
@@ -377,7 +375,7 @@ public class MessageListView extends ConstraintLayout {
         }
     }
 
-    public void setScrollButtonBackgroundResource(int backgroundRes) {
+    public void setScrollButtonBackgroundResource(@DrawableRes int backgroundRes) {
         unseenBottomBtn.setBackgroundResource(backgroundRes);
     }
 
@@ -385,7 +383,7 @@ public class MessageListView extends ConstraintLayout {
         unseenBottomBtn.setBackground(drawable);
     }
 
-    public void setScrollButtonIconResource(int backgroundRes) {
+    public void setScrollButtonIconResource(@DrawableRes int backgroundRes) {
         ImageView icon = findViewById(R.id.scrollIconIV);
         icon.setImageResource(backgroundRes);
     }
@@ -494,7 +492,7 @@ public class MessageListView extends ConstraintLayout {
                 layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
-                scrollButtonBehaviour.unreadMessages(unseenItems);
+                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
@@ -674,7 +672,7 @@ public class MessageListView extends ConstraintLayout {
 
         void userScrolledToTheBottom();
 
-        void unreadMessages(int count);
+        void onUnreadMessageCountChanged(int count);
 
     }
 
@@ -712,7 +710,7 @@ public class MessageListView extends ConstraintLayout {
         }
 
         @Override
-        public void unreadMessages(int count) {
+        public void onUnreadMessageCountChanged(int count) {
             if (count <= 0) {
                 newMessagesTextTV.setVisibility(View.GONE);
             } else {
