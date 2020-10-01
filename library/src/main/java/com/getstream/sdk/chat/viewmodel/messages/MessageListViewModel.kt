@@ -70,7 +70,7 @@ class MessageListViewModel @JvmOverloads constructor(
                 domain.useCases.deleteMessage(event.message).enqueue()
             }
             is Event.FlagMessage -> {
-                client.flagUser(event.message.user.id).enqueue()
+                client.flagMessage(event.message.id).enqueue()
             }
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
