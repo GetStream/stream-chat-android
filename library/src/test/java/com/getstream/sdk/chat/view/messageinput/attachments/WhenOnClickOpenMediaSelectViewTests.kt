@@ -6,24 +6,14 @@ import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.any
 import org.amshove.kluent.calling
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @ExperimentalCoroutinesApi
 internal class WhenOnClickOpenMediaSelectViewTests : BaseAttachmentsControllerTests() {
-
-    @BeforeEach
-    override fun setup() {
-        super.setup()
-        Dispatchers.setMain(TestCoroutineDispatcher())
-    }
 
     @Test
     fun `If storage permission is not granted Should check storage permission to permission helper`() {
@@ -55,7 +45,7 @@ internal class WhenOnClickOpenMediaSelectViewTests : BaseAttachmentsControllerTe
     }
 
     @Test
-    fun `If storage permission is granted and total media attachments are not empty Should show total media adapter`() {
+    fun `If storage permission is granted and total media attachments are not empty Should show total media attachments And empty media selected attachments`() {
         When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
         When calling storageHelper.getMediaAttachments(any()) doReturn listOf(
             createAttachmentMetaDataWithAttachment(),
@@ -65,5 +55,19 @@ internal class WhenOnClickOpenMediaSelectViewTests : BaseAttachmentsControllerTe
         sut.onClickOpenMediaSelectView(mock())
 
         verify(view).showTotalMediaAttachments(argThat { itemCount == 2 })
+        verify(view).showSelectedMediaAttachments(argThat { itemCount == 0 })
+    }
+
+    @Test
+    fun `If storage permission is granted and total media attachments are not empty Should hide loading`() {
+        When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
+        When calling storageHelper.getMediaAttachments(any()) doReturn listOf(
+            createAttachmentMetaDataWithAttachment(),
+            createAttachmentMetaDataWithAttachment()
+        )
+
+        sut.onClickOpenMediaSelectView(mock())
+
+        verify(view).showLoadingTotalAttachments(false)
     }
 }

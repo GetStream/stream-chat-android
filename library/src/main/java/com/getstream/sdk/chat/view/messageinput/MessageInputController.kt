@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.exhaustive
+import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageUtils
@@ -31,7 +32,14 @@ internal class MessageInputController(
 ) {
 
     internal val attachmentsController =
-        AttachmentsController(this, PermissionChecker, StorageUtils, view, style.isShowAttachmentButton)
+        AttachmentsController(
+            this,
+            PermissionChecker,
+            StorageUtils,
+            DispatchersProvider(),
+            view,
+            style.isShowAttachmentButton
+        )
 
     private var messageInputType: MessageInputType? = null
     internal var members: List<Member> = listOf()

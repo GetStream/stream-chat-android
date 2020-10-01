@@ -7,13 +7,13 @@ import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.enums.MessageInputType
+import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.utils.PermissionHelper
 import com.getstream.sdk.chat.utils.StorageHelper
 import com.getstream.sdk.chat.utils.Utils
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,10 +22,10 @@ internal class AttachmentsController(
     private val rootController: MessageInputController,
     private val permissionHelper: PermissionHelper,
     private val storageHelper: StorageHelper,
+    private val dispatchersProvider: DispatchersProvider,
     private val view: MessageInputView,
     private val showOpenAttachmentsMenuConfig: Boolean
 ) {
-
     private var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
     private var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
     private var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
@@ -54,7 +54,7 @@ internal class AttachmentsController(
         isMedia: Boolean,
         treeUri: Uri? = null
     ) {
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
             view.showLoadingTotalAttachments(true)
             totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
             if (totalAttachments.isEmpty()) {
@@ -86,7 +86,7 @@ internal class AttachmentsController(
         isMedia: Boolean,
         treeUri: Uri? = null
     ): Set<AttachmentMetaData> =
-        withContext(Dispatchers.IO) {
+        withContext(dispatchersProvider.ioDispatcher) {
             when (isMedia) {
                 true -> storageHelper.getMediaAttachments(view.context).toSet()
                 false -> storageHelper.getFileAttachments(view.context, treeUri).toSet()
