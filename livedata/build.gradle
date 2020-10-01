@@ -8,10 +8,7 @@ apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: "com.hiya.jacoco-android"
 
-
-group = 'com.github.GetStream'
-
-
+group = 'com.github.getstream'
 
 android {
     compileSdkVersion 28
@@ -20,7 +17,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.8.0"
+        versionName "0.8.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -68,7 +65,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.16.1"
+    api "com.github.getstream:stream-chat-android-client:1.16.2"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
@@ -141,7 +138,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-livedata'
-                version = '0.8.1-SNAPSHOT'
+                version = '0.8.2-SNAPSHOT'
             }
         }
     }
