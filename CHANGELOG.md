@@ -1,4 +1,6 @@
 # To be released:
+- Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
+- Moved `BaseAttachmentViewHolder` to a new package
 
 # Sep 30th, 2020 - 4.3.0-beta-2
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters

@@ -257,6 +257,7 @@ public class MessageListView extends RecyclerView {
 
         // Inject Attachment factory
         attachmentViewHolderFactory.setListenerContainerInternal(listenerContainer);
+        attachmentViewHolderFactory.setBubbleHelperInternal(bubbleHelper);
 
         // Inject Message factory
         messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
