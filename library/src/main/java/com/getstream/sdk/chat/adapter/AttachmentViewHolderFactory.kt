@@ -41,7 +41,6 @@ open class AttachmentViewHolderFactory {
     }
 
     open fun createAttachmentViewHolder(
-        adapter: AttachmentListItemAdapter,
         parent: ViewGroup,
         viewType: Int
     ): BaseAttachmentViewHolder {
