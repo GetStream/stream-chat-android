@@ -1,56 +1,31 @@
-package com.getstream.sdk.chat.adapter;
+package com.getstream.sdk.chat.adapter
 
-import android.view.ViewGroup;
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
+import com.getstream.sdk.chat.view.MessageListViewStyle
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class AttachmentListItemAdapter(
+    private val messageListItem: MessageItem,
+    private val factory: AttachmentViewHolderFactory,
+    private val style: MessageListViewStyle
+) : RecyclerView.Adapter<BaseAttachmentViewHolder>() {
 
-import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder;
-import com.getstream.sdk.chat.view.MessageListViewStyle;
+    private val attachments: List<AttachmentListItem> =
+        messageListItem.message.attachments.map(::AttachmentListItem)
 
-import java.util.List;
-
-import kotlin.collections.CollectionsKt;
-
-
-public class AttachmentListItemAdapter extends RecyclerView.Adapter<BaseAttachmentViewHolder> {
-
-    private final AttachmentViewHolderFactory factory;
-    private final MessageListViewStyle style;
-
-    private final MessageListItem.MessageItem messageListItem;
-    private final List<AttachmentListItem> attachments;
-
-    public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
-                                     @NonNull AttachmentViewHolderFactory factory,
-                                     @NonNull MessageListViewStyle style
-    ) {
-        this.factory = factory;
-        this.messageListItem = messageListItem;
-        this.attachments = CollectionsKt.map(messageListItem.getMessage().getAttachments(), AttachmentListItem::new);
-        this.style = style;
+    override fun getItemViewType(position: Int): Int {
+        return factory.getAttachmentViewType(attachments[position])
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return factory.getAttachmentViewType(attachments.get(position));
+    override fun getItemCount() = attachments.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseAttachmentViewHolder {
+        return factory.createAttachmentViewHolder(parent, viewType, style, messageListItem)
     }
 
-    @Override
-    public int getItemCount() {
-        return attachments.size();
+    override fun onBindViewHolder(holder: BaseAttachmentViewHolder, position: Int) {
+        holder.bind(attachments[position])
     }
-
-    @NonNull
-    @Override
-    public BaseAttachmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                      int viewType) {
-        return this.factory.createAttachmentViewHolder(parent, viewType, style, messageListItem);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull BaseAttachmentViewHolder holder, int position) {
-        holder.bind(attachments.get(position));
-    }
-
 }
