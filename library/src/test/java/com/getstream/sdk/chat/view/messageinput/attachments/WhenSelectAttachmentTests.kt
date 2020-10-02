@@ -5,6 +5,7 @@ import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.randomLong
 import com.getstream.sdk.chat.utils.Constant
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -61,10 +62,11 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If isMedia Should add attachments to selected media attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment()
+        sut.selectedMediaAttachmentAdapter = mock()
 
         sut.selectAttachment(attachment, mock(), true)
 
-        sut.selectedMediaAttachmentAdapter?.selectedAttachments?.contains(attachment) shouldBeEqualTo true
+        verify(sut.selectedMediaAttachmentAdapter!!).addAttachment(attachment)
     }
 
     @Test
@@ -72,38 +74,29 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         val attachment = createAttachmentMetaDataWithAttachment()
         val sut = Fixture().givenMediaAttachmentsState(listOf(attachment)).please()
 
-        try {
-            sut.selectAttachment(attachment, mock(), true)
-        } catch (e: NullPointerException) {
-            // expected because adapter not attached to recycler
-        }
+        sut.selectAttachment(attachment, mock(), true)
 
-        sut.totalMediaAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
-        sut.totalMediaAttachmentAdapter?.attachments?.first()?.isSelected shouldBeEqualTo true
+        verify(sut.totalMediaAttachmentAdapter!!).selectAttachment(attachment)
     }
 
     @Test
     fun `If is not media Should add attachments to selected file attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment()
+        sut.selectedFileAttachmentAdapter = mock()
 
         sut.selectAttachment(attachment, mock(), false)
 
-        sut.selectedFileAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
+        verify(sut.selectedFileAttachmentAdapter!!).setAttachments(argThat { contains(attachment) })
     }
 
     @Test
-    fun `If is not media and total file attachments already shown and contains attachment Should change selection state`() {
+    fun `If is not media and total file attachments already shown and contains attachment Should change selection state to total file adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment()
         val sut = Fixture().givenFileAttachmentsState(listOf(attachment)).please()
 
-        try {
-            sut.selectAttachment(attachment, mock(), true)
-        } catch (e: NullPointerException) {
-            // expected because adapter not attached to recycler
-        }
+        sut.selectAttachment(attachment, mock(), false)
 
-        sut.totalMediaAttachmentAdapter?.attachments?.contains(attachment) shouldBeEqualTo true
-        sut.totalMediaAttachmentAdapter?.attachments?.first()?.isSelected shouldBeEqualTo true
+        verify(sut.totalFileAttachmentAdapter!!).selectAttachment(attachment)
     }
 
     private inner class Fixture {
@@ -114,12 +107,20 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
             When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
             When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
+
+            attachmentsController.totalMediaAttachmentAdapter = mock()
+            attachmentsController.selectedMediaAttachmentAdapter = mock()
+
             return this
         }
 
         fun givenFileAttachmentsState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
             When calling storageHelper.getFileAttachments(any(), any()) doReturn totalFileAttachments
             attachmentsController.onClickOpenFileSelectView(mock(), mock())
+
+            attachmentsController.totalFileAttachmentAdapter = mock()
+            attachmentsController.selectedFileAttachmentAdapter = mock()
+
             return this
         }
 

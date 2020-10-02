@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding
@@ -11,7 +10,7 @@ import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.view.common.visible
 
 class MediaAttachmentAdapter(
-    @VisibleForTesting internal var attachments: List<AttachmentMetaData>,
+    private var attachments: List<AttachmentMetaData>,
     private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {
 

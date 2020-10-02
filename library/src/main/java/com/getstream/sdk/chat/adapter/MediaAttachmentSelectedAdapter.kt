@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
@@ -12,21 +11,12 @@ import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.StringUtility
-import io.getstream.chat.android.client.logger.ChatLogger
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class MediaAttachmentSelectedAdapter(
-    @VisibleForTesting
-    internal var selectedAttachments: List<AttachmentMetaData>
-) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
+    private var selectedAttachments: List<AttachmentMetaData>,
     private var cancelListener: OnAttachmentCancelListener? = null
-
-    constructor(
-        attachments: List<AttachmentMetaData>,
-        listener: OnAttachmentCancelListener
-    ) : this(attachments) {
-        cancelListener = listener
-    }
+) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -94,14 +84,8 @@ class MediaAttachmentSelectedAdapter(
                     .load(attachment.uri)
                     .into(binding.ivMedia)
             } else {
-                try {
-                    if (attachment.mimeType == ModelType.attach_mime_mov ||
-                        attachment.mimeType == ModelType.attach_mime_mp4
-                    ) {
-                        binding.ivMedia.setImageResource(R.drawable.stream_placeholder)
-                    }
-                } catch (e: Exception) {
-                    ChatLogger.instance.logE(TAG, e)
+                if (attachment.mimeType == ModelType.attach_mime_mov || attachment.mimeType == ModelType.attach_mime_mp4) {
+                    binding.ivMedia.setImageResource(R.drawable.stream_placeholder)
                 }
             }
             if (ModelType.attach_video == attachment.type) {
@@ -112,7 +96,6 @@ class MediaAttachmentSelectedAdapter(
             binding.btnClose.setOnClickListener { cancelListener?.onCancel(attachment) }
             binding.ivMask.visibility = View.INVISIBLE
             binding.progressBar.visibility = View.INVISIBLE
-            binding.executePendingBindings()
         }
     }
 

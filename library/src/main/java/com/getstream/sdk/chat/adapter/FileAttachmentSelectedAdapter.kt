@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import androidx.annotation.VisibleForTesting
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachFileBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -13,19 +12,10 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.view.common.visible
 
 internal class FileAttachmentSelectedAdapter(
-    @VisibleForTesting internal var attachments: List<AttachmentMetaData>,
-    private val localAttach: Boolean
-) : BaseAdapter() {
+    private var attachments: List<AttachmentMetaData>,
+    private val localAttach: Boolean,
     private var cancelListener: OnAttachmentCancelListener? = null
-
-    constructor(
-        attachments: List<AttachmentMetaData>,
-        localAttach: Boolean,
-        cancelListener: OnAttachmentCancelListener?
-    ) : this(attachments, localAttach) {
-        this.cancelListener = cancelListener
-    }
-
+) : BaseAdapter() {
     override fun getCount() = attachments.size
     override fun getItem(position: Int) = attachments[position]
     override fun getItemId(position: Int) = position.toLong()
