@@ -44,8 +44,9 @@ internal class WhenOnClickOpenFileSelectViewTests : BaseAttachmentsControllerTes
 
         sut.onClickOpenFileSelectView(mock(), mock())
 
-        verify(view).showTotalFileAttachments(argThat { itemCount == 2 })
-        verify(view).showSelectedFileAttachments(argThat { count == 0 })
+        verify(totalFileAttachmentAdapter).setAttachments(argThat { size == 2 })
+        verify(view).showTotalFileAttachments(totalFileAttachmentAdapter)
+        verify(view).showSelectedFileAttachments(selectedFileAttachmentAdapter)
     }
 
     @Test

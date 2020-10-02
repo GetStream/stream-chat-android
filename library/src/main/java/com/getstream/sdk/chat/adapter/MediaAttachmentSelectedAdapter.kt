@@ -14,8 +14,8 @@ import com.getstream.sdk.chat.utils.StringUtility
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class MediaAttachmentSelectedAdapter(
-    private var selectedAttachments: List<AttachmentMetaData>,
-    private var cancelListener: OnAttachmentCancelListener? = null
+    private var selectedAttachments: List<AttachmentMetaData> = emptyList(),
+    var cancelListener: (AttachmentMetaData) -> Unit = { }
 ) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -61,14 +61,10 @@ class MediaAttachmentSelectedAdapter(
         notifyDataSetChanged()
     }
 
-    interface OnAttachmentCancelListener {
-        fun onCancel(attachment: AttachmentMetaData)
-    }
-
     inner class MyViewHolder(private val binding: StreamItemAttachedMediaBinding) : RecyclerView.ViewHolder(
         binding.root
     ) {
-        fun bind(attachment: AttachmentMetaData, cancelListener: OnAttachmentCancelListener?) {
+        fun bind(attachment: AttachmentMetaData, cancelListener: (AttachmentMetaData) -> Unit) {
             val cornerRadius =
                 itemView.context.resources.getDimensionPixelSize(R.dimen.stream_input_upload_media_radius)
             binding.ivMedia.setShape(
@@ -93,7 +89,7 @@ class MediaAttachmentSelectedAdapter(
             } else {
                 binding.tvLength.text = ""
             }
-            binding.btnClose.setOnClickListener { cancelListener?.onCancel(attachment) }
+            binding.btnClose.setOnClickListener { cancelListener(attachment) }
             binding.ivMask.visibility = View.INVISIBLE
             binding.progressBar.visibility = View.INVISIBLE
         }

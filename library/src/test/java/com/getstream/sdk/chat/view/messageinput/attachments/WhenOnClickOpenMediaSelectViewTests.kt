@@ -54,8 +54,9 @@ internal class WhenOnClickOpenMediaSelectViewTests : BaseAttachmentsControllerTe
 
         sut.onClickOpenMediaSelectView(mock())
 
-        verify(view).showTotalMediaAttachments(argThat { itemCount == 2 })
-        verify(view).showSelectedMediaAttachments(argThat { itemCount == 0 })
+        verify(totalMediaAttachmentAdapter).setAttachments(argThat { size == 2 })
+        verify(view).showTotalMediaAttachments(totalMediaAttachmentAdapter)
+        verify(view).showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
     }
 
     @Test

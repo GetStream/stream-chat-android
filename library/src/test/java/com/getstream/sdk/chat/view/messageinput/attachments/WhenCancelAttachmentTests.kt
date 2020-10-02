@@ -1,15 +1,12 @@
 package com.getstream.sdk.chat.view.messageinput.attachments
 
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
-import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
-import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
-import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.randomBoolean
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.reset
 import com.nhaarman.mockitokotlin2.verify
 import org.amshove.kluent.When
 import org.amshove.kluent.any
@@ -42,7 +39,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
         sut.cancelAttachment(attachment, mock(), true)
 
-        verify(sut.selectedMediaAttachmentAdapter!!).removeAttachment(attachment)
+        verify(selectedMediaAttachmentAdapter).removeAttachment(attachment)
     }
 
     @Test
@@ -55,7 +52,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
         sut.cancelAttachment(attachment, mock(), true)
 
-        verify(sut.totalMediaAttachmentAdapter!!).unselectAttachment(attachment)
+        verify(totalMediaAttachmentAdapter).unselectAttachment(attachment)
     }
 
     @Test
@@ -65,10 +62,11 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             .givenFileAttachmentsState(listOf(attachment))
             .givenFileSelectedAttachment(attachment)
             .please()
+        reset(selectedFileAttachmentAdapter)
 
         sut.cancelAttachment(attachment, mock(), false)
 
-        verify(sut.selectedFileAttachmentAdapter!!).setAttachments(argThat { !contains(attachment) })
+        verify(selectedFileAttachmentAdapter).setAttachments(argThat { !contains(attachment) })
     }
 
     @Test
@@ -81,7 +79,7 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
         sut.cancelAttachment(attachment, mock(), false)
 
-        verify(sut.totalFileAttachmentAdapter!!).unselectAttachment(attachment)
+        verify(totalFileAttachmentAdapter).unselectAttachment(attachment)
     }
 
     private inner class Fixture {
@@ -91,36 +89,22 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
             When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
             When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
-
-            val selectedAdapter: MediaAttachmentSelectedAdapter = mock()
-            sut.selectedMediaAttachmentAdapter = selectedAdapter
-
-            val totalMediaAdapter: MediaAttachmentAdapter = mock()
-            sut.totalMediaAttachmentAdapter = totalMediaAdapter
-
             return this
         }
 
         fun givenMediaSelectedAttachment(selectedAttachment: AttachmentMetaData): Fixture {
-            sut.selectAttachment(selectedAttachment, mock(), true)
+            sut.selectAttachment(selectedAttachment, true)
             return this
         }
 
         fun givenFileAttachmentsState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
             When calling storageHelper.getFileAttachments(any(), any()) doReturn totalFileAttachments
             attachmentsController.onClickOpenFileSelectView(mock(), mock())
-
-            val selectedAdapter: FileAttachmentSelectedAdapter = mock()
-            sut.selectedFileAttachmentAdapter = selectedAdapter
-
-            val totalAdapter: FileAttachmentListAdapter = mock()
-            sut.totalFileAttachmentAdapter = totalAdapter
-
             return this
         }
 
         fun givenFileSelectedAttachment(selectedAttachment: AttachmentMetaData): Fixture {
-            sut.selectAttachment(selectedAttachment, mock(), false)
+            sut.selectAttachment(selectedAttachment, false)
             return this
         }
 

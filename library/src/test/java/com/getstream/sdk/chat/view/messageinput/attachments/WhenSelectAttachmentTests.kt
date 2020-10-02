@@ -24,7 +24,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
             size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
         }
 
-        sut.selectAttachment(attachment, mock(), true)
+        sut.selectAttachment(attachment, true)
 
         verify(view).showMessage(R.string.stream_large_size_file_error)
     }
@@ -33,28 +33,28 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     fun `Should add attachment to selected attachments`() {
         val attachment = createAttachmentMetaDataWithAttachment()
 
-        sut.selectAttachment(attachment, mock(), true)
+        sut.selectAttachment(attachment, true)
 
         sut.selectedAttachments.contains(attachment) shouldBeEqualTo true
     }
 
     @Test
     fun `If isMedia Should show media attachments`() {
-        sut.selectAttachment(mock(), mock(), true)
+        sut.selectAttachment(mock(), true)
 
         verify(view).showMediaAttachments()
     }
 
     @Test
     fun `If not isMedia Should show file attachments`() {
-        sut.selectAttachment(mock(), mock(), false)
+        sut.selectAttachment(mock(), false)
 
         verify(view).showFileAttachments()
     }
 
     @Test
     fun `Should config send button enable state to message input controller`() {
-        sut.selectAttachment(mock(), mock(), true)
+        sut.selectAttachment(mock(), true)
 
         verify(messageInputController).configSendButtonEnableState()
     }
@@ -62,11 +62,10 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If isMedia Should add attachments to selected media attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment()
-        sut.selectedMediaAttachmentAdapter = mock()
 
-        sut.selectAttachment(attachment, mock(), true)
+        sut.selectAttachment(attachment, true)
 
-        verify(sut.selectedMediaAttachmentAdapter!!).addAttachment(attachment)
+        verify(selectedMediaAttachmentAdapter).addAttachment(attachment)
     }
 
     @Test
@@ -74,19 +73,18 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         val attachment = createAttachmentMetaDataWithAttachment()
         val sut = Fixture().givenMediaAttachmentsState(listOf(attachment)).please()
 
-        sut.selectAttachment(attachment, mock(), true)
+        sut.selectAttachment(attachment, true)
 
-        verify(sut.totalMediaAttachmentAdapter!!).selectAttachment(attachment)
+        verify(totalMediaAttachmentAdapter).selectAttachment(attachment)
     }
 
     @Test
     fun `If is not media Should add attachments to selected file attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment()
-        sut.selectedFileAttachmentAdapter = mock()
 
-        sut.selectAttachment(attachment, mock(), false)
+        sut.selectAttachment(attachment, false)
 
-        verify(sut.selectedFileAttachmentAdapter!!).setAttachments(argThat { contains(attachment) })
+        verify(selectedFileAttachmentAdapter).setAttachments(argThat { contains(attachment) })
     }
 
     @Test
@@ -94,9 +92,9 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         val attachment = createAttachmentMetaDataWithAttachment()
         val sut = Fixture().givenFileAttachmentsState(listOf(attachment)).please()
 
-        sut.selectAttachment(attachment, mock(), false)
+        sut.selectAttachment(attachment, false)
 
-        verify(sut.totalFileAttachmentAdapter!!).selectAttachment(attachment)
+        verify(totalFileAttachmentAdapter).selectAttachment(attachment)
     }
 
     private inner class Fixture {
@@ -107,20 +105,12 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
             When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
             When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
-
-            attachmentsController.totalMediaAttachmentAdapter = mock()
-            attachmentsController.selectedMediaAttachmentAdapter = mock()
-
             return this
         }
 
         fun givenFileAttachmentsState(totalFileAttachments: List<AttachmentMetaData>): Fixture {
             When calling storageHelper.getFileAttachments(any(), any()) doReturn totalFileAttachments
             attachmentsController.onClickOpenFileSelectView(mock(), mock())
-
-            attachmentsController.totalFileAttachmentAdapter = mock()
-            attachmentsController.selectedFileAttachmentAdapter = mock()
-
             return this
         }
 

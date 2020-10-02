@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.view.common.visible
 internal class FileAttachmentSelectedAdapter(
     private var attachments: List<AttachmentMetaData>,
     private val localAttach: Boolean,
-    private var cancelListener: OnAttachmentCancelListener? = null
+    var cancelListener: (AttachmentMetaData) -> Unit = { }
 ) : BaseAdapter() {
     override fun getCount() = attachments.size
     override fun getItem(position: Int) = attachments[position]
@@ -40,7 +40,7 @@ internal class FileAttachmentSelectedAdapter(
         binding.tvFileSize.text = StringUtility.convertFileSizeByteCount(attachment.size)
         if (!localAttach) return
         binding.tvClose.visible(true)
-        binding.tvClose.setOnClickListener { cancelListener?.onCancel(attachment) }
+        binding.tvClose.setOnClickListener { cancelListener(attachment) }
     }
 
     fun setAttachments(attachments: List<AttachmentMetaData>) {
@@ -51,9 +51,5 @@ internal class FileAttachmentSelectedAdapter(
     fun clear() {
         attachments = emptyList()
         notifyDataSetChanged()
-    }
-
-    interface OnAttachmentCancelListener {
-        fun onCancel(attachment: AttachmentMetaData)
     }
 }

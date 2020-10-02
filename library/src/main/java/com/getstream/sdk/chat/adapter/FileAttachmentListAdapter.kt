@@ -11,8 +11,8 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.view.common.visible
 
 class FileAttachmentListAdapter(
-    private var attachments: List<AttachmentMetaData>,
-    private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
+    private var attachments: List<AttachmentMetaData> = emptyList(),
+    var listener: (attachmentMetaData: AttachmentMetaData) -> Unit = { }
 ) : RecyclerView.Adapter<FileAttachmentListAdapter.MyViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder =
         MyViewHolder(
@@ -35,8 +35,11 @@ class FileAttachmentListAdapter(
         notifyDataSetChanged()
     }
 
+    fun setAttachments(attachments: List<AttachmentMetaData>) {
+        this.attachments = attachments
+        notifyDataSetChanged()
+    }
     fun selectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, true)
-
     fun unselectAttachment(attachment: AttachmentMetaData) = toggleSelection(attachment, false)
 
     private fun toggleSelection(attachment: AttachmentMetaData, isSelected: Boolean) {

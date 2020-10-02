@@ -2,6 +2,10 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
+import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
+import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
+import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
+import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.enums.label
@@ -40,6 +44,10 @@ internal class MessageInputController(
             storageHelper,
             DispatchersProvider(),
             view,
+            MediaAttachmentAdapter(),
+            FileAttachmentListAdapter(),
+            MediaAttachmentSelectedAdapter(),
+            FileAttachmentSelectedAdapter(emptyList(), true),
             style.isShowAttachmentButton
         )
 
@@ -144,7 +152,7 @@ internal class MessageInputController(
     }
 
     internal fun onFileCaptured(file: File) {
-        attachmentsController.selectAttachment(AttachmentMetaData(file), messageInputType, true)
+        attachmentsController.selectAttachment(AttachmentMetaData(file), true)
     }
 
     internal fun checkCommandsOrMentions(inputMessage: String) {
