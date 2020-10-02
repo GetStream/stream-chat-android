@@ -7,18 +7,13 @@ import com.getstream.sdk.chat.adapter.viewholder.message.hasNoAttachments
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
-import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.logger.ChatLogger
 
 internal class AttachmentConfigurator(
     private val binding: StreamItemMessageBinding,
     private val style: MessageListViewStyle,
-    private val bubbleHelper: MessageListView.BubbleHelper,
-    private val viewHolderFactory: AttachmentViewHolderFactory,
-    private val attachmentClickListener: MessageListView.AttachmentClickListener,
-    private val giphySendListener: MessageListView.GiphySendListener,
-    private val messageLongClickListener: MessageListView.MessageLongClickListener
+    private val viewHolderFactory: AttachmentViewHolderFactory
 ) : Configurator {
 
     override fun configure(messageItem: MessageItem) {
@@ -42,13 +37,8 @@ internal class AttachmentConfigurator(
 
         binding.attachmentview.apply {
             isVisible = true
-            setViewHolderFactory(viewHolderFactory)
-            setStyle(style)
-            setGiphySendListener(giphySendListener)
+            init(viewHolderFactory, style)
             setEntity(messageItem)
-            setBubbleHelper(bubbleHelper)
-            setAttachmentClickListener(attachmentClickListener)
-            setLongClickListener(messageLongClickListener)
         }
     }
 }
