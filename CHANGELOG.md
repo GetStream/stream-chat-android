@@ -1,10 +1,10 @@
 # To be released:
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
 - Moved `BaseAttachmentViewHolder` to a new package
-
 - Fix setting read state when user's last read equals message created date
 - Skip setting user's read status if last read message is his own
 - Make MessageListItem properties abstract
+- Change default query sort to "last_updated"
 - Fixed attachments logic. Save previously attached files when add more.
 - Fixed the bug when it was unable to select new files when you have already attached something.
 - Moved `MessageInputView` class to a new package.
