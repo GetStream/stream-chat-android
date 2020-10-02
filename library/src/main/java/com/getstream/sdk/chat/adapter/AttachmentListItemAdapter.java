@@ -13,7 +13,7 @@ import java.util.List;
 import kotlin.collections.CollectionsKt;
 
 
-public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AttachmentListItemAdapter extends RecyclerView.Adapter<BaseAttachmentViewHolder> {
 
     private final AttachmentViewHolderFactory factory;
     private final MessageListViewStyle style;
@@ -43,15 +43,14 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+    public BaseAttachmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                       int viewType) {
         return this.factory.createAttachmentViewHolder(parent, viewType, style, messageListItem);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        AttachmentListItem attachmentItem = attachments.get(position);
-        ((BaseAttachmentViewHolder) holder).bind(attachmentItem);
+    public void onBindViewHolder(@NonNull BaseAttachmentViewHolder holder, int position) {
+        holder.bind(attachments.get(position));
     }
 
 }
