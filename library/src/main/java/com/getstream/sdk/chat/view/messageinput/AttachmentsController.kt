@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Constant
-import com.getstream.sdk.chat.utils.PermissionHelper
+import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 
 internal class AttachmentsController(
     private val rootController: MessageInputController,
-    private val permissionHelper: PermissionHelper,
+    private val permissionChecker: PermissionChecker,
     private val storageHelper: StorageHelper,
     private val dispatchersProvider: DispatchersProvider,
     private val view: MessageInputView,
@@ -28,10 +28,13 @@ internal class AttachmentsController(
 ) {
     @VisibleForTesting
     internal var totalMediaAttachmentAdapter: MediaAttachmentAdapter? = null
+
     @VisibleForTesting
     internal var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter? = null
+
     @VisibleForTesting
     internal var totalFileAttachmentAdapter: FileAttachmentListAdapter? = null
+
     @VisibleForTesting
     internal var selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter? = null
 
@@ -112,7 +115,7 @@ internal class AttachmentsController(
         removeAttachmentFromAdapters(attachment, messageInputType, isMedia)
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
-            configAttachmentButtonVisible(true) 
+            configAttachmentButtonVisible(true)
         }
     }
 
@@ -125,16 +128,16 @@ internal class AttachmentsController(
     }
 
     internal fun onCameraClick() {
-        if (!permissionHelper.isGrantedCameraPermissions(view.context)) {
-            permissionHelper.checkCameraPermissions(view) { onCameraClick() }
+        if (!permissionChecker.isGrantedCameraPermissions(view.context)) {
+            permissionChecker.checkCameraPermissions(view) { onCameraClick() }
         } else {
             view.showCameraOptions()
         }
     }
 
     internal fun onClickOpenMediaSelectView(messageInputType: MessageInputType) {
-        if (!permissionHelper.isGrantedStoragePermissions(view.context)) {
-            permissionHelper.checkStoragePermissions(view) {
+        if (!permissionChecker.isGrantedStoragePermissions(view.context)) {
+            permissionChecker.checkStoragePermissions(view) {
                 onClickOpenMediaSelectView(messageInputType)
             }
             return
@@ -321,12 +324,12 @@ internal class AttachmentsController(
 
     private fun checkPermissions() {
         when {
-            permissionHelper.isGrantedCameraPermissions(view.context) -> {
+            permissionChecker.isGrantedCameraPermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(false)
                 view.showFilePermissions(true)
             }
-            permissionHelper.isGrantedStoragePermissions(view.context) -> {
+            permissionChecker.isGrantedStoragePermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(true)
                 view.showFilePermissions(true)

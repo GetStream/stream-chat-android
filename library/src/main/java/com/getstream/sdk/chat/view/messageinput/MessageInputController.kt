@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
-import com.getstream.sdk.chat.utils.StorageUtils
+import com.getstream.sdk.chat.utils.StorageHelper
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
@@ -31,11 +31,13 @@ internal class MessageInputController(
     private val style: MessageInputStyle
 ) {
 
+    private val storageHelper = StorageHelper()
+
     internal val attachmentsController =
         AttachmentsController(
             this,
-            PermissionChecker,
-            StorageUtils,
+            PermissionChecker(),
+            storageHelper,
             DispatchersProvider(),
             view,
             style.isShowAttachmentButton
@@ -89,7 +91,7 @@ internal class MessageInputController(
         true -> view.sendTextMessage(message)
         false -> view.sendAttachments(
             message,
-            attachmentsController.selectedAttachments.map { StorageUtils.getCachedFileFromUri(view.context, it) }
+            attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
         )
     }
 
@@ -100,7 +102,7 @@ internal class MessageInputController(
                 parentMessage,
                 message,
                 binding.cbSendAlsoToChannel.isChecked,
-                attachmentsController.selectedAttachments.map { StorageUtils.getCachedFileFromUri(view.context, it) }
+                attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
             )
         }
 

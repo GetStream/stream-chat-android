@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal object StorageUtils : StorageHelper {
+internal class StorageHelper {
 
     private val supportedFilesMimeTypes =
         listOf(
@@ -60,7 +60,7 @@ internal object StorageUtils : StorageHelper {
         return cachedFile
     }
 
-    override fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
+    internal fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
         val columns = arrayOf(
             MediaStore.Files.FileColumns._ID,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
@@ -89,7 +89,7 @@ internal object StorageUtils : StorageHelper {
         return emptyList()
     }
 
-    override fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
+    internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
         if (treeUri == null) {
             throw IllegalStateException("Cannot get file attachments because treeUri doesn't exist")
         }
@@ -107,13 +107,11 @@ internal object StorageUtils : StorageHelper {
                 val mimeType = Utils.getMimeType(file.uri.path)
                 if (supportedFilesMimeTypes.contains(mimeType)) {
                     attachmentMetaData += AttachmentMetaData(
-                        file.uri,
-                        mimeType
-                    ).apply {
-                        this.type = ModelType.attach_file
-                        this.size = file.length()
-                        this.title = file.name
-                    }
+                        uri = file.uri,
+                        mimeType = mimeType,
+                        type = ModelType.attach_file,
+                        title = file.name
+                    ).apply { size = file.length() }
                 }
             }
         }
@@ -149,7 +147,7 @@ internal object StorageUtils : StorageHelper {
                 val mimeType = MimeTypeMap.getSingleton()
                     .getMimeTypeFromExtension(context.contentResolver.getType(uri)) ?: ""
 
-                attachments += AttachmentMetaData(uri, mimeType).apply {
+                attachments += AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
                     this.type = mediaType.modelType
                     this.size = getLong(getColumnIndex(MediaStore.Files.FileColumns.SIZE))
                     this.title = displayName
@@ -169,8 +167,3 @@ internal object ImageMediaType :
 
 internal object VideoMediaType :
     MediaType(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, ModelType.attach_video)
-
-internal interface StorageHelper {
-    fun getMediaAttachments(context: Context): List<AttachmentMetaData>
-    fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData>
-}

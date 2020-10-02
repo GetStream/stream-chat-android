@@ -98,8 +98,4 @@ class MediaAttachmentSelectedAdapter(
             binding.progressBar.visibility = View.INVISIBLE
         }
     }
-
-    companion object {
-        private val TAG = MediaAttachmentSelectedAdapter::class.java.simpleName
-    }
 }
