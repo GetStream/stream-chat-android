@@ -29,6 +29,8 @@ class AttachmentViewHolder(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
+    private val clickListener: AttachmentClickListener,
+    private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachmentBinding =
         StreamItemAttachmentBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -38,23 +40,15 @@ class AttachmentViewHolder(
     private lateinit var messageListItem: MessageItem
     private lateinit var message: Message
 
-    private var clickListener: AttachmentClickListener? = null
-    private var longClickListener: MessageLongClickListener? = null
-
     private lateinit var attachment: Attachment
 
     override fun bind(
         messageListItem: MessageItem,
         message: Message,
-        attachmentListItem: AttachmentListItem,
-        clickListener: AttachmentClickListener?,
-        longClickListener: MessageLongClickListener?
+        attachmentListItem: AttachmentListItem
     ) {
         this.messageListItem = messageListItem
         this.message = message
-
-        this.clickListener = clickListener
-        this.longClickListener = longClickListener
 
         attachment = attachmentListItem.attachment
 
@@ -205,10 +199,10 @@ class AttachmentViewHolder(
 
     private fun configClickListeners() {
         mediaBinding.root.setOnClickListener {
-            clickListener?.onAttachmentClick(message, attachment)
+            clickListener.onAttachmentClick(message, attachment)
         }
         mediaBinding.root.setOnLongClickListener {
-            longClickListener?.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(message)
             true
         }
     }
@@ -224,10 +218,10 @@ class AttachmentViewHolder(
             false
         )
         binding.lvAttachmentFile.onItemClickListener = OnItemClickListener { _, _, _, _ ->
-            clickListener?.onAttachmentClick(message, attachment)
+            clickListener.onAttachmentClick(message, attachment)
         }
         binding.lvAttachmentFile.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            longClickListener?.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(message)
             true
         }
 

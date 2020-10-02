@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder;
-import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
@@ -24,22 +23,15 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private final Message message;
     private final List<AttachmentListItem> attachments;
 
-    private MessageListView.AttachmentClickListener attachmentClickListener;
-    private MessageListView.MessageLongClickListener longClickListener;
-
     public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
                                      @NonNull AttachmentViewHolderFactory factory,
-                                     @NonNull MessageListViewStyle style,
-                                     @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
-                                     @NonNull MessageListView.MessageLongClickListener longClickListener
+                                     @NonNull MessageListViewStyle style
     ) {
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
         this.factory = factory;
         this.attachments = CollectionsKt.map(message.getAttachments(), AttachmentListItem::new);
         this.style = style;
-        this.attachmentClickListener = attachmentClickListener;
-        this.longClickListener = longClickListener;
     }
 
     @Override
@@ -65,9 +57,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         ((BaseAttachmentViewHolder) holder).bind(
                 messageListItem,
                 message,
-                attachmentItem,
-                attachmentClickListener,
-                longClickListener);
+                attachmentItem);
     }
 
 }

@@ -17,6 +17,8 @@ class AttachmentViewHolderFile(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
+    private val clickListener: AttachmentClickListener,
+    private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -25,21 +27,13 @@ class AttachmentViewHolderFile(
     private lateinit var message: Message
     private lateinit var attachment: Attachment
 
-    private var clickListener: AttachmentClickListener? = null
-    private var longClickListener: MessageLongClickListener? = null
-
     override fun bind(
         messageListItem: MessageItem,
         message: Message,
-        attachmentListItem: AttachmentListItem,
-        clickListener: AttachmentClickListener?,
-        longClickListener: MessageLongClickListener?
+        attachmentListItem: AttachmentListItem
     ) {
         this.messageListItem = messageListItem
         this.message = message
-
-        this.clickListener = clickListener
-        this.longClickListener = longClickListener
 
         attachment = attachmentListItem.attachment
 
@@ -74,13 +68,13 @@ class AttachmentViewHolderFile(
 
     private fun configClickListeners() {
         binding.attachmentview.setOnClickListener {
-            clickListener?.onAttachmentClick(
+            clickListener.onAttachmentClick(
                 message,
                 attachment
             )
         }
         binding.attachmentview.setOnLongClickListener {
-            longClickListener?.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(message)
             true
         }
     }

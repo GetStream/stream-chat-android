@@ -56,12 +56,26 @@ open class AttachmentViewHolderFactory {
                     parent,
                     style,
                     bubbleHelper,
-                    listenerContainer.giphySendListener
+                    listenerContainer.giphySendListener,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
                 )
             FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(parent, style, bubbleHelper)
+                AttachmentViewHolderFile(
+                    parent,
+                    style,
+                    bubbleHelper,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
+                )
             else ->
-                AttachmentViewHolder(parent, style, bubbleHelper)
+                AttachmentViewHolder(
+                    parent,
+                    style,
+                    bubbleHelper,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
+                )
         }
     }
 }

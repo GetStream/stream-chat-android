@@ -17,9 +17,6 @@ public class AttachmentListView extends RecyclerView {
     private AttachmentViewHolderFactory viewHolderFactory;
     private MessageListViewStyle style;
 
-    private MessageListView.AttachmentClickListener attachmentClickListener;
-    private MessageListView.MessageLongClickListener longClickListener;
-
     public AttachmentListView(Context context) {
         super(context);
         setHasFixedSize(true);
@@ -37,14 +34,10 @@ public class AttachmentListView extends RecyclerView {
 
     public void init(
             @NonNull AttachmentViewHolderFactory viewHolderFactory,
-            @NonNull MessageListViewStyle style,
-            @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
-            @NonNull MessageListView.MessageLongClickListener longClickListener
+            @NonNull MessageListViewStyle style
     ) {
         this.viewHolderFactory = viewHolderFactory;
         this.style = style;
-        this.attachmentClickListener = attachmentClickListener;
-        this.longClickListener = longClickListener;
 
         setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }
@@ -56,9 +49,7 @@ public class AttachmentListView extends RecyclerView {
         this.setAdapter(new AttachmentListItemAdapter(
                 messageListItem,
                 viewHolderFactory,
-                style,
-                attachmentClickListener,
-                longClickListener
+                style
         ));
     }
 }

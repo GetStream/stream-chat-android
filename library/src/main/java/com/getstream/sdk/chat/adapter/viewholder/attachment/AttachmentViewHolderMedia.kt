@@ -28,6 +28,8 @@ class AttachmentViewHolderMedia(
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
     private val giphySendListener: GiphySendListener,
+    private val clickListener: AttachmentClickListener,
+    private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachMediaBinding =
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -35,22 +37,15 @@ class AttachmentViewHolderMedia(
     private lateinit var message: Message
     private lateinit var messageListItem: MessageItem
 
-    private var clickListener: AttachmentClickListener? = null
-    private var longClickListener: MessageLongClickListener? = null
-
     private lateinit var attachment: Attachment
 
     override fun bind(
         messageListItem: MessageItem,
         message: Message,
-        attachmentListItem: AttachmentListItem,
-        clickListener: AttachmentClickListener?,
-        longClickListener: MessageLongClickListener?
+        attachmentListItem: AttachmentListItem
     ) {
         this.messageListItem = messageListItem
         this.message = message
-        this.clickListener = clickListener
-        this.longClickListener = longClickListener
 
         attachment = attachmentListItem.attachment
 
@@ -170,13 +165,13 @@ class AttachmentViewHolderMedia(
 
     private fun configClickListeners() {
         binding.ivMediaThumb.setOnClickListener {
-            clickListener?.onAttachmentClick(
+            clickListener.onAttachmentClick(
                 message,
                 attachment
             )
         }
         binding.ivMediaThumb.setOnLongClickListener {
-            longClickListener?.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(message)
             true
         }
     }
