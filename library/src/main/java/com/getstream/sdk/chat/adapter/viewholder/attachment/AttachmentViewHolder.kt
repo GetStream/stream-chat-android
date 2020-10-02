@@ -23,12 +23,12 @@ import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 
 class AttachmentViewHolder(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
+    private val messageItem: MessageItem,
     private val clickListener: AttachmentClickListener,
     private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachmentBinding =
@@ -37,19 +37,9 @@ class AttachmentViewHolder(
 
     private val mediaBinding: StreamItemAttachMediaBinding = binding.clAttachmentMedia
 
-    private lateinit var messageListItem: MessageItem
-    private lateinit var message: Message
-
     private lateinit var attachment: Attachment
 
-    override fun bind(
-        messageListItem: MessageItem,
-        message: Message,
-        attachmentListItem: AttachmentListItem
-    ) {
-        this.messageListItem = messageListItem
-        this.message = message
-
+    override fun bind(attachmentListItem: AttachmentListItem) {
         attachment = attachmentListItem.attachment
 
         applyStyle()
@@ -57,7 +47,7 @@ class AttachmentViewHolder(
     }
 
     private fun applyStyle() {
-        if (messageListItem.isMine) {
+        if (messageItem.isMine) {
             style.attachmentTitleTextMine.apply(mediaBinding.tvMediaTitle)
             style.attachmentDescriptionTextMine.apply(mediaBinding.tvMediaDes)
         } else {
@@ -69,7 +59,7 @@ class AttachmentViewHolder(
     private fun configAttachment() {
         var hasFile = false
         var hasMedia = false
-        for (attachment in message.attachments) {
+        for (attachment in messageItem.message.attachments) {
             if (attachment.type != null) {
                 if (attachment.type == ModelType.attach_file) {
                     hasFile = true
@@ -115,7 +105,7 @@ class AttachmentViewHolder(
     }
 
     private fun configMediaAttach() {
-        val firstAttachment = message.attachments.first { it.type != ModelType.attach_file }
+        val firstAttachment = messageItem.message.attachments.first { it.type != ModelType.attach_file }
         val type = firstAttachment.type
         var attachUrl = firstAttachment.imageUrl
         if (type != null) {
@@ -147,7 +137,7 @@ class AttachmentViewHolder(
             .load(getInstance().urlSigner().signImageUrl(attachUrl))
             .into(mediaBinding.ivMediaThumb)
 
-        if (message.type != ModelType.message_ephemeral) {
+        if (messageItem.message.type != ModelType.message_ephemeral) {
             mediaBinding.tvMediaTitle.text = firstAttachment.title
         }
         mediaBinding.tvMediaDes.text = firstAttachment.text
@@ -172,7 +162,7 @@ class AttachmentViewHolder(
     }
 
     private fun configAttachViewBackground(view: View) {
-        val messageBubbleDrawableRes = style.getMessageBubbleDrawable(messageListItem.isMine)
+        val messageBubbleDrawableRes = style.getMessageBubbleDrawable(messageItem.isMine)
         if (messageBubbleDrawableRes != -1) {
             view.background = context.getDrawable(messageBubbleDrawableRes)
         }
@@ -180,18 +170,18 @@ class AttachmentViewHolder(
 
     private fun configImageThumbBackground() {
         var background = bubbleHelper.getDrawableForAttachment(
-            message,
-            messageListItem.isMine,
-            messageListItem.positions,
+            messageItem.message,
+            messageItem.isMine,
+            messageItem.positions,
             attachment
         )
         mediaBinding.ivMediaThumb.setShape(context, background)
 
         if (mediaBinding.tvMediaDes.isVisible || mediaBinding.tvMediaTitle.isVisible) {
             background = bubbleHelper.getDrawableForAttachmentDescription(
-                messageListItem.message,
-                messageListItem.isMine,
-                messageListItem.positions
+                messageItem.message,
+                messageItem.isMine,
+                messageItem.positions
             )
             mediaBinding.clDes.background = background
         }
@@ -199,10 +189,10 @@ class AttachmentViewHolder(
 
     private fun configClickListeners() {
         mediaBinding.root.setOnClickListener {
-            clickListener.onAttachmentClick(message, attachment)
+            clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         mediaBinding.root.setOnLongClickListener {
-            longClickListener.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(messageItem.message)
             true
         }
     }
@@ -210,7 +200,7 @@ class AttachmentViewHolder(
     private fun configFileAttach() {
         configAttachViewBackground(binding.lvAttachmentFile)
 
-        val attachments = message.attachments.filter { it.type == ModelType.attach_file }
+        val attachments = messageItem.message.attachments.filter { it.type == ModelType.attach_file }
         binding.lvAttachmentFile.adapter = AttachmentListAdapter(
             context,
             LlcMigrationUtils.getMetaAttachments(attachments),
@@ -218,10 +208,10 @@ class AttachmentViewHolder(
             false
         )
         binding.lvAttachmentFile.onItemClickListener = OnItemClickListener { _, _, _, _ ->
-            clickListener.onAttachmentClick(message, attachment)
+            clickListener.onAttachmentClick(messageItem.message, attachment)
         }
         binding.lvAttachmentFile.onItemLongClickListener = OnItemLongClickListener { _, _, _, _ ->
-            longClickListener.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(messageItem.message)
             true
         }
 

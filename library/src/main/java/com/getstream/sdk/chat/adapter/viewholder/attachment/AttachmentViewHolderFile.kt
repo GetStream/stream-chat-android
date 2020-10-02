@@ -11,30 +11,21 @@ import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 
 class AttachmentViewHolderFile(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
+    private val messageItem: MessageItem,
     private val clickListener: AttachmentClickListener,
     private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 
-    private lateinit var messageListItem: MessageItem
-    private lateinit var message: Message
     private lateinit var attachment: Attachment
 
-    override fun bind(
-        messageListItem: MessageItem,
-        message: Message,
-        attachmentListItem: AttachmentListItem
-    ) {
-        this.messageListItem = messageListItem
-        this.message = message
-
+    override fun bind(attachmentListItem: AttachmentListItem) {
         attachment = attachmentListItem.attachment
 
         applyStyle()
@@ -43,7 +34,7 @@ class AttachmentViewHolderFile(
     }
 
     private fun applyStyle() {
-        if (messageListItem.isMine) {
+        if (messageItem.isMine) {
             style.attachmentTitleTextMine.apply(binding.tvFileTitle)
             style.attachmentFileSizeTextMine.apply(binding.tvFileSize)
         } else {
@@ -58,9 +49,9 @@ class AttachmentViewHolderFile(
         binding.tvFileTitle.text = attachment.title
 
         val background = bubbleHelper.getDrawableForAttachment(
-            messageListItem.message,
-            messageListItem.isMine,
-            messageListItem.positions,
+            messageItem.message,
+            messageItem.isMine,
+            messageItem.positions,
             attachment
         )
         binding.attachmentview.background = background
@@ -69,12 +60,12 @@ class AttachmentViewHolderFile(
     private fun configClickListeners() {
         binding.attachmentview.setOnClickListener {
             clickListener.onAttachmentClick(
-                message,
+                messageItem.message,
                 attachment
             )
         }
         binding.attachmentview.setOnLongClickListener {
-            longClickListener.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(messageItem.message)
             true
         }
     }

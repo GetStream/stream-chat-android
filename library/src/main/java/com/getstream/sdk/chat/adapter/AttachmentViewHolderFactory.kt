@@ -48,7 +48,8 @@ open class AttachmentViewHolderFactory {
     open fun createAttachmentViewHolder(
         parent: ViewGroup,
         viewType: Int,
-        style: MessageListViewStyle
+        style: MessageListViewStyle,
+        messageItem: MessageListItem.MessageItem
     ): BaseAttachmentViewHolder {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
@@ -56,6 +57,7 @@ open class AttachmentViewHolderFactory {
                     parent,
                     style,
                     bubbleHelper,
+                    messageItem,
                     listenerContainer.giphySendListener,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener
@@ -65,6 +67,7 @@ open class AttachmentViewHolderFactory {
                     parent,
                     style,
                     bubbleHelper,
+                    messageItem,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener
                 )
@@ -73,6 +76,7 @@ open class AttachmentViewHolderFactory {
                     parent,
                     style,
                     bubbleHelper,
+                    messageItem,
                     listenerContainer.attachmentClickListener,
                     listenerContainer.messageLongClickListener
                 )

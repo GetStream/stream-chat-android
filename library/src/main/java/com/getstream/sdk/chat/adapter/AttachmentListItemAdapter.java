@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;
 
-import io.getstream.chat.android.client.models.Message;
 import kotlin.collections.CollectionsKt;
 
 
@@ -20,17 +19,15 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     private final MessageListViewStyle style;
 
     private final MessageListItem.MessageItem messageListItem;
-    private final Message message;
     private final List<AttachmentListItem> attachments;
 
     public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
                                      @NonNull AttachmentViewHolderFactory factory,
                                      @NonNull MessageListViewStyle style
     ) {
-        this.messageListItem = messageListItem;
-        this.message = messageListItem.getMessage();
         this.factory = factory;
-        this.attachments = CollectionsKt.map(message.getAttachments(), AttachmentListItem::new);
+        this.messageListItem = messageListItem;
+        this.attachments = CollectionsKt.map(messageListItem.getMessage().getAttachments(), AttachmentListItem::new);
         this.style = style;
     }
 
@@ -48,16 +45,13 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                       int viewType) {
-        return this.factory.createAttachmentViewHolder(parent, viewType, style);
+        return this.factory.createAttachmentViewHolder(parent, viewType, style, messageListItem);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         AttachmentListItem attachmentItem = attachments.get(position);
-        ((BaseAttachmentViewHolder) holder).bind(
-                messageListItem,
-                message,
-                attachmentItem);
+        ((BaseAttachmentViewHolder) holder).bind(attachmentItem);
     }
 
 }

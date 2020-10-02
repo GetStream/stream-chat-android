@@ -20,13 +20,13 @@ import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class AttachmentViewHolderMedia(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,
+    private val messageItem: MessageItem,
     private val giphySendListener: GiphySendListener,
     private val clickListener: AttachmentClickListener,
     private val longClickListener: MessageLongClickListener,
@@ -34,19 +34,9 @@ class AttachmentViewHolderMedia(
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 
-    private lateinit var message: Message
-    private lateinit var messageListItem: MessageItem
-
     private lateinit var attachment: Attachment
 
-    override fun bind(
-        messageListItem: MessageItem,
-        message: Message,
-        attachmentListItem: AttachmentListItem
-    ) {
-        this.messageListItem = messageListItem
-        this.message = message
-
+    override fun bind(attachmentListItem: AttachmentListItem) {
         attachment = attachmentListItem.attachment
 
         applyStyle()
@@ -56,7 +46,7 @@ class AttachmentViewHolderMedia(
     }
 
     private fun applyStyle() {
-        if (messageListItem.isMine) {
+        if (messageItem.isMine) {
             style.attachmentTitleTextMine.apply(binding.tvMediaTitle)
             style.attachmentDescriptionTextMine.apply(binding.tvMediaDes)
         } else {
@@ -78,7 +68,7 @@ class AttachmentViewHolderMedia(
             .placeholder(R.drawable.stream_placeholder)
             .into(binding.ivMediaThumb)
 
-        if (message.type != ModelType.message_ephemeral) {
+        if (messageItem.message.type != ModelType.message_ephemeral) {
             binding.tvMediaTitle.text = attachment.title
         }
 
@@ -90,7 +80,7 @@ class AttachmentViewHolderMedia(
 
         if (binding.tvMediaDes.isVisible || binding.tvMediaTitle.isVisible) {
             val background = bubbleHelper.getDrawableForAttachmentDescription(
-                messageListItem.message, messageListItem.isMine, messageListItem.positions
+                messageItem.message, messageItem.isMine, messageItem.positions
             )
             binding.clDes.background = background
         }
@@ -98,16 +88,16 @@ class AttachmentViewHolderMedia(
 
     private fun configImageThumbBackground() {
         val background = bubbleHelper.getDrawableForAttachment(
-            message,
-            messageListItem.isMine,
-            messageListItem.positions,
+            messageItem.message,
+            messageItem.isMine,
+            messageItem.positions,
             attachment
         )
         binding.ivMediaThumb.setShape(context, background)
     }
 
     private fun configActions() {
-        if (message.type == ModelType.message_ephemeral && message.command == ModelType.attach_giphy) {
+        if (messageItem.message.type == ModelType.message_ephemeral && messageItem.message.command == ModelType.attach_giphy) {
             configGiphyAction()
         } else {
             binding.clAction.visibility = View.GONE
@@ -142,15 +132,15 @@ class AttachmentViewHolderMedia(
             .build()
         binding.tvActionSend.setOnClickListener {
             enableSendGiphyButtons(false)
-            giphySendListener.onGiphySend(message, GiphyAction.SEND)
+            giphySendListener.onGiphySend(messageItem.message, GiphyAction.SEND)
         }
         binding.tvActionShuffle.setOnClickListener {
             enableSendGiphyButtons(false)
-            giphySendListener.onGiphySend(message, GiphyAction.SHUFFLE)
+            giphySendListener.onGiphySend(messageItem.message, GiphyAction.SHUFFLE)
         }
         binding.tvActionCancel.setOnClickListener {
             giphySendListener.onGiphySend(
-                message,
+                messageItem.message,
                 GiphyAction.CANCEL
             )
         }
@@ -166,12 +156,12 @@ class AttachmentViewHolderMedia(
     private fun configClickListeners() {
         binding.ivMediaThumb.setOnClickListener {
             clickListener.onAttachmentClick(
-                message,
+                messageItem.message,
                 attachment
             )
         }
         binding.ivMediaThumb.setOnLongClickListener {
-            longClickListener.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(messageItem.message)
             true
         }
     }
