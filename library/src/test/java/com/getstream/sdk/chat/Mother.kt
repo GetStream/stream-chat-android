@@ -191,8 +191,9 @@ fun createCommand(
 
 fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
 
-fun createMessageListItem(
+fun createMessageItem(
     message: Message = createMessage(),
     positions: List<MessageViewHolderFactory.Position> = listOf(),
-    isMessageMine: Boolean = randomBoolean()
-): MessageListItem = MessageListItem.MessageItem(message, positions, isMessageMine)
+    isMine: Boolean = randomBoolean(),
+    messageReadBy: MutableList<ChannelUserRead> = mutableListOf()
+): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)

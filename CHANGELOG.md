@@ -2,7 +2,7 @@
 
 - Fix setting read state when user's last read equals message created date
 - Skip setting user's read status if last read message is his own
-- Add checking if message reads are equals in MessageListItemDiffCallback
+- Make MessageListItem properties abstract
 
 # Sep 30th, 2020 - 4.3.0-beta-2
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
