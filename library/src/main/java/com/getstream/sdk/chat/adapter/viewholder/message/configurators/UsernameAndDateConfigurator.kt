@@ -41,7 +41,7 @@ internal class UsernameAndDateConfigurator(
 
         if (style.isMessageDateShow) {
             binding.tvMessagedate.isVisible = true
-            binding.tvMessagedate.text = TIME_DATEFORMAT.format(messageItem.message.createdAt)
+            binding.tvMessagedate.text = TIME_DATEFORMAT.format(messageItem.message.createdAt!!)
         } else {
             binding.tvMessagedate.isVisible = false
         }

@@ -119,7 +119,7 @@ class MessageListViewModelTest {
         whenever(getThreadCall.execute()) doReturn getThreadResult
         whenever(getThreadResult.data()) doReturn threadController
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
-        whenever(client.flag(any())) doReturn flagCall
+        whenever(client.flagMessage(any())) doReturn flagCall
 
         messages.value = MESSAGES
         reads.value = listOf(CHANNEL_USER_READ)
@@ -175,7 +175,7 @@ class MessageListViewModelTest {
 
         viewModel.onEvent(MessageListViewModel.Event.FlagMessage(MESSAGE))
 
-        verify(client).flag(MESSAGE.user.id)
+        verify(client).flagMessage(MESSAGE.id)
     }
 
     @Test
