@@ -2,6 +2,10 @@
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
 - Moved `BaseAttachmentViewHolder` to a new package
 
+- Fix setting read state when user's last read equals message created date
+- Skip setting user's read status if last read message is his own
+- Make MessageListItem properties abstract
+
 # Sep 30th, 2020 - 4.3.0-beta-2
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
