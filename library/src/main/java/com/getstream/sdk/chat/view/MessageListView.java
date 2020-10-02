@@ -182,29 +182,32 @@ public class MessageListView extends ConstraintLayout {
     // region Constructor
     public MessageListView(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.parseAttr(context, attrs);
-        init(context);
-        configureAttributes(attrs);
+        init(context, attrs);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
-        init(context);
-        configureAttributes(attrs);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
+    private void init(Context context, @Nullable AttributeSet attr) {
         LayoutInflater.from(context).inflate(R.layout.stream_message_list_view, this, true);
 
         initRecyclerView();
         initUnseenMessagesButton();
         initUnseenMessagesView();
+
+        if (attr != null) {
+            configureAttributes(attr);
+        }
+
         initScrollButtonBehaviour();
 
         hasScrolledUp = false;
