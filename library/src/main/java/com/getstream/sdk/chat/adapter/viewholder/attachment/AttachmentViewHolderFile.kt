@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter.viewholder.attachment
 
-import android.content.Context
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -30,7 +29,6 @@ class AttachmentViewHolderFile(
     private var longClickListener: MessageLongClickListener? = null
 
     override fun bind(
-        context: Context,
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,

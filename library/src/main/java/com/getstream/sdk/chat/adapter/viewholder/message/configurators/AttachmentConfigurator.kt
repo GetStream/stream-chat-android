@@ -17,7 +17,6 @@ internal class AttachmentConfigurator(
     private val bubbleHelper: MessageListView.BubbleHelper,
     private val viewHolderFactory: AttachmentViewHolderFactory,
     private val attachmentClickListener: MessageListView.AttachmentClickListener,
-    private val giphySendListener: MessageListView.GiphySendListener,
     private val messageLongClickListener: MessageListView.MessageLongClickListener
 ) : Configurator {
 
@@ -42,13 +41,14 @@ internal class AttachmentConfigurator(
 
         binding.attachmentview.apply {
             isVisible = true
-            setViewHolderFactory(viewHolderFactory)
-            setStyle(style)
-            setGiphySendListener(giphySendListener)
+            init(
+                viewHolderFactory,
+                style,
+                bubbleHelper,
+                attachmentClickListener,
+                messageLongClickListener
+            )
             setEntity(messageItem)
-            setBubbleHelper(bubbleHelper)
-            setAttachmentClickListener(attachmentClickListener)
-            setLongClickListener(messageLongClickListener)
         }
     }
 }

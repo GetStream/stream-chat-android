@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter.viewholder.attachment
 
-import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
@@ -34,7 +33,6 @@ class AttachmentViewHolder(
 
     private val mediaBinding: StreamItemAttachMediaBinding = binding.clAttachmentMedia
 
-    private lateinit var context: Context
     private lateinit var messageListItem: MessageItem
     private lateinit var message: Message
     private lateinit var style: MessageListViewStyle
@@ -46,7 +44,6 @@ class AttachmentViewHolder(
     private lateinit var attachment: Attachment
 
     override fun bind(
-        context: Context,
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
@@ -55,7 +52,6 @@ class AttachmentViewHolder(
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     ) {
-        this.context = context
         this.messageListItem = messageListItem
         this.message = message
         this.style = style
