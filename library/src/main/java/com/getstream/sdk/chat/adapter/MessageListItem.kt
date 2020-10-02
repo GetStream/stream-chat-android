@@ -31,6 +31,10 @@ sealed class MessageListItem(
         is MessageItem -> copy()
         is TypingItem -> copy()
         is ThreadSeparatorItem -> copy()
+    }.also { copy ->
+        messageReadBy.forEach {
+            copy.messageReadBy += it.copy()
+        } 
     }.exhaustive
 
     data class DateSeparatorItem(val date: Date) : MessageListItem()
