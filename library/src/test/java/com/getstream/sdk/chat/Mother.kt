@@ -1,5 +1,7 @@
 package com.getstream.sdk.chat
 
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -188,3 +190,9 @@ fun createCommand(
 ): Command = Command(name, description, args, set)
 
 fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
+
+fun createMessageListItem(
+    message: Message = createMessage(),
+    positions: List<MessageViewHolderFactory.Position> = listOf(),
+    isMessageMine: Boolean = randomBoolean()
+): MessageListItem = MessageListItem.MessageItem(message, positions, isMessageMine)

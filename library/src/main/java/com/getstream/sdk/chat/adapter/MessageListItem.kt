@@ -34,7 +34,7 @@ sealed class MessageListItem(
     }.also { copy ->
         messageReadBy.forEach {
             copy.messageReadBy += it.copy()
-        } 
+        }
     }.exhaustive
 
     data class DateSeparatorItem(val date: Date) : MessageListItem()
