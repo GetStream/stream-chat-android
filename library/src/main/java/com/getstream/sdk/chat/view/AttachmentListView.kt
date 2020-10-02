@@ -1,55 +1,40 @@
-package com.getstream.sdk.chat.view;
+package com.getstream.sdk.chat.view
 
-import android.content.Context;
-import android.util.AttributeSet;
+import android.content.Context
+import android.util.AttributeSet
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter
+import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+class AttachmentListView : RecyclerView {
 
-import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter;
-import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
-import com.getstream.sdk.chat.adapter.MessageListItem;
+    constructor(context: Context) : super(context) {}
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {}
 
-public class AttachmentListView extends RecyclerView {
-
-    private AttachmentViewHolderFactory viewHolderFactory;
-    private MessageListViewStyle style;
-
-    public AttachmentListView(Context context) {
-        super(context);
-        setHasFixedSize(true);
+    init {
+        setHasFixedSize(true)
     }
 
-    public AttachmentListView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        setHasFixedSize(true);
-    }
+    private var viewHolderFactory: AttachmentViewHolderFactory? = null
+    private var style: MessageListViewStyle? = null
 
-    public AttachmentListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        setHasFixedSize(true);
-    }
-
-    public void init(
-            @NonNull AttachmentViewHolderFactory viewHolderFactory,
-            @NonNull MessageListViewStyle style
+    fun init(
+        viewHolderFactory: AttachmentViewHolderFactory,
+        style: MessageListViewStyle
     ) {
-        this.viewHolderFactory = viewHolderFactory;
-        this.style = style;
-
-        setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        this.viewHolderFactory = viewHolderFactory
+        this.style = style
+        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-    public void setEntity(MessageListItem.MessageItem messageListItem) {
-        if (viewHolderFactory == null) {
-            throw new IllegalStateException("Please call init() before using setEntity()");
-        }
-        this.setAdapter(new AttachmentListItemAdapter(
-                messageListItem,
-                viewHolderFactory,
-                style
-        ));
+    fun setEntity(messageListItem: MessageItem) {
+        this.adapter = AttachmentListItemAdapter(
+            messageListItem,
+            checkNotNull(viewHolderFactory) { "Please call init() before using setEntity()" },
+            checkNotNull(style) { "Please call init() before using setEntity()" }
+        )
     }
 }
