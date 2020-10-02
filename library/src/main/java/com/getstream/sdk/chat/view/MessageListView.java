@@ -60,8 +60,6 @@ import kotlin.jvm.functions.Function2;
 public class MessageListView extends ConstraintLayout {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
-    public static final int SCROLL_TO_BOTTOM = 0;
-    public static final int COUNT_UPDATE = 1;
     protected MessageListViewStyle style;
 
     private RecyclerView messagesRV;
@@ -70,7 +68,7 @@ public class MessageListView extends ConstraintLayout {
     private int lastViewedPosition = 0;
     private String newMessagesTextSingle;
     private String newMessagesTextPlural;
-    private int newMessagesBehaviour;
+    private NewMessagesBehaviour newMessagesBehaviour;
     private ScrollButtonBehaviour scrollButtonBehaviour;
 
     private int unseenItems = 0;
@@ -266,9 +264,11 @@ public class MessageListView extends ConstraintLayout {
         newMessagesTextPlural =
                 tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
 
-        newMessagesBehaviour = tArray.getInt(
-                R.styleable.MessageListView_streamNewMessagesBehaviour,
-                COUNT_UPDATE);
+        newMessagesBehaviour = NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                        R.styleable.MessageListView_streamNewMessagesBehaviour,
+                        NewMessagesBehaviour.COUNT_UPDATE.value)
+        );
 
         int arrowIconRes = tArray.getResourceId(
                 R.styleable.MessageListView_streamButtonIcon,
@@ -367,12 +367,8 @@ public class MessageListView extends ConstraintLayout {
         this.scrollButtonBehaviour = scrollButtonBehaviour;
     }
 
-    public void setNewMessagesBehaviour(int newMessagesBehaviour) {
-        if (newMessagesBehaviour == SCROLL_TO_BOTTOM || newMessagesBehaviour == COUNT_UPDATE) {
-            this.newMessagesBehaviour = newMessagesBehaviour;
-        } else {
-            throw new IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)");
-        }
+    public void setNewMessagesBehaviour(NewMessagesBehaviour newMessagesBehaviour) {
+        this.newMessagesBehaviour = newMessagesBehaviour;
     }
 
     public void setScrollButtonBackgroundResource(@DrawableRes int backgroundRes) {
@@ -436,6 +432,7 @@ public class MessageListView extends ConstraintLayout {
         }
 
         int oldSize = adapter.getItemCount();
+
         adapter.replaceEntities(entities);
 
         // Scroll to origin position on return from thread
@@ -484,11 +481,11 @@ public class MessageListView extends ConstraintLayout {
             int newPosition = adapter.getItemCount() - 1;
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
-
             // Scroll to bottom when the user wrote the message.
             if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
-                    newMessagesBehaviour == SCROLL_TO_BOTTOM) {
+                    newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
+
                 layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
@@ -664,6 +661,30 @@ public class MessageListView extends ConstraintLayout {
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
 
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+    }
+
+    public enum NewMessagesBehaviour {
+        SCROLL_TO_BOTTOM(0), COUNT_UPDATE(1);
+
+        private final int value;
+
+        NewMessagesBehaviour(int value) {
+            this.value = value;
+        }
+
+        public final int getValue() {
+            return value;
+        }
+
+        public static NewMessagesBehaviour parseValue(int value) {
+            if (value == SCROLL_TO_BOTTOM.getValue())
+                return SCROLL_TO_BOTTOM;
+            if (value == COUNT_UPDATE.getValue())
+                return COUNT_UPDATE;
+            throw new IllegalArgumentException(
+                    "Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)"
+            );
+        }
     }
 
     public interface ScrollButtonBehaviour {
