@@ -16,7 +16,6 @@ import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UserAvata
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.UsernameAndDateConfigurator
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.view.MessageListView
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
@@ -33,7 +32,6 @@ class MessageListItemViewHolder(
     bubbleHelper: BubbleHelper,
     messageClickListener: MessageClickListener,
     messageLongClickListener: MessageLongClickListener,
-    attachmentClickListener: AttachmentClickListener,
     reactionViewClickListener: ReactionViewClickListener,
     userClickListener: MessageListView.UserClickListener,
     readStateClickListener: ReadStateClickListener,
@@ -65,10 +63,7 @@ class MessageListItemViewHolder(
         val attachmentConfigurator = AttachmentConfigurator(
             binding,
             style,
-            bubbleHelper,
-            viewHolderFactory,
-            attachmentClickListener,
-            messageLongClickListener
+            viewHolderFactory
         )
         val indicatorConfigurator = IndicatorConfigurator(
             binding,

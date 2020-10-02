@@ -1,4 +1,6 @@
 # To be released:
+- Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
+- Moved `BaseAttachmentViewHolder` to a new package
 
 - Change default query sort to "last_updated"
 
