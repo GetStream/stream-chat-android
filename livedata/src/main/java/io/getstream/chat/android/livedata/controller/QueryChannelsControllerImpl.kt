@@ -24,6 +24,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
+private const val MESSAGE_LIMIT = 10
+private const val MEMBER_LIMIT = 30
+private const val INITIAL_CHANNEL_OFFSET = 0
+private const val CHANNEL_LIMIT = 30
 class QueryChannelsControllerImpl(
     override val filter: FilterObject,
     override val sort: QuerySort,
@@ -55,9 +59,13 @@ class QueryChannelsControllerImpl(
     private val _loadingMore = MutableLiveData<Boolean>(false)
     override val loadingMore: LiveData<Boolean> = _loadingMore
 
-    fun loadMoreRequest(limit: Int = 30, messageLimit: Int = 10): QueryChannelsPaginationRequest {
+    fun loadMoreRequest(
+        channelLimit: Int = CHANNEL_LIMIT,
+        messageLimit: Int = MESSAGE_LIMIT,
+        memberLimit: Int = MEMBER_LIMIT
+    ): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: mapOf()
-        return QueryChannelsPaginationRequest(sort, channels.size, limit, messageLimit)
+        return QueryChannelsPaginationRequest(sort, channels.size, channelLimit, messageLimit, memberLimit)
     }
 
     fun handleEvents(events: List<ChatEvent>) {
@@ -96,13 +104,17 @@ class QueryChannelsControllerImpl(
         _channels.postValue((_channels.value ?: mapOf()) + mapOf(channel.cid to channel))
     }
 
-    suspend fun loadMore(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
-        val pagination = loadMoreRequest(limit, messageLimit)
+    suspend fun loadMore(channelLimit: Int = CHANNEL_LIMIT, messageLimit: Int = MESSAGE_LIMIT): Result<List<Channel>> {
+        val pagination = loadMoreRequest(channelLimit, messageLimit)
         return runQuery(pagination)
     }
 
-    suspend fun query(limit: Int = 30, messageLimit: Int = 10): Result<List<Channel>> {
-        return runQuery(QueryChannelsPaginationRequest(sort, 0, limit, messageLimit))
+    suspend fun query(
+        channelLimit: Int = CHANNEL_LIMIT,
+        messageLimit: Int = MESSAGE_LIMIT,
+        memberLimit: Int = MEMBER_LIMIT
+    ): Result<List<Channel>> {
+        return runQuery(QueryChannelsPaginationRequest(sort, INITIAL_CHANNEL_OFFSET, channelLimit, messageLimit, memberLimit))
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {

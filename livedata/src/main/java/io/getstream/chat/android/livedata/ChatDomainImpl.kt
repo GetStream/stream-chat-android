@@ -53,6 +53,10 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
+private const val MESSAGE_LIMIT = 30
+private const val MEMBER_LIMIT = 30
+private const val INITIAL_CHANNEL_OFFSET = 0
+private const val CHANNEL_LIMIT = 30
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
@@ -520,7 +524,7 @@ class ChatDomainImpl private constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 30))
+            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), INITIAL_CHANNEL_OFFSET, CHANNEL_LIMIT, MESSAGE_LIMIT, MEMBER_LIMIT))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }

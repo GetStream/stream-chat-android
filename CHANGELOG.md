@@ -1,5 +1,8 @@
 # To be released:
 
+# Oct 2nd, 2020 - 0.8.2
+- Request members by default when querying channels
+
 # Sep 30th, 2020 - 0.8.1
 - Handle the new `ChannelUpdatedByUserEvent` 
 - Update client to 1.16.1: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
