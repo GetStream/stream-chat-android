@@ -422,7 +422,7 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -504,35 +504,40 @@ class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)? = null): Result<Attachment> {
+    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
         val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
         val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
+        var newAttachment: Attachment
+        var uploadError: ChatError? = null
 
-        return if (pathResult.isError) {
-            val newAttachment = attachment.copy(uploadError = pathResult.error())
-            Result(newAttachment, pathResult.error())
+        if (pathResult.isError) {
+            uploadError = pathResult.error()
+            newAttachment = attachment.copy(uploadError = pathResult.error())
         } else {
-            val path = pathResult.data()
-            var newAttachment = attachment.copy(
+            val uploadPath = pathResult.data()
+            newAttachment = attachment.copy(
                 name = file.name,
                 fileSize = file.length().toInt(),
                 mimeType = mimeType?.toString() ?: "",
-                url = path,
+                url = uploadPath,
                 type = attachmentType
             ).apply {
                 if (attachmentType == "image") {
-                    imageUrl = path
+                    imageUrl = uploadPath
                 } else {
-                    assetUrl = path
+                    assetUrl = uploadPath
                 }
             }
-            if (attachmentTransformer != null) {
-                newAttachment = attachmentTransformer(newAttachment, path, file)
-            }
-            Result(newAttachment)
         }
+
+        // allow the user to change the format of the attachment
+        if (attachmentTransformer != null) {
+            newAttachment = attachmentTransformer(newAttachment, file)
+        }
+
+        return Result(newAttachment, uploadError)
     }
 
     /**

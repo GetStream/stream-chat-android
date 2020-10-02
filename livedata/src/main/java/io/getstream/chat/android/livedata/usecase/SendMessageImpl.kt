@@ -16,11 +16,11 @@ interface SendMessage {
      * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)? = null): Call2<Message>
+    operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Call2<Message>
 }
 
 class SendMessageImpl(var domainImpl: ChatDomainImpl) : SendMessage {
-    override operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, path: String, file: File) -> Attachment)?): Call2<Message> {
+    override operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?): Call2<Message> {
         val cid = message.cid
         validateCid(cid)
 

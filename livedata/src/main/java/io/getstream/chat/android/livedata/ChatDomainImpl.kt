@@ -46,9 +46,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import java.lang.Thread.sleep
-import java.util.Date
-import java.util.InputMismatchException
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -210,6 +208,9 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
+
+        // monitor connectivity at OS level
+        // TODO
     }
 
     internal suspend fun updateCurrentUser(me: User) {

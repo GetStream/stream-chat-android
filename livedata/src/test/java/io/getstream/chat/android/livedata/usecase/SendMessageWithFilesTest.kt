@@ -59,7 +59,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
     @Test
     fun `Should return message sending files`() {
         runBlocking(Dispatchers.IO) {
-            val message = randomMessage().apply { id = "shouldreturnmessage" }
+            val message = randomMessage()
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
@@ -83,7 +83,84 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
         }
     }
 
-    // TODO: test uploadAttachments standalone
+    @Test
+    fun `Upload attachment should have the right format`() {
+        runBlocking(Dispatchers.IO) {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+
+            mockFileUploads(files)
+
+            for (attachment in attachments) {
+                val url = attachment.upload!!.absolutePath
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name)
+                val result = channelControllerImpl.uploadAttachment(attachment = attachment)
+                assertSuccess(result)
+                Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
+            }
+        }
+    }
+
+    @Test
+    fun `Upload attachment should be configurable`() {
+        runBlocking(Dispatchers.IO) {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+
+            mockFileUploads(files)
+            val extra = mutableMapOf<String, Any>("The Answer" to 42)
+
+            for (attachment in attachments) {
+                val url = attachment.upload!!.absolutePath
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, extraData = extra)
+                val result = channelControllerImpl.uploadAttachment(attachment = attachment) {
+                    attachment, _ ->
+                    attachment.copy(extraData = extra)
+                }
+                assertSuccess(result)
+                Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
+            }
+        }
+    }
+
+    @Test
+    fun `Upload attachment with error should be configurable`() {
+        runBlocking(Dispatchers.IO) {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+
+            mockFileUploadsFailure(files)
+            val extra = mutableMapOf<String, Any>("The Answer" to 42)
+
+            for (attachment in attachments) {
+                val error = attachment.upload!!.toChatError()
+                val result = channelControllerImpl.uploadAttachment(attachment = attachment) {
+                    attachment, _ ->
+                    attachment.copy(extraData = extra)
+                }
+                assertFailure(result)
+                Truth.assertThat(result.data().uploadError).isInstanceOf(error.javaClass)
+                Truth.assertThat(result.data().extraData).isEqualTo(extra)
+            }
+        }
+    }
+
+    @Test
+    fun `Upload attachment should with errors should have the right format`() {
+        runBlocking(Dispatchers.IO) {
+            val attachments = randomAttachmentsWithFile().toMutableList()
+            val files: List<File> = attachments.map { it.upload!! }
+
+            mockFileUploadsFailure(files)
+
+            for (attachment in attachments) {
+                val error = attachment.upload!!.toChatError()
+                val result = channelControllerImpl.uploadAttachment(attachment = attachment)
+                assertFailure(result)
+                Truth.assertThat(result.data().uploadError).isInstanceOf(error.javaClass)
+            }
+        }
+    }
 
     @Test
     fun `Errors should still return the attachments`() {
@@ -122,7 +199,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             mockFileUploads(files)
 
             val result = channelControllerImpl.uploadAttachment(message.attachments.first()) {
-                attachment, _, _ ->
+                attachment, _ ->
                 attachment.copy(extraData = extra)
             }
             assertSuccess(result)
