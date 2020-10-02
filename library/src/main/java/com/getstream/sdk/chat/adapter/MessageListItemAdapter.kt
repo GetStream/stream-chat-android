@@ -4,6 +4,7 @@ import android.os.Looper
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
@@ -41,9 +42,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
-        holder.bindListItem(
-            messageListItem = messageListItemList[position],
-            position = position
-        )
+        holder.bindListItem(messageListItemList[position])
     }
 }

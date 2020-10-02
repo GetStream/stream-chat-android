@@ -101,6 +101,7 @@ internal class ChatSocketListener(
             is ChannelDeletedEvent,
             is ChannelHiddenEvent,
             is ChannelUpdatedEvent,
+            is ChannelUpdatedByUserEvent,
             is ChannelVisibleEvent,
             is MemberAddedEvent,
             is MemberRemovedEvent,

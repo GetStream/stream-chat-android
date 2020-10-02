@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.adapter
+package com.getstream.sdk.chat.adapter.viewholder.message
 
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +7,7 @@ import androidx.core.view.updateMargins
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
+import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemTypeIndicatorBinding
 import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
@@ -18,10 +19,7 @@ class TypingIndicatorViewHolder(
         StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
 ) : BaseMessageListItemViewHolder<TypingItem>(binding.root) {
 
-    override fun bind(
-        messageListItem: TypingItem,
-        position: Int
-    ) {
+    override fun bind(messageListItem: TypingItem) {
         binding.llTypingIndicator.visibility = View.VISIBLE
         binding.ivTypingIndicator.visibility = View.VISIBLE
         binding.llTypingIndicator.removeAllViews()

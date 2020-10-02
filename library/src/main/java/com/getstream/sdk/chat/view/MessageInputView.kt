@@ -3,7 +3,7 @@ package com.getstream.sdk.chat.view
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
-import android.os.Bundle
+import android.os.Build
 import android.text.Editable
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -14,7 +14,6 @@ import android.widget.RelativeLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.BuildCompat
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
 import androidx.recyclerview.widget.ConcatAdapter
@@ -163,12 +162,13 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
                     setKeyboardEventListener()
                 }
             }
-        TextViewUtils.afterTextChanged(binding.messageTextInput) { editable: Editable -> keyStroke(editable.toString()) }
-        binding.messageTextInput.setCallback { inputContentInfo: InputContentInfoCompat, flags: Int, opts: Bundle ->
-            sendGiphyFromKeyboard(
-                inputContentInfo,
-                flags
+        TextViewUtils.afterTextChanged(binding.messageTextInput) { editable: Editable ->
+            keyStroke(
+                editable.toString()
             )
+        }
+        binding.messageTextInput.setCallback { inputContentInfo, flags, _ ->
+            sendGiphyFromKeyboard(inputContentInfo, flags)
         }
     }
 
@@ -296,7 +296,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         inputContentInfo: InputContentInfoCompat,
         flags: Int
     ): Boolean {
-        if (BuildCompat.isAtLeastQ() &&
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
             flags and InputConnectionCompat.INPUT_CONTENT_GRANT_READ_URI_PERMISSION != 0
         ) {
             try {

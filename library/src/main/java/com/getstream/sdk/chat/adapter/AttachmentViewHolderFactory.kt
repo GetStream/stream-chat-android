@@ -1,8 +1,13 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolder
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderFile
+import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderMedia
+import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.view.MessageListView
+import com.getstream.sdk.chat.view.MessageListViewStyle
 
 /**
  * Allows you to easily customize attachment rendering
@@ -18,6 +23,9 @@ open class AttachmentViewHolderFactory {
 
     lateinit var listenerContainer: ListenerContainer
         @JvmName("setListenerContainerInternal")
+        internal set
+    lateinit var bubbleHelper: MessageListView.BubbleHelper
+        @JvmName("setBubbleHelperInternal")
         internal set
 
     open fun getAttachmentViewType(
@@ -38,21 +46,40 @@ open class AttachmentViewHolderFactory {
     }
 
     open fun createAttachmentViewHolder(
-        adapter: AttachmentListItemAdapter,
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
+        style: MessageListViewStyle,
+        messageItem: MessageListItem.MessageItem
     ): BaseAttachmentViewHolder {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
                 AttachmentViewHolderMedia(
-                    R.layout.stream_item_attach_media,
                     parent,
-                    listenerContainer.giphySendListener
+                    style,
+                    bubbleHelper,
+                    messageItem,
+                    listenerContainer.giphySendListener,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
                 )
             FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(R.layout.stream_item_attachment_file, parent)
+                AttachmentViewHolderFile(
+                    parent,
+                    style,
+                    bubbleHelper,
+                    messageItem,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
+                )
             else ->
-                AttachmentViewHolder(R.layout.stream_item_attachment, parent)
+                AttachmentViewHolder(
+                    parent,
+                    style,
+                    bubbleHelper,
+                    messageItem,
+                    listenerContainer.attachmentClickListener,
+                    listenerContainer.messageLongClickListener
+                )
         }
     }
 }
