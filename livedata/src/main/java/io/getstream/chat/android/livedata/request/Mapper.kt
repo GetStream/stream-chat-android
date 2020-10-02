@@ -12,9 +12,7 @@ internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): Any
     }
 
 internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(filter: FilterObject, userPresence: Boolean): QueryChannelsRequest {
-    var request = QueryChannelsRequest(filter, channelOffset, channelLimit, sort)
-
-    request = request.withMessages(messageLimit)
+    var request = QueryChannelsRequest(filter, channelOffset, channelLimit, sort, messageLimit, memberLimit)
     if (userPresence) {
         request = request.withPresence()
     }
