@@ -35,13 +35,14 @@ class App : Application() {
                 androidLogger()
             }
             androidContext(this@App)
-            modules(
-                listOf(
+
+            // see crash/bug here: https://github.com/InsertKoinIO/koin/issues/871
+            koin.loadModules(listOf(
                     appModule,
                     dataModule,
                     loginModule
-                )
-            )
+            ))
+            koin.createRootScope()
         }
     }
 }
