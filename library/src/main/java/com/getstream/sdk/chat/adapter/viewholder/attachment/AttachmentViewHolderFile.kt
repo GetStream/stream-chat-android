@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.models.Message
 
 class AttachmentViewHolderFile(
     parent: ViewGroup,
+    private val style: MessageListViewStyle,
     private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
@@ -22,7 +23,6 @@ class AttachmentViewHolderFile(
     private lateinit var messageListItem: MessageItem
     private lateinit var message: Message
     private lateinit var attachment: Attachment
-    private lateinit var style: MessageListViewStyle
     private lateinit var bubbleHelper: BubbleHelper
 
     private var clickListener: AttachmentClickListener? = null
@@ -32,14 +32,12 @@ class AttachmentViewHolderFile(
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
-        style: MessageListViewStyle,
         bubbleHelper: BubbleHelper,
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     ) {
         this.messageListItem = messageListItem
         this.message = message
-        this.style = style
         this.bubbleHelper = bubbleHelper
 
         this.clickListener = clickListener

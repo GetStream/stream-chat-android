@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderMedia
 import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.view.MessageListViewStyle
 
 /**
  * Allows you to easily customize attachment rendering
@@ -42,18 +43,20 @@ open class AttachmentViewHolderFactory {
 
     open fun createAttachmentViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
+        style: MessageListViewStyle
     ): BaseAttachmentViewHolder {
         return when (viewType) {
             VIDEO_ATTACHMENT, IMAGE_ATTACHMENT ->
                 AttachmentViewHolderMedia(
                     parent,
+                    style,
                     listenerContainer.giphySendListener
                 )
             FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(parent)
+                AttachmentViewHolderFile(parent, style)
             else ->
-                AttachmentViewHolder(parent)
+                AttachmentViewHolder(parent, style)
         }
     }
 }

@@ -59,7 +59,7 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                       int viewType) {
-        return this.factory.createAttachmentViewHolder(parent, viewType);
+        return this.factory.createAttachmentViewHolder(parent, viewType, style);
     }
 
     @Override
@@ -69,7 +69,6 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 messageListItem,
                 message,
                 attachmentItem,
-                style,
                 bubbleHelper,
                 attachmentClickListener,
                 longClickListener);
