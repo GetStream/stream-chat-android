@@ -6,6 +6,7 @@ import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.attachment.AttachmentViewHolderMedia
 import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.model.ModelType
+import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 
 /**
@@ -22,6 +23,9 @@ open class AttachmentViewHolderFactory {
 
     lateinit var listenerContainer: ListenerContainer
         @JvmName("setListenerContainerInternal")
+        internal set
+    lateinit var bubbleHelper: MessageListView.BubbleHelper
+        @JvmName("setBubbleHelperInternal")
         internal set
 
     open fun getAttachmentViewType(
@@ -51,12 +55,13 @@ open class AttachmentViewHolderFactory {
                 AttachmentViewHolderMedia(
                     parent,
                     style,
+                    bubbleHelper,
                     listenerContainer.giphySendListener
                 )
             FILE_ATTACHMENT ->
-                AttachmentViewHolderFile(parent, style)
+                AttachmentViewHolderFile(parent, style, bubbleHelper)
             else ->
-                AttachmentViewHolder(parent, style)
+                AttachmentViewHolder(parent, style, bubbleHelper)
         }
     }
 }

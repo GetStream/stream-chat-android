@@ -26,14 +26,12 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
 
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
-    private MessageListView.BubbleHelper bubbleHelper;
 
     public AttachmentListItemAdapter(@NonNull MessageListItem.MessageItem messageListItem,
                                      @NonNull AttachmentViewHolderFactory factory,
                                      @NonNull MessageListViewStyle style,
                                      @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
-                                     @NonNull MessageListView.MessageLongClickListener longClickListener,
-                                     @NonNull MessageListView.BubbleHelper bubbleHelper
+                                     @NonNull MessageListView.MessageLongClickListener longClickListener
     ) {
         this.messageListItem = messageListItem;
         this.message = messageListItem.getMessage();
@@ -42,7 +40,6 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
         this.style = style;
         this.attachmentClickListener = attachmentClickListener;
         this.longClickListener = longClickListener;
-        this.bubbleHelper = bubbleHelper;
     }
 
     @Override
@@ -69,7 +66,6 @@ public class AttachmentListItemAdapter extends RecyclerView.Adapter<RecyclerView
                 messageListItem,
                 message,
                 attachmentItem,
-                bubbleHelper,
                 attachmentClickListener,
                 longClickListener);
     }

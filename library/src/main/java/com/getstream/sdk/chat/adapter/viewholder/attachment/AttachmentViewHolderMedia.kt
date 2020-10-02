@@ -26,6 +26,7 @@ import top.defaults.drawabletoolbox.DrawableBuilder
 class AttachmentViewHolderMedia(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
+    private val bubbleHelper: BubbleHelper,
     private val giphySendListener: GiphySendListener,
     private val binding: StreamItemAttachMediaBinding =
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
@@ -33,7 +34,6 @@ class AttachmentViewHolderMedia(
 
     private lateinit var message: Message
     private lateinit var messageListItem: MessageItem
-    private lateinit var bubbleHelper: BubbleHelper
 
     private var clickListener: AttachmentClickListener? = null
     private var longClickListener: MessageLongClickListener? = null
@@ -44,13 +44,11 @@ class AttachmentViewHolderMedia(
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
-        bubbleHelper: BubbleHelper,
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     ) {
         this.messageListItem = messageListItem
         this.message = message
-        this.bubbleHelper = bubbleHelper
         this.clickListener = clickListener
         this.longClickListener = longClickListener
 

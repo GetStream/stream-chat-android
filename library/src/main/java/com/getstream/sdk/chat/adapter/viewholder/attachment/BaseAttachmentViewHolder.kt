@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
-import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import io.getstream.chat.android.client.models.Message
 
@@ -16,7 +15,6 @@ abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolde
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
-        bubbleHelper: BubbleHelper,
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     )

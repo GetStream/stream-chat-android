@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.logger.ChatLogger
 internal class AttachmentConfigurator(
     private val binding: StreamItemMessageBinding,
     private val style: MessageListViewStyle,
-    private val bubbleHelper: MessageListView.BubbleHelper,
     private val viewHolderFactory: AttachmentViewHolderFactory,
     private val attachmentClickListener: MessageListView.AttachmentClickListener,
     private val messageLongClickListener: MessageListView.MessageLongClickListener
@@ -44,7 +43,6 @@ internal class AttachmentConfigurator(
             init(
                 viewHolderFactory,
                 style,
-                bubbleHelper,
                 attachmentClickListener,
                 messageLongClickListener
             )

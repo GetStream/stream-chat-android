@@ -65,7 +65,6 @@ class MessageListItemViewHolder(
         val attachmentConfigurator = AttachmentConfigurator(
             binding,
             style,
-            bubbleHelper,
             viewHolderFactory,
             attachmentClickListener,
             messageLongClickListener

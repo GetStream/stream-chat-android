@@ -16,7 +16,6 @@ public class AttachmentListView extends RecyclerView {
 
     private AttachmentViewHolderFactory viewHolderFactory;
     private MessageListViewStyle style;
-    private MessageListView.BubbleHelper bubbleHelper;
 
     private MessageListView.AttachmentClickListener attachmentClickListener;
     private MessageListView.MessageLongClickListener longClickListener;
@@ -39,13 +38,11 @@ public class AttachmentListView extends RecyclerView {
     public void init(
             @NonNull AttachmentViewHolderFactory viewHolderFactory,
             @NonNull MessageListViewStyle style,
-            @NonNull MessageListView.BubbleHelper bubbleHelper,
             @NonNull MessageListView.AttachmentClickListener attachmentClickListener,
             @NonNull MessageListView.MessageLongClickListener longClickListener
     ) {
         this.viewHolderFactory = viewHolderFactory;
         this.style = style;
-        this.bubbleHelper = bubbleHelper;
         this.attachmentClickListener = attachmentClickListener;
         this.longClickListener = longClickListener;
 
@@ -61,8 +58,7 @@ public class AttachmentListView extends RecyclerView {
                 viewHolderFactory,
                 style,
                 attachmentClickListener,
-                longClickListener,
-                bubbleHelper
+                longClickListener
         ));
     }
 }
