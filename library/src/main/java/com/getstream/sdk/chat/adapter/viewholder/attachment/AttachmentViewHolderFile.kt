@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.adapter.viewholder.attachment
 
-import android.content.Context
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -12,41 +11,21 @@ import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 
 class AttachmentViewHolderFile(
     parent: ViewGroup,
+    private val style: MessageListViewStyle,
+    private val bubbleHelper: BubbleHelper,
+    private val messageItem: MessageItem,
+    private val clickListener: AttachmentClickListener,
+    private val longClickListener: MessageLongClickListener,
     private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 
-    private lateinit var messageListItem: MessageItem
-    private lateinit var message: Message
     private lateinit var attachment: Attachment
-    private lateinit var style: MessageListViewStyle
-    private lateinit var bubbleHelper: BubbleHelper
 
-    private var clickListener: AttachmentClickListener? = null
-    private var longClickListener: MessageLongClickListener? = null
-
-    override fun bind(
-        context: Context,
-        messageListItem: MessageItem,
-        message: Message,
-        attachmentListItem: AttachmentListItem,
-        style: MessageListViewStyle,
-        bubbleHelper: BubbleHelper,
-        clickListener: AttachmentClickListener?,
-        longClickListener: MessageLongClickListener?
-    ) {
-        this.messageListItem = messageListItem
-        this.message = message
-        this.style = style
-        this.bubbleHelper = bubbleHelper
-
-        this.clickListener = clickListener
-        this.longClickListener = longClickListener
-
+    override fun bind(attachmentListItem: AttachmentListItem) {
         attachment = attachmentListItem.attachment
 
         applyStyle()
@@ -55,7 +34,7 @@ class AttachmentViewHolderFile(
     }
 
     private fun applyStyle() {
-        if (messageListItem.isMine) {
+        if (messageItem.isMine) {
             style.attachmentTitleTextMine.apply(binding.tvFileTitle)
             style.attachmentFileSizeTextMine.apply(binding.tvFileSize)
         } else {
@@ -70,9 +49,9 @@ class AttachmentViewHolderFile(
         binding.tvFileTitle.text = attachment.title
 
         val background = bubbleHelper.getDrawableForAttachment(
-            messageListItem.message,
-            messageListItem.isMine,
-            messageListItem.positions,
+            messageItem.message,
+            messageItem.isMine,
+            messageItem.positions,
             attachment
         )
         binding.attachmentview.background = background
@@ -80,13 +59,13 @@ class AttachmentViewHolderFile(
 
     private fun configClickListeners() {
         binding.attachmentview.setOnClickListener {
-            clickListener?.onAttachmentClick(
-                message,
+            clickListener.onAttachmentClick(
+                messageItem.message,
                 attachment
             )
         }
         binding.attachmentview.setOnLongClickListener {
-            longClickListener?.onMessageLongClick(message)
+            longClickListener.onMessageLongClick(messageItem.message)
             true
         }
     }

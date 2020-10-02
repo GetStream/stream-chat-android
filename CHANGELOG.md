@@ -1,4 +1,6 @@
 # To be released:
+- Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
+- Moved `BaseAttachmentViewHolder` to a new package
 
 - Fixed attachments logic. Save previously attached files when add more.
 - Fixed the bug when it was unable to select new files when you have already attached something.
