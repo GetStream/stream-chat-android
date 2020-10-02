@@ -59,7 +59,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
     @Test
     fun `Should return message sending files`() {
         runBlocking(Dispatchers.IO) {
-            val message = randomMessage()
+            val message = randomMessage().apply { id = "shouldreturnmessage" }
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
@@ -82,6 +82,8 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             Truth.assertThat(result).isEqualTo(expectedResult)
         }
     }
+
+    // TODO: test uploadAttachments standalone
 
     @Test
     fun `Errors should still return the attachments`() {
