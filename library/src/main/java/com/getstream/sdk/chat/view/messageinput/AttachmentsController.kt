@@ -111,9 +111,9 @@ internal class AttachmentsController(
         selectedAttachments = selectedAttachments - attachment
         removeAttachmentFromAdapters(attachment, messageInputType, isMedia)
         rootController.configSendButtonEnableState()
-        if (selectedAttachments.isEmpty() && messageInputType == MessageInputType.EDIT_MESSAGE) configAttachmentButtonVisible(
-            true
-        )
+        if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
+            configAttachmentButtonVisible(true) 
+        }
     }
 
     private fun showSelectedAttachments(isMedia: Boolean) {
