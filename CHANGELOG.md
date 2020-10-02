@@ -1,4 +1,6 @@
 # To be released:
+
+# Oct 2nd, 2020 - 4.3.0-beta-3
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
 - Moved `BaseAttachmentViewHolder` to a new package
 - Fix setting read state when user's last read equals message created date
