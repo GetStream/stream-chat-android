@@ -36,7 +36,7 @@ interface ChannelsViewModel {
 
     companion object {
         @JvmField
-        val DEFAULT_SORT: QuerySort = QuerySort().desc("last_message_at")
+        val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
     }
 }
 
