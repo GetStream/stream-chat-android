@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.models.Message
 abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     abstract fun bind(
-        context: Context,
         messageListItem: MessageItem,
         message: Message,
         attachmentListItem: AttachmentListItem,
@@ -23,4 +22,7 @@ abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolde
         clickListener: AttachmentClickListener?,
         longClickListener: MessageLongClickListener?
     )
+
+    protected val context: Context
+        get() = itemView.context
 }
