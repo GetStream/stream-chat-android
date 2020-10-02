@@ -165,6 +165,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
     @Test
     fun `Errors should still return the attachments`() {
         runBlocking(Dispatchers.IO) {
+
             val message = randomMessage()
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
