@@ -34,6 +34,7 @@ import org.amshove.kluent.on
 import org.amshove.kluent.that
 import org.amshove.kluent.was
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
@@ -41,6 +42,7 @@ import java.io.File
 import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
+@Ignore
 class SendMessageWithAttachmentsImplTest {
 
     val channelController: ChannelControllerImpl = mock()

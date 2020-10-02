@@ -3,10 +3,11 @@ package io.getstream.chat.android.livedata.usecase
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
-import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
+import com.nhaarman.mockitokotlin2.same
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.livedata.TestResultCall
@@ -40,17 +41,18 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
     private fun mockFileUploads(files: List<File>) {
         for (file in files) {
             val result = Result(file.absolutePath)
-            When calling client.sendFile(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
-            When calling client.sendImage(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
+            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
         }
     }
 
     private fun mockFileUploadsFailure(files: List<File>) {
+
         for (file in files) {
             val path: String? = null
             val result = Result(path, file.toChatError())
-            When calling client.sendFile(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
-            When calling client.sendImage(channelControllerImpl.channelType, channelControllerImpl.channelId, file) doReturn TestResultCall(result)
+            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
+            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
         }
     }
 
@@ -70,18 +72,17 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(any()) doReturn TestResultCall(expectedResult)
+            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestResultCall(expectedResult)
 
             mockFileUploads(files)
 
             val result = sendMessageWithFile(message).execute()
+            assertSuccess(result)
 
             Truth.assertThat(result).isEqualTo(expectedResult)
         }
     }
 
-    /*
-    // TODO: mocks for files don't seem to be specific to that file, but instead match any()
     @Test
     fun `Errors should still return the attachments`() {
         runBlocking(Dispatchers.IO) {
@@ -89,20 +90,22 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
+            val expectedAttachments = message.attachments.map { it.copy(uploadError = it.upload!!.toChatError()) }
+
             val expectedResult = Result(
-                    message
+                message.copy(attachments = expectedAttachments.toMutableList())
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(any()) doReturn TestResultCall(expectedResult)
+            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestResultCall(expectedResult)
 
             mockFileUploadsFailure(files)
 
             val result = sendMessageWithFile(message).execute()
 
-            result `should be equal to` expectedResult
+            Truth.assertThat(result).isEqualTo(expectedResult)
         }
-    }*/
+    }
 
     @Test
     fun `Should return apply the right transformation to attachments`() {
@@ -120,6 +123,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                 attachment, _, _ ->
                 attachment.copy(extraData = extra)
             }
+            assertSuccess(result)
             val uploadedAttachment = result.data()
 
             Truth.assertThat(uploadedAttachment.extraData).isEqualTo(extra)
@@ -150,9 +154,3 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 }
 
 private fun File.toChatError(): ChatError = ChatError(absolutePath)
-private fun File.toAttachment(mimetype: String?) = Attachment(
-    name = name,
-    fileSize = length().toInt(),
-    mimeType = mimetype,
-    url = absolutePath
-)

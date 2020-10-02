@@ -511,10 +511,11 @@ class ChannelControllerImpl(
         val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
 
         return if (pathResult.isError) {
-            Result(pathResult.error())
+            val newAttachment = attachment.copy(uploadError = pathResult.error())
+            Result(newAttachment, pathResult.error())
         } else {
             val path = pathResult.data()
-            var newAttachment = Attachment(
+            var newAttachment = attachment.copy(
                 name = file.name,
                 fileSize = file.length().toInt(),
                 mimeType = mimeType?.toString() ?: "",

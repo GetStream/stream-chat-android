@@ -61,7 +61,13 @@ open class BaseDomainTest {
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
-            Truth.assertWithMessage(result.error().toString()).that(result.isSuccess).isTrue()
+            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
+        }
+    }
+
+    fun assertFailure(result: Result<*>) {
+        if (result.isSuccess) {
+            Truth.assertWithMessage(result.data().toString()).that(result.isSuccess).isFalse()
         }
     }
 
