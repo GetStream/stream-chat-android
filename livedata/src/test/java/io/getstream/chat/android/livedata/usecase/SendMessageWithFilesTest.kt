@@ -8,6 +8,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.same
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
 import io.getstream.chat.android.livedata.TestResultCall
@@ -139,7 +140,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                     attachment.copy(extraData = extra)
                 }
                 assertFailure(result)
-                Truth.assertThat(result.data().uploadError).isInstanceOf(error.javaClass)
+                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.Companion.UploadState.Failed::class.java)
                 Truth.assertThat(result.data().extraData).isEqualTo(extra)
             }
         }
@@ -157,7 +158,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                 val error = attachment.upload!!.toChatError()
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment)
                 assertFailure(result)
-                Truth.assertThat(result.data().uploadError).isInstanceOf(error.javaClass)
+                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.Companion.UploadState.Failed::class.java)
             }
         }
     }
@@ -170,7 +171,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
-            val expectedAttachments = message.attachments.map { it.copy(uploadError = it.upload!!.toChatError()) }
+            val expectedAttachments = message.attachments.map { it.copy(uploadState = Attachment.Companion.UploadState.Failed(it.upload!!.toChatError())) }
 
             val expectedResult = Result(
                 message.copy(attachments = expectedAttachments.toMutableList())
