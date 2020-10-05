@@ -94,7 +94,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
             for (attachment in attachments) {
                 val url = attachment.upload!!.absolutePath
-                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name)
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, uploadState = Attachment.Companion.UploadState.Success)
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment)
                 assertSuccess(result)
                 Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
@@ -113,7 +113,7 @@ class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
             for (attachment in attachments) {
                 val url = attachment.upload!!.absolutePath
-                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, extraData = extra)
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, extraData = extra, uploadState = Attachment.Companion.UploadState.Success)
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment) {
                     attachment, _ ->
                     attachment.copy(extraData = extra)
