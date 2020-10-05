@@ -13,7 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest() {
+internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegrationTest() {
 
     /**
      * test that a message added only to the local storage is picked up

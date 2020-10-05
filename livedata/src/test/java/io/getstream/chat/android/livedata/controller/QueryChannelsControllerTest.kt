@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
+internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun newChannelAdded() = runBlocking(Dispatchers.IO) {

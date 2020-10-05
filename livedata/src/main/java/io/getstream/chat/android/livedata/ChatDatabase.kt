@@ -54,7 +54,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
     SyncStatusConverter::class,
     DateConverter::class
 )
-abstract class ChatDatabase : RoomDatabase() {
+internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsQDao(): QueryChannelsDao
     abstract fun userDao(): UserDao
     abstract fun reactionDao(): ReactionDao

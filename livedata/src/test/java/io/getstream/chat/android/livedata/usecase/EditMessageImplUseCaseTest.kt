@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
+internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("Flaky test. The list of messages into the livedata has some messages with a `createdAt` date in the future and break our test logic")

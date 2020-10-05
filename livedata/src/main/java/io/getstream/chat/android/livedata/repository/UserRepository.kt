@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.dao.UserDao
 import io.getstream.chat.android.livedata.entity.UserEntity
 
-class UserRepository(
+internal class UserRepository(
     private val userDao: UserDao,
     private val currentUser: User?,
     cacheSize: Int = 100

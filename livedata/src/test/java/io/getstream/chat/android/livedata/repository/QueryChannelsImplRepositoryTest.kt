@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsImplRepositoryTest : BaseDomainTest() {
+internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.queryChannels }
 
     @Test

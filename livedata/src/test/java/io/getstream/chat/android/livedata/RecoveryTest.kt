@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
+internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 
     @Test
     fun replayEventsForActiveChannels() = runBlocking(Dispatchers.IO) {
@@ -30,7 +30,7 @@ class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 }
 
 @RunWith(AndroidJUnit4::class)
-class ConnectedRecoveryTest : BaseConnectedMockedTest() {
+internal class ConnectedRecoveryTest : BaseConnectedMockedTest() {
 
     @Test
     fun storeSyncState() = runBlocking(Dispatchers.IO) {

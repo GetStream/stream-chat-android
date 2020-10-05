@@ -10,10 +10,10 @@ import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
+import java.util.*
 
 @RunWith(AndroidJUnit4::class)
-class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {
+internal class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun testUnreadCount() {

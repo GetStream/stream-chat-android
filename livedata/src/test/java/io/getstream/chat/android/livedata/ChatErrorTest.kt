@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChatErrorTest : BaseConnectedIntegrationTest() {
+internal class ChatErrorTest : BaseConnectedIntegrationTest() {
     @Test
     fun invalidMessageInput() {
         val message = Message(text = "hi", id = "thesame")

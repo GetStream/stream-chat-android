@@ -45,9 +45,9 @@ import org.amshove.kluent.calling
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import java.util.Date
+import java.util.*
 
-open class BaseDomainTest {
+internal open class BaseDomainTest {
     lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain

@@ -15,7 +15,7 @@ data class Person(var name: String)
 data class Animal(var name: String)
 
 @RunWith(AndroidJUnit4::class)
-class SendMessageImplTest : BaseConnectedIntegrationTest() {
+internal class SendMessageImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("Flaky test. The list of messages into the livedata has some messages with a `createdAt` date in the future and break our test logic")

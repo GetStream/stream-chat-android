@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 
-class RepositoryHelper(
+internal class RepositoryHelper(
     client: ChatClient,
     currentUser: User,
     database: ChatDatabase
