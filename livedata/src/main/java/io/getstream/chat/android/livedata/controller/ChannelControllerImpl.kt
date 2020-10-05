@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -50,6 +52,7 @@ import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -419,7 +422,7 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -454,6 +457,19 @@ class ChannelControllerImpl(
         }
 
         return@withContext if (online) {
+            // upload attachments
+            logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+            newMessage.attachments = newMessage.attachments.map {
+                var attachment: Attachment = it
+                if (it.upload != null) {
+                    val result = uploadAttachment(it, attachmentTransformer)
+                    if (result.isSuccess) {
+                        attachment = result.data() as Attachment
+                    }
+                }
+                attachment
+            }.toMutableList()
+
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
             val result = domainImpl.runAndRetry { channelController.sendMessage(newMessage) }
@@ -482,6 +498,46 @@ class ChannelControllerImpl(
             logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
             Result(newMessage, null)
         }
+    }
+
+    /**
+     * Upload the attachment.upload file for the given attachment
+     * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
+     */
+    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Attachment> {
+        val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+        val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
+        val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
+        var newAttachment: Attachment
+        var uploadError: ChatError? = null
+
+        if (pathResult.isError) {
+            uploadError = pathResult.error()
+            newAttachment = attachment.copy(uploadError = pathResult.error())
+        } else {
+            val uploadPath = pathResult.data()
+            newAttachment = attachment.copy(
+                name = file.name,
+                fileSize = file.length().toInt(),
+                mimeType = mimeType?.toString() ?: "",
+                url = uploadPath,
+                type = attachmentType
+            ).apply {
+                if (attachmentType == "image") {
+                    imageUrl = uploadPath
+                } else {
+                    assetUrl = uploadPath
+                }
+            }
+        }
+
+        // allow the user to change the format of the attachment
+        if (attachmentTransformer != null) {
+            newAttachment = attachmentTransformer(newAttachment, file)
+        }
+
+        return Result(newAttachment, uploadError)
     }
 
     /**

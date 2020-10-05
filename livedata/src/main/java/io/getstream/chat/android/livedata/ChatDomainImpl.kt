@@ -214,6 +214,9 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
+
+        // monitor connectivity at OS level
+        // TODO
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -508,12 +511,15 @@ class ChatDomainImpl private constructor(
         }
 
         val now = Date()
-        val events = queryEvents(cids)
-        eventHandler.updateOfflineStorageFromEvents(events)
 
-        syncState?.let { it.lastSyncedAt = now }
-
-        return Result(events, null)
+        return if (cids.isNotEmpty()) {
+            val events = queryEvents(cids)
+            eventHandler.updateOfflineStorageFromEvents(events)
+            syncState?.let { it.lastSyncedAt = now }
+            Result(events, null)
+        } else {
+            Result(listOf<ChatEvent>(), null)
+        }
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {

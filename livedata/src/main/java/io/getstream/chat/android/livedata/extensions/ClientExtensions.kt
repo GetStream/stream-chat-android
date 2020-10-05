@@ -143,3 +143,5 @@ internal class CompositeComparator<T>(private val comparators: List<Comparator<T
             }
         }
 }
+
+internal fun String?.isImageMimetype() = this?.contains("image") ?: false
