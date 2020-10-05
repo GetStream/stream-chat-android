@@ -1,6 +1,6 @@
 # To be released:
 
-# 1.16.3 - Monday 05th of October 2020
+# 1.16.4 - Monday 5th of October 2020
 
 - Add `attachment.upload` and `attachment.uploadState` fields for livedata upload status. These fields are currently unused if you only use the low level client.
 
