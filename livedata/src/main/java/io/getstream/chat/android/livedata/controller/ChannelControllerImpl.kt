@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Config
@@ -50,6 +52,7 @@ import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -57,7 +60,10 @@ import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -77,6 +83,7 @@ class ChannelControllerImpl(
     var domainImpl: ChatDomainImpl
 ) :
     ChannelController {
+    private val editJobs = mutableMapOf<String, Job>()
     private val _messages = MutableLiveData<MutableMap<String, Message>>()
     private val _watcherCount = MutableLiveData<Int>()
     private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
@@ -358,14 +365,13 @@ class ChannelControllerImpl(
 
         // if we are online we we run the actual API call
 
-        var result = if (domainImpl.isOnline()) {
+        return if (domainImpl.isOnline()) {
             runChannelQueryOnline(pagination)
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
             Result(channel, null)
         }
-        return result
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
@@ -416,33 +422,34 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
+        val newMessage = message.copy()
 
         // set defaults for id, cid and created at
-        if (message.id.isEmpty()) {
-            message.id = domainImpl.generateMessageId()
+        if (newMessage.id.isEmpty()) {
+            newMessage.id = domainImpl.generateMessageId()
         }
-        if (message.cid.isEmpty()) {
-            message.cid = cid
+        if (newMessage.cid.isEmpty()) {
+            newMessage.cid = cid
         }
 
-        message.user = domainImpl.currentUser
-        message.createdAt = message.createdAt ?: Date()
-        message.syncStatus = SyncStatus.IN_PROGRESS
+        newMessage.user = domainImpl.currentUser
+        newMessage.createdAt = newMessage.createdAt ?: Date()
+        newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
+            newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val messageEntity = MessageEntity(message)
+        val messageEntity = MessageEntity(newMessage)
 
         // Update livedata
-        upsertMessage(message)
+        upsertMessage(newMessage)
 
         // we insert early to ensure we don't lose messages
-        domainImpl.repos.messages.insertMessage(message)
+        domainImpl.repos.messages.insertMessage(newMessage)
 
-        val channelStateEntity = domainImpl.repos.channels.select(message.cid)
+        val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
             it.addMessage(messageEntity)
@@ -450,9 +457,22 @@ class ChannelControllerImpl(
         }
 
         return@withContext if (online) {
-            logger.logI("Starting to send message with id ${message.id} and text ${message.text}")
+            // upload attachments
+            logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
+            newMessage.attachments = newMessage.attachments.map {
+                var attachment: Attachment = it
+                if (it.upload != null) {
+                    val result = uploadAttachment(it, attachmentTransformer)
+                    if (result.isSuccess) {
+                        attachment = result.data() as Attachment
+                    }
+                }
+                attachment
+            }.toMutableList()
 
-            val result = domainImpl.runAndRetry { channelController.sendMessage(message) }
+            logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
+
+            val result = domainImpl.runAndRetry { channelController.sendMessage(newMessage) }
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -466,17 +486,60 @@ class ChannelControllerImpl(
                 Result(processedMessage, null)
             } else {
                 if (result.error().isPermanent()) {
-                    messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    messageEntity.syncStatus = SyncStatus.SYNC_NEEDED
+                    newMessage.syncStatus = SyncStatus.SYNC_NEEDED
                 }
-                domainImpl.repos.messages.insert(messageEntity)
-                Result(message, result.error())
+                upsertMessage(newMessage)
+                domainImpl.repos.messages.insertMessage(newMessage)
+                Result(newMessage, result.error())
             }
         } else {
-            logger.logI("Chat is offline, postponing send message with id ${message.id} and text ${message.text}")
-            Result(message, null)
+            logger.logI("Chat is offline, postponing send message with id ${newMessage.id} and text ${newMessage.text}")
+            Result(newMessage, null)
         }
+    }
+
+    /**
+     * Upload the attachment.upload file for the given attachment
+     * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
+     */
+    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Attachment> {
+        val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+        val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
+        val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
+        var newAttachment: Attachment
+        var uploadError: ChatError? = null
+
+        if (pathResult.isError) {
+            uploadError = pathResult.error()
+
+            newAttachment = attachment.copy(uploadState = Attachment.Companion.UploadState.Failed(uploadError))
+        } else {
+            val uploadPath = pathResult.data()
+            newAttachment = attachment.copy(
+                name = file.name,
+                fileSize = file.length().toInt(),
+                mimeType = mimeType?.toString() ?: "",
+                url = uploadPath,
+                uploadState = Attachment.Companion.UploadState.Success,
+                type = attachmentType
+            ).apply {
+                if (attachmentType == "image") {
+                    imageUrl = uploadPath
+                } else {
+                    assetUrl = uploadPath
+                }
+            }
+        }
+
+        // allow the user to change the format of the attachment
+        if (attachmentTransformer != null) {
+            newAttachment = attachmentTransformer(newAttachment, file)
+        }
+
+        return Result(newAttachment, uploadError)
     }
 
     /**
@@ -576,10 +639,10 @@ class ChannelControllerImpl(
                 client.sendReaction(reaction)
             }
             val result = domainImpl.runAndRetry(runnable)
-            if (result.isSuccess) {
+            return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data(), null)
+                Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -587,7 +650,7 @@ class ChannelControllerImpl(
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(null, result.error())
+                Result(null, result.error())
             }
         }
         return Result(reaction, null)
@@ -685,6 +748,9 @@ class ChannelControllerImpl(
             }
             if (!outdated) {
                 freshMessages.add(message)
+            } else {
+                val oldDate = oldMessage?.updatedAt
+                logger.logW("Skipping outdated message update for message with text ${message.text}. Old message date is $oldDate new message date id ${message.updatedAt}")
             }
         }
 
@@ -988,42 +1054,59 @@ class ChannelControllerImpl(
 
     suspend fun editMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        message.updatedAt = Date()
-        message.syncStatus = SyncStatus.IN_PROGRESS
+        var editedMessage = message.copy()
+
+        // set message.updated at if it's null or older than now (prevents issues with incorrect clocks)
+        editedMessage.apply {
+            val now = Date()
+            if (updatedAt == null || updatedAt!!.before(now)) {
+                updatedAt = now
+            }
+        }
+
+        editedMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
+            editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
         // Update livedata
-        upsertMessage(message)
+        upsertMessage(editedMessage)
 
         // Update Room State
-        domainImpl.repos.messages.insertMessage(message)
+        domainImpl.repos.messages.insertMessage(editedMessage)
 
         if (online) {
             val runnable = {
-                client.updateMessage(message)
+                client.updateMessage(editedMessage)
             }
-            val result = domainImpl.runAndRetry(runnable)
+            // updating a message should cancel prior runnables editing the same message...
+            // cancel previous message jobs
+            editJobs[message.id]?.let {
+                it.cancelAndJoin()
+            }
+            val job = scope.async { domainImpl.runAndRetry(runnable) }
+            editJobs[message.id] = job
+            val result = job.await()
             if (result.isSuccess) {
-                message.syncStatus = SyncStatus.COMPLETED
-                upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                editedMessage = result.data()
+                editedMessage.syncStatus = SyncStatus.COMPLETED
+                upsertMessage(editedMessage)
+                domainImpl.repos.messages.insertMessage(editedMessage)
 
-                return Result(result.data(), null)
+                return Result(editedMessage, null)
             } else {
                 if (result.error().isPermanent()) {
-                    message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                    editedMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    message.syncStatus = SyncStatus.SYNC_NEEDED
+                    editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
                 }
 
-                upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                upsertMessage(editedMessage)
+                domainImpl.repos.messages.insertMessage(editedMessage)
                 return Result(null, result.error())
             }
         }
-        return Result(message, null)
+        return Result(editedMessage, null)
     }
 
     suspend fun deleteMessage(message: Message): Result<Message> {
