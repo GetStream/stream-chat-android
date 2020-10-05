@@ -61,7 +61,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         messageTransformer: Message.() -> Unit = { }
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
-        val attachments = attachmentFiles.map { Attachment(upload=it) }.toMutableList()
+        val attachments = attachmentFiles.map { Attachment(upload = it) }.toMutableList()
         val message = Message(cid = cid, text = message, attachments = attachments).apply(messageTransformer)
         GlobalScope.launch {
             chatDomain.useCases.sendMessage(message)

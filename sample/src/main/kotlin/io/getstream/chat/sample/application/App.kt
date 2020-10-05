@@ -37,11 +37,13 @@ class App : Application() {
             androidContext(this@App)
 
             // see crash/bug here: https://github.com/InsertKoinIO/koin/issues/871
-            koin.loadModules(listOf(
+            koin.loadModules(
+                listOf(
                     appModule,
                     dataModule,
                     loginModule
-            ))
+                )
+            )
             koin.createRootScope()
         }
     }
