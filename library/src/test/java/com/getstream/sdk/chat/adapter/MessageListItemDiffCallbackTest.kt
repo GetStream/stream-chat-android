@@ -4,11 +4,8 @@ import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessageItem
 import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
 import java.util.Date
 
-@TestInstance(PER_METHOD)
 class MessageListItemDiffCallbackTest {
 
     private val channelUserRead = createChannelUserRead()
