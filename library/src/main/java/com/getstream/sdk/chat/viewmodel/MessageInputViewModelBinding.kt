@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.getstream.sdk.chat.view.MessageInputView
+import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 

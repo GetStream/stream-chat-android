@@ -7,6 +7,9 @@
 - Skip setting user's read status if last read message is his own
 - Make MessageListItem properties abstract
 - Change default query sort to "last_updated"
+- Fixed attachments logic. Save previously attached files when add more.
+- Fixed the bug when it was unable to select new files when you have already attached something.
+- Moved `MessageInputView` class to a new package.
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.2
 
 # Sep 30th, 2020 - 4.3.0-beta-2
