@@ -37,7 +37,11 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
     private fun setupOnClickListeners() {
         channelsListView.setOnChannelClickListener {
-            findNavController().navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
+            with(findNavController()) {
+                if (currentDestination?.id == R.id.channelsFragment) {
+                    navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
+                }
+            }
         }
 
         addNewChannelButton.setOnClickListener {
