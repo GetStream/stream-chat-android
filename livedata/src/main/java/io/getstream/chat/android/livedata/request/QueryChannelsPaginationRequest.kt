@@ -6,7 +6,8 @@ data class QueryChannelsPaginationRequest(
     val sort: QuerySort,
     val channelOffset: Int = 0,
     val channelLimit: Int = 30,
-    val messageLimit: Int = 10
+    val messageLimit: Int = 10,
+    val memberLimit: Int
 ) {
 
     val isFirstPage: Boolean
