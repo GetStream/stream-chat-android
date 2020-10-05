@@ -46,9 +46,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import java.lang.Thread.sleep
-import java.util.Date
-import java.util.InputMismatchException
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -596,7 +594,7 @@ class ChatDomainImpl private constructor(
         // store the channel configs
         repos.configs.insertConfigs(configs)
         // store the users
-        repos.users.insertManyUsers(users.values.toList())
+        repos.users.insert(users.values.toList())
         // store the channel data
         repos.channels.insertChannel(channelsResponse)
         // store the messages

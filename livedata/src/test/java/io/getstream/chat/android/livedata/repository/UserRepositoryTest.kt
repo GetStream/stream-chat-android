@@ -14,9 +14,8 @@ class UserRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        repo.insertManyUsers(listOf(data.user1))
-        val user1Entity = repo.select(data.user1.id)
-        val user1 = user1Entity!!.toUser()
+        repo.insert(listOf(data.user1))
+        val user1 = repo.select(data.user1.id)!!
         Truth.assertThat(data.user1).isEqualTo(user1)
 
         val userMap = repo.selectUserMap(listOf(data.user1.id, "missing"))
