@@ -7,7 +7,7 @@ Typically it will show:
 Here's an example message input view
 
 ```xml
-<com.getstream.sdk.chat.view.MessageInputView
+<com.getstream.sdk.chat.view.messageinput.MessageInputView
     android:id="@+id/message_input"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.view.BaseStyle;
-import com.getstream.sdk.chat.view.MessageInputStyle;
+import com.getstream.sdk.chat.view.messageinput.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
 
 import java.util.List;

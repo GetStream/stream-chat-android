@@ -83,7 +83,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_title">
 
             <LinearLayout
-                android:id="@+id/ll_media"
+                android:id="@+id/select_media"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackground"
@@ -129,7 +129,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_camera"
+                android:id="@+id/select_camera"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
@@ -138,7 +138,7 @@
                 android:orientation="horizontal"
                 android:paddingStart="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_media">
+                app:layout_constraintTop_toBottomOf="@+id/select_media">
 
                 <FrameLayout
                     android:layout_width="30dp"
@@ -176,7 +176,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_file"
+                android:id="@+id/select_file"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
@@ -186,7 +186,7 @@
                 android:paddingStart="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ll_camera">
+                app:layout_constraintTop_toBottomOf="@+id/select_camera">
 
                 <FrameLayout
                     android:layout_width="30dp"
@@ -276,7 +276,7 @@
                 android:layout_marginEnd="10dp">
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_composer"
+                    android:id="@+id/media_composer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
@@ -285,7 +285,7 @@
                     android:visibility="gone" />
 
                 <ListView
-                    android:id="@+id/lv_composer"
+                    android:id="@+id/file_composer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
