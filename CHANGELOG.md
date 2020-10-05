@@ -1,10 +1,13 @@
 # To be released:
+
+# Oct 2nd, 2020 - 4.3.0-beta-3
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
 - Moved `BaseAttachmentViewHolder` to a new package
 - Fix setting read state when user's last read equals message created date
 - Skip setting user's read status if last read message is his own
 - Make MessageListItem properties abstract
 - Change default query sort to "last_updated"
+- Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.2
 
 # Sep 30th, 2020 - 4.3.0-beta-2
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
