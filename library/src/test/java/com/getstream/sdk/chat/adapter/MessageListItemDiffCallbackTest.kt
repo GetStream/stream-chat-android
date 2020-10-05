@@ -29,37 +29,36 @@ class MessageListItemDiffCallbackTest {
 
     @Test
     fun `Should properly check if items are the same when messages have the same id`() {
-        val diff = MessageListItemDiffCallback(listOf(msg), listOf(msg))
+        val result = MessageListItemDiffCallback.areItemsTheSame(msg, msg)
 
-        diff.areItemsTheSame(0, 0) shouldBe true
+        result shouldBe true
     }
 
     @Test
     fun `Should properly check if items are the same when messages have different id`() {
-        val diff = MessageListItemDiffCallback(listOf(msg), listOf(msgWithUserRead))
+        val result = MessageListItemDiffCallback.areItemsTheSame(msg, msgWithUserRead)
 
-        diff.areItemsTheSame(0, 0) shouldBe false
+        result shouldBe false
     }
 
     @Test
     fun `Should properly check if contents are the same when messages are the same`() {
-        val diff = MessageListItemDiffCallback(listOf(msgWithUserRead), listOf(msgWithUserRead))
+        val result = MessageListItemDiffCallback.areContentsTheSame(msgWithUserRead, msgWithUserRead)
 
-        diff.areContentsTheSame(0, 0) shouldBe true
+        result shouldBe true
     }
 
     @Test
     fun `Should properly check if contents are the same when messages are different`() {
-        val diff = MessageListItemDiffCallback(listOf(msg), listOf(msgWithUserRead))
+        val result = MessageListItemDiffCallback.areContentsTheSame(msg, msgWithUserRead)
 
-        diff.areContentsTheSame(0, 0) shouldBe false
+        result shouldBe false
     }
 
     @Test
     fun `Should properly check if contents are the same when messages are the same but with different user read`() {
-        val diff =
-            MessageListItemDiffCallback(listOf(msgWithUserRead), listOf(msgWithModifiedUserRead))
+        val result = MessageListItemDiffCallback.areContentsTheSame(msgWithUserRead, msgWithModifiedUserRead)
 
-        diff.areContentsTheSame(0, 0) shouldBe false
+        result shouldBe false
     }
 }
