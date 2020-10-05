@@ -62,17 +62,17 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
 
         imageView.setPlaceholder(initials,
                 style.getAvatarBackGroundColor(),
-                style.readStateText.color);
+                style.readStateText.getColor());
 
         Typeface typeface = chatFonts.getFont(style.readStateText);
 
         if (typeface != null) {
             imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    (style.readStateText.size), typeface);
+                    (style.readStateText.getSize()), typeface);
         } else
             imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                   (style.readStateText.size),
-                    style.readStateText.style);
+                   (style.readStateText.getSize()),
+                    style.readStateText.getStyle());
 
         if (!Utils.isSVGImage(image))
             Glide.with(getContext())
@@ -100,8 +100,8 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         TextView textView = new TextView(getContext());
         textView.setText(String.valueOf(reads.size() - 1));
 
-        textView.setTextColor(style.readStateText.color);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.readStateText.size);
+        textView.setTextColor(style.readStateText.getColor());
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.readStateText.getSize());
         chatFonts.setFont(style.readStateText, textView);
         textView.setGravity(Gravity.CENTER);
         textView.setId(2);

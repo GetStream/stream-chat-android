@@ -1,129 +1,86 @@
-package com.getstream.sdk.chat.style;
+package com.getstream.sdk.chat.style
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Typeface;
-import android.util.SparseArray;
-import android.util.TypedValue;
-import android.widget.TextView;
+import android.content.Context
+import android.graphics.Typeface
+import android.util.SparseArray
+import android.widget.TextView
+import androidx.annotation.FontRes
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.util.contains
+import io.getstream.chat.android.client.logger.ChatLogger
+import java.util.HashMap
 
-import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
+class ChatFontsImpl(
+    private val style: ChatStyle,
+    private val context: Context
+) : ChatFonts {
 
-import java.util.HashMap;
-import java.util.Map;
+    private val resourceMap = SparseArray<Typeface>()
+    private val pathMap: MutableMap<String, Typeface> = HashMap()
 
-import androidx.annotation.FontRes;
-import androidx.core.content.res.ResourcesCompat;
-import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.logger.TaggedLogger;
+    private val logger = ChatLogger.get(ChatFonts::class.java.simpleName)
 
-public class ChatFontsImpl implements ChatFonts {
-
-    private final ChatStyle style;
-    private final Context context;
-    private SparseArray<Typeface> resourceMap = new SparseArray<>();
-    private Map<String, Typeface> pathMap = new HashMap<>();
-    private final TaggedLogger logger = ChatLogger.Companion.get(ChatFonts.class.getSimpleName());
-
-    public ChatFontsImpl(ChatStyle style, Context context) {
-        this.style = style;
-        this.context = context;
-    }
-
-    @SuppressLint("WrongConstant")
-    public void setFont(TextStyle textStyle, TextView textView) {
-
-        Typeface font = textStyle.getFont();
-
-        if (font != null) {
-            textView.setTypeface(font, textStyle.style);
+    override fun setFont(textStyle: TextStyle, textView: TextView) {
+        if (textStyle.font != null) {
+            textView.setTypeface(textStyle.font, textStyle.style)
         } else {
-            setDefaultFont(textView, textStyle.style);
+            setDefaultFont(textView, textStyle.style)
         }
     }
 
-    @Override
-    public void setFont(TextStyle textStyle, CircularImageView imageView, float factor) {
-
-        Typeface font = textStyle.getFont();
-
-        if (font != null) {
-            imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (textStyle.size / factor), font);
-        } else {
-
-            if (style.hasDefaultFont()) {
-                TextStyle defaultTextStyle = style.getDefaultTextStyle();
-                imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX, (int) (textStyle.size / factor), getFont(defaultTextStyle));
-            } else {
-                imageView.setPlaceholderTextSize(TypedValue.COMPLEX_UNIT_PX,
-                        (int) (textStyle.size / factor),
-                        textStyle.style);
-            }
+    override fun getFont(textStyle: TextStyle): Typeface? {
+        return when {
+            textStyle.fontResource != -1 ->
+                getFont(textStyle.fontResource)
+            !textStyle.fontAssetsPath.isNullOrEmpty() ->
+                getFont(textStyle.fontAssetsPath!!)
+            else -> null
         }
     }
 
-    @Override
-    public Typeface getFont(TextStyle textStyle) {
-        if (textStyle.fontResource != -1) {
-            return getFont(textStyle.fontResource);
-        } else if (textStyle.fontAssetsPath != null && !"".equals(textStyle.fontAssetsPath)) {
-            return getFont(textStyle.fontAssetsPath);
-        } else {
-            return null;
-        }
-    }
-
-    private Typeface getFont(String fontPath) {
-        Typeface result;
-
-        if (pathMap.containsKey(fontPath)) {
-            result = pathMap.get(fontPath);
-        } else {
-            result = safeLoadTypeface(fontPath);
-            pathMap.put(fontPath, result);
+    private fun getFont(fontPath: String): Typeface? {
+        if (fontPath in pathMap) {
+            return pathMap[fontPath]
         }
 
-        return result;
+        val typeface = safeLoadTypeface(fontPath) ?: return null
+        pathMap[fontPath] = typeface
+        return typeface
     }
 
-    private Typeface getFont(@FontRes int fontRes) {
-
-        Typeface result;
-
-        if (resourceMap.get(fontRes) != null) {
-            result = resourceMap.get(fontRes);
-        } else {
-            result = safeLoadTypeface(fontRes);
-            resourceMap.put(fontRes, result);
+    private fun getFont(@FontRes fontRes: Int): Typeface? {
+        if (fontRes in resourceMap) {
+            return resourceMap[fontRes]
         }
 
-        return result;
+        val typeface = safeLoadTypeface(fontRes) ?: return null
+        resourceMap.put(fontRes, typeface)
+        return typeface
     }
 
-    private void setDefaultFont(TextView textView, int textStyle) {
-
+    private fun setDefaultFont(textView: TextView, textStyle: Int) {
         if (style.hasDefaultFont()) {
-            textView.setTypeface(getFont(style.getDefaultTextStyle()), textStyle);
+            textView.setTypeface(getFont(style.getDefaultTextStyle()), textStyle)
         } else {
-            textView.setTypeface(Typeface.DEFAULT, textStyle);
+            textView.setTypeface(Typeface.DEFAULT, textStyle)
         }
     }
 
-    private Typeface safeLoadTypeface(int fontRes) {
-        try {
-            return ResourcesCompat.getFont(context, fontRes);
-        } catch (Throwable t) {
-            logger.logE(t);
-            return null;
+    private fun safeLoadTypeface(@FontRes fontRes: Int): Typeface? {
+        return try {
+            ResourcesCompat.getFont(context, fontRes)
+        } catch (t: Throwable) {
+            logger.logE(t)
+            null
         }
     }
 
-    private Typeface safeLoadTypeface(String fontPath) {
-        try {
-            return Typeface.createFromAsset(context.getAssets(), fontPath);
-        } catch (Throwable t) {
-            logger.logE(t);
-            return null;
+    private fun safeLoadTypeface(fontPath: String): Typeface? {
+        return try {
+            Typeface.createFromAsset(context.assets, fontPath)
+        } catch (t: Throwable) {
+            logger.logE(t)
+            null
         }
     }
 }

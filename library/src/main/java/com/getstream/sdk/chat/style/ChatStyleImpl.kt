@@ -1,16 +1,9 @@
-package com.getstream.sdk.chat.style;
+package com.getstream.sdk.chat.style
 
-public class ChatStyleImpl implements ChatStyle {
+class ChatStyleImpl : ChatStyle {
+    internal var defaultTextStyle: TextStyle? = null
 
-    TextStyle defaultTextStyle;
+    override fun hasDefaultFont(): Boolean = defaultTextStyle?.hasFont() == true
 
-    public TextStyle getDefaultTextStyle() {
-        return defaultTextStyle;
-    }
-
-    @Override
-    public boolean hasDefaultFont() {
-        return defaultTextStyle != null && defaultTextStyle.hasFont();
-    }
-
+    override fun getDefaultTextStyle(): TextStyle = defaultTextStyle!!
 }

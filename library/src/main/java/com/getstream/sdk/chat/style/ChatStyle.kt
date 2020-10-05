@@ -1,33 +1,28 @@
-package com.getstream.sdk.chat.style;
+package com.getstream.sdk.chat.style
 
-import androidx.annotation.FontRes;
+import androidx.annotation.FontRes
 
-public interface ChatStyle {
+interface ChatStyle {
 
-    TextStyle getDefaultTextStyle();
+    fun hasDefaultFont(): Boolean
 
-    boolean hasDefaultFont();
+    fun getDefaultTextStyle(): TextStyle
 
     class Builder {
+        var result = ChatStyleImpl()
 
-        ChatStyleImpl result = new ChatStyleImpl();
-        TextStyle defaultTextStyle;
-
-        public Builder setDefaultFont(String assetPath) {
-            defaultTextStyle = new TextStyle();
-            defaultTextStyle.fontAssetsPath = assetPath;
-            return this;
+        fun setDefaultFont(assetPath: String): Builder = apply {
+            result.defaultTextStyle = TextStyle().apply {
+                fontAssetsPath = assetPath
+            }
         }
 
-        public Builder setDefaultFont(@FontRes int fontRes) {
-            defaultTextStyle = new TextStyle();
-            defaultTextStyle.fontResource = fontRes;
-            return this;
+        fun setDefaultFont(@FontRes fontRes: Int): Builder = apply {
+            result.defaultTextStyle = TextStyle().apply {
+                fontResource = fontRes
+            }
         }
 
-        public ChatStyle build() {
-            result.defaultTextStyle = defaultTextStyle;
-            return result;
-        }
+        fun build(): ChatStyle = result
     }
 }
