@@ -38,10 +38,19 @@ data class Attachment(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
-    var uploadError: ChatError? = null,
+    var uploadState: UploadState? = null,
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 
-) : CustomObject
+) : CustomObject {
+
+    companion object {
+        sealed class UploadState {
+            object InProgress : UploadState()
+            object Success : UploadState()
+            data class Failed(val error: ChatError) : UploadState()
+        }
+    }
+}
