@@ -1,5 +1,9 @@
 # To be released:
 
+# 1.16.3 - Monday 05th of October 2020
+
+- Add `attachment.upload` and `attachment.uploadState` fields for livedata upload status. These fields are currently unused if you only use the low level client.
+
 # 1.16.2 - Wed 30 Sep 2020
 - Add `ChatClient::enableSlowMode` method to enable slow mode
 - Add `ChatClient::disableSlowMode` method to disable slow mode

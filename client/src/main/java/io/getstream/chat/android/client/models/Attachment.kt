@@ -1,8 +1,10 @@
 package io.getstream.chat.android.client.models
 
 import com.google.gson.annotations.SerializedName
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
+import java.io.File
 
 data class Attachment(
 
@@ -32,6 +34,23 @@ data class Attachment(
 
     @IgnoreSerialisation
     @IgnoreDeserialisation
+    var upload: File? = null,
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var uploadState: UploadState? = null,
+
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
     override var extraData: MutableMap<String, Any> = mutableMapOf()
 
-) : CustomObject
+) : CustomObject {
+
+    companion object {
+        sealed class UploadState {
+            object InProgress : UploadState()
+            object Success : UploadState()
+            data class Failed(val error: ChatError) : UploadState()
+        }
+    }
+}
