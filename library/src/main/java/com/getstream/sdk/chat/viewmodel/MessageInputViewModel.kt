@@ -51,7 +51,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         stopTyping()
 
         GlobalScope.launch {
-            chatDomain.useCases.sendMessage(message.apply(messageTransformer)).execute()
+            chatDomain.useCases.sendMessage(message.apply(messageTransformer)).enqueue()
         }
     }
 
@@ -65,7 +65,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         val message = Message(cid = cid, text = message, attachments = attachments).apply(messageTransformer)
         GlobalScope.launch {
             chatDomain.useCases.sendMessage(message)
-                .execute()
+                .enqueue()
         }
     }
 
@@ -78,7 +78,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         stopTyping()
 
         viewModelScope.launch {
-            chatDomain.useCases.editMessage(message).execute()
+            chatDomain.useCases.editMessage(message).enqueue()
         }
     }
 
@@ -91,7 +91,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         if (isThread) return
 
         viewModelScope.launch {
-            chatDomain.useCases.keystroke(cid).execute()
+            chatDomain.useCases.keystroke(cid).enqueue()
         }
     }
 
@@ -101,7 +101,7 @@ class MessageInputViewModel @JvmOverloads constructor(
     fun stopTyping() {
         if (isThread) return
         viewModelScope.launch {
-            chatDomain.useCases.stopTyping(cid).execute()
+            chatDomain.useCases.stopTyping(cid).enqueue()
         }
     }
 }
