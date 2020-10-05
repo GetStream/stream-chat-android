@@ -11,12 +11,11 @@ import androidx.documentfile.provider.DocumentFile
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import java.io.File
-import java.lang.IllegalStateException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-internal object StorageUtils {
+internal class StorageHelper {
 
     private val supportedFilesMimeTypes =
         listOf(
@@ -108,13 +107,11 @@ internal object StorageUtils {
                 val mimeType = Utils.getMimeType(file.uri.path)
                 if (supportedFilesMimeTypes.contains(mimeType)) {
                     attachmentMetaData += AttachmentMetaData(
-                        file.uri,
-                        mimeType
-                    ).apply {
-                        this.type = ModelType.attach_file
-                        this.size = file.length()
-                        this.title = file.name
-                    }
+                        uri = file.uri,
+                        mimeType = mimeType,
+                        type = ModelType.attach_file,
+                        title = file.name
+                    ).apply { size = file.length() }
                 }
             }
         }
@@ -150,7 +147,7 @@ internal object StorageUtils {
                 val mimeType = MimeTypeMap.getSingleton()
                     .getMimeTypeFromExtension(context.contentResolver.getType(uri)) ?: ""
 
-                attachments += AttachmentMetaData(uri, mimeType).apply {
+                attachments += AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
                     this.type = mediaType.modelType
                     this.size = getLong(getColumnIndex(MediaStore.Files.FileColumns.SIZE))
                     this.title = displayName

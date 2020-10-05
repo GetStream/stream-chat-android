@@ -10,8 +10,8 @@ import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.Chat.Companion.getInstance
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.AttachmentListAdapter
 import com.getstream.sdk.chat.adapter.AttachmentListItem
+import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
@@ -201,10 +201,8 @@ class AttachmentViewHolder(
         configAttachViewBackground(binding.lvAttachmentFile)
 
         val attachments = messageItem.message.attachments.filter { it.type == ModelType.attach_file }
-        binding.lvAttachmentFile.adapter = AttachmentListAdapter(
-            context,
+        binding.lvAttachmentFile.adapter = FileAttachmentSelectedAdapter(
             LlcMigrationUtils.getMetaAttachments(attachments),
-            false,
             false
         )
         binding.lvAttachmentFile.onItemClickListener = OnItemClickListener { _, _, _, _ ->
