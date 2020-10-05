@@ -13,7 +13,7 @@ class RepositoryHelper(
     currentUser: User,
     database: ChatDatabase
 ) {
-    val users = UserRepository(database.userDao(), currentUser, UserMapper(), 100)
+    val users = UserRepository(database.userDao(), currentUser, 100)
     val configs = ChannelConfigRepository(database.channelConfigDao())
     val channels = ChannelRepository(database.channelStateDao(), 100, currentUser, client)
     val queryChannels = QueryChannelsRepository(database.queryChannelsQDao())

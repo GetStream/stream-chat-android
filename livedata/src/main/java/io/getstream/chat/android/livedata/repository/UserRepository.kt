@@ -8,7 +8,6 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 class UserRepository(
     private val userDao: UserDao,
     private val currentUser: User?,
-    private val userMapper: UserMapper = UserMapper(),
     cacheSize: Int = 100
 ) {
     // the user cache is simple, just keeps the last 100 users in memory
@@ -17,7 +16,7 @@ class UserRepository(
     suspend fun insert(users: List<User>) {
         if (users.isEmpty()) return
         cacheUsers(users)
-        userDao.insertMany(users.map(userMapper::modelToEntity))
+        userDao.insertMany(users.map(::toEntity))
     }
 
     private fun cacheUsers(users: List<User>) {
@@ -27,11 +26,11 @@ class UserRepository(
     }
 
     suspend fun insertUser(user: User) {
-        userDao.insert(userMapper.modelToEntity(user))
+        userDao.insert(toEntity(user))
     }
 
     suspend fun insertMe(user: User) {
-        val userEntity = userMapper.modelToEntity(user)
+        val userEntity = toEntity(user)
         userEntity.originalId = user.id
         userEntity.id = "me"
         userDao.insert(userEntity)
@@ -40,17 +39,17 @@ class UserRepository(
     suspend fun selectMe(): User? {
         return userDao.select("me")
             ?.apply { id = originalId }
-            ?.let(userMapper::entityToModel)
+            ?.let(::toModel)
     }
 
     suspend fun select(userId: String): User? {
-        return userDao.select(userId)?.let(userMapper::entityToModel)
+        return userDao.select(userId)?.let(::toModel)
     }
 
     suspend fun select(userIds: List<String>): List<User> {
         val cacheUsers: List<User> = userIds.mapNotNull(userCache::get)
         val missingUserIds = userIds.filter { userCache.get(it) == null }
-        val dbUsers = userDao.select(missingUserIds).map(userMapper::entityToModel).also(::cacheUsers)
+        val dbUsers = userDao.select(missingUserIds).map(::toModel).also(::cacheUsers)
         return dbUsers + cacheUsers
     }
 
@@ -63,30 +62,29 @@ class UserRepository(
                 userMap
             }
         }
-}
 
-class UserMapper {
-    fun modelToEntity(user: User): UserEntity = UserEntity(user.id).apply {
-        role = user.role
-        createdAt = user.createdAt
-        updatedAt = user.updatedAt
-        lastActive = user.lastActive
-        invisible = user.invisible
-        banned = user.banned
-        extraData = user.extraData
-        val muteList = user.mutes
-        mutes = muteList.map { it.target.id }
+    private fun toEntity(user: User): UserEntity = with(user) {
+        UserEntity(id).also {
+            it.role = role
+            it.createdAt = createdAt
+            it.updatedAt = updatedAt
+            it.lastActive = lastActive
+            it.invisible = invisible
+            it.banned = banned
+            it.extraData = extraData
+            it.mutes = mutes.map { mute -> mute.target.id }
+        }
     }
 
-    fun entityToModel(entity: UserEntity): User = with(entity) {
-        val u = User(id = this.id)
-        u.role = role
-        u.createdAt = createdAt
-        u.updatedAt = updatedAt
-        u.lastActive = lastActive
-        u.invisible = invisible
-        u.extraData = extraData
-        u.banned = banned
-        return u
+    private fun toModel(userEntity: UserEntity): User = with(userEntity) {
+        User(id = this.id).also { user ->
+            user.role = role
+            user.createdAt = createdAt
+            user.updatedAt = updatedAt
+            user.lastActive = lastActive
+            user.invisible = invisible
+            user.extraData = extraData
+            user.banned = banned
+        }
     }
 }
