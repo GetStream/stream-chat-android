@@ -10,6 +10,7 @@ import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import com.getstream.sdk.chat.viewmodel.channels.bindView
 import io.getstream.chat.sample.R
+import io.getstream.chat.sample.common.navigateSafely
 import kotlinx.android.synthetic.main.fragment_channels.*
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels) {
@@ -22,7 +23,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
             viewLifecycleOwner,
             Observer {
                 if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
-                    findNavController().navigate(R.id.action_to_loginFragment)
+                    findNavController().navigateSafely(R.id.action_to_loginFragment)
                 }
             }
         )
@@ -37,15 +38,11 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
 
     private fun setupOnClickListeners() {
         channelsListView.setOnChannelClickListener {
-            with(findNavController()) {
-                if (currentDestination?.id == R.id.channelsFragment) {
-                    navigate(ChannelsFragmentDirections.actionOpenChannel(it.cid))
-                }
-            }
+            findNavController().navigateSafely(ChannelsFragmentDirections.actionOpenChannel(it.cid))
         }
 
         addNewChannelButton.setOnClickListener {
-            findNavController().navigate(R.id.action_to_create_channel)
+            findNavController().navigateSafely(R.id.action_to_create_channel)
         }
 
         activity?.apply {
