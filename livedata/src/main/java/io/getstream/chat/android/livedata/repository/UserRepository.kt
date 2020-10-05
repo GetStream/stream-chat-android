@@ -30,15 +30,13 @@ class UserRepository(
     }
 
     suspend fun insertMe(user: User) {
-        val userEntity = toEntity(user)
-        userEntity.originalId = user.id
-        userEntity.id = "me"
+        val userEntity = toEntity(user).copy(originalId = user.id, id = ME_ID)
         userDao.insert(userEntity)
     }
 
     suspend fun selectMe(): User? {
-        return userDao.select("me")
-            ?.apply { id = originalId }
+        return userDao.select(ME_ID)
+            ?.let { it.copy(id = it.originalId) }
             ?.let(::toModel)
     }
 
@@ -64,16 +62,17 @@ class UserRepository(
         }
 
     private fun toEntity(user: User): UserEntity = with(user) {
-        UserEntity(id).also {
-            it.role = role
-            it.createdAt = createdAt
-            it.updatedAt = updatedAt
-            it.lastActive = lastActive
-            it.invisible = invisible
-            it.banned = banned
-            it.extraData = extraData
-            it.mutes = mutes.map { mute -> mute.target.id }
-        }
+        UserEntity(
+            id = id,
+            role = role,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            invisible = invisible,
+            banned = banned,
+            extraData = extraData,
+            mutes = mutes.map { mute -> mute.target.id }
+        )
     }
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
@@ -83,8 +82,12 @@ class UserRepository(
             user.updatedAt = updatedAt
             user.lastActive = lastActive
             user.invisible = invisible
-            user.extraData = extraData
+            user.extraData = extraData.toMutableMap()
             user.banned = banned
         }
+    }
+
+    companion object {
+        private const val ME_ID = "me"
     }
 }
