@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 
 internal class UserRepository(
     private val userDao: UserDao,
-    private val currentUser: User?,
+    private val currentUser: User,
     cacheSize: Int = 100
 ) {
     // the user cache is simple, just keeps the last 100 users in memory
@@ -30,14 +30,12 @@ internal class UserRepository(
     }
 
     suspend fun insertMe(user: User) {
-        val userEntity = toEntity(user).copy(originalId = user.id, id = ME_ID)
+        val userEntity = toEntity(user).copy(id = ME_ID)
         userDao.insert(userEntity)
     }
 
     suspend fun selectMe(): User? {
-        return userDao.select(ME_ID)
-            ?.let { it.copy(id = it.originalId) }
-            ?.let(::toModel)
+        return userDao.select(ME_ID)?.let(::toModel)
     }
 
     suspend fun select(userId: String): User? {
@@ -55,19 +53,13 @@ internal class UserRepository(
         return dbUsers + cacheUsers
     }
 
-    suspend fun selectUserMap(userIds: List<String>): Map<String, User> = select(userIds)
-        .associateBy(User::id)
-        .let { userMap ->
-            if (currentUser != null) {
-                userMap + (currentUser.id to currentUser)
-            } else {
-                userMap
-            }
-        }
+    suspend fun selectUserMap(userIds: List<String>): Map<String, User> =
+        select(userIds).associateBy(User::id) + (currentUser.id to currentUser)
 
     private fun toEntity(user: User): UserEntity = with(user) {
         UserEntity(
             id = id,
+            originalId = id,
             role = role,
             createdAt = createdAt,
             updatedAt = updatedAt,
@@ -80,7 +72,7 @@ internal class UserRepository(
     }
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
-        User(id = this.id).also { user ->
+        User(id = this.originalId).also { user ->
             user.role = role
             user.createdAt = createdAt
             user.updatedAt = updatedAt

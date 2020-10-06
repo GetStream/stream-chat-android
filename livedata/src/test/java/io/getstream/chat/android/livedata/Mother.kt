@@ -102,7 +102,7 @@ internal fun randomUserEntity(
     updatedAt: Date? = null,
     lastActive: Date? = null,
     invisible: Boolean = randomBoolean(),
-    banned: Boolean = false,
+    banned: Boolean = randomBoolean(),
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap()
 ): UserEntity = UserEntity(id, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
