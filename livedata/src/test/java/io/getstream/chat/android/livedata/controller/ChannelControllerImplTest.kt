@@ -31,7 +31,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerImplTest : BaseDomainTest() {
+internal class ChannelControllerImplTest : BaseDomainTest() {
 
     private val chatClient: ChatClient = spy()
     private val channelType: String = randomString()

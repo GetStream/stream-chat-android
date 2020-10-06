@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class DeleteMessageImplTest : BaseConnectedIntegrationTest() {
+internal class DeleteMessageImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("test occasionally fails, not sure why")

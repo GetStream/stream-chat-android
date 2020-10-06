@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ChatErrorTest : BaseConnectedIntegrationTest() {
+internal class ChatErrorTest : BaseConnectedIntegrationTest() {
     // https://getstream.io/chat/docs/api_errors_response/?language=js
     @Test
     fun invalidMessageInput() {

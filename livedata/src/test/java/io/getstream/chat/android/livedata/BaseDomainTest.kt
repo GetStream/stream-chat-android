@@ -47,7 +47,7 @@ import org.junit.Before
 import org.junit.Rule
 import java.util.Date
 
-open class BaseDomainTest {
+internal open class BaseDomainTest {
     lateinit var channelMock: ChannelController
     lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
