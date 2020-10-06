@@ -1,5 +1,14 @@
 # To be released:
 
+# Oct 5th, 2020 - 0.8.3
+
+- Improved message attachment handling. Message is now first added to local storage and the attachment is uploaded afterwards.
+- Editing messages now works while offline
+- Deprecate SendMessageWithAttachments in favor of SendMessage while specifying attachment.upload
+- Fix a bug that caused messages not to load if member limit wasn't specified
+- Fix a crash related to reaction data structure
+- Fix a bug where network errors (temporary ones) are detected as permanent errors
+
 # Oct 2nd, 2020 - 0.8.2
 - Request members by default when querying channels
 

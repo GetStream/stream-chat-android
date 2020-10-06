@@ -56,6 +56,11 @@ fun randomFiles(
     creationFunction: (Int) -> File = { randomFile() }
 ): List<File> = (1..size).map(creationFunction)
 
+fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()) }
+): List<Attachment> = (1..size).map(creationFunction)
+
 fun randomImageFile() = randomFile(extension = "jpg")
 
 fun randomUser(

@@ -13,6 +13,7 @@ internal open class BaseConnectedMockedTest : BaseDomainTest() {
     override fun setup() {
         client = createConnectedMockClient()
         setupChatDomain(client, true)
+        chatDomainImpl.setOnline()
     }
 
     @After

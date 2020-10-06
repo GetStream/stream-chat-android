@@ -9,7 +9,7 @@ class DefaultRetryPolicy : RetryPolicy {
         attempt: Int,
         error: ChatError
     ): Boolean {
-        return attempt < 5
+        return attempt < 3
     }
 
     /**
