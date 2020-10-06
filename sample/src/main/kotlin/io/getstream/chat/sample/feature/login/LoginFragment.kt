@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.getstream.chat.sample.R
+import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.data.user.User
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -36,7 +37,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun redirectToChannelsScreen() {
-        findNavController().navigate(R.id.action_loginFragment_to_channelsFragment)
+        findNavController().navigateSafely(R.id.action_loginFragment_to_channelsFragment)
     }
 
     private fun renderAvailableUsers(users: List<User>) {

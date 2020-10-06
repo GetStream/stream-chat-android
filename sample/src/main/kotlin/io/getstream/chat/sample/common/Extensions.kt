@@ -6,7 +6,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import io.getstream.chat.android.client.models.User
 
 var User.image: String
@@ -46,5 +49,15 @@ fun View.visible(isVisible: Boolean) {
         View.VISIBLE
     } else {
         View.GONE
+    }
+}
+
+fun NavController.navigateSafely(directions: NavDirections) {
+    currentDestination?.getAction(directions.actionId)?.let { navigate(directions) }
+}
+
+fun NavController.navigateSafely(@IdRes resId: Int) {
+    if (currentDestination?.id != resId) {
+        navigate(resId, null)
     }
 }

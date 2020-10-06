@@ -1,35 +1,32 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
-class MessageListItemAdapter @JvmOverloads constructor(
+class MessageListItemAdapter(
     val channel: Channel,
     val viewHolderFactory: MessageViewHolderFactory,
-    val style: MessageListViewStyle,
-    private var messageListItemList: List<MessageListItem> = emptyList()
-) : RecyclerView.Adapter<BaseMessageListItemViewHolder<*>>() {
+    val style: MessageListViewStyle
+) : ListAdapter<MessageListItem, BaseMessageListItemViewHolder<*>>(MessageListItemDiffCallback) {
 
     var isThread = false
 
+    @Deprecated(
+        message = "Use submitList instead",
+        replaceWith = ReplaceWith("submitList(newEntities)"),
+        level = DeprecationLevel.ERROR
+    )
     fun replaceEntities(newEntities: List<MessageListItem>) {
-        val result = DiffUtil.calculateDiff(
-            MessageListItemDiffCallback(messageListItemList, newEntities), true
-        )
-        result.dispatchUpdatesTo(this)
-        messageListItemList = newEntities
+        submitList(newEntities)
     }
 
-    override fun getItemCount(): Int = messageListItemList.size
-
-    override fun getItemId(position: Int): Long = messageListItemList[position].getStableId()
+    override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
-        val messageListItem = messageListItemList[position]
+        val messageListItem = getItem(position)
         return viewHolderFactory.getMessageViewType(messageListItem)
     }
 
@@ -41,6 +38,6 @@ class MessageListItemAdapter @JvmOverloads constructor(
     }
 
     override fun onBindViewHolder(holder: BaseMessageListItemViewHolder<*>, position: Int) {
-        holder.bindListItem(messageListItemList[position])
+        holder.bindListItem(getItem(position))
     }
 }
