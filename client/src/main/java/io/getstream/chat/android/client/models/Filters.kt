@@ -144,4 +144,9 @@ object Filters {
             FilterObject("\$nin", values)
         )
     }
+
+    @JvmStatic
+    fun autocomplete(field: String, value: String): FilterObject {
+        return FilterObject(field, FilterObject("\$autocomplete", value))
+    }
 }
