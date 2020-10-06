@@ -1,6 +1,7 @@
 # To be released:
 
 - Add autocomplete filter
+- Add @JvmOverloads to QueryUsersRequest constructor
 
 # 1.16.4 - Monday 5th of October 2020
 

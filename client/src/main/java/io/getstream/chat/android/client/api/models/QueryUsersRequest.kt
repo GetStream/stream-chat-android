@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
-data class QueryUsersRequest(
+data class QueryUsersRequest @JvmOverloads constructor(
     @IgnoreSerialisation
     var filter: FilterObject,
     val offset: Int,
