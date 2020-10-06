@@ -46,11 +46,9 @@ data class Attachment(
 
 ) : CustomObject {
 
-    companion object {
-        sealed class UploadState {
-            object InProgress : UploadState()
-            object Success : UploadState()
-            data class Failed(val error: ChatError) : UploadState()
-        }
+    sealed class UploadState {
+        object InProgress : UploadState()
+        object Success : UploadState()
+        data class Failed(val error: ChatError) : UploadState()
     }
 }
