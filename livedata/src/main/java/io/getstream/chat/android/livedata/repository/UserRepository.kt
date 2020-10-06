@@ -11,7 +11,7 @@ internal class UserRepository(
     cacheSize: Int = 100
 ) {
     // the user cache is simple, just keeps the last 100 users in memory
-    var userCache = LruCache<String, User>(cacheSize)
+    private val userCache = LruCache<String, User>(cacheSize)
 
     suspend fun insert(users: List<User>) {
         if (users.isEmpty()) return
@@ -47,7 +47,11 @@ internal class UserRepository(
     suspend fun select(userIds: List<String>): List<User> {
         val cacheUsers: List<User> = userIds.mapNotNull(userCache::get)
         val missingUserIds = userIds.filter { userCache.get(it) == null }
-        val dbUsers = userDao.select(missingUserIds).map(::toModel).also(::cacheUsers)
+        val dbUsers = if (missingUserIds.isNotEmpty()) {
+            userDao.select(missingUserIds).map(::toModel).also(::cacheUsers)
+        } else {
+            emptyList()
+        }
         return dbUsers + cacheUsers
     }
 

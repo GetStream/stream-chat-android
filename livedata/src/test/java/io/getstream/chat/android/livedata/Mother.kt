@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.entity.UserEntity
 import java.io.File
 import java.util.Date
 import kotlin.random.Random
@@ -92,6 +93,19 @@ fun randomUser(
     channelMutes,
     extraData
 )
+
+internal fun randomUserEntity(
+    id: String = randomString(),
+    originalId: String = randomString(),
+    role: String = randomString(),
+    createdAt: Date? = null,
+    updatedAt: Date? = null,
+    lastActive: Date? = null,
+    invisible: Boolean = randomBoolean(),
+    banned: Boolean = false,
+    mutes: List<String> = emptyList(),
+    extraData: Map<String, Any> = emptyMap()
+): UserEntity = UserEntity(id, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 fun randomMessage(
     id: String = randomString(),
