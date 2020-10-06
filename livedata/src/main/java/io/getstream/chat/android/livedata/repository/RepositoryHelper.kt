@@ -8,12 +8,12 @@ import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 
-class RepositoryHelper(
+internal class RepositoryHelper(
     client: ChatClient,
     currentUser: User,
     database: ChatDatabase
 ) {
-    val users = UserRepository(database.userDao(), 100, currentUser)
+    val users = UserRepository(database.userDao(), currentUser, 100)
     val configs = ChannelConfigRepository(database.channelConfigDao())
     val channels = ChannelRepository(database.channelStateDao(), 100, currentUser, client)
     val queryChannels = QueryChannelsRepository(database.queryChannelsQDao())

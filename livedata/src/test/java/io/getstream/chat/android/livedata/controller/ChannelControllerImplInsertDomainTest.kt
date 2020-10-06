@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 import java.lang.Thread.sleep
 
 @RunWith(AndroidJUnit4::class)
-class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
+internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionStorage() = runBlocking(Dispatchers.IO) {

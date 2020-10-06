@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SyncStateRepositoryTest : BaseDomainTest() {
+internal class SyncStateRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.syncState }
 
     @Test

@@ -29,7 +29,7 @@ import java.io.File
 import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
-class SendMessageWithFilesTest : BaseConnectedMockedTest() {
+internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
     val sendMessageWithFile: SendMessage by lazy { chatDomain.useCases.sendMessage }
 

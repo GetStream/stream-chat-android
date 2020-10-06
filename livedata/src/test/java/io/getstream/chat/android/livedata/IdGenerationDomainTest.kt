@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IdGenerationDomainTest : BaseDomainTest() {
+internal class IdGenerationDomainTest : BaseDomainTest() {
 
     @Test
     fun messageIdGeneration() {

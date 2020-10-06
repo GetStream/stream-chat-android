@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class GetTotalUnreadCountImplTest : BaseConnectedIntegrationTest() {
+internal class GetTotalUnreadCountImplTest : BaseConnectedIntegrationTest() {
 
     @Ignore("Failing for unknown reasons")
     @Test

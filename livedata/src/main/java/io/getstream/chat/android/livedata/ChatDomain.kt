@@ -101,7 +101,7 @@ interface ChatDomain {
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
-        fun database(db: ChatDatabase): Builder {
+        internal fun database(db: ChatDatabase): Builder {
             this.database = db
             return this
         }

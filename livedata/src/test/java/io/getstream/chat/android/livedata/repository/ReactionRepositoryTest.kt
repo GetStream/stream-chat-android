@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ReactionRepositoryTest : BaseDomainTest() {
+internal class ReactionRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.reactions }
 
     @Test

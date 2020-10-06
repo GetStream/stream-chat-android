@@ -17,7 +17,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 
-open class BaseConnectedIntegrationTest : BaseDomainTest() {
+internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
     companion object {
 
         var data = TestDataHelper()

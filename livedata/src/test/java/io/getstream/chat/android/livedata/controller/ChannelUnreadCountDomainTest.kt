@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
-class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {
+internal class ChannelUnreadCountDomainTest : BaseDisconnectedIntegrationTest() {
 
     @Test
     fun testUnreadCount() {
