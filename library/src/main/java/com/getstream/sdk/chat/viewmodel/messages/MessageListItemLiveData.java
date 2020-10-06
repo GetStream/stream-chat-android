@@ -80,29 +80,31 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         // set the new read state
         // this wil become slow with many users and many messages
-        for (ChannelUserRead userRead : reads.getValue()) {
-            // we don't show read state for the current user
-            if (userRead.getUser().getId().equals(currentUser.getId())) {
-                continue;
-            }
-            // skip things that aren't messages
-            final List<MessageListItem> filteredItems =
-                    filter(merged, listItem -> listItem instanceof MessageListItem.MessageItem);
-
-            final List<MessageListItem.MessageItem> messageItems =
-                    map(filteredItems, item -> (MessageListItem.MessageItem) item);
-
-            for (int i = messageItems.size(); i-- > 0; ) {
-                final MessageListItem.MessageItem messageListItem = messageItems.get(i);
-                if (userRead.getUserId().equals(messageListItem.getMessage().getUser().getId())) {
-                    // last read message is added by this user, so break
-                    break;
+        if (reads != null && reads.getValue() != null) {
+            for (ChannelUserRead userRead : reads.getValue()) {
+                // we don't show read state for the current user
+                if (userRead.getUser().getId().equals(currentUser.getId())) {
+                    continue;
                 }
-                if (!userRead.getLastRead().before(messageListItem.getMessage().getCreatedAt())) {
-                    // set the read state on this entity
-                    messageListItem.getMessageReadBy().add(userRead);
-                    // we only show it for the last message, so break
-                    break;
+                // skip things that aren't messages
+                final List<MessageListItem> filteredItems =
+                        filter(merged, listItem -> listItem instanceof MessageListItem.MessageItem);
+
+                final List<MessageListItem.MessageItem> messageItems =
+                        map(filteredItems, item -> (MessageListItem.MessageItem) item);
+
+                for (int i = messageItems.size(); i-- > 0; ) {
+                    final MessageListItem.MessageItem messageListItem = messageItems.get(i);
+                    if (userRead.getUserId().equals(messageListItem.getMessage().getUser().getId())) {
+                        // last read message is added by this user, so break
+                        break;
+                    }
+                    if (!userRead.getLastRead().before(messageListItem.getMessage().getCreatedAt())) {
+                        // set the read state on this entity
+                        messageListItem.getMessageReadBy().add(userRead);
+                        // we only show it for the last message, so break
+                        break;
+                    }
                 }
             }
         }
