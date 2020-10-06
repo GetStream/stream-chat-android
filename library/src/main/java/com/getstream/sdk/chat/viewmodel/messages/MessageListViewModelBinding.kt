@@ -1,9 +1,12 @@
+@file:JvmName("MessageListViewModelBinding")
+
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.MessageListView
 
+@JvmName("bind")
 fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     view.init(channel, currentUser)
     view.setEndRegionReachedHandler { onEvent(MessageListViewModel.Event.EndRegionReached) }
