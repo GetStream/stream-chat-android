@@ -1,4 +1,7 @@
 # To be released:
+- For Java clients, the `bindView` methods used to bind a ViewModel and its UI component together are now available with friendlier syntax.
+    - Calls such as `MessageListViewModelBindingKt.bindView(...);` should be replaced with calls like `MessageListViewModelBinding.bind(...);`
+    - The `ChannelListViewModelBindingKt` class has been renamed to `ChannelsViewModelBinding`, to match the name of the ViewModel it's associated with.
 
 # Oct 2nd, 2020 - 4.3.0-beta-3
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
@@ -7,6 +10,9 @@
 - Skip setting user's read status if last read message is his own
 - Make MessageListItem properties abstract
 - Change default query sort to "last_updated"
+- Fixed attachments logic. Save previously attached files when add more.
+- Fixed the bug when it was unable to select new files when you have already attached something.
+- Moved `MessageInputView` class to a new package.
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.2
 
 # Sep 30th, 2020 - 4.3.0-beta-2

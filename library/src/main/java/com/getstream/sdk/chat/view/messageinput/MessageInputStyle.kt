@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view
+package com.getstream.sdk.chat.view.messageinput
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,6 +13,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.graphics.drawable.DrawableCompat
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
+import com.getstream.sdk.chat.view.BaseStyle
 
 /**
  * Style for MessageInputStyle customization by xml attributes
