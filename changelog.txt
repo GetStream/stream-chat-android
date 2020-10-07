@@ -1,4 +1,5 @@
 # To be released:
+- Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 
 # 1.16.2 - Wed 30 Sep 2020
 - Add `ChatClient::enableSlowMode` method to enable slow mode
