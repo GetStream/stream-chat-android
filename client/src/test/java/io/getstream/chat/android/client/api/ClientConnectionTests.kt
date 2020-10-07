@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -68,6 +69,7 @@ internal class ClientConnectionTests {
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initConnectionListener: InitConnectionListener
     private lateinit var socketListener: SocketListener
+    private lateinit var attachmentHelper: AttachmentHelper
 
     @Before
     fun before() {
@@ -77,6 +79,7 @@ internal class ClientConnectionTests {
         logger = mock(ChatLogger::class.java)
         notificationsManager = mock(ChatNotifications::class.java)
         initConnectionListener = mock(InitConnectionListener::class.java)
+        attachmentHelper = mock(AttachmentHelper::class.java)
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,
@@ -94,7 +97,8 @@ internal class ClientConnectionTests {
             config,
             api,
             socket,
-            notificationsManager
+            notificationsManager,
+            attachmentHelper
         )
     }
 

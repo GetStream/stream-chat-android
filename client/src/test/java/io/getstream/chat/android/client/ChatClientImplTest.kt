@@ -57,7 +57,8 @@ internal class ChatClientImplTest {
             config = config,
             api = mock(),
             socket = socket,
-            notifications = mock()
+            notifications = mock(),
+            attachmentHelper = mock()
         )
         result = mutableListOf()
     }

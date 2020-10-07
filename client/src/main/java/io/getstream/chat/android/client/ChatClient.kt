@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import com.facebook.stetho.Stetho
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -12,9 +13,11 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -305,6 +308,8 @@ interface ChatClient {
 
     fun getVersion(): String
 
+    fun hasValidUrl(attachment: Attachment): Boolean
+
     class Builder {
         private val apiKey: String
         private val appContext: Context
@@ -394,6 +399,10 @@ interface ChatClient {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
+            if (BuildConfig.DEBUG) {
+                Stetho.initializeWithDefaults(appContext)
+            }
+
             val config = ChatClientConfig(
                 apiKey,
                 "https://$baseUrl/",
@@ -412,7 +421,8 @@ interface ChatClient {
                 config,
                 modules.api(),
                 modules.socket(),
-                modules.notifications()
+                modules.notifications(),
+                AttachmentHelper()
             )
             instance = result
 

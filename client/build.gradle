@@ -72,6 +72,8 @@ dependencies {
 
     implementation 'com.github.mrmike:ok2curl:0.6.0'
 
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
@@ -93,6 +95,7 @@ dependencies {
         exclude group: "org.hamcrest", module: "hamcrest"
     }
     testImplementation "org.amshove.kluent:kluent:1.61"
+    testImplementation "com.flextrade.jfixture:kfixture:0.2.0"
 
     androidTestImplementation 'junit:junit:4.13'
     androidTestImplementation 'org.assertj:assertj-core:3.15.0'

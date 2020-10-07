@@ -1,12 +1,14 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -16,7 +18,6 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
-import org.mockito.Mockito.mock
 import java.util.Date
 
 /**
@@ -46,11 +47,12 @@ class MockClientBuilder {
     internal lateinit var retrofitApi: RetrofitApi
     private lateinit var api: ChatApi
     private lateinit var notificationsManager: ChatNotifications
+    private lateinit var attachmentHelper: AttachmentHelper
     private lateinit var client: ChatClient
 
     fun build(): ChatClient {
 
-        val context = mock(Context::class.java)
+        val context = mock<Context>()
 
         val config = ChatClientConfig(
             apiKey,
@@ -65,9 +67,10 @@ class MockClientBuilder {
         )
 
         socket = FakeChatSocket()
-        retrofitApi = mock(RetrofitApi::class.java)
-        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
-        notificationsManager = mock(ChatNotifications::class.java)
+        retrofitApi = mock()
+        retrofitCdnApi = mock()
+        notificationsManager = mock()
+        attachmentHelper = mock()
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,
@@ -76,7 +79,7 @@ class MockClientBuilder {
             UuidGeneratorImpl()
         )
 
-        client = ChatClientImpl(config, api, socket, notificationsManager)
+        client = ChatClientImpl(config, api, socket, notificationsManager, attachmentHelper)
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)
