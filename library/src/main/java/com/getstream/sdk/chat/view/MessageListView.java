@@ -2,17 +2,25 @@ package com.getstream.sdk.chat.view;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.getstream.sdk.chat.Chat;
 import com.getstream.sdk.chat.DefaultBubbleHelper;
+import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
 import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
@@ -49,10 +57,21 @@ import kotlin.jvm.functions.Function2;
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView extends RecyclerView {
+public class MessageListView extends ConstraintLayout {
     //    private int firstVisible;
     private static int fVPosition, lVPosition;
     protected MessageListViewStyle style;
+
+    private RecyclerView messagesRV;
+    private ConstraintLayout unseenBottomBtn;
+    private TextView newMessagesTextTV;
+    private int lastViewedPosition = 0;
+    private String newMessagesTextSingle;
+    private String newMessagesTextPlural;
+    private NewMessagesBehaviour newMessagesBehaviour;
+    private ScrollButtonBehaviour scrollButtonBehaviour;
+
+    private int unseenItems = 0;
 
     @Nullable
     private MessageListItemAdapter adapter = null;
@@ -163,46 +182,113 @@ public class MessageListView extends RecyclerView {
     // region Constructor
     public MessageListView(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.parseAttr(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
     public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.parseAttr(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(Context context) {
-        layoutManager = new LinearLayoutManager(context);
-        layoutManager.setStackFromEnd(true);
+    private void init(Context context, @Nullable AttributeSet attr) {
+        LayoutInflater.from(context).inflate(R.layout.stream_message_list_view, this, true);
 
-        this.setLayoutManager(layoutManager);
+        initRecyclerView();
+        initUnseenMessagesButton();
+        initUnseenMessagesView();
+
+        if (attr != null) {
+            configureAttributes(attr);
+        }
+
+        initScrollButtonBehaviour();
+
         hasScrolledUp = false;
-        setHasFixedSize(true);
-        setItemViewCacheSize(20);
     }
 
     // region Init
+    private void initScrollButtonBehaviour() {
+        scrollButtonBehaviour =
+                new DefaultScrollButtonBehaviour(
+                        unseenBottomBtn,
+                        newMessagesTextTV,
+                        newMessagesTextSingle,
+                        newMessagesTextPlural
+                );
+    }
+
+    private void initRecyclerView() {
+        messagesRV = findViewById(R.id.chatMessagesRV);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setStackFromEnd(true);
+
+        messagesRV.setLayoutManager(layoutManager);
+        messagesRV.setHasFixedSize(true);
+        messagesRV.setItemViewCacheSize(20);
+    }
+
+    private void initUnseenMessagesButton() {
+        unseenBottomBtn = findViewById(R.id.scrollBottomBtn);
+        unseenBottomBtn.setOnClickListener(view ->
+                messagesRV.smoothScrollToPosition(lastPosition())
+        );
+    }
+
+    private void initUnseenMessagesView() {
+        newMessagesTextTV = findViewById(R.id.newMessagesTV);
+        newMessagesTextTV.setVisibility(View.GONE);
+    }
+
     private void parseAttr(Context context, @Nullable AttributeSet attrs) {
         // parse the attributes
         style = new MessageListViewStyle(context, attrs);
     }
 
-    // set the adapter and apply the style.
-    @Override
-    @Deprecated
-    public final void setAdapter(Adapter adapter) {
-        throw new IllegalArgumentException("Use setMessageListItemAdapter instead please");
+    //private methods
+    private void configureAttributes(AttributeSet attributeSet) {
+        TypedArray tArray = getContext()
+                .obtainStyledAttributes(attributeSet, R.styleable.MessageListView);
+
+        int backgroundRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonBackground,
+                R.drawable.stream_shape_round);
+
+        unseenBottomBtn.setBackgroundResource(backgroundRes);
+        newMessagesTextSingle =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
+        newMessagesTextPlural =
+                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
+
+        newMessagesBehaviour = NewMessagesBehaviour.parseValue(
+                tArray.getInt(
+                        R.styleable.MessageListView_streamNewMessagesBehaviour,
+                        NewMessagesBehaviour.COUNT_UPDATE.value)
+        );
+
+        int arrowIconRes = tArray.getResourceId(
+                R.styleable.MessageListView_streamButtonIcon,
+                R.drawable.stream_bottom_arrow);
+
+        ImageView scrollButtonArrow = findViewById(R.id.scrollIconIV);
+        scrollButtonArrow.setImageResource(arrowIconRes);
+
+        tArray.recycle();
+    }
+
+    private int lastPosition() {
+        return adapter.getItemCount() - 1;
     }
 
     private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
-        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        messagesRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (layoutManager != null) {
@@ -212,10 +298,20 @@ public class MessageListView extends RecyclerView {
                         endRegionReachedHandler.invoke();
                     }
 
-                    hasScrolledUp = currentLastVisible <= (adapter.getItemCount() - 3); //TODO: investigate magic number 3
+                    hasScrolledUp = currentLastVisible < lastPosition();
                     lVPosition = currentLastVisible;
                     fVPosition = currentFirstVisible;
-                    threadParentPosition = lVPosition;
+
+                    lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition);
+
+                    unseenItems = adapter.getItemCount() - 1 - lastViewedPosition;
+                    scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
+
+                    if (hasScrolledUp) {
+                        scrollButtonBehaviour.userScrolledUp();
+                    } else {
+                        scrollButtonBehaviour.userScrolledToTheBottom();
+                    }
                 }
             }
         });
@@ -232,7 +328,8 @@ public class MessageListView extends RecyclerView {
                 postDelayed(() -> lockScrollUp = false, 500);
             }
         });
-        super.setAdapter(adapter);
+
+        messagesRV.setAdapter(adapter);
     }
 
     public void init(Channel channel, User currentUser) {
@@ -268,6 +365,32 @@ public class MessageListView extends RecyclerView {
         adapter.setHasStableIds(true);
 
         this.setMessageListItemAdapter(adapter);
+    }
+
+    public void setScrollButtonBehaviour(ScrollButtonBehaviour scrollButtonBehaviour) {
+        this.scrollButtonBehaviour = scrollButtonBehaviour;
+    }
+
+    public void setNewMessagesBehaviour(NewMessagesBehaviour newMessagesBehaviour) {
+        this.newMessagesBehaviour = newMessagesBehaviour;
+    }
+
+    public void setScrollButtonBackgroundResource(@DrawableRes int backgroundRes) {
+        unseenBottomBtn.setBackgroundResource(backgroundRes);
+    }
+
+    public void setScrollButtonBackground(Drawable drawable) {
+        unseenBottomBtn.setBackground(drawable);
+    }
+
+    public void setScrollButtonIconResource(@DrawableRes int backgroundRes) {
+        ImageView icon = findViewById(R.id.scrollIconIV);
+        icon.setImageResource(backgroundRes);
+    }
+
+    public void setScrollButtonIcon(Drawable drawable) {
+        ImageView icon = findViewById(R.id.scrollIconIV);
+        icon.setImageDrawable(drawable);
     }
 
     public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
@@ -313,6 +436,7 @@ public class MessageListView extends RecyclerView {
         }
 
         int oldSize = adapter.getItemCount();
+
         adapter.replaceEntities(entities);
 
         // Scroll to origin position on return from thread
@@ -328,23 +452,7 @@ public class MessageListView extends RecyclerView {
             layoutManager.scrollToPosition(newPosition);
             return;
         }
-        // check lastmessage update
-        if (!entities.isEmpty()) {
-            final MessageListItem lastListItem = entities.get(entities.size() - 1);
-            if (lastListItem instanceof MessageListItem.MessageItem) {
-                final Message lastMessage = ((MessageListItem.MessageItem) lastListItem).getMessage();
-                // Checks if we should scroll to bottom because last message was updated.
-                // If it's a new message it will be marked as read in "else" branch, otherwise it
-                // should be already marked as read.
-                if (scrolledBottom() && justUpdated(lastMessage)) {
-                    int newPosition = adapter.getItemCount() - 1;
-                    logger.logI("just update last message");
 
-                    postDelayed(() -> layoutManager.scrollToPosition(newPosition), 200);
-
-                }
-            }
-        }
         int newSize = adapter.getItemCount();
         int sizeGrewBy = newSize - oldSize;
 
@@ -367,7 +475,7 @@ public class MessageListView extends RecyclerView {
             // to stay at the relative 0 we should go to 0 + size of new messages...
 
             int newPosition;// = oldPosition + sizeGrewBy;
-            newPosition = ((LinearLayoutManager) getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
+            newPosition = ((LinearLayoutManager) messagesRV.getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
             layoutManager.scrollToPosition(newPosition);
         } else {
             if (newSize == 0) return;
@@ -377,14 +485,15 @@ public class MessageListView extends RecyclerView {
             int newPosition = adapter.getItemCount() - 1;
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
+            // Scroll to bottom when the user wrote the message.
+            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
+                    !hasScrolledUp ||
+                    newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
 
-            if (hasScrolledUp) {
-                // always scroll to bottom when current user posts a message
-                if (entities.size() > 1 && entities.get(entities.size() - 1).isMine()) {
-                    layoutManager.scrollToPosition(newPosition);
-                }
+                layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
-                layoutManager.scrollToPosition(newPosition);
+                unseenItems = newSize - 1 - lastViewedPosition;
+                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
@@ -399,8 +508,7 @@ public class MessageListView extends RecyclerView {
     }
 
     private boolean scrolledBottom() {
-        int itemCount = adapter.getItemCount() - 2;
-        return lVPosition >= itemCount;
+        return lVPosition >= lastPosition();
     }
 
     private boolean justUpdated(Message message) {
@@ -557,5 +665,99 @@ public class MessageListView extends RecyclerView {
         Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
 
         Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+    }
+
+    public enum NewMessagesBehaviour {
+        SCROLL_TO_BOTTOM(0), COUNT_UPDATE(1);
+
+        private final int value;
+
+        NewMessagesBehaviour(int value) {
+            this.value = value;
+        }
+
+        public final int getValue() {
+            return value;
+        }
+
+        public static NewMessagesBehaviour parseValue(int value) {
+            if (value == SCROLL_TO_BOTTOM.getValue())
+                return SCROLL_TO_BOTTOM;
+            if (value == COUNT_UPDATE.getValue())
+                return COUNT_UPDATE;
+            throw new IllegalArgumentException(
+                    "Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)"
+            );
+        }
+    }
+
+    public interface ScrollButtonBehaviour {
+
+        void userScrolledUp();
+
+        void userScrolledToTheBottom();
+
+        void onUnreadMessageCountChanged(int count);
+
+    }
+
+    static class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
+
+        private ViewGroup unseenBottomBtn;
+        private TextView newMessagesTextTV;
+        private String newMessagesTextSingle;
+        private String newMessagesTextPlural;
+
+        public DefaultScrollButtonBehaviour(
+                ViewGroup unseenBottomBtn,
+                TextView newMessagesTextTV,
+                String newMessagesTextSingle,
+                String newMessagesTextPlural
+        ) {
+            this.unseenBottomBtn = unseenBottomBtn;
+            this.newMessagesTextTV = newMessagesTextTV;
+            this.newMessagesTextSingle = newMessagesTextSingle;
+            this.newMessagesTextPlural = newMessagesTextPlural;
+        }
+
+        @Override
+        public void userScrolledUp() {
+            if (!unseenBottomBtn.isShown()) {
+                unseenBottomBtn.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void userScrolledToTheBottom() {
+            if (unseenBottomBtn.isShown()) {
+                unseenBottomBtn.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void onUnreadMessageCountChanged(int count) {
+            if (count <= 0) {
+                newMessagesTextTV.setVisibility(View.GONE);
+            } else {
+                newMessagesTextTV.setVisibility(View.VISIBLE);
+                newMessagesTextTV.setText(parseNewMessagesText(count));
+            }
+        }
+
+        private String parseNewMessagesText(int unseenItems) {
+            if (unseenItems == 1) {
+                if (newMessagesTextSingle != null) {
+                    return String.format(newMessagesTextSingle, unseenItems);
+                } else {
+                    return String.valueOf(unseenItems);
+                }
+            } else {
+                if (newMessagesTextPlural != null) {
+                    return String.format(newMessagesTextPlural, unseenItems);
+                } else {
+                    return String.valueOf(unseenItems);
+                }
+            }
+        }
     }
 }
