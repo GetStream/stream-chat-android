@@ -1,4 +1,6 @@
 # To be released:
+
+# Oct 7th, 2020 - 0.8.4
 - Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
 
 # Oct 5th, 2020 - 0.8.3
