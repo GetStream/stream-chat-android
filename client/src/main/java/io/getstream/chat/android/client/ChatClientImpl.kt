@@ -19,9 +19,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.GuestUser
@@ -49,8 +47,7 @@ internal class ChatClientImpl(
     private val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications,
-    private val attachmentHelper: AttachmentHelper
+    private val notifications: ChatNotifications
 ) : ChatClient {
 
     private val state = ClientState()
@@ -609,10 +606,6 @@ internal class ChatClientImpl(
         lastSyncAt: Date
     ): Call<List<ChatEvent>> {
         return api.getSyncHistory(channelsIds, lastSyncAt)
-    }
-
-    override fun hasValidUrl(attachment: Attachment): Boolean {
-        return attachmentHelper.hasValidUrl(attachment)
     }
 
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {

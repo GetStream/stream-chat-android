@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.SystemTimeProvider
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.apache.commons.validator.routines.UrlValidator
 
 class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
@@ -13,7 +14,7 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
         return when {
             url == null -> false
             urlValidator.isValid(url).not() -> false
-            url.contains(KEY_WORD_EXPIRES) -> {
+            url.contains(QUERY_KEY_NAME_EXPIRES) -> {
                 parseTimeStampOrNull(url)?.let { timestamp -> timestamp > systemTimeProvider.provideTime() } ?: false
             }
             else -> true
@@ -21,11 +22,10 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
     }
 
     private fun parseTimeStampOrNull(url: String): Long? {
-        return url.substringAfter(KEY_WORD_EXPIRES).substringBefore(CHAR_AMPERSAND).toLongOrNull()
+        return url.toHttpUrlOrNull()?.queryParameter(QUERY_KEY_NAME_EXPIRES)?.toLongOrNull()
     }
 
     companion object {
-        private const val CHAR_AMPERSAND = "&"
-        private const val KEY_WORD_EXPIRES = "Expires="
+        private const val QUERY_KEY_NAME_EXPIRES = "Expires"
     }
 }

@@ -3,13 +3,13 @@ package io.getstream.chat.android.client.api
 import android.content.Context
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -37,7 +36,7 @@ internal class ClientConnectionTests {
     private val connectionId = "connection-id"
     private val user = User().apply { id = userId }
     private val token = "token"
-    private val context = mock(Context::class.java)
+    private val context = mock<Context>()
 
     private val config = ChatClientConfig(
         "api-key",
@@ -69,17 +68,15 @@ internal class ClientConnectionTests {
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var initConnectionListener: InitConnectionListener
     private lateinit var socketListener: SocketListener
-    private lateinit var attachmentHelper: AttachmentHelper
 
     @Before
     fun before() {
-        socket = mock(ChatSocket::class.java)
-        retrofitApi = mock(RetrofitApi::class.java)
-        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
-        logger = mock(ChatLogger::class.java)
-        notificationsManager = mock(ChatNotifications::class.java)
-        initConnectionListener = mock(InitConnectionListener::class.java)
-        attachmentHelper = mock(AttachmentHelper::class.java)
+        socket = mock()
+        retrofitApi = mock()
+        retrofitCdnApi = mock()
+        logger = mock()
+        notificationsManager = mock()
+        initConnectionListener = mock()
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,
@@ -97,8 +94,7 @@ internal class ClientConnectionTests {
             config,
             api,
             socket,
-            notificationsManager,
-            attachmentHelper
+            notificationsManager
         )
     }
 

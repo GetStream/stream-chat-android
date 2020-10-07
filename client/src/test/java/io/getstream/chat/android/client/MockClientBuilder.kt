@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.helpers.AttachmentHelper
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.EventType
@@ -47,7 +46,6 @@ class MockClientBuilder {
     internal lateinit var retrofitApi: RetrofitApi
     private lateinit var api: ChatApi
     private lateinit var notificationsManager: ChatNotifications
-    private lateinit var attachmentHelper: AttachmentHelper
     private lateinit var client: ChatClient
 
     fun build(): ChatClient {
@@ -70,7 +68,6 @@ class MockClientBuilder {
         retrofitApi = mock()
         retrofitCdnApi = mock()
         notificationsManager = mock()
-        attachmentHelper = mock()
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,
@@ -79,7 +76,7 @@ class MockClientBuilder {
             UuidGeneratorImpl()
         )
 
-        client = ChatClientImpl(config, api, socket, notificationsManager, attachmentHelper)
+        client = ChatClientImpl(config, api, socket, notificationsManager)
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)
