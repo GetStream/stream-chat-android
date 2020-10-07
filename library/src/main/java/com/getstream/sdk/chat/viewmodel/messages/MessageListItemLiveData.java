@@ -5,14 +5,17 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
+
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
@@ -62,7 +65,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         isLoadingMore = loading;
     }
 
-    private synchronized void broadcastValue() {
+    private synchronized void broadcastValue(final boolean hasNewMessages) {
         List<MessageListItem> merged = new ArrayList<>();
 
         for (MessageListItem i : messageEntities) {
@@ -133,9 +136,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
-    private Observer<List<Message>> messagesObserver = this::onMessagesChanged;
-    private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
-
     private boolean isThread() {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
@@ -152,30 +152,26 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
     }
 
-    private Observer<List<ChannelUserRead>> readsObserver() {
-        return channelUserReads -> {
-            hasNewMessages = false;
-            logger.logI("broadcast because reads changed");
-            broadcastValue();
-        };
+    private void onReadsChanged(List<ChannelUserRead> channelUserRead) {
+        hasNewMessages = false;
+        logger.logI("broadcast because reads changed");
+        broadcastValue(false);
     }
 
-    private Observer<List<User>> userObserver() {
-        return users -> {
-            if (isThread()) return;
-            // update
-            hasNewMessages = false;
-            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
+    private void onUsersChanged(List<User> users) {
+        if (isThread()) return;
+        // update
+        hasNewMessages = false;
+        List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
 
-            if (users.size() > 0) {
-                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
-                typingEntities.add(messageListItem);
-            }
-            
-            this.typingEntities = typingEntities;
-            logger.logI("broadcast because typing changed");
-            broadcastValue();
-        };
+        if (users.size() > 0) {
+            MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
+            typingEntities.add(messageListItem);
+        }
+
+        this.typingEntities = typingEntities;
+        logger.logI("broadcast because typing changed");
+        broadcastValue(false);
     }
 
     @Override
@@ -184,20 +180,20 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         super.observe(owner, observer);
         this.lifecycleOwner = owner;
 
-        this.reads.observe(owner, readsObserver());
-        this.messages.observe(owner, messagesObserver);
-        this.threadMessages.observe(owner, threadMessagesObserver);
-        this.typing.observe(owner, userObserver());
+        this.reads.observe(owner, this::onReadsChanged);
+        this.messages.observe(owner, this::onMessagesChanged);
+        this.threadMessages.observe(owner, this::onThreadMessagesChanged);
+        this.typing.observe(owner, this::onUsersChanged);
     }
 
     @Override
     public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observeForever(observer);
 
-        this.reads.observeForever(readsObserver());
-        this.messages.observeForever(messagesObserver);
-        this.threadMessages.observeForever(threadMessagesObserver);
-        this.typing.observeForever(userObserver());
+        this.reads.observeForever(this::onReadsChanged);
+        this.messages.observeForever(this::onMessagesChanged);
+        this.threadMessages.observeForever(this::onThreadMessagesChanged);
+        this.typing.observeForever(this::onUsersChanged);
     }
 
     private void progressMessages(List<Message> messages) {
@@ -264,7 +260,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
         logger.logI("broadcast because messages changed");
-        broadcastValue();
+        broadcastValue(hasNewMessages);
     }
 
     public Boolean getHasNewMessages() {
@@ -273,14 +269,14 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {
         // remove the old observer
-        this.threadMessages.removeObserver(threadMessagesObserver);
+        this.threadMessages.removeObserver(this::onThreadMessagesChanged);
 
         // setup the new observer
         this.threadMessages = threadMessages;
         if (lifecycleOwner == null) {
-            threadMessages.observeForever(threadMessagesObserver);
+            threadMessages.observeForever(this::onThreadMessagesChanged);
         } else {
-            threadMessages.observe(lifecycleOwner, threadMessagesObserver);
+            threadMessages.observe(lifecycleOwner, this::onThreadMessagesChanged);
         }
 
         // trigger an update
