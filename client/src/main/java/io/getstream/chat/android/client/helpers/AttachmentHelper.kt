@@ -9,13 +9,15 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
     private val urlValidator = UrlValidator()
 
     fun hasValidUrl(attachment: Attachment): Boolean {
-        val url = attachment.url ?: return false
-        if (urlValidator.isValid(url).not()) return false
-        if (url.contains(KEY_WORD_EXPIRES))  {
-            val expirationTimestamp = parseTimeStampOrNull(url) ?: return false
-            return expirationTimestamp > systemTimeProvider.provideTime()
+        val url = attachment.url
+        return when {
+            url == null -> false
+            urlValidator.isValid(url).not() -> false
+            url.contains(KEY_WORD_EXPIRES) -> {
+                parseTimeStampOrNull(url)?.let { timestamp -> timestamp > systemTimeProvider.provideTime() } ?: false
+            }
+            else -> true
         }
-        return true
     }
 
     private fun parseTimeStampOrNull(url: String): Long? {
