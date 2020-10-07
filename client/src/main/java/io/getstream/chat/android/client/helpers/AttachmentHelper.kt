@@ -1,9 +1,10 @@
 package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.utils.SystemTimeProvider
 import org.apache.commons.validator.routines.UrlValidator
 
-class AttachmentHelper {
+class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
 
     private val urlValidator = UrlValidator()
 
