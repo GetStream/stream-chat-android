@@ -11,9 +11,10 @@ class TextStyle {
         const val UNSET_SIZE = -1
         const val UNSET_COLOR = -1
         const val UNSET_HINT_COLOR = -1
+        const val UNSET_FONT_RESOURCE = -1
     }
 
-    var fontResource: Int = -1
+    var fontResource: Int = UNSET_FONT_RESOURCE
     var fontAssetsPath: String? = null
     var style: Int = -1
     var size: Int = UNSET_SIZE
@@ -42,7 +43,7 @@ class TextStyle {
     }
 
     fun hasFont(): Boolean {
-        return fontAssetsPath != null || fontResource != -1
+        return fontAssetsPath != null || fontResource != UNSET_FONT_RESOURCE
     }
 
     class Builder(private val array: TypedArray) {
