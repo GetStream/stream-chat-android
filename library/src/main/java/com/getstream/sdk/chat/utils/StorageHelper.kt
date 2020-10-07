@@ -5,7 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
-import android.webkit.MimeTypeMap
+import android.provider.OpenableColumns
 import androidx.core.database.getLongOrNull
 import androidx.documentfile.provider.DocumentFile
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -89,6 +89,28 @@ internal class StorageHelper {
         return emptyList()
     }
 
+    internal fun getAttachmentsFromUriList(
+        context: Context,
+        uriList: List<Uri>
+    ): List<AttachmentMetaData> {
+        val attachments = mutableListOf<AttachmentMetaData>()
+        uriList.forEach { uri ->
+            context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                cursor.moveToFirst()
+                attachments += AttachmentMetaData(
+                    uri = uri,
+                    type = ModelType.attach_file,
+                    mimeType = context.contentResolver.getType(uri),
+                    title = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                ).apply {
+                    this.size = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE))
+                }
+            }
+        }
+
+        return attachments
+    }
+
     internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
         if (treeUri == null) {
             throw IllegalStateException("Cannot get file attachments because treeUri doesn't exist")
@@ -144,8 +166,7 @@ internal class StorageHelper {
                     getString(getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME))
                 val videoLength =
                     getLongOrNull(getColumnIndex(MediaStore.Files.FileColumns.DURATION)) ?: 0
-                val mimeType = MimeTypeMap.getSingleton()
-                    .getMimeTypeFromExtension(context.contentResolver.getType(uri)) ?: ""
+                val mimeType = context.contentResolver.getType(uri)
 
                 attachments += AttachmentMetaData(uri = uri, mimeType = mimeType).apply {
                     this.type = mediaType.modelType

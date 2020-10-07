@@ -65,18 +65,17 @@ internal class AttachmentsController(
                     isMedia
                 )
             }
-            selectedAttachments = filterMediaFiles(isMedia, selectedAttachments)
             setSelectedAttachmentAdapter(messageInputType, isMedia)
             view.showLoadingTotalAttachments(false)
         }
     }
 
-    private fun filterMediaFiles(isMedia: Boolean, filesToFilter: Set<AttachmentMetaData>): Set<AttachmentMetaData> {
-        return if (!isMedia) {
-            filesToFilter
-        } else {
-            filesToFilter.filter(mediaAttachmentsPredicate).toSet()
-        }
+    private fun filterMediaFiles(
+        isMedia: Boolean,
+        filesToFilter: Set<AttachmentMetaData>
+    ): Set<AttachmentMetaData> {
+        return filesToFilter.filter(if (isMedia) mediaAttachmentsPredicate else fileAttachmentsPredicate)
+            .toSet()
     }
 
     private suspend fun getAttachmentsFromLocal(
@@ -201,10 +200,11 @@ internal class AttachmentsController(
         }
     }
 
-    private fun setSelectedAttachmentAdapter(
+    internal fun setSelectedAttachmentAdapter(
         messageInputType: MessageInputType?,
         isMedia: Boolean
     ) {
+        selectedAttachments = filterMediaFiles(isMedia, selectedAttachments)
         if (isMedia) {
             selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
             selectedMediaAttachmentAdapter.cancelListener =
@@ -265,17 +265,14 @@ internal class AttachmentsController(
             permissionChecker.isGrantedCameraPermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(false)
-                view.showFilePermissions(true)
             }
             permissionChecker.isGrantedStoragePermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(true)
-                view.showFilePermissions(true)
             }
             else -> {
                 view.showMediaPermissions(true)
                 view.showCameraPermissions(true)
-                view.showFilePermissions(true)
             }
         }
     }
@@ -296,6 +293,9 @@ internal class AttachmentsController(
 
     companion object {
         private val listOfMediaTypes = listOf(ModelType.attach_image, ModelType.attach_video)
-        private val mediaAttachmentsPredicate: (AttachmentMetaData) -> Boolean = { it.type in listOfMediaTypes }
+        private val mediaAttachmentsPredicate: (AttachmentMetaData) -> Boolean =
+            { it.type in listOfMediaTypes }
+        private val fileAttachmentsPredicate: (AttachmentMetaData) -> Boolean =
+            { it.type == ModelType.attach_file }
     }
 }

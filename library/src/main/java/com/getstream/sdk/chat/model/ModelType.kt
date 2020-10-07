@@ -34,6 +34,7 @@ object ModelType {
     const val attach_mime_doc = "application/msword"
     const val attach_mime_docx =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
     // const val attach_mine_xls = "application/vnd.ms-excel"
     const val attach_mime_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     const val attach_mime_csv = "application/vnd.ms-excel"
@@ -48,4 +49,18 @@ object ModelType {
     const val action_send = "send"
     const val action_shuffle = "shuffle"
     const val action_cancel = "cancel"
+
+    val supportedMimeTypes = listOf(
+        attach_mime_pdf,
+        attach_mime_ppt,
+        attach_mime_csv,
+        attach_mime_xlsx,
+        attach_mime_doc,
+        attach_mime_docx,
+        attach_mime_txt,
+        attach_mime_zip,
+        attach_mime_tar,
+        attach_mime_mov,
+        attach_mime_mp3
+    )
 }
