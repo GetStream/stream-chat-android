@@ -1,4 +1,6 @@
 # To be released:
+
+# Oct 7th, 2020 - 4.3.0-beta-4
 - For Java clients, the `bindView` methods used to bind a ViewModel and its UI component together are now available with friendlier syntax.
 - Calls such as `MessageListViewModelBindingKt.bindView(...);` should be replaced with calls like `MessageListViewModelBinding.bind(...);`
 - The `ChannelListViewModelBindingKt` class has been renamed to `ChannelsViewModelBinding`, to match the name of the ViewModel it's associated with.
