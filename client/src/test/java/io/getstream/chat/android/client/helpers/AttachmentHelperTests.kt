@@ -72,6 +72,18 @@ internal class AttachmentHelperTests {
         result shouldBeEqualTo true
     }
 
+    @Test
+    fun `When has valid url if attachment url is valid with Expires and timestamp is less than current time Should return false`() {
+        val currentTime = 1000L
+        val timeStamp = currentTime - 100L
+        When calling timeProvider.provideTime() doReturn currentTime
+        val attachment = Mother.randomAttachment {  url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
+
+        val result = sut.hasValidUrl(attachment)
+
+        result shouldBeEqualTo false
+    }
+
     companion object {
         @JvmStatic
         fun nonValidUrls() = listOf(

@@ -12,7 +12,8 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
         val url = attachment.url ?: return false
         if (urlValidator.isValid(url).not()) return false
         if (url.contains(KEY_WORD_EXPIRES))  {
-            if (parseTimeStampOrNull(url) == null) return false
+            val expirationTimestamp = parseTimeStampOrNull(url) ?: return false
+            return expirationTimestamp > systemTimeProvider.provideTime()
         }
         return true
     }
