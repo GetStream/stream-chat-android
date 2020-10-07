@@ -72,6 +72,8 @@ dependencies {
 
     implementation 'com.github.mrmike:ok2curl:0.6.0'
 
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import com.facebook.stetho.Stetho
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -392,6 +393,10 @@ interface ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
+            }
+
+            if (BuildConfig.DEBUG) {
+                Stetho.initializeWithDefaults(appContext)
             }
 
             val config = ChatClientConfig(

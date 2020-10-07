@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client
 
+import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Loggable
 import io.getstream.chat.android.client.api.ChatApi
@@ -95,6 +96,10 @@ internal open class ChatModules(val config: ChatClientConfig) {
                     }
                 )
             )
+
+        if (BuildConfig.DEBUG) {
+            clientBuilder.addNetworkInterceptor(StethoInterceptor())
+        }
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
