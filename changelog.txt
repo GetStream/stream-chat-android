@@ -1,10 +1,11 @@
 # To be released:
 
+- Add AttachmentsHelper with hasValidUrl method
+
 # 1.16.5 - Wed 7th of Oct 2020
 - Add autocomplete filter
 - Add @JvmOverloads to QueryUsersRequest constructor
 - Improve java interop of `TokenManager`
-- Add the hasValidUrl method to ChatClient
 
 # 1.16.4 - Mon 5th of Oct 2020
 
