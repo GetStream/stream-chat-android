@@ -515,7 +515,7 @@ class ChannelControllerImpl(
         if (pathResult.isError) {
             uploadError = pathResult.error()
 
-            newAttachment = attachment.copy(uploadState = Attachment.Companion.UploadState.Failed(uploadError))
+            newAttachment = attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
         } else {
             val uploadPath = pathResult.data()
             newAttachment = attachment.copy(
@@ -523,7 +523,7 @@ class ChannelControllerImpl(
                 fileSize = file.length().toInt(),
                 mimeType = mimeType?.toString() ?: "",
                 url = uploadPath,
-                uploadState = Attachment.Companion.UploadState.Success,
+                uploadState = Attachment.UploadState.Success,
                 type = attachmentType
             ).apply {
                 if (attachmentType == "image") {

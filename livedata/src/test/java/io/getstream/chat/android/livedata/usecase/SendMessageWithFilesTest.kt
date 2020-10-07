@@ -94,7 +94,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
             for (attachment in attachments) {
                 val url = attachment.upload!!.absolutePath
-                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, uploadState = Attachment.Companion.UploadState.Success)
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, uploadState = Attachment.UploadState.Success)
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment)
                 assertSuccess(result)
                 Truth.assertThat(result.data()).isEqualTo(expectedAttachment)
@@ -113,7 +113,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
             for (attachment in attachments) {
                 val url = attachment.upload!!.absolutePath
-                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, extraData = extra, uploadState = Attachment.Companion.UploadState.Success)
+                val expectedAttachment = attachment.copy(assetUrl = url, url = url, type = "file", mimeType = "", name = attachment.upload!!.name, extraData = extra, uploadState = Attachment.UploadState.Success)
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment) {
                     attachment, _ ->
                     attachment.copy(extraData = extra)
@@ -140,7 +140,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                     attachment.copy(extraData = extra)
                 }
                 assertFailure(result)
-                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.Companion.UploadState.Failed::class.java)
+                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.UploadState.Failed::class.java)
                 Truth.assertThat(result.data().extraData).isEqualTo(extra)
             }
         }
@@ -158,7 +158,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
                 val error = attachment.upload!!.toChatError()
                 val result = channelControllerImpl.uploadAttachment(attachment = attachment)
                 assertFailure(result)
-                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.Companion.UploadState.Failed::class.java)
+                Truth.assertThat(result.data().uploadState).isInstanceOf(Attachment.UploadState.Failed::class.java)
             }
         }
     }
@@ -171,7 +171,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             message.cid = channelControllerImpl.cid
             message.attachments = randomAttachmentsWithFile().toMutableList()
 
-            val expectedAttachments = message.attachments.map { it.copy(uploadState = Attachment.Companion.UploadState.Failed(it.upload!!.toChatError())) }
+            val expectedAttachments = message.attachments.map { it.copy(uploadState = Attachment.UploadState.Failed(it.upload!!.toChatError())) }
 
             val expectedResult = Result(
                 message.copy(attachments = expectedAttachments.toMutableList())
