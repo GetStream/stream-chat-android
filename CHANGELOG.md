@@ -1,7 +1,7 @@
 # To be released:
+- Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
 
 # Oct 5th, 2020 - 0.8.3
-
 - Improved message attachment handling. Message is now first added to local storage and the attachment is uploaded afterwards.
 - Editing messages now works while offline
 - Deprecate SendMessageWithAttachments in favor of SendMessage while specifying attachment.upload
@@ -19,7 +19,6 @@
 - Replace posting an empty channels map when the channels query wasn't run online and offline storage is empty with error
 
 # Sep 23rd, 2020 - 0.8.0
-
 - Update client to 1.16.0: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.0
 
 # Sep 23rd, 2020 - 0.7.7
