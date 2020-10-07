@@ -50,7 +50,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
-        this.messageEntities = new ArrayList<MessageListItem>();
+        this.messageEntities = new ArrayList<>();
         this.typingEntities = new ArrayList<>();
         this.isLoadingMore = false;
         // scroll behaviour is only triggered for new messages
@@ -152,63 +152,52 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
     }
 
+    private Observer<List<ChannelUserRead>> readsObserver() {
+        return channelUserReads -> {
+            hasNewMessages = false;
+            logger.logI("broadcast because reads changed");
+            broadcastValue();
+        };
+    }
+
+    private Observer<List<User>> userObserver() {
+        return users -> {
+            if (isThread()) return;
+            // update
+            hasNewMessages = false;
+            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
+
+            if (users.size() > 0) {
+                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
+                typingEntities.add(messageListItem);
+            }
+            
+            this.typingEntities = typingEntities;
+            logger.logI("broadcast because typing changed");
+            broadcastValue();
+        };
+    }
+
     @Override
     public void observe(@NonNull LifecycleOwner owner,
                         @NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observe(owner, observer);
         this.lifecycleOwner = owner;
 
-        this.reads.observe(owner, reads -> {
-            hasNewMessages = false;
-            logger.logI("broadcast because reads changed");
-            broadcastValue();
-        });
-
-        messages.observe(owner, messagesObserver);
-
-        threadMessages.observe(owner, threadMessagesObserver);
-
-        this.typing.observe(owner, users -> {
-            if (isThread()) return;
-            // update
-            hasNewMessages = false;
-            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
-            if (users.size() > 0) {
-                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
-                typingEntities.add(messageListItem);
-            }
-            this.typingEntities = typingEntities;
-            logger.logI("broadcast because typing changed");
-            broadcastValue();
-        });
+        this.reads.observe(owner, readsObserver());
+        this.messages.observe(owner, messagesObserver);
+        this.threadMessages.observe(owner, threadMessagesObserver);
+        this.typing.observe(owner, userObserver());
     }
 
     @Override
     public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
         super.observeForever(observer);
-        this.reads.observeForever(reads -> {
-            hasNewMessages = false;
-            logger.logI("broadcast because reads changed");
-            broadcastValue();
-        });
 
-        messages.observeForever(messagesObserver);
-
-        threadMessages.observeForever(threadMessagesObserver);
-
-        this.typing.observeForever(users -> {
-            if (isThread()) return;
-            // update
-            hasNewMessages = false;
-            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
-            if (users.size() > 0) {
-                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
-                typingEntities.add(messageListItem);
-            }
-            this.typingEntities = typingEntities;
-            logger.logI("broadcast because typing changed");
-            broadcastValue();
-        });
+        this.reads.observeForever(readsObserver());
+        this.messages.observeForever(messagesObserver);
+        this.threadMessages.observeForever(threadMessagesObserver);
+        this.typing.observeForever(userObserver());
     }
 
     private void progressMessages(List<Message> messages) {
