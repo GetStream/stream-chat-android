@@ -1,3 +1,5 @@
+@file:JvmName("ChannelHeaderViewModelBinding")
+
 package com.getstream.sdk.chat.viewmodel
 
 import android.content.Context
@@ -10,6 +12,7 @@ import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 import java.util.isInLastMinute
 
+@JvmName("bind")
 fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
     members.observe(
         lifecycleOwner,

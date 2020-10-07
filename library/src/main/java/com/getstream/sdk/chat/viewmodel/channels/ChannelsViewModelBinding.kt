@@ -1,9 +1,12 @@
+@file:JvmName("ChannelsViewModelBinding")
+
 package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
+@JvmName("bind")
 fun ChannelsViewModel.bindView(view: ChannelsView, lifecycle: LifecycleOwner) {
     state.observe(
         lifecycle,
