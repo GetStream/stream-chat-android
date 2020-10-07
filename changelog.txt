@@ -2,6 +2,7 @@
 
 - Add autocomplete filter
 - Add @JvmOverloads to QueryUsersRequest constructor
+- Add the hasValidUrl method to ChatClient
 
 # 1.16.4 - Monday 5th of October 2020
 
