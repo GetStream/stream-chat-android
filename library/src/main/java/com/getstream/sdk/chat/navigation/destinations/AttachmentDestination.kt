@@ -80,9 +80,9 @@ class AttachmentDestination(
                 }
                 start(intent)
             }
-            mimeType == ModelType.attach_mime_doc
-                || mimeType == ModelType.attach_mime_txt
-                || mimeType == ModelType.attach_mime_pdf
+            mimeType == ModelType.attach_mime_doc ||
+                mimeType == ModelType.attach_mime_txt ||
+                mimeType == ModelType.attach_mime_pdf
                 || mimeType.contains("application/vnd") -> {
                 val intent = Intent(context, AttachmentDocumentActivity::class.java).apply {
                     putExtra("url", url)
