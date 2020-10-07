@@ -34,6 +34,8 @@ import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 import java.util.List;
 
@@ -118,23 +120,22 @@ public class MessageListView extends ConstraintLayout {
             //viewModel.sendMessage(message);
         }
     };
-    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message -> {
-        new MessageMoreActionDialog(
-                getContext(),
-                channel,
-                message,
-                currentUser,
-                style,
-                onMessageEditHandler,
-                onMessageDeleteHandler,
-                (Message m) -> {
-                    onStartThreadHandler.invoke(m);
-                    onStartThreadListener.invoke(m);
-                    return Unit.INSTANCE;
-                },
-                onMessageFlagHandler
-        ).show();
-    };
+    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message ->
+            new MessageMoreActionDialog(
+                    getContext(),
+                    channel,
+                    message,
+                    currentUser,
+                    style,
+                    onMessageEditHandler,
+                    onMessageDeleteHandler,
+                    (Message m) -> {
+                        onStartThreadHandler.invoke(m);
+                        onStartThreadListener.invoke(m);
+                        return Unit.INSTANCE;
+                    },
+                    onMessageFlagHandler
+            ).show();
     private final AttachmentClickListener DEFAULT_ATTACHMENT_CLICK_LISTENER = (message, attachment) -> {
         Chat.getInstance()
                 .getNavigator()
@@ -155,15 +156,13 @@ public class MessageListView extends ConstraintLayout {
         ).show();
     };
     private final UserClickListener DEFAULT_USER_CLICK_LISTENER = user -> { /* Empty */ };
-    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads -> {
-        new ReadUsersDialog(getContext())
-                .setReads(reads)
-                .setStyle(style)
-                .show();
-    };
-    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) -> {
-        onSendGiphyHandler.invoke(message, action);
-    };
+    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads ->
+            new ReadUsersDialog(getContext())
+                    .setReads(reads)
+                    .setStyle(style)
+                    .show();
+    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) ->
+            onSendGiphyHandler.invoke(message, action);
 
     private final ListenerContainer listenerContainer = new ListenerContainerImpl(
             DEFAULT_MESSAGE_CLICK_LISTENER,
@@ -290,7 +289,7 @@ public class MessageListView extends ConstraintLayout {
     private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
         messagesRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
                 if (layoutManager != null) {
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
@@ -395,14 +394,14 @@ public class MessageListView extends ConstraintLayout {
 
     public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set AttachmentViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set AttachmentViewHolderFactory first");
         }
         this.attachmentViewHolderFactory = attachmentViewHolderFactory;
     }
 
     public void setMessageViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
         }
         this.messageViewHolderFactory = messageViewHolderFactory;
     }
@@ -413,14 +412,14 @@ public class MessageListView extends ConstraintLayout {
     @Deprecated
     public void setViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
         }
         this.messageViewHolderFactory = messageViewHolderFactory;
     }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set BubbleHelper first");
+            throw new IllegalStateException("Adapter was already initialized, please set BubbleHelper first");
         }
         this.bubbleHelper = bubbleHelper;
     }
@@ -429,16 +428,24 @@ public class MessageListView extends ConstraintLayout {
         List<MessageListItem> entities = listItem.getListEntities();
 
         // Adapter initialization for channel and thread swapping
-        boolean backFromThread = false;
+        boolean backFromThread = adapter.isThread() && listItem.isThread();
+
         if (adapter.isThread() != listItem.isThread()) {
             adapter.setThread(listItem.isThread());
-            backFromThread = !listItem.isThread();
         }
 
-        int oldSize = adapter.getItemCount();
+        adapter.submitList(
+                entities,
+                () -> continueMessageAdd(backFromThread, listItem, entities, adapter.getItemCount())
+        );
+    }
 
-        adapter.replaceEntities(entities);
-
+    private void continueMessageAdd(
+            boolean backFromThread,
+            MessageListItemWrapper listItem,
+            List<MessageListItem> entities,
+            int oldSize
+    ) {
         // Scroll to origin position on return from thread
         if (backFromThread) {
             layoutManager.scrollToPosition(this.threadParentPosition);
@@ -461,7 +468,7 @@ public class MessageListView extends ConstraintLayout {
             // read
             // typing
             // message updates
-            logger.logI(String.format("no Scroll no new message"));
+            logger.logI("no Scroll no new message");
             return;
         }
 
@@ -489,7 +496,6 @@ public class MessageListView extends ConstraintLayout {
             if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
-
                 layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
