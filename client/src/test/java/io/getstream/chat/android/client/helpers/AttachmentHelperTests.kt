@@ -21,7 +21,7 @@ internal class AttachmentHelperTests {
 
     @ParameterizedTest
     @MethodSource("nonValidUrls")
-    fun `When has valida url if attachment url is not any valid Url Should return false`(notValidUrl: String) {
+    fun `When has valid url if attachment url is not valid Should return false`(notValidUrl: String) {
         val attachment = Mother.randomAttachment { url = notValidUrl }
 
         val result = sut.hasValidUrl(attachment)
@@ -29,9 +29,23 @@ internal class AttachmentHelperTests {
         result shouldBeEqualTo false
     }
 
+    @Test
+    fun `When has valid url if attachment url is valid without Expires Should return true`() {
+        val attachment = Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg" }
+
+        val result = sut.hasValidUrl(attachment)
+
+        result shouldBeEqualTo true
+    }
+
     companion object {
         @JvmStatic
-        fun nonValidUrls() =
-            listOf<String>("someNotValidUrl", "https://????.com", "https://domain.com/xxIII ioi", "www.++++.---.com")
+        fun nonValidUrls() = listOf<String>(
+                "someNotValidUrl",
+                "https://????.com",
+                "https://domain.com/xxIII ioi",
+                "https://www.++++.---.com",
+                "www.someDomainWithoutProtocol.com"
+            )
     }
 }

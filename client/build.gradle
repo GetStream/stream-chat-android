@@ -74,6 +74,8 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 
+    implementation 'commons-validator:commons-validator:1.7'
+
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
