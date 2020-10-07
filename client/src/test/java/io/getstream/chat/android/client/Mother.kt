@@ -13,6 +13,6 @@ object Mother {
                 Attachment.UploadState::class.java,
                 Attachment.UploadState.Success
             )
-        }<Attachment>().apply(attachmentBuilder)
+        } <Attachment>().apply(attachmentBuilder)
     }
 }

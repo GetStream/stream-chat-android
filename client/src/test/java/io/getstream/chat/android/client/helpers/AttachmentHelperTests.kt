@@ -53,7 +53,8 @@ internal class AttachmentHelperTests {
 
     @Test
     fun `When has valid url if attachment url is valid with Expires and failed to parse timestamp Should return false`() {
-        val attachment = Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee" }
+        val attachment =
+            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee" }
 
         val result = sut.hasValidUrl(attachment)
 
@@ -65,7 +66,8 @@ internal class AttachmentHelperTests {
         val currentTime = 1000L
         val timeStamp = currentTime + 100L
         When calling timeProvider.provideTime() doReturn currentTime
-        val attachment = Mother.randomAttachment {  url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
+        val attachment =
+            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
         val result = sut.hasValidUrl(attachment)
 
@@ -77,7 +79,8 @@ internal class AttachmentHelperTests {
         val currentTime = 1000L
         val timeStamp = currentTime - 100L
         When calling timeProvider.provideTime() doReturn currentTime
-        val attachment = Mother.randomAttachment {  url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
+        val attachment =
+            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
         val result = sut.hasValidUrl(attachment)
 
@@ -87,11 +90,11 @@ internal class AttachmentHelperTests {
     companion object {
         @JvmStatic
         fun nonValidUrls() = listOf(
-                "someNotValidUrl",
-                "https://????.com",
-                "https://domain.com/xxIII ioi",
-                "https://www.++++.---.com",
-                "www.someDomainWithoutProtocol.com"
-            )
+            "someNotValidUrl",
+            "https://????.com",
+            "https://domain.com/xxIII ioi",
+            "https://www.++++.---.com",
+            "www.someDomainWithoutProtocol.com"
+        )
     }
 }
