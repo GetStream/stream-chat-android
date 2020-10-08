@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import NEVER
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +13,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import wasCreatedAfterOrAt
 
 class ThreadControllerImpl(
     override val threadId: String,
@@ -31,7 +33,11 @@ class ThreadControllerImpl(
         addSource(threadMessages) { postValue(value.plus(it)) }
         addSource(channelMessages) { postValue(value.plus(it)) }
     }
-    override val messages = Transformations.map(mediatorLiveData) { it.values.sortedBy { m -> m.createdAt }.filter { channelControllerImpl.hideMessagesBefore == null || it.createdAt!! > channelControllerImpl.hideMessagesBefore } }
+    override val messages =
+        Transformations.map(mediatorLiveData) {
+            it.values.sortedBy { m -> m.createdAt }
+                .filter { it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore ?: NEVER) }
+        }
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     override val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
@@ -68,7 +74,7 @@ class ThreadControllerImpl(
                 ?.values
                 ?.asSequence()
                 ?.filter { it.parentId == threadId }
-                ?.sortedBy { it.createdAt }
+                ?.sortedBy { it.createdAt ?: it.createdLocallyAt }
                 ?.firstOrNull()
                 ?.let { loadMessages(client.getRepliesMore(threadId, it.id, limit), limit) }
                 ?: watch(limit)

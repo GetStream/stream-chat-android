@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import NEVER
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -60,15 +61,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import wasCreatedAfterOrAt
+import wasCreatedBefore
 import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-val KEY_MESSAGE_ACTION = "image_action"
-val MESSAGE_ACTION_SHUFFLE = "shuffle"
-val MESSAGE_ACTION_SEND = "send"
+const val KEY_MESSAGE_ACTION = "image_action"
+const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+const val MESSAGE_ACTION_SEND = "send"
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -101,9 +104,10 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
-            .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+            .filter { it.wasCreatedAfterOrAt(hideMessagesBefore ?: NEVER) }
             .sortedBy { it.createdAt }
-            .toList().map { it.copy() }
+            .toList()
+            .map { it.copy() }
     }
 
     /** the number of people currently watching the channel */
@@ -227,7 +231,7 @@ class ChannelControllerImpl(
         val messages = sortedMessages()
         if (messages.isNotEmpty()) {
             val last = messages.last()
-            val lastMessageDate = last.createdAt
+            val lastMessageDate = last.createdAt ?: last.createdLocallyAt
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
@@ -244,17 +248,19 @@ class ChannelControllerImpl(
         // sorted ascending order, so the oldest messages are at the beginning of the list
         var messages = emptyList<Message>()
         _messages.value?.let { mapOfMessages ->
-            messages = mapOfMessages.values.sortedBy { it.createdAt }.filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+            messages = mapOfMessages.values
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
         }
         return messages
     }
 
-    fun removeMessagesBefore(t: Date) {
+    private fun removeMessagesBefore(date: Date) {
         val copy = _messages.value ?: mutableMapOf()
         // start off empty
         _messages.postValue(mutableMapOf())
         // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.createdAt!! > t }
+        val recentMessages = copy.values.filter { it.wasCreatedBefore(date) }
         upsertMessages(recentMessages)
     }
 
@@ -428,7 +434,7 @@ class ChannelControllerImpl(
         }
 
         message.user = domainImpl.currentUser
-        message.createdAt = message.createdAt ?: Date()
+        message.createdLocallyAt = message.createdAt ?: Date()
         message.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             message.syncStatus = SyncStatus.SYNC_NEEDED
@@ -664,7 +670,9 @@ class ChannelControllerImpl(
         var message = copy[messageId]
 
         if (hideMessagesBefore != null) {
-            if (message != null && message.createdAt!! <= hideMessagesBefore) {
+            if (message != null &&
+                message.createdAt ?: message.createdLocallyAt ?: NEVER <= hideMessagesBefore
+            ) {
                 message = null
             }
         }
@@ -679,8 +687,8 @@ class ChannelControllerImpl(
             val oldMessage = copy[message.id]
             var outdated = false
             if (oldMessage != null) {
-                val oldTime = oldMessage.updatedAt?.time ?: 0
-                val newTime = message.updatedAt?.time ?: 0
+                val oldTime = oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
+                val newTime = message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
                 outdated = oldTime > newTime
             }
             if (!outdated) {
@@ -988,7 +996,7 @@ class ChannelControllerImpl(
 
     suspend fun editMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
-        message.updatedAt = Date()
+        message.updatedLocallyAt = Date()
         message.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             message.syncStatus = SyncStatus.SYNC_NEEDED
