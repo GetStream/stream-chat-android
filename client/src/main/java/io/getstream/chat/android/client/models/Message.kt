@@ -60,6 +60,12 @@ data class Message(
     @IgnoreSerialisation
     @SerializedName("deleted_at")
     var deletedAt: Date? = null,
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var updatedLocallyAt: Date? = null,
+    @IgnoreSerialisation
+    @IgnoreDeserialisation
+    var createdLocallyAt: Date? = null,
 
     @IgnoreSerialisation
     var user: User = User(),
