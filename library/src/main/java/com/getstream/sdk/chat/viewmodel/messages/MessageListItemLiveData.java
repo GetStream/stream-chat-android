@@ -119,7 +119,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
 
         merged.addAll(typingEntities);
-        
+
         final boolean isTyping = !typingEntities.isEmpty();
         MessageListItemWrapper wrapper =
                 new MessageListItemWrapper(
@@ -164,7 +164,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void onTypingChanged(List<User> users) {
-        if (isThread()) return;
+        if (isThread() || onlyCurrentUser(users)) return;
         // update
         hasNewMessages = false;
         List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
@@ -178,6 +178,16 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
         logger.logI("broadcast because typing changed");
         broadcastValue(hasNewMessages, isLoadingMore, typingEntities, messageEntities);
+    }
+
+    private boolean onlyCurrentUser(List<User> users) {
+        for (User user : users) {
+            if (!isCurrentUser(user.getId())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private boolean isCurrentUser(String id) {
