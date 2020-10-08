@@ -87,17 +87,7 @@ internal class ChatClientImpl(
     //region Set user
 
     override fun setUser(user: User, token: String, listener: InitConnectionListener?) {
-        if (!ensureUserNotSet(listener)) {
-            return
-        }
-        connectionListener = listener
-        config.isAnonymous = false
-        config.tokenManager.setTokenProvider(ImmediateTokenProvider(token))
-        warmUp()
-        notifications.onSetUser()
-        getTokenAndConnect {
-            socket.connect(user)
-        }
+        setUser(user, ImmediateTokenProvider(token), listener)
     }
 
     override fun setUser(

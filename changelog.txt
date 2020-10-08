@@ -1,6 +1,15 @@
 # To be released:
 - Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 
+# 1.16.5 - Wed 7th of Oct 2020
+- Add autocomplete filter
+- Add @JvmOverloads to QueryUsersRequest constructor
+- Improve java interop of `TokenManager`
+
+# 1.16.4 - Mon 5th of Oct 2020
+
+- Add `attachment.upload` and `attachment.uploadState` fields for livedata upload status. These fields are currently unused if you only use the low level client.
+
 # 1.16.2 - Wed 30 Sep 2020
 - Add `ChatClient::enableSlowMode` method to enable slow mode
 - Add `ChatClient::disableSlowMode` method to disable slow mode
