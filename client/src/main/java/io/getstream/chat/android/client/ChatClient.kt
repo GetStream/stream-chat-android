@@ -1,7 +1,6 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import com.facebook.stetho.Stetho
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -12,6 +11,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
+import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -395,10 +395,6 @@ interface ChatClient {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
             }
 
-            if (BuildConfig.DEBUG) {
-                Stetho.initializeWithDefaults(appContext)
-            }
-
             val config = ChatClientConfig(
                 apiKey,
                 "https://$baseUrl/",
@@ -411,13 +407,13 @@ interface ChatClient {
                 notificationsHandler
             )
 
-            val modules = ChatModules(config)
+            val module = ChatModule(appContext, config)
 
             val result = ChatClientImpl(
                 config,
-                modules.api(),
-                modules.socket(),
-                modules.notifications()
+                module.api(),
+                module.socket(),
+                module.notifications()
             )
             instance = result
 
