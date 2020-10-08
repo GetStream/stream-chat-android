@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
@@ -133,6 +134,22 @@ class MessageListItemLiveDataTests {
         typing.postValue(listOf(currentUser, User(id = "123")))
 
         verify(testObserver).onChanged(any())
+    }
+
+    @Test
+    fun `When other users stop typing, this should be propagated`() {
+        val testObserver: Observer<MessageListItemWrapper> = mock()
+
+        val typing = MutableLiveData<List<User>>()
+
+        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
+
+        typing.postValue(listOf(currentUser, User(id = "123")))
+        typing.postValue(listOf(currentUser))
+        typing.postValue(listOf(currentUser))
+        typing.postValue(listOf(currentUser))
+
+        verify(testObserver, times(2)).onChanged(any())
     }
 
     private fun onlyTypingMessageListItemLiveData(user: User, typingLiveData: MutableLiveData<List<User>>) =

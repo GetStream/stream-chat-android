@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.filter;
@@ -42,6 +43,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private Boolean hasNewMessages;
     private String lastMessageID;
     private LifecycleOwner lifecycleOwner;
+    private List<User> previousTypingUsers;
 
     private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
 
@@ -61,6 +63,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         // scroll behaviour is only triggered for new messages
         this.lastMessageID = "";
         this.hasNewMessages = false;
+        previousTypingUsers = new LinkedList<>();
     }
 
     private void setIsLoadingMore(Boolean loading) {
@@ -166,7 +169,15 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void onTypingChanged(List<User> users) {
-        if (isThread() || onlyCurrentUser(users)) return;
+        boolean onlyUserTyping = onlyUserTyping(users);
+
+        previousTypingUsers.clear();
+        previousTypingUsers.addAll(users);
+
+        if (isThread() || onlyUserTyping) {
+            return;
+        }
+
         // update
         hasNewMessages = false;
         List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
@@ -182,14 +193,20 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         broadcastValue(hasNewMessages, isLoadingMore, typingEntities, messageEntities);
     }
 
-    private boolean onlyCurrentUser(List<User> users) {
+    private boolean onlyUserTyping(List<User> users) {
+        boolean isTheirs = hasOtherUser(users);
+        boolean wasTheirs = hasOtherUser(previousTypingUsers);
+        return !isTheirs && !wasTheirs;
+    }
+
+    private boolean hasOtherUser(List<User> users) {
         for (User user : users) {
             if (!isCurrentUser(user.getId())) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     private boolean isCurrentUser(String id) {
