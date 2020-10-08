@@ -70,7 +70,7 @@ internal class AttachmentsController(
         }
     }
 
-    private fun filterMediaFiles(
+    private fun filterAttachments(
         isMedia: Boolean,
         filesToFilter: Set<AttachmentMetaData>
     ): Set<AttachmentMetaData> {
@@ -204,7 +204,7 @@ internal class AttachmentsController(
         messageInputType: MessageInputType?,
         isMedia: Boolean
     ) {
-        selectedAttachments = filterMediaFiles(isMedia, selectedAttachments)
+        selectedAttachments = filterAttachments(isMedia, selectedAttachments)
         if (isMedia) {
             selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
             selectedMediaAttachmentAdapter.cancelListener =
@@ -240,6 +240,16 @@ internal class AttachmentsController(
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)
+        }
+    }
+
+    internal fun selectAttachmentsFromUriList(uriList: List<Uri>) {
+        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
+            setSelectedAttachmentAdapter(null, false)
+            val attachments = withContext(dispatchersProvider.ioDispatcher) {
+                storageHelper.getAttachmentsFromUriList(view.context, uriList)
+            }
+            attachments.forEach { selectAttachment(it, false) }
         }
     }
 

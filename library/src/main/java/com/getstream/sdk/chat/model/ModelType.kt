@@ -49,18 +49,4 @@ object ModelType {
     const val action_send = "send"
     const val action_shuffle = "shuffle"
     const val action_cancel = "cancel"
-
-    val supportedMimeTypes = listOf(
-        attach_mime_pdf,
-        attach_mime_ppt,
-        attach_mime_csv,
-        attach_mime_xlsx,
-        attach_mime_doc,
-        attach_mime_docx,
-        attach_mime_txt,
-        attach_mime_zip,
-        attach_mime_tar,
-        attach_mime_mov,
-        attach_mime_mp3
-    )
 }

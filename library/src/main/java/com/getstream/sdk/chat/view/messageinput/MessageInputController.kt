@@ -22,9 +22,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.properties.Delegates
@@ -39,14 +36,13 @@ internal class MessageInputController(
 ) {
 
     private val storageHelper = StorageHelper()
-    private val dispatchersProvider = DispatchersProvider()
 
     internal val attachmentsController =
         AttachmentsController(
             this,
             PermissionChecker(),
             storageHelper,
-            dispatchersProvider,
+            DispatchersProvider(),
             view,
             MediaAttachmentAdapter(),
             FileAttachmentListAdapter(),
@@ -174,13 +170,7 @@ internal class MessageInputController(
     }
 
     internal fun onFilesSelected(uriList: List<Uri>) {
-        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
-            attachmentsController.setSelectedAttachmentAdapter(null, false)
-            val attachments = withContext(dispatchersProvider.ioDispatcher) {
-                storageHelper.getAttachmentsFromUriList(view.context, uriList)
-            }
-            attachments.forEach { attachmentsController.selectAttachment(it, false) }
-        }
+        attachmentsController.selectAttachmentsFromUriList(uriList)
     }
 
     internal fun checkCommandsOrMentions(inputMessage: String) {

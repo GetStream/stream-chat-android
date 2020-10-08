@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view.messageinput.attachments
 
+import android.net.Uri
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.createAttachment
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
@@ -9,6 +10,7 @@ import com.getstream.sdk.chat.randomLong
 import com.getstream.sdk.chat.utils.Constant
 import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doReturn
+import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import org.amshove.kluent.When
@@ -183,6 +185,53 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         verify(selectedFileAttachmentAdapter).clear()
     }
 
+    @Test
+    fun `Should clear media selected attachments when selecting attachments from Uri list`() {
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
+        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
+
+        sut.selectAttachmentsFromUriList(emptyList())
+
+        sut.selectedAttachments.isEmpty() shouldBe true
+    }
+
+    @Test
+    fun `Should set already selected non media attachments when selecting attachments from Uri list`() {
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
+        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
+
+        sut.selectAttachmentsFromUriList(emptyList())
+
+        verify(selectedFileAttachmentAdapter).setAttachments(argThat { contains(attachment) })
+    }
+
+    @Test
+    fun `Should show selected file attachments when selecting attachments from Uri list`() {
+        sut.selectAttachmentsFromUriList(emptyList())
+
+        verify(view).showSelectedFileAttachments(selectedFileAttachmentAdapter)
+    }
+
+    @Test
+    fun `Should clear media adapter when selecting attachments from Uri list`() {
+        sut.selectAttachmentsFromUriList(emptyList())
+
+        verify(selectedMediaAttachmentAdapter).clear()
+    }
+
+    @Test
+    fun `Should csomething when selecting attachments from Uri list`() {
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
+        val sut = Fixture().givenAttachmentsFromUriState(listOf(attachment)).please()
+        val list = listOf(Uri.parse(""))
+        sut.selectAttachmentsFromUriList(list)
+
+        verify(storageHelper).getAttachmentsFromUriList(any(), eq(list))
+    }
+
     private inner class Fixture {
 
         private val attachmentsController = this@WhenSelectAttachmentTests.sut
@@ -191,6 +240,14 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
             When calling storageHelper.getMediaAttachments(any()) doReturn totalMediaAttachments
             When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
             attachmentsController.onClickOpenMediaSelectView(mock())
+            return this
+        }
+
+        fun givenAttachmentsFromUriState(fileAttachments: List<AttachmentMetaData>): Fixture {
+            When calling storageHelper.getAttachmentsFromUriList(
+                any(),
+                any()
+            ) doReturn fileAttachments
             return this
         }
 

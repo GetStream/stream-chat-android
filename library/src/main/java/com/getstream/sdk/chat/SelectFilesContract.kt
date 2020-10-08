@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
-import com.getstream.sdk.chat.model.ModelType
 
 internal class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
 
@@ -17,7 +16,6 @@ internal class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
         type = "*/*"
         addCategory(Intent.CATEGORY_OPENABLE)
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        putExtra(Intent.EXTRA_MIME_TYPES, ModelType.supportedMimeTypes.toTypedArray())
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
