@@ -61,8 +61,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import wasCreatedAfter
 import wasCreatedAfterOrAt
-import wasCreatedBefore
+import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -95,7 +96,7 @@ class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
-    internal var hideMessagesBefore: Date? = null
+    internal var hideMessagesBefore: Date = NEVER
     val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
@@ -104,7 +105,7 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
-            .filter { it.wasCreatedAfterOrAt(hideMessagesBefore ?: NEVER) }
+            .filter { it.wasCreatedAfter(hideMessagesBefore ) }
             .sortedBy { it.createdAt }
             .toList()
             .map { it.copy() }
@@ -244,13 +245,13 @@ class ChannelControllerImpl(
         return Result(false, null)
     }
 
-    fun sortedMessages(): List<Message> {
+    private fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         var messages = emptyList<Message>()
         _messages.value?.let { mapOfMessages ->
             messages = mapOfMessages.values
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+                .filter { it.wasCreatedAfter(hideMessagesBefore) }
         }
         return messages
     }
@@ -260,7 +261,7 @@ class ChannelControllerImpl(
         // start off empty
         _messages.postValue(mutableMapOf())
         // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.wasCreatedBefore(date) }
+        val recentMessages = copy.values.filter { it.wasCreatedAfterOrAt(date) }
         upsertMessages(recentMessages)
     }
 
@@ -657,7 +658,7 @@ class ChannelControllerImpl(
         upsertMessages(listOf(message))
     }
 
-    fun upsertEventMessage(message: Message) {
+    private fun upsertEventMessage(message: Message) {
         // make sure we don't lose ownReactions
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
@@ -669,12 +670,8 @@ class ChannelControllerImpl(
         val copy = _messages.value ?: mutableMapOf()
         var message = copy[messageId]
 
-        if (hideMessagesBefore != null) {
-            if (message != null &&
-                message.createdAt ?: message.createdLocallyAt ?: NEVER <= hideMessagesBefore
-            ) {
-                message = null
-            }
+        if (message != null && message.wasCreatedBeforeOrAt(hideMessagesBefore)) {
+            message = null
         }
         return message
     }
@@ -961,7 +958,7 @@ class ChannelControllerImpl(
 
     fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
         setHidden(c.entity.hidden)
-        hideMessagesBefore = c.entity.hideMessagesBefore
+        c.entity.hideMessagesBefore?.let { hideMessagesBefore = it }
         updateLiveDataFromChannel(c.channel)
     }
 
