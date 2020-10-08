@@ -92,8 +92,6 @@ internal class AttachmentHelperTests {
         fun nonValidUrls() = listOf(
             "someNotValidUrl",
             "https://????.com",
-            "https://domain.com/xxIII ioi",
-            "https://www.++++.---.com",
             "www.someDomainWithoutProtocol.com"
         )
     }

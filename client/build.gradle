@@ -72,8 +72,6 @@ dependencies {
 
     implementation 'com.github.mrmike:ok2curl:0.6.0'
 
-    implementation 'commons-validator:commons-validator:1.7'
-
     // Tests
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
