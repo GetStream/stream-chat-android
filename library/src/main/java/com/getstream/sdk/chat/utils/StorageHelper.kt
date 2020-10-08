@@ -93,11 +93,10 @@ internal class StorageHelper {
         context: Context,
         uriList: List<Uri>
     ): List<AttachmentMetaData> {
-        val attachments = mutableListOf<AttachmentMetaData>()
-        uriList.forEach { uri ->
+        return uriList.mapNotNull { uri ->
             context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
                 cursor.moveToFirst()
-                attachments += AttachmentMetaData(
+                AttachmentMetaData(
                     uri = uri,
                     type = ModelType.attach_file,
                     mimeType = context.contentResolver.getType(uri),
@@ -107,8 +106,6 @@ internal class StorageHelper {
                 }
             }
         }
-
-        return attachments
     }
 
     internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
