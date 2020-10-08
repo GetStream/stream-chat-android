@@ -1,4 +1,5 @@
 # To be released:
+- Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 
 - Add AttachmentsHelper with hasValidUrl method
 
