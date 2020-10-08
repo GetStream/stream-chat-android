@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -45,7 +44,6 @@ internal class MessageInputController(
             DispatchersProvider(),
             view,
             MediaAttachmentAdapter(),
-            FileAttachmentListAdapter(),
             MediaAttachmentSelectedAdapter(),
             FileAttachmentSelectedAdapter(emptyList(), true),
             style.isShowAttachmentButton
@@ -166,7 +164,7 @@ internal class MessageInputController(
 
     internal fun onFileCaptured(file: File) {
         attachmentsController.setSelectedAttachmentAdapter(null, true)
-        attachmentsController.selectAttachment(AttachmentMetaData(file), true)
+        attachmentsController.selectAttachment(AttachmentMetaData(file))
     }
 
     internal fun onFilesSelected(uriList: List<Uri>) {
@@ -204,12 +202,6 @@ internal class MessageInputController(
     fun onClickOpenMediaSelectView() {
         messageInputType = MessageInputType.UPLOAD_MEDIA
         attachmentsController.onClickOpenMediaSelectView(messageInputType!!)
-        onClickOpenAttachmentSelectionMenu(messageInputType!!)
-    }
-
-    fun onClickOpenFileSelectView(treeUri: Uri?) {
-        messageInputType = MessageInputType.UPLOAD_FILE
-        attachmentsController.onClickOpenFileSelectView(messageInputType!!, treeUri)
         onClickOpenAttachmentSelectionMenu(messageInputType!!)
     }
 
