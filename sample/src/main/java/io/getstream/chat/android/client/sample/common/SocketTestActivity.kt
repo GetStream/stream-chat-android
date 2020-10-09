@@ -15,7 +15,10 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.android.synthetic.main.activity_socket_tests.*
+import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
+import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
+import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
+import kotlinx.android.synthetic.main.activity_socket_tests.textSocketState
 
 class SocketTestActivity : AppCompatActivity() {
 
