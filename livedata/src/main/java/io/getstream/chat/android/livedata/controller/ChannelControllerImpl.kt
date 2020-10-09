@@ -507,8 +507,8 @@ class ChannelControllerImpl(
     internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Attachment> {
         val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
-        val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
+        val attachmentType = if (mimeType.isImageMimetype()) { TYPE_IMAGE } else { TYPE_FILE }
+        val pathResult = if (attachmentType == TYPE_IMAGE) { sendImage(file) } else { sendFile(file) }
         val url = if (pathResult.isError) null else pathResult.data()
         val uploadState = if (pathResult.isError) Attachment.UploadState.Failed(pathResult.error()) else Attachment.UploadState.Success
 
@@ -521,7 +521,7 @@ class ChannelControllerImpl(
             type = attachmentType
         ).apply {
             url?.let {
-                if (attachmentType == "image") {
+                if (attachmentType == TYPE_IMAGE) {
                     imageUrl = it
                 } else {
                     assetUrl = it
@@ -1161,5 +1161,10 @@ class ChannelControllerImpl(
         }
 
         return channel
+    }
+
+    companion object {
+        private const val TYPE_IMAGE = "image"
+        private const val TYPE_FILE = "file"
     }
 }
