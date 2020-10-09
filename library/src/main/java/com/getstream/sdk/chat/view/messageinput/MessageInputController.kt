@@ -95,13 +95,19 @@ internal class MessageInputController(
         }
     }
 
-    private fun sendNormalMessage(message: String) = when (attachmentsController.selectedAttachments.isEmpty()) {
-        true -> view.sendTextMessage(message)
-        false -> view.sendAttachments(
-            message,
-            attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
-        )
-    }
+    private fun sendNormalMessage(message: String) =
+        when (attachmentsController.selectedAttachments.isEmpty()) {
+            true -> view.sendTextMessage(message)
+            false -> view.sendAttachments(
+                message,
+                attachmentsController.selectedAttachments.map {
+                    storageHelper.getCachedFileFromUri(
+                        view.context,
+                        it
+                    )
+                }
+            )
+        }
 
     private fun sendToThread(parentMessage: Message, message: String) =
         when (attachmentsController.selectedAttachments.isEmpty()) {
@@ -110,7 +116,12 @@ internal class MessageInputController(
                 parentMessage,
                 message,
                 binding.cbSendAlsoToChannel.isChecked,
-                attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
+                attachmentsController.selectedAttachments.map {
+                    storageHelper.getCachedFileFromUri(
+                        view.context,
+                        it
+                    )
+                }
             )
         }
 
@@ -132,7 +143,9 @@ internal class MessageInputController(
                 binding.clSelectPhoto.visibility = View.VISIBLE
                 attachmentsController.configAttachmentButtonVisible(false)
             }
-            MessageInputType.COMMAND, MessageInputType.MENTION -> binding.btnClose.visibility = View.GONE
+            MessageInputType.COMMAND, MessageInputType.MENTION ->
+                binding.btnClose.visibility =
+                    View.GONE
         }
         binding.tvTitle.text = type.label
     }
@@ -152,7 +165,12 @@ internal class MessageInputController(
     }
 
     internal fun onFileCaptured(file: File) {
+        attachmentsController.setSelectedAttachmentAdapter(null, true)
         attachmentsController.selectAttachment(AttachmentMetaData(file), true)
+    }
+
+    internal fun onFilesSelected(uriList: List<Uri>) {
+        attachmentsController.selectAttachmentsFromUriList(uriList)
     }
 
     internal fun checkCommandsOrMentions(inputMessage: String) {

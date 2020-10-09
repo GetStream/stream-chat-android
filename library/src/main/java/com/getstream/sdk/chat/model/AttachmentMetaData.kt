@@ -22,6 +22,7 @@ data class AttachmentMetaData(
         title = attachment.title
     )
 
+    // TODO: Set type and size
     constructor(file: File) : this(
         file = file,
         uri = Uri.fromFile(file),

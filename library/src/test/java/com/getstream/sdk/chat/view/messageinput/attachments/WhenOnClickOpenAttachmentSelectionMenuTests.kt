@@ -17,24 +17,22 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
     }
 
     @Test
-    fun `If camera permission is granted Should show file permissions and hide others`() {
+    fun `If camera permission is granted Should hide permissions`() {
         When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn true
 
         sut.onClickOpenAttachmentSelectionMenu()
 
-        verify(view).showFilePermissions(true)
         verify(view).showCameraPermissions(false)
         verify(view).showMediaPermissions(false)
     }
 
     @Test
-    fun `If storage permission is granted and camera permission is not Should show file and camera permissions and hide media`() {
+    fun `If storage permission is granted and camera permission is not Should show camera permissions and hide media`() {
         When calling permissionHelper.isGrantedCameraPermissions(any()) doReturn false
         When calling permissionHelper.isGrantedStoragePermissions(any()) doReturn true
 
         sut.onClickOpenAttachmentSelectionMenu()
 
-        verify(view).showFilePermissions(true)
         verify(view).showCameraPermissions(true)
         verify(view).showMediaPermissions(false)
     }
@@ -47,7 +45,6 @@ internal class WhenOnClickOpenAttachmentSelectionMenuTests : BaseAttachmentsCont
 
         sut.onClickOpenAttachmentSelectionMenu()
 
-        verify(view).showFilePermissions(true)
         verify(view).showCameraPermissions(true)
         verify(view).showMediaPermissions(true)
     }
