@@ -71,7 +71,7 @@ import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ExoMediaPlayer extends Player.DefaultEventListener {
+public class ExoMediaPlayer implements Player.EventListener {
     private static final String TAG = "ExoMediaPlayer";
     private static final int BUFFER_REPEAT_DELAY = 1_000;
     private static final int WAKE_LOCK_TIMEOUT = 1_000;
@@ -84,8 +84,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     private final ExoPlayer player;
     @NonNull
     private final DefaultTrackSelector trackSelector;
-    @NonNull
-    private final AdaptiveTrackSelection.Factory adaptiveTrackSelectionFactory;
     @NonNull
     private final Handler mainHandler;
     @NonNull
@@ -109,7 +107,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     @NonNull
     private List<Renderer> renderers;
     @NonNull
-    private DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+    private DefaultBandwidthMeter bandwidthMeter;
     @Nullable
     private CaptionListener captionListener;
     @Nullable
@@ -120,14 +118,13 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     private OnBufferUpdateListener bufferUpdateListener;
     @Nullable
     private PowerManager.WakeLock wakeLock = null;
-    @NonNull
-    private CapabilitiesListener capabilitiesListener = new CapabilitiesListener();
     private int audioSessionId = C.AUDIO_SESSION_ID_UNSET;
     @NonNull
     private AnalyticsCollector analyticsCollector;
 
     public ExoMediaPlayer(@NonNull Context context) {
         this.context = context;
+        bandwidthMeter = new DefaultBandwidthMeter.Builder(context).build();
 
         bufferRepeater.setRepeaterDelay(BUFFER_REPEAT_DELAY);
         bufferRepeater.setRepeatListener(new BufferRepeatListener());
@@ -136,20 +133,24 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
 
         ComponentListener componentListener = new ComponentListener();
         RendererProvider rendererProvider = new RendererProvider(context, mainHandler, componentListener, componentListener, componentListener, componentListener);
-        DrmSessionManager<FrameworkMediaCrypto> drmSessionManager = generateDrmSessionManager();
+        DrmSessionManager drmSessionManager = generateDrmSessionManager();
         rendererProvider.setDrmSessionManager(drmSessionManager);
 
         renderers = rendererProvider.generate();
 
-        adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        trackSelector = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+        AdaptiveTrackSelection.Factory adaptiveTrackSelectionFactory = new AdaptiveTrackSelection.Factory();
+        trackSelector = new DefaultTrackSelector(context, adaptiveTrackSelectionFactory);
 
         LoadControl loadControl = ExoMedia.Data.loadControl != null ? ExoMedia.Data.loadControl : new DefaultLoadControl();
-        player = ExoPlayerFactory.newInstance(renderers.toArray(new Renderer[renderers.size()]), trackSelector, loadControl);
+        player = new ExoPlayer.Builder(context, renderers.toArray(new Renderer[0]))
+                .setTrackSelector(trackSelector)
+                .setLoadControl(loadControl)
+                .setBandwidthMeter(bandwidthMeter)
+                .build();
         player.addListener(this);
-        analyticsCollector = new AnalyticsCollector.Factory().createAnalyticsCollector(player, Clock.DEFAULT);
+        analyticsCollector = new AnalyticsCollector(Clock.DEFAULT);
+        analyticsCollector.setPlayer(player);
         player.addListener(analyticsCollector);
-        setupDamSessionManagerAnalytics(drmSessionManager);
     }
 
     @Override
@@ -183,7 +184,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
     public void setMediaSource(@Nullable MediaSource source) {
         if (this.mediaSource != null) {
             this.mediaSource.removeEventListener(analyticsCollector);
-            analyticsCollector.resetForNewMediaSource();
         }
         if (source != null) {
             source.addEventListener(mainHandler, analyticsCollector);
@@ -855,7 +855,7 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
      * @return The {@link DrmSessionManager} to use or <code>null</code>
      */
     @Nullable
-    protected DrmSessionManager<FrameworkMediaCrypto> generateDrmSessionManager() {
+    protected DrmSessionManager generateDrmSessionManager() {
         // DRM is only supported on API 18 + in the ExoPlayer
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             return null;
@@ -865,19 +865,14 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
         UUID uuid = C.WIDEVINE_UUID;
 
         try {
-            DefaultDrmSessionManager<FrameworkMediaCrypto> sessionManager = new DefaultDrmSessionManager<>(uuid, FrameworkMediaDrm.newInstance(uuid), new DelegatedMediaDrmCallback(), null);
-            sessionManager.addListener(mainHandler, capabilitiesListener);
+            DefaultDrmSessionManager sessionManager = new DefaultDrmSessionManager.Builder()
+                    .setUuidAndExoMediaDrmProvider(uuid, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                    .build(new DelegatedMediaDrmCallback());
 
             return sessionManager;
         } catch (Exception e) {
             logger.logE(e);
             return null;
-        }
-    }
-
-    protected void setupDamSessionManagerAnalytics(DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
-        if (drmSessionManager instanceof DefaultDrmSessionManager) {
-            ((DefaultDrmSessionManager) drmSessionManager).addListener(mainHandler, analyticsCollector);
         }
     }
 
@@ -1007,37 +1002,13 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
      */
     private class DelegatedMediaDrmCallback implements MediaDrmCallback {
         @Override
-        public byte[] executeProvisionRequest(UUID uuid, ExoMediaDrm.ProvisionRequest request) throws Exception {
+        public byte[] executeProvisionRequest(UUID uuid, ExoMediaDrm.ProvisionRequest request) throws MediaDrmCallbackException {
             return drmCallback != null ? drmCallback.executeProvisionRequest(uuid, request) : new byte[0];
         }
 
         @Override
-        public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws Exception {
+        public byte[] executeKeyRequest(UUID uuid, ExoMediaDrm.KeyRequest request) throws MediaDrmCallbackException {
             return drmCallback != null ? drmCallback.executeKeyRequest(uuid, request) : new byte[0];
-        }
-    }
-
-    private class CapabilitiesListener implements DefaultDrmSessionEventListener {
-        @Override
-        public void onDrmKeysLoaded() {
-            // Purposefully left blank
-        }
-
-        @Override
-        public void onDrmKeysRestored() {
-            // Purposefully left blank
-        }
-
-        @Override
-        public void onDrmKeysRemoved() {
-            // Purposefully left blank
-        }
-
-        @Override
-        public void onDrmSessionManagerError(Exception e) {
-            if (internalErrorListener != null) {
-                internalErrorListener.onDrmSessionManagerError(e);
-            }
         }
     }
 
@@ -1072,14 +1043,6 @@ public class ExoMediaPlayer extends Player.DefaultEventListener {
         @Override
         public void onAudioInputFormatChanged(Format format) {
             analyticsCollector.onAudioInputFormatChanged(format);
-        }
-
-        @Override
-        public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
-            if (internalErrorListener != null) {
-                internalErrorListener.onAudioSinkUnderrun(bufferSize, bufferSizeMs, elapsedSinceLastFeedMs);
-            }
-            analyticsCollector.onAudioSinkUnderrun(bufferSize, bufferSizeMs, elapsedSinceLastFeedMs);
         }
 
         @Override
