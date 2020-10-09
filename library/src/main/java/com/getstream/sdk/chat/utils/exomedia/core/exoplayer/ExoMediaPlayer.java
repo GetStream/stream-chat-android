@@ -30,7 +30,6 @@ import com.getstream.sdk.chat.utils.exomedia.ExoMedia;
 import com.getstream.sdk.chat.utils.exomedia.ExoMedia.RendererType;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.CaptionListener;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.ExoPlayerListener;
-import com.getstream.sdk.chat.utils.exomedia.core.listener.InternalErrorListener;
 import com.getstream.sdk.chat.utils.exomedia.core.listener.MetadataListener;
 import com.getstream.sdk.chat.utils.exomedia.core.renderer.RendererProvider;
 import com.getstream.sdk.chat.utils.exomedia.listener.OnBufferUpdateListener;
@@ -112,8 +111,6 @@ public class ExoMediaPlayer implements Player.EventListener {
     private CaptionListener captionListener;
     @Nullable
     private MetadataListener metadataListener;
-    @Nullable
-    private InternalErrorListener internalErrorListener;
     @Nullable
     private OnBufferUpdateListener bufferUpdateListener;
     @Nullable
@@ -209,10 +206,6 @@ public class ExoMediaPlayer implements Player.EventListener {
     public void setBufferUpdateListener(@Nullable OnBufferUpdateListener listener) {
         this.bufferUpdateListener = listener;
         setBufferRepeaterStarted(listener != null);
-    }
-
-    public void setInternalErrorListener(@Nullable InternalErrorListener listener) {
-        internalErrorListener = listener;
     }
 
     public void setCaptionListener(@Nullable CaptionListener listener) {
