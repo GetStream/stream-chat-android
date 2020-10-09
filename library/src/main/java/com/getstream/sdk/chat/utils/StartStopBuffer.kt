@@ -1,10 +1,11 @@
 package com.getstream.sdk.chat.utils
 
-import kotlinx.coroutines.GlobalScope
+import java.util.LinkedList
+import java.util.Queue
 import kotlinx.coroutines.launch
-import java.util.*
+import kotlinx.coroutines.GlobalScope
 
-internal class StartStopBuffer<T>() {
+internal class StartStopBuffer<T> {
 
     private val events: Queue<T> = LinkedList<T>()
     private var active = false
