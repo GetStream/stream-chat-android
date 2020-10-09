@@ -306,9 +306,8 @@ public class LlcMigrationUtils {
     }
 
     public static int getIcon(String mimeType) {
-        int fileTyineRes = 0;
+        int fileTyineRes = R.drawable.stream_ic_file;
         if (mimeType == null) {
-            fileTyineRes = R.drawable.stream_ic_file;
             return fileTyineRes;
         }
 

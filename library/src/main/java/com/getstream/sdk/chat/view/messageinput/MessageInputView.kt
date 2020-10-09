@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.text.Editable
 import android.text.TextUtils
@@ -21,10 +20,9 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.CaptureMediaContract
-import com.getstream.sdk.chat.DocumentTreeAccessContract
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.adapter.CommandsAdapter
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -107,11 +105,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
                 file?.let { messageInputController.onFileCaptured(it) }
             }
 
-    private val documentTreeAccessContract: ActivityResultLauncher<Unit>? =
-        (context as? ComponentActivity)
-            ?.registerForActivityResult(DocumentTreeAccessContract()) { uri: Uri? ->
-                messageInputController.onClickOpenFileSelectView(uri)
-            }
+    private val selectFilesResultLauncher: ActivityResultLauncher<Unit>? =
+        (context as? ComponentActivity)?.registerForActivityResult(SelectFilesContract()) {
+            messageInputController.onFilesSelected(it)
+        }
 
     private val commandsAdapter =
         CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
@@ -212,7 +209,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.selectMedia.setOnClickListener { messageInputController.onClickOpenMediaSelectView() }
         binding.selectCamera.setOnClickListener { messageInputController.onCameraClick() }
         binding.selectFile.setOnClickListener {
-            documentTreeAccessContract?.launch(Unit)
+            selectFilesResultLauncher?.launch(Unit)
         }
     }
 
@@ -354,14 +351,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     internal fun showTotalMediaAttachments(totalMediaAttachmentAdapter: MediaAttachmentAdapter) {
         binding.rvMedia.adapter = totalMediaAttachmentAdapter
-        gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
-        gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
-    }
-
-    internal fun showTotalFileAttachments(totalFileAttachmentAdapter: FileAttachmentListAdapter) {
-        gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
-        gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
-        binding.rvMedia.adapter = totalFileAttachmentAdapter
     }
 
     internal fun showMediaAttachments() {
@@ -376,7 +365,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     internal fun showMediaPermissions(shouldBeVisible: Boolean) = binding.ivMediaPermission.visible(shouldBeVisible)
     internal fun showCameraPermissions(shouldBeVisible: Boolean) = binding.ivCameraPermission.visible(shouldBeVisible)
-    internal fun showFilePermissions(shouldBeVisible: Boolean) = binding.ivFilePermission.visible(shouldBeVisible)
 
     internal fun hideAttachmentsMenu() {
         binding.clTitle.visible(false)
@@ -425,10 +413,5 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
-    }
-
-    companion object {
-        private const val MEDIA_ITEMS_PER_ROW = 4
-        private const val FILE_ITEMS_PER_ROW = 1
     }
 }
