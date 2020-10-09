@@ -80,19 +80,13 @@ internal class ChatLoggerImpl constructor(
     }
 
     private fun getTag(tag: Any?): String {
-
-        var stringTag: String
-
-        if (tag == null) {
-            stringTag = "null"
-        } else if (tag is String) {
-            stringTag = tag
-        } else {
-            stringTag = tag.javaClass.simpleName
+        val stringTag: String = when (tag) {
+            null -> "null"
+            is String -> tag
+            else -> tag.javaClass.simpleName
         }
 
-        val result = TAG_PREFIX + stringTag
-        return result
+        return TAG_PREFIX + stringTag
     }
 
     private fun getStackString(t: Throwable): String {

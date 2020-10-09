@@ -86,7 +86,7 @@ internal class ClientConnectionTests {
         )
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
-            socketListener = invocationOnMock.getArgument<SocketListener>(0)
+            socketListener = invocationOnMock.getArgument(0)
             socketListener.onEvent(disconnectedEvent)
         }
 

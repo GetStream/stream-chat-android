@@ -98,7 +98,6 @@ class ChannelsListAdapter(data: List<Channel>) :
     ): List<Channel> {
         val result: MutableList<Channel> = ArrayList(current)
         for (ch in update) {
-
             val idx = current.indexOfFirst { it.id == ch.id }
 
             if (idx != -1) {
@@ -108,12 +107,12 @@ class ChannelsListAdapter(data: List<Channel>) :
             }
         }
 
-        result.sortWith(java.util.Comparator { o1: Channel, o2: Channel -> (o1.updatedAt - o2.updatedAt) })
+        result.sortBy(Channel::updatedAt)
         return result
     }
 
     class VH(view: View) : RecyclerView.ViewHolder(view) {
-        val textId = view.findViewById<TextView>(R.id.text_id)
-        val textName = view.findViewById<TextView>(R.id.text_name)
+        val textId: TextView = view.findViewById(R.id.text_id)
+        val textName: TextView = view.findViewById(R.id.text_name)
     }
 }

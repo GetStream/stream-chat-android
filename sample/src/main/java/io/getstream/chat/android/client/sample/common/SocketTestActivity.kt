@@ -15,14 +15,8 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
-import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
-import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
-import kotlinx.android.synthetic.main.activity_socket_tests.textSocketState
-import java.text.SimpleDateFormat
-import kotlin.time.ExperimentalTime
+import kotlinx.android.synthetic.main.activity_socket_tests.*
 
-@ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
     var disposables = mutableListOf<Disposable>()
@@ -87,7 +81,6 @@ class SocketTestActivity : AppCompatActivity() {
     }
 
     private val sb = StringBuilder()
-    private val logTimeFormat = SimpleDateFormat("hh:mm:ss")
 
     private fun appendEvent(event: ChatEvent) {
         sb.insert(0, "${event.type}\n")

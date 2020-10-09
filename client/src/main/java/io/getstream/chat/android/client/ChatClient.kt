@@ -306,9 +306,7 @@ interface ChatClient {
 
     fun getVersion(): String
 
-    class Builder {
-        private val apiKey: String
-        private val appContext: Context
+    class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
@@ -317,13 +315,7 @@ interface ChatClient {
         private var logLevel = ChatLogLevel.ALL
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler
-
-        constructor(apiKey: String, appContext: Context) {
-            this.apiKey = apiKey
-            this.appContext = appContext
-            this.notificationsHandler = ChatNotificationHandler(appContext)
-        }
+        private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
 
         fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level

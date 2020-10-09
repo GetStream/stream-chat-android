@@ -117,9 +117,7 @@ class UsersApiCallsTests {
             )
         ).thenReturn(RetroSuccess(FlagResponse(flag)))
 
-        val result = client.flag(
-            targetUserId
-        ).execute()
+        val result = client.flagUser(targetUserId).execute()
 
         verifySuccess(result, flag)
     }

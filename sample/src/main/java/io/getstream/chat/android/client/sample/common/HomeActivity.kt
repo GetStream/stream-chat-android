@@ -9,9 +9,7 @@ import androidx.core.app.ActivityCompat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.sample.R
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

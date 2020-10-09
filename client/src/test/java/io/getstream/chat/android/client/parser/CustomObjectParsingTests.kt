@@ -42,7 +42,7 @@ class CustomObjectParsingTests {
         assertThat(message.cid).isEmpty()
         assertThat(message.silent).isFalse()
 
-        message.reactionCounts.put("like", 1)
+        message.reactionCounts["like"] = 1
         message.latestReactions.add(Reaction("x"))
         message.attachments.add(Attachment("author"))
 

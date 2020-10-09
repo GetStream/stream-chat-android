@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.sample.common
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
@@ -113,28 +112,22 @@ class ChannelsListActivity : AppCompatActivity() {
         // input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         builder.setView(input)
 
-        builder.setPositiveButton(
-            "OK",
-            DialogInterface.OnClickListener { dialog, which ->
-                val id = input.text.toString()
+        builder.setPositiveButton("OK") { _, _ ->
+            val id = input.text.toString()
 
-                if (id.isEmpty()) {
+            if (id.isNotEmpty()) {
+                if (id.contains(",")) {
+                    DbUtils.removeSet(id, this)
+                } else if (id.contains("-")) {
+                    DbUtils.removeRange(id, this)
                 } else {
-
-                    if (id.contains(",")) {
-                        DbUtils.removeSet(id, this)
-                    } else if (id.contains("-")) {
-                        DbUtils.removeRange(id, this)
-                    } else {
-                        DbUtils.removeChannel(id, this)
-                    }
+                    DbUtils.removeChannel(id, this)
                 }
             }
-        )
-        builder.setNegativeButton(
-            "Cancel",
-            DialogInterface.OnClickListener { dialog, which -> dialog.cancel() }
-        )
+        }
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.cancel()
+        }
 
         builder.show()
     }
