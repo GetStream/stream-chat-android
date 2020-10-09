@@ -8,9 +8,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
+import com.getstream.sdk.chat.utils.isInLastMinute
 import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
-import java.util.isInLastMinute
 
 @JvmName("bind")
 fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {

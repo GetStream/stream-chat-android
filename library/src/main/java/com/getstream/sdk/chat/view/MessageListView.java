@@ -103,6 +103,9 @@ public class MessageListView extends ConstraintLayout {
     private Function2<Message, GiphyAction, Unit> onSendGiphyHandler = (Message m, GiphyAction a) -> {
         throw new IllegalStateException("onSendGiphyHandler must be set.");
     };
+    private Function1<Message, Unit> onMessageRetryHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageRetryHandler must be set.");
+    };
     private Channel channel;
     private User currentUser;
     /**
@@ -116,10 +119,9 @@ public class MessageListView extends ConstraintLayout {
         if (message.getReplyCount() > 0) {
             onStartThreadHandler.invoke(message);
             onStartThreadListener.invoke(message);
-        } else {
-            //viewModel.sendMessage(message);
         }
     };
+
     private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message ->
             new MessageMoreActionDialog(
                     getContext(),
@@ -136,6 +138,11 @@ public class MessageListView extends ConstraintLayout {
                     },
                     onMessageFlagHandler
             ).show();
+   
+    private final MessageRetryListener DEFAULT_MESSAGE_RETRY_LISTENER = (message) -> {
+        onMessageRetryHandler.invoke(message);
+    };
+
     private final AttachmentClickListener DEFAULT_ATTACHMENT_CLICK_LISTENER = (message, attachment) -> {
         Chat.getInstance()
                 .getNavigator()
@@ -167,6 +174,7 @@ public class MessageListView extends ConstraintLayout {
     private final ListenerContainer listenerContainer = new ListenerContainerImpl(
             DEFAULT_MESSAGE_CLICK_LISTENER,
             DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+            DEFAULT_MESSAGE_RETRY_LISTENER,
             DEFAULT_ATTACHMENT_CLICK_LISTENER,
             DEFAULT_REACTION_VIEW_CLICK_LISTENER,
             DEFAULT_USER_CLICK_LISTENER,
@@ -550,6 +558,18 @@ public class MessageListView extends ConstraintLayout {
     }
 
     /**
+     * Sets the message retry listener to be used by MessageListView.
+     *
+     * @param messageRetryListener The listener to use. If null, the default will be used instead.
+     */
+    public void setMessageRetryListener(@Nullable MessageRetryListener messageRetryListener) {
+        if (messageRetryListener == null) {
+            messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER;
+        }
+        listenerContainer.setMessageRetryListener(messageRetryListener);
+    }
+
+    /**
      * Sets the attachment click listener to be used by MessageListView.
      *
      * @param attachmentClickListener The listener to use. If null, the default will be used instead.
@@ -625,6 +645,10 @@ public class MessageListView extends ConstraintLayout {
         this.onSendGiphyHandler = onSendGiphyHandler;
     }
 
+    public void setOnMessageRetryHandler(Function1<Message, Unit> onMessageRetryHandler) {
+        this.onMessageRetryHandler = onMessageRetryHandler;
+    }
+
     public void setOnStartThreadListener(Function1<Message, Unit> onStartThreadListener) {
         this.onStartThreadListener = onStartThreadListener;
     }
@@ -639,6 +663,10 @@ public class MessageListView extends ConstraintLayout {
 
     public interface MessageClickListener {
         void onMessageClick(Message message);
+    }
+
+    public interface MessageRetryListener {
+        void onRetryMessage(Message message);
     }
 
     public interface MessageLongClickListener {
