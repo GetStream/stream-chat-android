@@ -40,7 +40,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private List<MessageListItem> messageEntities;
     private List<MessageListItem.TypingItem> typingEntities;
     private Boolean isLoadingMore;
-    private Boolean hasNewMessages;
     private String lastMessageID;
     private LifecycleOwner lifecycleOwner;
     private List<User> previousTypingUsers;
@@ -62,7 +61,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.isLoadingMore = false;
         // scroll behaviour is only triggered for new messages
         this.lastMessageID = "";
-        this.hasNewMessages = false;
         previousTypingUsers = new LinkedList<>();
     }
 
@@ -163,9 +161,8 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private void onReadsChanged(List<ChannelUserRead> channelUserRead) {
-        hasNewMessages = false;
         logger.logI("broadcast because reads changed");
-        broadcastValue(hasNewMessages, isLoadingMore, typingEntities, messageEntities);
+        broadcastValue(false, isLoadingMore, typingEntities, messageEntities);
     }
 
     private void onTypingChanged(List<User> users) {
@@ -179,7 +176,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
 
         // update
-        hasNewMessages = false;
         List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
 
         if (users.size() > 0) {
@@ -190,7 +186,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.typingEntities = typingEntities;
 
         logger.logI("broadcast because typing changed");
-        broadcastValue(hasNewMessages, isLoadingMore, typingEntities, messageEntities);
+        broadcastValue(false, isLoadingMore, typingEntities, messageEntities);
     }
 
     private boolean onlyUserTyping(List<User> users) {
@@ -216,7 +212,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private void progressMessages(List<Message> messages) {
         if (messages == null || messages.size() == 0) return;
         // update based on messages
-        hasNewMessages = false;
+        boolean hasNewMessages = false;
         String newlastMessageID = messages.get(messages.size() - 1).getId();
         if (!newlastMessageID.equals(lastMessageID)) {
             hasNewMessages = true;
@@ -300,10 +296,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.messages.observeForever(this::onMessagesChanged);
         this.threadMessages.observeForever(threadMessagesObserver);
         this.typing.observeForever(this::onTypingChanged);
-    }
-
-    public Boolean getHasNewMessages() {
-        return hasNewMessages;
     }
 
     public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {
