@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.controller
 
-import NEVER
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -36,7 +35,7 @@ class ThreadControllerImpl(
     override val messages =
         Transformations.map(mediatorLiveData) {
             it.values.sortedBy { m -> m.createdAt }
-                .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore ?: NEVER) }
+                .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore) }
         }
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)

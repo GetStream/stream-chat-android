@@ -68,8 +68,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import wasCreatedAfter
-import wasCreatedAfterOrAt
-import wasCreatedBefore
+import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date
@@ -113,7 +112,7 @@ class ChannelControllerImpl(
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
             .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-            .sortedBy { it.createdAt }
+            .sortedBy { it.createdAt ?: it.createdLocallyAt }
             .toList()
             .map { it.copy() }
     }
@@ -243,7 +242,7 @@ class ChannelControllerImpl(
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead(domainImpl.currentUser).apply { lastRead = last.createdAt }
+                val userRead = ChannelUserRead(domainImpl.currentUser).apply { lastRead = last.createdAt ?: last.createdLocallyAt }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return Result(true, null)
@@ -268,7 +267,7 @@ class ChannelControllerImpl(
         // start off empty
         _messages.postValue(mutableMapOf())
         // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.wasCreatedAfterOrAt(date) }
+        val recentMessages = copy.values.filter { it.wasCreatedAfter(date) }
         upsertMessages(recentMessages)
     }
 
@@ -442,7 +441,7 @@ class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
-        newMessage.createdAt = newMessage.createdAt ?: Date()
+        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
@@ -734,7 +733,7 @@ class ChannelControllerImpl(
         var message = copy[messageId]
 
         if (hideMessagesBefore != null) {
-            if (message != null && message.wasCreatedBefore(hideMessagesBefore)) {
+            if (message != null && message.wasCreatedBeforeOrAt(hideMessagesBefore)) {
                 message = null
             }
         }
@@ -1170,7 +1169,7 @@ class ChannelControllerImpl(
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
         if (messages.isNotEmpty()) {
-            channel.lastMessageAt = messages.last().createdAt
+            channel.lastMessageAt = messages.last().let { it.createdAt ?: it.createdLocallyAt }
         }
 
         return channel
