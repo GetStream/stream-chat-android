@@ -108,6 +108,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
+    testImplementation "com.flextrade.jfixture:kfixture:0.2.0"
 
     androidTestImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$jupiter_version"

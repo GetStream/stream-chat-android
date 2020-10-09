@@ -113,10 +113,17 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
+<<<<<<< HEAD
             .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
             .sortedBy { it.createdAt ?: it.createdLocallyAt }
             .toList()
             .map { it.copy() }
+=======
+            .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+            .sortedBy { it.createdAt }
+            .map { it.copy() }
+            .toList()
+>>>>>>> Tests and implementation when need to update url
     }
 
     /** the number of people currently watching the channel */
@@ -769,7 +776,7 @@ class ChannelControllerImpl(
 
     private fun upsertMessages(messages: List<Message>) {
         val copy = _messages.value ?: mutableMapOf()
-        val newMessages = messageHelper.updateValidAttachmentsUrl(copy, messages)
+        val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
         for (message in newMessages) {
