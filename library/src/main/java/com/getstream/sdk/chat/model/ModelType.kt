@@ -34,6 +34,7 @@ object ModelType {
     const val attach_mime_doc = "application/msword"
     const val attach_mime_docx =
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
     // const val attach_mine_xls = "application/vnd.ms-excel"
     const val attach_mime_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     const val attach_mime_csv = "application/vnd.ms-excel"
