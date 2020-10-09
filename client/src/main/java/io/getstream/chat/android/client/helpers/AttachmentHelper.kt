@@ -11,8 +11,8 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
         if (url.queryParameterNames.contains(QUERY_KEY_NAME_EXPIRES).not()) {
             return true
         }
-        return url.queryParameter(QUERY_KEY_NAME_EXPIRES)?.toLongOrNull()
-            ?.let { timestamp -> timestamp > systemTimeProvider.provideTime() } ?: false
+        val timestamp = url.queryParameter(QUERY_KEY_NAME_EXPIRES)?.toLongOrNull() ?: return false
+        return timestamp > systemTimeProvider.provideTime()
     }
 
     companion object {
