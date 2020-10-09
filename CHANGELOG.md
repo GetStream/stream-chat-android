@@ -5,6 +5,7 @@
 - Add setting type and file size when creating AttachmentMetaData from file
 - Remove FileAttachmentListAdapter and methods related to opening files chooser
 - Replace isMedia flag with getting type from attachment if possible
+- Update ExoPlayer dependency to version [2.12.0](https://github.com/google/ExoPlayer/blob/release-v2/RELEASENOTES.md#2120-2020-09-11)
 
 # Oct 7th, 2020 - 4.3.0-beta-4
 - For Java clients, the `bindView` methods used to bind a ViewModel and its UI component together are now available with friendlier syntax.
