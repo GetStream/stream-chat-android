@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -45,7 +44,6 @@ internal class MessageInputController(
             DispatchersProvider(),
             view,
             MediaAttachmentAdapter(),
-            FileAttachmentListAdapter(),
             MediaAttachmentSelectedAdapter(),
             FileAttachmentSelectedAdapter(emptyList(), true),
             style.isShowAttachmentButton
@@ -95,13 +93,19 @@ internal class MessageInputController(
         }
     }
 
-    private fun sendNormalMessage(message: String) = when (attachmentsController.selectedAttachments.isEmpty()) {
-        true -> view.sendTextMessage(message)
-        false -> view.sendAttachments(
-            message,
-            attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
-        )
-    }
+    private fun sendNormalMessage(message: String) =
+        when (attachmentsController.selectedAttachments.isEmpty()) {
+            true -> view.sendTextMessage(message)
+            false -> view.sendAttachments(
+                message,
+                attachmentsController.selectedAttachments.map {
+                    storageHelper.getCachedFileFromUri(
+                        view.context,
+                        it
+                    )
+                }
+            )
+        }
 
     private fun sendToThread(parentMessage: Message, message: String) =
         when (attachmentsController.selectedAttachments.isEmpty()) {
@@ -110,7 +114,12 @@ internal class MessageInputController(
                 parentMessage,
                 message,
                 binding.cbSendAlsoToChannel.isChecked,
-                attachmentsController.selectedAttachments.map { storageHelper.getCachedFileFromUri(view.context, it) }
+                attachmentsController.selectedAttachments.map {
+                    storageHelper.getCachedFileFromUri(
+                        view.context,
+                        it
+                    )
+                }
             )
         }
 
@@ -132,7 +141,9 @@ internal class MessageInputController(
                 binding.clSelectPhoto.visibility = View.VISIBLE
                 attachmentsController.configAttachmentButtonVisible(false)
             }
-            MessageInputType.COMMAND, MessageInputType.MENTION -> binding.btnClose.visibility = View.GONE
+            MessageInputType.COMMAND, MessageInputType.MENTION ->
+                binding.btnClose.visibility =
+                    View.GONE
         }
         binding.tvTitle.text = type.label
     }
@@ -152,7 +163,11 @@ internal class MessageInputController(
     }
 
     internal fun onFileCaptured(file: File) {
-        attachmentsController.selectAttachment(AttachmentMetaData(file), true)
+        attachmentsController.selectAttachmentFromCamera(AttachmentMetaData(file))
+    }
+
+    internal fun onFilesSelected(uriList: List<Uri>) {
+        attachmentsController.selectAttachmentsFromUriList(uriList)
     }
 
     internal fun checkCommandsOrMentions(inputMessage: String) {
@@ -186,12 +201,6 @@ internal class MessageInputController(
     fun onClickOpenMediaSelectView() {
         messageInputType = MessageInputType.UPLOAD_MEDIA
         attachmentsController.onClickOpenMediaSelectView(messageInputType!!)
-        onClickOpenAttachmentSelectionMenu(messageInputType!!)
-    }
-
-    fun onClickOpenFileSelectView(treeUri: Uri?) {
-        messageInputType = MessageInputType.UPLOAD_FILE
-        attachmentsController.onClickOpenFileSelectView(messageInputType!!, treeUri)
         onClickOpenAttachmentSelectionMenu(messageInputType!!)
     }
 
