@@ -17,7 +17,7 @@ internal class RepositoryHelper(
     val configs = ChannelConfigRepository(database.channelConfigDao())
     val channels = ChannelRepository(database.channelStateDao(), 100, currentUser, client)
     val queryChannels = QueryChannelsRepository(database.queryChannelsQDao())
-    val messages = MessageRepository(database.messageDao(), 100, currentUser, client)
+    val messages = MessageRepository(database.messageDao(), currentUser, 100)
     val reactions = ReactionRepository(database.reactionDao(), currentUser, client)
     val syncState = SyncStateRepository(database.syncStateDao())
 

@@ -568,10 +568,11 @@ class ChatDomainImpl private constructor(
     }
 
     suspend fun retryFailedEntities() {
+        // TODO seems weird
         sleep(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
-        val messageEntities = repos.messages.retryMessages()
+        val messageEntities = repos.messages.retryMessages(ChatClient.instance())
         val reactionEntities = repos.reactions.retryReactions()
         logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
     }

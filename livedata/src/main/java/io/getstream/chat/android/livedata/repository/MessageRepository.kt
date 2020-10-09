@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.repository
 
+import androidx.annotation.VisibleForTesting
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -14,8 +15,13 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 import java.util.Date
 
-class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, private val currentUser: User, var client: ChatClient) {
+class MessageRepository(
+    private val messageDao: MessageDao,
+    private val currentUser: User,
+    private val cacheSize: Int = 100
+) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
+    @VisibleForTesting
     var messageCache = LruCache<String, Message>(cacheSize)
 
     internal suspend fun selectMessagesForChannel(
@@ -101,7 +107,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, pr
         return messageDao.selectSyncNeeded()
     }
 
-    suspend fun retryMessages(): List<MessageEntity> {
+    suspend fun retryMessages(client: ChatClient): List<MessageEntity> {
         val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
         val messageEntities = selectSyncNeeded()

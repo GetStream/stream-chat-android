@@ -96,12 +96,12 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         Truth.assertThat(liveChannel.lastMessageAt).isEqualTo(message1.createdAt)
         Truth.assertThat(roomChannel!!.lastMessageAt).isEqualTo(message1.createdAt)
 
-        var messageEntities = chatDomainImpl.repos.messages.retryMessages()
+        var messageEntities = chatDomainImpl.repos.messages.retryMessages(client)
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         // now we go online and retry, after the retry all state should be updated
         chatDomainImpl.setOnline()
-        messageEntities = chatDomainImpl.repos.messages.retryMessages()
+        messageEntities = chatDomainImpl.repos.messages.retryMessages(client)
         Truth.assertThat(messageEntities.size).isEqualTo(1)
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(

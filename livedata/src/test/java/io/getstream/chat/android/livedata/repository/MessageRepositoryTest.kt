@@ -77,7 +77,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         Truth.assertThat(messages.first().createdAt).isEqualTo(oldDate)
         Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
-        messages = repo.retryMessages()
+        messages = repo.retryMessages(client)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
 
