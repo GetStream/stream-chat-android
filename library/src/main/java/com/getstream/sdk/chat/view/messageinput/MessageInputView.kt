@@ -23,7 +23,6 @@ import com.getstream.sdk.chat.CaptureMediaContract
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.SelectFilesContract
 import com.getstream.sdk.chat.adapter.CommandsAdapter
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -352,14 +351,6 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     internal fun showTotalMediaAttachments(totalMediaAttachmentAdapter: MediaAttachmentAdapter) {
         binding.rvMedia.adapter = totalMediaAttachmentAdapter
-        gridSpacingItemDecoration.setSpanCount(MEDIA_ITEMS_PER_ROW)
-        gridLayoutManager.spanCount = MEDIA_ITEMS_PER_ROW
-    }
-
-    internal fun showTotalFileAttachments(totalFileAttachmentAdapter: FileAttachmentListAdapter) {
-        gridSpacingItemDecoration.setSpanCount(FILE_ITEMS_PER_ROW)
-        gridLayoutManager.spanCount = FILE_ITEMS_PER_ROW
-        binding.rvMedia.adapter = totalFileAttachmentAdapter
     }
 
     internal fun showMediaAttachments() {
@@ -422,10 +413,5 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
-    }
-
-    companion object {
-        private const val MEDIA_ITEMS_PER_ROW = 4
-        private const val FILE_ITEMS_PER_ROW = 1
     }
 }

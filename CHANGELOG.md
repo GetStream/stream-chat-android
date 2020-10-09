@@ -2,6 +2,9 @@
 
 - Improve selecting non-media attachments
 - Fix showing attachments captured with camera
+- Add setting type and file size when creating AttachmentMetaData from file
+- Remove FileAttachmentListAdapter and methods related to opening files chooser
+- Replace isMedia flag with getting type from attachment if possible
 
 # Oct 7th, 2020 - 4.3.0-beta-4
 - For Java clients, the `bindView` methods used to bind a ViewModel and its UI component together are now available with friendlier syntax.
