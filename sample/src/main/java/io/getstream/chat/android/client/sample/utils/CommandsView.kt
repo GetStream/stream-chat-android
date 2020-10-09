@@ -63,7 +63,6 @@ import kotlinx.android.synthetic.main.layout_commands.view.textStatus
 import kotlinx.android.synthetic.main.layout_commands.view.textUserId
 import java.util.Date
 import java.util.concurrent.TimeUnit
-import kotlin.collections.set
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     init {
