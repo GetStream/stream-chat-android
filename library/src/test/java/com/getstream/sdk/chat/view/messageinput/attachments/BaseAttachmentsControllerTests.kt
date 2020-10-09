@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.messageinput.attachments
 
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -27,7 +26,6 @@ internal open class BaseAttachmentsControllerTests {
     protected lateinit var view: MessageInputView
     private lateinit var testDispatcher: CoroutineDispatcher
     protected lateinit var totalMediaAttachmentAdapter: MediaAttachmentAdapter
-    protected lateinit var totalFileAttachmentAdapter: FileAttachmentListAdapter
     protected lateinit var selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter
     protected lateinit var selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter
 
@@ -42,7 +40,6 @@ internal open class BaseAttachmentsControllerTests {
         testDispatcher = TestCoroutineDispatcher()
         view = mock()
         totalMediaAttachmentAdapter = mock()
-        totalFileAttachmentAdapter = mock()
         selectedMediaAttachmentAdapter = mock()
         selectedFileAttachmentAdapter = mock()
         When calling view.context doReturn mock()
@@ -57,7 +54,6 @@ internal open class BaseAttachmentsControllerTests {
             DispatchersProvider(mainDispatcher = testDispatcher, ioDispatcher = testDispatcher),
             view,
             totalMediaAttachmentAdapter,
-            totalFileAttachmentAdapter,
             selectedMediaAttachmentAdapter,
             selectedFileAttachmentAdapter,
             showOpenAttachmentsMenuConfig

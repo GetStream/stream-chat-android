@@ -149,37 +149,39 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         }
 
         Attachment attachment = lastMessage.getAttachments().get(0);
-        iv_attachment_type.setVisibility(View.VISIBLE);
+        if (attachment.getType() != null) {
+            iv_attachment_type.setVisibility(View.VISIBLE);
 
-        String lastMessageText;
-        @IdRes int attachmentType;
+            String lastMessageText;
+            @IdRes int attachmentType;
 
-        switch (attachment.getType()) {
-            case ModelType.attach_image:
-                lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_photo);
-                attachmentType = R.drawable.stream_ic_image;
-                break;
-            case ModelType.attach_file:
-                if (attachment.getMimeType() != null && attachment.getMimeType().contains("video")) {
-                    lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_video);
-                    attachmentType = R.drawable.stream_ic_video;
-                } else {
+            switch (attachment.getType()) {
+                case ModelType.attach_image:
+                    lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_photo);
+                    attachmentType = R.drawable.stream_ic_image;
+                    break;
+                case ModelType.attach_file:
+                    if (attachment.getMimeType() != null && attachment.getMimeType().contains("video")) {
+                        lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_video);
+                        attachmentType = R.drawable.stream_ic_video;
+                    } else {
+                        lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
+                        attachmentType = R.drawable.stream_ic_file;
+                    }
+                    break;
+                case ModelType.attach_giphy:
+                    lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_giphy);
+                    attachmentType = R.drawable.stream_ic_gif;
+                    break;
+                default:
                     lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
                     attachmentType = R.drawable.stream_ic_file;
-                }
-                break;
-            case ModelType.attach_giphy:
-                lastMessageText = context.getResources().getString(R.string.stream_last_message_attachment_giphy);
-                attachmentType = R.drawable.stream_ic_gif;
-                break;
-            default:
-                lastMessageText = !TextUtils.isEmpty(attachment.getTitle()) ? attachment.getTitle() : attachment.getFallback();
-                attachmentType = R.drawable.stream_ic_file;
-                break;
-        }
+                    break;
+            }
 
-        tv_last_message.setText(lastMessageText);
-        iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
+            tv_last_message.setText(lastMessageText);
+            iv_attachment_type.setImageDrawable(context.getDrawable(attachmentType));
+        }
     }
 
     protected void configLastMessageDate(Channel channel) {

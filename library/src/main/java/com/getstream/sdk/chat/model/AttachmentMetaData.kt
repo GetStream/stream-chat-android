@@ -22,9 +22,23 @@ data class AttachmentMetaData(
         title = attachment.title
     )
 
-    constructor(file: File) : this(
-        file = file,
-        uri = Uri.fromFile(file),
+    constructor(file: File) : this(file = file, uri = Uri.fromFile(file)) {
         mimeType = Utils.getMimeType(file)
-    )
+        type = getTypeFromMimeType(mimeType)
+        size = file.length()
+    }
+
+    private fun getTypeFromMimeType(mimeType: String?): String = mimeType?.let { type ->
+        when {
+            type.contains("image") -> {
+                ModelType.attach_image
+            }
+            type.contains("video") -> {
+                ModelType.attach_video
+            }
+            else -> {
+                ModelType.attach_file
+            }
+        }
+    } ?: ModelType.attach_file
 }

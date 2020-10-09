@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.view.messageinput
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.FileAttachmentListAdapter
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -25,7 +24,6 @@ internal class AttachmentsController(
     private val dispatchersProvider: DispatchersProvider,
     private val view: MessageInputView,
     private val totalMediaAttachmentAdapter: MediaAttachmentAdapter,
-    private val totalFileAttachmentAdapter: FileAttachmentListAdapter,
     private val selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter,
     private val selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter,
     private val showOpenAttachmentsMenuConfig: Boolean
@@ -41,54 +39,30 @@ internal class AttachmentsController(
     internal fun onClickCloseAttachmentSelectionMenu() {
         view.hideAttachmentsMenu()
         totalAttachments = emptySet()
-        totalFileAttachmentAdapter.clear()
         totalMediaAttachmentAdapter.clear()
         configAttachmentButtonVisible(true)
     }
 
-    private fun fillTotalAttachmentsView(
-        messageInputType: MessageInputType?,
-        isMedia: Boolean,
-        treeUri: Uri? = null
-    ) {
+    private fun fillTotalMediaAttachmentsView(messageInputType: MessageInputType?) {
         GlobalScope.launch(dispatchersProvider.mainDispatcher) {
             view.showLoadingTotalAttachments(true)
-            totalAttachments = getAttachmentsFromLocal(isMedia, treeUri)
+            totalAttachments = withContext(dispatchersProvider.ioDispatcher) {
+                storageHelper.getMediaAttachments(view.context).toSet()
+            }
             if (totalAttachments.isEmpty()) {
                 view.showMessage(R.string.stream_no_media_error)
                 onClickCloseAttachmentSelectionMenu()
             } else {
-                setTotalAttachmentAdapters(
+                setTotalMediaAttachmentAdapter(
                     totalAttachments.toList(),
                     selectedAttachments.toList(),
-                    messageInputType,
-                    isMedia
+                    messageInputType
                 )
             }
-            selectedAttachments = filterMediaFiles(isMedia, selectedAttachments)
-            setSelectedAttachmentAdapter(messageInputType, isMedia)
+            setSelectedMediaAttachmentAdapter(messageInputType)
             view.showLoadingTotalAttachments(false)
         }
     }
-
-    private fun filterMediaFiles(isMedia: Boolean, filesToFilter: Set<AttachmentMetaData>): Set<AttachmentMetaData> {
-        return if (!isMedia) {
-            filesToFilter
-        } else {
-            filesToFilter.filter(mediaAttachmentsPredicate).toSet()
-        }
-    }
-
-    private suspend fun getAttachmentsFromLocal(
-        isMedia: Boolean,
-        treeUri: Uri? = null
-    ): Set<AttachmentMetaData> =
-        withContext(dispatchersProvider.ioDispatcher) {
-            when (isMedia) {
-                true -> storageHelper.getMediaAttachments(view.context).toSet()
-                false -> storageHelper.getFileAttachments(view.context, treeUri).toSet()
-            }
-        }
 
     internal fun configAttachmentButtonVisible(visible: Boolean) {
         if (!showOpenAttachmentsMenuConfig) return
@@ -98,22 +72,13 @@ internal class AttachmentsController(
     @VisibleForTesting
     internal fun cancelAttachment(
         attachment: AttachmentMetaData,
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
+        messageInputType: MessageInputType?
     ) {
         selectedAttachments = selectedAttachments - attachment
-        removeAttachmentFromAdapters(attachment, isMedia)
+        removeAttachmentFromAdapters(attachment)
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)
-        }
-    }
-
-    private fun showSelectedAttachments(isMedia: Boolean) {
-        if (isMedia) {
-            view.showMediaAttachments()
-        } else {
-            view.showFileAttachments()
         }
     }
 
@@ -132,130 +97,109 @@ internal class AttachmentsController(
             }
             return
         }
-        openSelectView(selectedAttachments, messageInputType, true, null)
+
+        setSelectedAttachments(selectedAttachments)
+        fillTotalMediaAttachmentsView(messageInputType)
     }
 
-    internal fun onClickOpenFileSelectView(messageInputType: MessageInputType, treeUri: Uri?) {
-        if (treeUri == null) {
-            view.showMessage(R.string.stream_permissions_storage_message)
-            return
-        }
-        openSelectView(selectedAttachments, messageInputType, false, treeUri)
-    }
-
-    private fun openSelectView(
-        editAttachments: Set<AttachmentMetaData>,
-        messageInputType: MessageInputType,
-        isMedia: Boolean,
-        treeUri: Uri? = null
-    ) {
-        setSelectedAttachments(editAttachments)
-        fillTotalAttachmentsView(messageInputType, isMedia, treeUri)
-    }
-
-    private fun removeAttachmentFromAdapters(
-        attachment: AttachmentMetaData,
-        isMedia: Boolean
-    ) {
-        if (isMedia) {
+    private fun removeAttachmentFromAdapters(attachment: AttachmentMetaData) {
+        if (isMediaAttachment(attachment)) {
             selectedMediaAttachmentAdapter.removeAttachment(attachment)
             totalMediaAttachmentAdapter.unselectAttachment(attachment)
         } else {
             selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            totalFileAttachmentAdapter.unselectAttachment(attachment)
         }
     }
 
-    private fun addAttachmentToAdapter(
-        attachment: AttachmentMetaData,
-        isMedia: Boolean
-    ) {
-        if (isMedia) {
-            selectedMediaAttachmentAdapter.addAttachment(attachment)
-            totalMediaAttachmentAdapter.selectAttachment(attachment)
-        } else {
-            selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            totalFileAttachmentAdapter.selectAttachment(attachment)
-        }
-    }
-
-    private fun setTotalAttachmentAdapters(
+    private fun setTotalMediaAttachmentAdapter(
         totalAttachment: List<AttachmentMetaData>,
         selectedAttachments: List<AttachmentMetaData>,
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
+        messageInputType: MessageInputType?
     ) {
         totalAttachment.forEach { it.isSelected = selectedAttachments.contains(it) }
-        if (isMedia) {
-            totalMediaAttachmentAdapter.apply {
-                setAttachments(totalAttachment)
-                listener = { attachment -> updateAttachment(attachment, messageInputType, isMedia) }
-            }
-            view.showTotalMediaAttachments(totalMediaAttachmentAdapter)
-        } else {
-            totalFileAttachmentAdapter.apply {
-                setAttachments(totalAttachment)
-                listener = { attachment -> updateAttachment(attachment, messageInputType, isMedia) }
-            }
-            view.showTotalFileAttachments(totalFileAttachmentAdapter)
+        totalMediaAttachmentAdapter.apply {
+            setAttachments(totalAttachment)
+            listener = { attachment -> updateMediaAttachment(attachment, messageInputType) }
         }
+        view.showTotalMediaAttachments(totalMediaAttachmentAdapter)
     }
 
-    private fun setSelectedAttachmentAdapter(
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
-    ) {
-        if (isMedia) {
-            selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            selectedMediaAttachmentAdapter.cancelListener =
-                { attachment -> cancelAttachment(attachment, messageInputType, isMedia) }
-            view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
-            selectedFileAttachmentAdapter.clear()
-        } else {
-            selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            selectedFileAttachmentAdapter.cancelListener =
-                { attachment -> cancelAttachment(attachment, messageInputType, isMedia) }
-            view.showSelectedFileAttachments(selectedFileAttachmentAdapter)
-            selectedMediaAttachmentAdapter.clear()
-        }
+    private fun setSelectedMediaAttachmentAdapter(messageInputType: MessageInputType?) {
+        selectedAttachments = selectedAttachments.filter(isMediaAttachment).toSet()
+        selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
+        selectedMediaAttachmentAdapter.cancelListener =
+            { attachment -> cancelAttachment(attachment, messageInputType) }
+        view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
+        selectedFileAttachmentAdapter.clear()
     }
 
-    private fun updateAttachment(
+    private fun setSelectedFileAttachmentAdapter() {
+        selectedAttachments = selectedAttachments.filter(isFileAttachment).toSet()
+        selectedFileAttachmentAdapter.cancelListener =
+            { attachment -> cancelAttachment(attachment, null) }
+        view.showSelectedFileAttachments(selectedFileAttachmentAdapter)
+        selectedMediaAttachmentAdapter.clear()
+    }
+
+    private fun updateMediaAttachment(
         attachment: AttachmentMetaData,
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
+        messageInputType: MessageInputType?
     ) = when (attachment.isSelected) {
-        true -> unselectAttachment(attachment, messageInputType, isMedia)
-        false -> selectAttachment(attachment, isMedia)
+        true -> unselectMediaAttachment(attachment, messageInputType)
+        false -> selectMediaAttachment(attachment)
     }
 
-    private fun unselectAttachment(
+    private fun unselectMediaAttachment(
         attachment: AttachmentMetaData,
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
+        messageInputType: MessageInputType?
     ) {
         attachment.isSelected = false
         selectedAttachments = selectedAttachments - attachment
-        removeAttachmentFromAdapters(attachment, isMedia)
+        removeAttachmentFromAdapters(attachment)
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)
         }
     }
 
-    internal fun selectAttachment(
-        attachment: AttachmentMetaData,
-        isMedia: Boolean
-    ) {
+    internal fun selectAttachmentFromCamera(attachment: AttachmentMetaData) {
+        setSelectedMediaAttachmentAdapter(null)
+        selectMediaAttachment(attachment)
+    }
+
+    internal fun selectAttachmentsFromUriList(uriList: List<Uri>) {
+        GlobalScope.launch(dispatchersProvider.mainDispatcher) {
+            setSelectedFileAttachmentAdapter()
+            val attachments = withContext(dispatchersProvider.ioDispatcher) {
+                storageHelper.getAttachmentsFromUriList(view.context, uriList)
+            }
+            selectFileAttachments(attachments)
+        }
+    }
+
+    private fun selectFileAttachments(attachments: List<AttachmentMetaData>) {
+        val filteredAttachments = attachments.filter { it.size <= Constant.MAX_UPLOAD_FILE_SIZE }
+        if (filteredAttachments.size < attachments.size) {
+            view.showMessage(R.string.stream_large_size_file_error)
+        }
+        filteredAttachments.forEach { it.isSelected = true }
+        selectedAttachments = selectedAttachments + filteredAttachments
+        view.showFileAttachments()
+        rootController.configSendButtonEnableState()
+        selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
+    }
+
+    internal fun selectMediaAttachment(attachment: AttachmentMetaData) {
         if (attachment.size > Constant.MAX_UPLOAD_FILE_SIZE) {
             view.showMessage(R.string.stream_large_size_file_error)
         } else {
             if (!selectedAttachments.contains(attachment)) {
                 attachment.isSelected = true
                 selectedAttachments = selectedAttachments + attachment
-                showSelectedAttachments(isMedia)
+                view.showMediaAttachments()
                 rootController.configSendButtonEnableState()
-                addAttachmentToAdapter(attachment, isMedia)
+                selectedMediaAttachmentAdapter.addAttachment(attachment)
+                totalMediaAttachmentAdapter.selectAttachment(attachment)
             }
         }
     }
@@ -265,17 +209,14 @@ internal class AttachmentsController(
             permissionChecker.isGrantedCameraPermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(false)
-                view.showFilePermissions(true)
             }
             permissionChecker.isGrantedStoragePermissions(view.context) -> {
                 view.showMediaPermissions(false)
                 view.showCameraPermissions(true)
-                view.showFilePermissions(true)
             }
             else -> {
                 view.showMediaPermissions(true)
                 view.showCameraPermissions(true)
-                view.showFilePermissions(true)
             }
         }
     }
@@ -284,7 +225,6 @@ internal class AttachmentsController(
         view.hideAttachmentsMenu()
         selectedAttachments = emptySet()
         totalMediaAttachmentAdapter.clear()
-        totalFileAttachmentAdapter.clear()
         selectedFileAttachmentAdapter.clear()
         selectedMediaAttachmentAdapter.clear()
     }
@@ -296,6 +236,9 @@ internal class AttachmentsController(
 
     companion object {
         private val listOfMediaTypes = listOf(ModelType.attach_image, ModelType.attach_video)
-        private val mediaAttachmentsPredicate: (AttachmentMetaData) -> Boolean = { it.type in listOfMediaTypes }
+        private val isMediaAttachment: (AttachmentMetaData) -> Boolean =
+            { it.type in listOfMediaTypes }
+        private val isFileAttachment: (AttachmentMetaData) -> Boolean =
+            { it.type == ModelType.attach_file }
     }
 }
