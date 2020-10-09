@@ -1,5 +1,6 @@
-package io.getstream.chat.android.client
+package io.getstream.chat.android.client.di
 
+import android.content.Context
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Loggable
 import io.getstream.chat.android.client.api.ChatApi
@@ -23,7 +24,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-internal open class ChatModules(val config: ChatClientConfig) {
+internal open class BaseChatModule(val appContext: Context, val config: ChatClientConfig) {
 
     private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }
@@ -71,8 +72,23 @@ internal open class ChatModules(val config: ChatClientConfig) {
         config: ChatClientConfig,
         parser: ChatParser
     ): Retrofit {
+        val clientBuilder = clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser)
 
-        val clientBuilder = OkHttpClient.Builder()
+        val builder = Retrofit.Builder()
+            .baseUrl(endpoint)
+            .client(clientBuilder.build())
+
+        return parser.configRetrofit(builder).build()
+    }
+
+    protected open fun clientBuilder(
+        connectTimeout: Long,
+        writeTimeout: Long,
+        readTimeout: Long,
+        config: ChatClientConfig,
+        parser: ChatParser
+    ): OkHttpClient.Builder {
+        return OkHttpClient.Builder()
             .followRedirects(false)
             // timeouts
             .callTimeout(connectTimeout, TimeUnit.MILLISECONDS)
@@ -95,12 +111,6 @@ internal open class ChatModules(val config: ChatClientConfig) {
                     }
                 )
             )
-
-        val builder = Retrofit.Builder()
-            .baseUrl(endpoint)
-            .client(clientBuilder.build())
-
-        return parser.configRetrofit(builder).build()
     }
 
     private fun buildSocket(
