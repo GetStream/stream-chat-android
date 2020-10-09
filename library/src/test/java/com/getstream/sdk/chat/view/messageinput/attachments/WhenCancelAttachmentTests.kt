@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.view.messageinput.attachments
 
+import android.net.Uri
 import com.getstream.sdk.chat.createAttachment
 import com.getstream.sdk.chat.createAttachmentMetaDataWithAttachment
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -32,7 +33,8 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
     @Test
     fun `If is media and this attachments is selected before Should remove it from selected media attachments adapter`() {
-        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
         val sut = Fixture()
             .givenMediaAttachmentsState(listOf(attachment))
             .givenMediaSelectedAttachment(attachment)
@@ -45,7 +47,8 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
     @Test
     fun `If is media and this attachments is selected before Should unselect attachment to total media adapter`() {
-        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
         val sut = Fixture()
             .givenMediaAttachmentsState(listOf(attachment))
             .givenMediaSelectedAttachment(attachment)
@@ -58,9 +61,10 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
 
     @Test
     fun `If is not media and this attachments is selected before Should set attachments list without it to attachments adapter`() {
-        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
         val sut = Fixture()
-            .givenFileSelectedAttachment(attachment)
+            .givenFileSelectedAttachment(listOf(attachment))
             .please()
         reset(selectedFileAttachmentAdapter)
 
@@ -80,12 +84,16 @@ internal class WhenCancelAttachmentTests : BaseAttachmentsControllerTests() {
         }
 
         fun givenMediaSelectedAttachment(selectedAttachment: AttachmentMetaData): Fixture {
-            sut.selectAttachment(selectedAttachment)
+            sut.selectMediaAttachment(selectedAttachment)
             return this
         }
 
-        fun givenFileSelectedAttachment(selectedAttachment: AttachmentMetaData): Fixture {
-            sut.selectAttachment(selectedAttachment)
+        fun givenFileSelectedAttachment(selectedAttachments: List<AttachmentMetaData>): Fixture {
+            When calling storageHelper.getAttachmentsFromUriList(
+                any(),
+                any()
+            ) doReturn selectedAttachments
+            sut.selectAttachmentsFromUriList(listOf(Uri.EMPTY))
             return this
         }
 

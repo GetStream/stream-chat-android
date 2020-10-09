@@ -24,21 +24,21 @@ import kotlin.math.abs
 internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
 
     @Test
-    fun `If attachment size is more than max upload file size Should show message`() {
+    fun `If media attachment size is more than max upload file size Should show message`() {
         val attachment = createAttachmentMetaDataWithAttachment().apply {
             size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
         }
 
-        sut.selectAttachment(attachment)
+        sut.selectMediaAttachment(attachment)
 
         verify(view).showMessage(R.string.stream_large_size_file_error)
     }
 
     @Test
-    fun `Should add attachment to selected attachments`() {
+    fun `Should add media attachment to selected attachments`() {
         val attachment = createAttachmentMetaDataWithAttachment()
 
-        sut.selectAttachment(attachment)
+        sut.selectMediaAttachment(attachment)
 
         sut.selectedAttachments.contains(attachment) shouldBeEqualTo true
     }
@@ -46,23 +46,14 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     @Test
     fun `If media attachment Should show media attachments`() {
         val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
-        sut.selectAttachment(attachment)
+        sut.selectMediaAttachment(attachment)
 
         verify(view).showMediaAttachments()
     }
 
     @Test
-    fun `If non media attachment Should show file attachments`() {
-        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
-
-        sut.selectAttachment(attachment)
-
-        verify(view).showFileAttachments()
-    }
-
-    @Test
     fun `Should config send button enable state to message input controller`() {
-        sut.selectAttachment(mock())
+        sut.selectMediaAttachment(mock())
 
         verify(messageInputController).configSendButtonEnableState()
     }
@@ -71,7 +62,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     fun `If media attachment Should add attachments to selected media attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
 
-        sut.selectAttachment(attachment)
+        sut.selectMediaAttachment(attachment)
 
         verify(selectedMediaAttachmentAdapter).addAttachment(attachment)
     }
@@ -81,101 +72,21 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
         val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
         val sut = Fixture().givenMediaAttachmentsState(listOf(attachment)).please()
 
-        sut.selectAttachment(attachment)
+        sut.selectMediaAttachment(attachment)
 
         verify(totalMediaAttachmentAdapter).selectAttachment(attachment)
     }
 
     @Test
-    fun `If is not media Should add attachments to selected file attachments adapter`() {
-        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
+    fun `Should show error message when at least one file attachment size is more than max upload file size`() {
+        val attachment = createAttachmentMetaDataWithAttachment().apply {
+            size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
+        }
 
-        sut.selectAttachment(attachment)
+        val sut = Fixture().givenAttachmentsFromUriState(listOf(attachment)).please()
+        sut.selectAttachmentsFromUriList(listOf(Uri.EMPTY))
 
-        verify(selectedFileAttachmentAdapter).setAttachments(argThat { contains(attachment) })
-    }
-
-    @Test
-    fun `Should clear media selected attachments when setting non media adapter`() {
-        val attachment =
-            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
-        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
-
-        sut.setSelectedAttachmentAdapter(null, false)
-
-        sut.selectedAttachments.isEmpty() shouldBe true
-    }
-
-    @Test
-    fun `Should not clear selected attachments when setting adapter of the same type`() {
-        val attachment =
-            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
-        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
-
-        sut.setSelectedAttachmentAdapter(null, true)
-
-        sut.selectedAttachments.isEmpty() shouldBe false
-    }
-
-    @Test
-    fun `Should set already selected non media attachments when setting non media adapter`() {
-        val attachment =
-            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
-        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
-
-        sut.setSelectedAttachmentAdapter(null, false)
-
-        verify(selectedFileAttachmentAdapter).setAttachments(argThat { contains(attachment) })
-    }
-
-    @Test
-    fun `Should show selected file attachments when setting non media adapter`() {
-        sut.setSelectedAttachmentAdapter(null, false)
-
-        verify(view).showSelectedFileAttachments(selectedFileAttachmentAdapter)
-    }
-
-    @Test
-    fun `Should clear media adapter when setting non media adapter`() {
-        sut.setSelectedAttachmentAdapter(null, false)
-
-        verify(selectedMediaAttachmentAdapter).clear()
-    }
-
-    @Test
-    fun `Should clear non media selected attachments when setting media adapter`() {
-        val attachment =
-            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
-        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
-
-        sut.setSelectedAttachmentAdapter(null, true)
-
-        sut.selectedAttachments.isEmpty() shouldBe true
-    }
-
-    @Test
-    fun `Should set already selected media attachments when setting media adapter`() {
-        val attachment =
-            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
-        val sut = Fixture().givenSelectedAttachmentsState(setOf(attachment)).please()
-
-        sut.setSelectedAttachmentAdapter(null, true)
-
-        verify(selectedMediaAttachmentAdapter).setAttachments(argThat { contains(attachment) })
-    }
-
-    @Test
-    fun `Should show selected media attachments when setting media adapter`() {
-        sut.setSelectedAttachmentAdapter(null, true)
-
-        verify(view).showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
-    }
-
-    @Test
-    fun `Should clear files adapter when setting media adapter`() {
-        sut.setSelectedAttachmentAdapter(null, true)
-
-        verify(selectedFileAttachmentAdapter).clear()
+        verify(view).showMessage(R.string.stream_large_size_file_error)
     }
 
     @Test
@@ -215,14 +126,53 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     }
 
     @Test
-    fun `Should csomething when selecting attachments from Uri list`() {
+    fun `Should convert Uri list to attachments list when selecting attachments from Uri list`() {
         val attachment =
             createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
         val sut = Fixture().givenAttachmentsFromUriState(listOf(attachment)).please()
-        val list = listOf(Uri.parse(""))
+        val list = listOf(Uri.EMPTY)
         sut.selectAttachmentsFromUriList(list)
 
         verify(storageHelper).getAttachmentsFromUriList(any(), eq(list))
+    }
+
+    @Test
+    fun `Should show file attachment when selecting attachments from Uri list`() {
+        val attachment =
+            createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
+        val sut = Fixture().givenAttachmentsFromUriState(listOf(attachment)).please()
+        sut.selectAttachmentsFromUriList(listOf(Uri.EMPTY))
+
+        verify(view).showFileAttachments()
+    }
+
+    @Test
+    fun `Should show error message when attachment from camera is too big`() {
+        val attachment = createAttachmentMetaDataWithAttachment().apply {
+            size = Constant.MAX_UPLOAD_FILE_SIZE + abs(randomLong())
+        }
+
+        sut.selectAttachmentFromCamera(attachment)
+
+        verify(view).showMessage(R.string.stream_large_size_file_error)
+    }
+
+    @Test
+    fun `Should add media attachment to selected attachments when selecting attachment from camera`() {
+        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
+
+        sut.selectAttachmentFromCamera(attachment)
+
+        sut.selectedAttachments.contains(attachment) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Should show media attachments when selecting attachment from camera`() {
+        val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_image))
+
+        sut.selectAttachmentFromCamera(attachment)
+
+        verify(view).showMediaAttachments()
     }
 
     private inner class Fixture {

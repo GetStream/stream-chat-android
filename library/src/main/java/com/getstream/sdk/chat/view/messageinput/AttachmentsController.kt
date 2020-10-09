@@ -59,17 +59,9 @@ internal class AttachmentsController(
                     messageInputType
                 )
             }
-            setSelectedAttachmentAdapter(messageInputType, true)
+            setSelectedMediaAttachmentAdapter(messageInputType)
             view.showLoadingTotalAttachments(false)
         }
-    }
-
-    private fun filterAttachments(
-        isMedia: Boolean,
-        filesToFilter: Set<AttachmentMetaData>
-    ): Set<AttachmentMetaData> {
-        return filesToFilter.filter(if (isMedia) isMediaAttachment else isFileAttachment)
-            .toSet()
     }
 
     internal fun configAttachmentButtonVisible(visible: Boolean) {
@@ -87,14 +79,6 @@ internal class AttachmentsController(
         rootController.configSendButtonEnableState()
         if (selectedAttachments.isEmpty() && MessageInputType.EDIT_MESSAGE == messageInputType) {
             configAttachmentButtonVisible(true)
-        }
-    }
-
-    private fun showSelectedAttachments(isMedia: Boolean) {
-        if (isMedia) {
-            view.showMediaAttachments()
-        } else {
-            view.showFileAttachments()
         }
     }
 
@@ -127,15 +111,6 @@ internal class AttachmentsController(
         }
     }
 
-    private fun addAttachmentToAdapter(attachment: AttachmentMetaData) {
-        if (isMediaAttachment(attachment)) {
-            selectedMediaAttachmentAdapter.addAttachment(attachment)
-            totalMediaAttachmentAdapter.selectAttachment(attachment)
-        } else {
-            selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
-        }
-    }
-
     private fun setTotalMediaAttachmentAdapter(
         totalAttachment: List<AttachmentMetaData>,
         selectedAttachments: List<AttachmentMetaData>,
@@ -149,24 +124,21 @@ internal class AttachmentsController(
         view.showTotalMediaAttachments(totalMediaAttachmentAdapter)
     }
 
-    internal fun setSelectedAttachmentAdapter(
-        messageInputType: MessageInputType?,
-        isMedia: Boolean
-    ) {
-        selectedAttachments = filterAttachments(isMedia, selectedAttachments)
-        if (isMedia) {
-            selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            selectedMediaAttachmentAdapter.cancelListener =
-                { attachment -> cancelAttachment(attachment, messageInputType) }
-            view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
-            selectedFileAttachmentAdapter.clear()
-        } else {
-            selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
-            selectedFileAttachmentAdapter.cancelListener =
-                { attachment -> cancelAttachment(attachment, messageInputType) }
-            view.showSelectedFileAttachments(selectedFileAttachmentAdapter)
-            selectedMediaAttachmentAdapter.clear()
-        }
+    private fun setSelectedMediaAttachmentAdapter(messageInputType: MessageInputType?) {
+        selectedAttachments = selectedAttachments.filter(isMediaAttachment).toSet()
+        selectedMediaAttachmentAdapter.setAttachments(selectedAttachments.toList())
+        selectedMediaAttachmentAdapter.cancelListener =
+            { attachment -> cancelAttachment(attachment, messageInputType) }
+        view.showSelectedMediaAttachments(selectedMediaAttachmentAdapter)
+        selectedFileAttachmentAdapter.clear()
+    }
+
+    private fun setSelectedFileAttachmentAdapter() {
+        selectedAttachments = selectedAttachments.filter(isFileAttachment).toSet()
+        selectedFileAttachmentAdapter.cancelListener =
+            { attachment -> cancelAttachment(attachment, null) }
+        view.showSelectedFileAttachments(selectedFileAttachmentAdapter)
+        selectedMediaAttachmentAdapter.clear()
     }
 
     private fun updateMediaAttachment(
@@ -174,7 +146,7 @@ internal class AttachmentsController(
         messageInputType: MessageInputType?
     ) = when (attachment.isSelected) {
         true -> unselectMediaAttachment(attachment, messageInputType)
-        false -> selectAttachment(attachment)
+        false -> selectMediaAttachment(attachment)
     }
 
     private fun unselectMediaAttachment(
@@ -190,26 +162,44 @@ internal class AttachmentsController(
         }
     }
 
+    internal fun selectAttachmentFromCamera(attachment: AttachmentMetaData) {
+        setSelectedMediaAttachmentAdapter(null)
+        selectMediaAttachment(attachment)
+    }
+
     internal fun selectAttachmentsFromUriList(uriList: List<Uri>) {
         GlobalScope.launch(dispatchersProvider.mainDispatcher) {
-            setSelectedAttachmentAdapter(null, false)
+            setSelectedFileAttachmentAdapter()
             val attachments = withContext(dispatchersProvider.ioDispatcher) {
                 storageHelper.getAttachmentsFromUriList(view.context, uriList)
             }
-            attachments.forEach { selectAttachment(it) }
+            selectFileAttachments(attachments)
         }
     }
 
-    internal fun selectAttachment(attachment: AttachmentMetaData) {
+    private fun selectFileAttachments(attachments: List<AttachmentMetaData>) {
+        val filteredAttachments = attachments.filter { it.size <= Constant.MAX_UPLOAD_FILE_SIZE }
+        if (filteredAttachments.size < attachments.size) {
+            view.showMessage(R.string.stream_large_size_file_error)
+        }
+        filteredAttachments.forEach { it.isSelected = true }
+        selectedAttachments = selectedAttachments + filteredAttachments
+        view.showFileAttachments()
+        rootController.configSendButtonEnableState()
+        selectedFileAttachmentAdapter.setAttachments(selectedAttachments.toList())
+    }
+
+    internal fun selectMediaAttachment(attachment: AttachmentMetaData) {
         if (attachment.size > Constant.MAX_UPLOAD_FILE_SIZE) {
             view.showMessage(R.string.stream_large_size_file_error)
         } else {
             if (!selectedAttachments.contains(attachment)) {
                 attachment.isSelected = true
                 selectedAttachments = selectedAttachments + attachment
-                showSelectedAttachments(isMediaAttachment(attachment))
+                view.showMediaAttachments()
                 rootController.configSendButtonEnableState()
-                addAttachmentToAdapter(attachment)
+                selectedMediaAttachmentAdapter.addAttachment(attachment)
+                totalMediaAttachmentAdapter.selectAttachment(attachment)
             }
         }
     }
