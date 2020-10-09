@@ -17,7 +17,7 @@ internal class GetTotalUnreadCountImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun getUnreadCount() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var result = chatDomain.useCases.getTotalUnreadCount().execute()
+        val result = chatDomain.useCases.getTotalUnreadCount().execute()
         assertSuccess(result)
         chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2)
         val count = result.data().getOrAwaitValue()

@@ -33,10 +33,10 @@ class WatchChannelImpl(var domainImpl: ChatDomainImpl) : WatchChannel {
             }
         }
 
-        var runnable = suspend {
+        val runnable = suspend {
             Result(channelControllerI, null)
         }
-        return CallImpl2<ChannelController>(
+        return CallImpl2(
             runnable,
             channelControllerImpl.scope
         )

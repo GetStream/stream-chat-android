@@ -55,7 +55,7 @@ class MapConverterTest : BaseTest() {
     @Test
     fun intMapRegular() {
         val converter = MapConverter()
-        val input = mapOf<String, Int>("score" to 1)
+        val input = mapOf("score" to 1)
         val output = converter.mapToString(input)
         val converted = converter.stringToMap(output)
         Truth.assertThat(converted).isEqualTo(input)
@@ -73,7 +73,7 @@ class MapConverterTest : BaseTest() {
     @Test
     fun testStringRegularEncoding() {
         val converter = MapConverter()
-        val input = mutableMapOf<String, String>("color" to "green")
+        val input = mutableMapOf("color" to "green")
         val output = converter.stringMapToString(input)
         val converted = converter.stringToStringMap(output)
         Truth.assertThat(converted).isEqualTo(input)

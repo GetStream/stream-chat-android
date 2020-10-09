@@ -13,10 +13,10 @@ internal class DeleteReactionImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking(Dispatchers.IO) {
-        var channelController =
+        val channelController =
             chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
-        var result = chatDomain.useCases.sendMessage(message1).execute()
+        val result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result)
         data.reaction1.messageId = result.data().id
         val result2 = chatDomain.useCases.sendReaction(data.channel1.cid, data.reaction1).execute()
