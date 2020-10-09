@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.api
 import android.content.Context
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.doAnswer
+import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClientImpl
@@ -24,7 +25,6 @@ import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.never
 import org.mockito.Mockito.times
 import org.mockito.Mockito.verify
@@ -36,7 +36,7 @@ internal class ClientConnectionTests {
     private val connectionId = "connection-id"
     private val user = User().apply { id = userId }
     private val token = "token"
-    private val context = mock(Context::class.java)
+    private val context = mock<Context>()
 
     private val config = ChatClientConfig(
         "api-key",
@@ -71,12 +71,12 @@ internal class ClientConnectionTests {
 
     @Before
     fun before() {
-        socket = mock(ChatSocket::class.java)
-        retrofitApi = mock(RetrofitApi::class.java)
-        retrofitCdnApi = mock(RetrofitCdnApi::class.java)
-        logger = mock(ChatLogger::class.java)
-        notificationsManager = mock(ChatNotifications::class.java)
-        initConnectionListener = mock(InitConnectionListener::class.java)
+        socket = mock()
+        retrofitApi = mock()
+        retrofitCdnApi = mock()
+        logger = mock()
+        notificationsManager = mock()
+        initConnectionListener = mock()
         api = ChatApiImpl(
             config.apiKey,
             retrofitApi,

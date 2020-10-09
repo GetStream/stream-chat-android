@@ -1,6 +1,8 @@
 # To be released:
 - Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 
+- Add AttachmentsHelper with hasValidUrl method
+
 # 1.16.5 - Wed 7th of Oct 2020
 - Add autocomplete filter
 - Add @JvmOverloads to QueryUsersRequest constructor
