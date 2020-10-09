@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class MarkReadImplTest : BaseConnectedIntegrationTest() {
+internal class MarkReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun read() = runBlocking(Dispatchers.IO) {

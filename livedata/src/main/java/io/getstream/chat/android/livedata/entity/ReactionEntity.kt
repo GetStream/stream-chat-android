@@ -46,7 +46,7 @@ data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String,
     var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** create a reactionEntity from a reaction object */
-    constructor(r: Reaction) : this(r.messageId, r.user!!.id, r.type) {
+    constructor(r: Reaction) : this(r.messageId, r.fetchUserId(), r.type) {
         score = r.score
         createdAt = r.createdAt
         // defend against GSON unsafe decoding/encoding

@@ -53,6 +53,10 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
+private const val MESSAGE_LIMIT = 30
+private const val MEMBER_LIMIT = 30
+private const val INITIAL_CHANNEL_OFFSET = 0
+private const val CHANNEL_LIMIT = 30
 
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
@@ -210,6 +214,9 @@ class ChatDomainImpl private constructor(
         eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
+
+        // monitor connectivity at OS level
+        // TODO
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -480,7 +487,7 @@ class ChatDomainImpl private constructor(
         }
 
     private fun queryEvents(cids: List<String>): List<ChatEvent> {
-        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: NEVER).execute()
+        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
         if (response.isError) {
             throw response.error().cause ?: IllegalStateException(response.error().message)
         }
@@ -504,12 +511,15 @@ class ChatDomainImpl private constructor(
         }
 
         val now = Date()
-        val events = queryEvents(cids)
-        eventHandler.updateOfflineStorageFromEvents(events)
 
-        syncState?.let { it.lastSyncedAt = now }
-
-        return Result(events, null)
+        return if (cids.isNotEmpty()) {
+            val events = queryEvents(cids)
+            eventHandler.updateOfflineStorageFromEvents(events)
+            syncState?.let { it.lastSyncedAt = now }
+            Result(events, null)
+        } else {
+            Result(listOf<ChatEvent>(), null)
+        }
     }
 
     suspend fun connectionRecovered(recoveryNeeded: Boolean = false) {
@@ -520,7 +530,7 @@ class ChatDomainImpl private constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 30))
+            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), INITIAL_CHANNEL_OFFSET, CHANNEL_LIMIT, MESSAGE_LIMIT, MEMBER_LIMIT))
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
@@ -553,8 +563,7 @@ class ChatDomainImpl private constructor(
 
         // 4 recover events
         if (isOnline()) {
-            // TODO: reenable this when the endpoint goes live
-            // replayEventsForActiveChannels()
+            replayEventsForActiveChannels()
         }
     }
 
@@ -592,7 +601,7 @@ class ChatDomainImpl private constructor(
         // store the channel configs
         repos.configs.insertConfigs(configs)
         // store the users
-        repos.users.insertManyUsers(users.values.toList())
+        repos.users.insert(users.values.toList())
         // store the channel data
         repos.channels.insertChannel(channelsResponse)
         // store the messages
@@ -630,7 +639,7 @@ class ChatDomainImpl private constructor(
     ): List<ChannelEntityPair> {
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
-        val channelMessagesMap = if (pagination.memberLimit > 0) {
+        val channelMessagesMap = if (pagination.messageLimit > 0) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary

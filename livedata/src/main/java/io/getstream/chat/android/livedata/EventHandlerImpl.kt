@@ -58,9 +58,9 @@ import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.entity.UserEntity
 import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -82,9 +82,9 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
     }
 
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
-        events.sortedBy { it.createdAt }
+        events.sortedBy(ChatEvent::createdAt)
 
-        val users: MutableMap<String, UserEntity> = mutableMapOf()
+        val users: MutableMap<String, User> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
 
         val messages: MutableMap<String, MessageEntity> = mutableMapOf()
@@ -92,7 +92,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
         val messagesToFetch = mutableSetOf<String>()
 
         events.filterIsInstance<CidEvent>().onEach { channelsToFetch += it.cid }
-        users += events.filterIsInstance<UserEvent>().map { UserEntity(it.user) }.associateBy { it.id }
+        users += events.filterIsInstance<UserEvent>().map(UserEvent::user).associateBy(User::id)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -167,34 +167,34 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 is NewMessageEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                 }
                 is MessageDeletedEvent -> {
                     event.message.cid = event.cid
-                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                 }
                 is MessageUpdatedEvent -> {
                     event.message.cid = event.cid
-                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users.putAll(event.message.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                 }
                 is NotificationAddedToChannelEvent -> {
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                     channels[event.cid] = ChannelEntity(event.channel)
                 }
                 is NotificationInvitedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is NotificationInviteAcceptedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is ChannelHiddenEvent -> {
                     channels[event.cid] = ChannelEntity(Channel(cid = event.cid)).apply {
@@ -208,16 +208,16 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     }
                 }
                 is ChannelUserBannedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is GlobalUserBannedEvent -> {
-                    users[event.user.id] = UserEntity(event.user).apply { banned = true }
+                    users[event.user.id] = event.user.apply { banned = true }
                 }
                 is ChannelUserUnbannedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is GlobalUserUnbannedEvent -> {
-                    users[event.user.id] = UserEntity(event.user).apply { banned = false }
+                    users[event.user.id] = event.user.apply { banned = false }
                 }
                 is NotificationMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
@@ -227,7 +227,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -235,7 +235,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     }
                 }
                 is UserUpdatedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
@@ -267,14 +267,14 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     channelMap[event.cid]?.let {
                         it.setMember(event.member.user.id, event.member)
                         channels[it.cid] = it
-                        users.put(event.member.user.id, UserEntity(event.member.user.id))
+                        users.put(event.member.user.id, event.member.user)
                     }
                 }
                 is MemberUpdatedEvent -> {
                     channelMap[event.cid]?.let {
                         it.setMember(event.member.user.id, event.member)
                         channels[it.cid] = it
-                        users.put(event.member.user.id, UserEntity(event.member.user.id))
+                        users.put(event.member.user.id, event.member.user)
                     }
                 }
                 is MemberRemovedEvent -> {
@@ -291,58 +291,58 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                 }
                 is ChannelUpdatedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is ChannelUpdatedByUserEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is ChannelDeletedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is ChannelCreatedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is ChannelMuteEvent -> {
                     channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
                 }
                 is ChannelsMuteEvent -> {
                     event.channelsMute.forEach {
                         channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                        users.putAll(it.channel.users().associateBy(User::id))
                     }
                 }
                 is ChannelUnmuteEvent -> {
                     channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
                 }
                 is ChannelsUnmuteEvent -> {
                     event.channelsMute.forEach {
                         channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                        users.putAll(it.channel.users().associateBy(User::id))
                     }
                 }
                 is ChannelTruncatedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is NotificationChannelDeletedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
                     channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().map { UserEntity(it) }.associateBy { it.id })
+                    users.putAll(event.channel.users().associateBy(User::id))
                 }
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
@@ -350,39 +350,39 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     }
                 }
                 is UserDeletedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is UserMutedEvent -> {
-                    users[event.targetUser.id] = UserEntity(event.targetUser)
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.targetUser.id] = event.targetUser
+                    users[event.user.id] = event.user
                 }
                 is UsersMutedEvent -> {
-                    event.targetUsers.forEach { users[it.id] = UserEntity(it) }
-                    users[event.user.id] = UserEntity(event.user)
+                    event.targetUsers.forEach { users[it.id] = it }
+                    users[event.user.id] = event.user
                 }
                 is UserPresenceChangedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is UserStartWatchingEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is UserStopWatchingEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
+                    users[event.user.id] = event.user
                 }
                 is UserUnmutedEvent -> {
-                    users[event.user.id] = UserEntity(event.user)
-                    users[event.targetUser.id] = UserEntity(event.targetUser)
+                    users[event.user.id] = event.user
+                    users[event.targetUser.id] = event.targetUser
                 }
                 is UsersUnmutedEvent -> {
-                    event.targetUsers.forEach { users[it.id] = UserEntity(it) }
-                    users[event.user.id] = UserEntity(event.user)
+                    event.targetUsers.forEach { users[it.id] = it }
+                    users[event.user.id] = event.user
                 }
                 is TypingStartEvent, is TypingStopEvent, is HealthEvent, is ConnectingEvent, is DisconnectedEvent,
                 is ErrorEvent, is UnknownEvent -> Unit
             }.exhaustive
         }
         // actually insert the data
-        users.remove(domainImpl.currentUser.id)?.let { domainImpl.updateCurrentUser(it.toUser()) }
+        users.remove(domainImpl.currentUser.id)?.let { domainImpl.updateCurrentUser(it) }
         domainImpl.repos.users.insert(users.values.toList())
         domainImpl.repos.channels.insert(channels.values.toList())
         // we only cache messages for which we're receiving events

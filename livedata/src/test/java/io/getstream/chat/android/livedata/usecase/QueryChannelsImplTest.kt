@@ -18,7 +18,7 @@ import org.junit.runner.RunWith
 import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
-class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
+internal class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("mock me")

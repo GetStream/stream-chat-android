@@ -172,9 +172,10 @@ class TestDataHelper {
     }
 
     fun createMessage(): Message {
-        val text = "hi there " + UUID.randomUUID().toString()
+        val messageId = UUID.randomUUID().toString()
+        val text = "hi there $messageId"
         val message = Message().apply {
-            cid = channel1.cid; this.text = text; id = ""; user =
+            cid = channel1.cid; this.text = text; id = messageId; user =
                 user1; createdAt = Date()
         }
         return message

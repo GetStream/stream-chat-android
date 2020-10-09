@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class StopTypingImplTest : BaseConnectedIntegrationTest() {
+internal class StopTypingImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun stopTyping() = runBlocking(Dispatchers.IO) {

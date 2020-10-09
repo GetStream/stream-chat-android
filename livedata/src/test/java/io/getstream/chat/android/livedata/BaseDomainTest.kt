@@ -47,7 +47,8 @@ import org.junit.Before
 import org.junit.Rule
 import java.util.Date
 
-open class BaseDomainTest {
+internal open class BaseDomainTest {
+    lateinit var channelMock: ChannelController
     lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
@@ -60,7 +61,13 @@ open class BaseDomainTest {
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
-            Truth.assertWithMessage(result.error().toString()).that(result.isSuccess).isTrue()
+            Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
+        }
+    }
+
+    fun assertFailure(result: Result<*>) {
+        if (!result.isError) {
+            Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
         }
     }
 
@@ -108,7 +115,7 @@ open class BaseDomainTest {
         }
 
         val result = Result(listOf(data.channel1), null)
-        val channelMock = mock<ChannelController> {
+        channelMock = mock<ChannelController> {
             on { sendMessage(any()) } doReturn ChatCallTestImpl<Message>(
                 Result(
                     data.message1,
@@ -116,12 +123,15 @@ open class BaseDomainTest {
                 )
             )
         }
+        val events = listOf<ChatEvent>()
+        val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
                 null
             }
+            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
@@ -150,7 +160,7 @@ open class BaseDomainTest {
         val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
 
         val result = Result(listOf(data.channel1), null)
-        val channelMock = mock<ChannelController> {
+        channelMock = mock<ChannelController> {
             on { query(any()) } doReturn ChatCallTestImpl<Channel>(
                 Result(
                     data.channel1,
@@ -164,14 +174,18 @@ open class BaseDomainTest {
                 )
             )
         }
+        val events = listOf<ChatEvent>()
+        val eventResults = Result(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
                 null
             }
+            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
             on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
             on { channel(any(), any()) } doReturn channelMock
+            on { channel(any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
                 Result(

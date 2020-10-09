@@ -13,6 +13,10 @@ import java.io.File
 
 interface SendMessageWithAttachments {
 
+    @Deprecated(
+        message = "Use sendMessage() and attachment.upload instead of this useCase",
+        level = DeprecationLevel.WARNING
+    )
     operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call2<Message>
 }
 
@@ -83,4 +87,4 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
         }
 }
 
-private fun String?.isImageMimetype() = this?.contains("image") ?: false
+internal fun String?.isImageMimetype() = this?.contains("image") ?: false

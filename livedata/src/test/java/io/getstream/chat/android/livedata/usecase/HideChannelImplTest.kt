@@ -15,7 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class HideChannelImplTest : BaseConnectedIntegrationTest() {
+internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun loadHidden() = runBlocking(Dispatchers.IO) {
@@ -42,7 +42,7 @@ class HideChannelImplTest : BaseConnectedIntegrationTest() {
         // setup the query channel controller
         chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0, 10).execute()
         var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
-        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort()))
+        queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0))
 
         // verify we have 1 channel in the result list and that it's hidden
         val channelController = chatDomainImpl.channel(data.channel1)

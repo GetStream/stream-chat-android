@@ -8,7 +8,7 @@ import org.junit.Before
 /**
  * Inherit from this class if you want to mock the client object and return a disconnected client
  */
-open class BaseDisconnectedMockedTest : BaseDomainTest() {
+internal open class BaseDisconnectedMockedTest : BaseDomainTest() {
     @Before
     override fun setup() {
         client = createDisconnectedMockClient()

@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
  * Verify that all events correctly update state in room
  */
 @RunWith(AndroidJUnit4::class)
-class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
+internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun defaultConfig() = runBlocking(Dispatchers.IO) {

@@ -7,7 +7,7 @@ import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.UserEntity
 
 @Dao
-interface UserDao {
+internal interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(users: List<UserEntity>)

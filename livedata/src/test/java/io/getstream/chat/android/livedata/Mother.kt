@@ -18,6 +18,7 @@ import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
+import io.getstream.chat.android.livedata.entity.UserEntity
 import java.io.File
 import java.util.Date
 import kotlin.random.Random
@@ -54,6 +55,11 @@ fun randomFiles(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> File = { randomFile() }
 ): List<File> = (1..size).map(creationFunction)
+
+fun randomAttachmentsWithFile(
+    size: Int = positiveRandomInt(10),
+    creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()) }
+): List<Attachment> = (1..size).map(creationFunction)
 
 fun randomImageFile() = randomFile(extension = "jpg")
 
@@ -92,6 +98,19 @@ fun randomUser(
     channelMutes,
     extraData
 )
+
+internal fun randomUserEntity(
+    id: String = randomString(),
+    originalId: String = randomString(),
+    role: String = randomString(),
+    createdAt: Date? = null,
+    updatedAt: Date? = null,
+    lastActive: Date? = null,
+    invisible: Boolean = randomBoolean(),
+    banned: Boolean = randomBoolean(),
+    mutes: List<String> = emptyList(),
+    extraData: Map<String, Any> = emptyMap()
+): UserEntity = UserEntity(id, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
 fun randomMessage(
     id: String = randomString(),
