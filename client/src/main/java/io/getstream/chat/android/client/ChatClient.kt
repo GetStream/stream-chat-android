@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.controllers.ChannelController
+import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -406,13 +407,13 @@ interface ChatClient {
                 notificationsHandler
             )
 
-            val modules = ChatModules(config)
+            val module = ChatModule(appContext, config)
 
             val result = ChatClientImpl(
                 config,
-                modules.api(),
-                modules.socket(),
-                modules.notifications()
+                module.api(),
+                module.socket(),
+                module.notifications()
             )
             instance = result
 
