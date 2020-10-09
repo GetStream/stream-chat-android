@@ -7,7 +7,6 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.database.getLongOrNull
-import androidx.documentfile.provider.DocumentFile
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import java.io.File
@@ -16,21 +15,6 @@ import java.util.Date
 import java.util.Locale
 
 internal class StorageHelper {
-
-    private val supportedFilesMimeTypes =
-        listOf(
-            ModelType.attach_mime_pdf,
-            ModelType.attach_mime_ppt,
-            ModelType.attach_mime_csv,
-            ModelType.attach_mime_xlsx,
-            ModelType.attach_mime_doc,
-            ModelType.attach_mime_docx,
-            ModelType.attach_mime_txt,
-            ModelType.attach_mime_zip,
-            ModelType.attach_mime_tar,
-            ModelType.attach_mime_mov,
-            ModelType.attach_mime_mp3
-        )
     private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
     internal fun getCachedFileFromUri(
@@ -106,36 +90,6 @@ internal class StorageHelper {
                 }
             }
         }
-    }
-
-    internal fun getFileAttachments(context: Context, treeUri: Uri?): List<AttachmentMetaData> {
-        if (treeUri == null) {
-            throw IllegalStateException("Cannot get file attachments because treeUri doesn't exist")
-        }
-        return DocumentFile.fromTreeUri(context, treeUri)?.let {
-            getFilesFromDocumentFile(it)
-        } ?: emptyList()
-    }
-
-    private fun getFilesFromDocumentFile(documentFile: DocumentFile): List<AttachmentMetaData> {
-        val attachmentMetaData = mutableListOf<AttachmentMetaData>()
-        for (file in documentFile.listFiles()) {
-            if (file.isDirectory) {
-                attachmentMetaData += getFilesFromDocumentFile(file)
-            } else {
-                val mimeType = Utils.getMimeType(file.uri.path)
-                if (supportedFilesMimeTypes.contains(mimeType)) {
-                    attachmentMetaData += AttachmentMetaData(
-                        uri = file.uri,
-                        mimeType = mimeType,
-                        type = ModelType.attach_file,
-                        title = file.name
-                    ).apply { size = file.length() }
-                }
-            }
-        }
-
-        return attachmentMetaData
     }
 
     private fun getAttachmentsFromCursor(
