@@ -176,7 +176,7 @@ class TestDataHelper {
         val text = "hi there $messageId"
         return Message().apply {
             cid = channel1.cid; this.text = text; id = messageId; user =
-            user1; createdAt = Date()
+                user1; createdAt = Date()
         }
     }
 

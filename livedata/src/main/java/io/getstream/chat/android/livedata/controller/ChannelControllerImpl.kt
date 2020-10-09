@@ -243,8 +243,9 @@ class ChannelControllerImpl(
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead =
-                    ChannelUserRead(domainImpl.currentUser).apply { lastRead = last.createdAt }
+                val userRead = ChannelUserRead(domainImpl.currentUser).apply {
+                    lastRead = last.createdAt
+                }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return Result(true, null)
@@ -257,7 +258,8 @@ class ChannelControllerImpl(
         // sorted ascending order, so the oldest messages are at the beginning of the list
         var messages = emptyList<Message>()
         _messages.value?.let { mapOfMessages ->
-            messages = mapOfMessages.values.sortedBy { it.createdAt }
+            messages = mapOfMessages.values
+                .sortedBy { it.createdAt }
                 .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
         }
         return messages
@@ -323,7 +325,7 @@ class ChannelControllerImpl(
         direction: Pagination
     ): QueryChannelPaginationRequest {
         val messages = sortedMessages()
-        var request = QueryChannelPaginationRequest(limit)
+        val request = QueryChannelPaginationRequest(limit)
         if (messages.isNotEmpty()) {
             val messageId: String = when (direction) {
                 Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
@@ -333,8 +335,10 @@ class ChannelControllerImpl(
                     messages.first().id
                 }
             }
-            request =
-                request.apply { messageFilterDirection = direction; messageFilterValue = messageId }
+            request.apply {
+                messageFilterDirection = direction
+                messageFilterValue = messageId
+            }
         }
 
         return request
@@ -522,14 +526,11 @@ class ChannelControllerImpl(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
     ): Result<Attachment> {
-        val file =
-            checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) {
-            "image"
-        } else {
-            "file"
+        val file = checkNotNull(attachment.upload) {
+            "upload file shouldn't be called on attachment without a attachment.upload"
         }
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
+        val attachmentType = if (mimeType.isImageMimetype()) "image" else "file"
         val pathResult = if (attachmentType == "image") {
             sendImage(file)
         } else {
@@ -541,7 +542,8 @@ class ChannelControllerImpl(
         if (pathResult.isError) {
             uploadError = pathResult.error()
 
-            newAttachment = attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
+            newAttachment =
+                attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
         } else {
             val uploadPath = pathResult.data()
             newAttachment = attachment.copy(
