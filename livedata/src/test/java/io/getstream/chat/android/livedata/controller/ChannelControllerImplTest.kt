@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.controller
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
@@ -8,12 +9,15 @@ import com.nhaarman.mockitokotlin2.spy
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.TestResultCall
+import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomString
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +28,9 @@ import org.amshove.kluent.`should be`
 import org.amshove.kluent.called
 import org.amshove.kluent.calling
 import org.amshove.kluent.on
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldNotBeNull
 import org.amshove.kluent.that
 import org.amshove.kluent.was
 import org.junit.Test
@@ -141,5 +148,52 @@ internal class ChannelControllerImplTest : BaseDomainTest() {
             assertEquals(result.members, emptyList<Member>())
             assertEquals(result.messages, emptyList<Message>())
         }
+    }
+
+    @Test
+    fun `Should return attachment with properly filled data when sending file has failed`() {
+        runBlocking(Dispatchers.IO) {
+            val error = ChatError("")
+            val attachment = randomAttachmentsWithFile(size = 1).first()
+            givenMockedFileUploads(Result(error))
+
+            val result = channelController.uploadAttachment(attachment)
+
+            with(result.data()) {
+                name shouldBeEqualTo attachment.upload!!.name
+                fileSize.shouldNotBeNull()
+                type.shouldNotBeNull()
+                mimeType.shouldNotBeNull()
+                uploadState shouldBeEqualTo Attachment.UploadState.Failed(error)
+                url.shouldBeNull()
+                imageUrl.shouldBeNull()
+                assetUrl.shouldBeNull()
+            }
+        }
+    }
+
+    @Test
+    fun `Should return attachment with properly filled data when successfully sent file`() {
+        runBlocking(Dispatchers.IO) {
+            val attachment = randomAttachmentsWithFile(size = 1).first()
+            val url = "url"
+            givenMockedFileUploads(Result(url))
+
+            val result = channelController.uploadAttachment(attachment)
+
+            with(result.data()) {
+                name shouldBeEqualTo attachment.upload!!.name
+                url shouldBeEqualTo url
+                fileSize.shouldNotBeNull()
+                type.shouldNotBeNull()
+                mimeType.shouldNotBeNull()
+                uploadState shouldBeEqualTo Attachment.UploadState.Success
+            }
+        }
+    }
+
+    private fun givenMockedFileUploads(result: Result<String>) {
+        When calling chatClient.sendImage(any(), any(), any()) doReturn TestResultCall(result)
+        When calling chatClient.sendFile(any(), any(), any()) doReturn TestResultCall(result)
     }
 }
