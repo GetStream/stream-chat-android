@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import java.util.Arrays
 
@@ -161,10 +160,8 @@ internal class MessageTextConfigurator(
         message: Message
     ) {
         binding.tvText.setOnClickListener {
-            if (message.isFailed()) {
-                if (ChatClient.instance().isSocketConnected()) {
-                    messageRetryListener.onRetryMessage(message)
-                }
+            if (message.isFailed() && message.command.isNullOrEmpty()) {
+                messageRetryListener.onRetryMessage(message)
             } else {
                 messageClickListener.onMessageClick(message)
             }
