@@ -87,7 +87,7 @@ internal class WhenSelectAttachmentTests : BaseAttachmentsControllerTests() {
     }
 
     @Test
-    fun `If is not media attachmentShould add attachments to selected file attachments adapter`() {
+    fun `If is not media Should add attachments to selected file attachments adapter`() {
         val attachment = createAttachmentMetaDataWithAttachment(attachment = createAttachment(type = ModelType.attach_file))
 
         sut.selectAttachment(attachment)
