@@ -1,6 +1,7 @@
 # To be released:
-- Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 
+# 1.16.6 - Fri 9th of Oct 2020
+- Add `createdLocallyAt` and `updatedLocallyAt` properties to `Message` type
 - Add AttachmentsHelper with hasValidUrl method
 
 # 1.16.5 - Wed 7th of Oct 2020
