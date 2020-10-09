@@ -142,7 +142,6 @@ internal class ChatSocketListener(
             is ConnectingEvent,
             is DisconnectedEvent,
             is ErrorEvent,
-            is ChannelUpdatedByUserEvent,
             is UnknownEvent -> { }
         }.exhaustive
     }

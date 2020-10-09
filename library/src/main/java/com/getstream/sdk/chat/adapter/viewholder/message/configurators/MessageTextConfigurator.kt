@@ -26,7 +26,6 @@ import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
 import java.util.Arrays
 
@@ -36,7 +35,8 @@ internal class MessageTextConfigurator(
     private val style: MessageListViewStyle,
     private val bubbleHelper: MessageListView.BubbleHelper,
     private val messageClickListener: MessageListView.MessageClickListener,
-    private val messageLongClickListener: MessageListView.MessageLongClickListener
+    private val messageLongClickListener: MessageListView.MessageLongClickListener,
+    private val messageRetryListener: MessageListView.MessageRetryListener
 ) : Configurator {
 
     override fun configure(
@@ -160,10 +160,11 @@ internal class MessageTextConfigurator(
         message: Message
     ) {
         binding.tvText.setOnClickListener {
-            if (message.isFailed() && !ChatClient.instance().isSocketConnected()) {
-                return@setOnClickListener
+            if (message.isFailed() && message.command.isNullOrEmpty()) {
+                messageRetryListener.onRetryMessage(message)
+            } else {
+                messageClickListener.onMessageClick(message)
             }
-            messageClickListener.onMessageClick(message)
         }
 
         binding.tvText.setOnLongClickListener {
