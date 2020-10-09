@@ -103,7 +103,6 @@ public class RendererProvider {
     @NonNull
     protected List<Renderer> buildAudioRenderers() {
         List<Renderer> renderers = new ArrayList<>();
-        //renderers.add(new MediaCodecAudioRenderer(context, MediaCodecSelector.DEFAULT, drmSessionManager, true, handler, audioRendererEventListener, AudioCapabilities.getCapabilities(context)));
         renderers.add(new MediaCodecAudioRenderer(context, MediaCodecSelector.DEFAULT, handler, audioRendererEventListener, AudioCapabilities.getCapabilities(context)));
 
         // Adds any registered classes
