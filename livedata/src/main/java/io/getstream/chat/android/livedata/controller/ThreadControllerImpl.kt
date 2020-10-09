@@ -36,7 +36,7 @@ class ThreadControllerImpl(
     override val messages =
         Transformations.map(mediatorLiveData) {
             it.values.sortedBy { m -> m.createdAt }
-                .filter { it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore ?: NEVER) }
+                .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore ?: NEVER) }
         }
 
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)

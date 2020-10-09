@@ -69,16 +69,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import wasCreatedAfter
 import wasCreatedAfterOrAt
-import wasCreatedBeforeOrAt
+import wasCreatedBefore
 import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-const val KEY_MESSAGE_ACTION = "image_action"
-const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-const val MESSAGE_ACTION_SEND = "send"
+private const val KEY_MESSAGE_ACTION = "image_action"
+private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+private const val MESSAGE_ACTION_SEND = "send"
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -103,7 +103,7 @@ class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
     private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
     private val _channelData = MutableLiveData<ChannelData>()
-    internal var hideMessagesBefore: Date = NEVER
+    internal var hideMessagesBefore: Date? = null
     val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
@@ -112,7 +112,7 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
-            .filter { it.wasCreatedAfter(hideMessagesBefore) }
+            .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
             .sortedBy { it.createdAt }
             .toList()
             .map { it.copy() }
@@ -187,7 +187,7 @@ class ChannelControllerImpl(
     val channelController = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
-    val job = SupervisorJob()
+    private val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
@@ -199,7 +199,7 @@ class ChannelControllerImpl(
             .also { scope.launch { it.watch() } }
     }
 
-    fun getConfig(): Config {
+    private fun getConfig(): Config {
         return domainImpl.getChannelConfig(channelType)
     }
 
@@ -258,7 +258,7 @@ class ChannelControllerImpl(
         _messages.value?.let { mapOfMessages ->
             messages = mapOfMessages.values
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .filter { it.wasCreatedAfter(hideMessagesBefore) }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
         }
         return messages
     }
@@ -733,9 +733,12 @@ class ChannelControllerImpl(
         val copy = _messages.value ?: mutableMapOf()
         var message = copy[messageId]
 
-        if (message != null && message.wasCreatedBeforeOrAt(hideMessagesBefore)) {
-            message = null
+        if (hideMessagesBefore != null) {
+            if (message != null && message.wasCreatedBefore(hideMessagesBefore)) {
+                message = null
+            }
         }
+
         return message
     }
 
