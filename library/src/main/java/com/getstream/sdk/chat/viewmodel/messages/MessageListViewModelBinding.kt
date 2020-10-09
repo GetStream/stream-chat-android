@@ -3,7 +3,6 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.DeleteMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
@@ -26,12 +25,9 @@ fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: Lifecyc
     }
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
 
-    state.observe(
-        lifecycleOwner,
-        Observer { state ->
-            if (state is MessageListViewModel.State.Result) {
-                view.displayNewMessage(state.messageListItem)
-            }
+    state.observe(lifecycleOwner) { state ->
+        if (state is MessageListViewModel.State.Result) {
+            view.displayNewMessage(state.messageListItem)
         }
-    )
+    }
 }

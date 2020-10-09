@@ -3,7 +3,6 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
@@ -50,20 +49,20 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
         override fun onKeystroke() = keystroke()
         override fun onStopTyping() = stopTyping()
     })
-    getActiveThread().observe(
-        lifecycleOwner,
-        Observer {
-            it?.let { view.setThreadMode(it) }
-                ?: view.setNormalMode()
+    getActiveThread().observe(lifecycleOwner) { message ->
+        if (message != null) {
+            view.setThreadMode(message)
+        } else {
+            view.setNormalMode()
         }
-    )
-    editMessage.observe(
-        lifecycleOwner,
-        Observer {
-            it?.let { view.setEditMode(it) }
-                ?: view.setNormalMode()
+    }
+    editMessage.observe(lifecycleOwner) { message ->
+        if (message != null) {
+            view.setEditMode(message)
+        } else {
+            view.setNormalMode()
         }
-    )
-    members.observe(lifecycleOwner, Observer { view.configureMembers(it) })
-    commands.observe(lifecycleOwner, Observer { view.configureCommands(it) })
+    }
+    members.observe(lifecycleOwner) { view.configureMembers(it) }
+    commands.observe(lifecycleOwner) { view.configureCommands(it) }
 }
