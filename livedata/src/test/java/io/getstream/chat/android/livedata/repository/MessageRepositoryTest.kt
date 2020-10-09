@@ -19,9 +19,8 @@ internal class MessageRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        repo.insertMessage(data.message1)
-        val entity = repo.select(data.message1.id)
-        val message = entity!!.toMessage(data.userMap)
+        repo.insert(data.message1)
+        val message = repo.select(data.message1.id, data.userMap)
         // ignore the channel field, we don't have that information at the message repository level
         Truth.assertThat(message).isEqualTo(data.message1)
     }
@@ -41,19 +40,18 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     fun testMessageObjectWithExtraData() = runBlocking(Dispatchers.IO) {
         val extra = mutableMapOf("int" to 10, "string" to "green", "list" to listOf("a", "b"))
         val messageIn = data.createMessage().apply { extraData = extra; id = "testMessageObjectWithExtraData" }
-        repo.insertMessage(messageIn, true)
-        val entity = repo.select(messageIn.id)
-        val messageOut = entity!!.toMessage(data.userMap)
-        Truth.assertThat(messageOut.extraData).isEqualTo(extra)
+        repo.insert(messageIn, true)
+        val messageOut = repo.select(messageIn.id, data.userMap)
+        Truth.assertThat(messageOut!!.extraData).isEqualTo(extra)
     }
 
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
-        repo.insertMessage(data.message1, true)
-        repo.insertMessage(data.message1Updated, true)
+        repo.insert(data.message1, true)
+        repo.insert(data.message1Updated, true)
 
-        val entity = repo.select(data.message1Updated.id)
-        val message = entity!!.toMessage(data.userMap)
+        val message = repo.select(data.message1Updated.id, data.userMap)
+
         Truth.assertThat(message).isEqualTo(data.message1Updated)
         Truth.assertThat(repo.messageCache.size()).isEqualTo(1)
     }
@@ -70,7 +68,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
             .apply { id = "testSyncNeeded-2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY }
         val message3 = data.createMessage()
             .apply { id = "testSyncNeeded-3"; text = "hi123"; syncStatus = SyncStatus.SYNC_NEEDED }
-        repo.insertMessages(listOf(message1, message2, message3), true)
+        repo.insert(listOf(message1, message2, message3), true)
 
         var messages = repo.selectSyncNeeded()
 
@@ -101,7 +99,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
             id = "testSelectMessagesForChannel3"; text = "hi123123"; syncStatus = SyncStatus.FAILED_PERMANENTLY; user =
                 data.user1; createdAt = calendar(2019, 9, 1)
         }
-        repo.insertMessages(listOf(message1, message2, message3), true)
+        repo.insert(listOf(message1, message2, message3), true)
 
         // this should select the first message
         val pagination = AnyChannelPaginationRequest(1)

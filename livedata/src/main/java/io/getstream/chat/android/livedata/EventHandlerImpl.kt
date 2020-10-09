@@ -58,9 +58,9 @@ import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -90,7 +90,8 @@ class EventHandlerImpl(
         val users: MutableMap<String, User> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
 
-        val messages: MutableMap<String, MessageEntity> = mutableMapOf()
+        val messages: MutableMap<String, Message
+                > = mutableMapOf()
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
 
@@ -166,7 +167,7 @@ class EventHandlerImpl(
         }
         // actually fetch the data
         val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
-        val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
+        val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList(), users.toMap()).associateBy { it.id }
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
@@ -178,23 +179,23 @@ class EventHandlerImpl(
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    messages[event.message.id] = event.message
                 }
                 is MessageDeletedEvent -> {
                     event.message.cid = event.cid
                     users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    messages[event.message.id] = event.message
                 }
                 is MessageUpdatedEvent -> {
                     event.message.cid = event.cid
                     users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    messages[event.message.id] = event.message
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    messages[event.message.id] = event.message
                 }
                 is NotificationAddedToChannelEvent -> {
                     users.putAll(event.channel.users().associateBy(User::id))
@@ -237,7 +238,9 @@ class EventHandlerImpl(
                     // event.message only has a subset of reactions
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // TODO maybe we don't need through DB and Message::addReaction is enough
+                            domainImpl.repos.messages.addReaction(event.reaction.messageId, event.reaction)
                         }
                     } ?: Unit
                 }
@@ -245,7 +248,9 @@ class EventHandlerImpl(
                     // get the message, update the reaction data, update the message
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            removeReaction(event.reaction, false)
+                            // removeReaction(event.reaction, false)
+                            // TODO maybe we don't need through DB and Message::removeReaction is enough
+                            domainImpl.repos.messages.removeReaction(event.reaction.messageId, event.reaction)
                             reactionCounts = event.message.reactionCounts
                         }
                     } ?: Unit
@@ -253,7 +258,9 @@ class EventHandlerImpl(
                 is ReactionUpdateEvent -> {
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // TODO maybe we don't need through DB and Message::addReaction is enough
+                            domainImpl.repos.messages.addReaction(event.reaction.messageId, event.reaction)
                         }
                     }
                 }

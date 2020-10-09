@@ -471,7 +471,7 @@ class ChannelControllerImpl(
         upsertMessage(newMessage)
 
         // we insert early to ensure we don't lose messages
-        domainImpl.repos.messages.insertMessage(newMessage)
+        domainImpl.repos.messages.insert(newMessage)
 
         val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
@@ -488,7 +488,7 @@ class ChannelControllerImpl(
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
                     if (result.isSuccess) {
-                        attachment = result.data() as Attachment
+                        attachment = result.data()
                     }
                 }
                 attachment
@@ -501,9 +501,7 @@ class ChannelControllerImpl(
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
                     syncStatus = SyncStatus.COMPLETED
-                    val entity = MessageEntity(this)
-                    entity.sendMessageCompletedAt = Date()
-                    domainImpl.repos.messages.insert(entity)
+                    domainImpl.repos.messages.insert(this)
                 }
 
                 upsertMessage(processedMessage)
@@ -515,7 +513,7 @@ class ChannelControllerImpl(
                     newMessage.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 upsertMessage(newMessage)
-                domainImpl.repos.messages.insertMessage(newMessage)
+                domainImpl.repos.messages.insert(newMessage)
                 Result(newMessage, result.error())
             }
         } else {
@@ -617,9 +615,7 @@ class ChannelControllerImpl(
             val processedMessage: Message = result.data()
             processedMessage.apply {
                 syncStatus = SyncStatus.COMPLETED
-                val entity = MessageEntity(this)
-                entity.sendMessageCompletedAt = Date()
-                domainImpl.repos.messages.insert(entity)
+                domainImpl.repos.messages.insert(this)
             }
             upsertMessage(processedMessage)
             Result(processedMessage)
@@ -660,11 +656,8 @@ class ChannelControllerImpl(
             upsertMessage(it)
         }
         // update the message in the local storage
-        val messageEntity = domainImpl.repos.messages.select(reaction.messageId)
-        messageEntity?.let {
-            it.addReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
-            domainImpl.repos.messages.insert(it)
-        }
+        // TODO compare with message::updateReaction and then update this for repo::insert
+        domainImpl.repos.messages.addReaction(reaction.messageId, reaction)
 
         if (online) {
             val runnable = {
@@ -707,11 +700,8 @@ class ChannelControllerImpl(
             upsertMessage(it)
         }
 
-        val messageEntity = domainImpl.repos.messages.select(reaction.messageId)
-        messageEntity?.let {
-            it.removeReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
-            domainImpl.repos.messages.insert(it)
-        }
+        // TODO compare with message::removeReaction and then update this for repo::insert
+        domainImpl.repos.messages.removeReaction(reaction.messageId, reaction)
 
         if (online) {
             val runnable = {
@@ -1107,7 +1097,7 @@ class ChannelControllerImpl(
         upsertMessage(editedMessage)
 
         // Update Room State
-        domainImpl.repos.messages.insertMessage(editedMessage)
+        domainImpl.repos.messages.insert(editedMessage)
 
         if (online) {
             val runnable = {
@@ -1123,7 +1113,7 @@ class ChannelControllerImpl(
                 editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insertMessage(editedMessage)
+                domainImpl.repos.messages.insert(editedMessage)
 
                 return Result(editedMessage, null)
             } else {
@@ -1134,7 +1124,7 @@ class ChannelControllerImpl(
                 }
 
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insertMessage(editedMessage)
+                domainImpl.repos.messages.insert(editedMessage)
                 return Result(null, result.error())
             }
         }
@@ -1153,7 +1143,7 @@ class ChannelControllerImpl(
         upsertMessage(message)
 
         // Update Room State
-        domainImpl.repos.messages.insertMessage(message)
+        domainImpl.repos.messages.insert(message)
 
         if (online) {
             val runnable = {
@@ -1163,7 +1153,7 @@ class ChannelControllerImpl(
             if (result.isSuccess) {
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                domainImpl.repos.messages.insert(message)
                 return Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
@@ -1173,7 +1163,7 @@ class ChannelControllerImpl(
                 }
 
                 upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                domainImpl.repos.messages.insert(message)
                 return Result(null, result.error())
             }
         }

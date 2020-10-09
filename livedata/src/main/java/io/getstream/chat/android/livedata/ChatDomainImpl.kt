@@ -605,7 +605,7 @@ class ChatDomainImpl private constructor(
         // store the channel data
         repos.channels.insertChannel(channelsResponse)
         // store the messages
-        repos.messages.insertMessages(messages)
+        repos.messages.insert(messages)
 
         logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }

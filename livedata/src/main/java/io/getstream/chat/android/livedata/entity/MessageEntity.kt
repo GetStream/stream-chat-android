@@ -139,6 +139,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         extraData = m.extraData
         reactionCounts = m.reactionCounts ?: mutableMapOf()
         reactionScores = m.reactionScores ?: mutableMapOf()
+        sendMessageCompletedAt = if (m.syncStatus == SyncStatus.COMPLETED) Date() else null
 
         // for these we need a little map
         latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()

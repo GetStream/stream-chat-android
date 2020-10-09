@@ -4,6 +4,7 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.MessageDao
@@ -13,9 +14,9 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 import java.util.Date
 
-class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
+class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, private val currentUser: User, var client: ChatClient) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
-    var messageCache = LruCache<String, MessageEntity>(cacheSize)
+    var messageCache = LruCache<String, Message>(cacheSize)
 
     internal suspend fun selectMessagesForChannel(
         cid: String,
@@ -46,50 +47,54 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
         return messageDao.messagesForChannel(cid, pagination.messageLimit)
     }
 
-    suspend fun select(messageId: String): MessageEntity? {
-        return select(listOf(messageId)).getOrElse(0) { null }
+    suspend fun removeReaction(messageId: String, reaction: Reaction) {
+        messageDao.select(messageId)?.also { messageEntity ->
+            messageEntity.removeReaction(reaction, currentUser.id == reaction.user?.id)
+            messageDao.insert(messageEntity)
+        }
     }
 
-    suspend fun select(messageIds: List<String>): List<MessageEntity> {
-        val cachedMessages: MutableList<MessageEntity> = mutableListOf()
+    suspend fun addReaction(messageId: String, reaction: Reaction) {
+        messageDao.select(messageId)?.also { messageEntity ->
+            messageEntity.addReaction(reaction, currentUser.id == reaction.user?.id)
+            messageDao.insert(messageEntity)
+        }
+    }
+
+    suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
+        val cachedMessages: MutableList<Message> = mutableListOf()
         for (messageId in messageIds) {
             val messageEntity = messageCache.get(messageId)
             messageEntity?.let { cachedMessages.add(it) }
         }
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        val dbMessages = messageDao.select(missingMessageIds).toMutableList()
+        val dbMessages = messageDao.select(missingMessageIds).map { it.toMessage(usersMap) }.toMutableList()
 
         dbMessages.addAll(cachedMessages)
         return dbMessages
     }
 
-    suspend fun insert(messageEntities: List<MessageEntity>, cache: Boolean = false) {
-        if (messageEntities.isEmpty()) return
-        for (messageEntity in messageEntities) {
-            if (messageEntity.cid == "") {
+    suspend fun select(messageId: String, usersMap: Map<String, User>): Message? {
+        return messageCache[messageId] ?: messageDao.select(messageId)?.toMessage(usersMap)
+    }
+
+    suspend fun insert(messages: List<Message>, cache: Boolean = false) {
+        if (messages.isEmpty()) return
+        for (message in messages) {
+            if (message.cid == "") {
                 throw InvalidParameterException("message.cid cant be empty")
             }
         }
-        for (m in messageEntities) {
+        for (m in messages) {
             if (messageCache.get(m.id) != null || cache) {
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messageEntities)
+        messageDao.insertMany(messages.map(::MessageEntity))
     }
 
-    suspend fun insertMessages(messages: List<Message>, cache: Boolean = false) {
-        val messageEntities = messages.map { MessageEntity(it) }
-        insert(messageEntities, cache)
-    }
-
-    suspend fun insertMessage(message: Message, cache: Boolean = false) {
-        val messageEntity = MessageEntity(message)
-        insert(listOf(messageEntity), cache)
-    }
-
-    suspend fun insert(messageEntity: MessageEntity, cache: Boolean = false) {
-        insert(listOf(messageEntity), cache)
+    suspend fun insert(message: Message, cache: Boolean = false) {
+        insert(listOf(message), cache)
     }
 
     suspend fun selectSyncNeeded(): List<MessageEntity> {
@@ -120,10 +125,10 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
                 messageEntity.syncStatus = SyncStatus.COMPLETED
                 messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
                     ?: Date()
-                insert(messageEntity)
+                messageDao.insert(messageEntity)
             } else if (result.isError && result.error().isPermanent()) {
                 messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                insert(messageEntity)
+                messageDao.insert(messageEntity)
             }
         }
 
@@ -134,7 +139,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
         // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
         // wipe the cache
-        messageCache = LruCache<String, MessageEntity>(cacheSize)
+        messageCache = LruCache(cacheSize)
     }
 
     suspend fun deleteChannelMessage(message: Message) {
