@@ -20,7 +20,7 @@ import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import java.io.File
-import java.util.Date
+import java.util.*
 import kotlin.random.Random
 
 private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
@@ -134,6 +134,8 @@ fun randomMessage(
     createdLocallyAt: Date? = randomDate(),
     updatedLocallyAt: Date? = randomDate(),
     deletedAt: Date? = randomDate(),
+    updatedLocallyAt: Date? = randomDate(),
+    createdLocallyAt: Date? = randomDate(),
     user: User = randomUser(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean()
