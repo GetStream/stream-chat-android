@@ -8,12 +8,12 @@ import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
 import com.getstream.sdk.chat.databinding.StreamViewMessageInputBinding
 import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.enums.label
-import com.getstream.sdk.chat.exhaustive
 import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
 import com.getstream.sdk.chat.utils.StringUtility
+import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.view.PreviewMessageView
 import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Command

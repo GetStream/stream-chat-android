@@ -35,9 +35,9 @@ import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
 import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.whenFalse
+import com.getstream.sdk.chat.utils.whenTrue
 import com.getstream.sdk.chat.view.common.visible
-import com.getstream.sdk.chat.whenFalse
-import com.getstream.sdk.chat.whenTrue
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member

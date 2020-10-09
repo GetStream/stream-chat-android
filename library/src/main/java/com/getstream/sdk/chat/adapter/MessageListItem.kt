@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
-import com.getstream.sdk.chat.exhaustive
+import com.getstream.sdk.chat.utils.exhaustive
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
