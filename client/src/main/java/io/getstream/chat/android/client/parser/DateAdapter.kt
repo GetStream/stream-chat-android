@@ -10,7 +10,8 @@ import java.util.TimeZone
 
 private const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 private const val DATE_FORMAT_WITHOUTH_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-internal class DateAdapter() : TypeAdapter<Date>() {
+
+internal class DateAdapter : TypeAdapter<Date>() {
 
     private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import java.util.UUID
 
 @Entity(tableName = "channels")
-public class Channel {
+class Channel {
 
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()

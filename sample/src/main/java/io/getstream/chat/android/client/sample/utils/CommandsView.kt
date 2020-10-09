@@ -66,7 +66,7 @@ import java.util.concurrent.TimeUnit
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     init {
-        orientation = LinearLayout.VERTICAL
+        orientation = VERTICAL
         LayoutInflater.from(context).inflate(R.layout.layout_commands, this, true)
     }
 
@@ -105,19 +105,19 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        if (customUrl.isNullOrEmpty()) {
+        client = if (customUrl.isEmpty()) {
             if (useStaging) {
-                client = ChatClient.Builder(config.apiKey, App.instance)
+                ChatClient.Builder(config.apiKey, App.instance)
                     .baseUrl(stagingEndpoint)
                     .notifications(notificationsHandler)
                     .build()
             } else {
-                client = ChatClient.Builder(config.apiKey, App.instance)
+                ChatClient.Builder(config.apiKey, App.instance)
                     .notifications(notificationsHandler)
                     .build()
             }
         } else {
-            client = ChatClient.Builder(config.apiKey, App.instance)
+            ChatClient.Builder(config.apiKey, App.instance)
                 .baseUrl(customUrl)
                 .notifications(notificationsHandler)
                 .build()

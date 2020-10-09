@@ -19,10 +19,7 @@ import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
 import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
 import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
 import kotlinx.android.synthetic.main.activity_socket_tests.textSocketState
-import java.text.SimpleDateFormat
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class SocketTestActivity : AppCompatActivity() {
 
     var disposables = mutableListOf<Disposable>()
@@ -87,7 +84,6 @@ class SocketTestActivity : AppCompatActivity() {
     }
 
     private val sb = StringBuilder()
-    private val logTimeFormat = SimpleDateFormat("hh:mm:ss")
 
     private fun appendEvent(event: ChatEvent) {
         sb.insert(0, "${event.type}\n")

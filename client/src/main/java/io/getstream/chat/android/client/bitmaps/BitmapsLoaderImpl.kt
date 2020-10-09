@@ -13,8 +13,6 @@ import okhttp3.Request
 
 internal class BitmapsLoaderImpl(val context: Context) : BitmapsLoader {
 
-    val TAG = BitmapsLoader::class.java.simpleName
-
     val cacheSize = 10 * 1024 * 1024 // 10 MiB
     val client = OkHttpClient.Builder().build()
     val uiHandler = Handler(Looper.getMainLooper())

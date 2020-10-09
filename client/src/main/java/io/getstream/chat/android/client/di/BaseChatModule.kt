@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import com.moczul.ok2curl.CurlInterceptor
-import com.moczul.ok2curl.logger.Loggable
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -105,11 +104,9 @@ internal open class BaseChatModule(val appContext: Context, val config: ChatClie
                 ) { config.isAnonymous }
             )
             .addInterceptor(
-                CurlInterceptor(
-                    Loggable {
-                        logger().logI("CURL", it)
-                    }
-                )
+                CurlInterceptor {
+                    logger().logI("CURL", it)
+                }
             )
     }
 

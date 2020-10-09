@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryLi
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositoryRx
 import io.getstream.chat.android.client.sample.repositories.ChannelsRepositorySync
 import io.getstream.chat.android.client.subscribeFor
-import kotlin.time.ExperimentalTime
 
 class App : Application() {
 
@@ -30,9 +29,6 @@ class App : Application() {
         lateinit var db: AppDatabase
         lateinit var cache: ChannelsCache
         lateinit var keyValue: KeyValue
-
-        val CHANNEL_TYPE_KEY = "type"
-        val CHANNEL_ID_KEY = "id"
 
         private const val EXTRA_CHANNEL_TYPE = "io.getstream.chat.example.CHANNEL_TYPE"
         private const val EXTRA_CHANNEL_ID = "io.getstream.chat.example.CHANNEL_ID"
@@ -134,7 +130,6 @@ class App : Application() {
         )
     }
 
-    @UseExperimental(ExperimentalTime::class)
     private fun provideNotificationConfig() = object : ChatNotificationHandler(this) {
 
         override fun getNewMessageIntent(
