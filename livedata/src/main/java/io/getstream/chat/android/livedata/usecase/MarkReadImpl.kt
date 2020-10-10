@@ -28,7 +28,7 @@ class MarkReadImpl(var domainImpl: ChatDomainImpl) : MarkRead {
 
             channelRepo.markRead()
         }
-        return CallImpl2<Boolean>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

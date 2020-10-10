@@ -25,7 +25,7 @@ class ShowChannelImpl(var domainImpl: ChatDomainImpl) : ShowChannel {
         val runnable = suspend {
             channelController.show()
         }
-        return CallImpl2<Unit>(
+        return CallImpl2(
             runnable,
             channelController.scope
         )

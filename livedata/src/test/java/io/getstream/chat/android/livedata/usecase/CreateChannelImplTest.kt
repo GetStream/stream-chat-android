@@ -17,14 +17,14 @@ internal class CreateChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun createChannel() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var channel = chatDomain.useCases.createChannel(data.channel1).execute()
+        val channel = chatDomain.useCases.createChannel(data.channel1).execute()
         Truth.assertThat(channel.isSuccess).isTrue()
     }
 
     @Test
     @Ignore("mock me")
     fun createChannelWithMembers() = runBlocking(Dispatchers.IO) {
-        var channelCreateResult = chatDomain.useCases.createChannel(data.channel4).execute()
+        val channelCreateResult = chatDomain.useCases.createChannel(data.channel4).execute()
         assertSuccess(channelCreateResult)
         val request = QueryChannelRequest().withMembers(10, 0)
         val channelRetrievedResult = client.queryChannel(data.channel4.type, data.channel4.id, request).execute()

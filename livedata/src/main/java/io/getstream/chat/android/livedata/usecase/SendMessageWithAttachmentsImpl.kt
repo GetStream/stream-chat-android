@@ -41,7 +41,7 @@ class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : S
     }
 
     private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Result<List<Attachment>> =
-        files.fold(Result<List<Attachment>>(listOf())) { acc, file ->
+        files.fold(Result(emptyList())) { acc, file ->
             if (acc.isError) {
                 acc
             } else {

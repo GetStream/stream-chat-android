@@ -27,7 +27,7 @@ class EditMessageImpl(var domainImpl: ChatDomainImpl) : EditMessage {
         val runnable = suspend {
             channelRepo.editMessage(message)
         }
-        return CallImpl2<Message>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

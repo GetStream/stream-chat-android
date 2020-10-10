@@ -25,7 +25,7 @@ class LoadOlderMessagesImpl(var domainImpl: ChatDomainImpl) : LoadOlderMessages 
         val runnable = suspend {
             channelRepo.loadOlderMessages(messageLimit)
         }
-        return CallImpl2<Channel>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

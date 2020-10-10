@@ -33,7 +33,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
                     ).loggerHandler(TestLoggerHandler()).build()
             client.subscribe {
                 if (it is ConnectedEvent) {
-                    System.out.println("connceted")
+                    println("connceted")
                 }
             }
             return client
@@ -61,7 +61,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
 
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
-                System.out.println("error event$it")
+                println("error event$it")
             }
         )
         return chatDomainImpl
@@ -80,7 +80,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
         client = Companion.client!!
         // start from a clean db everytime
         chatDomainImpl = setupChatDomain(client)
-        System.out.println("setup")
+        println("setup")
 
         // setup channel controller and query controllers for tests
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
@@ -98,7 +98,7 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
     @After
     override fun tearDown() = runBlocking(Dispatchers.IO) {
         // things to do after each test
-        System.out.println("tearDown")
+        println("tearDown")
         chatDomainImpl.disconnect()
     }
 }
