@@ -90,7 +90,7 @@ class TestDataHelper {
         return cal.time
     }
 
-    val extraData1 = mutableMapOf("color" to "green", "score" to 1.1)
+    val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
     val config1 = Config().apply { isTypingEvents = true; isReadEvents = true }
     val channel1 = Channel().apply {
@@ -174,11 +174,10 @@ class TestDataHelper {
     fun createMessage(): Message {
         val messageId = UUID.randomUUID().toString()
         val text = "hi there $messageId"
-        val message = Message().apply {
+        return Message().apply {
             cid = channel1.cid; this.text = text; id = messageId; user =
                 user1; createdAt = Date()
         }
-        return message
     }
 
     val message1Updated = Message().apply {

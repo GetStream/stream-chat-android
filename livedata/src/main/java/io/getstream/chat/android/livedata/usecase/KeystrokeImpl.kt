@@ -25,7 +25,7 @@ class KeystrokeImpl(var domainImpl: ChatDomainImpl) : Keystroke {
         val runnable = suspend {
             channelController.keystroke()
         }
-        return CallImpl2<Boolean>(
+        return CallImpl2(
             runnable,
             channelController.scope
         )

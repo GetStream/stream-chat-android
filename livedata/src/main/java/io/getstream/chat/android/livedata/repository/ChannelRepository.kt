@@ -24,7 +24,7 @@ class ChannelRepository(
     }
 
     suspend fun insertChannel(channels: List<Channel>) {
-        var entities = channels.map { ChannelEntity(it) }
+        val entities = channels.map { ChannelEntity(it) }
         insert(entities)
     }
 

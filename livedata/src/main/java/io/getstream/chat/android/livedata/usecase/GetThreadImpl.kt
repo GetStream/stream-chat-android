@@ -31,7 +31,7 @@ class GetThreadImpl(var domainImpl: ChatDomainImpl) : GetThread {
         val runnable = suspend {
             Result(threadController, null)
         }
-        return CallImpl2<ThreadController>(
+        return CallImpl2(
             runnable,
             channelController.scope
         )

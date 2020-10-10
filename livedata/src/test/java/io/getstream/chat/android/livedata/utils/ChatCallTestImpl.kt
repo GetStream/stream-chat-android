@@ -21,7 +21,7 @@ class ChatCallTestImpl<T>(val result: Result<T>) : Call<T> {
 
     override fun <K> map(mapper: (T) -> K): Call<K> {
         val mapped: K = mapper(result.data())
-        val newResult = Result<K>(mapped, null)
+        val newResult = Result(mapped, null)
         return ChatCallTestImpl(newResult)
     }
 

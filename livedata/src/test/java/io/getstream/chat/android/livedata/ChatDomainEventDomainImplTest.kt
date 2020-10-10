@@ -40,7 +40,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun addedToChannel() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.notificationAddedToChannel2Event)
-        val channel = chatDomainImpl.repos.channels.select(data.notificationAddedToChannel2Event.channel!!.cid)
+        val channel = chatDomainImpl.repos.channels.select(data.notificationAddedToChannel2Event.channel.cid)
         Truth.assertThat(channel).isNotNull()
     }
 
@@ -119,11 +119,11 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.channels.insertChannel(data.channel1) }
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.readEvent) }
         // check channel level read info
-        val cid = data.readEvent.cid!!
+        val cid = data.readEvent.cid
         val channel = runBlocking(Dispatchers.IO) { chatDomainImpl.repos.channels.select(cid) }
         Truth.assertThat(channel!!.reads.size).isEqualTo(1)
         val read = channel.reads.values.first()
-        Truth.assertThat(read.userId).isEqualTo(data.readEvent.user!!.id)
+        Truth.assertThat(read.userId).isEqualTo(data.readEvent.user.id)
     }
 
     @Test
@@ -132,7 +132,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         val messageId = data.newMessageEvent.message.id
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent) }
         // add the reaction
-        val secondId = data.reactionEvent.reaction!!.messageId
+        val secondId = data.reactionEvent.reaction.messageId
         Truth.assertThat(secondId).isEqualTo(messageId)
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.reactionEvent) }
         // fetch the message
@@ -140,8 +140,8 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
             chatDomainImpl.repos.messages.select(messageId)!!
         }
         // reaction from yourself (so it goes into ownReactions)
-        Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(1)
-        Truth.assertThat(message.reactionScores.get("like")).isEqualTo(10)
+        Truth.assertThat(message.reactionCounts["like"]).isEqualTo(1)
+        Truth.assertThat(message.reactionScores["like"]).isEqualTo(10)
 
         Truth.assertThat(message.latestReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
         Truth.assertThat(message.ownReactions.first().userId).isEqualTo(data.reaction1.user!!.id)
@@ -151,7 +151,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         message = runBlocking(Dispatchers.IO) {
             chatDomainImpl.repos.messages.select(messageId)!!
         }
-        Truth.assertThat(message.reactionCounts.get("like")).isEqualTo(2)
+        Truth.assertThat(message.reactionCounts["like"]).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)
         Truth.assertThat(message.ownReactions.size).isEqualTo(1)
     }
@@ -160,9 +160,9 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun channelUpdatedEvent() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.channelUpdatedEvent)
         // check channel level read info
-        val cid = data.channelUpdatedEvent.cid!!
+        val cid = data.channelUpdatedEvent.cid
         val channel = chatDomainImpl.repos.channels.select(cid)!!
-        Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
+        Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
     }
 
     @Test
@@ -170,7 +170,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         // add the member to the channel
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
-        val cid = data.memberAddedToChannelEvent.cid!!
+        val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members
         var channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
@@ -184,7 +184,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         // add the member to the channel
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.eventHandler.handleEvent(data.memberAddedToChannelEvent)
-        val cid = data.memberAddedToChannelEvent.cid!!
+        val cid = data.memberAddedToChannelEvent.cid
         // verify that user 2 is now part of the members
         var channel = chatDomainImpl.repos.channels.select(cid)!!
         Truth.assertThat(channel.members.size).isEqualTo(2)
