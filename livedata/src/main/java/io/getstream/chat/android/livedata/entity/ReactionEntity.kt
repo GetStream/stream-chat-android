@@ -22,12 +22,12 @@ import java.util.Date
  */
 @Entity(
     tableName = "stream_chat_reaction",
-    indices = arrayOf(
+    indices = [
         Index(
             value = ["messageId", "userId", "type"],
             unique = true
-        )
-    )
+        ), Index(value = ["syncStatus"])
+    ]
 )
 data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {
 

@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
@@ -19,7 +21,7 @@ import java.util.Date
  * messages are stored on their own table for easier pagination and updates
  *
  */
-@Entity(tableName = "stream_chat_channel_state")
+@Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
 data class ChannelEntity(var type: String, var channelId: String) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
@@ -47,6 +49,10 @@ data class ChannelEntity(var type: String, var channelId: String) {
 
     /** denormalize the last message date so we can sort on it */
     var lastMessageAt: Date? = null
+
+    /** denormalize the last message to optimise read performance for channel list showing the last message */
+    @Embedded(prefix = "last_message")
+    var lastMessage: MessageEntity? = null
 
     /** when the channel was created */
     var createdAt: Date? = null
@@ -77,7 +83,12 @@ data class ChannelEntity(var type: String, var channelId: String) {
         for (r in c.read) {
             reads[r.getUserId()] = ChannelUserReadEntity(r)
         }
-        lastMessageAt = c.lastMessageAt
+        if (c.messages.isNotEmpty()) {
+            lastMessage = MessageEntity(c.messages.last())
+            lastMessage?.let {
+                lastMessageAt = it.createdAt
+            }
+        }
         createdByUserId = c.createdBy.id
     }
 
@@ -97,6 +108,10 @@ data class ChannelEntity(var type: String, var channelId: String) {
 
         c.members = members.values.map { it.toMember(userMap) }
 
+        lastMessage?.let {
+            c.messages = listOf(it.toMessage(userMap))
+        }
+
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
         c.createdBy = userMap[createdByUserId]
@@ -111,6 +126,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
 
         if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
             lastMessageAt = messageEntity.createdAt
+            lastMessage = messageEntity
         }
     }
 

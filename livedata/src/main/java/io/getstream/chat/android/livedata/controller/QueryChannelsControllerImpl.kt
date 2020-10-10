@@ -182,6 +182,8 @@ class QueryChannelsControllerImpl(
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
+        val startTime = System.currentTimeMillis()
+
         val loader = if (pagination.isFirstPage) {
             _loading
         } else {
@@ -195,7 +197,9 @@ class QueryChannelsControllerImpl(
         // start by getting the query results from offline storage
 
         val channels = runQueryOffline(pagination)
+        val duration = System.currentTimeMillis() - startTime
 
+        logger.logI("QPerf query offline took $duration")
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
         val output: Result<List<Channel>>

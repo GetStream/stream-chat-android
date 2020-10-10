@@ -169,22 +169,42 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
+                    channelMap[event.cid]?.let {
+                        channels[it.cid] = it.apply {
+                            addMessage(MessageEntity(event.message))
+                        }
+                    }
                 }
                 is MessageDeletedEvent -> {
                     event.message.cid = event.cid
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
+                    channelMap[event.cid]?.let {
+                        channels[it.cid] = it.apply {
+                            addMessage(MessageEntity(event.message))
+                        }
+                    }
                 }
                 is MessageUpdatedEvent -> {
                     event.message.cid = event.cid
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
+                    channelMap[event.cid]?.let {
+                        channels[it.cid] = it.apply {
+                            addMessage(MessageEntity(event.message))
+                        }
+                    }
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
+                    channelMap[event.cid]?.let {
+                        channels[it.cid] = it.apply {
+                            addMessage(MessageEntity(event.message))
+                        }
+                    }
                 }
                 is NotificationAddedToChannelEvent -> {
                     users.putAll(event.channel.users().associateBy(User::id))

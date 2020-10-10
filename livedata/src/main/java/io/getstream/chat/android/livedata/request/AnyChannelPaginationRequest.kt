@@ -30,11 +30,19 @@ internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
         return messageFilterDirection == null
     }
 
+    fun isRequestingMoreThanLastMessage(): Boolean {
+        return (isFirstPage() && messageLimit > 1) || (isNotFirstPage() && messageLimit > 0)
+    }
+
     fun isFilteringNewerMessages(): Boolean {
         return (messageFilterDirection != null && (messageFilterDirection == Pagination.GREATER_THAN_OR_EQUAL || messageFilterDirection == Pagination.GREATER_THAN))
     }
 
     fun isFilteringOlderMessages(): Boolean {
         return (messageFilterDirection != null && (messageFilterDirection == Pagination.LESS_THAN || messageFilterDirection == Pagination.LESS_THAN_OR_EQUAL))
+    }
+
+    fun isNotFirstPage(): Boolean {
+        return !isFirstPage()
     }
 }

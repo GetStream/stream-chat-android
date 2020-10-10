@@ -43,6 +43,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import java.lang.Thread.sleep
@@ -638,18 +639,32 @@ class ChatDomainImpl private constructor(
         pagination: AnyChannelPaginationRequest
     ): List<ChannelEntityPair> {
         // fetch the channel entities from room
+        val startTime1 = System.currentTimeMillis()
         val channelEntities = repos.channels.select(channelIds)
-        val channelMessagesMap = if (pagination.messageLimit > 0) {
+        val elapsedTime1 = System.currentTimeMillis() - startTime1
+        logger.logI("QPerf channels selection took $elapsedTime1")
+
+        val startTime2 = System.currentTimeMillis()
+        val channelMessagesMap = if (pagination.isRequestingMoreThanLastMessage()) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
+
+            // async to run queries in parallel
+            channelEntities.map { scope.async { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) } }.awaitAll().toMap()
+            // sync version:
+            // channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
         } else {
             emptyMap()
         }
+        val elapsedTime2 = System.currentTimeMillis() - startTime2
+        logger.logI("QPerf messages selection took $elapsedTime2")
 
         // gather the user ids from channels, members and the last message
+        val startTime = System.currentTimeMillis()
         val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
+        val elapsedTime = System.currentTimeMillis() - startTime
+        logger.logI("QPerf users took $elapsedTime")
 
         // convert the channels
         val channelPairs = mutableListOf<ChannelEntityPair>()
@@ -658,7 +673,7 @@ class ChatDomainImpl private constructor(
             // get the config we have stored offline
             channel.config = getChannelConfig(channel.type)
 
-            if (pagination.messageLimit > 0) {
+            if (pagination.isRequestingMoreThanLastMessage()) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
                 val messages = messageEntities.map { it.toMessage(userMap) }
                 channel.messages = messages
