@@ -174,9 +174,8 @@ class EventHandlerImpl(
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                     channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            addMessage(MessageEntity(event.message))
-                        }
+                        it.addMessage(MessageEntity(event.message))
+                        channels[it.cid] = it
                     }
                 }
                 is MessageDeletedEvent -> {
@@ -184,9 +183,8 @@ class EventHandlerImpl(
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                     channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            addMessage(MessageEntity(event.message))
-                        }
+                        it.addMessage(MessageEntity(event.message))
+                        channels[it.cid] = it
                     }
                 }
                 is MessageUpdatedEvent -> {
@@ -194,9 +192,8 @@ class EventHandlerImpl(
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                     channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            addMessage(MessageEntity(event.message))
-                        }
+                        it.addMessage(MessageEntity(event.message))
+                        channels[it.cid] = it
                     }
                 }
                 is NotificationMessageNewEvent -> {
@@ -205,9 +202,8 @@ class EventHandlerImpl(
                     users.putAll(event.message.users().associateBy(User::id))
                     messages[event.message.id] = MessageEntity(event.message)
                     channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            addMessage(MessageEntity(event.message))
-                        }
+                        it.addMessage(MessageEntity(event.message))
+                        channels[it.cid] = it
                     }
                 }
                 is NotificationAddedToChannelEvent -> {

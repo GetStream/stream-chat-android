@@ -122,9 +122,11 @@ data class ChannelEntity(var type: String, var channelId: String) {
 
     /** updates last message and lastmessagedate on this channel entity */
     fun addMessage(messageEntity: MessageEntity) {
-        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
+        val messageEntityCreatedAt = checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
-        if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
+        val updateNeeded = messageEntity.id == lastMessage?.id
+        val newLastMessage = lastMessageAt == null || messageEntityCreatedAt.after(lastMessageAt)
+        if (newLastMessage || updateNeeded) {
             lastMessageAt = messageEntity.createdAt
             lastMessage = messageEntity
         }
