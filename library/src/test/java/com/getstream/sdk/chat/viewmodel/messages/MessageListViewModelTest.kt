@@ -48,7 +48,7 @@ private const val LIMIT = 30
 private val CURRENT_USER = createUser(online = true)
 private val CHANNEL = createChannel(CID)
 private val CHANNEL_USER_READ = createChannelUserRead(CURRENT_USER)
-private val MESSAGES = createMessageList() {
+private val MESSAGES = createMessageList {
     createMessage(
         user = CURRENT_USER,
         createdAt = Date.from(Instant.now()),
@@ -57,7 +57,7 @@ private val MESSAGES = createMessageList() {
 }
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
-private val THREAD_MESSAGES = createMessageList() {
+private val THREAD_MESSAGES = createMessageList {
     createMessage(
         createdAt = Date.from(Instant.now()),
         parentId = THREAD_PARENT_MESSAGE.id,

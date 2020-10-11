@@ -78,12 +78,9 @@ class MessageMoreActionDialog(
                 .solidColor(style.reactionInputBgColor)
                 .cornerRadii(reactionsContainer.height / 2, reactionsContainer.height / 2, 0, 0)
                 .build()
-            reactionsRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            val reactionAdapter = ReactionDialogAdapter(
-                message,
-                style,
-                View.OnClickListener { dismiss() }
-            )
+            reactionsRecyclerView.layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            val reactionAdapter = ReactionDialogAdapter(message, style) { dismiss() }
             reactionsRecyclerView.adapter = reactionAdapter
         } else {
             reactionsContainer.visibility = View.GONE
@@ -105,7 +102,9 @@ class MessageMoreActionDialog(
     private fun canCopyOnMessage(): Boolean {
         return !(
             message.deletedAt != null || // TODO: llc cache
-                message.type == ModelType.message_error || message.type == ModelType.message_ephemeral || TextUtils.isEmpty(message.text)
+                message.type == ModelType.message_error || message.type == ModelType.message_ephemeral || TextUtils.isEmpty(
+                message.text
+            )
             )
     }
 

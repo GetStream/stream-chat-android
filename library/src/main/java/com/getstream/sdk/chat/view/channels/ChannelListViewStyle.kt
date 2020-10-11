@@ -122,8 +122,4 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
             recycle()
         }
     }
-
-    companion object {
-        private val TAG: String? = ChannelListViewStyle::class.java.simpleName
-    }
 }
