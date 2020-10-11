@@ -7,9 +7,9 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
 class MessageListItemAdapter(
-    val channel: Channel,
-    val viewHolderFactory: MessageViewHolderFactory,
-    val style: MessageListViewStyle
+    private val channel: Channel,
+    private val viewHolderFactory: MessageViewHolderFactory,
+    private val style: MessageListViewStyle
 ) : ListAdapter<MessageListItem, BaseMessageListItemViewHolder<*>>(MessageListItemDiffCallback) {
 
     var isThread = false
