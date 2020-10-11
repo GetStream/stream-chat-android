@@ -18,7 +18,7 @@ import java.util.Date
  * and back:
  * messageEntity.toMessage()
  */
-@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "parentId"]), Index(value = ["syncStatus"])])
+@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
 data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
     /** the message text */
