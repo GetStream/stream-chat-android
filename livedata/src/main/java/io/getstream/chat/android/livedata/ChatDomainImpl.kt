@@ -639,12 +639,8 @@ class ChatDomainImpl private constructor(
         pagination: AnyChannelPaginationRequest
     ): List<ChannelEntityPair> {
         // fetch the channel entities from room
-        val startTime1 = System.currentTimeMillis()
         val channelEntities = repos.channels.select(channelIds)
-        val elapsedTime1 = System.currentTimeMillis() - startTime1
-        logger.logI("QPerf channels selection took $elapsedTime1")
 
-        val startTime2 = System.currentTimeMillis()
         val channelMessagesMap = if (pagination.isRequestingMoreThanLastMessage()) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
@@ -657,14 +653,9 @@ class ChatDomainImpl private constructor(
         } else {
             emptyMap()
         }
-        val elapsedTime2 = System.currentTimeMillis() - startTime2
-        logger.logI("QPerf messages selection took $elapsedTime2")
 
         // gather the user ids from channels, members and the last message
-        val startTime = System.currentTimeMillis()
         val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
-        val elapsedTime = System.currentTimeMillis() - startTime
-        logger.logI("QPerf users took $elapsedTime")
 
         // convert the channels
         val channelPairs = mutableListOf<ChannelEntityPair>()
