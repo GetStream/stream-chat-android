@@ -608,7 +608,7 @@ class ChatDomainImpl private constructor(
         // store the messages
         repos.messages.insertMessages(messages)
 
-        logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
+        logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
     suspend fun selectAndEnrichChannel(
