@@ -122,7 +122,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         // should return message 2 and message 3, with message 3 (the oldest message as the first element)
         messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
-        Truth.assertThat(messages.first().id).isEqualTo(message3.id)
+        Truth.assertThat(messages.first().id).isEqualTo(message2.id)
         // request 2 and newer, message 2 (the oldest) should be first
         pagination.setFilter(Pagination.GREATER_THAN_OR_EQUAL, message2.id)
         messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
