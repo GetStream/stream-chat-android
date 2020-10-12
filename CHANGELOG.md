@@ -1,5 +1,6 @@
 # To be released:
 
+# Oct 9th, 2020 - 4.3.0-beta-5
 - Improve selecting non-media attachments
 - Fix showing attachments captured with camera
 - Add setting type and file size when creating AttachmentMetaData from file
