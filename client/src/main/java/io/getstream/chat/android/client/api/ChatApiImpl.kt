@@ -476,15 +476,15 @@ internal class ChatApiImpl(
         channelId: String,
         request: UpdateChannelRequest
     ): Call<Channel> {
-return callMapper.map(
-    retrofitApi.updateChannel(
-        channelType,
-        channelId,
-        apiKey,
-        connectionId,
-        request
-    )
-).map { flattenChannel(it) }
+        return callMapper.map(
+            retrofitApi.updateChannel(
+                channelType,
+                channelId,
+                apiKey,
+                connectionId,
+                request
+            )
+        ).map { flattenChannel(it) }
     }
 
     override fun enableSlowMode(
@@ -533,11 +533,11 @@ return callMapper.map(
     }
 
     override fun showChannel(channelType: String, channelId: String): Call<Unit> {
-return callMapper.map(
-    retrofitApi.showChannel(channelType, channelId, apiKey, connectionId, emptyMap())
-).map {
-    Unit
-}
+        return callMapper.map(
+            retrofitApi.showChannel(channelType, channelId, apiKey, connectionId, emptyMap())
+        ).map {
+            Unit
+        }
     }
 
     override fun hideChannel(

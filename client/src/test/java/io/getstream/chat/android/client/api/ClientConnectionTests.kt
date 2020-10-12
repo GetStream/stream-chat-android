@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.never

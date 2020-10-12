@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 
-public data class Result<T: Any>(
+public data class Result<T : Any>(
     private val data: T?,
     private val error: ChatError?
 ) {
