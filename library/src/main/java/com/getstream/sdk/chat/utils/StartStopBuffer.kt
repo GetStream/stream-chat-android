@@ -1,9 +1,9 @@
 package com.getstream.sdk.chat.utils
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.Queue
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.GlobalScope
 
 internal class StartStopBuffer<T> {
 
