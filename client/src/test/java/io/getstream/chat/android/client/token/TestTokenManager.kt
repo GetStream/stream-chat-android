@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.concurrent.TimeUnit.SECONDS
 
-class TestTokenManager {
+internal class TestTokenManager {
 
     val token = "token"
     private lateinit var manager: TokenManager

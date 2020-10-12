@@ -21,7 +21,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import java.util.Date
 
-class UsersApiCallsTests {
+internal class UsersApiCallsTests {
 
     lateinit var client: ChatClient
     lateinit var mock: MockClientBuilder

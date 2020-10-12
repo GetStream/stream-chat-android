@@ -16,7 +16,7 @@ import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
-class MessageIdGenerationTests {
+internal class MessageIdGenerationTests {
 
     val userId = "user-id"
     val apiKey = "api-key"

@@ -4,7 +4,7 @@ import com.flextrade.jfixture.JFixture
 import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.models.Attachment
 
-object Mother {
+internal object Mother {
     private val fixture = JFixture()
 
     fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {

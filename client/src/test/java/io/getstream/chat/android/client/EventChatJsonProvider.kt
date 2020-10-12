@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client
 
-fun createChannelCreatedEventStringJson() =
+internal fun createChannelCreatedEventStringJson() =
     createChatEventStringJson(
         "channel.created",
         """
@@ -13,7 +13,7 @@ fun createChannelCreatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelDeletedEventStringJson() =
+internal fun createChannelDeletedEventStringJson() =
     createChatEventStringJson(
         "channel.deleted",
         """
@@ -25,7 +25,7 @@ fun createChannelDeletedEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelHiddenEventStringJson() =
+internal fun createChannelHiddenEventStringJson() =
     createChatEventStringJson(
         "channel.hidden",
         """
@@ -37,7 +37,7 @@ fun createChannelHiddenEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelMuteEventStringJson() =
+internal fun createChannelMuteEventStringJson() =
     createChatEventStringJson(
         "channel.muted",
         """
@@ -45,7 +45,7 @@ fun createChannelMuteEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelsMuteEventStringJson() =
+internal fun createChannelsMuteEventStringJson() =
     createChatEventStringJson(
         "channel.muted",
         """
@@ -55,7 +55,7 @@ fun createChannelsMuteEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelTruncatedEventStringJson() =
+internal fun createChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "channel.truncated",
         """
@@ -67,7 +67,7 @@ fun createChannelTruncatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelUnmuteEventStringJson() =
+internal fun createChannelUnmuteEventStringJson() =
     createChatEventStringJson(
         "channel.unmuted",
         """
@@ -75,7 +75,7 @@ fun createChannelUnmuteEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelsUnmuteEventStringJson() =
+internal fun createChannelsUnmuteEventStringJson() =
     createChatEventStringJson(
         "channel.unmuted",
         """
@@ -83,7 +83,7 @@ fun createChannelsUnmuteEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelUpdatedEventStringJson() =
+internal fun createChannelUpdatedEventStringJson() =
     createChatEventStringJson(
         "channel.updated",
         """
@@ -95,7 +95,7 @@ fun createChannelUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelUpdatedByUserEventStringJson() =
+internal fun createChannelUpdatedByUserEventStringJson() =
     createChatEventStringJson(
         "channel.updated",
         """
@@ -108,7 +108,7 @@ fun createChannelUpdatedByUserEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelVisibleEventStringJson() =
+internal fun createChannelVisibleEventStringJson() =
     createChatEventStringJson(
         "channel.visible",
         """
@@ -119,7 +119,7 @@ fun createChannelVisibleEventStringJson() =
         """.trimIndent()
     )
 
-fun createMemberAddedEventStringJson() =
+internal fun createMemberAddedEventStringJson() =
     createChatEventStringJson(
         "member.added",
         """
@@ -131,7 +131,7 @@ fun createMemberAddedEventStringJson() =
         """.trimIndent()
     )
 
-fun createMemberRemovedEventStringJson() =
+internal fun createMemberRemovedEventStringJson() =
     createChatEventStringJson(
         "member.removed",
         """
@@ -142,7 +142,7 @@ fun createMemberRemovedEventStringJson() =
         """.trimIndent()
     )
 
-fun createMemberUpdatedEventStringJson() =
+internal fun createMemberUpdatedEventStringJson() =
     createChatEventStringJson(
         "member.updated",
         """
@@ -154,7 +154,7 @@ fun createMemberUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createMessageDeletedEventStringJson() =
+internal fun createMessageDeletedEventStringJson() =
     createChatEventStringJson(
         "message.deleted",
         """
@@ -168,7 +168,7 @@ fun createMessageDeletedEventStringJson() =
         """.trimIndent()
     )
 
-fun createMessageReadEventStringJson() =
+internal fun createMessageReadEventStringJson() =
     createChatEventStringJson(
         "message.read",
         """
@@ -180,7 +180,7 @@ fun createMessageReadEventStringJson() =
         """.trimIndent()
     )
 
-fun createMessageUpdatedEventStringJson() =
+internal fun createMessageUpdatedEventStringJson() =
     createChatEventStringJson(
         "message.updated",
         """
@@ -193,7 +193,7 @@ fun createMessageUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationAddedToChannelEventStringJson() =
+internal fun createNotificationAddedToChannelEventStringJson() =
     createChatEventStringJson(
         "notification.added_to_channel",
         """
@@ -204,7 +204,7 @@ fun createNotificationAddedToChannelEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationChannelDeletedEventStringJson() =
+internal fun createNotificationChannelDeletedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_deleted",
         """
@@ -216,7 +216,7 @@ fun createNotificationChannelDeletedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationChannelTruncatedEventStringJson() =
+internal fun createNotificationChannelTruncatedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_truncated",
         """
@@ -228,7 +228,7 @@ fun createNotificationChannelTruncatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationInviteAcceptedEventStringJson() =
+internal fun createNotificationInviteAcceptedEventStringJson() =
     createChatEventStringJson(
         "notification.invite_accepted",
         """
@@ -240,7 +240,7 @@ fun createNotificationInviteAcceptedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationInvitedEventStringJson() =
+internal fun createNotificationInvitedEventStringJson() =
     createChatEventStringJson(
         "notification.invited",
         """
@@ -252,7 +252,7 @@ fun createNotificationInvitedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationMarkReadEventStringJson() =
+internal fun createNotificationMarkReadEventStringJson() =
     createChatEventStringJson(
         "notification.mark_read",
         """
@@ -266,7 +266,7 @@ fun createNotificationMarkReadEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationMessageNewEventStringJson() =
+internal fun createNotificationMessageNewEventStringJson() =
     createChatEventStringJson(
         "notification.message_new",
         """
@@ -281,7 +281,7 @@ fun createNotificationMessageNewEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationRemovedFromChannelEventStringJson() =
+internal fun createNotificationRemovedFromChannelEventStringJson() =
     createChatEventStringJson(
         "notification.removed_from_channel",
         """
@@ -292,7 +292,7 @@ fun createNotificationRemovedFromChannelEventStringJson() =
         """.trimIndent()
     )
 
-fun createReactionDeletedEventStringJson() =
+internal fun createReactionDeletedEventStringJson() =
     createChatEventStringJson(
         "reaction.deleted",
         """
@@ -305,7 +305,7 @@ fun createReactionDeletedEventStringJson() =
         """.trimIndent()
     )
 
-fun createReactionNewEventStringJson() =
+internal fun createReactionNewEventStringJson() =
     createChatEventStringJson(
         "reaction.new",
         """
@@ -318,7 +318,7 @@ fun createReactionNewEventStringJson() =
         """.trimIndent()
     )
 
-fun createReactionUpdateEventStringJson() =
+internal fun createReactionUpdateEventStringJson() =
     createChatEventStringJson(
         "reaction.updated",
         """
@@ -331,7 +331,7 @@ fun createReactionUpdateEventStringJson() =
         """.trimIndent()
     )
 
-fun createTypingStartEventStringJson() =
+internal fun createTypingStartEventStringJson() =
     createChatEventStringJson(
         "typing.start",
         """
@@ -342,7 +342,7 @@ fun createTypingStartEventStringJson() =
         """.trimIndent()
     )
 
-fun createTypingStopEventStringJson() =
+internal fun createTypingStopEventStringJson() =
     createChatEventStringJson(
         "typing.stop",
         """
@@ -353,7 +353,7 @@ fun createTypingStopEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelUserBannedEventStringJson() =
+internal fun createChannelUserBannedEventStringJson() =
     createChatEventStringJson(
         "user.banned",
         """
@@ -365,7 +365,7 @@ fun createChannelUserBannedEventStringJson() =
         """.trimIndent()
     )
 
-fun createGlobalUserBannedEventStringJson() =
+internal fun createGlobalUserBannedEventStringJson() =
     createChatEventStringJson(
         "user.banned",
         """
@@ -373,7 +373,7 @@ fun createGlobalUserBannedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserDeletedEventStringJson() =
+internal fun createUserDeletedEventStringJson() =
     createChatEventStringJson(
         "user.deleted",
         """
@@ -381,7 +381,7 @@ fun createUserDeletedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserMutedEventStringJson() =
+internal fun createUserMutedEventStringJson() =
     createChatEventStringJson(
         "user.muted",
         """
@@ -390,7 +390,7 @@ fun createUserMutedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUsersMutedEventStringJson() =
+internal fun createUsersMutedEventStringJson() =
     createChatEventStringJson(
         "user.muted",
         """
@@ -399,7 +399,7 @@ fun createUsersMutedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserPresenceChangedEventStringJson() =
+internal fun createUserPresenceChangedEventStringJson() =
     createChatEventStringJson(
         "user.presence.changed",
         """
@@ -407,7 +407,7 @@ fun createUserPresenceChangedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserStartWatchingEventStringJson() =
+internal fun createUserStartWatchingEventStringJson() =
     createChatEventStringJson(
         "user.watching.start",
         """
@@ -419,7 +419,7 @@ fun createUserStartWatchingEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserStopWatchingEventStringJson() =
+internal fun createUserStopWatchingEventStringJson() =
     createChatEventStringJson(
         "user.watching.stop",
         """
@@ -431,7 +431,7 @@ fun createUserStopWatchingEventStringJson() =
         """.trimIndent()
     )
 
-fun createChannelUserUnbannedEventStringJson() =
+internal fun createChannelUserUnbannedEventStringJson() =
     createChatEventStringJson(
         "user.unbanned",
         """
@@ -442,7 +442,7 @@ fun createChannelUserUnbannedEventStringJson() =
         """.trimIndent()
     )
 
-fun createGlobalUserUnbannedEventStringJson() =
+internal fun createGlobalUserUnbannedEventStringJson() =
     createChatEventStringJson(
         "user.unbanned",
         """
@@ -450,7 +450,7 @@ fun createGlobalUserUnbannedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserUnmutedEventStringJson() =
+internal fun createUserUnmutedEventStringJson() =
     createChatEventStringJson(
         "user.unmuted",
         """
@@ -459,7 +459,7 @@ fun createUserUnmutedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUsersUnmutedEventStringJson() =
+internal fun createUsersUnmutedEventStringJson() =
     createChatEventStringJson(
         "user.unmuted",
         """
@@ -468,7 +468,7 @@ fun createUsersUnmutedEventStringJson() =
         """.trimIndent()
     )
 
-fun createUserUpdatedEventStringJson() =
+internal fun createUserUpdatedEventStringJson() =
     createChatEventStringJson(
         "user.updated",
         """
@@ -476,7 +476,7 @@ fun createUserUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createHealthEventStringJson() =
+internal fun createHealthEventStringJson() =
     createChatEventStringJson(
         "health.check",
         """
@@ -484,7 +484,7 @@ fun createHealthEventStringJson() =
         """.trimIndent()
     )
 
-fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
+internal fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
     createChatEventStringJson(
         "health.check",
         """
@@ -493,7 +493,7 @@ fun createConnectedEventStringJson(userJsonString: String? = createUserJsonStrin
         """.trimIndent()
     )
 
-fun createNotificationChannelMutesUpdatedEventStringJson() =
+internal fun createNotificationChannelMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.channel_mutes_updated",
         """
@@ -501,7 +501,7 @@ fun createNotificationChannelMutesUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNotificationMutesUpdatedEventStringJson() =
+internal fun createNotificationMutesUpdatedEventStringJson() =
     createChatEventStringJson(
         "notification.mutes_updated",
         """
@@ -509,7 +509,7 @@ fun createNotificationMutesUpdatedEventStringJson() =
         """.trimIndent()
     )
 
-fun createNewMessageEventStringJson() =
+internal fun createNewMessageEventStringJson() =
     createChatEventStringJson(
         "message.new",
         """
@@ -524,7 +524,7 @@ fun createNewMessageEventStringJson() =
         """.trimIndent()
     )
 
-fun createUnknownEventStringJson(type: String = "unknown_event") =
+internal fun createUnknownEventStringJson(type: String = "unknown_event") =
     createChatEventStringJson(type, null)
 
 private fun createChatEventStringJson(type: String, payload: String?) =

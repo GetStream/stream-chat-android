@@ -14,7 +14,7 @@ import org.junit.Ignore
 import org.junit.Test
 import kotlin.collections.set
 
-class CustomObjectParsingTests {
+internal class CustomObjectParsingTests {
 
     val parser = ChatParserImpl()
 

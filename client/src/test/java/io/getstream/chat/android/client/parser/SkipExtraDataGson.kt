@@ -5,7 +5,7 @@ import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
-class SkipExtraDataGson {
+internal class SkipExtraDataGson {
 
     private val extraDataName = "extraData"
 

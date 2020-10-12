@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.testing.loadResource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class DatesTests {
+internal class DatesTests {
 
     val parser = ChatParserImpl()
     val jsonMessage = loadResource("/message.json")
