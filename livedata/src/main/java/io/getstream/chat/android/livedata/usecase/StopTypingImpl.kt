@@ -26,7 +26,7 @@ class StopTypingImpl(var domainImpl: ChatDomainImpl) : StopTyping {
 
             channelRepo.stopTyping()
         }
-        return CallImpl2<Boolean>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

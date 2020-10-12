@@ -84,12 +84,12 @@ class ChatDomainImpl private constructor(
     override var userPresence: Boolean = false
 ) :
     ChatDomain {
-    private val _initialized = MutableLiveData<Boolean>(false)
-    private val _online = MutableLiveData<Boolean>(false)
+    private val _initialized = MutableLiveData(false)
+    private val _online = MutableLiveData(false)
     private val _totalUnreadCount = MutableLiveData<Int>()
     private val _channelUnreadCount = MutableLiveData<Int>()
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
-    private val _banned = MutableLiveData<Boolean>(false)
+    private val _banned = MutableLiveData(false)
     private val _mutedUsers = MutableLiveData<List<Mute>>()
 
     /** a helper object which lists all the initialized use cases for the chat domain */
@@ -330,7 +330,7 @@ class ChatDomainImpl private constructor(
                         c.syncStatus = SyncStatus.SYNC_NEEDED
                     }
                     repos.channels.insertChannel(c)
-                    Result<Channel>(null, result.error())
+                    Result(null, result.error())
                 }
             } else {
                 Result(c, null)
@@ -427,7 +427,7 @@ class ChatDomainImpl private constructor(
                     client,
                     this
                 )
-            activeChannelMapImpl.put(cid, channelRepo)
+            activeChannelMapImpl[cid] = channelRepo
         }
         return activeChannelMapImpl.getValue(cid)
     }
@@ -518,7 +518,7 @@ class ChatDomainImpl private constructor(
             syncState?.let { it.lastSyncedAt = now }
             Result(events, null)
         } else {
-            Result(listOf<ChatEvent>(), null)
+            Result(emptyList(), null)
         }
     }
 
@@ -678,9 +678,7 @@ class ChatDomainImpl private constructor(
     }
 
     override fun getChannelConfig(channelType: String): Config {
-        val config = repos.configs.select(channelType) ?: defaultConfig
-        // checkNotNull(config) { "Missing channel config for channel type $channelType" }
-        return config
+        return repos.configs.select(channelType) ?: defaultConfig
     }
 
     fun postInitialized() {

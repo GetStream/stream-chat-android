@@ -23,8 +23,8 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         channelEntity.hidden = true
         chatDomainImpl.repos.channels.insert(channelEntity)
         // setup the channel controller
-        var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
-        var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
+        val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
+        val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         channelControllerImpl.watch(10)
         // verify it's hidden
         Truth.assertThat(channelController.hidden.getOrAwaitValue()).isTrue()
@@ -41,7 +41,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
         // setup the query channel controller
         chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0, 10).execute()
-        var queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
+        val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
         queryChannelsControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0))
 
         // verify we have 1 channel in the result list and that it's hidden
@@ -52,8 +52,8 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
     @Test
     @Ignore("problematic since we dont have channel.hidden")
     fun hide() = runBlocking(Dispatchers.IO) {
-        var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
-        var channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
+        val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, true).execute()
         assertSuccess(result)
         // verify it's now hidden
@@ -68,7 +68,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun show() = runBlocking(Dispatchers.IO) {
-        var channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         chatDomain.useCases.hideChannel(data.channel1.cid, true).execute()
         chatDomain.useCases.showChannel(data.channel1.cid).execute()
 

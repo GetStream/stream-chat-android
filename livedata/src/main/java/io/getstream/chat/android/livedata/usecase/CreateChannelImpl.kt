@@ -21,7 +21,7 @@ class CreateChannelImpl(var domainImpl: ChatDomainImpl) : CreateChannel {
         val runnable = suspend {
             domainImpl.createChannel(channel)
         }
-        return CallImpl2<Channel>(
+        return CallImpl2(
             runnable,
             domainImpl.scope
         )

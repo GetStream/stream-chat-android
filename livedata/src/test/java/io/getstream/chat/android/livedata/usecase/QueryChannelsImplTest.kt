@@ -24,7 +24,7 @@ internal class QueryChannelsImplTest : BaseConnectedIntegrationTest() {
     @Ignore("mock me")
     fun filter() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
+        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort()).execute()
         assertSuccess(queryChannelResult)
         val queryChannelsController = queryChannelResult.data()
         val channels = queryChannelsController.channels.getOrAwaitValue()

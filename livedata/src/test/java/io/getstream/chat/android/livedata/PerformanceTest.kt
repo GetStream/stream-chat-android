@@ -25,7 +25,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
         var channelControllerImpl = chatDomainImpl.channel(data.channel1)
         val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
-        var counter = LiveDiffCounter { old: List<Channel>, new: List<Channel> ->
+        val counter = LiveDiffCounter { old: List<Channel>, new: List<Channel> ->
             DiffUtil.calculateDiff(ChannelDiffCallback(old, new), true)
         }
 
@@ -59,9 +59,9 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
 
     @Test
     fun messages() = runBlocking(Dispatchers.IO) {
-        var channelController = chatDomainImpl.channel(data.channel1)
+        val channelController = chatDomainImpl.channel(data.channel1)
 
-        var counter = LiveDiffCounter { old: List<Message>, new: List<Message> ->
+        val counter = LiveDiffCounter { old: List<Message>, new: List<Message> ->
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
 

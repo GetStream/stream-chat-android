@@ -22,10 +22,10 @@ interface ReplayEventsForActiveChannels {
 class ReplayEventsForActiveChannelsImpl(var domainImpl: ChatDomainImpl) : ReplayEventsForActiveChannels {
     override operator fun invoke(cid: String): Call2<List<ChatEvent>> {
         validateCid(cid)
-        var runnable = suspend {
+        val runnable = suspend {
             domainImpl.replayEventsForActiveChannels(cid)
         }
-        return CallImpl2<List<ChatEvent>>(
+        return CallImpl2(
             runnable,
             domainImpl.scope
         )

@@ -24,7 +24,7 @@ class GetTotalUnreadCountImpl(var domainImpl: ChatDomainImpl) : GetTotalUnreadCo
         val runnable = suspend {
             Result(domainImpl.totalUnreadCount, null)
         }
-        return CallImpl2<LiveData<Int>>(
+        return CallImpl2(
             runnable,
             domainImpl.scope
         )

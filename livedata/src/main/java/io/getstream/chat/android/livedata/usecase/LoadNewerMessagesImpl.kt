@@ -25,7 +25,7 @@ class LoadNewerMessagesImpl(var domainImpl: ChatDomainImpl) : LoadNewerMessages 
         val runnable = suspend {
             channelRepo.loadNewerMessages(messageLimit)
         }
-        return CallImpl2<Channel>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

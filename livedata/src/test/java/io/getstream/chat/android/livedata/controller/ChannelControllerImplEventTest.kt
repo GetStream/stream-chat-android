@@ -51,10 +51,10 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
         channelControllerImpl.handleEvent(data.reactionEvent)
         channelControllerImpl.handleEvent(data.user1UpdatedEvent)
         val channel = channelControllerImpl.toChannel()
-        Truth.assertThat(channel.createdBy.extraData.get("color")).isEqualTo("green")
+        Truth.assertThat(channel.createdBy.extraData["color"]).isEqualTo("green")
 
         val message = channelControllerImpl.getMessage(data.message1.id)
-        Truth.assertThat(message!!.user.extraData.get("color")).isEqualTo("green")
+        Truth.assertThat(message!!.user.extraData["color"]).isEqualTo("green")
         Truth.assertThat(message.latestReactions.first().user!!.extraData["color"])
             .isEqualTo("green")
     }
@@ -115,7 +115,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     fun eventUpdatedChannel() {
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
         val channel = channelControllerImpl.channelData.getOrAwaitValue()
-        Truth.assertThat(channel.extraData.get("color")).isEqualTo("green")
+        Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
     }
 
     @Test

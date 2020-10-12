@@ -44,7 +44,7 @@ class QueryChannelsControllerImpl(
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
-    private val _endOfChannels = MutableLiveData<Boolean>(false)
+    private val _endOfChannels = MutableLiveData(false)
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
@@ -53,10 +53,10 @@ class QueryChannelsControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
-    private val _loading = MutableLiveData<Boolean>(false)
+    private val _loading = MutableLiveData(false)
     override val loading: LiveData<Boolean> = _loading
 
-    private val _loadingMore = MutableLiveData<Boolean>(false)
+    private val _loadingMore = MutableLiveData(false)
     override val loadingMore: LiveData<Boolean> = _loadingMore
 
     fun loadMoreRequest(

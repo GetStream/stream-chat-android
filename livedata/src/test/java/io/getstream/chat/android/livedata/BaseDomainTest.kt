@@ -22,10 +22,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
@@ -102,11 +99,10 @@ internal open class BaseDomainTest {
 
     fun createClient(): ChatClient {
         val logLevel = System.getenv("STREAM_LOG_LEVEL") ?: "ALL"
-        val client = ChatClient.Builder(data.apiKey, getApplicationContext())
-            .logLevel(
-                logLevel
-            ).loggerHandler(TestLoggerHandler()).build()
-        return client
+        return ChatClient.Builder(data.apiKey, getApplicationContext())
+            .logLevel(logLevel)
+            .loggerHandler(TestLoggerHandler())
+            .build()
     }
 
     fun createDisconnectedMockClient(): ChatClient {
@@ -115,8 +111,8 @@ internal open class BaseDomainTest {
         }
 
         val result = Result(listOf(data.channel1), null)
-        channelMock = mock<ChannelController> {
-            on { sendMessage(any()) } doReturn ChatCallTestImpl<Message>(
+        channelMock = mock {
+            on { sendMessage(any()) } doReturn ChatCallTestImpl(
                 Result(
                     data.message1,
                     null
@@ -125,7 +121,8 @@ internal open class BaseDomainTest {
         }
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
-        val client = mock<ChatClient> {
+
+        return mock {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
@@ -139,20 +136,18 @@ internal open class BaseDomainTest {
             on { getSyncHistory(any(), anyOrNull()) } doReturn ChatCallTestImpl(data.replayEventsResult)
             on {
                 createChannel(
-                    any<String>(),
+                    any(),
                     any<String>(),
                     any<Map<String, Any>>()
                 )
-            } doReturn ChatCallTestImpl<Channel>(Result(data.channel1, null))
-            on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
+            } doReturn ChatCallTestImpl(Result(data.channel1, null))
+            on { sendReaction(any()) } doReturn ChatCallTestImpl(
                 Result(
                     data.reaction1,
                     null
                 )
             )
         }
-
-        return client
     }
 
     fun createConnectedMockClient(): ChatClient {
@@ -160,14 +155,14 @@ internal open class BaseDomainTest {
         val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
 
         val result = Result(listOf(data.channel1), null)
-        channelMock = mock<ChannelController> {
-            on { query(any()) } doReturn ChatCallTestImpl<Channel>(
+        channelMock = mock {
+            on { query(any()) } doReturn ChatCallTestImpl(
                 Result(
                     data.channel1,
                     null
                 )
             )
-            on { watch(any<WatchChannelRequest>()) } doReturn ChatCallTestImpl<Channel>(
+            on { watch(any<WatchChannelRequest>()) } doReturn ChatCallTestImpl(
                 Result(
                     data.channel1,
                     null
@@ -187,7 +182,7 @@ internal open class BaseDomainTest {
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
-            on { sendReaction(any()) } doReturn ChatCallTestImpl<Reaction>(
+            on { sendReaction(any()) } doReturn ChatCallTestImpl(
                 Result(
                     data.reaction1,
                     null
@@ -244,7 +239,7 @@ internal open class BaseDomainTest {
 
         chatDomainImpl.errorEvents.observeForever(
             EventObserver {
-                System.out.println("error event$it")
+                println("error event$it")
             }
         )
 

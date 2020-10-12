@@ -24,13 +24,14 @@ class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRe
     }
 
     internal fun toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
+        val originalRequest = this
         return AnyChannelPaginationRequest().apply {
-            this.messageLimit = messageLimit
-            this.messageFilterDirection = messageFilterDirection
-            this.memberLimit = memberLimit
-            this.memberOffset = memberOffset
-            this.watcherLimit = watcherLimit
-            this.watcherOffset = watcherOffset
+            this.messageLimit = originalRequest.messageLimit
+            this.messageFilterDirection = originalRequest.messageFilterDirection
+            this.memberLimit = originalRequest.memberLimit
+            this.memberOffset = originalRequest.memberOffset
+            this.watcherLimit = originalRequest.watcherLimit
+            this.watcherOffset = originalRequest.watcherOffset
             this.channelLimit = 1
         }
     }

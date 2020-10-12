@@ -13,9 +13,9 @@ internal class SendReactionImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun reactionUseCase() = runBlocking(Dispatchers.IO) {
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
+        val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val message1 = data.createMessage()
-        var result = chatDomain.useCases.sendMessage(message1).execute()
+        val result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result)
         data.reaction1.messageId = result.data().id
         // go offline, reaction should still update state
@@ -27,7 +27,7 @@ internal class SendReactionImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(result2.isSuccess).isTrue()
         val msg = channelState.getMessage(message1.id)
         val newReactionCounts = msg!!.reactionCounts
-        Truth.assertThat(msg!!.id).isEqualTo(result.data().id)
+        Truth.assertThat(msg.id).isEqualTo(result.data().id)
         Truth.assertThat(msg.reactionCounts).isEqualTo(mapOf("like" to 1))
         Truth.assertThat(msg.latestReactions.last()).isEqualTo(data.reaction1)
         Truth.assertThat(msg.ownReactions.last()).isEqualTo(data.reaction1)

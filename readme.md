@@ -50,7 +50,7 @@ Chat.getInstance().getClient().getCurrentUser()
 With
 
 ```kotlin
-ChatRepo.instance().getCurrentUser();
+ChatRepo.instance().getCurrentUser()
 ```
 
 ## Dev Tips

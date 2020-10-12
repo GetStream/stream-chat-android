@@ -19,12 +19,12 @@ internal class LoadOlderMessagesImplTest : BaseConnectedIntegrationTest() {
     fun watchChannelUseCase() = runBlocking(Dispatchers.IO) {
         // use case style syntax
         val message1 = data.createMessage()
-        var channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
+        val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val result = chatDomain.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
         assertSuccess(result as Result<Any>)
         var messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.size).isGreaterThan(0)
-        var result2 = chatDomain.useCases.sendMessage(message1).execute()
+        val result2 = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result2 as Result<Any>)
         messages = channelState.messages.getOrAwaitValue()
         Truth.assertThat(messages.last()).isEqualTo(message1)

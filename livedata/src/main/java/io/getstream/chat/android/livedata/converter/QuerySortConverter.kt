@@ -20,8 +20,8 @@ class QuerySortConverter {
         for (map in sort.data) {
             // cast floats to ints
             val newMap = mutableMapOf<String, Any>()
-            newMap.set("direction", (map["direction"] as Double).toInt())
-            newMap.set("field", map["field"] as String)
+            newMap["direction"] = (map["direction"] as Double).toInt()
+            newMap["field"] = map["field"] as String
             newData.add(newMap)
         }
         return QuerySort(newData)

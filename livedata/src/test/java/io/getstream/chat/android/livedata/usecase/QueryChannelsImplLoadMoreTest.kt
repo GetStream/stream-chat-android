@@ -18,15 +18,15 @@ internal class QueryChannelsImplLoadMoreTest : BaseConnectedIntegrationTest() {
     @Ignore("mock me")
     fun loadMoreTest() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0).execute()
+        val queryChannelResult = chatDomain.useCases.queryChannels(data.filter1, QuerySort(), 0).execute()
         assertSuccess(queryChannelResult)
         val queryChannelsController = queryChannelResult.data()
 
-        var loadMoreResult =
+        val loadMoreResult =
             chatDomain.useCases.queryChannelsLoadMore(data.filter1, QuerySort(), 1).execute()
         assertSuccess(loadMoreResult)
 
-        var channels = queryChannelsController.channels.getOrAwaitValue()
+        val channels = queryChannelsController.channels.getOrAwaitValue()
         Truth.assertThat(channels.size).isEqualTo(1)
     }
 }

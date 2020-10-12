@@ -104,7 +104,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         repo.insertMessages(listOf(message1, message2, message3), true)
 
         // this should select the first message
-        var pagination = AnyChannelPaginationRequest(1)
+        val pagination = AnyChannelPaginationRequest(1)
         pagination.setFilter(Pagination.GREATER_THAN, message2.id)
         var messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
