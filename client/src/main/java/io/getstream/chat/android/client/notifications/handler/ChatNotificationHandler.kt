@@ -116,7 +116,7 @@ public open class ChatNotificationHandler @JvmOverloads constructor(
             .build()
     }
 
-   public open fun buildNotification(
+    public open fun buildNotification(
         notificationId: Int,
         channelName: String,
         messageText: String,

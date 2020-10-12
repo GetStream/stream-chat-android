@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
 
-data public class Attachment(
+public data class Attachment(
 
     @SerializedName("author_name")
     var authorName: String? = null,
