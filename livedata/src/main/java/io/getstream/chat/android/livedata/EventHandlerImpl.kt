@@ -247,7 +247,7 @@ class EventHandlerImpl(
                     // get the message, update the reaction data, update the message
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            removeReaction(event.reaction, domainImpl.currentUser.id == event.reaction.userId)
+                            removeReaction(event.reaction, false)
                             reactionCounts = event.message.reactionCounts
                         }
                     } ?: Unit
