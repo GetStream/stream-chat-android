@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
 import retrofit2.Response
 
-internal class RetrofitCall<T>(
+internal class RetrofitCall<T : Any>(
     private val call: retrofit2.Call<T>,
     private val parser: ChatParser
 ) : ChatCallImpl<T>() {

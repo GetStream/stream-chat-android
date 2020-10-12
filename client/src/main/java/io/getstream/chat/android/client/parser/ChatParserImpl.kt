@@ -52,12 +52,12 @@ internal class ChatParserImpl : ChatParser {
     }
 
     @Synchronized
-    override fun <T> fromJson(raw: String, clazz: Class<T>): T {
+    override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
         return gson.fromJson(raw, clazz)
     }
 
     @Synchronized
-    override fun <T> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
+    override fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
             Result(
                 fromJson(raw, clazz),

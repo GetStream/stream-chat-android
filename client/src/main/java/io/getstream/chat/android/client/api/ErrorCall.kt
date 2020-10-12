@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.ChatCallImpl
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-internal class ErrorCall<T>(val e: ChatError) : ChatCallImpl<T>() {
+internal class ErrorCall<T : Any>(val e: ChatError) : ChatCallImpl<T>() {
     override fun execute(): Result<T> {
         return Result(null, e)
     }

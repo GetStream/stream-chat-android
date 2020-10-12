@@ -90,7 +90,7 @@ internal class CustomObjectParsingTests {
         assertThat(inputMessage.reactionScores).isEqualTo(outputMessage.reactionScores)
     }
 
-    private fun <T> convert(obj: Any, clazz: Class<T>): T {
+    private fun <T : Any> convert(obj: Any, clazz: Class<T>): T {
         val jsonMessage = gson.toJson(obj)
         return parser.fromJson(jsonMessage, clazz)
     }

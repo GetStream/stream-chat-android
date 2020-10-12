@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-internal abstract class ChatCallImpl<T> : Call<T> {
+internal abstract class ChatCallImpl<T : Any> : Call<T> {
 
     @Volatile
     protected var canceled = false
@@ -18,7 +18,7 @@ internal abstract class ChatCallImpl<T> : Call<T> {
         canceled = true
     }
 
-    override fun <K> map(mapper: (T) -> K): Call<K> {
+    override fun <K : Any> map(mapper: (T) -> K): Call<K> {
         return callMapper(this, mapper)
     }
 
@@ -32,16 +32,16 @@ internal abstract class ChatCallImpl<T> : Call<T> {
         return this
     }
 
-    override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
+    override fun <K : Any> zipWith(call: Call<K>): Call<Pair<T, K>> {
         return ZipCall.zip(this, call)
     }
 
-    override fun <K, P> zipWith(callK: Call<K>, callP: Call<P>): Call<Triple<T, K, P>> {
+    override fun <K : Any, P : Any> zipWith(callK: Call<K>, callP: Call<P>): Call<Triple<T, K, P>> {
         return ZipCall.zip(this, callK, callP)
     }
 
     internal companion object {
-        private fun <A, B> callMapper(
+        private fun <A : Any, B : Any> callMapper(
             callA: Call<A>,
             mapper: (A) -> B
         ): ChatCallImpl<B> {
