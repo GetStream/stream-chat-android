@@ -4,8 +4,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.LinkedList
 import java.util.Queue
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
-internal class StartStopBuffer<T> {
+internal class StartStopBuffer<T>(
+    private val ioDispatcher: CoroutineContext = Dispatchers.IO
+) {
 
     private val events: Queue<T> = LinkedList<T>()
     private var active = false
@@ -40,7 +44,7 @@ internal class StartStopBuffer<T> {
     fun enqueueData(data: T) {
         events.offer(data)
 
-        GlobalScope.launch {
+        GlobalScope.launch(ioDispatcher) {
             active()
         }
     }
