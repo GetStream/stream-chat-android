@@ -7,8 +7,8 @@ public data class Result<T : Any>(
     private val error: ChatError?
 ) {
 
-    internal constructor(data: T) : this(data, null)
-    internal constructor(error: ChatError) : this(null, error)
+    public constructor(data: T) : this(data, null)
+    public constructor(error: ChatError) : this(null, error)
 
     val isSuccess: Boolean
         get() = data != null

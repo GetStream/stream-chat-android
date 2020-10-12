@@ -2,54 +2,54 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
-internal interface ChatLogger {
+public interface ChatLogger {
 
-    fun logI(tag: Any, message: String)
+    public fun logI(tag: Any, message: String)
 
-    fun logD(tag: Any, message: String)
+    public fun logD(tag: Any, message: String)
 
-    fun logW(tag: Any, message: String)
+    public fun logW(tag: Any, message: String)
 
-    fun logE(tag: Any, message: String)
+    public fun logE(tag: Any, message: String)
 
-    fun logE(tag: Any, throwable: Throwable)
+    public fun logE(tag: Any, throwable: Throwable)
 
-    fun logE(tag: Any, message: String, throwable: Throwable)
+    public fun logE(tag: Any, message: String, throwable: Throwable)
 
-    fun logE(tag: Any, chatError: ChatError)
+    public fun logE(tag: Any, chatError: ChatError)
 
-    fun logE(tag: Any, message: String, chatError: ChatError)
+    public fun logE(tag: Any, message: String, chatError: ChatError)
 
-    fun getLevel(): ChatLogLevel
+    public fun getLevel(): ChatLogLevel
 
-    data class Config(val level: ChatLogLevel, val handler: ChatLoggerHandler?)
+    public data class Config(val level: ChatLogLevel, val handler: ChatLoggerHandler?)
 
-    class Builder(config: Config) {
+    public class Builder(config: Config) {
 
         private var level = config.level
         private var handler: ChatLoggerHandler? = config.handler
 
-        fun level(level: ChatLogLevel): Builder {
+        public fun level(level: ChatLogLevel): Builder {
             this.level = level
             return this
         }
 
-        fun handler(handler: ChatLoggerHandler): Builder {
+        public fun handler(handler: ChatLoggerHandler): Builder {
             this.handler = handler
             return this
         }
 
-        fun build(): ChatLogger {
+        public fun build(): ChatLogger {
             val result = ChatLoggerImpl(level, handler)
             instance = result
             return result
         }
     }
 
-    companion object {
-        var instance: ChatLogger = ChatSilentLogger()
+    public companion object {
+        public var instance: ChatLogger = ChatSilentLogger()
 
-        fun get(tag: Any): TaggedLogger {
+        public fun get(tag: Any): TaggedLogger {
             return TaggedLoggerImpl(tag, instance)
         }
     }
