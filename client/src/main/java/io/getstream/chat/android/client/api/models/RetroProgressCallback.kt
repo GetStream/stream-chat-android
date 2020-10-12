@@ -5,10 +5,12 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import retrofit2.Call
 import retrofit2.Callback
 
-internal class RetroProgressCallback(val callback: ProgressCallback) : Callback<UploadFileResponse> {
+internal class RetroProgressCallback(
+    private val callback: ProgressCallback
+) : Callback<UploadFileResponse> {
 
     override fun onFailure(call: Call<UploadFileResponse>, t: Throwable) {
-        callback.onError(ChatError(t))
+        callback.onError(ChatError(cause = t))
     }
 
     override fun onResponse(

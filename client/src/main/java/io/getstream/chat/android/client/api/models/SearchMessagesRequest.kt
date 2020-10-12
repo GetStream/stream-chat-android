@@ -2,7 +2,6 @@ package io.getstream.chat.android.client.api.models
 
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
-import java.util.HashMap
 
 public data class SearchMessagesRequest(
     val offset: Int,

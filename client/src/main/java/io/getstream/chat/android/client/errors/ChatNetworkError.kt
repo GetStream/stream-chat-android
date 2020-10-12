@@ -1,17 +1,16 @@
 package io.getstream.chat.android.client.errors
 
-public class ChatNetworkError private constructor(
-    public val description: String,
+internal class ChatNetworkError private constructor(
+    val description: String,
     cause: Throwable? = null,
-    public val streamCode: Int,
-    public val statusCode: Int
-) :
-    ChatError(
-        "Status code: $statusCode, with stream code: $streamCode, description: $description",
-        cause
-    ) {
-    public companion object {
-        public fun create(
+    val streamCode: Int,
+    val statusCode: Int
+) : ChatError(
+    "Status code: $statusCode, with stream code: $streamCode, description: $description",
+    cause
+) {
+    companion object {
+        fun create(
             code: ChatErrorCode,
             cause: Throwable? = null,
             statusCode: Int = -1
@@ -19,7 +18,7 @@ public class ChatNetworkError private constructor(
             return ChatNetworkError(code.description, cause, code.code, statusCode)
         }
 
-        public fun create(
+        fun create(
             streamCode: Int,
             description: String,
             statusCode: Int,

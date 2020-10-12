@@ -1,8 +1,10 @@
 package io.getstream.chat.android.client.utils
 
-public data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
+public class FilterObject(key: String, value: Any) {
 
-    public constructor(key: String, value: Any) : this() {
+    private var data: MutableMap<String, Any> = mutableMapOf()
+
+    init {
         data[key] = (normalizeValue(value))
     }
 

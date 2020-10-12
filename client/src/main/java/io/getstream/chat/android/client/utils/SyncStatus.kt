@@ -11,7 +11,7 @@ public enum class SyncStatus(public val status: Int) {
     IN_PROGRESS(3);
 
     public companion object {
-        private val map = SyncStatus.values().associateBy(SyncStatus::status)
+        private val map = values().associateBy(SyncStatus::status)
         public fun fromInt(type: Int): SyncStatus? = map[type]
     }
 }

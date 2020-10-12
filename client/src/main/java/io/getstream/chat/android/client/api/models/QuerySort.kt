@@ -1,6 +1,8 @@
 package io.getstream.chat.android.client.api.models
 
-public data class QuerySort(val data: MutableList<Map<String, Any>> = mutableListOf()) {
+public data class QuerySort(
+    internal val data: MutableList<Map<String, Any>> = mutableListOf()
+) {
 
     private fun add(fieldName: String, direction: Int): QuerySort {
         val map = mutableMapOf<String, Any>()

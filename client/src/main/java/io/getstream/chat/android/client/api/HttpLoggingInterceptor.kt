@@ -178,7 +178,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     }
 }
 
-public fun Buffer.isProbablyUtf8(): Boolean {
+private fun Buffer.isProbablyUtf8(): Boolean {
     try {
         val prefix = Buffer()
         val byteCount = size.coerceAtMost(64)

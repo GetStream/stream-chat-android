@@ -30,10 +30,7 @@ internal open class BaseChatModule(
     private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }
     private val defaultNotifications by lazy {
-        buildNotification(
-            config.notificationsHandler,
-            api()
-        )
+        buildNotification(config.notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config, parser()) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
