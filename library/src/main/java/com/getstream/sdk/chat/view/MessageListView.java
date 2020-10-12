@@ -29,6 +29,7 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
+import com.getstream.sdk.chat.utils.StartStopBuffer;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
@@ -72,6 +73,7 @@ public class MessageListView extends ConstraintLayout {
     private String newMessagesTextPlural;
     private NewMessagesBehaviour newMessagesBehaviour;
     private ScrollButtonBehaviour scrollButtonBehaviour;
+    private StartStopBuffer<MessageListItemWrapper> buffer;
 
     private int unseenItems = 0;
 
@@ -138,7 +140,7 @@ public class MessageListView extends ConstraintLayout {
                     },
                     onMessageFlagHandler
             ).show();
-   
+
     private final MessageRetryListener DEFAULT_MESSAGE_RETRY_LISTENER = (message) -> {
         onMessageRetryHandler.invoke(message);
     };
@@ -218,6 +220,13 @@ public class MessageListView extends ConstraintLayout {
         initScrollButtonBehaviour();
 
         hasScrolledUp = false;
+
+        buffer = new StartStopBuffer<>();
+
+        buffer.subscribe((wrapper) -> {
+            handleNewWrapper(wrapper);
+            return Unit.INSTANCE;
+        });
     }
 
     // region Init
@@ -433,6 +442,11 @@ public class MessageListView extends ConstraintLayout {
     }
 
     public void displayNewMessage(MessageListItemWrapper listItem) {
+        buffer.enqueueData(listItem);
+    }
+
+    private void handleNewWrapper(MessageListItemWrapper listItem) {
+        buffer.hold();
         List<MessageListItem> entities = listItem.getListEntities();
 
         // Adapter initialization for channel and thread swapping
@@ -454,6 +468,9 @@ public class MessageListView extends ConstraintLayout {
             List<MessageListItem> entities,
             int oldSize
     ) {
+        int newSize = adapter.getItemCount();
+        int sizeGrewBy = newSize - oldSize;
+
         // Scroll to origin position on return from thread
         if (backFromThread) {
             layoutManager.scrollToPosition(this.threadParentPosition);
@@ -462,14 +479,11 @@ public class MessageListView extends ConstraintLayout {
         }
 
         // Scroll to bottom position for typing indicator
-        if (listItem.isTyping() && scrolledBottom()) {
+        if (listItem.isTyping() && scrolledBottom(sizeGrewBy + 2)) {
             int newPosition = adapter.getItemCount() - 1;
             layoutManager.scrollToPosition(newPosition);
             return;
         }
-
-        int newSize = adapter.getItemCount();
-        int sizeGrewBy = newSize - oldSize;
 
         if (!listItem.getHasNewMessages()) {
             // we only touch scroll for new messages, we ignore
@@ -515,14 +529,16 @@ public class MessageListView extends ConstraintLayout {
             //viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke();
         }
+
+        buffer.active();
     }
 
     public MessageListViewStyle getStyle() {
         return style;
     }
 
-    private boolean scrolledBottom() {
-        return lVPosition >= lastPosition();
+    private boolean scrolledBottom(int delta) {
+        return lVPosition + delta >= lastPosition();
     }
 
     private boolean justUpdated(Message message) {

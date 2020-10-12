@@ -27,7 +27,6 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Message
-import java.util.Arrays
 
 internal class MessageTextConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -135,7 +134,7 @@ internal class MessageTextConfigurator(
                     bubbleHelper.getDrawableForMessage(
                         messageItem.message,
                         messageItem.isMine,
-                        Arrays.asList(MessageViewHolderFactory.Position.MIDDLE)
+                        listOf(MessageViewHolderFactory.Position.MIDDLE)
                     )
                 } else {
                     bubbleHelper.getDrawableForMessage(

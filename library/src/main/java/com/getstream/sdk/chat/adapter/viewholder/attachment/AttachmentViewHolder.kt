@@ -142,23 +142,9 @@ class AttachmentViewHolder(
         }
         mediaBinding.tvMediaDes.text = firstAttachment.text
 
-        if (firstAttachment.text.isNullOrEmpty()) {
-            mediaBinding.tvMediaDes.isVisible = false
-        } else {
-            mediaBinding.tvMediaDes.isVisible = true
-        }
-
-        if (firstAttachment.title.isNullOrEmpty()) {
-            mediaBinding.tvMediaTitle.isVisible = false
-        } else {
-            mediaBinding.tvMediaTitle.isVisible = true
-        }
-
-        if (type == ModelType.attach_video) {
-            mediaBinding.tvMediaPlay.isVisible = true
-        } else {
-            mediaBinding.tvMediaPlay.isVisible = false
-        }
+        mediaBinding.tvMediaDes.isVisible = !firstAttachment.text.isNullOrEmpty()
+        mediaBinding.tvMediaTitle.isVisible = !firstAttachment.title.isNullOrEmpty()
+        mediaBinding.tvMediaPlay.isVisible = type == ModelType.attach_video
     }
 
     private fun configAttachViewBackground(view: View) {
