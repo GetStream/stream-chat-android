@@ -134,6 +134,8 @@ fun randomMessage(
     createdLocallyAt: Date? = randomDate(),
     updatedLocallyAt: Date? = randomDate(),
     deletedAt: Date? = randomDate(),
+    updatedLocallyAt: Date? = randomDate(),
+    createdLocallyAt: Date? = randomDate(),
     user: User = randomUser(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
     silent: Boolean = randomBoolean()
