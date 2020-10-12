@@ -39,7 +39,7 @@ internal class ChannelConfigRepositoryTest : BaseDomainTest() {
         repo.clearCache()
         repo.load()
 
-        var config = repo.select("messaging")
+        val config = repo.select("messaging")
         Truth.assertThat(config).isEqualTo(data.config1)
         Truth.assertThat(config!!.maxMessageLength).isEqualTo(200)
     }

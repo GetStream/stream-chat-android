@@ -23,8 +23,8 @@ class ThreadControllerImpl(
     private val logger = ChatLogger.get("ThreadController")
     private val threadMessages: MutableLiveData<Map<String, Message>> = MutableLiveData(mapOf())
 
-    private val channelMessages: LiveData<Map<String, Message>> = Transformations.map(channelControllerImpl.unfilteredMessages) {
-        it.asSequence()
+    private val channelMessages: LiveData<Map<String, Message>> = Transformations.map(channelControllerImpl.unfilteredMessages) { messages ->
+        messages.asSequence()
             .filter { it.id == threadId || it.parentId == threadId }
             .associateBy { it.id }
     }
@@ -38,12 +38,12 @@ class ThreadControllerImpl(
                 .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore) }
         }
 
-    private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
+    private val _loadingOlderMessages = MutableLiveData(false)
     override val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
 
     override fun getMessagesSorted(): List<Message> = messages.value ?: listOf()
 
-    private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
+    private val _endOfOlderMessages = MutableLiveData(false)
     override val endOfOlderMessages: LiveData<Boolean> = _endOfOlderMessages
 
     suspend fun watch(limit: Int = 30): Result<List<Message>> = loadMessages(client.getReplies(threadId, limit), limit)

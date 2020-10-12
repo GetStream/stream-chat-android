@@ -17,7 +17,7 @@ internal class GetUnreadChannelCountImplTest : BaseConnectedIntegrationTest() {
     @Test
     fun getUnreadCount() = runBlocking(Dispatchers.IO) {
         // use case style syntax
-        var result = chatDomain.useCases.getUnreadChannelCount().execute()
+        val result = chatDomain.useCases.getUnreadChannelCount().execute()
         assertSuccess(result)
         chatDomainImpl.eventHandler.handleEvent(data.connectedEvent2)
         val count = result.data().getOrAwaitValue()

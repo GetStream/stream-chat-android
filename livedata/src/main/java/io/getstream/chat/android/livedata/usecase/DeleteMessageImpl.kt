@@ -27,7 +27,7 @@ class DeleteMessageImpl(var domainImpl: ChatDomainImpl) : DeleteMessage {
 
             channelRepo.deleteMessage(message)
         }
-        return CallImpl2<Message>(
+        return CallImpl2(
             runnable,
             channelRepo.scope
         )

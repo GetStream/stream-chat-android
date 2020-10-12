@@ -24,7 +24,7 @@ class GetUnreadChannelCountImpl(var domainImpl: ChatDomainImpl) : GetUnreadChann
         val runnable = suspend {
             Result(domainImpl.channelUnreadCount, null)
         }
-        return CallImpl2<LiveData<Int>>(
+        return CallImpl2(
             runnable,
             domainImpl.scope
         )

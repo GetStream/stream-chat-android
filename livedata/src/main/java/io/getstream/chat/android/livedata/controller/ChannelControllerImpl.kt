@@ -92,18 +92,19 @@ class ChannelControllerImpl(
     private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
     private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
     private val _read = MutableLiveData<ChannelUserRead>()
-    private val _endOfNewerMessages = MutableLiveData<Boolean>(false)
-    private val _endOfOlderMessages = MutableLiveData<Boolean>(false)
-    private val _loading = MutableLiveData<Boolean>(false)
-    private val _hidden = MutableLiveData<Boolean>(false)
-    private val _muted = MutableLiveData<Boolean>(false)
+    private val _endOfNewerMessages = MutableLiveData(false)
+    private val _endOfOlderMessages = MutableLiveData(false)
+    private val _loading = MutableLiveData(false)
+    private val _hidden = MutableLiveData(false)
+    private val _muted = MutableLiveData(false)
     private val _watchers = MutableLiveData<Map<String, User>>(mapOf())
     private val _members = MutableLiveData<MutableMap<String, Member>>()
-    private val _loadingOlderMessages = MutableLiveData<Boolean>(false)
-    private val _loadingNewerMessages = MutableLiveData<Boolean>(false)
+    private val _loadingOlderMessages = MutableLiveData(false)
+    private val _loadingNewerMessages = MutableLiveData(false)
     private val _channelData = MutableLiveData<ChannelData>()
     internal var hideMessagesBefore: Date? = null
-    val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.values.toList() }
+    val unfilteredMessages: LiveData<List<Message>> =
+        Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = Transformations.map(_messages) { messageMap ->
@@ -119,22 +120,25 @@ class ChannelControllerImpl(
 
     /** the number of people currently watching the channel */
     override val watcherCount: LiveData<Int> = _watcherCount
+
     /** the list of users currently watching this channel */
     override val watchers: LiveData<List<User>> = Transformations.map(_watchers) {
-        it.values.sortedBy { it.createdAt }
+        it.values.sortedBy { user -> user.createdAt }
     }
 
     /** who is currently typing (current user is excluded from this) */
     override val typing: LiveData<List<User>> = Transformations.map(_typing) {
-        it.values.sortedBy { it.createdAt }.mapNotNull {
-            (it as? TypingStartEvent)?.user
-                ?: (it as? TypingStopEvent)?.user
-        }
+        it.values
+            .sortedBy { event -> event.createdAt }
+            .mapNotNull { event ->
+                (event as? TypingStartEvent)?.user
+                    ?: (event as? TypingStopEvent)?.user
+            }
     }
 
     /** how far every user in this channel has read */
     override val reads: LiveData<List<ChannelUserRead>> = Transformations.map(_reads) {
-        it.values.sortedBy { it.lastRead }
+        it.values.sortedBy { userRead -> userRead.lastRead }
     }
 
     /** read status for the current user */
@@ -152,7 +156,7 @@ class ChannelControllerImpl(
 
     /** the list of members of this channel */
     override val members: LiveData<List<Member>> = Transformations.map(_members) {
-        it.values.sortedBy { it.createdAt }
+        it.values.sortedBy { member -> member.createdAt }
     }
 
     /** LiveData object with the channel data */
@@ -191,7 +195,8 @@ class ChannelControllerImpl(
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
-    private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> = ConcurrentHashMap()
+    private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> =
+        ConcurrentHashMap()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client)
@@ -242,7 +247,9 @@ class ChannelControllerImpl(
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead(domainImpl.currentUser).apply { lastRead = last.createdAt ?: last.createdLocallyAt }
+                val userRead = ChannelUserRead(domainImpl.currentUser).apply {
+                    lastRead = last.createdAt ?: last.createdLocallyAt
+                }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
                 return Result(true, null)
@@ -317,9 +324,12 @@ class ChannelControllerImpl(
         _loading.postValue(false)
     }
 
-    fun loadMoreMessagesRequest(limit: Int = 30, direction: Pagination): QueryChannelPaginationRequest {
+    fun loadMoreMessagesRequest(
+        limit: Int = 30,
+        direction: Pagination
+    ): QueryChannelPaginationRequest {
         val messages = sortedMessages()
-        var request = QueryChannelPaginationRequest(limit)
+        val request = QueryChannelPaginationRequest(limit)
         if (messages.isNotEmpty()) {
             val messageId: String = when (direction) {
                 Pagination.GREATER_THAN_OR_EQUAL, Pagination.GREATER_THAN -> {
@@ -329,7 +339,10 @@ class ChannelControllerImpl(
                     messages.first().id
                 }
             }
-            request = request.apply { messageFilterDirection = direction; messageFilterValue = messageId }
+            request.apply {
+                messageFilterDirection = direction
+                messageFilterValue = messageId
+            }
         }
 
         return request
@@ -428,7 +441,10 @@ class ChannelControllerImpl(
      * - If the request fails we retry according to the retry policy set on the repo
      */
 
-    suspend fun sendMessage(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Message> = withContext(scope.coroutineContext) {
+    suspend fun sendMessage(
+        message: Message,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
+    ): Result<Message> = withContext(scope.coroutineContext) {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -510,18 +526,28 @@ class ChannelControllerImpl(
      * Upload the attachment.upload file for the given attachment
      * Structure of the resulting attachment object can be adjusted using the attachmentTransformer
      */
-    internal suspend fun uploadAttachment(attachment: Attachment, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Result<Attachment> {
-        val file = checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
+    internal suspend fun uploadAttachment(
+        attachment: Attachment,
+        attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
+    ): Result<Attachment> {
+        val file = checkNotNull(attachment.upload) {
+            "upload file shouldn't be called on attachment without a attachment.upload"
+        }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) { "image" } else { "file" }
-        val pathResult = if (attachmentType == "image") { sendImage(file) } else { sendFile(file) }
+        val attachmentType = if (mimeType.isImageMimetype()) "image" else "file"
+        val pathResult = if (attachmentType == "image") {
+            sendImage(file)
+        } else {
+            sendFile(file)
+        }
         var newAttachment: Attachment
         var uploadError: ChatError? = null
 
         if (pathResult.isError) {
             uploadError = pathResult.error()
 
-            newAttachment = attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
+            newAttachment =
+                attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
         } else {
             val uploadPath = pathResult.data()
             newAttachment = attachment.copy(
@@ -692,10 +718,10 @@ class ChannelControllerImpl(
                 client.deleteReaction(reaction.messageId, reaction.type)
             }
             val result = domainImpl.runAndRetry(runnable)
-            if (result.isSuccess) {
+            return if (result.isSuccess) {
                 reaction.syncStatus = SyncStatus.COMPLETED
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(result.data(), null)
+                Result(result.data(), null)
             } else {
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -703,7 +729,7 @@ class ChannelControllerImpl(
                     reaction.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 domainImpl.repos.reactions.insertReaction(reaction)
-                return Result(null, result.error())
+                Result(null, result.error())
             }
         }
         return Result(currentMessage, null)
@@ -1088,9 +1114,7 @@ class ChannelControllerImpl(
             }
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
-            editJobs[message.id]?.let {
-                it.cancelAndJoin()
-            }
+            editJobs[message.id]?.cancelAndJoin()
             val job = scope.async { domainImpl.runAndRetry(runnable) }
             editJobs[message.id] = job
             val result = job.await()

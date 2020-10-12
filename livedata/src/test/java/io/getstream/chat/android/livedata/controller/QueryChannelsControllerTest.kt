@@ -30,7 +30,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
         channels = queryControllerImpl.channels.getOrAwaitValue()
         val newSize = channels.size
         Truth.assertThat(newSize - oldSize).isEqualTo(1)
-        val channelController = chatDomainImpl.channel(addedEvent.channel!!)
+        val channelController = chatDomainImpl.channel(addedEvent.channel)
         val channel = channelController.toChannel()
     }
 

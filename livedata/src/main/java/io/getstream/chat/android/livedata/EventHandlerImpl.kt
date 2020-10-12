@@ -65,7 +65,10 @@ import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = true) {
+class EventHandlerImpl(
+    private val domainImpl: ChatDomainImpl,
+    private val runAsync: Boolean = true
+) {
 
     fun handleEvents(events: List<ChatEvent>) {
         if (runAsync) {
@@ -161,6 +164,7 @@ class EventHandlerImpl(var domainImpl: ChatDomainImpl, var runAsync: Boolean = t
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
+            @Suppress("IMPLICIT_CAST_TO_ANY")
             when (event) {
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information

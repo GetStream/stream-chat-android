@@ -6,8 +6,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 class SyncStatusConverter {
     @TypeConverter
     fun stringToSyncStatus(data: Int): SyncStatus {
-        val st = SyncStatus.fromInt(data)!!
-        return st
+        return SyncStatus.fromInt(data)!!
     }
 
     @TypeConverter

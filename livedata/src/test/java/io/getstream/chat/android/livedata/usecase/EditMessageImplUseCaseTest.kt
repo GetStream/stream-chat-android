@@ -15,7 +15,7 @@ internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
     @Test
     fun editMessageUseCase() = runBlocking(Dispatchers.IO) {
         val originalMessage = data.createMessage()
-        var result = channelControllerImpl.sendMessage(originalMessage)
+        val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
         var messages = channelControllerImpl.messages.getOrAwaitValue()
@@ -25,13 +25,13 @@ internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
 
-        var result2 = channelControllerImpl.editMessage(updatedMessage)
+        val result2 = channelControllerImpl.editMessage(updatedMessage)
         assertSuccess(result2)
         messages = channelControllerImpl.messages.getOrAwaitValue()
         val liveLastMessage = messages.last()
         Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
         Truth.assertThat(liveLastMessage.extraData).isEqualTo(updatedMessage.extraData)
-        Truth.assertThat(liveLastMessage.extraData.get("plaid")).isEqualTo(true)
+        Truth.assertThat(liveLastMessage.extraData["plaid"]).isEqualTo(true)
         // verify it's not the same object (since that breaks diffUtils)
         Truth.assertThat(liveLastMessage === updatedMessage).isFalse()
     }
