@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.lang.reflect.Field
 
-class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter<CustomObject>() {
+internal class CustomObjectGsonAdapter(val gson: Gson, val clazz: Class<*>) : TypeAdapter<CustomObject>() {
 
     companion object {
         val logger = ChatLogger.get("CustomObjectAdapter")

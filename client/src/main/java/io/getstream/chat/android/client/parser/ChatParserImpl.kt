@@ -14,7 +14,7 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ChatParserImpl : ChatParser {
+internal class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
 

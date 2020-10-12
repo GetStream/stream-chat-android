@@ -1,22 +1,22 @@
 package io.getstream.chat.android.client.api.models
 
-open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
+public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     override var state: Boolean = false
     override var watch: Boolean = false
     override var presence: Boolean = false
 
-    val messages = mutableMapOf<String, Any>()
-    val watchers = mutableMapOf<String, Any>()
-    val members = mutableMapOf<String, Any>()
-    val data = mutableMapOf<String, Any>()
+    public val messages: MutableMap<String, Any> = mutableMapOf()
+    public val watchers: MutableMap<String, Any> = mutableMapOf()
+    public val members: MutableMap<String, Any> = mutableMapOf()
+    public val data: MutableMap<String, Any> = mutableMapOf()
 
-    open fun withData(data: Map<String, Any>): QueryChannelRequest {
+    public open fun withData(data: Map<String, Any>): QueryChannelRequest {
         this.data.putAll(data)
         return this
     }
 
-    open fun withMembers(limit: Int, offset: Int): QueryChannelRequest {
+    public open fun withMembers(limit: Int, offset: Int): QueryChannelRequest {
         state = true
         val members: MutableMap<String, Any> = HashMap()
         members["limit"] = limit
@@ -25,7 +25,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return this
     }
 
-    open fun withWatchers(limit: Int, offset: Int): QueryChannelRequest {
+    public open fun withWatchers(limit: Int, offset: Int): QueryChannelRequest {
         val watchers: MutableMap<String, Any> = HashMap()
         watchers["limit"] = limit
         watchers["offset"] = offset
@@ -33,7 +33,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return this
     }
 
-    open fun withMessages(limit: Int): QueryChannelRequest {
+    public open fun withMessages(limit: Int): QueryChannelRequest {
         state = true
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
@@ -41,7 +41,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return this
     }
 
-    open fun withMessages(direction: Pagination, messageId: String, limit: Int): QueryChannelRequest {
+    public open fun withMessages(direction: Pagination, messageId: String, limit: Int): QueryChannelRequest {
         state = true
         val messages: MutableMap<String, Any> = HashMap()
         messages["limit"] = limit
@@ -50,7 +50,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return this
     }
 
-    fun isFilteringNewerMessages(): Boolean {
+    public fun isFilteringNewerMessages(): Boolean {
         if (messages.isEmpty()) {
             return false
         }
@@ -58,7 +58,7 @@ open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return keys.contains(Pagination.GREATER_THAN.toString()) || keys.contains(Pagination.GREATER_THAN_OR_EQUAL.toString())
     }
 
-    fun filteringOlderMessages(): Boolean {
+    public fun filteringOlderMessages(): Boolean {
         if (messages.isEmpty()) {
             return false
         }

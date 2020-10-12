@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class Mute(
+public data class Mute(
     var user: User,
     var target: User,
     @SerializedName("created_at")

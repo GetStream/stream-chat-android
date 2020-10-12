@@ -28,30 +28,30 @@ import io.getstream.chat.android.client.notifications.FirebaseMessageParserImpl
 import io.getstream.chat.android.client.notifications.NotificationLoadDataListener
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
-open class ChatNotificationHandler @JvmOverloads constructor(
-    val context: Context,
-    val config: NotificationConfig = NotificationConfig()
+public open class ChatNotificationHandler @JvmOverloads constructor(
+    protected val context: Context,
+    protected val config: NotificationConfig = NotificationConfig()
 ) {
     private val logger = ChatLogger.get("ChatNotificationHandler")
 
-    open fun onChatEvent(event: ChatEvent): Boolean {
+    public open fun onChatEvent(event: ChatEvent): Boolean {
         return false
     }
 
-    open fun onFirebaseMessage(message: RemoteMessage): Boolean {
+    public open fun onFirebaseMessage(message: RemoteMessage): Boolean {
         return false
     }
 
-    open fun getDeviceRegisteredListener(): DeviceRegisteredListener? {
+    public open fun getDeviceRegisteredListener(): DeviceRegisteredListener? {
         return null
     }
 
-    open fun getDataLoadListener(): NotificationLoadDataListener? {
+    public open fun getDataLoadListener(): NotificationLoadDataListener? {
         return null
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    open fun createNotificationChannel(): NotificationChannel {
+    public open fun createNotificationChannel(): NotificationChannel {
         logger.logI("createNotificationChannel()")
         return NotificationChannel(
             getNotificationChannelId(),
@@ -77,26 +77,26 @@ open class ChatNotificationHandler @JvmOverloads constructor(
         }
     }
 
-    open fun getNotificationChannelId(): String = context.getString(config.notificationChannelId)
+    public open fun getNotificationChannelId(): String = context.getString(config.notificationChannelId)
 
-    open fun getNotificationChannelName(): String =
+    public open fun getNotificationChannelName(): String =
         context.getString(config.notificationChannelName)
 
-    open fun getSmallIcon(): Int = config.smallIcon
+    public open fun getSmallIcon(): Int = config.smallIcon
 
-    open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
+    public open fun getFirebaseMessageIdKey(): String = config.firebaseMessageIdKey
 
-    open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
+    public open fun getFirebaseChannelIdKey(): String = config.firebaseChannelIdKey
 
-    open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
+    public open fun getFirebaseChannelTypeKey(): String = config.firebaseChannelTypeKey
 
-    open fun getErrorCaseNotificationTitle(): String =
+    public open fun getErrorCaseNotificationTitle(): String =
         context.getString(config.errorCaseNotificationTitle)
 
-    open fun getErrorCaseNotificationContent(): String =
+    public open fun getErrorCaseNotificationContent(): String =
         context.getString(config.errorCaseNotificationContent)
 
-    open fun buildErrorCaseNotification(): Notification {
+    public open fun buildErrorCaseNotification(): Notification {
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = getNotificationBuilder()
         val intent = PendingIntent.getActivity(
@@ -116,7 +116,7 @@ open class ChatNotificationHandler @JvmOverloads constructor(
             .build()
     }
 
-    open fun buildNotification(
+   public open fun buildNotification(
         notificationId: Int,
         channelName: String,
         messageText: String,
@@ -174,7 +174,7 @@ open class ChatNotificationHandler @JvmOverloads constructor(
         return 1220999987
     }
 
-    open fun getNewMessageIntent(
+    public open fun getNewMessageIntent(
         messageId: String,
         channelType: String,
         channelId: String
@@ -182,11 +182,11 @@ open class ChatNotificationHandler @JvmOverloads constructor(
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
-    open fun getErrorCaseIntent(): Intent {
+    public open fun getErrorCaseIntent(): Intent {
         return context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
     }
 
-    open fun getFirebaseMessageParser(): FirebaseMessageParser {
+    public open fun getFirebaseMessageParser(): FirebaseMessageParser {
         return FirebaseMessageParserImpl(this)
     }
 
@@ -257,7 +257,7 @@ open class ChatNotificationHandler @JvmOverloads constructor(
         )
     }
 
-    open fun getFirebaseInstanceId(): FirebaseInstanceId? =
+    public open fun getFirebaseInstanceId(): FirebaseInstanceId? =
         if (config.useProvidedFirebaseInstance && FirebaseApp.getApps(context).isNotEmpty()) {
             FirebaseInstanceId.getInstance()
         } else {

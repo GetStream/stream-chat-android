@@ -5,7 +5,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import java.lang.reflect.Type
 
-class UrlQueryPayloadFactory(val gson: Gson) : Converter.Factory() {
+internal class UrlQueryPayloadFactory(private val gson: Gson) : Converter.Factory() {
 
     override fun stringConverter(
         type: Type,

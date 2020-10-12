@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-abstract class ChatCallImpl<T> : Call<T> {
+internal abstract class ChatCallImpl<T> : Call<T> {
 
     @Volatile
     protected var canceled = false

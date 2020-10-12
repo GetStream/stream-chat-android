@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.io.File
 
-data class Attachment(
+data public class Attachment(
 
     @SerializedName("author_name")
     var authorName: String? = null,
@@ -46,9 +46,9 @@ data class Attachment(
 
 ) : CustomObject {
 
-    sealed class UploadState {
-        object InProgress : UploadState()
-        object Success : UploadState()
-        data class Failed(val error: ChatError) : UploadState()
+    public sealed class UploadState {
+        public object InProgress : UploadState()
+        public object Success : UploadState()
+        public data class Failed(val error: ChatError) : UploadState()
     }
 }

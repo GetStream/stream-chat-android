@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.safeLet
 import io.getstream.chat.android.client.models.Message
 
-class NotificationMessageReceiver : BroadcastReceiver() {
+internal class NotificationMessageReceiver : BroadcastReceiver() {
 
     companion object {
         const val ACTION_READ = "com.getstream.sdk.chat.READ"

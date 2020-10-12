@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlin.reflect.KClass
 
-inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
+public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     crossinline listener: (event: T) -> Unit
 ): Disposable {
     return this.subscribeFor(
@@ -15,7 +15,7 @@ inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     )
 }
 
-fun ChatClient.subscribeFor(
+public fun ChatClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: (event: ChatEvent) -> Unit
 ): Disposable {
@@ -23,7 +23,7 @@ fun ChatClient.subscribeFor(
     return subscribeFor(*javaClassTypes, listener = listener)
 }
 
-inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
+public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
     noinline listener: (event: T) -> Unit
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)

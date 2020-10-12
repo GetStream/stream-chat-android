@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import java.io.IOException
 import java.util.ArrayList
 
-class QuerySortAdapter(val gson: Gson) : TypeAdapter<QuerySort>() {
+internal class QuerySortAdapter(val gson: Gson) : TypeAdapter<QuerySort>() {
     override fun write(out: JsonWriter, value: QuerySort?) {
         val adapter = gson.getAdapter(ArrayList::class.java)
         adapter.write(out, value?.data as? ArrayList<*>)

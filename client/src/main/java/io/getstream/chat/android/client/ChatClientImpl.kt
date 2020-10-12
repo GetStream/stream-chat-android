@@ -497,7 +497,7 @@ internal class ChatClientImpl(
 
     override fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
-    override fun flag(targetId: String) = flagUser(targetId)
+    override fun flag(userId: String) = flagUser(userId)
 
     override fun flagUser(userId: String) = api.flagUser(userId)
 

@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
-interface ChatLogger {
+internal interface ChatLogger {
 
     fun logI(tag: Any, message: String)
 

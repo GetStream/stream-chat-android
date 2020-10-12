@@ -36,92 +36,92 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
-interface ChatClient {
+public interface ChatClient {
 
-    fun setUser(user: User, token: String, listener: InitConnectionListener? = null)
+    public fun setUser(user: User, token: String, listener: InitConnectionListener? = null)
 
-    fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener? = null)
+    public fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener? = null)
 
-    fun setAnonymousUser(listener: InitConnectionListener? = null)
+    public fun setAnonymousUser(listener: InitConnectionListener? = null)
 
-    fun getGuestToken(userId: String, userName: String): Call<GuestUser>
+    public fun getGuestToken(userId: String, userName: String): Call<GuestUser>
 
-    fun disconnect()
+    public fun disconnect()
 
-    fun disconnectSocket()
+    public fun disconnectSocket()
 
-    fun reconnectSocket()
+    public fun reconnectSocket()
 
-    fun isSocketConnected(): Boolean
+    public fun isSocketConnected(): Boolean
 
-    fun getConnectionId(): String?
+    public fun getConnectionId(): String?
 
-    fun getCurrentUser(): User?
+    public fun getCurrentUser(): User?
 
-    fun channel(cid: String): ChannelController
+    public fun channel(cid: String): ChannelController
 
-    fun channel(channelType: String, channelId: String): ChannelController
+    public fun channel(channelType: String, channelId: String): ChannelController
 
-    fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
+    public fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
 
-    fun createChannel(channelType: String, members: List<String>): Call<Channel>
+    public fun createChannel(channelType: String, members: List<String>): Call<Channel>
 
-    fun createChannel(
+    public fun createChannel(
         channelType: String,
         members: List<String>,
         extraData: Map<String, Any>
     ): Call<Channel>
 
-    fun createChannel(
+    public fun createChannel(
         channelType: String,
         channelId: String,
         members: List<String>,
         extraData: Map<String, Any>
     ): Call<Channel>
 
-    fun createChannel(
+    public fun createChannel(
         channelType: String,
         channelId: String,
         extraData: Map<String, Any>
     ): Call<Channel>
 
-    fun muteChannel(channelType: String, channelId: String): Call<Unit>
+    public fun muteChannel(channelType: String, channelId: String): Call<Unit>
 
-    fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
+    public fun unMuteChannel(channelType: String, channelId: String): Call<Unit>
 
     //region CDN
 
-    fun sendFile(
+    public fun sendFile(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback
     )
 
-    fun sendImage(
+    public fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback
     )
 
-    fun sendFile(
+    public fun sendFile(
         channelType: String,
         channelId: String,
         file: File
     ): Call<String>
 
-    fun sendImage(
+    public fun sendImage(
         channelType: String,
         channelId: String,
         file: File
     ): Call<String>
 
-    fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
+    public fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
+    public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
-    fun replayEvents(
+    public fun replayEvents(
         channelIds: List<String>,
         since: Date?,
         limit: Int = 100,
@@ -132,34 +132,34 @@ interface ChatClient {
 
     //region Events
 
-    fun addSocketListener(listener: SocketListener)
+    public fun addSocketListener(listener: SocketListener)
 
-    fun removeSocketListener(listener: SocketListener)
+    public fun removeSocketListener(listener: SocketListener)
 
     @Deprecated(
         message = "Use subscribe() on the client directly instead",
         level = DeprecationLevel.WARNING
     )
-    fun events(): ChatObservable
+    public fun events(): ChatObservable
 
-    fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
 
-    fun subscribeFor(
+    public fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
 
-    fun subscribeFor(
+    public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
 
-    fun subscribeForSingle(
+    public fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
 
-    fun <T : ChatEvent> subscribeForSingle(
+    public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
     ): Disposable
@@ -168,25 +168,25 @@ interface ChatClient {
 
     //region Users
 
-    fun updateUser(user: User): Call<User>
+    public fun updateUser(user: User): Call<User>
 
-    fun updateUsers(users: List<User>): Call<List<User>>
+    public fun updateUsers(users: List<User>): Call<List<User>>
 
-    fun queryUsers(query: QueryUsersRequest): Call<List<User>>
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>>
 
-    fun addMembers(
+    public fun addMembers(
         channelType: String,
         channelId: String,
         members: List<String>
     ): Call<Channel>
 
-    fun removeMembers(
+    public fun removeMembers(
         channelType: String,
         channelId: String,
         members: List<String>
     ): Call<Channel>
 
-    fun queryMembers(
+    public fun queryMembers(
         channelType: String,
         channelId: String,
         offset: Int,
@@ -196,19 +196,19 @@ interface ChatClient {
         members: List<Member> = emptyList()
     ): Call<List<Member>>
 
-    fun muteUser(userId: String): Call<Mute>
-    fun muteCurrentUser(): Call<Mute>
-    fun unmuteUser(userId: String): Call<Mute>
-    fun unmuteCurrentUser(): Call<Mute>
+    public fun muteUser(userId: String): Call<Mute>
+    public fun muteCurrentUser(): Call<Mute>
+    public fun unmuteUser(userId: String): Call<Mute>
+    public fun unmuteCurrentUser(): Call<Mute>
 
     @Deprecated(
         message = "We are going to replace with flagUser()",
         replaceWith = ReplaceWith("this.flagUser(userId)")
     )
-    fun flag(userId: String): Call<Flag>
-    fun flagUser(userId: String): Call<Flag>
-    fun flagMessage(messageId: String): Call<Flag>
-    fun banUser(
+    public fun flag(userId: String): Call<Flag>
+    public fun flagUser(userId: String): Call<Flag>
+    public fun flagMessage(messageId: String): Call<Flag>
+    public fun banUser(
         targetId: String,
         channelType: String,
         channelId: String,
@@ -216,97 +216,97 @@ interface ChatClient {
         timeout: Int
     ): Call<Unit>
 
-    fun unBanUser(
+    public fun unBanUser(
         targetId: String,
         channelType: String,
         channelId: String
     ): Call<Unit>
 
     //region Reactions
-    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
 
-    fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
-    fun sendReaction(reaction: Reaction): Call<Reaction>
-    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    public fun sendReaction(messageId: String, reactionType: String): Call<Reaction>
+    public fun sendReaction(reaction: Reaction): Call<Reaction>
+    public fun deleteReaction(messageId: String, reactionType: String): Call<Message>
     //endregion
 
     //endregion
 
     //region Api calls
 
-    fun getDevices(): Call<List<Device>>
-    fun deleteDevice(deviceId: String): Call<Unit>
-    fun addDevice(deviceId: String): Call<Unit>
-    fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
-    fun getReplies(messageId: String, limit: Int): Call<List<Message>>
-    fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
-    fun sendAction(request: SendActionRequest): Call<Message>
-    fun deleteMessage(messageId: String): Call<Message>
-    fun getMessage(messageId: String): Call<Message>
-    fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message>
-    fun updateMessage(message: Message): Call<Message>
+    public fun getDevices(): Call<List<Device>>
+    public fun deleteDevice(deviceId: String): Call<Unit>
+    public fun addDevice(deviceId: String): Call<Unit>
+    public fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
+    public fun getReplies(messageId: String, limit: Int): Call<List<Message>>
+    public fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>>
+    public fun sendAction(request: SendActionRequest): Call<Message>
+    public fun deleteMessage(messageId: String): Call<Message>
+    public fun getMessage(messageId: String): Call<Message>
+    public fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message>
+    public fun updateMessage(message: Message): Call<Message>
 
-    fun queryChannel(
+    public fun queryChannel(
         channelType: String,
         channelId: String,
         request: QueryChannelRequest
     ): Call<Channel>
 
-    fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>
-    fun showChannel(channelType: String, channelId: String): Call<Unit>
-    fun hideChannel(
+    public fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    public fun showChannel(channelType: String, channelId: String): Call<Unit>
+    public fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean = false
     ): Call<Unit>
 
-    fun stopWatching(channelType: String, channelId: String): Call<Unit>
-    fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>>
+    public fun stopWatching(channelType: String, channelId: String): Call<Unit>
+    public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>>
 
-    fun updateChannel(
+    public fun updateChannel(
         channelType: String,
         channelId: String,
         updateMessage: Message? = null,
         channelExtraData: Map<String, Any> = emptyMap()
     ): Call<Channel>
 
-    fun enableSlowMode(
+    public fun enableSlowMode(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int
     ): Call<Channel>
 
-    fun disableSlowMode(
+    public fun disableSlowMode(
         channelType: String,
         channelId: String
     ): Call<Channel>
 
-    fun rejectInvite(channelType: String, channelId: String): Call<Channel>
-    fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
-    fun markRead(channelType: String, channelId: String): Call<Unit>
-    fun markAllRead(): Call<Unit>
-    fun deleteChannel(channelType: String, channelId: String): Call<Channel>
+    public fun rejectInvite(channelType: String, channelId: String): Call<Channel>
+    public fun acceptInvite(channelType: String, channelId: String, message: String): Call<Channel>
+    public fun markRead(channelType: String, channelId: String): Call<Unit>
+    public fun markAllRead(): Call<Unit>
+    public fun deleteChannel(channelType: String, channelId: String): Call<Channel>
     //endregion
 
     // region messages
-    fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
-    fun onNewTokenReceived(token: String, context: Context)
+    public fun onMessageReceived(remoteMessage: RemoteMessage, context: Context)
+    public fun onNewTokenReceived(token: String, context: Context)
     //endregion
 
-    fun sendEvent(
+    public fun sendEvent(
         eventType: String,
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent>
 
-    fun translate(messageId: String, language: String): Call<Message>
+    public fun translate(messageId: String, language: String): Call<Message>
 
-    fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
+    public fun getSyncHistory(channelsIds: List<String>, lastSyncAt: Date): Call<List<ChatEvent>>
 
-    fun getVersion(): String
+    public fun getVersion(): String
 
-    class Builder(private val apiKey: String, private val appContext: Context) {
+    public class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
         private var cdnUrl: String = baseUrl
@@ -317,41 +317,41 @@ interface ChatClient {
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
 
-        fun logLevel(level: ChatLogLevel): Builder {
+        public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
             return this
         }
 
-        fun logLevel(level: String): Builder {
+        public fun logLevel(level: String): Builder {
             logLevel = ChatLogLevel.valueOf(level)
             return this
         }
 
-        fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
+        public fun loggerHandler(loggerHandler: ChatLoggerHandler): Builder {
             this.loggerHandler = loggerHandler
             return this
         }
 
-        fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
+        public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
             this.notificationsHandler = notificationsHandler
             return this
         }
 
-        fun baseTimeout(timeout: Long): Builder {
+        public fun baseTimeout(timeout: Long): Builder {
             baseTimeout = timeout
             return this
         }
 
-        fun cdnTimeout(timeout: Long): Builder {
+        public fun cdnTimeout(timeout: Long): Builder {
             cdnTimeout = timeout
             return this
         }
 
-        fun disableWarmUp(): Builder = apply {
+        public fun disableWarmUp(): Builder = apply {
             warmUp = false
         }
 
-        fun baseUrl(value: String): Builder {
+        public fun baseUrl(value: String): Builder {
             var baseUrl = value
             if (baseUrl.startsWith("https://")) {
                 baseUrl = baseUrl.split("https://").toTypedArray()[1]
@@ -366,7 +366,7 @@ interface ChatClient {
             return this
         }
 
-        fun cdnUrl(value: String): Builder {
+        public fun cdnUrl(value: String): Builder {
             var cdnUrl = value
             if (cdnUrl.startsWith("https://")) {
                 cdnUrl = cdnUrl.split("https://").toTypedArray()[1]
@@ -381,7 +381,7 @@ interface ChatClient {
             return this
         }
 
-        fun build(): ChatClient {
+        public fun build(): ChatClient {
 
             if (apiKey.isEmpty()) {
                 throw IllegalStateException("apiKey is not defined in " + this::class.java.simpleName)
@@ -413,12 +413,11 @@ interface ChatClient {
         }
     }
 
-    companion object {
-
+    public companion object {
         private lateinit var instance: ChatClient
 
         @JvmStatic
-        fun instance(): ChatClient {
+        public fun instance(): ChatClient {
             return instance
         }
     }

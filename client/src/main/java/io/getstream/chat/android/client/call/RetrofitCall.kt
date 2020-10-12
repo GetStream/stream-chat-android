@@ -8,7 +8,11 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
 import retrofit2.Response
 
-class RetrofitCall<T>(val call: retrofit2.Call<T>, val parser: ChatParser) : ChatCallImpl<T>() {
+internal class RetrofitCall<T>(
+    private val call: retrofit2.Call<T>,
+    private val parser: ChatParser
+) : ChatCallImpl<T>() {
+
     override fun execute(): Result<T> {
         val result = execute(call)
         if (!result.isSuccess) errorHandler?.invoke(result.error())

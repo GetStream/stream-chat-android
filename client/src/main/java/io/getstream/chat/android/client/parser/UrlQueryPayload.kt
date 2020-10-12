@@ -7,4 +7,4 @@ package io.getstream.chat.android.client.parser
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class UrlQueryPayload
+internal annotation class UrlQueryPayload

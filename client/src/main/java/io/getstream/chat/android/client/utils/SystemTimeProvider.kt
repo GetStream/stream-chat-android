@@ -1,5 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-class SystemTimeProvider {
-    fun provideTime() = System.currentTimeMillis()
+public class SystemTimeProvider {
+    public fun provideTime(): Long = System.currentTimeMillis()
 }

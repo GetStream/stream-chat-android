@@ -10,7 +10,7 @@ import io.getstream.chat.android.client.parser.adapters.QuerySortAdapter
 import io.getstream.chat.android.client.utils.FilterObject
 import java.util.Date
 
-class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
+internal class TypeAdapterFactory : com.google.gson.TypeAdapterFactory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {

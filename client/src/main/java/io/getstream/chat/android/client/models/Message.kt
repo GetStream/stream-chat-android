@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-data class Message(
+public data class Message(
     var id: String = "",
     var cid: String = "",
     var text: String = "",

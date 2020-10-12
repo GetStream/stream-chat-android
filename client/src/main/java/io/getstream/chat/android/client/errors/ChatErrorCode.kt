@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.errors
 
-enum class ChatErrorCode(val code: Int, val description: String) {
+public enum class ChatErrorCode(public val code: Int, public val description: String) {
 
     /**
      * Local

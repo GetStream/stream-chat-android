@@ -1,8 +1,8 @@
 package io.getstream.chat.android.client.utils
 
-data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
+public data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
 
-    constructor(key: String, value: Any) : this() {
+    public constructor(key: String, value: Any) : this() {
         data[key] = (normalizeValue(value))
     }
 
@@ -11,14 +11,14 @@ data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
         data = toMap()
     }
 
-    fun put(key: String, value: Any): FilterObject {
+    public fun put(key: String, value: Any): FilterObject {
         data[key] = normalizeValue(value)
 
         return this
     }
 
     // cleanup references to prevent serialization issues
-    fun normalizeValue(value: Any): Any {
+    private fun normalizeValue(value: Any): Any {
         return if (value is FilterObject) {
             value.toMap()
         } else if (value is Array<*> && value.isArrayOf<FilterObject>()) {
@@ -29,7 +29,7 @@ data class FilterObject(var data: MutableMap<String, Any> = mutableMapOf()) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun toMap(): HashMap<String, Any> {
+    public fun toMap(): HashMap<String, Any> {
         val data: HashMap<String, Any> = HashMap()
 
         for ((key, value) in this.data.entries) {

@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import java.util.Date
 
-data class ChannelResponse(
+internal data class ChannelResponse(
     val channel: Channel,
     val messages: List<Message>? = null,
     var members: List<Member>? = null,

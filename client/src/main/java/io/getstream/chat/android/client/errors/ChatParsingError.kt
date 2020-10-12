@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.errors
 
-class ChatParsingError : Exception {
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(null, cause)
+public class ChatParsingError : Exception {
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(null, cause)
 }
