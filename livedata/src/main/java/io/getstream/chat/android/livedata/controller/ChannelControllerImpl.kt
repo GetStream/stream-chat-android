@@ -654,10 +654,8 @@ class ChannelControllerImpl(
         currentMessage?.let {
             it.addReaction(reaction, true)
             upsertMessage(it)
+            domainImpl.repos.messages.insert(it)
         }
-        // update the message in the local storage
-        // TODO compare with message::updateReaction and then update this for repo::insert
-        domainImpl.repos.messages.addReaction(reaction.messageId, reaction)
 
         if (online) {
             val runnable = {
@@ -698,10 +696,8 @@ class ChannelControllerImpl(
         currentMessage?.let {
             it.removeReaction(reaction, true)
             upsertMessage(it)
+            domainImpl.repos.messages.insert(it)
         }
-
-        // TODO compare with message::removeReaction and then update this for repo::insert
-        domainImpl.repos.messages.removeReaction(reaction.messageId, reaction)
 
         if (online) {
             val runnable = {

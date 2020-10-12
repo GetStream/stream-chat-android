@@ -61,6 +61,8 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -90,8 +92,7 @@ class EventHandlerImpl(
         val users: MutableMap<String, User> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
 
-        val messages: MutableMap<String, Message
-                > = mutableMapOf()
+        val messages: MutableMap<String, Message> = mutableMapOf()
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
 
@@ -238,9 +239,7 @@ class EventHandlerImpl(
                     // event.message only has a subset of reactions
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
-                            // TODO maybe we don't need through DB and Message::addReaction is enough
-                            domainImpl.repos.messages.addReaction(event.reaction.messageId, event.reaction)
+                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
                     } ?: Unit
                 }
@@ -248,9 +247,7 @@ class EventHandlerImpl(
                     // get the message, update the reaction data, update the message
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            // removeReaction(event.reaction, false)
-                            // TODO maybe we don't need through DB and Message::removeReaction is enough
-                            domainImpl.repos.messages.removeReaction(event.reaction.messageId, event.reaction)
+                            removeReaction(event.reaction, domainImpl.currentUser.id == event.reaction.userId)
                             reactionCounts = event.message.reactionCounts
                         }
                     } ?: Unit
@@ -258,9 +255,7 @@ class EventHandlerImpl(
                 is ReactionUpdateEvent -> {
                     messageMap[event.reaction.messageId]?.let {
                         messages[it.id] = it.apply {
-                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
-                            // TODO maybe we don't need through DB and Message::addReaction is enough
-                            domainImpl.repos.messages.addReaction(event.reaction.messageId, event.reaction)
+                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
                     }
                 }

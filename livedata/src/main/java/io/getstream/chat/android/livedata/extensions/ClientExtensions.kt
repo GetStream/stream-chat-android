@@ -27,12 +27,10 @@ internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 
     // add to own reactions
     if (isMine) {
-        this.ownReactions = this.ownReactions.toMutableList()
         this.ownReactions.add(reaction)
     }
 
     // add to latest reactions
-    this.latestReactions = this.latestReactions.toMutableList()
     this.latestReactions.add(reaction)
 
     // update the count

@@ -5,7 +5,6 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.MessageDao
@@ -23,6 +22,7 @@ class MessageRepository(
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
     @VisibleForTesting
     var messageCache = LruCache<String, Message>(cacheSize)
+        private set
 
     internal suspend fun selectMessagesForChannel(
         cid: String,
@@ -51,20 +51,6 @@ class MessageRepository(
             }
         }
         return messageDao.messagesForChannel(cid, pagination.messageLimit)
-    }
-
-    suspend fun removeReaction(messageId: String, reaction: Reaction) {
-        messageDao.select(messageId)?.also { messageEntity ->
-            messageEntity.removeReaction(reaction, currentUser.id == reaction.user?.id)
-            messageDao.insert(messageEntity)
-        }
-    }
-
-    suspend fun addReaction(messageId: String, reaction: Reaction) {
-        messageDao.select(messageId)?.also { messageEntity ->
-            messageEntity.addReaction(reaction, currentUser.id == reaction.user?.id)
-            messageDao.insert(messageEntity)
-        }
     }
 
     suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
@@ -103,14 +89,10 @@ class MessageRepository(
         insert(listOf(message), cache)
     }
 
-    suspend fun selectSyncNeeded(): List<MessageEntity> {
-        return messageDao.selectSyncNeeded()
-    }
-
     suspend fun retryMessages(client: ChatClient): List<MessageEntity> {
         val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
 
-        val messageEntities = selectSyncNeeded()
+        val messageEntities = messageDao.selectSyncNeeded()
         for (messageEntity in messageEntities) {
             val channel = client.channel(messageEntity.cid)
             // support sending, deleting and editing messages here

@@ -57,35 +57,6 @@ internal class MessageRepositoryTest : BaseDomainTest() {
     }
 
     @Test
-    fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
-        val oldDate = calendar(2019, 11, 1)
-        val message1 =
-            data.createMessage().apply {
-                id = "testSyncNeeded-1"; text = "yoyo"; syncStatus = SyncStatus.SYNC_NEEDED
-                createdAt = oldDate
-            }
-        val message2 = data.createMessage()
-            .apply { id = "testSyncNeeded-2"; text = "hi123"; syncStatus = SyncStatus.FAILED_PERMANENTLY }
-        val message3 = data.createMessage()
-            .apply { id = "testSyncNeeded-3"; text = "hi123"; syncStatus = SyncStatus.SYNC_NEEDED }
-        repo.insert(listOf(message1, message2, message3), true)
-
-        var messages = repo.selectSyncNeeded()
-
-        Truth.assertThat(messages.size).isEqualTo(2)
-        // verify that the old item is returned first
-        Truth.assertThat(messages.first().createdAt).isEqualTo(oldDate)
-        Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
-
-        messages = repo.retryMessages(client)
-        Truth.assertThat(messages.size).isEqualTo(2)
-        Truth.assertThat(messages.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
-
-        messages = repo.selectSyncNeeded()
-        Truth.assertThat(messages.size).isEqualTo(0)
-    }
-
-    @Test
     fun testSelectMessagesForChannel() = runBlocking(Dispatchers.IO) {
         val message1 = data.createMessage().apply {
             id = "testSelectMessagesForChannel1"; text = "message1"; syncStatus = SyncStatus.SYNC_NEEDED; user = data.user1; createdAt =

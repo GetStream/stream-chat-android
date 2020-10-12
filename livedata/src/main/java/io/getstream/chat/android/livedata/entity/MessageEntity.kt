@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
@@ -72,55 +71,6 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
     /** all the custom data provided for this message */
     var extraData = mutableMapOf<String, Any>()
-
-    /** add a reaction to this message. updated the own reactions, latestReactions, reaction Count */
-    fun addReaction(reaction: Reaction, isMine: Boolean) {
-        val reactionEntity = ReactionEntity(reaction)
-
-        // add to own reactions
-        if (isMine) {
-            ownReactions.add(reactionEntity)
-        }
-
-        // add to latest reactions
-        latestReactions = latestReactions.toMutableList()
-        latestReactions.add(reactionEntity)
-
-        // update the count
-        reactionCounts = reactionCounts.toMutableMap()
-        val currentCount = reactionCounts.getOrElse(reaction.type) { 0 }
-        reactionCounts[reaction.type] = currentCount + 1
-        // update the score
-        reactionScores = reactionScores.toMutableMap()
-        val currentScore = reactionScores.getOrElse(reaction.type) { 0 }
-        reactionScores[reaction.type] = currentScore + reaction.score
-    }
-
-    // removes this reaction and update the counts
-    fun removeReaction(reaction: Reaction, updateCounts: Boolean = false) {
-        val reactionEntity = ReactionEntity(reaction)
-        val countBeforeFilter = ownReactions.size + latestReactions.size
-        ownReactions = ownReactions.filterNot { it.type == reactionEntity.type && it.userId == reactionEntity.userId }.toMutableList()
-        latestReactions = latestReactions.filterNot { it.type == reactionEntity.type && it.userId == reactionEntity.userId }.toMutableList()
-        val countAfterFilter = ownReactions.size + latestReactions.size
-        if (updateCounts) {
-            val shouldDecrement = (countBeforeFilter > countAfterFilter) || latestReactions.size >= 15
-            if (shouldDecrement) {
-                val currentCount = reactionCounts.getOrElse(reaction.type) { 1 }
-                val newCount = currentCount - 1
-                reactionCounts[reaction.type] = newCount
-                if (newCount <= 0) {
-                    reactionCounts.remove(reaction.type)
-                }
-                val currentScore = reactionScores.getOrElse(reaction.type) { 1 }
-                val newScore = currentScore - reaction.score
-                reactionScores[reaction.type] = newScore
-                if (newScore <= 0) {
-                    reactionScores.remove(reaction.type)
-                }
-            }
-        }
-    }
 
     /** create a messageEntity from a message object */
     constructor(m: Message) : this(m.id, m.cid, m.user.id) {
