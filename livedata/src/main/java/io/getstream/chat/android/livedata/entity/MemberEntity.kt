@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.entity
 
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import java.util.Date
@@ -36,15 +37,8 @@ data class MemberEntity(var userId: String) {
     }
 
     /** converts a member entity into a member */
-    fun toMember(userMap: Map<String, User>): Member {
-        val user = userMap[userId] ?: error("userMap is missing the user for this member")
-        val r = Member(user, role)
-        r.createdAt = createdAt
-        r.updatedAt = updatedAt
-        r.isInvited = isInvited
-        r.inviteAcceptedAt = inviteAcceptedAt
-        r.inviteRejectedAt = inviteRejectedAt
-
-        return r
-    }
+    fun toMember(userMap: Map<String, User>): Member? =
+        userMap[userId]?.let {
+            Member(it, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+        } ?: null.also { ChatLogger.get("MemberEntity").logE("userMap is missing the user with id='$userId` needed to create this member") }
 }
