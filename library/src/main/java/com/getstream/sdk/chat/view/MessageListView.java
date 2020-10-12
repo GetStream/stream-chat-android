@@ -29,10 +29,13 @@ import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
+import com.getstream.sdk.chat.utils.StartStopBuffer;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 import java.util.List;
@@ -70,6 +73,7 @@ public class MessageListView extends ConstraintLayout {
     private String newMessagesTextPlural;
     private NewMessagesBehaviour newMessagesBehaviour;
     private ScrollButtonBehaviour scrollButtonBehaviour;
+    private StartStopBuffer<MessageListItemWrapper> buffer;
 
     private int unseenItems = 0;
 
@@ -101,6 +105,9 @@ public class MessageListView extends ConstraintLayout {
     private Function2<Message, GiphyAction, Unit> onSendGiphyHandler = (Message m, GiphyAction a) -> {
         throw new IllegalStateException("onSendGiphyHandler must be set.");
     };
+    private Function1<Message, Unit> onMessageRetryHandler = (Message m) -> {
+        throw new IllegalStateException("onMessageRetryHandler must be set.");
+    };
     private Channel channel;
     private User currentUser;
     /**
@@ -114,27 +121,30 @@ public class MessageListView extends ConstraintLayout {
         if (message.getReplyCount() > 0) {
             onStartThreadHandler.invoke(message);
             onStartThreadListener.invoke(message);
-        } else {
-            //viewModel.sendMessage(message);
         }
     };
-    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message -> {
-        new MessageMoreActionDialog(
-                getContext(),
-                channel,
-                message,
-                currentUser,
-                style,
-                onMessageEditHandler,
-                onMessageDeleteHandler,
-                (Message m) -> {
-                    onStartThreadHandler.invoke(m);
-                    onStartThreadListener.invoke(m);
-                    return Unit.INSTANCE;
-                },
-                onMessageFlagHandler
-        ).show();
+
+    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message ->
+            new MessageMoreActionDialog(
+                    getContext(),
+                    channel,
+                    message,
+                    currentUser,
+                    style,
+                    onMessageEditHandler,
+                    onMessageDeleteHandler,
+                    (Message m) -> {
+                        onStartThreadHandler.invoke(m);
+                        onStartThreadListener.invoke(m);
+                        return Unit.INSTANCE;
+                    },
+                    onMessageFlagHandler
+            ).show();
+
+    private final MessageRetryListener DEFAULT_MESSAGE_RETRY_LISTENER = (message) -> {
+        onMessageRetryHandler.invoke(message);
     };
+
     private final AttachmentClickListener DEFAULT_ATTACHMENT_CLICK_LISTENER = (message, attachment) -> {
         Chat.getInstance()
                 .getNavigator()
@@ -155,19 +165,18 @@ public class MessageListView extends ConstraintLayout {
         ).show();
     };
     private final UserClickListener DEFAULT_USER_CLICK_LISTENER = user -> { /* Empty */ };
-    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads -> {
-        new ReadUsersDialog(getContext())
-                .setReads(reads)
-                .setStyle(style)
-                .show();
-    };
-    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) -> {
-        onSendGiphyHandler.invoke(message, action);
-    };
+    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads ->
+            new ReadUsersDialog(getContext())
+                    .setReads(reads)
+                    .setStyle(style)
+                    .show();
+    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) ->
+            onSendGiphyHandler.invoke(message, action);
 
     private final ListenerContainer listenerContainer = new ListenerContainerImpl(
             DEFAULT_MESSAGE_CLICK_LISTENER,
             DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+            DEFAULT_MESSAGE_RETRY_LISTENER,
             DEFAULT_ATTACHMENT_CLICK_LISTENER,
             DEFAULT_REACTION_VIEW_CLICK_LISTENER,
             DEFAULT_USER_CLICK_LISTENER,
@@ -211,6 +220,13 @@ public class MessageListView extends ConstraintLayout {
         initScrollButtonBehaviour();
 
         hasScrolledUp = false;
+
+        buffer = new StartStopBuffer<>();
+
+        buffer.subscribe((wrapper) -> {
+            handleNewWrapper(wrapper);
+            return Unit.INSTANCE;
+        });
     }
 
     // region Init
@@ -290,7 +306,7 @@ public class MessageListView extends ConstraintLayout {
     private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
         messagesRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
                 if (layoutManager != null) {
                     int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
                     int currentLastVisible = layoutManager.findLastVisibleItemPosition();
@@ -395,14 +411,14 @@ public class MessageListView extends ConstraintLayout {
 
     public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set AttachmentViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set AttachmentViewHolderFactory first");
         }
         this.attachmentViewHolderFactory = attachmentViewHolderFactory;
     }
 
     public void setMessageViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
         }
         this.messageViewHolderFactory = messageViewHolderFactory;
     }
@@ -413,31 +429,47 @@ public class MessageListView extends ConstraintLayout {
     @Deprecated
     public void setViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set MessageViewHolderFactory first");
+            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
         }
         this.messageViewHolderFactory = messageViewHolderFactory;
     }
 
     public void setBubbleHelper(BubbleHelper bubbleHelper) {
         if (adapter != null) {
-            throw new IllegalStateException("Adapter was already inited, please set BubbleHelper first");
+            throw new IllegalStateException("Adapter was already initialized, please set BubbleHelper first");
         }
         this.bubbleHelper = bubbleHelper;
     }
 
     public void displayNewMessage(MessageListItemWrapper listItem) {
+        buffer.enqueueData(listItem);
+    }
+
+    private void handleNewWrapper(MessageListItemWrapper listItem) {
+        buffer.hold();
         List<MessageListItem> entities = listItem.getListEntities();
 
         // Adapter initialization for channel and thread swapping
-        boolean backFromThread = false;
+        boolean backFromThread = adapter.isThread() && listItem.isThread();
+
         if (adapter.isThread() != listItem.isThread()) {
             adapter.setThread(listItem.isThread());
-            backFromThread = !listItem.isThread();
         }
 
-        int oldSize = adapter.getItemCount();
+        adapter.submitList(
+                entities,
+                () -> continueMessageAdd(backFromThread, listItem, entities, adapter.getItemCount())
+        );
+    }
 
-        adapter.replaceEntities(entities);
+    private void continueMessageAdd(
+            boolean backFromThread,
+            MessageListItemWrapper listItem,
+            List<MessageListItem> entities,
+            int oldSize
+    ) {
+        int newSize = adapter.getItemCount();
+        int sizeGrewBy = newSize - oldSize;
 
         // Scroll to origin position on return from thread
         if (backFromThread) {
@@ -447,21 +479,18 @@ public class MessageListView extends ConstraintLayout {
         }
 
         // Scroll to bottom position for typing indicator
-        if (listItem.isTyping() && scrolledBottom()) {
+        if (listItem.isTyping() && scrolledBottom(sizeGrewBy + 2)) {
             int newPosition = adapter.getItemCount() - 1;
             layoutManager.scrollToPosition(newPosition);
             return;
         }
-
-        int newSize = adapter.getItemCount();
-        int sizeGrewBy = newSize - oldSize;
 
         if (!listItem.getHasNewMessages()) {
             // we only touch scroll for new messages, we ignore
             // read
             // typing
             // message updates
-            logger.logI(String.format("no Scroll no new message"));
+            logger.logI("no Scroll no new message");
             return;
         }
 
@@ -489,7 +518,6 @@ public class MessageListView extends ConstraintLayout {
             if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
-
                 layoutManager.scrollToPosition(adapter.getItemCount() - 1);
             } else {
                 unseenItems = newSize - 1 - lastViewedPosition;
@@ -501,14 +529,16 @@ public class MessageListView extends ConstraintLayout {
             //viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke();
         }
+
+        buffer.active();
     }
 
     public MessageListViewStyle getStyle() {
         return style;
     }
 
-    private boolean scrolledBottom() {
-        return lVPosition >= lastPosition();
+    private boolean scrolledBottom(int delta) {
+        return lVPosition + delta >= lastPosition();
     }
 
     private boolean justUpdated(Message message) {
@@ -541,6 +571,18 @@ public class MessageListView extends ConstraintLayout {
             messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER;
         }
         listenerContainer.setMessageLongClickListener(messageLongClickListener);
+    }
+
+    /**
+     * Sets the message retry listener to be used by MessageListView.
+     *
+     * @param messageRetryListener The listener to use. If null, the default will be used instead.
+     */
+    public void setMessageRetryListener(@Nullable MessageRetryListener messageRetryListener) {
+        if (messageRetryListener == null) {
+            messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER;
+        }
+        listenerContainer.setMessageRetryListener(messageRetryListener);
     }
 
     /**
@@ -619,6 +661,10 @@ public class MessageListView extends ConstraintLayout {
         this.onSendGiphyHandler = onSendGiphyHandler;
     }
 
+    public void setOnMessageRetryHandler(Function1<Message, Unit> onMessageRetryHandler) {
+        this.onMessageRetryHandler = onMessageRetryHandler;
+    }
+
     public void setOnStartThreadListener(Function1<Message, Unit> onStartThreadListener) {
         this.onStartThreadListener = onStartThreadListener;
     }
@@ -633,6 +679,10 @@ public class MessageListView extends ConstraintLayout {
 
     public interface MessageClickListener {
         void onMessageClick(Message message);
+    }
+
+    public interface MessageRetryListener {
+        void onRetryMessage(Message message);
     }
 
     public interface MessageLongClickListener {

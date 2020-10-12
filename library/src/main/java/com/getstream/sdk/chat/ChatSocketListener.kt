@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat
 
 import com.getstream.sdk.chat.enums.OnlineStatus
+import com.getstream.sdk.chat.utils.exhaustive
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -141,7 +142,6 @@ internal class ChatSocketListener(
             is ConnectingEvent,
             is DisconnectedEvent,
             is ErrorEvent,
-            is ChannelUpdatedByUserEvent,
             is UnknownEvent -> { }
         }.exhaustive
     }

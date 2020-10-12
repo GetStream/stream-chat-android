@@ -5,19 +5,23 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+
 import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
+
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.logger.TaggedLogger;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.filter;
@@ -36,9 +40,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private List<MessageListItem> messageEntities;
     private List<MessageListItem.TypingItem> typingEntities;
     private Boolean isLoadingMore;
-    private Boolean hasNewMessages;
     private String lastMessageID;
     private LifecycleOwner lifecycleOwner;
+    private List<User> previousTypingUsers;
+
+    private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
 
     public MessageListItemLiveData(User currentUser,
                                    LiveData<List<Message>> messages,
@@ -50,19 +56,24 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.currentUser = currentUser;
         this.typing = typing;
         this.reads = reads;
-        this.messageEntities = new ArrayList<MessageListItem>();
+        this.messageEntities = new ArrayList<>();
         this.typingEntities = new ArrayList<>();
         this.isLoadingMore = false;
         // scroll behaviour is only triggered for new messages
         this.lastMessageID = "";
-        this.hasNewMessages = false;
+        previousTypingUsers = new LinkedList<>();
     }
 
     private void setIsLoadingMore(Boolean loading) {
         isLoadingMore = loading;
     }
 
-    private synchronized void broadcastValue() {
+    private synchronized void broadcastValue(
+            final boolean hasNewMessages,
+            final boolean isLoadingMore,
+            final List<MessageListItem.TypingItem> typingEntities,
+            final List<MessageListItem> messageEntities
+    ) {
         List<MessageListItem> merged = new ArrayList<>();
 
         for (MessageListItem i : messageEntities) {
@@ -133,9 +144,6 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
     }
 
-    private Observer<List<Message>> messagesObserver = this::onMessagesChanged;
-    private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
-
     private boolean isThread() {
         return !(threadMessages.getValue() == null || threadMessages.getValue().isEmpty());
     }
@@ -152,69 +160,59 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         }
     }
 
-    @Override
-    public void observe(@NonNull LifecycleOwner owner,
-                        @NonNull Observer<? super MessageListItemWrapper> observer) {
-        super.observe(owner, observer);
-        this.lifecycleOwner = owner;
-
-        this.reads.observe(owner, reads -> {
-            hasNewMessages = false;
-            logger.logI("broadcast because reads changed");
-            broadcastValue();
-        });
-
-        messages.observe(owner, messagesObserver);
-
-        threadMessages.observe(owner, threadMessagesObserver);
-
-        this.typing.observe(owner, users -> {
-            if (isThread()) return;
-            // update
-            hasNewMessages = false;
-            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
-            if (users.size() > 0) {
-                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
-                typingEntities.add(messageListItem);
-            }
-            this.typingEntities = typingEntities;
-            logger.logI("broadcast because typing changed");
-            broadcastValue();
-        });
+    private void onReadsChanged(List<ChannelUserRead> channelUserRead) {
+        logger.logI("broadcast because reads changed");
+        broadcastValue(false, isLoadingMore, typingEntities, messageEntities);
     }
 
-    @Override
-    public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
-        super.observeForever(observer);
-        this.reads.observeForever(reads -> {
-            hasNewMessages = false;
-            logger.logI("broadcast because reads changed");
-            broadcastValue();
-        });
+    private void onTypingChanged(List<User> users) {
+        boolean onlyUserTyping = onlyUserTyping(users);
 
-        messages.observeForever(messagesObserver);
+        previousTypingUsers.clear();
+        previousTypingUsers.addAll(users);
 
-        threadMessages.observeForever(threadMessagesObserver);
+        if (isThread() || onlyUserTyping) {
+            return;
+        }
 
-        this.typing.observeForever(users -> {
-            if (isThread()) return;
-            // update
-            hasNewMessages = false;
-            List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
-            if (users.size() > 0) {
-                MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
-                typingEntities.add(messageListItem);
+        // update
+        List<MessageListItem.TypingItem> typingEntities = new ArrayList<>();
+
+        if (users.size() > 0) {
+            MessageListItem.TypingItem messageListItem = new MessageListItem.TypingItem(users);
+            typingEntities.add(messageListItem);
+        }
+
+        this.typingEntities = typingEntities;
+
+        logger.logI("broadcast because typing changed");
+        broadcastValue(false, isLoadingMore, typingEntities, messageEntities);
+    }
+
+    private boolean onlyUserTyping(List<User> users) {
+        boolean isTheirs = hasOtherUser(users);
+        boolean wasTheirs = hasOtherUser(previousTypingUsers);
+        return !isTheirs && !wasTheirs;
+    }
+
+    private boolean hasOtherUser(List<User> users) {
+        for (User user : users) {
+            if (!isCurrentUser(user.getId())) {
+                return true;
             }
-            this.typingEntities = typingEntities;
-            logger.logI("broadcast because typing changed");
-            broadcastValue();
-        });
+        }
+
+        return false;
+    }
+
+    private boolean isCurrentUser(String id) {
+        return id.equals(currentUser.getId());
     }
 
     private void progressMessages(List<Message> messages) {
         if (messages == null || messages.size() == 0) return;
         // update based on messages
-        hasNewMessages = false;
+        boolean hasNewMessages = false;
         String newlastMessageID = messages.get(messages.size() - 1).getId();
         if (!newlastMessageID.equals(lastMessageID)) {
             hasNewMessages = true;
@@ -237,7 +235,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                 nextMessage = null;
 
             // determine if the message is written by the current user
-            boolean mine = message.getUser().getId().equals(currentUser.getId());
+            boolean mine = isCurrentUser(message.getUser().getId());
             // determine the position (top, middle, bottom)
             User user = message.getUser();
             List<MessageViewHolderFactory.Position> positions = new ArrayList<>();
@@ -275,11 +273,29 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
         this.messageEntities.clear();
         this.messageEntities.addAll(entities);
         logger.logI("broadcast because messages changed");
-        broadcastValue();
+        broadcastValue(hasNewMessages, isLoadingMore, typingEntities, entities);
     }
 
-    public Boolean getHasNewMessages() {
-        return hasNewMessages;
+    @Override
+    public void observe(@NonNull LifecycleOwner owner,
+                        @NonNull Observer<? super MessageListItemWrapper> observer) {
+        super.observe(owner, observer);
+        this.lifecycleOwner = owner;
+
+        this.reads.observe(owner, this::onReadsChanged);
+        this.messages.observe(owner, this::onMessagesChanged);
+        this.threadMessages.observe(owner, threadMessagesObserver);
+        this.typing.observe(owner, this::onTypingChanged);
+    }
+
+    @Override
+    public void observeForever(@NonNull Observer<? super MessageListItemWrapper> observer) {
+        super.observeForever(observer);
+
+        this.reads.observeForever(this::onReadsChanged);
+        this.messages.observeForever(this::onMessagesChanged);
+        this.threadMessages.observeForever(threadMessagesObserver);
+        this.typing.observeForever(this::onTypingChanged);
     }
 
     public void setThreadMessages(@NotNull LiveData<List<Message>> threadMessages) {

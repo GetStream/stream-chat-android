@@ -62,7 +62,6 @@ android {
         all {
             it.java.srcDir "src/$it.name/kotlin"
         }
-        main.java.srcDirs += 'src/main/kotlinX'
     }
 
     kotlinOptions {

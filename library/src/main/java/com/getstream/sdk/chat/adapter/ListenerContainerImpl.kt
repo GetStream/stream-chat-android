@@ -1,10 +1,10 @@
 package com.getstream.sdk.chat.adapter
 
-import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
@@ -12,20 +12,21 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 internal class ListenerContainerImpl(
-    messageClickListener: MessageListView.MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
-    messageLongClickListener: MessageListView.MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
-    attachmentClickListener: MessageListView.AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
-    reactionViewClickListener: MessageListView.ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
-    userClickListener: MessageListView.UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
-    readStateClickListener: MessageListView.ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
-    giphySendListener: MessageListView.GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM)
+    messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
+    messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
+    messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
+    attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
+    reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
+    userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
+    readStateClickListener: ReadStateClickListener = ReadStateClickListener(EmptyFunctions.ONE_PARAM),
+    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.TWO_PARAM)
 ) : ListenerContainer {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Unit = { _ -> Unit }
         val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> Unit }
     }
 
-    override var messageClickListener: MessageListView.MessageClickListener by ListenerDelegate(
+    override var messageClickListener: MessageClickListener by ListenerDelegate(
         messageClickListener
     ) { realListener ->
         MessageClickListener { message ->
@@ -33,7 +34,7 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var messageLongClickListener: MessageListView.MessageLongClickListener by ListenerDelegate(
+    override var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
         messageLongClickListener
     ) { realListener ->
         MessageLongClickListener { message ->
@@ -41,7 +42,15 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var attachmentClickListener: MessageListView.AttachmentClickListener by ListenerDelegate(
+    override var messageRetryListener: MessageRetryListener by ListenerDelegate(
+        messageRetryListener
+    ) { realListener ->
+        MessageRetryListener { message ->
+            realListener().onRetryMessage(message)
+        }
+    }
+
+    override var attachmentClickListener: AttachmentClickListener by ListenerDelegate(
         attachmentClickListener
     ) { realListener ->
         AttachmentClickListener { message, attachment ->
@@ -49,7 +58,7 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var reactionViewClickListener: MessageListView.ReactionViewClickListener by ListenerDelegate(
+    override var reactionViewClickListener: ReactionViewClickListener by ListenerDelegate(
         reactionViewClickListener
     ) { realListener ->
         ReactionViewClickListener { message ->
@@ -57,7 +66,7 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var userClickListener: MessageListView.UserClickListener by ListenerDelegate(
+    override var userClickListener: UserClickListener by ListenerDelegate(
         userClickListener
     ) { realListener ->
         UserClickListener { user ->
@@ -65,7 +74,7 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var readStateClickListener: MessageListView.ReadStateClickListener by ListenerDelegate(
+    override var readStateClickListener: ReadStateClickListener by ListenerDelegate(
         readStateClickListener
     ) { realListener ->
         ReadStateClickListener { reads ->
@@ -73,7 +82,7 @@ internal class ListenerContainerImpl(
         }
     }
 
-    override var giphySendListener: MessageListView.GiphySendListener by ListenerDelegate(
+    override var giphySendListener: GiphySendListener by ListenerDelegate(
         giphySendListener
     ) { realListener ->
         GiphySendListener { message, action ->

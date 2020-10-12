@@ -2,13 +2,19 @@ package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.createMessage
 import com.getstream.sdk.chat.utils.livedata.TestObserver
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
+import com.nhaarman.mockitokotlin2.times
+import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import org.amshove.kluent.any
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
@@ -103,4 +109,55 @@ class MessageListItemLiveDataTests {
             item is MessageListItem.MessageItem && item.message == newThreadMessage
         } shouldBeEqualTo true
     }
+
+    @Test
+    fun `When the user is the only one typing, no broadcast is made`() {
+        val testObserver: Observer<MessageListItemWrapper> = mock()
+
+        val typing = MutableLiveData<List<User>>()
+
+        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
+
+        typing.postValue(listOf(currentUser))
+
+        verify(testObserver, never()).onChanged(any())
+    }
+
+    @Test
+    fun `When the other users are typing, the state must be updated`() {
+        val testObserver: Observer<MessageListItemWrapper> = mock()
+
+        val typing = MutableLiveData<List<User>>()
+
+        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
+
+        typing.postValue(listOf(currentUser, User(id = "123")))
+
+        verify(testObserver).onChanged(any())
+    }
+
+    @Test
+    fun `When other users stop typing, this should be propagated`() {
+        val testObserver: Observer<MessageListItemWrapper> = mock()
+
+        val typing = MutableLiveData<List<User>>()
+
+        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
+
+        typing.postValue(listOf(currentUser, User(id = "123")))
+        typing.postValue(listOf(currentUser))
+        typing.postValue(listOf(currentUser))
+        typing.postValue(listOf(currentUser))
+
+        verify(testObserver, times(2)).onChanged(any())
+    }
+
+    private fun onlyTypingMessageListItemLiveData(user: User, typingLiveData: MutableLiveData<List<User>>) =
+        MessageListItemLiveData(
+            currentUser,
+            MutableLiveData(),
+            MutableLiveData(),
+            typingLiveData,
+            MutableLiveData()
+        )
 }

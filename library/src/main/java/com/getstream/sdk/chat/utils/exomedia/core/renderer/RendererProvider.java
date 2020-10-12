@@ -62,7 +62,7 @@ public class RendererProvider {
     protected VideoRendererEventListener videoRendererEventListener;
 
     @Nullable
-    protected DrmSessionManager<FrameworkMediaCrypto> drmSessionManager;
+    protected DrmSessionManager drmSessionManager;
     protected int droppedFrameNotificationAmount = 50;
     protected int videoJoiningTimeMs = 5_000;
 
@@ -76,7 +76,7 @@ public class RendererProvider {
         this.videoRendererEventListener = videoRendererEventListener;
     }
 
-    public void setDrmSessionManager(@Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager) {
+    public void setDrmSessionManager(@Nullable DrmSessionManager drmSessionManager) {
         this.drmSessionManager = drmSessionManager;
     }
 
@@ -103,7 +103,7 @@ public class RendererProvider {
     @NonNull
     protected List<Renderer> buildAudioRenderers() {
         List<Renderer> renderers = new ArrayList<>();
-        renderers.add(new MediaCodecAudioRenderer(context, MediaCodecSelector.DEFAULT, drmSessionManager, true, handler, audioRendererEventListener, AudioCapabilities.getCapabilities(context)));
+        renderers.add(new MediaCodecAudioRenderer(context, MediaCodecSelector.DEFAULT, handler, audioRendererEventListener, AudioCapabilities.getCapabilities(context)));
 
         // Adds any registered classes
         List<String> classNames = ExoMedia.Data.registeredRendererClasses.get(ExoMedia.RendererType.AUDIO);
@@ -127,7 +127,7 @@ public class RendererProvider {
     protected List<Renderer> buildVideoRenderers() {
         List<Renderer> renderers = new ArrayList<>();
 
-        renderers.add(new MediaCodecVideoRenderer(context, MediaCodecSelector.DEFAULT, videoJoiningTimeMs, drmSessionManager, false, handler, videoRendererEventListener, droppedFrameNotificationAmount));
+        renderers.add(new MediaCodecVideoRenderer(context, MediaCodecSelector.DEFAULT, videoJoiningTimeMs, handler, videoRendererEventListener, droppedFrameNotificationAmount));
 
         // Adds any registered classes
         List<String> classNames = ExoMedia.Data.registeredRendererClasses.get(ExoMedia.RendererType.VIDEO);

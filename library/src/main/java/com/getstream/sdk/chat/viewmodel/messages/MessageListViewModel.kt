@@ -5,7 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
-import com.getstream.sdk.chat.exhaustive
+import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
@@ -75,6 +75,9 @@ class MessageListViewModel @JvmOverloads constructor(
             is Event.GiphyActionSelected -> {
                 onGiphyActionSelected(event)
             }
+            is Event.RetryMessage -> {
+                domain.useCases.sendMessage(event.message).enqueue()
+            }
         }.exhaustive
     }
 
@@ -143,6 +146,7 @@ class MessageListViewModel @JvmOverloads constructor(
         data class DeleteMessage(val message: Message) : Event()
         data class FlagMessage(val message: Message) : Event()
         data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
+        data class RetryMessage(val message: Message) : Event()
     }
 
     sealed class Mode {
