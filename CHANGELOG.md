@@ -1,4 +1,6 @@
 # To be released:
+- Update LLC to version 1.16.6
+- Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 
 - Significant performance improvements to offline storage
 - Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps

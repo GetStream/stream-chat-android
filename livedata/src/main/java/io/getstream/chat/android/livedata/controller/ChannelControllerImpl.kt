@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.controller
 
+import NEVER
 import android.webkit.MimeTypeMap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -66,15 +67,17 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import wasCreatedAfter
+import wasCreatedBeforeOrAt
 import java.io.File
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-const val KEY_MESSAGE_ACTION = "image_action"
-const val MESSAGE_ACTION_SHUFFLE = "shuffle"
-const val MESSAGE_ACTION_SEND = "send"
+private const val KEY_MESSAGE_ACTION = "image_action"
+private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
+private const val MESSAGE_ACTION_SEND = "send"
 
 class ChannelControllerImpl(
     override var channelType: String,
@@ -109,9 +112,10 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
-            .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
-            .sortedBy { it.createdAt }
-            .toList().map { it.copy() }
+            .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+            .sortedBy { it.createdAt ?: it.createdLocallyAt }
+            .toList()
+            .map { it.copy() }
     }
 
     /** the number of people currently watching the channel */
@@ -186,7 +190,7 @@ class ChannelControllerImpl(
     val channelController = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
-    val job = SupervisorJob()
+    private val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
@@ -199,7 +203,7 @@ class ChannelControllerImpl(
             .also { scope.launch { it.watch() } }
     }
 
-    fun getConfig(): Config {
+    private fun getConfig(): Config {
         return domainImpl.getChannelConfig(channelType)
     }
 
@@ -239,12 +243,12 @@ class ChannelControllerImpl(
         val messages = sortedMessages()
         if (messages.isNotEmpty()) {
             val last = messages.last()
-            val lastMessageDate = last.createdAt
+            val lastMessageDate = last.createdAt ?: last.createdLocallyAt
 
             if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
                 lastMarkReadEvent = lastMessageDate
                 val userRead = ChannelUserRead(domainImpl.currentUser).apply {
-                    lastRead = last.createdAt
+                    lastRead = last.createdAt ?: last.createdLocallyAt
                 }
                 _read.postValue(userRead)
                 client.markMessageRead(channelType, channelId, last.id).execute()
@@ -254,23 +258,23 @@ class ChannelControllerImpl(
         return Result(false, null)
     }
 
-    fun sortedMessages(): List<Message> {
+    private fun sortedMessages(): List<Message> {
         // sorted ascending order, so the oldest messages are at the beginning of the list
         var messages = emptyList<Message>()
         _messages.value?.let { mapOfMessages ->
             messages = mapOfMessages.values
-                .sortedBy { it.createdAt }
-                .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
         }
         return messages
     }
 
-    fun removeMessagesBefore(t: Date) {
+    private fun removeMessagesBefore(date: Date) {
         val copy = _messages.value ?: mutableMapOf()
         // start off empty
         _messages.postValue(mutableMapOf())
         // call upsert with the messages that are recent
-        val recentMessages = copy.values.filter { it.createdAt!! > t }
+        val recentMessages = copy.values.filter { it.wasCreatedAfter(date) }
         upsertMessages(recentMessages)
     }
 
@@ -463,7 +467,7 @@ class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
-        newMessage.createdAt = newMessage.createdAt ?: Date()
+        newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
@@ -752,7 +756,7 @@ class ChannelControllerImpl(
         upsertMessages(listOf(message))
     }
 
-    fun upsertEventMessage(message: Message) {
+    private fun upsertEventMessage(message: Message) {
         // make sure we don't lose ownReactions
         getMessage(message.id)?.let {
             message.ownReactions = it.ownReactions
@@ -765,10 +769,11 @@ class ChannelControllerImpl(
         var message = copy[messageId]
 
         if (hideMessagesBefore != null) {
-            if (message != null && message.createdAt!! <= hideMessagesBefore) {
+            if (message != null && message.wasCreatedBeforeOrAt(hideMessagesBefore)) {
                 message = null
             }
         }
+
         return message
     }
 
@@ -780,8 +785,8 @@ class ChannelControllerImpl(
             val oldMessage = copy[message.id]
             var outdated = false
             if (oldMessage != null) {
-                val oldTime = oldMessage.updatedAt?.time ?: 0
-                val newTime = message.updatedAt?.time ?: 0
+                val oldTime = oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
+                val newTime = message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
                 outdated = oldTime > newTime
             }
             if (!outdated) {
@@ -1057,7 +1062,7 @@ class ChannelControllerImpl(
 
     fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
         setHidden(c.entity.hidden)
-        hideMessagesBefore = c.entity.hideMessagesBefore
+        c.entity.hideMessagesBefore?.let { hideMessagesBefore = it }
         updateLiveDataFromChannel(c.channel)
     }
 
@@ -1198,7 +1203,7 @@ class ChannelControllerImpl(
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
         if (messages.isNotEmpty()) {
-            channel.lastMessageAt = messages.last().createdAt
+            channel.lastMessageAt = messages.last().let { it.createdAt ?: it.createdLocallyAt }
         }
 
         return channel

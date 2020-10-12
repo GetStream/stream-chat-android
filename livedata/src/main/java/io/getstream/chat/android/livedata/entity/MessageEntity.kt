@@ -41,8 +41,12 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
 
     /** when the message was created */
     var createdAt: Date? = null
+    /** when the message was created locally */
+    var createdLocallyAt: Date? = null
     /** when the message was updated */
     var updatedAt: Date? = null
+    /** when the message was updated locally */
+    var updatedLocallyAt: Date? = null
     /** when the message was deleted */
     var deletedAt: Date? = null
 

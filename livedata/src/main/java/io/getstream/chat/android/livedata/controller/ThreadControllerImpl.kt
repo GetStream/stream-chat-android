@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import wasCreatedAfterOrAt
 
 class ThreadControllerImpl(
     override val threadId: String,
@@ -31,11 +32,11 @@ class ThreadControllerImpl(
         addSource(threadMessages) { postValue(value.plus(it)) }
         addSource(channelMessages) { postValue(value.plus(it)) }
     }
-    override val messages = Transformations.map(mediatorLiveData) {
-        it.values
-            .sortedBy { message -> message.createdAt }
-            .filter { message -> channelControllerImpl.hideMessagesBefore == null || message.createdAt!! > channelControllerImpl.hideMessagesBefore }
-    }
+    override val messages =
+        Transformations.map(mediatorLiveData) {
+            it.values.sortedBy { m -> m.createdAt }
+                .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore) }
+        }
 
     private val _loadingOlderMessages = MutableLiveData(false)
     override val loadingOlderMessages: LiveData<Boolean> = _loadingOlderMessages
@@ -74,7 +75,7 @@ class ThreadControllerImpl(
                 ?.values
                 ?.asSequence()
                 ?.filter { it.parentId == threadId }
-                ?.sortedBy { it.createdAt }
+                ?.sortedBy { it.createdAt ?: it.createdLocallyAt }
                 ?.firstOrNull()
                 ?.let { loadMessages(client.getRepliesMore(threadId, it.id, limit), limit) }
                 ?: watch(limit)
