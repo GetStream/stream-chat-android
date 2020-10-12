@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
@@ -614,7 +613,7 @@ class ChatDomainImpl private constructor(
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelPaginationRequest
-    ): ChannelEntityPair? {
+    ): Channel? {
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
@@ -622,7 +621,7 @@ class ChatDomainImpl private constructor(
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelsPaginationRequest
-    ): ChannelEntityPair? {
+    ): Channel? {
         val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
         return channelStates.getOrNull(0)
     }
@@ -630,14 +629,14 @@ class ChatDomainImpl private constructor(
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: QueryChannelsPaginationRequest
-    ): List<ChannelEntityPair> {
+    ): List<Channel> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
-    ): List<ChannelEntityPair> {
+    ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
         val channelMessagesMap = if (pagination.messageLimit > 0) {
@@ -653,7 +652,7 @@ class ChatDomainImpl private constructor(
         val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
 
         // convert the channels
-        val channelPairs = mutableListOf<ChannelEntityPair>()
+        val channels = mutableListOf<Channel>()
         for (channelEntity in channelEntities) {
             val channel = channelEntity.toChannel(userMap)
             // get the config we have stored offline
@@ -665,11 +664,9 @@ class ChatDomainImpl private constructor(
                 channel.messages = messages
             }
 
-            val channelPair = ChannelEntityPair(channel, channelEntity)
-
-            channelPairs.add(channelPair)
+            channels.add(channel)
         }
-        return channelPairs.toList().applyPagination(pagination)
+        return channels.toList().applyPagination(pagination)
     }
 
     override fun clean() {

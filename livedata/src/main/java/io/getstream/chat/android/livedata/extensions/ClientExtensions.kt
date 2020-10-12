@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -104,14 +103,14 @@ fun ChatError.isPermanent(): Boolean {
     return isPermanent
 }
 
-internal fun Collection<ChannelEntityPair>.applyPagination(pagination: AnyChannelPaginationRequest): List<ChannelEntityPair> =
+internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
     sortedWith(pagination.sort.comparator).drop(pagination.channelOffset).take(pagination.channelLimit)
 
-internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
+internal val QuerySort.comparator: Comparator<in Channel>
     get() =
-        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<ChannelEntityPair> })
+        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
 
-internal val Map<String, Any>.comparator: Comparator<in ChannelEntityPair>?
+internal val Map<String, Any>.comparator: Comparator<in Channel>?
     get() =
         (this["field"] as? String)?.let { fieldName ->
             (this["direction"] as? Int)?.let { sortDirection ->
@@ -121,11 +120,11 @@ internal val Map<String, Any>.comparator: Comparator<in ChannelEntityPair>?
             }
         }
 
-internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<ChannelEntityPair>? =
+internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<Channel>? =
     this?.let { compareProperty ->
         Comparator { c0, c1 ->
-            (compareProperty.getter.call(c0.channel) as? Comparable<Any>)?.let { a ->
-                (compareProperty.getter.call(c1.channel) as? Comparable<Any>)?.let { b ->
+            (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
+                (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
                     a.compareTo(b) * sortDirection
                 }
             } ?: EQUAL_ON_COMPARISON

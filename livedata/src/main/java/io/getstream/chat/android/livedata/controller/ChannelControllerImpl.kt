@@ -50,7 +50,6 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
@@ -396,18 +395,17 @@ class ChannelControllerImpl(
     }
 
     suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
-        val channelPair = domainImpl.selectAndEnrichChannel(cid, pagination)
+        val selectedChannel = domainImpl.selectAndEnrichChannel(cid, pagination)
 
-        channelPair?.let {
-            val channel = it.channel
-            it.channel.config = domainImpl.getChannelConfig(it.channel.type)
+        selectedChannel?.also { channel ->
+            channel.config = domainImpl.getChannelConfig(channel.type)
             _loading.postValue(false)
 
-            updateLiveDataFromChannelEntityPair(it)
+            updateLiveDataFromLocalChannel(channel)
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-        return channelPair?.channel
+        return selectedChannel
     }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
@@ -1037,10 +1035,10 @@ class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
-        setHidden(c.entity.hidden)
-        c.entity.hideMessagesBefore?.let { hideMessagesBefore = it }
-        updateLiveDataFromChannel(c.channel)
+    internal fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+        localChannel.hidden?.let(::setHidden)
+        hideMessagesBefore = localChannel.hiddenMessagesBefore
+        updateLiveDataFromChannel(localChannel)
     }
 
     fun updateLiveDataFromChannel(c: Channel) {

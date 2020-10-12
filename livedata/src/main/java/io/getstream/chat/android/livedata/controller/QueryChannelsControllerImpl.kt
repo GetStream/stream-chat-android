@@ -122,13 +122,12 @@ class QueryChannelsControllerImpl(
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-            val channelPairs = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
-            for (p in channelPairs) {
-                val channelRepo = domainImpl.channel(p.channel)
-                channelRepo.updateLiveDataFromChannelEntityPair(p)
+            channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
+            for (p in channels) {
+                val channelRepo = domainImpl.channel(p)
+                channelRepo.updateLiveDataFromLocalChannel(p)
             }
-            channels = channelPairs.map { it.channel }
-            logger.logI("found ${channelPairs.size} channels in offline storage")
+            logger.logI("found ${channels.size} channels in offline storage")
         }
 
         if (channels != null) {
