@@ -1,4 +1,6 @@
 # To be released:
+- Update LLC to version 1.16.6
+- Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 
 - Add setting attachment data even if attachment upload failed
 
