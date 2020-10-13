@@ -559,6 +559,10 @@ public class MessageListView extends ConstraintLayout {
                 && passedTime < 3000;
     }
 
+    public void scrollToBottom() {
+        layoutManager.scrollToPosition(adapter.getItemCount() - 1);
+    }
+
     /**
      * Sets the message click listener to be used by MessageListView.
      *
