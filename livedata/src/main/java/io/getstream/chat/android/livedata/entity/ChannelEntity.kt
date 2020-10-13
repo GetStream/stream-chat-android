@@ -95,7 +95,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
 
-        c.members = members.values.map { it.toMember(userMap) }
+        c.members = members.values.mapNotNull { it.toMember(userMap) }
 
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
 
