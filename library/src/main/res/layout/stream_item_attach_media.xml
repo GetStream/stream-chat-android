@@ -66,7 +66,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:ellipsize="end"
-            android:maxLines="5"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"

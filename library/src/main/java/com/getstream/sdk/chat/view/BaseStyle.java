@@ -6,14 +6,15 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.TypedValue;
 
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.style.TextStyle;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.annotation.DrawableRes;
+import androidx.annotation.IntegerRes;
 import androidx.core.content.ContextCompat;
+
+import com.getstream.sdk.chat.R;
+import com.getstream.sdk.chat.style.TextStyle;
 
 public class BaseStyle {
 
@@ -79,6 +80,10 @@ public class BaseStyle {
 
     protected final int getColor(@ColorRes int color) {
         return ContextCompat.getColor(context, color);
+    }
+
+    protected final int getInteger(@IntegerRes int intRes) {
+        return context.getResources().getInteger(intRes);
     }
 
     protected final Drawable getDrawable(@DrawableRes int drawable) {
