@@ -113,17 +113,10 @@ class ChannelControllerImpl(
         messageMap.values
             .asSequence()
             .filter { it.parentId == null || it.showInChannel }
-<<<<<<< HEAD
             .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
             .sortedBy { it.createdAt ?: it.createdLocallyAt }
             .toList()
             .map { it.copy() }
-=======
-            .filter { hideMessagesBefore == null || it.createdAt!! > hideMessagesBefore }
-            .sortedBy { it.createdAt }
-            .map { it.copy() }
-            .toList()
->>>>>>> Tests and implementation when need to update url
     }
 
     /** the number of people currently watching the channel */
