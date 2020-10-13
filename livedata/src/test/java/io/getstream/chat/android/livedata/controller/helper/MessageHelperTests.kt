@@ -36,21 +36,78 @@ internal class MessageHelperTests {
     }
 
     @Test
-    fun `If old messages contains the same id and old url is still valid Should return list with new message with old url`() {
-        val oldValidUrl = "oldValidUrl"
-        val oldAttachment = randomAttachment { url = oldValidUrl }
+    fun `If old messages contains the same id and old url is null to new url Should return list with new message`() {
+        val oldAttachment = randomAttachment { imageUrl = null }
+        val newAttachment = oldAttachment.copy(imageUrl = "imageUrl")
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
-            attachments = mutableListOf(oldAttachment.copy(url = "SomeNewUrl")),
+            attachments = mutableListOf(newAttachment),
             updatedAt = Date(2000L)
         )
-        When calling attachmentHelper.hasValidUrl(oldAttachment) doReturn true
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
 
         result.size shouldBeEqualTo 1
         result.any { message ->
-            message.cid == message.cid && message.updatedAt!!.time == 2000L && message.attachments.first().url == "oldValidUrl"
+            message.updatedAt == Date(2000L) &&
+                message.attachments.first() == newAttachment
+        } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `If old messages contains the same id and old url is equal to new url Should return list with new message`() {
+        val oldAttachment = randomAttachment { imageUrl = "imageUrl" }
+        val newAttachment = oldAttachment.copy(name = "otherName")
+        val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
+        val newMessage = oldMessage.copy(
+            attachments = mutableListOf(newAttachment),
+            updatedAt = Date(2000L)
+        )
+
+        val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
+
+        result.size shouldBeEqualTo 1
+        result.any { message ->
+            message.updatedAt == Date(2000L) &&
+                message.attachments.first() == newAttachment
+        } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `If old messages contains the same id and old url is not valid Should return list with new attachment`() {
+        val oldNotValidUrl = "oldNotValidUrl"
+        val oldAttachment = randomAttachment { imageUrl = oldNotValidUrl }
+        val newAttachment = oldAttachment.copy(imageUrl = "SomeNewUrl")
+        val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
+        val newMessage = oldMessage.copy(
+            attachments = mutableListOf(newAttachment),
+            updatedAt = Date(2000L)
+        )
+        When calling attachmentHelper.hasValidImageUrl(oldAttachment) doReturn false
+
+        val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
+
+        result.size shouldBeEqualTo 1
+        result.any { message -> message.attachments.first() === newAttachment } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `If old messages contains the same id and old url is still valid Should return list with new message with old url`() {
+        val oldValidUrl = "oldValidUrl"
+        val oldAttachment = randomAttachment { imageUrl = oldValidUrl }
+        val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
+        val newMessage = oldMessage.copy(
+            attachments = mutableListOf(oldAttachment.copy(imageUrl = "SomeNewUrl")),
+            updatedAt = Date(2000L)
+        )
+        When calling attachmentHelper.hasValidImageUrl(oldAttachment) doReturn true
+
+        val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
+
+        result.size shouldBeEqualTo 1
+        result.any { message ->
+            message.cid == message.cid && message.updatedAt!!.time == 2000L &&
+                message.attachments.first().imageUrl == "oldValidUrl"
         } shouldBeEqualTo true
     }
 }

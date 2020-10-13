@@ -22,7 +22,7 @@ import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.entity.UserEntity
 import java.io.File
-import java.util.*
+import java.util.Date
 import kotlin.random.Random
 
 private val fixture = JFixture()
@@ -256,5 +256,5 @@ fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
             Attachment.UploadState::class.java,
             Attachment.UploadState.Success
         )
-    }<Attachment>().apply(attachmentBuilder)
+    } <Attachment>().apply(attachmentBuilder)
 }
