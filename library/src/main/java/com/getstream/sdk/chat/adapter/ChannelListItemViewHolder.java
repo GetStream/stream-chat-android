@@ -19,9 +19,9 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarView;
+import com.getstream.sdk.chat.view.ReadStateView;
 import com.getstream.sdk.chat.view.channels.ChannelListView;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
-import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -228,9 +228,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void applyStyle(Channel channel) {
-        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.size);
-        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
+        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.getSize());
+        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.getSize());
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.getSize());
 
         User currentUser = ChatDomain.instance().getCurrentUser();
         String currentUserId = currentUser.getId();
@@ -253,7 +253,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         style.lastMessageDateText.apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.color);
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.getColor());
     }
 
     protected void applyUnreadStyle() {
@@ -264,7 +264,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         style.lastMessageDateUnreadText.apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessageUnread.color);
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessageUnread.getColor());
     }
 
 }
