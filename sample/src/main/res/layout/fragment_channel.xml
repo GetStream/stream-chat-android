@@ -27,6 +27,7 @@
         app:streamNewMessagesTextSingle="@string/new_messages_single"
         app:streamNewMessagesTextPlural="@string/new_messages_plural"
         app:streamNewMessagesBehaviour="count_new_messages"
+        app:streamButtonEnabled="false"
         app:streamButtonIcon="@drawable/stream_bottom_arrow"
         />
 

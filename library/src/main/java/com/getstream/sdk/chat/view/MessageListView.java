@@ -67,6 +67,7 @@ public class MessageListView extends ConstraintLayout {
 
     private RecyclerView messagesRV;
     private ConstraintLayout unseenBottomBtn;
+    boolean unseenButtonEnabled;
     private TextView newMessagesTextTV;
     private int lastViewedPosition = 0;
     private String newMessagesTextSingle;
@@ -236,7 +237,8 @@ public class MessageListView extends ConstraintLayout {
                         unseenBottomBtn,
                         newMessagesTextTV,
                         newMessagesTextSingle,
-                        newMessagesTextPlural
+                        newMessagesTextPlural,
+                        unseenButtonEnabled
                 );
     }
 
@@ -277,7 +279,15 @@ public class MessageListView extends ConstraintLayout {
                 R.styleable.MessageListView_streamButtonBackground,
                 R.drawable.stream_shape_round);
 
-        unseenBottomBtn.setBackgroundResource(backgroundRes);
+        unseenButtonEnabled = tArray.getBoolean(
+                R.styleable.MessageListView_streamDefaultButtonEnabled, true);
+
+        if (unseenButtonEnabled) {
+            unseenBottomBtn.setBackgroundResource(backgroundRes);
+        } else {
+            unseenBottomBtn.setVisibility(View.GONE);
+        }
+
         newMessagesTextSingle =
                 tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
         newMessagesTextPlural =
@@ -748,7 +758,6 @@ public class MessageListView extends ConstraintLayout {
         void userScrolledToTheBottom();
 
         void onUnreadMessageCountChanged(int count);
-
     }
 
     static class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
@@ -757,6 +766,21 @@ public class MessageListView extends ConstraintLayout {
         private TextView newMessagesTextTV;
         private String newMessagesTextSingle;
         private String newMessagesTextPlural;
+        private boolean isButtonEnabled;
+
+        private DefaultScrollButtonBehaviour(
+                ViewGroup unseenBottomBtn,
+                TextView newMessagesTextTV,
+                String newMessagesTextSingle,
+                String newMessagesTextPlural,
+                boolean isButtonEnabled
+        ) {
+            this.unseenBottomBtn = unseenBottomBtn;
+            this.newMessagesTextTV = newMessagesTextTV;
+            this.newMessagesTextSingle = newMessagesTextSingle;
+            this.newMessagesTextPlural = newMessagesTextPlural;
+            this.isButtonEnabled = isButtonEnabled;
+        }
 
         public DefaultScrollButtonBehaviour(
                 ViewGroup unseenBottomBtn,
@@ -768,11 +792,12 @@ public class MessageListView extends ConstraintLayout {
             this.newMessagesTextTV = newMessagesTextTV;
             this.newMessagesTextSingle = newMessagesTextSingle;
             this.newMessagesTextPlural = newMessagesTextPlural;
+            isButtonEnabled = true;
         }
 
         @Override
         public void userScrolledUp() {
-            if (!unseenBottomBtn.isShown()) {
+            if (!unseenBottomBtn.isShown() && isButtonEnabled) {
                 unseenBottomBtn.setVisibility(View.VISIBLE);
             }
         }

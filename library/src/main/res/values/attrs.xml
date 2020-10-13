@@ -171,6 +171,7 @@
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
         <!--Scroll button-->
+        <attr name="streamDefaultButtonEnabled" format="boolean" />
         <attr name="streamButtonBackground" format="reference" />
         <attr name="streamButtonIcon" format="reference" />
         <attr name="streamNewMessagesTextSingle" format="string" />
