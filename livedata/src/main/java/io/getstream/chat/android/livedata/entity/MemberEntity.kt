@@ -37,8 +37,13 @@ data class MemberEntity(var userId: String) {
     }
 
     /** converts a member entity into a member */
-    fun toMember(userMap: Map<String, User>): Member? =
-        userMap[userId]?.let {
-            Member(it, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
-        } ?: null.also { ChatLogger.get("MemberEntity").logE("userMap is missing the user with id='$userId` needed to create this member") }
+    fun toMember(userMap: Map<String, User>): Member? {
+        val user = userMap[userId]
+        if (user == null) {
+            ChatLogger.get("MemberEntity")
+                .logE("userMap is missing the user with id='$userId` needed to create this member")
+            return null
+        }
+        return Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
+    }
 }
