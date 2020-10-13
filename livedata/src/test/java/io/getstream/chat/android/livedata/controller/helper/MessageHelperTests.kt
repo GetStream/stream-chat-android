@@ -24,15 +24,13 @@ internal class MessageHelperTests {
     }
 
     @Test
-    fun `Should return list with the same size as new messages with same messages`() {
+    fun `Should return list with same messages`() {
         val message1 = randomMessage()
         val message2 = randomMessage()
 
         val result = sut.updateValidAttachmentsUrl(listOf(message1, message2), emptyMap())
 
-        result.size shouldBeEqualTo 2
-        result.any { it === message1 } shouldBeEqualTo true
-        result.any { it === message2 } shouldBeEqualTo true
+        result shouldBeEqualTo listOf(message1, message2)
     }
 
     @Test
