@@ -12,7 +12,7 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
             return true
         }
         val timestamp = url.queryParameter(QUERY_KEY_NAME_EXPIRES)?.toLongOrNull() ?: return false
-        return timestamp > systemTimeProvider.provideTime()
+        return timestamp > systemTimeProvider.provideCurrentTimeInSeconds()
     }
 
     companion object {

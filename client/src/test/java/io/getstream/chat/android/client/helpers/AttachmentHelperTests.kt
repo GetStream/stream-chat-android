@@ -65,7 +65,7 @@ internal class AttachmentHelperTests {
     fun `When has valid image url if attachment url is valid with Expires and timestamp is greater than current time Should return true`() {
         val currentTime = 1000L
         val timeStamp = currentTime + 100L
-        When calling timeProvider.provideTime() doReturn currentTime
+        When calling timeProvider.provideCurrentTimeInSeconds() doReturn currentTime
         val attachment =
             Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
@@ -78,7 +78,7 @@ internal class AttachmentHelperTests {
     fun `When has valid image url if attachment url is valid with Expires and timestamp is less than current time Should return false`() {
         val currentTime = 1000L
         val timeStamp = currentTime - 100L
-        When calling timeProvider.provideTime() doReturn currentTime
+        When calling timeProvider.provideCurrentTimeInSeconds() doReturn currentTime
         val attachment =
             Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
