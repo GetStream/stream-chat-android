@@ -6,8 +6,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
 
-    fun hasValidUrl(attachment: Attachment): Boolean {
-        val url = attachment.url?.toHttpUrlOrNull() ?: return false
+    fun hasValidImageUrl(attachment: Attachment): Boolean {
+        val url = attachment.imageUrl?.toHttpUrlOrNull() ?: return false
         if (url.queryParameterNames.contains(QUERY_KEY_NAME_EXPIRES).not()) {
             return true
         }

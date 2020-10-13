@@ -24,65 +24,65 @@ internal class AttachmentHelperTests {
     }
 
     @Test
-    fun `When has valid url If attachment has null url Should return false`() {
-        val attachment = Mother.randomAttachment { url = null }
+    fun `When has valid image url If attachment has null url Should return false`() {
+        val attachment = Mother.randomAttachment { imageUrl = null }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo false
     }
 
     @ParameterizedTest
     @MethodSource("nonValidUrls")
-    fun `When has valid url if attachment url is not valid Should return false`(notValidUrl: String) {
-        val attachment = Mother.randomAttachment { url = notValidUrl }
+    fun `When has valid image url if attachment url is not valid Should return false`(notValidUrl: String) {
+        val attachment = Mother.randomAttachment { imageUrl = notValidUrl }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo false
     }
 
     @Test
-    fun `When has valid url if attachment url is valid without Expires Should return true`() {
-        val attachment = Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg" }
+    fun `When has valid image url if attachment url is valid without Expires Should return true`() {
+        val attachment = Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg" }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo true
     }
 
     @Test
-    fun `When has valid url if attachment url is valid with Expires and failed to parse timestamp Should return false`() {
+    fun `When has valid image url if attachment url is valid with Expires and failed to parse timestamp Should return false`() {
         val attachment =
-            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee" }
+            Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee" }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo false
     }
 
     @Test
-    fun `When has valid url if attachment url is valid with Expires and timestamp is greater than current time Should return true`() {
+    fun `When has valid image url if attachment url is valid with Expires and timestamp is greater than current time Should return true`() {
         val currentTime = 1000L
         val timeStamp = currentTime + 100L
         When calling timeProvider.provideTime() doReturn currentTime
         val attachment =
-            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
+            Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo true
     }
 
     @Test
-    fun `When has valid url if attachment url is valid with Expires and timestamp is less than current time Should return false`() {
+    fun `When has valid image url if attachment url is valid with Expires and timestamp is less than current time Should return false`() {
         val currentTime = 1000L
         val timeStamp = currentTime - 100L
         When calling timeProvider.provideTime() doReturn currentTime
         val attachment =
-            Mother.randomAttachment { url = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
+            Mother.randomAttachment { imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp" }
 
-        val result = sut.hasValidUrl(attachment)
+        val result = sut.hasValidImageUrl(attachment)
 
         result shouldBeEqualTo false
     }
