@@ -2,6 +2,8 @@
 - Update LLC to version 1.16.6
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 
+- Add setting attachment data even if attachment upload failed
+
 # Oct 7th, 2020 - 0.8.4
 - Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
 

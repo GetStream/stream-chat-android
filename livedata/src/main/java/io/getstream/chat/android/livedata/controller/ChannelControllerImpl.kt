@@ -530,38 +530,36 @@ class ChannelControllerImpl(
         attachment: Attachment,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
     ): Result<Attachment> {
-        val file = checkNotNull(attachment.upload) {
-            "upload file shouldn't be called on attachment without a attachment.upload"
-        }
+        val file =
+            checkNotNull(attachment.upload) { "upload file shouldn't be called on attachment without a attachment.upload" }
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension)
-        val attachmentType = if (mimeType.isImageMimetype()) "image" else "file"
-        val pathResult = if (attachmentType == "image") {
+        val attachmentType = if (mimeType.isImageMimetype()) {
+            TYPE_IMAGE
+        } else {
+            TYPE_FILE
+        }
+        val pathResult = if (attachmentType == TYPE_IMAGE) {
             sendImage(file)
         } else {
             sendFile(file)
         }
-        var newAttachment: Attachment
-        var uploadError: ChatError? = null
+        val url = if (pathResult.isError) null else pathResult.data()
+        val uploadState =
+            if (pathResult.isError) Attachment.UploadState.Failed(pathResult.error()) else Attachment.UploadState.Success
 
-        if (pathResult.isError) {
-            uploadError = pathResult.error()
-
-            newAttachment =
-                attachment.copy(uploadState = Attachment.UploadState.Failed(uploadError))
-        } else {
-            val uploadPath = pathResult.data()
-            newAttachment = attachment.copy(
-                name = file.name,
-                fileSize = file.length().toInt(),
-                mimeType = mimeType?.toString() ?: "",
-                url = uploadPath,
-                uploadState = Attachment.UploadState.Success,
-                type = attachmentType
-            ).apply {
-                if (attachmentType == "image") {
-                    imageUrl = uploadPath
+        var newAttachment = attachment.copy(
+            name = file.name,
+            fileSize = file.length().toInt(),
+            mimeType = mimeType ?: "",
+            url = url,
+            uploadState = uploadState,
+            type = attachmentType
+        ).apply {
+            url?.let {
+                if (attachmentType == TYPE_IMAGE) {
+                    imageUrl = it
                 } else {
-                    assetUrl = uploadPath
+                    assetUrl = it
                 }
             }
         }
@@ -571,7 +569,7 @@ class ChannelControllerImpl(
             newAttachment = attachmentTransformer(newAttachment, file)
         }
 
-        return Result(newAttachment, uploadError)
+        return Result(newAttachment, if (pathResult.isError) pathResult.error() else null)
     }
 
     /**
@@ -1197,5 +1195,10 @@ class ChannelControllerImpl(
         }
 
         return channel
+    }
+
+    companion object {
+        private const val TYPE_IMAGE = "image"
+        private const val TYPE_FILE = "file"
     }
 }
