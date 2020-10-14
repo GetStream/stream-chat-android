@@ -211,18 +211,6 @@ class EventHandlerImpl(
                         hidden = false
                     }
                 }
-                is ChannelUserBannedEvent -> {
-                    users[event.user.id] = event.user
-                }
-                is GlobalUserBannedEvent -> {
-                    users[event.user.id] = event.user.apply { banned = true }
-                }
-                is ChannelUserUnbannedEvent -> {
-                    users[event.user.id] = event.user
-                }
-                is GlobalUserUnbannedEvent -> {
-                    users[event.user.id] = event.user.apply { banned = false }
-                }
                 is NotificationMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
@@ -231,15 +219,11 @@ class EventHandlerImpl(
                 }
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
-                    users[event.user.id] = event.user
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
                     }
-                }
-                is UserUpdatedEvent -> {
-                    users[event.user.id] = event.user
                 }
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
@@ -346,43 +330,40 @@ class EventHandlerImpl(
                 }
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users[event.user.id] = event.user
                     channelMap[event.cid]?.let {
                         channels[it.cid] = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
                     }
                 }
-                is UserDeletedEvent -> {
-                    users[event.user.id] = event.user
-                }
                 is UserMutedEvent -> {
                     users[event.targetUser.id] = event.targetUser
-                    users[event.user.id] = event.user
                 }
                 is UsersMutedEvent -> {
                     event.targetUsers.forEach { users[it.id] = it }
-                    users[event.user.id] = event.user
-                }
-                is UserPresenceChangedEvent -> {
-                    users[event.user.id] = event.user
-                }
-                is UserStartWatchingEvent -> {
-                    users[event.user.id] = event.user
-                }
-                is UserStopWatchingEvent -> {
-                    users[event.user.id] = event.user
                 }
                 is UserUnmutedEvent -> {
-                    users[event.user.id] = event.user
                     users[event.targetUser.id] = event.targetUser
                 }
                 is UsersUnmutedEvent -> {
                     event.targetUsers.forEach { users[it.id] = it }
-                    users[event.user.id] = event.user
                 }
-                is TypingStartEvent, is TypingStopEvent, is HealthEvent, is ConnectingEvent, is DisconnectedEvent,
-                is ErrorEvent, is UnknownEvent -> Unit
+                is TypingStartEvent,
+                is TypingStopEvent,
+                is HealthEvent,
+                is ConnectingEvent,
+                is DisconnectedEvent,
+                is ErrorEvent,
+                is UnknownEvent,
+                is ChannelUserBannedEvent,
+                is GlobalUserBannedEvent,
+                is ChannelUserUnbannedEvent,
+                is GlobalUserUnbannedEvent,
+                is UserUpdatedEvent,
+                is UserDeletedEvent,
+                is UserPresenceChangedEvent,
+                is UserStartWatchingEvent,
+                is UserStopWatchingEvent -> Unit
             }.exhaustive
         }
         // actually insert the data
