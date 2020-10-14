@@ -8,7 +8,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-interface Call2<T> {
+interface Call2<T : Any> {
 
     @WorkerThread
     fun execute(): Result<T>
@@ -19,7 +19,7 @@ interface Call2<T> {
     fun cancel()
 }
 
-class CallImpl2<T>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) :
+class CallImpl2<T : Any>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) :
     Call2<T> {
     var canceled: Boolean = false
 
