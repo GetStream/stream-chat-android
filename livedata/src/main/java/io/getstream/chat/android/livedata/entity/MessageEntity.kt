@@ -130,7 +130,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         type = m.type
         replyCount = m.replyCount
         createdAt = m.createdAt
+        createdLocallyAt = m.createdLocallyAt
         updatedAt = m.updatedAt
+        updatedLocallyAt = m.updatedLocallyAt
         deletedAt = m.deletedAt
         parentId = m.parentId
         command = m.command
@@ -156,7 +158,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.type = type
         m.replyCount = replyCount
         m.createdAt = createdAt
+        m.createdLocallyAt = createdLocallyAt
         m.updatedAt = updatedAt
+        m.updatedLocallyAt = updatedLocallyAt
         m.deletedAt = deletedAt
         m.parentId = parentId
         m.command = command
@@ -164,11 +168,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.reactionCounts = reactionCounts ?: mutableMapOf()
         m.reactionScores = reactionScores ?: mutableMapOf()
         m.syncStatus = syncStatus ?: SyncStatus.COMPLETED
-
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
         m.mentionedUsers = mentionedUsersId.mapNotNull { userMap[it] }.toMutableList()
-
         return m
     }
 }
