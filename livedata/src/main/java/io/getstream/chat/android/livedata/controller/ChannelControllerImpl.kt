@@ -476,7 +476,7 @@ class ChannelControllerImpl(
         val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
-            it.addMessage(messageEntity)
+            it.updateLastMessageDate(messageEntity)
             domainImpl.repos.channels.insert(it)
         }
 

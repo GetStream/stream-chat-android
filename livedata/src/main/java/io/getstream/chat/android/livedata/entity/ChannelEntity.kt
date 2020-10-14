@@ -106,12 +106,8 @@ data class ChannelEntity(var type: String, var channelId: String) {
     }
 
     /** updates last message and lastmessagedate on this channel entity */
-    fun addMessage(messageEntity: MessageEntity) {
-        checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
-
-        if (lastMessageAt == null || messageEntity.createdAt!!.after(lastMessageAt)) {
-            lastMessageAt = messageEntity.createdAt
-        }
+    fun updateLastMessageDate(messageEntity: MessageEntity) {
+        lastMessageAt = max(lastMessageAt, messageEntity.createdAt ?: messageEntity.createdLocallyAt)
     }
 
     /** updates last message and lastmessagedate on this channel entity */
@@ -127,4 +123,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
             members[userId] = MemberEntity(member)
         }
     }
+
+    private fun max(date: Date?, otherDate: Date?): Date? =
+        date?.takeIf { otherDate == null || it.after(otherDate) } ?: otherDate
 }
