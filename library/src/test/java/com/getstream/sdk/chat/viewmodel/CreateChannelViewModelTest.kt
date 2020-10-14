@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createUser
+import com.getstream.sdk.chat.utils.TestCoroutineExtension
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
@@ -14,18 +15,13 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.usecase.CreateChannel
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Call2
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.shouldContainSame
-import org.junit.After
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -37,8 +33,10 @@ private val CHANNEL = createChannel(CID)
 @ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class CreateChannelViewModelTest {
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-    private val testCoroutineScope = TestCoroutineScope(testCoroutineDispatcher)
+
+    @JvmField
+    @RegisterExtension
+    val testCoroutines = TestCoroutineExtension()
 
     private val chatClient: ChatClient = mock()
     private val chatDomain: ChatDomain = mock()
@@ -57,14 +55,6 @@ internal class CreateChannelViewModelTest {
         whenever(createChannelResult.data()) doReturn CHANNEL
         whenever(createChannelResult.isError) doReturn false
         whenever(createChannelResult.isSuccess) doReturn true
-
-        Dispatchers.setMain(testCoroutineDispatcher)
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-        testCoroutineScope.cleanupTestCoroutines()
     }
 
     @ParameterizedTest
@@ -79,27 +69,42 @@ internal class CreateChannelViewModelTest {
     }
 
     @Test
-    fun `Should inform about backend error`() = testCoroutineScope.runBlockingTest {
+    fun `Should inform about backend error`() = testCoroutines.scope.runBlockingTest {
         whenever(createChannelResult.isError) doReturn true
         whenever(createChannelResult.isSuccess) doReturn false
-        val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient, ioDispatcher = testCoroutineDispatcher)
+        val viewModel = CreateChannelViewModel(
+            domain = chatDomain,
+            client = chatClient,
+            ioDispatcher = testCoroutines.dispatcher
+        )
         val states = viewModel.state.observeAll()
         val channelNameCandidate = "channel name"
         viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        states shouldContainSame listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.BackendError)
+        states shouldContainSame listOf(
+            CreateChannelViewModel.State.Loading,
+            CreateChannelViewModel.State.BackendError
+        )
     }
 
     @Test
-    fun `Should inform about channel creation success`() = testCoroutineScope.runBlockingTest {
-        val viewModel = CreateChannelViewModel(domain = chatDomain, client = chatClient, ioDispatcher = testCoroutineDispatcher)
-        val states = viewModel.state.observeAll()
-        val channelNameCandidate = "channel name"
+    fun `Should inform about channel creation success`() =
+        testCoroutines.scope.runBlockingTest {
+            val viewModel = CreateChannelViewModel(
+                domain = chatDomain,
+                client = chatClient,
+                ioDispatcher = testCoroutines.dispatcher
+            )
+            val states = viewModel.state.observeAll()
+            val channelNameCandidate = "channel name"
 
-        viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
+            viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelNameCandidate))
 
-        states shouldContainSame listOf(CreateChannelViewModel.State.Loading, CreateChannelViewModel.State.ChannelCreated)
-    }
+            states shouldContainSame listOf(
+                CreateChannelViewModel.State.Loading,
+                CreateChannelViewModel.State.ChannelCreated
+            )
+        }
 
     companion object {
         @JvmStatic
