@@ -2,13 +2,16 @@
 
 - Significant performance improvements to offline storage
 - Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps
-- Update client to 1.16.7: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.7
+
+# Oct 14th, 2020 - 0.8.5
+
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 - Update attachments of message with an old image url, if it's still valid.
 - Set attachment fields even if the file upload fails
 - Fix NPE while ChatEvent was handled
 - Improved nullability, restricted some generic type parameters to be non-nullable (set `Any` as their upper bound)
 - Fix method to store date of the last message received into a channel
+- Update client to 1.16.7: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.7
 
 # Oct 7th, 2020 - 0.8.4
 - Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
