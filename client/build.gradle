@@ -17,7 +17,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.16.6"
+        versionName "1.16.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -130,7 +130,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-client'
-                version = '1.16.7-SNAPSHOT'
+                version = '1.16.8-SNAPSHOT'
             }
         }
     }
