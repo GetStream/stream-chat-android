@@ -100,6 +100,7 @@ class EventHandlerImpl(
         // inject a null instance into property `user` that doesn't allow null values.
         // This is a workaround, while we identify which event type is, that omit null values without
         // break our public API
+        @Suppress("USELESS_CAST")
         users += events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }.associateBy(User::id)
 
         // step 1. see which data we need to retrieve from offline storage
