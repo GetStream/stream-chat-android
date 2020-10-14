@@ -354,6 +354,12 @@ class EventHandlerImpl(
                 is UsersUnmutedEvent -> {
                     event.targetUsers.forEach { users[it.id] = it }
                 }
+                is GlobalUserBannedEvent -> {
+                    users[event.user.id] = event.user.apply { banned = true }
+                }
+                is GlobalUserUnbannedEvent -> {
+                    users[event.user.id] = event.user.apply { banned = false }
+                }
                 is TypingStartEvent,
                 is TypingStopEvent,
                 is HealthEvent,
@@ -362,9 +368,7 @@ class EventHandlerImpl(
                 is ErrorEvent,
                 is UnknownEvent,
                 is ChannelUserBannedEvent,
-                is GlobalUserBannedEvent,
                 is ChannelUserUnbannedEvent,
-                is GlobalUserUnbannedEvent,
                 is UserUpdatedEvent,
                 is UserDeletedEvent,
                 is UserPresenceChangedEvent,
