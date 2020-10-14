@@ -83,11 +83,9 @@ data class ChannelEntity(var type: String, var channelId: String) {
         for (r in c.read) {
             reads[r.getUserId()] = ChannelUserReadEntity(r)
         }
-        if (c.messages.isNotEmpty()) {
-            lastMessage = MessageEntity(c.messages.last())
-            lastMessage?.let {
-                lastMessageAt = it.createdAt
-            }
+        c.messages.lastOrNull()?.let { message ->
+            lastMessage = MessageEntity(message)
+            lastMessageAt = message.createdAt
         }
         createdByUserId = c.createdBy.id
     }
