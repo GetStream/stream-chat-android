@@ -95,7 +95,12 @@ class EventHandlerImpl(
         val messagesToFetch = mutableSetOf<String>()
 
         events.filterIsInstance<CidEvent>().onEach { channelsToFetch += it.cid }
-        users += events.filterIsInstance<UserEvent>().map(UserEvent::user).associateBy(User::id)
+        // For some reason backend is not sending us the user instance into some events that they should
+        // and we are not able to identify which event type is. Gson, because it is using reflection,
+        // inject a null instance into property `user` that doesn't allow null values.
+        // This is a workaround, while we identify which event type is, that omit null values without
+        // break our public API
+        users += events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }.associateBy(User::id)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
