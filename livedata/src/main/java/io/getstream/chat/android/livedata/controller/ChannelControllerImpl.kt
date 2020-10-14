@@ -56,6 +56,7 @@ import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
@@ -463,7 +464,7 @@ class ChannelControllerImpl(
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val messageEntity = MessageEntity.newEntity(newMessage)
+        val messageEntity = MessageRepository.toEntity(newMessage)
 
         // Update livedata
         upsertMessage(newMessage)

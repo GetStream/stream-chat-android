@@ -28,6 +28,7 @@ import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -660,7 +661,7 @@ class ChatDomainImpl private constructor(
 
             if (pagination.messageLimit > 0) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
-                val messages = messageEntities.map { it.toMessage(userMap) }
+                val messages = messageEntities.map { MessageRepository.toModel(it, userMap) }
                 channel.messages = messages
             }
 

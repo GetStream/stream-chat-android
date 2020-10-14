@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
@@ -33,7 +34,7 @@ class MessageRepository(
             val message = messageDao.select(pagination.messageFilterValue)
             if (message?.createdAt == null) return listOf()
             val messageLimit = pagination.messageLimit
-            val messageTime = message.createdAt!!
+            val messageTime = message.createdAt
 
             when (pagination.messageFilterDirection) {
                 Pagination.GREATER_THAN_OR_EQUAL -> {
@@ -60,14 +61,14 @@ class MessageRepository(
             messageEntity?.let { cachedMessages.add(it) }
         }
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-        val dbMessages = messageDao.select(missingMessageIds).map { it.toMessage(usersMap) }.toMutableList()
+        val dbMessages = messageDao.select(missingMessageIds).map { toModel(it, usersMap) }.toMutableList()
 
         dbMessages.addAll(cachedMessages)
         return dbMessages
     }
 
     suspend fun select(messageId: String, usersMap: Map<String, User>): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toMessage(usersMap)
+        return messageCache[messageId] ?: messageDao.select(messageId)?.let { toModel(it, usersMap) }
     }
 
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {
@@ -82,7 +83,7 @@ class MessageRepository(
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messages.map { MessageEntity.newEntity(it) })
+        messageDao.insertMany(messages.map { toEntity(it) })
     }
 
     suspend fun insert(message: Message, cache: Boolean = false) {
@@ -101,10 +102,10 @@ class MessageRepository(
                     channel.deleteMessage(messageEntity.id).execute()
                 }
                 messageEntity.sendMessageCompletedAt != null -> {
-                    client.updateMessage(messageEntity.toMessage(userMap)).execute()
+                    client.updateMessage(toModel(messageEntity, userMap)).execute()
                 }
                 else -> {
-                    channel.sendMessage(messageEntity.toMessage(userMap)).execute()
+                    channel.sendMessage(toModel(messageEntity, userMap)).execute()
                 }
             }
 
@@ -134,5 +135,56 @@ class MessageRepository(
     suspend fun deleteChannelMessage(message: Message) {
         messageDao.deleteMessage(message.cid, message.id)
         messageCache.remove(message.id)
+    }
+
+    companion object {
+        fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
+            val message = Message()
+            message.id = id
+            message.cid = cid
+            message.user = userMap[userId]
+                ?: error("userMap doesnt contain user id $userId for message id ${message.id}")
+            message.text = text
+            message.attachments = attachments.toMutableList()
+            message.type = type
+            message.replyCount = replyCount
+            message.createdAt = createdAt
+            message.updatedAt = updatedAt
+            message.deletedAt = deletedAt
+            message.parentId = parentId
+            message.command = command
+            message.extraData = extraData.toMutableMap()
+            message.reactionCounts = reactionCounts.toMutableMap()
+            message.reactionScores = reactionScores.toMutableMap()
+            message.syncStatus = syncStatus ?: SyncStatus.COMPLETED
+
+            message.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
+            message.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
+            message.mentionedUsers = mentionedUsersId.mapNotNull { userMap[it] }.toMutableList()
+
+            message
+        }
+
+        fun toEntity(model: Message) = MessageEntity(
+            id = model.id, cid = model.cid, userId = model.user.id,
+            text = model.text,
+            attachments = model.attachments,
+            syncStatus = model.syncStatus ?: SyncStatus.COMPLETED,
+            type = model.type,
+            replyCount = model.replyCount,
+            createdAt = model.createdAt,
+            updatedAt = model.updatedAt,
+            deletedAt = model.deletedAt,
+            parentId = model.parentId,
+            command = model.command,
+            extraData = model.extraData,
+            reactionCounts = model.reactionCounts ?: mutableMapOf(),
+            reactionScores = model.reactionScores ?: mutableMapOf(),
+            sendMessageCompletedAt = if (model.syncStatus == SyncStatus.COMPLETED) Date() else null,
+            // for these we need a little map,
+            latestReactions = (model.latestReactions.map { ReactionEntity(it) }).toMutableList(),
+            ownReactions = (model.ownReactions.map { ReactionEntity(it) }).toMutableList(),
+            mentionedUsersId = (model.mentionedUsers.map { it.id }).toMutableList()
+        )
     }
 }
