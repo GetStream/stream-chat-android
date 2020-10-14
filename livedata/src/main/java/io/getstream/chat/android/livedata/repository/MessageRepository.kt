@@ -82,7 +82,7 @@ class MessageRepository(
                 messageCache.put(m.id, m)
             }
         }
-        messageDao.insertMany(messages.map(::MessageEntity))
+        messageDao.insertMany(messages.map { MessageEntity.newEntity(it) })
     }
 
     suspend fun insert(message: Message, cache: Boolean = false) {
@@ -110,13 +110,14 @@ class MessageRepository(
 
             if (result.isSuccess) {
                 // TODO: 1.1 image upload support
-                messageEntity.syncStatus = SyncStatus.COMPLETED
-                messageEntity.sendMessageCompletedAt = messageEntity.sendMessageCompletedAt
-                    ?: Date()
-                messageDao.insert(messageEntity)
+                messageDao.insert(
+                    messageEntity.copy(
+                        syncStatus = SyncStatus.COMPLETED,
+                        sendMessageCompletedAt = messageEntity.sendMessageCompletedAt ?: Date()
+                    )
+                )
             } else if (result.isError && result.error().isPermanent()) {
-                messageEntity.syncStatus = SyncStatus.FAILED_PERMANENTLY
-                messageDao.insert(messageEntity)
+                messageDao.insert(messageEntity.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
             }
         }
 

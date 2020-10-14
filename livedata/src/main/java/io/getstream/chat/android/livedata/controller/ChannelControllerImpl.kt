@@ -463,7 +463,7 @@ class ChannelControllerImpl(
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val messageEntity = MessageEntity(newMessage)
+        val messageEntity = MessageEntity.newEntity(newMessage)
 
         // Update livedata
         upsertMessage(newMessage)

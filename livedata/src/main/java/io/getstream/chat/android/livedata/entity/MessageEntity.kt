@@ -17,84 +17,75 @@ import java.util.Date
  * messageEntity.toMessage()
  */
 @Entity(tableName = "stream_chat_message")
-data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
-
+data class MessageEntity(
+    @PrimaryKey
+    val id: String,
+    val cid: String,
+    val userId: String,
     /** the message text */
-    var text: String = ""
-
+    val text: String = "",
     /** the list of attachments */
-    var attachments: MutableList<Attachment> = mutableListOf()
-
+    val attachments: List<Attachment> = emptyList(),
     /** message type can be system, regular or ephemeral */
-    var type: String = ""
-
+    val type: String = "",
     /** if the message has been synced to the servers, default is synced */
-    var syncStatus: SyncStatus = SyncStatus.COMPLETED
-
+    val syncStatus: SyncStatus = SyncStatus.COMPLETED,
     /** tracks when send message was completed */
-    var sendMessageCompletedAt: Date? = null
-
+    val sendMessageCompletedAt: Date? = null,
     /** the number of replies */
-    var replyCount = 0
-
+    val replyCount: Int = 0,
     /** when the message was created */
-    var createdAt: Date? = null
+    val createdAt: Date? = null,
     /** when the message was created locally */
-    var createdLocallyAt: Date? = null
+    val createdLocallyAt: Date? = null,
     /** when the message was updated */
-    var updatedAt: Date? = null
+    val updatedAt: Date? = null,
     /** when the message was updated locally */
-    var updatedLocallyAt: Date? = null
+    val updatedLocallyAt: Date? = null,
     /** when the message was deleted */
-    var deletedAt: Date? = null
-
+    val deletedAt: Date? = null,
     /** the last 5 reactions on this message */
-    var latestReactions: MutableList<ReactionEntity> = mutableListOf()
-
+    val latestReactions: List<ReactionEntity> = emptyList(),
     /** the reactions from the current user */
-    var ownReactions: MutableList<ReactionEntity> = mutableListOf()
-
+    val ownReactions: List<ReactionEntity> = emptyList(),
     /** the users mentioned in this message */
-    var mentionedUsersId: MutableList<String> = mutableListOf()
-
+    val mentionedUsersId: List<String> = emptyList(),
     /** a mapping between reaction type and the count, ie like:10, heart:4 */
-    var reactionCounts: MutableMap<String, Int> = mutableMapOf()
-
+    val reactionCounts: Map<String, Int> = emptyMap(),
     /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
-    var reactionScores: MutableMap<String, Int> = mutableMapOf()
-
+    val reactionScores: Map<String, Int> = emptyMap(),
     /** parent id, used for threads */
-    var parentId: String? = null
-
+    val parentId: String? = null,
     /** slash command like /giphy etc */
-    var command: String? = null
-
+    val command: String? = null,
     /** all the custom data provided for this message */
-    var extraData = mutableMapOf<String, Any>()
-
-    /** create a messageEntity from a message object */
-    constructor(m: Message) : this(m.id, m.cid, m.user.id) {
-        text = m.text
-        attachments = m.attachments
-        syncStatus = m.syncStatus ?: SyncStatus.COMPLETED
-        type = m.type
-        replyCount = m.replyCount
-        createdAt = m.createdAt
-        createdLocallyAt = m.createdLocallyAt
-        updatedAt = m.updatedAt
-        updatedLocallyAt = m.updatedLocallyAt
-        deletedAt = m.deletedAt
-        parentId = m.parentId
-        command = m.command
-        extraData = m.extraData
-        reactionCounts = m.reactionCounts ?: mutableMapOf()
-        reactionScores = m.reactionScores ?: mutableMapOf()
-        sendMessageCompletedAt = if (m.syncStatus == SyncStatus.COMPLETED) Date() else null
-
-        // for these we need a little map
-        latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList()
-        ownReactions = (m.ownReactions.map { ReactionEntity(it) }).toMutableList()
-        mentionedUsersId = (m.mentionedUsers.map { it.id }).toMutableList()
+    val extraData: Map<String, Any> = emptyMap()
+) {
+    companion object {
+        /** create a messageEntity from a message object */
+        fun newEntity(m: Message) = MessageEntity(
+            id = m.id, cid = m.cid, userId = m.user.id,
+            text = m.text,
+            attachments = m.attachments,
+            syncStatus = m.syncStatus ?: SyncStatus.COMPLETED,
+            type = m.type,
+            replyCount = m.replyCount,
+            createdAt = m.createdAt,
+            createdLocallyAt = m.createdLocallyAt,
+            updatedAt = m.updatedAt,
+            updatedLocallyAt = m.updatedLocallyAt,
+            deletedAt = m.deletedAt,
+            parentId = m.parentId,
+            command = m.command,
+            extraData = m.extraData,
+            reactionCounts = m.reactionCounts ?: mutableMapOf(),
+            reactionScores = m.reactionScores ?: mutableMapOf(),
+            sendMessageCompletedAt = if (m.syncStatus == SyncStatus.COMPLETED) Date() else null,
+            // for these we need a little map,
+            latestReactions = (m.latestReactions.map { ReactionEntity(it) }).toMutableList(),
+            ownReactions = (m.ownReactions.map { ReactionEntity(it) }).toMutableList(),
+            mentionedUsersId = (m.mentionedUsers.map { it.id }).toMutableList()
+        )
     }
 
     /** converts a message entity into a message object */
@@ -105,7 +96,7 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.user = userMap[userId]
             ?: error("userMap doesnt contain user id $userId for message id ${m.id}")
         m.text = text
-        m.attachments = attachments
+        m.attachments = attachments.toMutableList()
         m.type = type
         m.replyCount = replyCount
         m.createdAt = createdAt
@@ -115,9 +106,9 @@ data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId
         m.deletedAt = deletedAt
         m.parentId = parentId
         m.command = command
-        m.extraData = extraData
-        m.reactionCounts = reactionCounts ?: mutableMapOf()
-        m.reactionScores = reactionScores ?: mutableMapOf()
+        m.extraData = extraData.toMutableMap()
+        m.reactionCounts = reactionCounts.toMutableMap()
+        m.reactionScores = reactionScores.toMutableMap()
         m.syncStatus = syncStatus ?: SyncStatus.COMPLETED
         m.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
         m.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()

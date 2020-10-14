@@ -226,8 +226,9 @@ fun randomChannelEntityPair(
 fun randomMessageEntity(
     id: String = randomString(),
     cid: String = randomCID(),
-    userId: String = randomString()
-) = MessageEntity(id, cid, userId)
+    userId: String = randomString(),
+    latestReactions: List<ReactionEntity> = emptyList()
+) = MessageEntity(id = id, cid = cid, userId = userId, latestReactions = latestReactions)
 
 fun randomReactionEntity(
     messageId: String = randomString(),

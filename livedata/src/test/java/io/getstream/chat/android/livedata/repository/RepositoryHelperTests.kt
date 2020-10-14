@@ -67,11 +67,14 @@ internal class RepositoryHelperTests {
         val messageUserId2 = "messageUserId2"
         val reactionUserId1 = "reactionUserId1"
         val reactionUserId2 = "reactionUserId2"
-        val message1 = randomMessageEntity(cid = cid, userId = messageUserId1).apply {
-            latestReactions.addAll(
-                listOf(randomReactionEntity(userId = reactionUserId1), randomReactionEntity(userId = reactionUserId2))
+        val message1 = randomMessageEntity(
+            cid = cid,
+            userId = messageUserId1,
+            latestReactions = listOf(
+                randomReactionEntity(userId = reactionUserId1),
+                randomReactionEntity(userId = reactionUserId2)
             )
-        }
+        )
         val message2 = randomMessageEntity(cid = cid, userId = messageUserId2)
         val messageMap = mapOf(cid to listOf(message1, message2))
 
