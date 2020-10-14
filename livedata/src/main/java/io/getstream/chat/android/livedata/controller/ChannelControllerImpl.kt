@@ -1193,9 +1193,7 @@ class ChannelControllerImpl(
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
-        if (messages.isNotEmpty()) {
-            channel.lastMessageAt = messages.last().let { it.createdAt ?: it.createdLocallyAt }
-        }
+        channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
 
         return channel
     }
