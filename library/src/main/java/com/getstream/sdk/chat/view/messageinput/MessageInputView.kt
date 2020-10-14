@@ -166,8 +166,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.messageTextInput.onFocusChangeListener =
             OnFocusChangeListener { _: View?, hasFocus: Boolean ->
                 if (hasFocus) {
-                    Utils.showSoftKeyboard(context as Activity)
-                } else Utils.hideSoftKeyboard(context as Activity)
+                    Utils.showSoftKeyboard(this)
+                } else {
+                    Utils.hideSoftKeyboard(this)
+                }
                 if (!isKeyboardEventListenerInitialized) {
                     isKeyboardEventListenerInitialized = true
                     setKeyboardEventListener()
@@ -204,7 +206,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             GridLayoutManager(context, 1, RecyclerView.HORIZONTAL, false)
         binding.btnClose.setOnClickListener {
             messageInputController.onClickCloseAttachmentSelectionMenu()
-            Utils.hideSoftKeyboard(context as Activity)
+            Utils.hideSoftKeyboard(this)
         }
         binding.selectMedia.setOnClickListener { messageInputController.onClickOpenMediaSelectView() }
         binding.selectCamera.setOnClickListener { messageInputController.onCameraClick() }
