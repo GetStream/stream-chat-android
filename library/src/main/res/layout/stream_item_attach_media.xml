@@ -52,6 +52,7 @@
         app:layout_constraintEnd_toEndOf="@+id/iv_media_thumb"
         app:layout_constraintStart_toStartOf="@+id/iv_media_thumb"
         app:layout_constraintTop_toBottomOf="@+id/iv_media_thumb">
+
         <TextView
             android:id="@+id/tv_media_title"
             android:layout_width="match_parent"
@@ -63,9 +64,10 @@
             android:id="@+id/tv_media_des"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:ellipsize="end"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:layout_marginBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/tv_media_title"
             app:layout_constraintStart_toStartOf="@+id/tv_media_title"

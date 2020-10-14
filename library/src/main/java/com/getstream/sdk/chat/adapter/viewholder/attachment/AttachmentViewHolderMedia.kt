@@ -36,6 +36,10 @@ class AttachmentViewHolderMedia(
 
     private lateinit var attachment: Attachment
 
+    init {
+        binding.tvMediaDes.maxLines = style.attachmentPreviewMaxLines
+    }
+
     override fun bind(attachmentListItem: AttachmentListItem) {
         attachment = attachmentListItem.attachment
 

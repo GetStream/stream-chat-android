@@ -347,6 +347,7 @@
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>
         </attr>
+        <attr name="streamAttachmentPreviewMaxLines" format="integer"/>
 
         <attr name="streamThreadEnabled" format="boolean"/>
         <!--Date Separator-->
