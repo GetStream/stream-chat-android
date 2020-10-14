@@ -138,7 +138,7 @@ afterEvaluate {
                 // Custom attributes of the publication
                 groupId = project.group
                 artifactId = 'stream-chat-android-livedata'
-                version = '0.8.6-SNAPSHOT'
+                version = '0.8.7-SNAPSHOT'
             }
         }
     }

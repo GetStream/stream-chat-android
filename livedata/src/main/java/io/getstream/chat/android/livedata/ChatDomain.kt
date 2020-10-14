@@ -108,9 +108,11 @@ interface ChatDomain {
 
         fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
             // TODO: Consider exposing apiKey and userToken by ChatClient to make this function more friendly
-            this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
             if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
-                throw IllegalArgumentException("ChatDomain.Builder::backgroundSyncEnabled. apiKey and user.id, and userToken must not be empty.")
+                this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+                throw IllegalArgumentException("ChatDomain.Builder::backgroundSyncEnabled. apiKey, user.id, and userToken must not be empty.")
+            } else {
+                this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
             }
             return this
         }
@@ -151,8 +153,10 @@ interface ChatDomain {
         }
 
         fun build(): ChatDomain {
-            storeBackgroundSyncConfig(backgroundSyncConfig)
-            storeNotificationConfig(notificationConfig)
+            if (offlineEnabled) {
+                storeBackgroundSyncConfig(backgroundSyncConfig)
+                storeNotificationConfig(notificationConfig)
+            }
             instance = buildImpl()
             return instance
         }
