@@ -1,4 +1,6 @@
 # To be released:
+- Removed many internal implementation classes and methods from the SDK's public API
+- Improved nullability, restricted many generic type parameters to be non-nullable (set `Any` as their upper bound)
 
 - Use AttachmentsHelper to validate imageUrl instead of just url.
 

@@ -8,7 +8,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 
-class CustomObjectAdapterTest {
+internal class CustomObjectAdapterTest {
     private val parser = ChatParserImpl()
 
     @Test

@@ -21,7 +21,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
-class MessagesApiCallsTests {
+internal class MessagesApiCallsTests {
 
     lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient

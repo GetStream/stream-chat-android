@@ -2,13 +2,13 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.errors.ChatError
 
-data class Result<T>(
+public data class Result<T : Any>(
     private val data: T?,
     private val error: ChatError?
 ) {
 
-    constructor(data: T) : this(data, null)
-    constructor(error: ChatError) : this(null, error)
+    public constructor(data: T) : this(data, null)
+    public constructor(error: ChatError) : this(null, error)
 
     val isSuccess: Boolean
         get() = data != null
@@ -16,13 +16,11 @@ data class Result<T>(
     val isError: Boolean
         get() = error != null
 
-    fun data(): T {
-        if (data == null) throw IllegalStateException("Result is not successful. Check result.isSuccess before getting data: result.data()")
-        return data
+    public fun data(): T {
+        return checkNotNull(data) { "Result is not successful. Check result.isSuccess before reading the data." }
     }
 
-    fun error(): ChatError {
-        if (error == null) throw IllegalStateException("Result is successful, no error. Check result.isSuccess before getting error: result.error()")
-        return error
+    public fun error(): ChatError {
+        return checkNotNull(error) { "Result is successful, not an error. Check result.isSuccess before reading the error." }
     }
 }

@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.notifications.handler
 
 import io.getstream.chat.android.client.R
 
-data class NotificationConfig(
+public data class NotificationConfig(
     val notificationChannelId: Int = R.string.stream_chat_notification_channel_id,
     val notificationChannelName: Int = R.string.stream_chat_notification_channel_name,
     val smallIcon: Int = R.drawable.stream_ic_notification,

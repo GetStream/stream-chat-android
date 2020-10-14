@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class Config(
+public data class Config(
     @SerializedName("created_at")
     var created_at: Date? = null,
 

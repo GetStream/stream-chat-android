@@ -1,5 +1,5 @@
 package io.getstream.chat.android.client.api.models
 
-data class MarkReadRequest(
+internal data class MarkReadRequest(
     val message_id: String
 )

@@ -17,78 +17,78 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
-interface ChannelController {
+public interface ChannelController {
 
-    val channelType: String
-    val channelId: String
-    val cid: String
+    public val channelType: String
+    public val channelId: String
+    public val cid: String
 
-    fun create(extraData: Map<String, Any> = emptyMap()): Call<Channel>
-    fun create(members: List<String>, extraData: Map<String, Any> = emptyMap()): Call<Channel>
-    fun query(request: QueryChannelRequest): Call<Channel>
-    fun watch(request: WatchChannelRequest): Call<Channel>
-    fun watch(): Call<Channel>
-    fun stopWatching(): Call<Unit>
-    fun sendMessage(message: Message): Call<Message>
-    fun updateMessage(message: Message): Call<Message>
-    fun deleteMessage(messageId: String): Call<Message>
-    fun getMessage(messageId: String): Call<Message>
-    fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>
-    fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit>
-    fun markMessageRead(messageId: String): Call<Unit>
-    fun markRead(): Call<Unit>
-    fun delete(): Call<Channel>
-    fun show(): Call<Unit>
-    fun hide(clearHistory: Boolean = false): Call<Unit>
-    fun sendFile(file: File): Call<String>
-    fun sendImage(file: File): Call<String>
-    fun sendFile(file: File, callback: ProgressCallback): Call<String>
-    fun sendImage(file: File, callback: ProgressCallback): Call<String>
-    fun sendReaction(reaction: Reaction): Call<Reaction>
-    fun sendAction(request: SendActionRequest): Call<Message>
-    fun deleteReaction(messageId: String, reactionType: String): Call<Message>
-    fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
-    fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
+    public fun create(extraData: Map<String, Any> = emptyMap()): Call<Channel>
+    public fun create(members: List<String>, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+    public fun query(request: QueryChannelRequest): Call<Channel>
+    public fun watch(request: WatchChannelRequest): Call<Channel>
+    public fun watch(): Call<Channel>
+    public fun stopWatching(): Call<Unit>
+    public fun sendMessage(message: Message): Call<Message>
+    public fun updateMessage(message: Message): Call<Message>
+    public fun deleteMessage(messageId: String): Call<Message>
+    public fun getMessage(messageId: String): Call<Message>
+    public fun banUser(targetId: String, reason: String, timout: Int): Call<Unit>
+    public fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit>
+    public fun markMessageRead(messageId: String): Call<Unit>
+    public fun markRead(): Call<Unit>
+    public fun delete(): Call<Channel>
+    public fun show(): Call<Unit>
+    public fun hide(clearHistory: Boolean = false): Call<Unit>
+    public fun sendFile(file: File): Call<String>
+    public fun sendImage(file: File): Call<String>
+    public fun sendFile(file: File, callback: ProgressCallback): Call<String>
+    public fun sendImage(file: File, callback: ProgressCallback): Call<String>
+    public fun sendReaction(reaction: Reaction): Call<Reaction>
+    public fun sendAction(request: SendActionRequest): Call<Message>
+    public fun deleteReaction(messageId: String, reactionType: String): Call<Message>
+    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>>
+    public fun getReactions(messageId: String, firstReactionId: String, limit: Int): Call<List<Message>>
 
     @Deprecated(
         message = "Use subscribe() on the controller directly instead",
         level = DeprecationLevel.WARNING
     )
-    fun events(): ChatObservable
+    public fun events(): ChatObservable
 
-    fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
 
-    fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Disposable
 
-    fun subscribeFor(
+    public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
 
-    fun subscribeForSingle(eventType: String, listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribeForSingle(eventType: String, listener: (event: ChatEvent) -> Unit): Disposable
 
-    fun <T : ChatEvent> subscribeForSingle(
+    public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
     ): Disposable
 
-    fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
-    fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel>
-    fun disableSlowMode(): Call<Channel>
-    fun addMembers(vararg userIds: String): Call<Channel>
-    fun removeMembers(vararg userIds: String): Call<Channel>
-    fun acceptInvite(message: String): Call<Channel>
-    fun rejectInvite(): Call<Channel>
-    fun mute(): Call<Unit>
-    fun unmute(): Call<Unit>
-    fun muteCurrentUser(): Call<Mute>
-    fun muteUser(userId: String): Call<Mute>
-    fun unmuteUser(userId: String): Call<Mute>
-    fun unmuteCurrentUser(): Call<Mute>
-    fun watch(data: Map<String, Any>): Call<Channel>
-    fun stopTyping(): Call<ChatEvent>
-    fun keystroke(): Call<ChatEvent>
-    fun queryMembers(
+    public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel>
+    public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel>
+    public fun disableSlowMode(): Call<Channel>
+    public fun addMembers(vararg userIds: String): Call<Channel>
+    public fun removeMembers(vararg userIds: String): Call<Channel>
+    public fun acceptInvite(message: String): Call<Channel>
+    public fun rejectInvite(): Call<Channel>
+    public fun mute(): Call<Unit>
+    public fun unmute(): Call<Unit>
+    public fun muteCurrentUser(): Call<Mute>
+    public fun muteUser(userId: String): Call<Mute>
+    public fun unmuteUser(userId: String): Call<Mute>
+    public fun unmuteCurrentUser(): Call<Mute>
+    public fun watch(data: Map<String, Any>): Call<Channel>
+    public fun stopTyping(): Call<ChatEvent>
+    public fun keystroke(): Call<ChatEvent>
+    public fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,

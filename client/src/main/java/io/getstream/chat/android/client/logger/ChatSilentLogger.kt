@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.logger
 
 import io.getstream.chat.android.client.errors.ChatError
 
-class ChatSilentLogger : ChatLogger {
+internal class ChatSilentLogger : ChatLogger {
 
     override fun getLevel(): ChatLogLevel {
         return ChatLogLevel.NOTHING

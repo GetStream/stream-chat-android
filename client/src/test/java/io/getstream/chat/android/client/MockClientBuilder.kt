@@ -23,7 +23,7 @@ import java.util.Date
  * Used for integrations tests.
  * Initialises mock internals of [ChatClientImpl]
  */
-class MockClientBuilder {
+internal class MockClientBuilder {
 
     val userId = "test-id"
     val connectionId = "connection-id"

@@ -5,7 +5,11 @@ import io.getstream.chat.android.client.utils.Result
 
 internal object ZipCall {
 
-    fun <A, B, C> zip(callA: Call<A>, callB: Call<B>, callC: Call<C>): Call<Triple<A, B, C>> {
+    fun <A : Any, B : Any, C : Any> zip(
+        callA: Call<A>,
+        callB: Call<B>,
+        callC: Call<C>
+    ): Call<Triple<A, B, C>> {
         return object : ChatCallImpl<Triple<A, B, C>>() {
             override fun execute(): Result<Triple<A, B, C>> {
                 val resultA = callA.execute()
@@ -50,7 +54,7 @@ internal object ZipCall {
         }
     }
 
-    fun <A, B> zip(callA: Call<A>, callB: Call<B>): Call<Pair<A, B>> {
+    fun <A : Any, B : Any> zip(callA: Call<A>, callB: Call<B>): Call<Pair<A, B>> {
         return object : ChatCallImpl<Pair<A, B>>() {
             override fun execute(): Result<Pair<A, B>> {
                 val resultA = callA.execute()
@@ -85,14 +89,14 @@ internal object ZipCall {
         }
     }
 
-    private fun <A, B> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
+    private fun <A : Any, B : Any> getErrorA(resultA: Result<A>): Result<Pair<A, B>> {
         return Result(
             null,
             ChatError("Error executing callA", resultA.error().cause)
         )
     }
 
-    private fun <A, B> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
+    private fun <A : Any, B : Any> getErrorB(resultB: Result<B>): Result<Pair<A, B>> {
         return Result(
             null,
             ChatError("Error executing callB", resultB.error().cause)

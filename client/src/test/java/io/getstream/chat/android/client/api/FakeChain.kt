@@ -8,7 +8,7 @@ import okhttp3.Request
 import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
-class FakeChain(vararg val response: FakeResponse) : Interceptor.Chain {
+internal class FakeChain(vararg val response: FakeResponse) : Interceptor.Chain {
 
     var chainIndex = 0
 

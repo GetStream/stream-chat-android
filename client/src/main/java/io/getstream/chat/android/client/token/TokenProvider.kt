@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.token
 
 import androidx.annotation.WorkerThread
 
-interface TokenProvider {
+public interface TokenProvider {
     @WorkerThread
-    fun loadToken(): String
+    public fun loadToken(): String
 }

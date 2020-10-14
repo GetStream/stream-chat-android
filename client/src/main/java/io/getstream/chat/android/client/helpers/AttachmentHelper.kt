@@ -4,9 +4,9 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.SystemTimeProvider
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
-class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
+public class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = SystemTimeProvider()) {
 
-    fun hasValidImageUrl(attachment: Attachment): Boolean {
+    public fun hasValidImageUrl(attachment: Attachment): Boolean {
         val url = attachment.imageUrl?.toHttpUrlOrNull() ?: return false
         if (url.queryParameterNames.contains(QUERY_KEY_NAME_EXPIRES).not()) {
             return true
@@ -15,7 +15,7 @@ class AttachmentHelper(private val systemTimeProvider: SystemTimeProvider = Syst
         return timestamp > systemTimeProvider.provideCurrentTimeInSeconds()
     }
 
-    companion object {
-        private const val QUERY_KEY_NAME_EXPIRES = "Expires"
+    private companion object {
+        const val QUERY_KEY_NAME_EXPIRES = "Expires"
     }
 }

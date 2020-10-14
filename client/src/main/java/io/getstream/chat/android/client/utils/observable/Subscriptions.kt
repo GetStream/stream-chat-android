@@ -2,9 +2,9 @@ package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.events.ChatEvent
 
-interface Disposable {
-    val isDisposed: Boolean
-    fun dispose()
+public interface Disposable {
+    public val isDisposed: Boolean
+    public fun dispose()
 }
 
 internal interface EventSubscription : Disposable {

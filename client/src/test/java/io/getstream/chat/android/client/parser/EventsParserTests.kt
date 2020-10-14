@@ -13,7 +13,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
-class EventsParserTests {
+internal class EventsParserTests {
 
     private val socket = Mockito.mock(WebSocket::class.java)
     private lateinit var eventsCollector: MutableList<ChatEvent>

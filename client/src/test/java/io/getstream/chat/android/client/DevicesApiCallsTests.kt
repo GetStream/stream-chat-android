@@ -12,7 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
 
-class DevicesApiCallsTests {
+internal class DevicesApiCallsTests {
 
     lateinit var mock: MockClientBuilder
     lateinit var client: ChatClient

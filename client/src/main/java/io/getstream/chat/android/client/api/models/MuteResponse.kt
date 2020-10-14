@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 
-data class MuteResponse(
+internal data class MuteResponse(
     @SerializedName("own_user")
     val user: User,
     @SerializedName("channel_mute")

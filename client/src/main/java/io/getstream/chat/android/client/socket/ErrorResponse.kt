@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import com.google.gson.annotations.SerializedName
 
-data class ErrorResponse(
+public data class ErrorResponse(
     val code: Int = -1,
     var message: String = "",
     @SerializedName("StatusCode")

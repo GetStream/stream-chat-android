@@ -10,20 +10,20 @@ import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import java.util.Date
 
-sealed class ChatEvent {
-    abstract val type: String
-    abstract val createdAt: Date
+public sealed class ChatEvent {
+    public abstract val type: String
+    public abstract val createdAt: Date
 }
 
-sealed class CidEvent : ChatEvent() {
-    abstract val cid: String
+public sealed class CidEvent : ChatEvent() {
+    public abstract val cid: String
 }
 
-interface UserEvent {
-    val user: User
+public interface UserEvent {
+    public val user: User
 }
 
-data class ChannelCreatedEvent(
+public data class ChannelCreatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -34,7 +34,7 @@ data class ChannelCreatedEvent(
     val channel: Channel
 ) : CidEvent(), UserEvent
 
-data class ChannelDeletedEvent(
+public data class ChannelDeletedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -44,7 +44,7 @@ data class ChannelDeletedEvent(
     val user: User?
 ) : CidEvent()
 
-data class ChannelHiddenEvent(
+public data class ChannelHiddenEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -54,19 +54,19 @@ data class ChannelHiddenEvent(
     @SerializedName("clear_history") val clearHistory: Boolean
 ) : CidEvent()
 
-data class ChannelMuteEvent(
+public data class ChannelMuteEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     @SerializedName("mute") val channelMute: ChannelMute
 ) : ChatEvent()
 
-data class ChannelsMuteEvent(
+public data class ChannelsMuteEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     @SerializedName("mutes") val channelsMute: List<ChannelMute>
 ) : ChatEvent()
 
-data class ChannelTruncatedEvent(
+public data class ChannelTruncatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -76,19 +76,19 @@ data class ChannelTruncatedEvent(
     val channel: Channel
 ) : CidEvent(), UserEvent
 
-data class ChannelUnmuteEvent(
+public data class ChannelUnmuteEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     @SerializedName("mute") val channelMute: ChannelMute
 ) : ChatEvent()
 
-data class ChannelsUnmuteEvent(
+public data class ChannelsUnmuteEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     @SerializedName("mutes") val channelsMute: List<ChannelMute>
 ) : ChatEvent()
 
-data class ChannelUpdatedEvent(
+public data class ChannelUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -98,7 +98,7 @@ data class ChannelUpdatedEvent(
     val channel: Channel
 ) : CidEvent()
 
-data class ChannelUpdatedByUserEvent(
+public data class ChannelUpdatedByUserEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -109,7 +109,7 @@ data class ChannelUpdatedByUserEvent(
     val channel: Channel
 ) : CidEvent(), UserEvent
 
-data class ChannelVisibleEvent(
+public data class ChannelVisibleEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -118,13 +118,13 @@ data class ChannelVisibleEvent(
     override val user: User
 ) : CidEvent(), UserEvent
 
-data class HealthEvent(
+public data class HealthEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     @SerializedName("connection_id") val connectionId: String
 ) : ChatEvent()
 
-data class MemberAddedEvent(
+public data class MemberAddedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -134,7 +134,7 @@ data class MemberAddedEvent(
     val member: Member
 ) : CidEvent(), UserEvent
 
-data class MemberRemovedEvent(
+public data class MemberRemovedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -143,7 +143,7 @@ data class MemberRemovedEvent(
     @SerializedName("channel_id") val channelId: String
 ) : CidEvent(), UserEvent
 
-data class MemberUpdatedEvent(
+public data class MemberUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -153,7 +153,7 @@ data class MemberUpdatedEvent(
     val member: Member
 ) : CidEvent(), UserEvent
 
-data class MessageDeletedEvent(
+public data class MessageDeletedEvent(
     override val type: String,
     @SerializedName("deleted_at") override val createdAt: Date,
     override val user: User,
@@ -164,7 +164,7 @@ data class MessageDeletedEvent(
     @SerializedName("watcher_count") val watcherCount: Int?
 ) : CidEvent(), UserEvent
 
-data class MessageReadEvent(
+public data class MessageReadEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -174,7 +174,7 @@ data class MessageReadEvent(
     @SerializedName("watcher_count") val watcherCount: Int?
 ) : CidEvent(), UserEvent
 
-data class MessageUpdatedEvent(
+public data class MessageUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -185,7 +185,7 @@ data class MessageUpdatedEvent(
     @SerializedName("watcher_count") val watcherCount: Int?
 ) : CidEvent(), UserEvent
 
-data class NewMessageEvent(
+public data class NewMessageEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -198,7 +198,7 @@ data class NewMessageEvent(
     @SerializedName("unread_channels") val unreadChannels: Int?
 ) : CidEvent(), UserEvent
 
-data class NotificationAddedToChannelEvent(
+public data class NotificationAddedToChannelEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -207,7 +207,7 @@ data class NotificationAddedToChannelEvent(
     val channel: Channel
 ) : CidEvent()
 
-data class NotificationChannelDeletedEvent(
+public data class NotificationChannelDeletedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -217,13 +217,13 @@ data class NotificationChannelDeletedEvent(
     val user: User?
 ) : CidEvent()
 
-data class NotificationChannelMutesUpdatedEvent(
+public data class NotificationChannelMutesUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     val me: User
 ) : ChatEvent()
 
-data class NotificationChannelTruncatedEvent(
+public data class NotificationChannelTruncatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -233,7 +233,7 @@ data class NotificationChannelTruncatedEvent(
     val channel: Channel
 ) : CidEvent(), UserEvent
 
-data class NotificationInviteAcceptedEvent(
+public data class NotificationInviteAcceptedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -243,7 +243,7 @@ data class NotificationInviteAcceptedEvent(
     val member: Member
 ) : CidEvent(), UserEvent
 
-data class NotificationInvitedEvent(
+public data class NotificationInvitedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -253,7 +253,7 @@ data class NotificationInvitedEvent(
     val member: Member
 ) : CidEvent(), UserEvent
 
-data class NotificationMarkReadEvent(
+public data class NotificationMarkReadEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -265,7 +265,7 @@ data class NotificationMarkReadEvent(
     @SerializedName("unread_channels") val unreadChannels: Int?
 ) : CidEvent(), UserEvent
 
-data class NotificationMessageNewEvent(
+public data class NotificationMessageNewEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -278,13 +278,13 @@ data class NotificationMessageNewEvent(
     @SerializedName("unread_channels") val unreadChannels: Int?
 ) : CidEvent(), UserEvent
 
-data class NotificationMutesUpdatedEvent(
+public data class NotificationMutesUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     val me: User
 ) : ChatEvent()
 
-data class NotificationRemovedFromChannelEvent(
+public data class NotificationRemovedFromChannelEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -293,7 +293,7 @@ data class NotificationRemovedFromChannelEvent(
     @SerializedName("channel_id") val channelId: String
 ) : CidEvent(), UserEvent
 
-data class ReactionDeletedEvent(
+public data class ReactionDeletedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -304,7 +304,7 @@ data class ReactionDeletedEvent(
     val reaction: Reaction
 ) : CidEvent(), UserEvent
 
-data class ReactionNewEvent(
+public data class ReactionNewEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -315,7 +315,7 @@ data class ReactionNewEvent(
     val reaction: Reaction
 ) : CidEvent(), UserEvent
 
-data class ReactionUpdateEvent(
+public data class ReactionUpdateEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -326,7 +326,7 @@ data class ReactionUpdateEvent(
     val reaction: Reaction
 ) : CidEvent(), UserEvent
 
-data class TypingStartEvent(
+public data class TypingStartEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -335,7 +335,7 @@ data class TypingStartEvent(
     @SerializedName("channel_id") val channelId: String
 ) : CidEvent(), UserEvent
 
-data class TypingStopEvent(
+public data class TypingStopEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -344,7 +344,7 @@ data class TypingStopEvent(
     @SerializedName("channel_id") val channelId: String
 ) : CidEvent(), UserEvent
 
-data class ChannelUserBannedEvent(
+public data class ChannelUserBannedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -354,39 +354,39 @@ data class ChannelUserBannedEvent(
     val expiration: Date?
 ) : CidEvent(), UserEvent
 
-data class GlobalUserBannedEvent(
+public data class GlobalUserBannedEvent(
     override val type: String,
     override val user: User,
     @SerializedName("created_at") override val createdAt: Date
 ) : ChatEvent(), UserEvent
 
-data class UserDeletedEvent(
+public data class UserDeletedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User
 ) : ChatEvent(), UserEvent
 
-data class UserMutedEvent(
+public data class UserMutedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
     @SerializedName("target_user") val targetUser: User
 ) : ChatEvent(), UserEvent
 
-data class UsersMutedEvent(
+public data class UsersMutedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
     @SerializedName("target_users") val targetUsers: List<User>
 ) : ChatEvent(), UserEvent
 
-data class UserPresenceChangedEvent(
+public data class UserPresenceChangedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User
 ) : ChatEvent(), UserEvent
 
-data class UserStartWatchingEvent(
+public data class UserStartWatchingEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -396,7 +396,7 @@ data class UserStartWatchingEvent(
     override val user: User
 ) : CidEvent(), UserEvent
 
-data class UserStopWatchingEvent(
+public data class UserStopWatchingEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val cid: String,
@@ -406,7 +406,7 @@ data class UserStopWatchingEvent(
     override val user: User
 ) : CidEvent(), UserEvent
 
-data class ChannelUserUnbannedEvent(
+public data class ChannelUserUnbannedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
@@ -415,56 +415,56 @@ data class ChannelUserUnbannedEvent(
     @SerializedName("channel_id") val channelId: String
 ) : CidEvent(), UserEvent
 
-data class GlobalUserUnbannedEvent(
+public data class GlobalUserUnbannedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User
 ) : ChatEvent(), UserEvent
 
-data class UserUnmutedEvent(
+public data class UserUnmutedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
     @SerializedName("target_user") val targetUser: User
 ) : ChatEvent(), UserEvent
 
-data class UsersUnmutedEvent(
+public data class UsersUnmutedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
     @SerializedName("target_users") val targetUsers: List<User>
 ) : ChatEvent(), UserEvent
 
-data class UserUpdatedEvent(
+public data class UserUpdatedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User
 ) : ChatEvent(), UserEvent
 
-data class ConnectedEvent(
+public data class ConnectedEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     val me: User,
     @SerializedName("connection_id") val connectionId: String
 ) : ChatEvent()
 
-data class ConnectingEvent(
+public data class ConnectingEvent(
     override val type: String,
     override val createdAt: Date
 ) : ChatEvent()
 
-data class DisconnectedEvent(
+public data class DisconnectedEvent(
     override val type: String,
     override val createdAt: Date
 ) : ChatEvent()
 
-data class ErrorEvent(
+public data class ErrorEvent(
     override val type: String,
     override val createdAt: Date,
     val error: ChatError
 ) : ChatEvent()
 
-data class UnknownEvent(
+public data class UnknownEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     val rawData: Map<*, *>

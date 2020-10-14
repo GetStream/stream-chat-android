@@ -1,10 +1,10 @@
 package io.getstream.chat.android.client.models
 
-interface CustomObject {
-    var extraData: MutableMap<String, Any>
+public interface CustomObject {
+    public var extraData: MutableMap<String, Any>
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> getExtraValue(key: String, default: T): T {
+    public fun <T> getExtraValue(key: String, default: T): T {
         return if (extraData.containsKey(key)) {
             extraData[key] as T
         } else {
@@ -12,7 +12,7 @@ interface CustomObject {
         }
     }
 
-    fun putExtraValue(key: String, value: Any) {
+    public fun putExtraValue(key: String, value: Any) {
         extraData[key] = value
     }
 }

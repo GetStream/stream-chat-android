@@ -12,11 +12,11 @@ private val resClass = ResClass()
  * Loads files under /resources directory
  * [path] "/model.member.json"
  */
-fun loadResource(path: String): String {
+internal fun loadResource(path: String): String {
     return convert(resClass.javaClass.getResourceAsStream(path))
 }
 
-fun convert(inputStream: InputStream): String {
+internal fun convert(inputStream: InputStream): String {
     BufferedReader(InputStreamReader(inputStream, Charset.defaultCharset())).use { br ->
         return br.lines().collect(Collectors.joining(System.lineSeparator()))
     }

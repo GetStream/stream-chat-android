@@ -8,7 +8,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RetroError<T>(val statusCode: Int) : Call<T> {
+internal class RetroError<T>(val statusCode: Int) : Call<T> {
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }

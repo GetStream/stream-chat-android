@@ -10,7 +10,6 @@ import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
-import io.getstream.chat.android.client.bitmaps.BitmapsLoaderImpl
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
@@ -23,14 +22,18 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-internal open class BaseChatModule(val appContext: Context, val config: ChatClientConfig) {
+internal open class BaseChatModule(
+    private val appContext: Context,
+    private val config: ChatClientConfig
+) {
 
     private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser by lazy { ChatParserImpl() }
-    private val defaultNotifications by lazy { buildNotification(config.notificationsHandler, api()) }
+    private val defaultNotifications by lazy {
+        buildNotification(config.notificationsHandler, api())
+    }
     private val defaultApi by lazy { buildApi(config, parser()) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
-    private val bitmapsLoader = BitmapsLoaderImpl(config.notificationsHandler.context)
 
     //region Modules
 
@@ -60,7 +63,7 @@ internal open class BaseChatModule(val appContext: Context, val config: ChatClie
         handler: ChatNotificationHandler,
         api: ChatApi
     ): ChatNotifications {
-        return ChatNotifications.create(handler, api, handler.context)
+        return ChatNotifications.create(handler, api, appContext)
     }
 
     private fun buildRetrofit(

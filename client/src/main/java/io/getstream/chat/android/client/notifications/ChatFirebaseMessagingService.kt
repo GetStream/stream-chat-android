@@ -5,7 +5,7 @@ import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogger
 
-class ChatFirebaseMessagingService : FirebaseMessagingService() {
+internal class ChatFirebaseMessagingService : FirebaseMessagingService() {
     private val logger = ChatLogger.get("ChatFirebaseMessagingService")
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

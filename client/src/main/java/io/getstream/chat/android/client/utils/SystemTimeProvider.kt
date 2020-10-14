@@ -1,9 +1,11 @@
 package io.getstream.chat.android.client.utils
 
-class SystemTimeProvider {
-    fun provideCurrentTimeInSeconds() = System.currentTimeMillis() / MILLIS_TO_SECONDS_FACTOR
+public class SystemTimeProvider {
+    public fun provideCurrentTimeInSeconds(): Long {
+        return System.currentTimeMillis() / MILLIS_TO_SECONDS_FACTOR
+    }
 
-    companion object {
-        private const val MILLIS_TO_SECONDS_FACTOR = 1000L
+    private companion object {
+        const val MILLIS_TO_SECONDS_FACTOR = 1000L
     }
 }

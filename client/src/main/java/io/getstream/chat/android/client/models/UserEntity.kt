@@ -1,10 +1,10 @@
 package io.getstream.chat.android.client.models
 
-interface UserEntity {
+public interface UserEntity {
 
-    var user: User
+    public var user: User
 
-    fun getUserId(): String {
+    public fun getUserId(): String {
         return user.id
     }
 }

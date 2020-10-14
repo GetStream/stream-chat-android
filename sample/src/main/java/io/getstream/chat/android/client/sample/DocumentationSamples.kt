@@ -1,4 +1,4 @@
-// package io.getstream.chat.android.client.sample.common
+@file:Suppress("UNUSED_VARIABLE", "MayBeConstant")
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient

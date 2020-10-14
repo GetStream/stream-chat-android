@@ -1,5 +1,5 @@
 package io.getstream.chat.android.client.utils
 
-interface UuidGenerator {
+internal interface UuidGenerator {
     fun generate(): String
 }

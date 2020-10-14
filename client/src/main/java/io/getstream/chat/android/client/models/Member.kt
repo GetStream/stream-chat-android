@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class Member(
+public data class Member(
     override var user: User,
     var role: String? = null,
     @SerializedName("created_at")

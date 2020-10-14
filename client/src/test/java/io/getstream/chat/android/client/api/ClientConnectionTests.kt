@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.api
 
 import android.content.Context
 import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.argThat
 import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -22,7 +23,6 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
-import io.getstream.chat.android.client.utils.safeArgThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.never
@@ -114,7 +114,7 @@ internal class ClientConnectionTests {
         verify(socket, never()).connect(user)
 
         val error = ChatError("User cannot be set until previous one is disconnected.")
-        verify(initConnectionListener).onError(safeArgThat(error, { it.message == error.message }))
+        verify(initConnectionListener).onError(argThat { message == error.message })
     }
 
     @Test

@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.util.Date
 
-data class User(
+public data class User(
     var id: String = "",
     var role: String = "",
 

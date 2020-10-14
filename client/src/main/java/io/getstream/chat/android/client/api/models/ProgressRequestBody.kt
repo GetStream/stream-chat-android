@@ -10,7 +10,7 @@ import okio.BufferedSink
 import java.io.File
 import java.io.FileInputStream
 
-class ProgressRequestBody(
+internal class ProgressRequestBody(
     private val file: File,
     private val callback: ProgressCallback
 ) : RequestBody() {

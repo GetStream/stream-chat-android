@@ -11,6 +11,7 @@ import kotlin.math.min
 private const val HEALTH_CHECK_INTERVAL = 10 * 1000L
 private const val MONITOR_INTERVAL = 1000L
 private const val NO_EVENT_INTERVAL_THRESHOLD = 30 * 1000L
+
 internal class HealthMonitor(private val healthCallback: HealthCallback) {
 
     private val delayHandler = Handler(Looper.getMainLooper())

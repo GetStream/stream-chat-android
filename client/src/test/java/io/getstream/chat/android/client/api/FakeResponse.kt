@@ -7,7 +7,7 @@ import okio.Buffer
 import okio.BufferedSource
 import java.nio.charset.Charset
 
-data class FakeResponse(val statusCode: Int, val body: Body? = null) {
+internal data class FakeResponse(val statusCode: Int, val body: Body? = null) {
     class Body(data: String) : ResponseBody() {
 
         val buffer = Buffer().writeString(data, Charset.defaultCharset())

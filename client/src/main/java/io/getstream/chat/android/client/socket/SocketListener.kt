@@ -4,20 +4,20 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 
-open class SocketListener {
+public open class SocketListener {
 
-    open fun onConnecting() {
+    public open fun onConnecting() {
     }
 
-    open fun onConnected(event: ConnectedEvent) {
+    public open fun onConnected(event: ConnectedEvent) {
     }
 
-    open fun onDisconnected() {
+    public open fun onDisconnected() {
     }
 
-    open fun onError(error: ChatError) {
+    public open fun onError(error: ChatError) {
     }
 
-    open fun onEvent(event: ChatEvent) {
+    public open fun onEvent(event: ChatEvent) {
     }
 }

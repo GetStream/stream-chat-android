@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.api.models
 
-class WatchChannelRequest : QueryChannelRequest() {
+public class WatchChannelRequest : QueryChannelRequest() {
 
     init {
         watch = true

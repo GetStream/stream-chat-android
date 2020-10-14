@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api.models
 
 @Suppress("UNCHECKED_CAST")
-interface ChannelRequest<T : ChannelRequest<T>> {
+internal interface ChannelRequest<T : ChannelRequest<T>> {
 
     var state: Boolean
     var watch: Boolean

@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.models
 import com.google.gson.annotations.SerializedName
 import java.util.Date
 
-data class Flag(
+public data class Flag(
     val user: User,
     @SerializedName("target_user")
     val targetUser: User?,

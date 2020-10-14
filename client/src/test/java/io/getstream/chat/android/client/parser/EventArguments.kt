@@ -110,7 +110,8 @@ import io.getstream.chat.android.client.models.User
 import org.junit.jupiter.params.provider.Arguments
 import java.util.Date
 
-object EventArguments {
+@Suppress("unused") // used via reflection
+internal object EventArguments {
     private val date = Date(1593411268000)
     private val dateString = "2020-06-29T06:14:28.000Z"
     private val connectionId = "6cfffec7-40df-40ac-901a-6ea6c5b7fb83"

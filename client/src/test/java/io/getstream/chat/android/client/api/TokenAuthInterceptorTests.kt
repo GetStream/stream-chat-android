@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowableOfType
 import org.junit.Test
 
-class TokenAuthInterceptorTests {
+internal class TokenAuthInterceptorTests {
 
     val token = "token"
     val parser = ChatParserImpl()

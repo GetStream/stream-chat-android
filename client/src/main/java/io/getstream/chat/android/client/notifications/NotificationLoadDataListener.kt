@@ -4,9 +4,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 
-interface NotificationLoadDataListener {
+public interface NotificationLoadDataListener {
 
-    fun onLoadSuccess(channel: Channel, message: Message)
+    public fun onLoadSuccess(channel: Channel, message: Message)
 
-    fun onLoadFail(messageId: String, error: ChatError)
+    public fun onLoadFail(messageId: String, error: ChatError)
 }

@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
-data class SearchMessagesRequest(
+public data class SearchMessagesRequest(
     val offset: Int,
     val limit: Int,
     @IgnoreSerialisation
@@ -11,6 +11,6 @@ data class SearchMessagesRequest(
     @IgnoreSerialisation
     val messageFilter: FilterObject
 ) {
-    val filter_conditions = channelFilter.toMap()
-    val message_filter_conditions = messageFilter.toMap()
+    val filter_conditions: HashMap<String, Any> = channelFilter.toMap()
+    val message_filter_conditions: HashMap<String, Any> = messageFilter.toMap()
 }

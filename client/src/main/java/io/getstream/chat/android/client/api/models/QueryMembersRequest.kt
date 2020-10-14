@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.FilterObject
 
-data class QueryMembersRequest(
+internal data class QueryMembersRequest(
     @SerializedName("type")
     val channelType: String,
     @SerializedName("id")

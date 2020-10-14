@@ -1,6 +1,6 @@
 package io.getstream.chat.android.client.utils
 
-enum class SyncStatus(val status: Int) {
+public enum class SyncStatus(public val status: Int) {
     /** when the entity is new or changed */
     SYNC_NEEDED(-1),
     /** when the entity has been succesfully synced */
@@ -10,8 +10,8 @@ enum class SyncStatus(val status: Int) {
     /** when sync is in progress */
     IN_PROGRESS(3);
 
-    companion object {
-        private val map = SyncStatus.values().associateBy(SyncStatus::status)
-        fun fromInt(type: Int) = map[type]
+    public companion object {
+        private val map = values().associateBy(SyncStatus::status)
+        public fun fromInt(type: Int): SyncStatus? = map[type]
     }
 }

@@ -2,11 +2,10 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.models.User
 
-class ClientState {
-
+internal class ClientState {
     var user: User? = null
     var connectionId: String? = null
-    var socketConnected = false
+    var socketConnected: Boolean = false
 
     fun reset() {
         user = null

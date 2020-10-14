@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.token
 
 import io.getstream.chat.android.client.utils.Result
 
-class FakeTokenManager(val tkn: String) : TokenManager {
+internal class FakeTokenManager(val tkn: String) : TokenManager {
     override fun loadAsync(listener: (Result<String>) -> Unit) {
         listener(Result(tkn))
     }

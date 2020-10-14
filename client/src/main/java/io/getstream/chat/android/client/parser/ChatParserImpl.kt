@@ -14,7 +14,7 @@ import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class ChatParserImpl : ChatParser {
+internal class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
 
@@ -52,12 +52,12 @@ class ChatParserImpl : ChatParser {
     }
 
     @Synchronized
-    override fun <T> fromJson(raw: String, clazz: Class<T>): T {
+    override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
         return gson.fromJson(raw, clazz)
     }
 
     @Synchronized
-    override fun <T> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
+    override fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
             Result(
                 fromJson(raw, clazz),

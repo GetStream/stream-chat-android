@@ -2,10 +2,10 @@ package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.utils.FilterObject
 
-object Filters {
+public object Filters {
 
     @JvmStatic
-    fun exists(value: Any): FilterObject {
+    public fun exists(value: Any): FilterObject {
         return FilterObject(
             "\$exists",
             value
@@ -13,7 +13,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun contains(value: Any): FilterObject {
+    public fun contains(value: Any): FilterObject {
         return FilterObject(
             "\$contains",
             value
@@ -21,7 +21,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun contains(vararg filters: FilterObject): FilterObject {
+    public fun contains(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$contains",
             filters
@@ -29,7 +29,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun and(vararg filters: FilterObject): FilterObject {
+    public fun and(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$and",
             filters
@@ -37,7 +37,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun or(vararg filters: FilterObject): FilterObject {
+    public fun or(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$or",
             filters
@@ -45,7 +45,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun nor(vararg filters: FilterObject): FilterObject {
+    public fun nor(vararg filters: FilterObject): FilterObject {
         return FilterObject(
             "\$nor",
             filters
@@ -53,12 +53,12 @@ object Filters {
     }
 
     @JvmStatic
-    fun eq(field: String, value: Any): FilterObject {
+    public fun eq(field: String, value: Any): FilterObject {
         return FilterObject(field, value)
     }
 
     @JvmStatic
-    fun ne(field: String, value: Any): FilterObject {
+    public fun ne(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$ne", value)
@@ -66,7 +66,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun greaterThan(field: String, value: Any): FilterObject {
+    public fun greaterThan(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$gt", value)
@@ -74,7 +74,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun greaterThanEquals(field: String, value: Any): FilterObject {
+    public fun greaterThanEquals(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$gte", value)
@@ -82,7 +82,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun lessThan(field: String, value: Any): FilterObject {
+    public fun lessThan(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$lt", value)
@@ -90,7 +90,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun lessThanEquals(field: String, value: Any): FilterObject {
+    public fun lessThanEquals(field: String, value: Any): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$lte", value)
@@ -98,7 +98,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun `in`(field: String, vararg values: String): FilterObject {
+    public fun `in`(field: String, vararg values: String): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$in", values)
@@ -106,7 +106,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun `in`(field: String, values: List<*>): FilterObject {
+    public fun `in`(field: String, values: List<*>): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$in", values)
@@ -114,7 +114,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun `in`(field: String, vararg values: Number): FilterObject {
+    public fun `in`(field: String, vararg values: Number): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$in", values)
@@ -122,7 +122,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun nin(field: String, vararg values: String): FilterObject {
+    public fun nin(field: String, vararg values: String): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$nin", values)
@@ -130,7 +130,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun nin(field: String, values: List<*>): FilterObject {
+    public fun nin(field: String, values: List<*>): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$nin", values)
@@ -138,7 +138,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun nin(field: String, vararg values: Number): FilterObject {
+    public fun nin(field: String, vararg values: Number): FilterObject {
         return FilterObject(
             field,
             FilterObject("\$nin", values)
@@ -146,7 +146,7 @@ object Filters {
     }
 
     @JvmStatic
-    fun autocomplete(field: String, value: String): FilterObject {
+    public fun autocomplete(field: String, value: String): FilterObject {
         return FilterObject(field, FilterObject("\$autocomplete", value))
     }
 }

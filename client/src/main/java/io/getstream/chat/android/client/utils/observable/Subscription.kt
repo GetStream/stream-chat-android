@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.utils.observable
 import io.getstream.chat.android.client.events.ChatEvent
 
 @Deprecated("Use the subscribe methods on ChatClient or ChannelController directly instead of events()")
-class Subscription(
+public class Subscription(
     private val observable: ChatObservable,
     private var listener: ((ChatEvent) -> Unit)?,
     private val filters: MutableList<(event: ChatEvent) -> Boolean> = mutableListOf(),
@@ -12,13 +12,13 @@ class Subscription(
 
     private var deliveredCounter = 0
 
-    fun unsubscribe() {
+    public fun unsubscribe() {
         listener = null
         filters.clear()
         observable.unsubscribe(this)
     }
 
-    fun onNext(event: ChatEvent) {
+    public fun onNext(event: ChatEvent) {
 
         if (filters.isEmpty()) {
             deliver(event)

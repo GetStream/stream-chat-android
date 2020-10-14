@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 private const val logBody = true
 private const val logHeaders = true
 
-class HttpLoggingInterceptor : Interceptor {
+internal class HttpLoggingInterceptor : Interceptor {
 
     @Volatile
     private var headersToRedact = emptySet<String>()
@@ -178,7 +178,7 @@ class HttpLoggingInterceptor : Interceptor {
     }
 }
 
-fun Buffer.isProbablyUtf8(): Boolean {
+private fun Buffer.isProbablyUtf8(): Boolean {
     try {
         val prefix = Buffer()
         val byteCount = size.coerceAtMost(64)

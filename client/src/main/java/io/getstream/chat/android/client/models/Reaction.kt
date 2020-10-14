@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-data class Reaction(
+public data class Reaction(
     @SerializedName("message_id")
     var messageId: String = "",
     var type: String = "",
@@ -31,7 +31,7 @@ data class Reaction(
     // this is a workaround around a backend issue
     // for some reason we sometimes only get the user id and not the user object
     // this needs more investigation on the backend side of things
-    fun fetchUserId(): String {
+    public fun fetchUserId(): String {
         return user?.id ?: userId
     }
 }

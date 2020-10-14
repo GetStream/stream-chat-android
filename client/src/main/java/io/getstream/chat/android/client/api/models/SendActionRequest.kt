@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.api.models
 
 import com.google.gson.annotations.SerializedName
 
-data class SendActionRequest(
+public data class SendActionRequest(
     @SerializedName("channel_id")
     val channelId: String,
     @SerializedName("message_id")

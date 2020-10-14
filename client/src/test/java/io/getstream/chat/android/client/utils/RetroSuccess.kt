@@ -6,7 +6,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RetroSuccess<T>(val result: T) : Call<T> {
+internal class RetroSuccess<T>(val result: T) : Call<T> {
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }
