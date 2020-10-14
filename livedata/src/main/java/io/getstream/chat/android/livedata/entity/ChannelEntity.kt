@@ -50,10 +50,13 @@ data class ChannelEntity(var type: String, var channelId: String) {
 
     /** when the channel was created */
     var createdAt: Date? = null
+
     /** when the channel was updated */
     var updatedAt: Date? = null
+
     /** when the channel was deleted */
     var deletedAt: Date? = null
+
     /** all the custom data provided for this channel */
     var extraData = mutableMapOf<String, Any>()
 
@@ -94,6 +97,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
+        c.hidden = hidden
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 
