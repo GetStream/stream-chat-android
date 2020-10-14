@@ -10,7 +10,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.TextStyle;
 
 public class MessageListViewStyle extends BaseStyle {
-    private static final String TAG = MessageListViewStyle.class.getSimpleName();
 
     // Message text
     public TextStyle messageTextMine;
@@ -51,6 +50,8 @@ public class MessageListViewStyle extends BaseStyle {
     private int attachmentBackgroundColorTheirs;
     private int attachmentBorderColorMine;
     private int attachmentBorderColorTheirs;
+    private int attachmentPreviewMaxLines;
+
     // Reaction
     private boolean reactionEnabled;
     // ReactionView
@@ -191,6 +192,11 @@ public class MessageListViewStyle extends BaseStyle {
                 .style(R.styleable.MessageListView_streamAttachmentFileSizeTextStyleTheirs, Typeface.BOLD)
                 .build();
 
+        attachmentPreviewMaxLines = a.getInt(R.styleable.MessageListView_streamAttachmentPreviewMaxLines, getInteger(R.integer.stream_attachment_preview_max_lines));
+        if (attachmentPreviewMaxLines <= 0) {
+            throw new IllegalArgumentException("streamAttachmentPreviewMaxLines value must be greater than 0");
+        }
+
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
@@ -292,6 +298,10 @@ public class MessageListViewStyle extends BaseStyle {
 
     public int getAttachmentBorderColor(boolean isMine) {
         return isMine ? attachmentBorderColorMine : attachmentBorderColorTheirs;
+    }
+
+    public int getAttachmentPreviewMaxLines() {
+        return attachmentPreviewMaxLines;
     }
 
     // Reaction Dialog

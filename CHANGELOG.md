@@ -3,6 +3,7 @@
 - Fix Typing view behavior
 - Fix NPE asking for `Attachment::type`
 - Fix ChatDomain initialization issue
+- Limit max lines displayed in link previews (5 lines by default, customizable via `streamAttachmentPreviewMaxLines` attribute on `MessageListView`)
 
 # Oct 9th, 2020 - 4.3.0-beta-5
 - Improve selecting non-media attachments
