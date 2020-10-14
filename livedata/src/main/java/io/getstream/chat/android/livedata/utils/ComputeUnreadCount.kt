@@ -15,7 +15,7 @@ fun computeUnreadCount(currentUser: User, read: ChannelUserRead?, messages: List
             if (m.user.id == currentUserId) continue
             if (m.deletedAt != null) continue
             if (m.silent) continue
-            if (m.createdAt!!.time > lastReadTime) unreadMessageCount++
+            if ((m.createdAt ?: m.createdLocallyAt)?.time ?: lastReadTime > lastReadTime) unreadMessageCount++
         }
     }
     return unreadMessageCount

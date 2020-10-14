@@ -260,7 +260,7 @@ class ChatDomainImpl private constructor(
         mainHandler.postDelayed(cleanTask, 5000)
     }
 
-    suspend fun <T> runAndRetry(runnable: () -> Call<T>): Result<T> {
+    suspend fun <T : Any> runAndRetry(runnable: () -> Call<T>): Result<T> {
         var attempt = 1
         var result: Result<T>
 
@@ -337,7 +337,7 @@ class ChatDomainImpl private constructor(
                 Result(c, null)
             }
         } catch (e: IllegalStateException) {
-            Result(null, ChatError(e))
+            Result(null, ChatError(cause = e))
         }
 
     fun addError(error: ChatError) {

@@ -34,7 +34,7 @@ class ThreadControllerImpl(
     }
     override val messages =
         Transformations.map(mediatorLiveData) {
-            it.values.sortedBy { m -> m.createdAt }
+            it.values.sortedBy { m -> m.createdAt ?: m.createdLocallyAt }
                 .filter { channelControllerImpl.hideMessagesBefore == null || it.wasCreatedAfterOrAt(channelControllerImpl.hideMessagesBefore) }
         }
 

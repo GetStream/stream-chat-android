@@ -106,7 +106,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
 
-        c.members = members.values.map { it.toMember(userMap) }
+        c.members = members.values.mapNotNull { it.toMember(userMap) }
 
         lastMessage?.let {
             c.messages = listOf(it.toMessage(userMap))
@@ -120,14 +120,15 @@ data class ChannelEntity(var type: String, var channelId: String) {
         return c
     }
 
-    /** updates last message and lastmessagedate on this channel entity */
+    /** updates last message and lastMessageAt on this channel entity */
     fun addMessage(messageEntity: MessageEntity) {
-        val messageEntityCreatedAt = checkNotNull(messageEntity.createdAt) { "created at cant be null, be sure to set message.createdAt" }
+        val createdAt = messageEntity.createdAt ?: messageEntity.createdLocallyAt
+        val messageEntityCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
         val updateNeeded = messageEntity.id == lastMessage?.id
-        val newLastMessage = lastMessageAt == null || messageEntityCreatedAt.after(lastMessageAt)
+        val newLastMessage = lastMessageAt == null || messageEntityCreatedAt.after(messageEntityCreatedAt)
         if (newLastMessage || updateNeeded) {
-            lastMessageAt = messageEntity.createdAt
+            lastMessageAt = messageEntityCreatedAt
             lastMessage = messageEntity
         }
     }
@@ -145,4 +146,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
             members[userId] = MemberEntity(member)
         }
     }
+
+    private fun max(date: Date?, otherDate: Date?): Date? =
+        date?.takeIf { otherDate == null || it.after(otherDate) } ?: otherDate
 }
