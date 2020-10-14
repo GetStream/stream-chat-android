@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.util.Locale
 
 internal class UsernameAndDateConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -39,9 +40,11 @@ internal class UsernameAndDateConfigurator(
             binding.tvUsername.isVisible = false
         }
 
-        if (style.isMessageDateShow) {
+        val date = messageItem.message.createdAt ?: messageItem.message.createdLocallyAt
+
+        if (style.isMessageDateShow && date != null) {
             binding.tvMessagedate.isVisible = true
-            binding.tvMessagedate.text = TIME_DATEFORMAT.format(messageItem.message.createdAt!!)
+            binding.tvMessagedate.text = TIME_DATEFORMAT.format(date)
         } else {
             binding.tvMessagedate.isVisible = false
         }
@@ -71,6 +74,6 @@ internal class UsernameAndDateConfigurator(
     }
 
     private companion object {
-        val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm")
+        val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
     }
 }
