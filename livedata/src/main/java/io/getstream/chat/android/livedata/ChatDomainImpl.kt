@@ -47,7 +47,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
-import java.lang.Thread.sleep
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -569,8 +568,8 @@ class ChatDomainImpl private constructor(
         }
     }
 
-    suspend fun retryFailedEntities() {
-        sleep(1000)
+    private suspend fun retryFailedEntities() {
+        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messageEntities = repos.messages.retryMessages()
