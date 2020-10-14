@@ -3,6 +3,7 @@
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 - Update attachments of message with an old image url, if it's still valid.
 - Add setting attachment data even if attachment upload failed
+- Fix NPE while ChatEvent was handled
 
 # Oct 7th, 2020 - 0.8.4
 - Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
