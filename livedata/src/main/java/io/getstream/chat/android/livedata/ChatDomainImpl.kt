@@ -33,6 +33,7 @@ import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
@@ -46,7 +47,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
-import java.lang.Thread.sleep
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -568,8 +568,8 @@ class ChatDomainImpl private constructor(
         }
     }
 
-    suspend fun retryFailedEntities() {
-        sleep(1000)
+    private suspend fun retryFailedEntities() {
+        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messageEntities = repos.messages.retryMessages()
@@ -648,8 +648,6 @@ class ChatDomainImpl private constructor(
 
             // async to run queries in parallel
             channelEntities.map { scope.async { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) } }.awaitAll().toMap()
-            // sync version:
-            // channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
         } else {
             emptyMap()
         }
