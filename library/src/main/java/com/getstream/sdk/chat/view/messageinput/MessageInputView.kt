@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import android.text.Editable
 import android.text.TextUtils
@@ -238,11 +239,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     }
 
     private fun setKeyboardEventListener() {
-        KeyboardVisibilityEvent.setEventListener(
-            context as Activity
-        ) { isOpen: Boolean ->
-            if (!isOpen) {
-                binding.messageTextInput.clearFocus()
+        when (context) {
+            is ContextWrapper -> (context as ContextWrapper).baseContext
+            else -> context
+        }.let {
+            KeyboardVisibilityEvent.setEventListener(it as Activity) { isOpen: Boolean ->
+                if (!isOpen) {
+                    binding.messageTextInput.clearFocus()
+                }
             }
         }
     }
