@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.adapter.viewholder.attachment
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentListItem
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachmentFileBinding
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
@@ -11,15 +10,16 @@ import com.getstream.sdk.chat.view.MessageListView.BubbleHelper
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class AttachmentViewHolderFile(
-    parent: ViewGroup,
-    private val style: MessageListViewStyle,
-    private val bubbleHelper: BubbleHelper,
-    private val messageItem: MessageItem,
-    private val clickListener: AttachmentClickListener,
-    private val longClickListener: MessageLongClickListener,
-    private val binding: StreamItemAttachmentFileBinding =
+        parent: ViewGroup,
+        private val style: MessageListViewStyle,
+        private val bubbleHelper: BubbleHelper,
+        private val messageItem: MessageListItem.MessageItem,
+        private val clickListener: AttachmentClickListener,
+        private val longClickListener: MessageLongClickListener,
+        private val binding: StreamItemAttachmentFileBinding =
         StreamItemAttachmentFileBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 

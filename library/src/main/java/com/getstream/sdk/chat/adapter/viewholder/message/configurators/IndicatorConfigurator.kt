@@ -6,7 +6,6 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.BOTTOM
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
@@ -22,6 +21,7 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -30,13 +30,13 @@ internal class IndicatorConfigurator(
     private val readStateClickListener: MessageListView.ReadStateClickListener
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         configDeliveredIndicator(messageItem)
         configReadIndicator(messageItem)
         configParamsReadIndicator(messageItem)
     }
 
-    private fun configDeliveredIndicator(messageItem: MessageItem) {
+    private fun configDeliveredIndicator(messageItem: MessageListItem.MessageItem) {
         binding.ivDeliver.isVisible = false
         binding.pbDeliver.isVisible = false
 
@@ -77,7 +77,7 @@ internal class IndicatorConfigurator(
         // }
     }
 
-    private fun configReadIndicator(messageItem: MessageItem) {
+    private fun configReadIndicator(messageItem: MessageListItem.MessageItem) {
         val readBy: List<ChannelUserRead> = messageItem.messageReadBy
         val message = messageItem.message
 
@@ -100,7 +100,7 @@ internal class IndicatorConfigurator(
         }
     }
 
-    internal fun configParamsReadIndicator(messageItem: MessageItem) {
+    internal fun configParamsReadIndicator(messageItem: MessageListItem.MessageItem) {
         if (binding.readState.isGone) {
             return
         }

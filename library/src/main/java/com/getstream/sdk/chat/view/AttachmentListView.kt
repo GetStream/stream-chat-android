@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class AttachmentListView : RecyclerView {
 
@@ -30,7 +30,7 @@ class AttachmentListView : RecyclerView {
         layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-    fun setEntity(messageListItem: MessageItem) {
+    fun setEntity(messageListItem: MessageListItem.MessageItem) {
         this.adapter = AttachmentListItemAdapter(
             messageListItem,
             checkNotNull(viewHolderFactory) { "Please call init() before using setEntity()" },

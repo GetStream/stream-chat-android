@@ -3,17 +3,17 @@ package com.getstream.sdk.chat.adapter.viewholder.message.configurators
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 internal class MarginConfigurator(
     private val binding: StreamItemMessageBinding,
     private val style: MessageListViewStyle
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         configMarginStartEnd(binding.tvText)
         configMarginStartEnd(binding.attachmentview)
         configMarginStartEnd(binding.ivReply)

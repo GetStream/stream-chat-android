@@ -2,15 +2,15 @@ package com.getstream.sdk.chat.adapter.viewholder.message.configurators
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.TOP
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 internal class SpaceConfigurator(
     private val binding: StreamItemMessageBinding
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         if (TOP in messageItem.positions) {
             // TOP
             binding.spaceHeader.isVisible = true

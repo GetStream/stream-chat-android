@@ -6,20 +6,20 @@ import android.widget.LinearLayout
 import androidx.core.view.updateMargins
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemTypeIndicatorBinding
 import com.getstream.sdk.chat.view.AvatarView
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class TypingIndicatorViewHolder(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val binding: StreamItemTypeIndicatorBinding =
         StreamItemTypeIndicatorBinding.inflate(parent.inflater, parent, false)
-) : BaseMessageListItemViewHolder<TypingItem>(binding.root) {
+) : BaseMessageListItemViewHolder<MessageListItem.TypingItem>(binding.root) {
 
-    override fun bind(messageListItem: TypingItem) {
+    override fun bind(messageListItem: MessageListItem.TypingItem) {
         binding.llTypingIndicator.visibility = View.VISIBLE
         binding.ivTypingIndicator.visibility = View.VISIBLE
         binding.llTypingIndicator.removeAllViews()

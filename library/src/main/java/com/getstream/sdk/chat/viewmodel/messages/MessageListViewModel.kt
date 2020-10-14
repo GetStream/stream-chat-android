@@ -6,12 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.exhaustive
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
+import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.utils.MessageListItemLiveData
+import io.getstream.chat.android.livedata.utils.MessageListItemWrapper
+import java.text.SimpleDateFormat
+import java.util.Date
 import kotlin.properties.Delegates
 
 class MessageListViewModel @JvmOverloads constructor(
@@ -22,6 +26,7 @@ class MessageListViewModel @JvmOverloads constructor(
     private val loading = MutableLiveData<State>()
     private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val messageListData: MessageListItemLiveData
+    private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
     private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
 
@@ -30,24 +35,56 @@ class MessageListViewModel @JvmOverloads constructor(
     val channel: Channel
     val currentUser: User
 
+    private val channelController: ChannelController
+
     init {
         loading.value = State.Loading
 
         val result = domain.useCases.watchChannel.invoke(cid, MESSAGES_LIMIT).execute()
-        val channelController = result.data()
+        channelController = result.data()
         channel = channelController.toChannel()
         currentUser = domain.currentUser
 
         messageListData = MessageListItemLiveData(
-            currentUser,
-            channelController.messages,
-            threadMessages,
-            channelController.typing,
-            channelController.reads
-        )
+                currentUser,
+                channelController.messages,
+                channelController.reads,
+                channelController.typing
+        ) {
+            val day = Date(it.createdAt?.time ?: 0)
+            SimpleDateFormat("MM / dd").format(day)
+        }
 
         stateMerger.apply {
             addSource(loading) { value = it }
+            addSource(messageListData) { value = State.Result(it) }
+        }
+    }
+
+    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
+        threadListData = MessageListItemLiveData(
+                currentUser,
+                channelController.messages,
+                channelController.reads,
+                isThread=true
+        ) {
+            val day = Date(it.createdAt?.time ?: 0)
+            SimpleDateFormat("MM / dd").format(day)
+        }
+        threadListData?.let {
+            stateMerger.apply {
+                addSource(it) { value = State.Result(it) }
+                removeSource(messageListData)
+            }
+        }
+
+    }
+
+    private fun resetThread() {
+        threadListData?.let {
+            stateMerger.removeSource(it)
+        }
+        stateMerger.apply {
             addSource(messageListData) { value = State.Result(it) }
         }
     }
@@ -117,20 +154,27 @@ class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
+
     private fun onThreadModeEntered(parentMessage: Message) {
         currentMode = Mode.Thread(parentMessage)
         val parentId: String = parentMessage.id
         val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
         threadMessages = threadController.messages
-        messageListData.setThreadMessages(threadMessages)
+        setThreadMessages(threadMessages)
+
         domain.useCases.threadLoadMore.invoke(cid, parentId, MESSAGES_LIMIT).execute()
     }
 
+
+
     private fun onNormalModeEntered() {
         currentMode = Mode.Normal
-        messageListData.resetThread()
+        resetThread()
+
         threadMessages = MutableLiveData()
     }
+
+
 
     sealed class State {
         object Loading : State()

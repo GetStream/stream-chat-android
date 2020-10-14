@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemDateSeparatorBinding
 import com.getstream.sdk.chat.enums.Dates
 import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 import java.util.Date
 
 class DateSeparatorViewHolder(
@@ -19,14 +19,14 @@ class DateSeparatorViewHolder(
     private val style: MessageListViewStyle,
     private val binding: StreamItemDateSeparatorBinding =
         StreamItemDateSeparatorBinding.inflate(parent.inflater, parent, false)
-) : BaseMessageListItemViewHolder<DateSeparatorItem>(binding.root) {
+) : BaseMessageListItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root) {
 
-    override fun bind(messageListItem: DateSeparatorItem) {
+    override fun bind(messageListItem: MessageListItem.DateSeparatorItem) {
         configDate(messageListItem)
         applyStyle()
     }
 
-    private fun configDate(messageListItem: DateSeparatorItem) {
+    private fun configDate(messageListItem: MessageListItem.DateSeparatorItem) {
         val messageDate = messageListItem.date.time
         val now = Date()
         val humanizedDate =

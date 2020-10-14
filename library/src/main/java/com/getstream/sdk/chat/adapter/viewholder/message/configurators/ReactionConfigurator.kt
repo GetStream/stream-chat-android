@@ -11,7 +11,6 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.ReactionListItemAdapter
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
@@ -22,6 +21,7 @@ import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.utils.MessageListItem
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class ReactionConfigurator(
@@ -30,17 +30,17 @@ internal class ReactionConfigurator(
     private val style: MessageListViewStyle,
     private val channel: Channel,
     private val reactionViewClickListener: MessageListView.ReactionViewClickListener,
-    private val configParamsReadIndicator: (MessageItem) -> Unit
+    private val configParamsReadIndicator: (MessageListItem.MessageItem) -> Unit
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         configReactionView(messageItem)
         configParamsReactionSpace(messageItem)
         configParamsReactionTail(messageItem)
         configParamsReactionRecyclerView(messageItem)
     }
 
-    private fun configReactionView(messageItem: MessageItem) {
+    private fun configReactionView(messageItem: MessageListItem.MessageItem) {
         val message = messageItem.message
 
         if (message.isDeleted() ||
@@ -74,7 +74,7 @@ internal class ReactionConfigurator(
         }
     }
 
-    private fun configStyleReactionView(messageItem: MessageItem) {
+    private fun configStyleReactionView(messageItem: MessageListItem.MessageItem) {
         if (style.reactionViewBgDrawable == -1) {
             binding.reactionsRecyclerView.background = DrawableBuilder()
                 .rectangle()
@@ -98,7 +98,7 @@ internal class ReactionConfigurator(
         }
     }
 
-    private fun configParamsReactionSpace(messageItem: MessageItem) {
+    private fun configParamsReactionSpace(messageItem: MessageListItem.MessageItem) {
         if (binding.ivTail.visibility != View.VISIBLE) {
             return
         }
@@ -123,7 +123,7 @@ internal class ReactionConfigurator(
         }
     }
 
-    private fun configParamsReactionTail(messageItem: MessageItem) {
+    private fun configParamsReactionTail(messageItem: MessageListItem.MessageItem) {
         if (binding.ivTail.visibility != View.VISIBLE) {
             return
         }
@@ -147,7 +147,7 @@ internal class ReactionConfigurator(
         }
     }
 
-    private fun configParamsReactionRecyclerView(messageItem: MessageItem) {
+    private fun configParamsReactionRecyclerView(messageItem: MessageListItem.MessageItem) {
         if (binding.reactionsRecyclerView.visibility != View.VISIBLE) {
             return
         }

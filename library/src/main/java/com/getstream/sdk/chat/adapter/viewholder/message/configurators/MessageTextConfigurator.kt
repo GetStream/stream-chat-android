@@ -16,7 +16,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
@@ -27,6 +26,7 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 internal class MessageTextConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -39,7 +39,7 @@ internal class MessageTextConfigurator(
 ) : Configurator {
 
     override fun configure(
-        messageItem: MessageItem
+        messageItem: MessageListItem.MessageItem
     ) {
         val message = messageItem.message
 
@@ -89,7 +89,7 @@ internal class MessageTextConfigurator(
 
     private fun configMessageTextStyle(
         message: Message,
-        messageItem: MessageItem
+        messageItem: MessageListItem.MessageItem
     ) {
         if (message.isDeleted()) {
             binding.tvText.setTextSize(
@@ -116,7 +116,7 @@ internal class MessageTextConfigurator(
 
     private fun configMessageTextBackground(
         message: Message,
-        messageItem: MessageItem
+        messageItem: MessageListItem.MessageItem
     ) {
         val background: Drawable? = when {
             message.isFailed() -> {
@@ -134,7 +134,7 @@ internal class MessageTextConfigurator(
                     bubbleHelper.getDrawableForMessage(
                         messageItem.message,
                         messageItem.isMine,
-                        listOf(MessageViewHolderFactory.Position.MIDDLE)
+                        listOf(MessageListItem.Position.Middle)
                     )
                 } else {
                     bubbleHelper.getDrawableForMessage(
@@ -189,7 +189,7 @@ internal class MessageTextConfigurator(
         }
     }
 
-    private fun configParamsMessageText(messageItem: MessageItem) {
+    private fun configParamsMessageText(messageItem: MessageListItem.MessageItem) {
         if (binding.tvText.isGone) {
             return
         }

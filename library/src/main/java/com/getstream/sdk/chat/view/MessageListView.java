@@ -24,7 +24,6 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
 import com.getstream.sdk.chat.adapter.ListenerContainer;
 import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
-import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
@@ -33,7 +32,6 @@ import com.getstream.sdk.chat.utils.StartStopBuffer;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,6 +45,8 @@ import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.ChannelUserRead;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.livedata.utils.MessageListItem;
+import io.getstream.chat.android.livedata.utils.MessageListItemWrapper;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -447,7 +447,8 @@ public class MessageListView extends ConstraintLayout {
 
     private void handleNewWrapper(MessageListItemWrapper listItem) {
         buffer.hold();
-        List<MessageListItem> entities = listItem.getListEntities();
+
+        List<MessageListItem> entities = listItem.getItems();
 
         // Adapter initialization for channel and thread swapping
         boolean backFromThread = adapter.isThread() && listItem.isThread();
@@ -515,7 +516,13 @@ public class MessageListView extends ConstraintLayout {
             int layoutSize = layoutManager.getItemCount();
             logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
             // Scroll to bottom when the user wrote the message.
-            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
+            Boolean isMine = false;
+            if (entities.size() >= 1) {
+                MessageListItem lastItem = entities.get(entities.size() - 1);
+                MessageListItem.MessageItem lastMessageItem = (MessageListItem.MessageItem) lastItem;
+                isMine = lastMessageItem.isMine();
+            }
+            if (entities.size() >= 1 && isMine ||
                     !hasScrolledUp ||
                     newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
                 layoutManager.scrollToPosition(adapter.getItemCount() - 1);
@@ -710,11 +717,11 @@ public class MessageListView extends ConstraintLayout {
     }
 
     public interface BubbleHelper {
-        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageListItem.Position> positions);
 
-        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageListItem.Position> positions, Attachment attachment);
 
-        Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+        Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageListItem.Position> positions);
     }
 
     public enum NewMessagesBehaviour {

@@ -6,12 +6,12 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.BOTTOM
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 
@@ -20,13 +20,13 @@ internal class UsernameAndDateConfigurator(
     private val style: MessageListViewStyle
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         configUserNameAndMessageDateStyle(messageItem)
         configParamsMessageDate(messageItem)
     }
 
-    private fun configUserNameAndMessageDateStyle(messageItem: MessageItem) {
-        if (BOTTOM !in messageItem.positions || (!style.isUserNameShow && !style.isMessageDateShow)) {
+    private fun configUserNameAndMessageDateStyle(messageItem: MessageListItem.MessageItem) {
+        if (MessageListItem.Position.Bottom !in messageItem.positions || (!style.isUserNameShow && !style.isMessageDateShow)) {
             binding.tvUsername.isVisible = false
             binding.tvMessagedate.isVisible = false
             return
@@ -54,7 +54,7 @@ internal class UsernameAndDateConfigurator(
         }
     }
 
-    private fun configParamsMessageDate(messageItem: MessageItem) {
+    private fun configParamsMessageDate(messageItem: MessageListItem.MessageItem) {
         if (binding.tvMessagedate.isGone) {
             return
         }

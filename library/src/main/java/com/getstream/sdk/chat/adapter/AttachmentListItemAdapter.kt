@@ -2,14 +2,14 @@ package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class AttachmentListItemAdapter(
-    private val messageListItem: MessageItem,
-    private val factory: AttachmentViewHolderFactory,
-    private val style: MessageListViewStyle
+        private val messageListItem: MessageListItem.MessageItem,
+        private val factory: AttachmentViewHolderFactory,
+        private val style: MessageListViewStyle
 ) : RecyclerView.Adapter<BaseAttachmentViewHolder>() {
 
     private val attachments: List<AttachmentListItem> =

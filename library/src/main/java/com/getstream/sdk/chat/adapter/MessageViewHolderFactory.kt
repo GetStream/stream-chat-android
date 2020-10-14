@@ -1,10 +1,6 @@
 package com.getstream.sdk.chat.adapter
 
 import android.view.ViewGroup
-import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
-import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.DateSeparatorViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.MessageListItemViewHolder
@@ -13,6 +9,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.TypingIndicatorViewHold
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 /**
  * Allows you to easily customize message rendering
@@ -38,10 +35,10 @@ open class MessageViewHolderFactory {
 
     open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
-            is DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
-            is TypingItem -> MESSAGEITEM_TYPING
-            is MessageItem -> MESSAGEITEM_MESSAGE
-            is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
+            is MessageListItem.DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
+            is MessageListItem.TypingItem -> MESSAGEITEM_TYPING
+            is MessageListItem.MessageItem -> MESSAGEITEM_MESSAGE
+            is MessageListItem.ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
             else -> MESSAGEITEM_NOT_FOUND
         }
     }

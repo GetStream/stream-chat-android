@@ -7,7 +7,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
@@ -17,6 +16,7 @@ import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 internal class ReplyConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -27,12 +27,12 @@ internal class ReplyConfigurator(
     private val bindingAdapterPosition: () -> Int
 ) : Configurator {
 
-    override fun configure(messageItem: MessageItem) {
+    override fun configure(messageItem: MessageListItem.MessageItem) {
         configReplyView(messageItem)
         configParamsReply(messageItem)
     }
 
-    private fun configReplyView(messageItem: MessageItem) {
+    private fun configReplyView(messageItem: MessageListItem.MessageItem) {
         val message = messageItem.message
 
         val replyCount = message.replyCount
@@ -62,7 +62,7 @@ internal class ReplyConfigurator(
         binding.tvReply.setOnClickListener(clickListener)
     }
 
-    private fun configParamsReply(messageItem: MessageItem) {
+    private fun configParamsReply(messageItem: MessageListItem.MessageItem) {
         if (binding.ivReply.isGone) {
             return
         }

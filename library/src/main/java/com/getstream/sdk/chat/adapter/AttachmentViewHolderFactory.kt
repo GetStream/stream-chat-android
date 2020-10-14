@@ -8,6 +8,7 @@ import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHo
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 /**
  * Allows you to easily customize attachment rendering

@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemAttachMediaBinding
 import com.getstream.sdk.chat.enums.GiphyAction
@@ -20,17 +19,18 @@ import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.livedata.utils.MessageListItem
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 class AttachmentViewHolderMedia(
-    parent: ViewGroup,
-    private val style: MessageListViewStyle,
-    private val bubbleHelper: BubbleHelper,
-    private val messageItem: MessageItem,
-    private val giphySendListener: GiphySendListener,
-    private val clickListener: AttachmentClickListener,
-    private val longClickListener: MessageLongClickListener,
-    private val binding: StreamItemAttachMediaBinding =
+        parent: ViewGroup,
+        private val style: MessageListViewStyle,
+        private val bubbleHelper: BubbleHelper,
+        private val messageItem: MessageListItem.MessageItem,
+        private val giphySendListener: GiphySendListener,
+        private val clickListener: AttachmentClickListener,
+        private val longClickListener: MessageLongClickListener,
+        private val binding: StreamItemAttachMediaBinding =
         StreamItemAttachMediaBinding.inflate(parent.inflater, parent, false)
 ) : BaseAttachmentViewHolder(binding.root) {
 

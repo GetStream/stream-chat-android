@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class MessageListItemAdapter(
     private val channel: Channel,

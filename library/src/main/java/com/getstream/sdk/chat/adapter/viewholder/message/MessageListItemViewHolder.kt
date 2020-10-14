@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.adapter.viewholder.message
 
 import android.view.ViewGroup
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
-import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.AttachmentConfigurator
 import com.getstream.sdk.chat.adapter.viewholder.message.configurators.Configurator
@@ -23,6 +22,7 @@ import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.livedata.utils.MessageListItem
 
 class MessageListItemViewHolder(
     parent: ViewGroup,
@@ -38,9 +38,9 @@ class MessageListItemViewHolder(
     readStateClickListener: ReadStateClickListener,
     private val binding: StreamItemMessageBinding =
         StreamItemMessageBinding.inflate(parent.inflater, parent, false)
-) : BaseMessageListItemViewHolder<MessageItem>(binding.root) {
+) : BaseMessageListItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    override fun bind(messageListItem: MessageItem) {
+    override fun bind(messageListItem: MessageListItem.MessageItem) {
         configurators.forEach { configurator ->
             configurator.configure(messageListItem)
         }
