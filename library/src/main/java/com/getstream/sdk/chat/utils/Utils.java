@@ -122,8 +122,6 @@ public class Utils {
     }
 
     public static void hideSoftKeyboard(@NonNull Context context) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-
         View view = null;
         if (context instanceof Activity) {
             // Find the currently focused view, so we can grab the correct window token from it.
@@ -132,11 +130,7 @@ public class Utils {
 
         // If we don't have an Activity, or no view currently has focus, create a new one,
         // just so we can grab a window token from it
-        if (view == null) {
-            view = new View(context);
-        }
-
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        hideSoftKeyboard(view != null ? view : new View(context));
     }
 
     public static void showSoftKeyboard(@NonNull View view) {
