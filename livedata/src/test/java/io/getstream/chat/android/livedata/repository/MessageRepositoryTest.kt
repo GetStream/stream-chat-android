@@ -17,6 +17,11 @@ import org.junit.runner.RunWith
 internal class MessageRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.messages }
 
+    private fun AnyChannelPaginationRequest.setFilter(messageFilterDirection: Pagination, messageFilterValue: String) {
+        this.messageFilterDirection = messageFilterDirection
+        this.messageFilterValue = messageFilterValue
+    }
+
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insertMessage(data.message1)
