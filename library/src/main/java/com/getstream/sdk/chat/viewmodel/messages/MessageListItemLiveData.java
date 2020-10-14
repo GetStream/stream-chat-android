@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import static kotlin.collections.CollectionsKt.filter;
 import static kotlin.collections.CollectionsKt.map;
@@ -45,6 +46,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     private List<User> previousTypingUsers;
 
     private Observer<List<Message>> threadMessagesObserver = this::onThreadMessagesChanged;
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd", Locale.ENGLISH);
 
     public MessageListItemLiveData(User currentUser,
                                    LiveData<List<Message>> messages,
@@ -111,6 +113,7 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
                         break;
                     }
                     if (userRead.getLastRead() != null &&
+                            messageListItem.getMessage().getCreatedAt() != null &&
                             !userRead.getLastRead().before(messageListItem.getMessage().getCreatedAt())) {
                         // set the read state on this entity
                         messageListItem.getMessageReadBy().add(userRead);
@@ -140,8 +143,11 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
     }
 
     private boolean isSameDay(Message a, Message b) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
+        Date aDate = (a.getCreatedAt() != null) ? a.getCreatedAt() : a.getCreatedLocallyAt();
+        Date bDate = (b.getCreatedAt() != null) ? b.getCreatedAt() : b.getCreatedLocallyAt();
+        return aDate != null &&
+                bDate != null &&
+                SIMPLE_DATE_FORMAT.format(aDate).equals(SIMPLE_DATE_FORMAT.format(bDate));
     }
 
     private boolean isThread() {

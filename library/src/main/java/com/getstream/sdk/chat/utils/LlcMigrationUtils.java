@@ -97,20 +97,23 @@ public class LlcMigrationUtils {
             return false;
         } else if (lastMessage == null) {
             return true;
-        } else return myReadDate.getTime() > lastMessage.getCreatedAt().getTime();
+        } else {
+            Date date = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
+            return myReadDate.getTime() > (date != null ? date.getTime() : 0);
+        }
     }
 
     public static List<ChannelUserRead> getLastMessageReads(Channel channel) {
         Message lastMessage = computeLastMessage(channel);
         List<ChannelUserRead> readLastMessage = new ArrayList<>();
         List<ChannelUserRead> reads = channel.getRead();
-        if (reads == null || lastMessage == null) return readLastMessage;
+        if (lastMessage == null || lastMessage.getCreatedAt() == null) return readLastMessage;
 
         User currentUser = getCurrentUser();
         String currentUserId = currentUser.getId();
 
         for (ChannelUserRead r : reads) {
-            if (r.getUserId().equals(currentUserId))
+            if (r.getUserId().equals(currentUserId) || r.getLastRead() == null)
                 continue;
             if (r.getLastRead().compareTo(lastMessage.getCreatedAt()) > -1) {
                 readLastMessage.add(r);
