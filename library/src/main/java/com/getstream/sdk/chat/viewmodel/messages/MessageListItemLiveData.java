@@ -141,7 +141,26 @@ public class MessageListItemLiveData extends LiveData<MessageListItemWrapper> {
 
     private boolean isSameDay(Message a, Message b) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        return fmt.format(a.getCreatedAt()).equals(fmt.format(b.getCreatedAt()));
+        Date aCreatedAt = null;
+        Date bCreatedAt = null;
+
+        if (a.getCreatedAt() != null) {
+            aCreatedAt = a.getCreatedAt();
+        } else if (a.getCreatedLocallyAt() != null) {
+            aCreatedAt = a.getCreatedLocallyAt();
+        }
+
+        if (b.getCreatedAt() != null) {
+            bCreatedAt = b.getCreatedAt();
+        } else if (b.getCreatedLocallyAt() != null) {
+            bCreatedAt = b.getCreatedLocallyAt();
+        }
+
+        if (aCreatedAt == null || bCreatedAt == null) {
+            return false;
+        } else {
+            return fmt.format(aCreatedAt).equals(fmt.format(bCreatedAt));
+        }
     }
 
     private boolean isThread() {
