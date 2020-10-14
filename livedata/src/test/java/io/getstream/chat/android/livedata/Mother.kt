@@ -1,5 +1,7 @@
 package io.getstream.chat.android.livedata
 
+import com.flextrade.jfixture.JFixture
+import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
@@ -23,6 +25,7 @@ import java.io.File
 import java.util.Date
 import kotlin.random.Random
 
+private val fixture = JFixture()
 private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
 fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
@@ -244,3 +247,12 @@ fun randomMessages(
 ): List<Message> = (1..size).map(creationFunction)
 
 fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
+
+fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
+    return KFixture(fixture) {
+        sameInstance(
+            Attachment.UploadState::class.java,
+            Attachment.UploadState.Success
+        )
+    } <Attachment>().apply(attachmentBuilder)
+}

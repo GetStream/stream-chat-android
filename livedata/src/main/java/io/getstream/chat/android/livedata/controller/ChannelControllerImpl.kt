@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
+import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -197,6 +198,7 @@ class ChannelControllerImpl(
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> =
         ConcurrentHashMap()
+    private val messageHelper = MessageHelper()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client)
@@ -767,9 +769,10 @@ class ChannelControllerImpl(
 
     private fun upsertMessages(messages: List<Message>) {
         val copy = _messages.value ?: mutableMapOf()
+        val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
-        for (message in messages) {
+        for (message in newMessages) {
             val oldMessage = copy[message.id]
             var outdated = false
             if (oldMessage != null) {

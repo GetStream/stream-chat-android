@@ -1,6 +1,7 @@
 # To be released:
 - Update LLC to version 1.16.6
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
+- Update attachments of message with an old image url, if it's still valid.
 - Add setting attachment data even if attachment upload failed
 - Fix NPE while ChatEvent was handled
 - Improved nullability, restricted some generic type parameters to be non-nullable (set `Any` as their upper bound)
