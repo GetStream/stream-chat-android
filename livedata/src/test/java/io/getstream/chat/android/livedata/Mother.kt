@@ -131,8 +131,6 @@ fun randomMessage(
     ownReactions: MutableList<Reaction> = mutableListOf(),
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
-    createdLocallyAt: Date? = randomDate(),
-    updatedLocallyAt: Date? = randomDate(),
     deletedAt: Date? = randomDate(),
     updatedLocallyAt: Date? = randomDate(),
     createdLocallyAt: Date? = randomDate(),
