@@ -1,4 +1,6 @@
 # To be released:
+
+# Oct 14th, 2020 - 4.3.0-beta-6
 - Update to Kotlin 1.4.10
 - Fix Typing view behavior
 - Fix NPE asking for `Attachment::type`
