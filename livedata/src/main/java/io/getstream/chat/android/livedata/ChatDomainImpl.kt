@@ -649,8 +649,6 @@ class ChatDomainImpl private constructor(
 
             // async to run queries in parallel
             channelEntities.map { scope.async { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) } }.awaitAll().toMap()
-            // sync version:
-            // channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
         } else {
             emptyMap()
         }
