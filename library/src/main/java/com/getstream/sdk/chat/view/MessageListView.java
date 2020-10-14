@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -30,7 +29,6 @@ import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
 import com.getstream.sdk.chat.enums.GiphyAction;
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
 import com.getstream.sdk.chat.utils.StartStopBuffer;
-import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
@@ -151,7 +149,6 @@ public class MessageListView extends ConstraintLayout {
                 .navigate(new AttachmentDestination(message, attachment, getContext()));
     };
     private final ReactionViewClickListener DEFAULT_REACTION_VIEW_CLICK_LISTENER = message -> {
-        Utils.hideSoftKeyboard((Activity) getContext());
         new MessageMoreActionDialog(
                 getContext(),
                 channel,
