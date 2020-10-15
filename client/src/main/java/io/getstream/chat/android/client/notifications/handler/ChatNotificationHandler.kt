@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
 public open class ChatNotificationHandler @JvmOverloads constructor(
     protected val context: Context,
-    protected val config: NotificationConfig = NotificationConfig()
+    public val config: NotificationConfig = NotificationConfig()
 ) {
     private val logger = ChatLogger.get("ChatNotificationHandler")
 
