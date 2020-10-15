@@ -85,7 +85,9 @@ class AttachmentViewHolderMedia(
 
         if (binding.tvMediaDes.isVisible || binding.tvMediaTitle.isVisible) {
             val background = bubbleHelper.getDrawableForAttachmentDescription(
-                messageItem.message, messageItem.isMine, messageItem.positions
+                messageItem.message,
+                messageItem.isMine,
+                messageItem.positions
             )
             binding.clDes.background = background
         }

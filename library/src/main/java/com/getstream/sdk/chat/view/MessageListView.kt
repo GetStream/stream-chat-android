@@ -294,34 +294,36 @@ class MessageListView : ConstraintLayout {
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
-        binding.chatMessagesRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (!::layoutManager.isInitialized) {
-                    return
-                }
+        binding.chatMessagesRV.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (!::layoutManager.isInitialized) {
+                        return
+                    }
 
-                val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
-                val currentLastVisible = layoutManager.findLastVisibleItemPosition()
-                if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
-                    endRegionReachedHandler.invoke()
-                }
+                    val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
+                    val currentLastVisible = layoutManager.findLastVisibleItemPosition()
+                    if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
+                        endRegionReachedHandler.invoke()
+                    }
 
-                hasScrolledUp = currentLastVisible < lastPosition()
-                lastVisiblePosition = currentLastVisible
-                firstVisiblePosition = currentFirstVisible
+                    hasScrolledUp = currentLastVisible < lastPosition()
+                    lastVisiblePosition = currentLastVisible
+                    firstVisiblePosition = currentFirstVisible
 
-                lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition)
+                    lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition)
 
-                val unseenItems = adapter.itemCount - 1 - lastViewedPosition
-                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
+                    val unseenItems = adapter.itemCount - 1 - lastViewedPosition
+                    scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
 
-                if (hasScrolledUp) {
-                    scrollButtonBehaviour.userScrolledUp()
-                } else {
-                    scrollButtonBehaviour.userScrolledToTheBottom()
+                    if (hasScrolledUp) {
+                        scrollButtonBehaviour.userScrolledUp()
+                    } else {
+                        scrollButtonBehaviour.userScrolledToTheBottom()
+                    }
                 }
             }
-        })
+        )
 
         /*
          * Lock for 500 milliseconds setMessageListScrollUp in here.
@@ -520,7 +522,7 @@ class MessageListView : ConstraintLayout {
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
             // we can't always run it since read and typing events also influence this list..
-            //viewModel.markLastMessageRead(); // TODO this is event
+            // viewModel.markLastMessageRead(); // TODO this is event
             lastMessageReadHandler.invoke()
         }
 

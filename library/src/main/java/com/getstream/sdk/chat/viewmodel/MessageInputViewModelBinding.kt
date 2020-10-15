@@ -45,10 +45,12 @@ fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: Lifec
             this@bindView.editMessage(oldMessage.apply { text = newMessageText })
         }
     }
-    view.addTypeListener(object : MessageInputView.TypeListener {
-        override fun onKeystroke() = keystroke()
-        override fun onStopTyping() = stopTyping()
-    })
+    view.addTypeListener(
+        object : MessageInputView.TypeListener {
+            override fun onKeystroke() = keystroke()
+            override fun onStopTyping() = stopTyping()
+        }
+    )
     getActiveThread().observe(lifecycleOwner) { message ->
         if (message != null) {
             view.setThreadMode(message)

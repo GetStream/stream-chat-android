@@ -98,8 +98,10 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
     fun getInputButtonIcon(isEdit: Boolean): Drawable {
         return if (inputButtonIcon == -1) {
             getSelector(
-                if (isEdit) inputButtonEditIconColor else inputButtonDefaultIconColor, inputButtonDefaultIconPressedColor,
-                inputButtonDefaultIconDisabledColor, R.drawable.stream_ic_send
+                if (isEdit) inputButtonEditIconColor else inputButtonDefaultIconColor,
+                inputButtonDefaultIconPressedColor,
+                inputButtonDefaultIconDisabledColor,
+                R.drawable.stream_ic_send
             )
         } else {
             getDrawable(inputButtonIcon)
@@ -200,7 +202,8 @@ class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
             )
 
             prefs = context.getSharedPreferences(
-                "MessageInputStyle", Context.MODE_PRIVATE
+                "MessageInputStyle",
+                Context.MODE_PRIVATE
             )
             recycle()
         }
