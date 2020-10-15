@@ -17,7 +17,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.8.4"
+        versionName "0.8.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
@@ -65,7 +65,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.16.6"
+    api "com.github.getstream:stream-chat-android-client:1.16.7"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
@@ -108,6 +108,7 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$jupiter_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$jupiter_version"
+    testImplementation "com.flextrade.jfixture:kfixture:0.2.0"
 
     androidTestImplementation "junit:junit:4.13"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$jupiter_version"

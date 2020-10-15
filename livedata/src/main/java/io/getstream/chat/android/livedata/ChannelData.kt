@@ -51,9 +51,7 @@ data class ChannelData(var type: String, var channelId: String) {
         c.updatedAt = updatedAt
         c.deletedAt = deletedAt
         c.extraData = extraData
-        if (messages.isNotEmpty()) {
-            c.lastMessageAt = messages.last().createdAt
-        }
+        c.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         c.createdBy = createdBy
 
         c.messages = messages

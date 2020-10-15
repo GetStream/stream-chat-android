@@ -1,8 +1,14 @@
 # To be released:
-- Update LLC to version 1.16.6
-- Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
-- Add setting attachment data even if attachment upload failed
 - Improve sync data validation in ChatDomain.Builder
+
+# Oct 14th, 2020 - 0.8.5
+- Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
+- Update attachments of message with an old image url, if it's still valid.
+- Add setting attachment data even if attachment upload failed
+- Fix NPE while ChatEvent was handled
+- Improved nullability, restricted some generic type parameters to be non-nullable (set `Any` as their upper bound)
+- Fix method to store date of the last message received into a channel
+- Update client to 1.16.7: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.7
 
 # Oct 7th, 2020 - 0.8.4
 - Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5

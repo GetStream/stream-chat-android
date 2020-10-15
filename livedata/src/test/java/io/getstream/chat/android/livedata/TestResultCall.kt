@@ -4,8 +4,8 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-class TestResultCall<T>(val result: Result<T>) : Call<T> {
-    override fun cancel() { }
+class TestResultCall<T : Any>(val result: Result<T>) : Call<T> {
+    override fun cancel() {}
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
         callback(result)
@@ -13,7 +13,7 @@ class TestResultCall<T>(val result: Result<T>) : Call<T> {
 
     override fun execute(): Result<T> = result
 
-    override fun <K> map(mapper: (T) -> K): Call<K> {
+    override fun <K : Any> map(mapper: (T) -> K): Call<K> {
         TODO("Not yet implemented")
     }
 
@@ -25,11 +25,11 @@ class TestResultCall<T>(val result: Result<T>) : Call<T> {
         TODO("Not yet implemented")
     }
 
-    override fun <C, B> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>> {
+    override fun <C : Any, B : Any> zipWith(callK: Call<C>, callP: Call<B>): Call<Triple<T, C, B>> {
         TODO("Not yet implemented")
     }
 
-    override fun <K> zipWith(call: Call<K>): Call<Pair<T, K>> {
+    override fun <K : Any> zipWith(call: Call<K>): Call<Pair<T, K>> {
         TODO("Not yet implemented")
     }
 }
