@@ -65,7 +65,15 @@ class MessageListViewModel @JvmOverloads constructor(
         return if (previous==null) {
             true
         } else {
-            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (60 * 60 * 4)
+            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+        }
+    }
+
+    private fun threadDateSeparator(previous: Message?, message: Message): Boolean {
+        return if (previous==null) {
+            false
+        } else {
+            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
         }
     }
 
@@ -76,7 +84,7 @@ class MessageListViewModel @JvmOverloads constructor(
                 channelController.reads,
                 null,
                 true,
-                ::dateSeparator
+                ::threadDateSeparator
         )
         threadListData?.let {
             stateMerger.apply {
