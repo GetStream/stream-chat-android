@@ -114,6 +114,7 @@ dependencies {
 
     implementation Dependencies.androidxMedia
     implementation Dependencies.coil
+    implementation Dependencies.coilGif
 
     // ExoPlayer
     api Dependencies.exoplayerCore

@@ -3,9 +3,13 @@ package com.getstream.sdk.chat
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import coil.Coil
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.GetRequest
 import coil.request.GetRequestBuilder
+import coil.size.Precision
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
@@ -31,6 +35,24 @@ internal object ImageLoader {
                         .drawable as? BitmapDrawable
                     )?.bitmap
             }
+    }
+
+    fun getImageLoaderWithGifSupport(
+        context: Context,
+        allowHardware: Boolean = false,
+        precision: Precision = Precision.EXACT
+    ): coil.ImageLoader {
+        return coil.ImageLoader.Builder(context)
+            .allowHardware(allowHardware)
+            .precision(precision)
+            .componentRegistry {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    add(ImageDecoderDecoder())
+                } else {
+                    add(GifDecoder())
+                }
+            }
+            .build()
     }
 
     private fun GetRequestBuilder.applyTransformation(

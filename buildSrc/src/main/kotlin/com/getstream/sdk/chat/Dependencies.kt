@@ -63,6 +63,7 @@ object Dependencies {
     const val androidxMedia = "androidx.media:media:$ANDROIDX_MEDIA_VERSION"
     const val appCompat = "androidx.appcompat:appcompat:$APP_COMPAT_VERSION"
     const val coil = "io.coil-kt:coil:$COIL_VERSION"
+    const val coilGif = "io.coil-kt:coil-gif:$COIL_VERSION"
     const val coroutinesTest = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$COROUTINES_VERSION"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:$CONSTRAINT_LAYOUT_VERSION"
     const val dexter = "com.karumi:dexter:$DEXTER_VERSION"
