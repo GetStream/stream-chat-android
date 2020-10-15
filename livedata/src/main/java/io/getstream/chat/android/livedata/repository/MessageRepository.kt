@@ -132,7 +132,9 @@ internal class MessageRepository(
             message.type = type
             message.replyCount = replyCount
             message.createdAt = createdAt
+            message.createdLocallyAt = createdLocallyAt
             message.updatedAt = updatedAt
+            message.updatedLocallyAt = updatedLocallyAt
             message.deletedAt = deletedAt
             message.parentId = parentId
             message.command = command
@@ -156,7 +158,9 @@ internal class MessageRepository(
             type = model.type,
             replyCount = model.replyCount,
             createdAt = model.createdAt,
+            createdLocallyAt = model.createdLocallyAt,
             updatedAt = model.updatedAt,
+            updatedLocallyAt = model.updatedLocallyAt,
             deletedAt = model.deletedAt,
             parentId = model.parentId,
             command = model.command,
