@@ -237,7 +237,7 @@ class MessageListView : ConstraintLayout {
         }
 
         binding.chatMessagesRV.apply {
-            setLayoutManager(layoutManager)
+            setLayoutManager(this@MessageListView.layoutManager)
             setHasFixedSize(true)
             setItemViewCacheSize(20)
         }
