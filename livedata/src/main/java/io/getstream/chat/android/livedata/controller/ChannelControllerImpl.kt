@@ -463,6 +463,7 @@ class ChannelControllerImpl(
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
+        // TODO remove usage of MessageEntity
         val messageEntity = MessageRepository.toEntity(newMessage)
 
         // Update livedata
@@ -1082,10 +1083,7 @@ class ChannelControllerImpl(
             }
         }
 
-        editedMessage.syncStatus = SyncStatus.IN_PROGRESS
-        if (!online) {
-            editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update livedata
         upsertMessage(editedMessage)
@@ -1111,10 +1109,10 @@ class ChannelControllerImpl(
 
                 return Result(editedMessage, null)
             } else {
-                if (result.error().isPermanent()) {
-                    editedMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                editedMessage.syncStatus = if (result.error().isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
+                    SyncStatus.SYNC_NEEDED
                 }
 
                 upsertMessage(editedMessage)
@@ -1128,10 +1126,7 @@ class ChannelControllerImpl(
     suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
         message.deletedAt = Date()
-        message.syncStatus = SyncStatus.IN_PROGRESS
-        if (!online) {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update livedata
         upsertMessage(message)
@@ -1150,10 +1145,10 @@ class ChannelControllerImpl(
                 domainImpl.repos.messages.insert(message)
                 return Result(result.data(), null)
             } else {
-                if (result.error().isPermanent()) {
-                    message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                message.syncStatus = if (result.error().isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    message.syncStatus = SyncStatus.SYNC_NEEDED
+                    SyncStatus.SYNC_NEEDED
                 }
 
                 upsertMessage(message)

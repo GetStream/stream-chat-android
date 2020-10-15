@@ -20,8 +20,6 @@ internal data class MessageEntity(
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
-    /** tracks when send message was completed */
-    val sendMessageCompletedAt: Date? = null,
     /** the number of replies */
     val replyCount: Int = 0,
     /** when the message was created */

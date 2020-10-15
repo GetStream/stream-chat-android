@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.os.Handler
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -567,13 +568,39 @@ class ChatDomainImpl private constructor(
     }
 
     suspend fun retryFailedEntities() {
-        // TODO seems weird
         sleep(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
-        val messageEntities = repos.messages.retryMessages(ChatClient.instance())
+        val messages = retryMessages()
         val reactionEntities = repos.reactions.retryReactions()
-        logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
+        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactionEntities.size} reaction entities")
+    }
+
+    @VisibleForTesting
+    internal suspend fun retryMessages(): List<Message> {
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
+
+        val messages = repos.messages.selectSyncNeeded(userMap)
+        for (message in messages) {
+            val channel = client.channel(message.cid)
+            // support sending, deleting and editing messages here
+            val result = when {
+                message.deletedAt != null -> channel.deleteMessage(message.id).execute()
+                message.updatedAt != null || message.updatedLocallyAt != null -> {
+                    client.updateMessage(message).execute()
+                }
+                else -> channel.sendMessage(message).execute()
+            }
+
+            if (result.isSuccess) {
+                // TODO: 1.1 image upload support
+                repos.messages.insert(message.copy(syncStatus = SyncStatus.COMPLETED))
+            } else if (result.isError && result.error().isPermanent()) {
+                repos.messages.insert(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+            }
+        }
+
+        return messages
     }
 
     suspend fun storeStateForChannel(channel: Channel) {

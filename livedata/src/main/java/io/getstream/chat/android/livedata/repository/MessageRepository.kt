@@ -2,22 +2,18 @@ package io.getstream.chat.android.livedata.repository
 
 import androidx.annotation.VisibleForTesting
 import androidx.collection.LruCache
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
-import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 import java.util.Date
 
 internal class MessageRepository(
     private val messageDao: MessageDao,
-    private val currentUser: User,
     private val cacheSize: Int = 100
 ) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
@@ -98,41 +94,6 @@ internal class MessageRepository(
         insert(listOf(message), cache)
     }
 
-    suspend fun retryMessages(client: ChatClient): List<MessageEntity> {
-        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
-
-        val messageEntities = messageDao.selectSyncNeeded()
-        for (messageEntity in messageEntities) {
-            val channel = client.channel(messageEntity.cid)
-            // support sending, deleting and editing messages here
-            val result = when {
-                messageEntity.deletedAt != null -> {
-                    channel.deleteMessage(messageEntity.id).execute()
-                }
-                messageEntity.sendMessageCompletedAt != null -> {
-                    client.updateMessage(toModel(messageEntity, userMap)).execute()
-                }
-                else -> {
-                    channel.sendMessage(toModel(messageEntity, userMap)).execute()
-                }
-            }
-
-            if (result.isSuccess) {
-                // TODO: 1.1 image upload support
-                messageDao.insert(
-                    messageEntity.copy(
-                        syncStatus = SyncStatus.COMPLETED,
-                        sendMessageCompletedAt = messageEntity.sendMessageCompletedAt ?: Date()
-                    )
-                )
-            } else if (result.isError && result.error().isPermanent()) {
-                messageDao.insert(messageEntity.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
-            }
-        }
-
-        return messageEntities
-    }
-
     suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
         // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
@@ -155,8 +116,12 @@ internal class MessageRepository(
             }
     }
 
+    internal suspend fun selectSyncNeeded(userMap: Map<String, User>): List<Message> {
+        return messageDao.selectSyncNeeded().map { toModel(it, userMap) }
+    }
+
     companion object {
-        fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
+        private fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
             val message = Message()
             message.id = id
             message.cid = cid
@@ -174,7 +139,7 @@ internal class MessageRepository(
             message.extraData = extraData.toMutableMap()
             message.reactionCounts = reactionCounts.toMutableMap()
             message.reactionScores = reactionScores.toMutableMap()
-            message.syncStatus = syncStatus ?: SyncStatus.COMPLETED
+            message.syncStatus = syncStatus
 
             message.latestReactions = (latestReactions.map { it.toReaction(userMap) }).toMutableList()
             message.ownReactions = (ownReactions.map { it.toReaction(userMap) }).toMutableList()
@@ -187,7 +152,7 @@ internal class MessageRepository(
             id = model.id, cid = model.cid, userId = model.user.id,
             text = model.text,
             attachments = model.attachments,
-            syncStatus = model.syncStatus ?: SyncStatus.COMPLETED,
+            syncStatus = model.syncStatus,
             type = model.type,
             replyCount = model.replyCount,
             createdAt = model.createdAt,
@@ -196,13 +161,12 @@ internal class MessageRepository(
             parentId = model.parentId,
             command = model.command,
             extraData = model.extraData,
-            reactionCounts = model.reactionCounts ?: mutableMapOf(),
-            reactionScores = model.reactionScores ?: mutableMapOf(),
-            sendMessageCompletedAt = if (model.syncStatus == SyncStatus.COMPLETED) Date() else null,
+            reactionCounts = model.reactionCounts,
+            reactionScores = model.reactionScores,
             // for these we need a little map,
-            latestReactions = (model.latestReactions.map { ReactionEntity(it) }).toMutableList(),
-            ownReactions = (model.ownReactions.map { ReactionEntity(it) }).toMutableList(),
-            mentionedUsersId = (model.mentionedUsers.map { it.id }).toMutableList()
+            latestReactions = model.latestReactions.map(::ReactionEntity),
+            ownReactions = model.ownReactions.map(::ReactionEntity),
+            mentionedUsersId = model.mentionedUsers.map(User::id)
         )
     }
 }
