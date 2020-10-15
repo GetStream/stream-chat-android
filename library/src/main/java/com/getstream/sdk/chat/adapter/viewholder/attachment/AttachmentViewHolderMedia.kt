@@ -5,8 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import coil.api.load
-import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.ImageLoader.loadWithGifSupport
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -67,15 +66,14 @@ class AttachmentViewHolderMedia(
         val thumbUrl = attachment.thumbUrl
         val imageUrl = if (thumbUrl.isNullOrEmpty()) attachment.imageUrl else thumbUrl
 
-        binding.ivMediaThumb.load(imageUrl, ImageLoader.getImageLoaderWithGifSupport(context)) {
-            placeholder(R.drawable.stream_placeholder)
-            listener(
-                onStart = { binding.progressBar.isVisible = true },
-                onSuccess = { _, _ -> binding.progressBar.isVisible = false },
-                onError = { _, _ -> binding.progressBar.isVisible = false },
-                onCancel = { binding.progressBar.isVisible = false },
-            )
-        }
+        binding.ivMediaThumb.loadWithGifSupport(
+            imageUrl,
+            placeholderResId = R.drawable.stream_placeholder,
+            onStart = { binding.progressBar.isVisible = true },
+            onCancel = { binding.progressBar.isVisible = false },
+            onError = { binding.progressBar.isVisible = false },
+            onSuccess = { binding.progressBar.isVisible = false },
+        )
 
         if (messageItem.message.type != ModelType.message_ephemeral) {
             binding.tvMediaTitle.text = attachment.title
