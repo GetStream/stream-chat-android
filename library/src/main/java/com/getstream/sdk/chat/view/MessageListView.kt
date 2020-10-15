@@ -1,54 +1,46 @@
-package com.getstream.sdk.chat.view;
+package com.getstream.sdk.chat.view
 
-import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.DefaultBubbleHelper;
-import com.getstream.sdk.chat.R;
-import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory;
-import com.getstream.sdk.chat.adapter.ListenerContainer;
-import com.getstream.sdk.chat.adapter.ListenerContainerImpl;
-import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.adapter.MessageListItemAdapter;
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
-import com.getstream.sdk.chat.enums.GiphyAction;
-import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination;
-import com.getstream.sdk.chat.utils.StartStopBuffer;
-import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog;
-import com.getstream.sdk.chat.view.dialog.ReadUsersDialog;
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Date;
-import java.util.List;
-
-import io.getstream.chat.android.client.logger.ChatLogger;
-import io.getstream.chat.android.client.logger.TaggedLogger;
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.ChannelUserRead;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.User;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
-import kotlin.jvm.functions.Function2;
+import android.content.Context
+import android.graphics.drawable.Drawable
+import android.util.AttributeSet
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.DefaultBubbleHelper
+import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
+import com.getstream.sdk.chat.adapter.ListenerContainer
+import com.getstream.sdk.chat.adapter.ListenerContainerImpl
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItemAdapter
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
+import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
+import com.getstream.sdk.chat.enums.GiphyAction
+import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
+import com.getstream.sdk.chat.utils.StartStopBuffer
+import com.getstream.sdk.chat.utils.inflater
+import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
+import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
+import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
+import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
+import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
+import com.getstream.sdk.chat.view.MessageListView.UserClickListener
+import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
+import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -58,99 +50,104 @@ import kotlin.jvm.functions.Function2;
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-public class MessageListView extends ConstraintLayout {
-    //    private int firstVisible;
-    private static int fVPosition, lVPosition;
-    protected MessageListViewStyle style;
+class MessageListView : ConstraintLayout {
+    private var firstVisiblePosition = 0
+    private var lastVisiblePosition = 0
 
-    private RecyclerView messagesRV;
-    private ConstraintLayout unseenBottomBtn;
-    private TextView newMessagesTextTV;
-    private int lastViewedPosition = 0;
-    private String newMessagesTextSingle;
-    private String newMessagesTextPlural;
-    private NewMessagesBehaviour newMessagesBehaviour;
-    private ScrollButtonBehaviour scrollButtonBehaviour;
-    private StartStopBuffer<MessageListItemWrapper> buffer;
+    private lateinit var style: MessageListViewStyle
 
-    private int unseenItems = 0;
+    private lateinit var binding: StreamMessageListViewBinding
 
-    @Nullable
-    private MessageListItemAdapter adapter = null;
-    private LinearLayoutManager layoutManager;
+    private var lastViewedPosition = 0
+    private var newMessagesTextSingle: String? = null
+    private var newMessagesTextPlural: String? = null
 
-    private boolean hasScrolledUp;
-    private int threadParentPosition;
-    private Function0<Unit> endRegionReachedHandler = () -> {
-        throw new IllegalStateException("endRegionReachedHandler must be set.");
-    };
-    private Function0<Unit> lastMessageReadHandler = () -> {
-        throw new IllegalStateException("lastMessageReadHandler must be set.");
-    };
-    private Function1<Message, Unit> onMessageEditHandler = (Message m) -> {
-        throw new IllegalStateException("onMessageEditHandler must be set.");
-    };
-    private Function1<Message, Unit> onMessageDeleteHandler = (Message m) -> {
-        throw new IllegalStateException("onMessageDeleteHandler must be set.");
-    };
-    private Function1<Message, Unit> onStartThreadHandler = (Message m) -> {
-        throw new IllegalStateException("onStartThreadHandler must be set.");
-    };
-    private Function1<Message, Unit> onStartThreadListener = (Message m) -> Unit.INSTANCE;
-    private Function1<Message, Unit> onMessageFlagHandler = (Message m) -> {
-        throw new IllegalStateException("onMessageFlagHandler must be set.");
-    };
-    private Function2<Message, GiphyAction, Unit> onSendGiphyHandler = (Message m, GiphyAction a) -> {
-        throw new IllegalStateException("onSendGiphyHandler must be set.");
-    };
-    private Function1<Message, Unit> onMessageRetryHandler = (Message m) -> {
-        throw new IllegalStateException("onMessageRetryHandler must be set.");
-    };
-    private Channel channel;
-    private User currentUser;
+    private lateinit var newMessagesBehaviour: NewMessagesBehaviour
+    private lateinit var scrollButtonBehaviour: ScrollButtonBehaviour
+
+    private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
+
+    private lateinit var adapter: MessageListItemAdapter
+    private lateinit var layoutManager: LinearLayoutManager
+
+    private var hasScrolledUp = false
+
+    private var endRegionReachedHandler: () -> Unit = {
+        throw IllegalStateException("endRegionReachedHandler must be set.")
+    }
+    private var lastMessageReadHandler: () -> Unit = {
+        throw IllegalStateException("lastMessageReadHandler must be set.")
+    }
+    private var onMessageEditHandler: (Message) -> Unit = {
+        throw IllegalStateException("onMessageEditHandler must be set.")
+    }
+    private var onMessageDeleteHandler: (Message) -> Unit = {
+        throw IllegalStateException("onMessageDeleteHandler must be set.")
+    }
+    private var onStartThreadHandler: (Message) -> Unit = {
+        throw IllegalStateException("onStartThreadHandler must be set.")
+    }
+    private var onStartThreadListener: (Message) -> Unit = {
+        /* Empty */
+    }
+    private var onMessageFlagHandler: (Message) -> Unit = {
+        throw IllegalStateException("onMessageFlagHandler must be set.")
+    }
+    private var onSendGiphyHandler: (Message, GiphyAction) -> Unit = { _, _ ->
+        throw IllegalStateException("onSendGiphyHandler must be set.")
+    }
+    private var onMessageRetryHandler: (Message) -> Unit = {
+        throw IllegalStateException("onMessageRetryHandler must be set.")
+    }
+
+    private lateinit var channel: Channel
+    private lateinit var currentUser: User
+
     /**
      * If you are allowed to scroll up or not
      */
-    boolean lockScrollUp = true;
+    private var lockScrollUp = true
 
-    private TaggedLogger logger = ChatLogger.Companion.get("MessageListView");
+    private val logger = ChatLogger.get("MessageListView")
 
-    private final MessageClickListener DEFAULT_MESSAGE_CLICK_LISTENER = (message) -> {
-        if (message.getReplyCount() > 0) {
-            onStartThreadHandler.invoke(message);
-            onStartThreadListener.invoke(message);
+    private val DEFAULT_MESSAGE_CLICK_LISTENER =
+        MessageClickListener { message ->
+            if (message.replyCount > 0) {
+                onStartThreadHandler.invoke(message)
+                onStartThreadListener.invoke(message)
+            }
         }
-    };
-
-    private final MessageLongClickListener DEFAULT_MESSAGE_LONG_CLICK_LISTENER = message ->
-            new MessageMoreActionDialog(
-                    getContext(),
-                    channel,
-                    message,
-                    currentUser,
-                    style,
-                    onMessageEditHandler,
-                    onMessageDeleteHandler,
-                    (Message m) -> {
-                        onStartThreadHandler.invoke(m);
-                        onStartThreadListener.invoke(m);
-                        return Unit.INSTANCE;
-                    },
-                    onMessageFlagHandler
-            ).show();
-
-    private final MessageRetryListener DEFAULT_MESSAGE_RETRY_LISTENER = (message) -> {
-        onMessageRetryHandler.invoke(message);
-    };
-
-    private final AttachmentClickListener DEFAULT_ATTACHMENT_CLICK_LISTENER = (message, attachment) -> {
-        Chat.getInstance()
-                .getNavigator()
-                .navigate(new AttachmentDestination(message, attachment, getContext()));
-    };
-    private final ReactionViewClickListener DEFAULT_REACTION_VIEW_CLICK_LISTENER = message -> {
-        new MessageMoreActionDialog(
-                getContext(),
+    private val DEFAULT_MESSAGE_LONG_CLICK_LISTENER =
+        MessageLongClickListener { message ->
+            MessageMoreActionDialog(
+                context,
+                channel,
+                message,
+                currentUser,
+                style,
+                onMessageEditHandler,
+                onMessageDeleteHandler,
+                { m: Message ->
+                    onStartThreadHandler.invoke(m)
+                    onStartThreadListener.invoke(m)
+                },
+                onMessageFlagHandler
+            ).show()
+        }
+    private val DEFAULT_MESSAGE_RETRY_LISTENER =
+        MessageRetryListener { message ->
+            onMessageRetryHandler.invoke(message)
+        }
+    private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
+        AttachmentClickListener { message, attachment ->
+            Chat.getInstance()
+                .navigator
+                .navigate(AttachmentDestination(message, attachment, context))
+        }
+    private val DEFAULT_REACTION_VIEW_CLICK_LISTENER =
+        ReactionViewClickListener { message: Message ->
+            MessageMoreActionDialog(
+                context,
                 channel,
                 message,
                 currentUser,
@@ -159,391 +156,379 @@ public class MessageListView extends ConstraintLayout {
                 onMessageDeleteHandler,
                 onStartThreadHandler,
                 onMessageFlagHandler
-        ).show();
-    };
-    private final UserClickListener DEFAULT_USER_CLICK_LISTENER = user -> { /* Empty */ };
-    private final ReadStateClickListener DEFAULT_READ_STATE_CLICK_LISTENER = reads ->
-            new ReadUsersDialog(getContext())
-                    .setReads(reads)
-                    .setStyle(style)
-                    .show();
-    private final GiphySendListener DEFAULT_GIPHY_SEND_LISTENER = (message, action) ->
-            onSendGiphyHandler.invoke(message, action);
-
-    private final ListenerContainer listenerContainer = new ListenerContainerImpl(
-            DEFAULT_MESSAGE_CLICK_LISTENER,
-            DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
-            DEFAULT_MESSAGE_RETRY_LISTENER,
-            DEFAULT_ATTACHMENT_CLICK_LISTENER,
-            DEFAULT_REACTION_VIEW_CLICK_LISTENER,
-            DEFAULT_USER_CLICK_LISTENER,
-            DEFAULT_READ_STATE_CLICK_LISTENER,
-            DEFAULT_GIPHY_SEND_LISTENER
-    );
-
-    private BubbleHelper bubbleHelper;
-    private AttachmentViewHolderFactory attachmentViewHolderFactory;
-    private MessageViewHolderFactory messageViewHolderFactory;
-
-    // region Constructor
-    public MessageListView(Context context) {
-        super(context);
-        init(context, null);
-    }
-
-    public MessageListView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        this.parseAttr(context, attrs);
-        init(context, attrs);
-    }
-
-    public MessageListView(Context context, @Nullable AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        this.parseAttr(context, attrs);
-        init(context, attrs);
-    }
-
-    private void init(Context context, @Nullable AttributeSet attr) {
-        LayoutInflater.from(context).inflate(R.layout.stream_message_list_view, this, true);
-
-        initRecyclerView();
-        initUnseenMessagesButton();
-        initUnseenMessagesView();
-
-        if (attr != null) {
-            configureAttributes(attr);
+            ).show()
+        }
+    private val DEFAULT_USER_CLICK_LISTENER = UserClickListener { /* Empty */ }
+    private val DEFAULT_READ_STATE_CLICK_LISTENER =
+        ReadStateClickListener { reads: List<ChannelUserRead> ->
+            ReadUsersDialog(context)
+                .setReads(reads)
+                .setStyle(style)
+                .show()
+        }
+    private val DEFAULT_GIPHY_SEND_LISTENER =
+        GiphySendListener { message, action ->
+            onSendGiphyHandler.invoke(message, action)
         }
 
-        initScrollButtonBehaviour();
+    private val listenerContainer: ListenerContainer = ListenerContainerImpl(
+        DEFAULT_MESSAGE_CLICK_LISTENER,
+        DEFAULT_MESSAGE_LONG_CLICK_LISTENER,
+        DEFAULT_MESSAGE_RETRY_LISTENER,
+        DEFAULT_ATTACHMENT_CLICK_LISTENER,
+        DEFAULT_REACTION_VIEW_CLICK_LISTENER,
+        DEFAULT_USER_CLICK_LISTENER,
+        DEFAULT_READ_STATE_CLICK_LISTENER,
+        DEFAULT_GIPHY_SEND_LISTENER
+    )
 
-        hasScrolledUp = false;
+    private lateinit var bubbleHelper: BubbleHelper
+    private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+    private lateinit var messageViewHolderFactory: MessageViewHolderFactory
 
-        buffer = new StartStopBuffer<>();
-
-        buffer.subscribe((wrapper) -> {
-            handleNewWrapper(wrapper);
-            return Unit.INSTANCE;
-        });
+    constructor(context: Context) : super(context) {
+        init(context, null)
     }
 
-    // region Init
-    private void initScrollButtonBehaviour() {
-        scrollButtonBehaviour =
-                new DefaultScrollButtonBehaviour(
-                        unseenBottomBtn,
-                        newMessagesTextTV,
-                        newMessagesTextSingle,
-                        newMessagesTextPlural
-                );
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        parseAttr(context, attrs)
+        init(context, attrs)
     }
 
-    private void initRecyclerView() {
-        messagesRV = findViewById(R.id.chatMessagesRV);
-
-        layoutManager = new LinearLayoutManager(getContext());
-        layoutManager.setStackFromEnd(true);
-
-        messagesRV.setLayoutManager(layoutManager);
-        messagesRV.setHasFixedSize(true);
-        messagesRV.setItemViewCacheSize(20);
+    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+        context,
+        attrs,
+        defStyle
+    ) {
+        parseAttr(context, attrs)
+        init(context, attrs)
     }
 
-    private void initUnseenMessagesButton() {
-        unseenBottomBtn = findViewById(R.id.scrollBottomBtn);
-        unseenBottomBtn.setOnClickListener(view ->
-                messagesRV.smoothScrollToPosition(lastPosition())
-        );
+    private fun init(context: Context, attr: AttributeSet?) {
+        binding = StreamMessageListViewBinding.inflate(context.inflater, this, true)
+
+        initRecyclerView()
+        initUnseenMessagesButton()
+        initUnseenMessagesView()
+
+        if (attr != null) {
+            configureAttributes(attr)
+        }
+
+        initScrollButtonBehaviour()
+
+        hasScrolledUp = false
+
+        buffer.subscribe { wrapper -> handleNewWrapper(wrapper) }
     }
 
-    private void initUnseenMessagesView() {
-        newMessagesTextTV = findViewById(R.id.newMessagesTV);
-        newMessagesTextTV.setVisibility(View.GONE);
+    private fun initScrollButtonBehaviour() {
+        scrollButtonBehaviour = DefaultScrollButtonBehaviour(
+            binding.scrollBottomBtn,
+            binding.newMessagesTV,
+            newMessagesTextSingle,
+            newMessagesTextPlural
+        )
     }
 
-    private void parseAttr(Context context, @Nullable AttributeSet attrs) {
-        // parse the attributes
-        style = new MessageListViewStyle(context, attrs);
+    private fun initRecyclerView() {
+        layoutManager = LinearLayoutManager(context).apply {
+            stackFromEnd = true
+        }
+
+        binding.chatMessagesRV.apply {
+            setLayoutManager(layoutManager)
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
+        }
     }
 
-    //private methods
-    private void configureAttributes(AttributeSet attributeSet) {
-        TypedArray tArray = getContext()
-                .obtainStyledAttributes(attributeSet, R.styleable.MessageListView);
+    private fun initUnseenMessagesButton() {
+        binding.scrollBottomBtn.setOnClickListener {
+            binding.chatMessagesRV.smoothScrollToPosition(lastPosition())
+        }
+    }
 
-        int backgroundRes = tArray.getResourceId(
-                R.styleable.MessageListView_streamButtonBackground,
-                R.drawable.stream_shape_round);
+    private fun initUnseenMessagesView() {
+        binding.newMessagesTV.setVisibility(GONE)
+    }
 
-        unseenBottomBtn.setBackgroundResource(backgroundRes);
+    private fun parseAttr(context: Context, attrs: AttributeSet?) {
+        style = MessageListViewStyle(context, attrs)
+    }
+
+    private fun configureAttributes(attributeSet: AttributeSet) {
+        val tArray = context
+            .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
+
+        val backgroundRes = tArray.getResourceId(
+            R.styleable.MessageListView_streamButtonBackground,
+            R.drawable.stream_shape_round
+        )
+
+        binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
         newMessagesTextSingle =
-                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle);
+            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
         newMessagesTextPlural =
-                tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural);
-
+            tArray.getString(R.styleable.MessageListView_streamNewMessagesTextPlural)
         newMessagesBehaviour = NewMessagesBehaviour.parseValue(
-                tArray.getInt(
-                        R.styleable.MessageListView_streamNewMessagesBehaviour,
-                        NewMessagesBehaviour.COUNT_UPDATE.value)
-        );
+            tArray.getInt(
+                R.styleable.MessageListView_streamNewMessagesBehaviour,
+                NewMessagesBehaviour.COUNT_UPDATE.value
+            )
+        )
 
-        int arrowIconRes = tArray.getResourceId(
-                R.styleable.MessageListView_streamButtonIcon,
-                R.drawable.stream_bottom_arrow);
+        val arrowIconRes = tArray.getResourceId(
+            R.styleable.MessageListView_streamButtonIcon,
+            R.drawable.stream_bottom_arrow
+        )
 
-        ImageView scrollButtonArrow = findViewById(R.id.scrollIconIV);
-        scrollButtonArrow.setImageResource(arrowIconRes);
+        val scrollButtonArrow = findViewById<ImageView>(R.id.scrollIconIV)
+        scrollButtonArrow.setImageResource(arrowIconRes)
 
-        tArray.recycle();
+        tArray.recycle()
     }
 
-    private int lastPosition() {
-        return adapter.getItemCount() - 1;
+    private fun lastPosition(): Int {
+        return adapter.itemCount - 1
     }
 
-    private void setMessageListItemAdapter(@NonNull MessageListItemAdapter adapter) {
-        messagesRV.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NotNull RecyclerView recyclerView, int dx, int dy) {
-                if (layoutManager != null) {
-                    int currentFirstVisible = layoutManager.findFirstVisibleItemPosition();
-                    int currentLastVisible = layoutManager.findLastVisibleItemPosition();
-                    if (currentFirstVisible < fVPosition && currentFirstVisible == 0) {
-                        endRegionReachedHandler.invoke();
-                    }
+    private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
+        binding.chatMessagesRV.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!::layoutManager.isInitialized) {
+                    return
+                }
 
-                    hasScrolledUp = currentLastVisible < lastPosition();
-                    lVPosition = currentLastVisible;
-                    fVPosition = currentFirstVisible;
+                val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
+                val currentLastVisible = layoutManager.findLastVisibleItemPosition()
+                if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
+                    endRegionReachedHandler.invoke()
+                }
 
-                    lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition);
+                hasScrolledUp = currentLastVisible < lastPosition()
+                lastVisiblePosition = currentLastVisible
+                firstVisiblePosition = currentFirstVisible
 
-                    unseenItems = adapter.getItemCount() - 1 - lastViewedPosition;
-                    scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
+                lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition)
 
-                    if (hasScrolledUp) {
-                        scrollButtonBehaviour.userScrolledUp();
-                    } else {
-                        scrollButtonBehaviour.userScrolledToTheBottom();
-                    }
+                val unseenItems = adapter.itemCount - 1 - lastViewedPosition
+                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
+
+                if (hasScrolledUp) {
+                    scrollButtonBehaviour.userScrolledUp()
+                } else {
+                    scrollButtonBehaviour.userScrolledToTheBottom()
                 }
             }
-        });
+        })
 
         /*
          * Lock for 500 milliseconds setMessageListScrollUp in here.
          * Because when keyboard shows up, MessageList is scrolled up and it triggers hiding keyboard.
          */
-
-        this.addOnLayoutChangeListener((View view, int left, int top, int right, int bottom,
-                                        int oldLeft, int oldTop, int oldRight, int oldBottom) -> {
+        addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             if (bottom < oldBottom) {
-                lockScrollUp = true;
-                postDelayed(() -> lockScrollUp = false, 500);
+                lockScrollUp = true
+                postDelayed({ lockScrollUp = false }, 500)
             }
-        });
+        }
 
-        messagesRV.setAdapter(adapter);
+        binding.chatMessagesRV.adapter = adapter
     }
 
-    public void init(Channel channel, User currentUser) {
-        this.currentUser = currentUser;
-        this.channel = channel;
-        initAdapter();
+    fun init(channel: Channel, currentUser: User) {
+        this.currentUser = currentUser
+        this.channel = channel
+        initAdapter()
     }
 
-    private void initAdapter() {
+    private fun initAdapter() {
         // Create default AttachmentViewHolderFactory if needed
-        if (attachmentViewHolderFactory == null) {
-            attachmentViewHolderFactory = new AttachmentViewHolderFactory();
+        if (::attachmentViewHolderFactory.isInitialized.not()) {
+            attachmentViewHolderFactory = AttachmentViewHolderFactory()
         }
         // Create default ViewHolderFactory if needed
-        if (messageViewHolderFactory == null) {
-            messageViewHolderFactory = new MessageViewHolderFactory();
+        if (::messageViewHolderFactory.isInitialized.not()) {
+            messageViewHolderFactory = MessageViewHolderFactory()
         }
         // Create default BubbleHelper if needed
-        if (bubbleHelper == null) {
-            bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, getContext());
+        if (::bubbleHelper.isInitialized.not()) {
+            bubbleHelper = DefaultBubbleHelper.initDefaultBubbleHelper(style, context)
         }
 
         // Inject Attachment factory
-        attachmentViewHolderFactory.setListenerContainerInternal(listenerContainer);
-        attachmentViewHolderFactory.setBubbleHelperInternal(bubbleHelper);
+        attachmentViewHolderFactory.listenerContainer = listenerContainer
+        attachmentViewHolderFactory.bubbleHelper = bubbleHelper
 
         // Inject Message factory
-        messageViewHolderFactory.setListenerContainerInternal(listenerContainer);
-        messageViewHolderFactory.setAttachmentViewHolderFactoryInternal(attachmentViewHolderFactory);
-        messageViewHolderFactory.setBubbleHelperInternal(bubbleHelper);
+        messageViewHolderFactory.listenerContainer = listenerContainer
+        messageViewHolderFactory.attachmentViewHolderFactory = attachmentViewHolderFactory
+        messageViewHolderFactory.bubbleHelper = bubbleHelper
 
-        adapter = new MessageListItemAdapter(channel, messageViewHolderFactory, style);
-        adapter.setHasStableIds(true);
+        adapter = MessageListItemAdapter(channel, messageViewHolderFactory, style)
+        adapter.setHasStableIds(true)
 
-        this.setMessageListItemAdapter(adapter);
+        setMessageListItemAdapter(adapter)
     }
 
-    public void setScrollButtonBehaviour(ScrollButtonBehaviour scrollButtonBehaviour) {
-        this.scrollButtonBehaviour = scrollButtonBehaviour;
+    fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {
+        this.scrollButtonBehaviour = scrollButtonBehaviour
     }
 
-    public void setNewMessagesBehaviour(NewMessagesBehaviour newMessagesBehaviour) {
-        this.newMessagesBehaviour = newMessagesBehaviour;
+    fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
+        this.newMessagesBehaviour = newMessagesBehaviour
     }
 
-    public void setScrollButtonBackgroundResource(@DrawableRes int backgroundRes) {
-        unseenBottomBtn.setBackgroundResource(backgroundRes);
+    fun setScrollButtonBackgroundResource(@DrawableRes backgroundRes: Int) {
+        binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
     }
 
-    public void setScrollButtonBackground(Drawable drawable) {
-        unseenBottomBtn.setBackground(drawable);
+    fun setScrollButtonBackground(drawable: Drawable?) {
+        binding.scrollBottomBtn.background = drawable
     }
 
-    public void setScrollButtonIconResource(@DrawableRes int backgroundRes) {
-        ImageView icon = findViewById(R.id.scrollIconIV);
-        icon.setImageResource(backgroundRes);
+    fun setScrollButtonIconResource(@DrawableRes backgroundRes: Int) {
+        binding.scrollIconIV.setImageResource(backgroundRes)
     }
 
-    public void setScrollButtonIcon(Drawable drawable) {
-        ImageView icon = findViewById(R.id.scrollIconIV);
-        icon.setImageDrawable(drawable);
+    fun setScrollButtonIcon(drawable: Drawable?) {
+        binding.scrollIconIV.setImageDrawable(drawable)
     }
 
-    public void setAttachmentViewHolderFactory(AttachmentViewHolderFactory attachmentViewHolderFactory) {
-        if (adapter != null) {
-            throw new IllegalStateException("Adapter was already initialized, please set AttachmentViewHolderFactory first");
-        }
-        this.attachmentViewHolderFactory = attachmentViewHolderFactory;
+    fun setAttachmentViewHolderFactory(attachmentViewHolderFactory: AttachmentViewHolderFactory) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewHolderFactory first" }
+        this.attachmentViewHolderFactory = attachmentViewHolderFactory
     }
 
-    public void setMessageViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
-        if (adapter != null) {
-            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
-        }
-        this.messageViewHolderFactory = messageViewHolderFactory;
+    fun setMessageViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
+        this.messageViewHolderFactory = messageViewHolderFactory
     }
 
     /**
      * Use the more explicit setMessageViewHolderFactory method instead.
      */
-    @Deprecated
-    public void setViewHolderFactory(MessageViewHolderFactory messageViewHolderFactory) {
-        if (adapter != null) {
-            throw new IllegalStateException("Adapter was already initialized, please set MessageViewHolderFactory first");
-        }
-        this.messageViewHolderFactory = messageViewHolderFactory;
+    @Deprecated(
+        message = "Use the more explicit setMessageViewHolderFactory method instead.",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
+    )
+    fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
+        setMessageViewHolderFactory(messageViewHolderFactory)
     }
 
-    public void setBubbleHelper(BubbleHelper bubbleHelper) {
-        if (adapter != null) {
-            throw new IllegalStateException("Adapter was already initialized, please set BubbleHelper first");
-        }
-        this.bubbleHelper = bubbleHelper;
+    fun setBubbleHelper(bubbleHelper: BubbleHelper) {
+        check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
+        this.bubbleHelper = bubbleHelper
     }
 
-    public void displayNewMessage(MessageListItemWrapper listItem) {
-        buffer.enqueueData(listItem);
+    fun displayNewMessage(listItem: MessageListItemWrapper) {
+        buffer.enqueueData(listItem)
     }
 
-    private void handleNewWrapper(MessageListItemWrapper listItem) {
-        buffer.hold();
-        List<MessageListItem> entities = listItem.getListEntities();
+    private fun handleNewWrapper(listItem: MessageListItemWrapper) {
+        buffer.hold()
+        val entities = listItem.listEntities
 
         // Adapter initialization for channel and thread swapping
-        boolean backFromThread = adapter.isThread() && listItem.isThread();
+        val backFromThread = adapter.isThread && listItem.isThread
 
-        if (adapter.isThread() != listItem.isThread()) {
-            adapter.setThread(listItem.isThread());
+        if (adapter.isThread != listItem.isThread) {
+            adapter.isThread = listItem.isThread
         }
 
-        adapter.submitList(
-                entities,
-                () -> continueMessageAdd(backFromThread, listItem, entities, adapter.getItemCount())
-        );
+        adapter.submitList(entities) {
+            continueMessageAdd(backFromThread, listItem, entities, adapter.itemCount)
+        }
     }
 
-    private void continueMessageAdd(
-            boolean backFromThread,
-            MessageListItemWrapper listItem,
-            List<MessageListItem> entities,
-            int oldSize
+    private fun continueMessageAdd(
+        backFromThread: Boolean,
+        listItem: MessageListItemWrapper,
+        entities: List<MessageListItem>,
+        oldSize: Int
     ) {
-        int newSize = adapter.getItemCount();
-        int sizeGrewBy = newSize - oldSize;
+        val newSize = adapter.itemCount
+        val sizeGrewBy = newSize - oldSize
 
         // Scroll to origin position on return from thread
         if (backFromThread) {
-            layoutManager.scrollToPosition(this.threadParentPosition);
-            lastMessageReadHandler.invoke();
-            return;
+            // TODO review this, supposed to be the thread parent position
+            layoutManager.scrollToPosition(0)
+            lastMessageReadHandler.invoke()
+            return
         }
 
         // Scroll to bottom position for typing indicator
-        if (listItem.isTyping() && scrolledBottom(sizeGrewBy + 2)) {
-            int newPosition = adapter.getItemCount() - 1;
-            layoutManager.scrollToPosition(newPosition);
-            return;
+        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2)) {
+            val newPosition = adapter.itemCount - 1
+            layoutManager.scrollToPosition(newPosition)
+            return
         }
 
-        if (!listItem.getHasNewMessages()) {
+        if (!listItem.hasNewMessages) {
             // we only touch scroll for new messages, we ignore
             // read
             // typing
             // message updates
-            logger.logI("no Scroll no new message");
-            return;
+            logger.logI("no Scroll no new message")
+            return
         }
 
         if (oldSize == 0 && newSize != 0) {
-            int newPosition = adapter.getItemCount() - 1;
-            layoutManager.scrollToPosition(newPosition);
-            logger.logI(String.format("Scroll: First load scrolling down to bottom %d", newPosition));
-            lastMessageReadHandler.invoke();
-        } else if (listItem.getLoadingMore()) {
+            val newPosition = adapter.itemCount - 1
+            layoutManager.scrollToPosition(newPosition)
+            logger.logI(
+                String.format("Scroll: First load scrolling down to bottom %d", newPosition)
+            )
+            lastMessageReadHandler.invoke()
+        } else if (listItem.loadingMore) {
             // the load more behaviour is different, scroll positions starts out at 0
             // to stay at the relative 0 we should go to 0 + size of new messages...
 
-            int newPosition;// = oldPosition + sizeGrewBy;
-            newPosition = ((LinearLayoutManager) messagesRV.getLayoutManager()).findLastCompletelyVisibleItemPosition() + sizeGrewBy;
-            layoutManager.scrollToPosition(newPosition);
+            // TODO ???
+            val newPosition = layoutManager.findLastCompletelyVisibleItemPosition() + sizeGrewBy
+            layoutManager.scrollToPosition(newPosition)
         } else {
-            if (newSize == 0) return;
+            if (newSize == 0) {
+                return
+            }
+
             // regular new message behaviour
             // we scroll down all the way, unless you've scrolled up
             // if you've scrolled up we set a variable on the viewmodel that there are new messages
-            int newPosition = adapter.getItemCount() - 1;
-            int layoutSize = layoutManager.getItemCount();
-            logger.logI(String.format("Scroll: Moving down to %d, layout has %d elements", newPosition, layoutSize));
+            val newPosition = adapter.itemCount - 1
+            val layoutSize = layoutManager.itemCount
+            logger.logI(
+                String.format(
+                    "Scroll: Moving down to %d, layout has %d elements",
+                    newPosition,
+                    layoutSize
+                )
+            )
             // Scroll to bottom when the user wrote the message.
-            if (entities.size() >= 1 && entities.get(entities.size() - 1).isMine() ||
-                    !hasScrolledUp ||
-                    newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM) {
-                layoutManager.scrollToPosition(adapter.getItemCount() - 1);
+            if (entities.size >= 1 && entities[entities.size - 1].isMine ||
+                !hasScrolledUp ||
+                newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
+            ) {
+                layoutManager.scrollToPosition(adapter.itemCount - 1)
             } else {
-                unseenItems = newSize - 1 - lastViewedPosition;
-                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems);
+                val unseenItems = newSize - 1 - lastViewedPosition
+                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
             }
             // we want to mark read if there is a new message
             // and this view is currently being displayed...
             // we can't always run it since read and typing events also influence this list..
             //viewModel.markLastMessageRead(); // TODO this is event
-            lastMessageReadHandler.invoke();
+            lastMessageReadHandler.invoke()
         }
 
-        buffer.active();
+        buffer.active()
     }
 
-    public MessageListViewStyle getStyle() {
-        return style;
-    }
-
-    private boolean scrolledBottom(int delta) {
-        return lVPosition + delta >= lastPosition();
-    }
-
-    private boolean justUpdated(Message message) {
-        if (message.getUpdatedAt() == null) return false;
-        Date now = new Date();
-        long passedTime = now.getTime() - message.getUpdatedAt().getTime();
-        return message.getUpdatedAt() != null
-                && passedTime < 3000;
+    private fun scrolledBottom(delta: Int): Boolean {
+        return lastVisiblePosition + delta >= lastPosition()
     }
 
     /**
@@ -551,11 +536,9 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param messageClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setMessageClickListener(@Nullable MessageClickListener messageClickListener) {
-        if (messageClickListener == null) {
-            messageClickListener = DEFAULT_MESSAGE_CLICK_LISTENER;
-        }
-        listenerContainer.setMessageClickListener(messageClickListener);
+    fun setMessageClickListener(messageClickListener: MessageClickListener?) {
+        listenerContainer.messageClickListener =
+            messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
     }
 
     /**
@@ -563,11 +546,9 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param messageLongClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setMessageLongClickListener(@Nullable MessageLongClickListener messageLongClickListener) {
-        if (messageLongClickListener == null) {
-            messageLongClickListener = DEFAULT_MESSAGE_LONG_CLICK_LISTENER;
-        }
-        listenerContainer.setMessageLongClickListener(messageLongClickListener);
+    fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
+        listenerContainer.messageLongClickListener =
+            messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
 
     /**
@@ -575,11 +556,9 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param messageRetryListener The listener to use. If null, the default will be used instead.
      */
-    public void setMessageRetryListener(@Nullable MessageRetryListener messageRetryListener) {
-        if (messageRetryListener == null) {
-            messageRetryListener = DEFAULT_MESSAGE_RETRY_LISTENER;
-        }
-        listenerContainer.setMessageRetryListener(messageRetryListener);
+    fun setMessageRetryListener(messageRetryListener: MessageRetryListener?) {
+        listenerContainer.messageRetryListener =
+            messageRetryListener ?: DEFAULT_MESSAGE_RETRY_LISTENER
     }
 
     /**
@@ -587,11 +566,9 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param attachmentClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setAttachmentClickListener(@Nullable AttachmentClickListener attachmentClickListener) {
-        if (attachmentClickListener == null) {
-            attachmentClickListener = DEFAULT_ATTACHMENT_CLICK_LISTENER;
-        }
-        listenerContainer.setAttachmentClickListener(attachmentClickListener);
+    fun setAttachmentClickListener(attachmentClickListener: AttachmentClickListener?) {
+        listenerContainer.attachmentClickListener =
+            attachmentClickListener ?: DEFAULT_ATTACHMENT_CLICK_LISTENER
     }
 
     /**
@@ -599,11 +576,9 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param reactionViewClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setReactionViewClickListener(@Nullable ReactionViewClickListener reactionViewClickListener) {
-        if (reactionViewClickListener == null) {
-            reactionViewClickListener = DEFAULT_REACTION_VIEW_CLICK_LISTENER;
-        }
-        listenerContainer.setReactionViewClickListener(reactionViewClickListener);
+    fun setReactionViewClickListener(reactionViewClickListener: ReactionViewClickListener?) {
+        listenerContainer.reactionViewClickListener =
+            reactionViewClickListener ?: DEFAULT_REACTION_VIEW_CLICK_LISTENER
     }
 
     /**
@@ -611,11 +586,8 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param userClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setUserClickListener(@Nullable UserClickListener userClickListener) {
-        if (userClickListener == null) {
-            userClickListener = DEFAULT_USER_CLICK_LISTENER;
-        }
-        listenerContainer.setUserClickListener(userClickListener);
+    fun setUserClickListener(userClickListener: UserClickListener?) {
+        listenerContainer.userClickListener = userClickListener ?: DEFAULT_USER_CLICK_LISTENER
     }
 
     /**
@@ -623,187 +595,161 @@ public class MessageListView extends ConstraintLayout {
      *
      * @param readStateClickListener The listener to use. If null, the default will be used instead.
      */
-    public void setReadStateClickListener(@Nullable ReadStateClickListener readStateClickListener) {
-        if (readStateClickListener == null) {
-            readStateClickListener = DEFAULT_READ_STATE_CLICK_LISTENER;
-        }
-        listenerContainer.setReadStateClickListener(readStateClickListener);
+    fun setReadStateClickListener(readStateClickListener: ReadStateClickListener?) {
+        listenerContainer.readStateClickListener =
+            readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
     }
 
-    public void setEndRegionReachedHandler(Function0<Unit> endRegionReachedHandler) {
-        this.endRegionReachedHandler = endRegionReachedHandler;
+    fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
+        this.endRegionReachedHandler = endRegionReachedHandler
     }
 
-    public void setLastMessageReadHandler(Function0<Unit> lastMessageReadHandler) {
-        this.lastMessageReadHandler = lastMessageReadHandler;
+    fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
+        this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    public void setOnMessageEditHandler(Function1<Message, Unit> onMessageEditHandler) {
-        this.onMessageEditHandler = onMessageEditHandler;
+    fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
+        this.onMessageEditHandler = onMessageEditHandler
     }
 
-    public void setOnMessageDeleteHandler(Function1<Message, Unit> onMessageDeleteHandler) {
-        this.onMessageDeleteHandler = onMessageDeleteHandler;
+    fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
+        this.onMessageDeleteHandler = onMessageDeleteHandler
     }
 
-    public void setOnStartThreadHandler(Function1<Message, Unit> onStartThreadHandler) {
-        this.onStartThreadHandler = onStartThreadHandler;
+    fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
+        this.onStartThreadHandler = onStartThreadHandler
     }
 
-    public void setOnMessageFlagHandler(Function1<Message, Unit> onMessageFlagHandler) {
-        this.onMessageFlagHandler = onMessageFlagHandler;
+    fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
+        this.onMessageFlagHandler = onMessageFlagHandler
     }
 
-    public void setOnSendGiphyHandler(Function2<Message, GiphyAction, Unit> onSendGiphyHandler) {
-        this.onSendGiphyHandler = onSendGiphyHandler;
+    fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
+        this.onSendGiphyHandler = onSendGiphyHandler
     }
 
-    public void setOnMessageRetryHandler(Function1<Message, Unit> onMessageRetryHandler) {
-        this.onMessageRetryHandler = onMessageRetryHandler;
+    fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
+        this.onMessageRetryHandler = onMessageRetryHandler
     }
 
-    public void setOnStartThreadListener(Function1<Message, Unit> onStartThreadListener) {
-        this.onStartThreadListener = onStartThreadListener;
+    fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
+        this.onStartThreadListener = onStartThreadListener
     }
 
-    public interface HeaderAvatarGroupClickListener {
-        void onHeaderAvatarGroupClick(Channel channel);
+    fun interface HeaderAvatarGroupClickListener {
+        fun onHeaderAvatarGroupClick(channel: Channel)
     }
 
-    public interface HeaderOptionsClickListener {
-        void onHeaderOptionsClick(Channel channel);
+    fun interface HeaderOptionsClickListener {
+        fun onHeaderOptionsClick(channel: Channel)
     }
 
-    public interface MessageClickListener {
-        void onMessageClick(Message message);
+    fun interface MessageClickListener {
+        fun onMessageClick(message: Message)
     }
 
-    public interface MessageRetryListener {
-        void onRetryMessage(Message message);
+    fun interface MessageRetryListener {
+        fun onRetryMessage(message: Message)
     }
 
-    public interface MessageLongClickListener {
-        void onMessageLongClick(Message message);
+    fun interface MessageLongClickListener {
+        fun onMessageLongClick(message: Message)
     }
 
-    public interface AttachmentClickListener {
-        void onAttachmentClick(Message message, Attachment attachment);
+    fun interface AttachmentClickListener {
+        fun onAttachmentClick(message: Message, attachment: Attachment)
     }
 
-    public interface GiphySendListener {
-        void onGiphySend(Message message, GiphyAction action);
+    fun interface GiphySendListener {
+        fun onGiphySend(message: Message, action: GiphyAction)
     }
 
-    public interface UserClickListener {
-        void onUserClick(User user);
+    fun interface UserClickListener {
+        fun onUserClick(user: User)
     }
 
-    public interface ReadStateClickListener {
-        void onReadStateClick(List<ChannelUserRead> reads);
+    fun interface ReadStateClickListener {
+        fun onReadStateClick(reads: List<ChannelUserRead>)
     }
 
-    public interface ReactionViewClickListener {
-        void onReactionViewClick(Message message);
+    fun interface ReactionViewClickListener {
+        fun onReactionViewClick(message: Message)
     }
 
-    public interface BubbleHelper {
-        Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+    interface BubbleHelper {
+        fun getDrawableForMessage(
+            message: Message,
+            mine: Boolean,
+            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>
+        ): Drawable
 
-        Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment);
+        fun getDrawableForAttachment(
+            message: Message,
+            mine: Boolean,
+            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>,
+            attachment: Attachment
+        ): Drawable
 
-        Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions);
+        fun getDrawableForAttachmentDescription(
+            message: Message,
+            mine: Boolean,
+            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>
+        ): Drawable
     }
 
-    public enum NewMessagesBehaviour {
+    enum class NewMessagesBehaviour(val value: Int) {
         SCROLL_TO_BOTTOM(0), COUNT_UPDATE(1);
 
-        private final int value;
-
-        NewMessagesBehaviour(int value) {
-            this.value = value;
-        }
-
-        public final int getValue() {
-            return value;
-        }
-
-        public static NewMessagesBehaviour parseValue(int value) {
-            if (value == SCROLL_TO_BOTTOM.getValue())
-                return SCROLL_TO_BOTTOM;
-            if (value == COUNT_UPDATE.getValue())
-                return COUNT_UPDATE;
-            throw new IllegalArgumentException(
-                    "Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)"
-            );
+        companion object {
+            fun parseValue(value: Int): NewMessagesBehaviour {
+                return values().find { behaviour -> behaviour.value == value }
+                    ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
+            }
         }
     }
 
-    public interface ScrollButtonBehaviour {
-
-        void userScrolledUp();
-
-        void userScrolledToTheBottom();
-
-        void onUnreadMessageCountChanged(int count);
-
+    interface ScrollButtonBehaviour {
+        fun userScrolledUp()
+        fun userScrolledToTheBottom()
+        fun onUnreadMessageCountChanged(count: Int)
     }
 
-    static class DefaultScrollButtonBehaviour implements ScrollButtonBehaviour {
-
-        private ViewGroup unseenBottomBtn;
-        private TextView newMessagesTextTV;
-        private String newMessagesTextSingle;
-        private String newMessagesTextPlural;
-
-        public DefaultScrollButtonBehaviour(
-                ViewGroup unseenBottomBtn,
-                TextView newMessagesTextTV,
-                String newMessagesTextSingle,
-                String newMessagesTextPlural
-        ) {
-            this.unseenBottomBtn = unseenBottomBtn;
-            this.newMessagesTextTV = newMessagesTextTV;
-            this.newMessagesTextSingle = newMessagesTextSingle;
-            this.newMessagesTextPlural = newMessagesTextPlural;
-        }
-
-        @Override
-        public void userScrolledUp() {
-            if (!unseenBottomBtn.isShown()) {
-                unseenBottomBtn.setVisibility(View.VISIBLE);
+    internal class DefaultScrollButtonBehaviour(
+        private val unseenBottomBtn: ViewGroup,
+        private val newMessagesTextTV: TextView,
+        private val newMessagesTextSingle: String?,
+        private val newMessagesTextPlural: String?
+    ) : ScrollButtonBehaviour {
+        override fun userScrolledUp() {
+            if (!unseenBottomBtn.isShown) {
+                unseenBottomBtn.visibility = VISIBLE
             }
         }
 
-        @Override
-        public void userScrolledToTheBottom() {
-            if (unseenBottomBtn.isShown()) {
-                unseenBottomBtn.setVisibility(View.GONE);
+        override fun userScrolledToTheBottom() {
+            if (unseenBottomBtn.isShown) {
+                unseenBottomBtn.visibility = GONE
             }
         }
 
-        @Override
-        public void onUnreadMessageCountChanged(int count) {
+        override fun onUnreadMessageCountChanged(count: Int) {
             if (count <= 0) {
-                newMessagesTextTV.setVisibility(View.GONE);
+                newMessagesTextTV.visibility = GONE
             } else {
-                newMessagesTextTV.setVisibility(View.VISIBLE);
-                newMessagesTextTV.setText(parseNewMessagesText(count));
+                newMessagesTextTV.visibility = VISIBLE
+                newMessagesTextTV.text = formatNewMessagesText(count)
             }
         }
 
-        private String parseNewMessagesText(int unseenItems) {
-            if (unseenItems == 1) {
-                if (newMessagesTextSingle != null) {
-                    return String.format(newMessagesTextSingle, unseenItems);
-                } else {
-                    return String.valueOf(unseenItems);
-                }
-            } else {
-                if (newMessagesTextPlural != null) {
-                    return String.format(newMessagesTextPlural, unseenItems);
-                } else {
-                    return String.valueOf(unseenItems);
-                }
+        private fun formatNewMessagesText(unseenItems: Int): String {
+            fun createText(formatString: String?) = when (formatString) {
+                null -> unseenItems.toString()
+                else -> String.format(formatString, unseenItems)
+            }
+
+            return when (unseenItems) {
+                1 -> createText(newMessagesTextSingle)
+                else -> createText(newMessagesTextPlural)
             }
         }
     }

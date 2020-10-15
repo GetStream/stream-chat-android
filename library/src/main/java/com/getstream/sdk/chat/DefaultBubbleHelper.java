@@ -4,12 +4,15 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory;
+import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -23,8 +26,9 @@ public class DefaultBubbleHelper {
 
     public static MessageListView.BubbleHelper initDefaultBubbleHelper(MessageListViewStyle style, Context context) {
         return new MessageListView.BubbleHelper() {
+            @NonNull
             @Override
-            public Drawable getDrawableForMessage(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions) {
+            public Drawable getDrawableForMessage(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
@@ -35,17 +39,16 @@ public class DefaultBubbleHelper {
                     // set background for Failed or Error message
                     //if (message.getSyncStatus() == Sync.LOCAL_FAILED
                     //TODO: llc: check cache
-                    if(message.getType().equals(ModelType.message_error))
+                    if (message.getType().equals(ModelType.message_error))
                         bgColor = context.getResources().getColor(R.color.stream_message_failed);
                 }
                 return getBubbleDrawable();
             }
 
+            @NotNull
             @Override
-            public Drawable getDrawableForAttachment(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions, Attachment attachment) {
-                if (attachment == null
-                        || attachment.getType() == null
-                        || attachment.getType().equals(ModelType.attach_unknown))
+            public Drawable getDrawableForAttachment(@NotNull Message message, boolean mine, @NotNull List<Position> positions, @NotNull Attachment attachment) {
+                if (attachment.getType() == null || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
                 if (style.getMessageBubbleDrawable(mine) != -1)
@@ -59,7 +62,7 @@ public class DefaultBubbleHelper {
                 if (!TextUtils.isEmpty(attachment.getTitle()) && !attachment.getType().equals(ModelType.attach_file))
                     bottomLeftRadius = bottomRightRadius = 0;
                 // set corner radius if the attachment is not first
-                if (message.getAttachments().indexOf(attachment) != 0){
+                if (message.getAttachments().indexOf(attachment) != 0) {
                     if (mine)
                         topRightRadius = 0;
                     else
@@ -68,8 +71,9 @@ public class DefaultBubbleHelper {
                 return getBubbleDrawable();
             }
 
+            @NotNull
             @Override
-            public Drawable getDrawableForAttachmentDescription(Message message, Boolean mine, List<MessageViewHolderFactory.Position> positions){
+            public Drawable getDrawableForAttachmentDescription(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
@@ -83,7 +87,7 @@ public class DefaultBubbleHelper {
         };
     }
 
-    private static void configParams(MessageListViewStyle style, boolean isMine, boolean isAttachment){
+    private static void configParams(MessageListViewStyle style, boolean isMine, boolean isAttachment) {
         bgColor = isAttachment ? style.getAttachmentBackgroundColor(isMine) : style.getMessageBackgroundColor(isMine);
         strokeColor = isAttachment ? style.getAttachmentBorderColor(isMine) : style.getMessageBorderColor(isMine);
         strokeWidth = style.getMessageBorderWidth(isMine);
@@ -93,21 +97,21 @@ public class DefaultBubbleHelper {
         bottomLeftRadius = style.getMessageBottomLeftCornerRadius(isMine);
     }
 
-    private static void applyStyleDefault(List<MessageViewHolderFactory.Position> positions, boolean isMine, Context context){
-        if (isMine){
+    private static void applyStyleDefault(List<Position> positions, boolean isMine, Context context) {
+        if (isMine) {
             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+            if (positions.contains(Position.TOP)) {
                 topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
                 topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
                 bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             }
-        }else{
+        } else {
             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(MessageViewHolderFactory.Position.TOP)) {
+            if (positions.contains(Position.TOP)) {
                 topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
@@ -130,7 +134,7 @@ public class DefaultBubbleHelper {
                 (style.getMessageBottomLeftCornerRadius(isMine) == context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2));
     }
 
-    private static Drawable getBubbleDrawable(){
+    private static Drawable getBubbleDrawable() {
         return new DrawableBuilder()
                 .rectangle()
                 .strokeColor(strokeColor)

@@ -27,13 +27,10 @@ open class MessageViewHolderFactory {
     }
 
     lateinit var listenerContainer: ListenerContainer
-        @JvmName("setListenerContainerInternal")
         internal set
     lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
-        @JvmName("setAttachmentViewHolderFactoryInternal")
         internal set
     lateinit var bubbleHelper: MessageListView.BubbleHelper
-        @JvmName("setBubbleHelperInternal")
         internal set
 
     open fun getMessageViewType(messageListItem: MessageListItem?): Int {
