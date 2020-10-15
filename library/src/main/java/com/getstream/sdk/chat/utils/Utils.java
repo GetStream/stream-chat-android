@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -33,15 +34,12 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.model.AttachmentMetaData;
-import com.getstream.sdk.chat.model.ModelType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -117,20 +115,31 @@ public class Utils {
         toast.show();
     }
 
-    public static void showSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (!inputMethodManager.isAcceptingText())
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    public static void showSoftKeyboard(@NonNull Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (!imm.isAcceptingText())
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
+    public static void hideSoftKeyboard(@NonNull Context context) {
+        View view = null;
+        if (context instanceof Activity) {
+            // Find the currently focused view, so we can grab the correct window token from it.
+            view = ((Activity) context).getCurrentFocus();
         }
+
+        // If we don't have an Activity, or no view currently has focus, create a new one,
+        // just so we can grab a window token from it
+        hideSoftKeyboard(view != null ? view : new View(context));
+    }
+
+    public static void showSoftKeyboard(@NonNull View view) {
+        showSoftKeyboard(view.getContext());
+    }
+
+    public static void hideSoftKeyboard(@NonNull View view) {
+        Context context = view.getContext();
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 

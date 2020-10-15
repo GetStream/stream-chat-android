@@ -12,6 +12,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
+import io.getstream.chat.android.livedata.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.livedata.utils.MessageListItemLiveData
 import io.getstream.chat.android.livedata.utils.MessageListItemWrapper
 import java.text.SimpleDateFormat
@@ -49,11 +50,10 @@ class MessageListViewModel @JvmOverloads constructor(
                 currentUser,
                 channelController.messages,
                 channelController.reads,
-                channelController.typing
-        ) {
-            val day = Date(it.createdAt?.time ?: 0)
-            SimpleDateFormat("MM / dd").format(day)
-        }
+                channelController.typing,
+                false,
+                ::dateSeparator
+        )
 
         stateMerger.apply {
             addSource(loading) { value = it }
@@ -61,20 +61,27 @@ class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
+    private fun dateSeparator(previous: Message?, message: Message): Boolean {
+        return if (previous==null) {
+            true
+        } else {
+            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (60 * 60 * 4)
+        }
+    }
+
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
                 currentUser,
-                channelController.messages,
+                threadMessages,
                 channelController.reads,
-                isThread=true
-        ) {
-            val day = Date(it.createdAt?.time ?: 0)
-            SimpleDateFormat("MM / dd").format(day)
-        }
+                null,
+                true,
+                ::dateSeparator
+        )
         threadListData?.let {
             stateMerger.apply {
-                addSource(it) { value = State.Result(it) }
                 removeSource(messageListData)
+                addSource(it) { value = State.Result(it) }
             }
         }
 

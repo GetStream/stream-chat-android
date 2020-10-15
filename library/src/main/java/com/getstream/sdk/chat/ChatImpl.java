@@ -136,14 +136,14 @@ class ChatImpl implements Chat {
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
         }
-        final ChatDomain chatDomain = domainBuilder
-                .userPresenceEnabled()
-                .notificationConfig(notificationConfig)
-                .build();
+        domainBuilder
+            .userPresenceEnabled()
+            .notificationConfig(notificationConfig);
+
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
             public void onSuccess(@NotNull ConnectionData data) {
-                chatDomain.setCurrentUser(user);
+                domainBuilder.build().setCurrentUser(user);
                 callbacks.onSuccess(data);
             }
 

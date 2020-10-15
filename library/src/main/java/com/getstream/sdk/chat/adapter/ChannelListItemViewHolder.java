@@ -19,14 +19,16 @@ import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.StringUtility;
 import com.getstream.sdk.chat.view.AvatarView;
+import com.getstream.sdk.chat.view.ReadStateView;
 import com.getstream.sdk.chat.view.channels.ChannelListView;
 import com.getstream.sdk.chat.view.channels.ChannelListViewStyle;
-import com.getstream.sdk.chat.view.ReadStateView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
@@ -37,8 +39,10 @@ import io.getstream.chat.android.livedata.ChatDomain;
 
 public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d");
-    private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm");
+    @SuppressLint("ConstantLocale")
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MMM d", Locale.getDefault());
+    @SuppressLint("ConstantLocale")
+    private static final DateFormat TIME_DATEFORMAT = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     protected TextView tv_name, tv_last_message, tv_date;
     protected ReadStateView<ChannelListViewStyle> read_state;
@@ -192,17 +196,22 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
             return;
         }
 
-        if (isFromToday(lastMessage)) {
-            tv_date.setText(TIME_DATEFORMAT.format(lastMessage.getCreatedAt()));
+        Date messageDate = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
+
+        if (messageDate == null) {
+            tv_date.setText("");
+        }
+        else if (isFromToday(messageDate)) {
+            tv_date.setText(TIME_DATEFORMAT.format(messageDate));
         } else {
-            tv_date.setText(DATE_FORMAT.format(lastMessage.getCreatedAt()));
+            tv_date.setText(DATE_FORMAT.format(messageDate));
         }
     }
 
-    private boolean isFromToday(Message message) {
+    private boolean isFromToday(Date date) {
         Calendar today = Calendar.getInstance();
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(message.getCreatedAt());
+        messageCalendar.setTime(date);
         return today.get(Calendar.DAY_OF_YEAR) == messageCalendar.get(Calendar.DAY_OF_YEAR)
                 && today.get(Calendar.YEAR) == messageCalendar.get(Calendar.YEAR);
     }
@@ -228,9 +237,9 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
     }
 
     protected void applyStyle(Channel channel) {
-        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.size);
-        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.size);
-        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.size);
+        tv_name.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.channelTitleText.getSize());
+        tv_last_message.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessage.getSize());
+        tv_date.setTextSize(TypedValue.COMPLEX_UNIT_PX, style.lastMessageDateText.getSize());
 
         User currentUser = ChatDomain.instance().getCurrentUser();
         String currentUserId = currentUser.getId();
@@ -253,7 +262,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         style.lastMessageDateText.apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.color);
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessage.getColor());
     }
 
     protected void applyUnreadStyle() {
@@ -264,7 +273,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         style.lastMessageDateUnreadText.apply(tv_date);
         // last Message Attachment Type
         if (iv_attachment_type.getDrawable() != null)
-            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessageUnread.color);
+            DrawableCompat.setTint(iv_attachment_type.getDrawable(), style.lastMessageUnread.getColor());
     }
 
 }

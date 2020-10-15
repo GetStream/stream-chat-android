@@ -1,7 +1,12 @@
 # To be released:
+
+# Oct 14th, 2020 - 4.3.0-beta-6
 - Update to Kotlin 1.4.10
 - Fix Typing view behavior
 - Fix NPE asking for `Attachment::type`
+- Fix ChatDomain initialization issue
+- Limit max lines displayed in link previews (5 lines by default, customizable via `streamAttachmentPreviewMaxLines` attribute on `MessageListView`)
+- Update Offline Support to the [last version](. See changes: )https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.5)
 
 # Oct 9th, 2020 - 4.3.0-beta-5
 - Improve selecting non-media attachments

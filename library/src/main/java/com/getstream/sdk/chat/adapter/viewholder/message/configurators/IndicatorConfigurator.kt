@@ -42,6 +42,8 @@ internal class IndicatorConfigurator(
 
         val message = messageItem.message
         val lastMessage = LlcMigrationUtils.computeLastMessage(channel)
+        val messageDate = message.createdAt ?: message.createdLocallyAt
+        val lastMessageDate = lastMessage?.createdAt ?: lastMessage?.createdLocallyAt
 
         if (message.isDeleted() ||
             message.isFailed() ||
@@ -50,7 +52,7 @@ internal class IndicatorConfigurator(
             BOTTOM !in messageItem.positions ||
             messageItem.messageReadBy.isNotEmpty() ||
             !messageItem.isMine ||
-            message.createdAt!!.time < lastMessage.createdAt!!.time ||
+            messageDate?.time ?: 0 < lastMessageDate?.time ?: 0 ||
             message.type == ModelType.message_ephemeral ||
             message.isInThread() ||
             message.isEphemeral()
