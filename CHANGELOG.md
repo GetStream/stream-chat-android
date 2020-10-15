@@ -1,4 +1,5 @@
 # To be released:
+- Fix a crash related to behaviour changes in 1.3.0-alpha08 of the AndroidX Fragment library
 
 # Oct 14th, 2020 - 4.3.0-beta-6
 - Update to Kotlin 1.4.10
