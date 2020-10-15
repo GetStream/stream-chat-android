@@ -15,17 +15,25 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import java.security.InvalidParameterException
 import java.util.Date
 
-class MessageRepository(
+internal class MessageRepository(
     private val messageDao: MessageDao,
     private val currentUser: User,
     private val cacheSize: Int = 100
 ) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
     @VisibleForTesting
-    var messageCache = LruCache<String, Message>(cacheSize)
+    internal var messageCache = LruCache<String, Message>(cacheSize)
         private set
 
     internal suspend fun selectMessagesForChannel(
+        cid: String,
+        usersMap: Map<String, User>,
+        pagination: AnyChannelPaginationRequest
+    ): List<Message> {
+        return selectMessagesEntitiesForChannel(cid, pagination).map { toModel(it, usersMap) }
+    }
+
+    private suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
@@ -135,6 +143,16 @@ class MessageRepository(
     suspend fun deleteChannelMessage(message: Message) {
         messageDao.deleteMessage(message.cid, message.id)
         messageCache.remove(message.id)
+    }
+
+    suspend fun selectUserIdsFromMessagesByChannelsIds(
+        channelIds: List<String>,
+        pagination: AnyChannelPaginationRequest
+    ): Set<String> {
+        return channelIds.flatMap { channelId -> selectMessagesEntitiesForChannel(channelId, pagination) }
+            .fold(emptySet()) { acc, message ->
+                acc + message.latestReactions.map(ReactionEntity::userId) + message.userId
+            }
     }
 
     companion object {

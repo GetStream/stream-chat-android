@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
 @Entity(tableName = "stream_chat_message")
-data class MessageEntity(
+internal data class MessageEntity(
     @PrimaryKey
     val id: String,
     val cid: String,
@@ -51,4 +51,3 @@ data class MessageEntity(
     /** all the custom data provided for this message */
     val extraData: Map<String, Any> = emptyMap()
 )
-

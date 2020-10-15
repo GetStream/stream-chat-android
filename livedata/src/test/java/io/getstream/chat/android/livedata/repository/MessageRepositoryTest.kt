@@ -75,12 +75,12 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         // this should select the first message
         val pagination = AnyChannelPaginationRequest(1)
         pagination.setFilter(Pagination.GREATER_THAN, message2.id)
-        var messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        var messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message1.id)
         // this should select the third message
         pagination.setFilter(Pagination.LESS_THAN, message2.id)
-        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
 
@@ -89,12 +89,12 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         // filter on 2 and older
         pagination.setFilter(Pagination.LESS_THAN_OR_EQUAL, message2.id)
         // should return message 2 and message 3, with message 3 (the oldest message as the first element)
-        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message3.id)
         // request 2 and newer, message 2 (the oldest) should be first
         pagination.setFilter(Pagination.GREATER_THAN_OR_EQUAL, message2.id)
-        messages = repo.selectMessagesForChannel(data.message1.cid, pagination)
+        messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
         Truth.assertThat(messages.first().id).isEqualTo(message2.id)
     }

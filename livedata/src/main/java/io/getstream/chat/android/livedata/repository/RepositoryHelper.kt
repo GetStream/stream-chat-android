@@ -5,8 +5,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDatabase
 import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
-import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 internal class RepositoryHelper(
     client: ChatClient,
@@ -23,23 +21,20 @@ internal class RepositoryHelper(
 
     internal suspend fun getUsersForChannels(
         channelEntities: Collection<ChannelEntity>,
-        channelMessagesMap: Map<String, Collection<MessageEntity>>
+        userIdsFromMessages: Set<String>
     ): Map<String, User> {
-        return users.selectUserMap(calculateUserIds(channelEntities, channelMessagesMap).toList())
+        return users.selectUserMap(calculateUserIds(channelEntities, userIdsFromMessages).toList())
     }
 
     @VisibleForTesting
     internal fun calculateUserIds(
         channelEntities: Collection<ChannelEntity>,
-        channelMessagesMap: Map<String, Collection<MessageEntity>>
+        userIdsFromMessages: Set<String>
     ): Collection<String> {
-        return channelEntities.fold(emptySet()) { acc, channel ->
+        return channelEntities.fold(userIdsFromMessages) { acc, channel ->
             acc + channel.createdByUserId.orEmpty() +
                 channel.members.keys +
-                channel.reads.keys +
-                channelMessagesMap[channel.cid]?.flatMap { message ->
-                    message.latestReactions.map(ReactionEntity::userId) + message.userId
-                }.orEmpty()
+                channel.reads.keys
         }
     }
 }

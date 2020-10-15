@@ -83,6 +83,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
+            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
@@ -106,6 +107,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
+            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()

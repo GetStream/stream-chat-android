@@ -223,7 +223,7 @@ fun randomChannelEntityPair(
     channelEntity: ChannelEntity = randomChannelEntity()
 ): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)
 
-fun randomMessageEntity(
+internal fun randomMessageEntity(
     id: String = randomString(),
     cid: String = randomCID(),
     userId: String = randomString(),

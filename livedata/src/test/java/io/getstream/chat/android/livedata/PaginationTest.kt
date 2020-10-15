@@ -73,12 +73,16 @@ class PaginationTest {
                 randomChannel(cid = "b", type = "a"),
                 randomChannel(cid = "b", type = "b")
             ).let {
-                Arguments.of(it, AnyChannelPaginationRequest().apply {
-                    sort = QuerySort().apply {
-                        asc("cid")
-                        asc("type")
-                    }
-                }, it)
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply {
+                        sort = QuerySort().apply {
+                            asc("cid")
+                            asc("type")
+                        }
+                    },
+                    it
+                )
             },
             listOf(
                 randomChannel(cid = "a"),

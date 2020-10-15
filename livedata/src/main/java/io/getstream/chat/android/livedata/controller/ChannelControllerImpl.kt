@@ -50,7 +50,6 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype

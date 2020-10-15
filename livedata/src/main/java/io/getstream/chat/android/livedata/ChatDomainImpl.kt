@@ -28,7 +28,6 @@ import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
-import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -640,17 +639,23 @@ class ChatDomainImpl private constructor(
     ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
-        val channelMessagesMap = if (pagination.messageLimit > 0) {
-            // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
-            // sqlite has window functions: https://sqlite.org/windowfunctions.html
-            // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
+        val userIdsFromMessages: Set<String> = if (pagination.memberLimit > 0) {
+            repos.messages.selectUserIdsFromMessagesByChannelsIds(channelIds, pagination)
         } else {
-            emptyMap()
+            emptySet()
         }
 
         // gather the user ids from channels, members and the last message
-        val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
+        val userMap = repos.getUsersForChannels(channelEntities, userIdsFromMessages)
+
+        val channelMessagesMap: Map<String, List<Message>> = if (pagination.messageLimit > 0) {
+            // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
+            // sqlite has window functions: https://sqlite.org/windowfunctions.html
+            // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
+            channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, userMap, pagination) }.toMap()
+        } else {
+            emptyMap()
+        }
 
         // convert the channels
         val channels = mutableListOf<Channel>()
@@ -658,16 +663,11 @@ class ChatDomainImpl private constructor(
             val channel = channelEntity.toChannel(userMap)
             // get the config we have stored offline
             channel.config = getChannelConfig(channel.type)
-
-            if (pagination.messageLimit > 0) {
-                val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
-                val messages = messageEntities.map { MessageRepository.toModel(it, userMap) }
-                channel.messages = messages
-            }
+            channel.messages = channelMessagesMap[channel.cid] ?: emptyList()
 
             channels.add(channel)
         }
-        return channels.toList().applyPagination(pagination)
+        return channels.applyPagination(pagination)
     }
 
     override fun clean() {

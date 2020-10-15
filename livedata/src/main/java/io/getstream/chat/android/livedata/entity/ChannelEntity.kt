@@ -31,7 +31,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
     var frozen: Boolean = false
 
     /** if the channel is hidden (new messages will cause to reappear) */
-    var hidden: Boolean = false
+    var hidden: Boolean? = null
 
     /** hide messages before this date */
     var hideMessagesBefore: Date? = null
@@ -71,6 +71,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
         syncStatus = c.syncStatus
+        hidden = c.hidden
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -110,7 +111,7 @@ data class ChannelEntity(var type: String, var channelId: String) {
     }
 
     /** updates last message and lastmessagedate on this channel entity */
-    fun updateLastMessageDate(messageEntity: MessageEntity) {
+    internal fun updateLastMessageDate(messageEntity: MessageEntity) {
         lastMessageAt = max(lastMessageAt, messageEntity.createdAt ?: messageEntity.createdLocallyAt)
     }
 
