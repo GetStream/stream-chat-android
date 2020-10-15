@@ -173,7 +173,7 @@ class EventHandlerImpl(
             users.putAll(message.users().associateBy(User::id))
             messages[message.id] = MessageEntity(message)
             channelMap[cid]?.let {
-                it.addMessage(MessageEntity(message))
+                it.updateLastMessage(MessageEntity(message))
                 channels[it.cid] = it
             }
         }
