@@ -96,6 +96,7 @@ interface ChatDomain {
 
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
+        private var backgroundSyncEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
@@ -110,10 +111,15 @@ interface ChatDomain {
             // TODO: Consider exposing apiKey and userToken by ChatClient to make this function more friendly
             if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
                 this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
-                throw IllegalArgumentException("ChatDomain.Builder::backgroundSyncEnabled. apiKey, user.id, and userToken must not be empty.")
             } else {
                 this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
             }
+            return this
+        }
+
+        fun backgroundSyncDisabled(): Builder {
+            this.backgroundSyncEnabled = false
+            this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
             return this
         }
 
@@ -153,9 +159,13 @@ interface ChatDomain {
         }
 
         fun build(): ChatDomain {
-            if (offlineEnabled) {
-                storeBackgroundSyncConfig(backgroundSyncConfig)
-                storeNotificationConfig(notificationConfig)
+            if (backgroundSyncEnabled) {
+                if (backgroundSyncConfig == BackgroundSyncConfig.UNAVAILABLE) {
+                    throw IllegalStateException("ChatDomain.Builder::build. backgroundSyncEnabled must be called with non-empty params.")
+                } else {
+                    storeBackgroundSyncConfig(backgroundSyncConfig)
+                    storeNotificationConfig(notificationConfig)
+                }
             }
             instance = buildImpl()
             return instance
