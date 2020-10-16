@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.view.dialog
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -33,8 +32,9 @@ class MessageMoreActionDialog(
     private val onStartThreadHandler: (message: Message) -> Unit,
     private val onMessageFlagHandler: (message: Message) -> Unit
 ) : Dialog(context, R.style.DialogTheme) {
+
     init {
-        Utils.hideSoftKeyboard(context as Activity)
+        Utils.hideSoftKeyboard(context)
         window?.apply {
             setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
