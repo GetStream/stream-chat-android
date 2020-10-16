@@ -1,4 +1,6 @@
 # To be released:
+
+# Oct 16th, 2020 - 0.8.6
 - Improve sync data validation in ChatDomain.Builder
 - Removed many internal implementation classes and methods from the SDK's public API
 - Significant performance improvements to offline storage
