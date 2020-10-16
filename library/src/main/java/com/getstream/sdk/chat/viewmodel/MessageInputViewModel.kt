@@ -23,7 +23,7 @@ class MessageInputViewModel @JvmOverloads constructor(
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
     private val channelController: ChannelController =
-        chatDomain.useCases.watchChannel(cid, MESSAGE_LIMIT).execute().data()
+        chatDomain.useCases.watchChannel(cid, 0).execute().data()
     private var channelState = MutableLiveData<Channel>(channelController.toChannel())
     val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
     val members: LiveData<List<Member>> = channelController.members
