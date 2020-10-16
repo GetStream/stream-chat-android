@@ -14,6 +14,15 @@
             android:id="@+id/action_loginFragment_to_channelsFragment"
             app:destination="@id/channelsFragment"
             />
+        <action
+            android:id="@+id/action_loginFragment_to_channelFragment"
+            app:destination="@id/channelFragment" >
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false"
+                />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/channelsFragment"

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.application.AppConfig
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
@@ -37,7 +38,7 @@ class LoginViewModel(
             chatUser, user.token,
             object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    _state.postValue(State.LoggedIn)
+                    _state.postValue(State.RedirectToChannels)
                     Timber.d("User set successfully")
                 }
 
@@ -48,11 +49,37 @@ class LoginViewModel(
             }
         )
     }
+
+    fun targetChannelDataReceived(cid: String) {
+        val user = userRepository.user
+        if (userRepository.user != User.None) {
+            val chatUser = ChatUser().apply {
+                id = user.id
+                image = user.image
+                name = user.name
+            }
+            Chat.getInstance().setUser(
+                chatUser, user.token,
+                object : InitConnectionListener() {
+                    override fun onSuccess(data: ConnectionData) {
+                        _state.postValue(State.RedirectToChannel(cid))
+                        Timber.d("User set successfully")
+                    }
+
+                    override fun onError(error: ChatError) {
+                        _state.postValue(State.Error(error.message))
+                        Timber.e("Failed to set user $error")
+                    }
+                }
+            )
+        }
+    }
 }
 
 sealed class State {
     data class AvailableUsers(val availableUsers: List<User>) : State()
-    object LoggedIn : State()
+    object RedirectToChannels : State()
     object Loading : State()
+    data class RedirectToChannel(val cid: String) : State()
     data class Error(val errorMessage: String?) : State()
 }
