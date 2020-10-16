@@ -141,7 +141,7 @@ class MessageListViewModelTest {
         stateList.last().apply {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             val state = (this as MessageListViewModel.State.Result)
-            state.messageListItem.listEntities.map {
+            state.messageListItem.items.map {
                 it as MessageListItem.MessageItem
                 it.message
             } shouldBeEqualTo MESSAGES
@@ -193,7 +193,7 @@ class MessageListViewModelTest {
                     isThread shouldBeEqualTo false
                     isTyping shouldBeEqualTo false
 
-                    listEntities.run {
+                    items.run {
                         first().apply {
                             this as MessageListItem.MessageItem
                             positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
@@ -239,7 +239,7 @@ class MessageListViewModelTest {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             (this as MessageListViewModel.State.Result).let {
                 it.messageListItem.isThread shouldBeEqualTo true
-                it.messageListItem.listEntities.run {
+                it.messageListItem.items.run {
                     println("JcLog: list -> $this")
                     first().run {
                         this shouldBeInstanceOf MessageListItem.MessageItem::class.java

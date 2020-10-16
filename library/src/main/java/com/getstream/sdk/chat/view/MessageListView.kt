@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.ListenerContainer
 import com.getstream.sdk.chat.adapter.ListenerContainerImpl
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItemAdapter
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.databinding.StreamMessageListViewBinding
@@ -24,14 +25,6 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
-import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
-import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -41,6 +34,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -431,7 +425,7 @@ class MessageListView : ConstraintLayout {
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()
-        val entities = listItem.listEntities
+        val entities = listItem.items
 
         // Adapter initialization for channel and thread swapping
         val backFromThread = adapter.isThread && listItem.isThread
@@ -509,8 +503,10 @@ class MessageListView : ConstraintLayout {
                     layoutSize
                 )
             )
+            val messageItem = entities.lastOrNull() as MessageItem?
+            val isMine = messageItem?.isMine ?: false
             // Scroll to bottom when the user wrote the message.
-            if (entities.size >= 1 && entities[entities.size - 1].isMine ||
+            if (entities.isNotEmpty() && isMine ||
                 !hasScrolledUp ||
                 newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             ) {
@@ -680,22 +676,22 @@ class MessageListView : ConstraintLayout {
 
     interface BubbleHelper {
         fun getDrawableForMessage(
-            message: Message,
-            mine: Boolean,
-            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>
+                message: Message,
+                mine: Boolean,
+                positions: List<MessageListItem.Position>
         ): Drawable
 
         fun getDrawableForAttachment(
-            message: Message,
-            mine: Boolean,
-            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>,
-            attachment: Attachment
+                message: Message,
+                mine: Boolean,
+                positions: List<MessageListItem.Position>,
+                attachment: Attachment
         ): Drawable
 
         fun getDrawableForAttachmentDescription(
-            message: Message,
-            mine: Boolean,
-            positions: @JvmSuppressWildcards List<MessageViewHolderFactory.Position>
+                message: Message,
+                mine: Boolean,
+                positions: List<MessageListItem.Position>
         ): Drawable
     }
 

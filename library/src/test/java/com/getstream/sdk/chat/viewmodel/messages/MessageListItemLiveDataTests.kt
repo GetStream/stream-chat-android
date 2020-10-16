@@ -1,163 +1,201 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.createMessage
-import com.getstream.sdk.chat.utils.livedata.TestObserver
-import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.randomUser
+import io.getstream.chat.android.livedata.utils.MessageListItem
+import io.getstream.chat.android.livedata.utils.MessageListItem.TypingItem
+import io.getstream.chat.android.livedata.utils.MessageListItemLiveData
+import io.getstream.chat.android.livedata.utils.MessageListItemWrapper
+import io.getstream.chat.android.livedata.utils.calendar
+import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.amshove.kluent.any
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldNotBeNull
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.Rule
+import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.runner.RunWith
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.Date
 
 @ExtendWith(InstantExecutorExtension::class)
-class MessageListItemLiveDataTests {
+class MessageListItemLiveDataTest {
 
-    private val currentUser = User()
-    private lateinit var messages: MutableLiveData<List<Message>>
-    private lateinit var threadMessages: MutableLiveData<List<Message>>
-    private lateinit var typing: MutableLiveData<List<User>>
-    private lateinit var reads: MutableLiveData<List<ChannelUserRead>>
 
-    private lateinit var observer: TestObserver<MessageListItemWrapper>
+    private val currentUser = randomUser()
 
-    private lateinit var sut: MessageListItemLiveData
+    private fun simpleDateGroups(previous: Message?, message: Message): Boolean {
+        return if (previous == null) {
+            true
+        } else {
+            !isSameDay(message.getCreatedAtOrThrow(), previous.getCreatedAtOrThrow())
+        }
+    }
+    private fun isSameDay(date1: Date, date2: Date): Boolean {
+        val localDate1: LocalDate = date1.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        val localDate2: LocalDate = date2.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        return localDate1.isEqual(localDate2)
+    }
 
-    @BeforeEach
-    fun setUp() {
-        observer = TestObserver()
-        messages = MutableLiveData(emptyList())
-        threadMessages = MutableLiveData(emptyList())
-        typing = MutableLiveData(emptyList())
-        reads = MutableLiveData(emptyList())
+    private fun emptyMessages(): MessageListItemLiveData {
+        val messages: LiveData<List<Message>> = MutableLiveData(listOf())
+        val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
+        val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        sut = MessageListItemLiveData(currentUser, messages, threadMessages, typing, reads)
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+    }
+
+    private fun oneMessage(message: Message): MessageListItemLiveData {
+        val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
+        val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
+        val typing: LiveData<List<User>> = MutableLiveData(listOf())
+
+        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+    }
+
+    private fun manyMessages(): MessageListItemLiveData {
+        val messages = mutableListOf<Message>()
+        val users = listOf(randomUser(), randomUser(), randomUser())
+
+        for (i in (0..2)) {
+            val user = users[i]
+            for (y in 0..2) {
+                val message = randomMessage(user = user, createdAt = calendar(2020, 11, i + 1, i + y))
+                messages.add(message)
+            }
+        }
+        val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
+        // user 0 read till the end, user 1 read the first message, user 3 read is missing
+        val read1 = ChannelUserRead(users[0], messages.last().createdAt)
+        val read2 = ChannelUserRead(users[1], messages.first().createdAt)
+        val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
+        val typing: LiveData<List<User>> = MutableLiveData(listOf())
+
+        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+    }
+
+    // livedata testing
+    @Test
+    fun `Observe should trigger a recompute`() {
+        val many = oneMessage(randomMessage())
+        val items = many.getOrAwaitValue().items
+        Truth.assertThat(items.size).isEqualTo(2)
+        val empty = emptyMessages()
+        val items2 = empty.getOrAwaitValue().items
+        Truth.assertThat(items2.size).isEqualTo(0)
+    }
+
+    // test typing indicator logic:
+    @Test
+    fun `Should return an empty list`() {
+        val messageListItemLd = emptyMessages()
+        messageListItemLd.typingChanged(emptyList())
+        val items = messageListItemLd.getOrAwaitValue().items
+        Truth.assertThat(items).isEmpty()
     }
 
     @Test
-    fun `When messages are changed if live data is in the thread state should not be observed any values`() {
-        sut.observeForever(observer)
-        threadMessages.value = listOf(createMessage())
-        observer.reset()
-
-        messages.value = listOf(createMessage())
-
-        observer.lastObservedValue shouldBeEqualTo null
+    fun `Should exclude the current user`() {
+        val messageListItemLd = emptyMessages()
+        val typing = listOf(currentUser)
+        messageListItemLd.typingChanged(typing)
+        val items = messageListItemLd.getOrAwaitValue().items
+        Truth.assertThat(items).isEmpty()
     }
 
     @Test
-    fun `When messages are changed if live data is not in the thread state should observe last assigned value to messages`() {
-        sut.observeForever(observer)
-        val sendingMessage = createMessage()
-
-        messages.value = listOf(sendingMessage)
-
-        val result = observer.lastObservedValue
-        result.shouldNotBeNull()
-        result.listEntities.any { item ->
-            item is MessageListItem.MessageItem && item.message == sendingMessage
-        } shouldBeEqualTo true
+    fun `Should return only the typing indicator`() {
+        val messageListItemLd = emptyMessages()
+        messageListItemLd.typingChanged(listOf(randomUser()))
+        val items = messageListItemLd.getOrAwaitValue().items
+        Truth.assertThat(items.size).isEqualTo(1)
+        Truth.assertThat(items.last()).isInstanceOf(TypingItem::class.java)
     }
 
     @Test
-    fun `When thread messages are changed should observe last assigned value to thread messages`() {
-        sut.observeForever(observer)
-        val threadMessage = createMessage()
+    fun `Should return messages with a typing indicator`() {
+        val message = randomMessage()
+        val messageListItemLd = oneMessage(message)
+        messageListItemLd.messagesChanged(listOf(message))
+        messageListItemLd.typingChanged(listOf(randomUser()))
+        val items = messageListItemLd.getOrAwaitValue().items
+        Truth.assertThat(items.size).isEqualTo(3)
+        Truth.assertThat(items.first()).isInstanceOf(MessageListItem.DateSeparatorItem::class.java)
+        Truth.assertThat(items[1]).isInstanceOf(MessageListItem.MessageItem::class.java)
+        Truth.assertThat(items.last()).isInstanceOf(TypingItem::class.java)
+    }
 
-        threadMessages.value = listOf(threadMessage)
-
-        val result = observer.lastObservedValue
-        result.shouldNotBeNull()
-        result.listEntities.any { item ->
-            item is MessageListItem.MessageItem && item.message == threadMessage
-        } shouldBeEqualTo true
+    // test how we merge read state
+    @Test
+    fun `Last message should contain the read state`() {
+        val messageListItemLd = manyMessages()
+        val items = messageListItemLd.getOrAwaitValue().items
+        val lastMessage = items.last() as MessageListItem.MessageItem
+        Truth.assertThat(lastMessage.messageReadBy).isNotEmpty()
     }
 
     @Test
-    fun `When set thread messages should remove observer from old thread messages and set to new one`() {
-        sut.observeForever(observer)
-        val newThreadMessages = MutableLiveData<List<Message>>(listOf())
-
-        sut.setThreadMessages(newThreadMessages)
-
-        threadMessages.hasObservers() shouldBeEqualTo false
-        newThreadMessages.hasObservers() shouldBeEqualTo true
+    fun `First message should contain the read state`() {
+        val messageListItemLd = manyMessages()
+        val items = messageListItemLd.getOrAwaitValue().items
+        val messages = items.filterIsInstance<MessageListItem.MessageItem>()
+        val firstMessage = messages.first()
+        Truth.assertThat(firstMessage.messageReadBy).isNotEmpty()
     }
 
+    // test message grouping
     @Test
-    fun `When set thread messages should observe values from new thread messages`() {
-        sut.observeForever(observer)
-        val newThreadMessage = createMessage()
-        val newThreadMessages = MutableLiveData(listOf(newThreadMessage))
+    fun `There should be 3 messages with a position Top`() {
+        val messageListItemLd = manyMessages()
+        val topMessages = mutableListOf<MessageListItem.Position>()
+        val items = messageListItemLd.getOrAwaitValue().items
+        for (item in items) {
+            if (item is MessageListItem.MessageItem) {
+                val messageItem = item as MessageListItem.MessageItem
+                topMessages.addAll(messageItem.positions)
+            }
+        }
+        // there are 3 users, so we should have 3 top sections
+        val correctPositions = listOf(MessageListItem.Position.Top, MessageListItem.Position.Middle, MessageListItem.Position.Bottom)
+        Truth.assertThat(topMessages).isEqualTo(correctPositions + correctPositions + correctPositions)
+    }
 
-        sut.setThreadMessages(newThreadMessages)
-
-        val result = observer.lastObservedValue
-        result.shouldNotBeNull()
-        result.listEntities.any { item ->
-            item is MessageListItem.MessageItem && item.message == newThreadMessage
-        } shouldBeEqualTo true
+    // test data separators
+    @Test
+    fun `There should be 3 date separators`() {
+        val messageListItemLd = manyMessages()
+        val separators = mutableListOf<MessageListItem.DateSeparatorItem>()
+        val items = messageListItemLd.getOrAwaitValue().items
+        for (item in items) {
+            if (item is MessageListItem.DateSeparatorItem) {
+                separators.add(item)
+            }
+        }
+        Truth.assertThat(separators.size).isEqualTo(3)
     }
 
     @Test
     fun `When the user is the only one typing, no broadcast is made`() {
+        val messageListItemLd = manyMessages()
         val testObserver: Observer<MessageListItemWrapper> = mock()
-
-        val typing = MutableLiveData<List<User>>()
-
-        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
-
-        typing.postValue(listOf(currentUser))
-
-        verify(testObserver, never()).onChanged(any())
-    }
-
-    @Test
-    fun `When the other users are typing, the state must be updated`() {
-        val testObserver: Observer<MessageListItemWrapper> = mock()
-
-        val typing = MutableLiveData<List<User>>()
-
-        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
-
-        typing.postValue(listOf(currentUser, User(id = "123")))
-
-        verify(testObserver).onChanged(any())
-    }
-
-    @Test
-    fun `When other users stop typing, this should be propagated`() {
-        val testObserver: Observer<MessageListItemWrapper> = mock()
-
-        val typing = MutableLiveData<List<User>>()
-
-        onlyTypingMessageListItemLiveData(currentUser, typing).observeForever(testObserver)
-
-        typing.postValue(listOf(currentUser, User(id = "123")))
-        typing.postValue(listOf(currentUser))
-        typing.postValue(listOf(currentUser))
-        typing.postValue(listOf(currentUser))
-
+        messageListItemLd.observeForever(testObserver)
+        messageListItemLd.typingChanged(listOf(currentUser))
         verify(testObserver, times(2)).onChanged(any())
     }
-
-    private fun onlyTypingMessageListItemLiveData(user: User, typingLiveData: MutableLiveData<List<User>>) =
-        MessageListItemLiveData(
-            currentUser,
-            MutableLiveData(),
-            MutableLiveData(),
-            typingLiveData,
-            MutableLiveData()
-        )
 }

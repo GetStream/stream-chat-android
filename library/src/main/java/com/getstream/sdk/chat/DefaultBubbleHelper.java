@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageListView;
@@ -28,7 +29,7 @@ public class DefaultBubbleHelper {
         return new MessageListView.BubbleHelper() {
             @NonNull
             @Override
-            public Drawable getDrawableForMessage(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
+            public Drawable getDrawableForMessage(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
@@ -47,7 +48,7 @@ public class DefaultBubbleHelper {
 
             @NotNull
             @Override
-            public Drawable getDrawableForAttachment(@NotNull Message message, boolean mine, @NotNull List<Position> positions, @NotNull Attachment attachment) {
+            public Drawable getDrawableForAttachment(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions, @NotNull Attachment attachment) {
                 if (attachment.getType() == null || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
@@ -73,7 +74,7 @@ public class DefaultBubbleHelper {
 
             @NotNull
             @Override
-            public Drawable getDrawableForAttachmentDescription(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
+            public Drawable getDrawableForAttachmentDescription(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
