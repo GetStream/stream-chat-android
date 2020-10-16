@@ -99,16 +99,34 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         }
     }
 
-    private val activityResultLauncher: ActivityResultLauncher<Unit>? =
-        (context as? ComponentActivity)
-            ?.registerForActivityResult(CaptureMediaContract()) { file: File? ->
+    private object LauncherRequestsKeys {
+        const val CAPTURE_MEDIA = "capture_media_request_key"
+        const val SELECT_FILES = "select_files_request_key"
+    }
+
+    private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
+    private var selectFilesResultLauncher: ActivityResultLauncher<Unit>? = null
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        val activityResultRegistry = (context as? ComponentActivity)?.activityResultRegistry
+
+        activityResultLauncher = activityResultRegistry
+            ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
                 file?.let { messageInputController.onFileCaptured(it) }
             }
+        selectFilesResultLauncher = activityResultRegistry
+            ?.register(LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) {
+                messageInputController.onFilesSelected(it)
+            }
+    }
 
-    private val selectFilesResultLauncher: ActivityResultLauncher<Unit>? =
-        (context as? ComponentActivity)?.registerForActivityResult(SelectFilesContract()) {
-            messageInputController.onFilesSelected(it)
-        }
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        activityResultLauncher?.unregister()
+        selectFilesResultLauncher?.unregister()
+    }
 
     private val commandsAdapter =
         CommandsAdapter(style) { messageInputController.onCommandSelected(it) }
@@ -365,8 +383,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.fileComposer.visible(true)
     }
 
-    internal fun showMediaPermissions(shouldBeVisible: Boolean) = binding.ivMediaPermission.visible(shouldBeVisible)
-    internal fun showCameraPermissions(shouldBeVisible: Boolean) = binding.ivCameraPermission.visible(shouldBeVisible)
+    internal fun showMediaPermissions(shouldBeVisible: Boolean) =
+        binding.ivMediaPermission.visible(shouldBeVisible)
+
+    internal fun showCameraPermissions(shouldBeVisible: Boolean) =
+        binding.ivCameraPermission.visible(shouldBeVisible)
 
     internal fun hideAttachmentsMenu() {
         binding.clTitle.visible(false)
@@ -386,7 +407,9 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     internal fun showLoadingTotalAttachments(shouldBeVisible: Boolean) =
         binding.progressBarFileLoader.visible(shouldBeVisible)
 
-    internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) = binding.ivOpenAttach.visible(shouldBeVisible)
+    internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) =
+        binding.ivOpenAttach.visible(shouldBeVisible)
+
     fun showMessage(@StringRes messageResId: Int) = Utils.showMessage(context, messageResId)
 
     interface TypeListener {
