@@ -477,8 +477,13 @@ internal class ChannelControllerImpl(
 
         val messageEntity = MessageEntity(newMessage)
 
-        // Update livedata
+        // Update livedata in channel controller
         upsertMessage(newMessage)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update livedata for currently running queries
+        for (query in domainImpl.getActiveQueries()) {
+            query.broadcastChannelUpdate(cid)
+        }
 
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insertMessage(newMessage)

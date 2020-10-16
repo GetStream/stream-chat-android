@@ -103,6 +103,12 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
+    internal fun broadcastChannelUpdate(cid: String) {
+        val channel = domainImpl.channel(cid).toChannel()
+        logger.logI("channel ${channel.cid} manually broadcasting update, last message text is ${channel.messages.lastOrNull()?.text}")
+        updateChannel(channel)
+    }
+
     private fun updateChannel(channel: Channel) {
         _channels.postValue((_channels.value ?: mapOf()) + mapOf(channel.cid to channel))
     }
