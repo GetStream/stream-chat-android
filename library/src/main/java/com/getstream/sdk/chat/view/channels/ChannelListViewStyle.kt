@@ -46,7 +46,9 @@ class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle()
         setContext(context)
         val attributes = context.obtainStyledAttributes(
             attrs,
-            R.styleable.ChannelListView, 0, 0
+            R.styleable.ChannelListView,
+            0,
+            0
         )
 
         channelTitleText = TextStyle.Builder(attributes).apply {

@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.whenFalse
 import com.getstream.sdk.chat.utils.whenTrue
+import com.getstream.sdk.chat.view.common.ensure
 import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
@@ -110,7 +111,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
 
-        val activityResultRegistry = (context as? ComponentActivity)?.activityResultRegistry
+        val activityResultRegistry = (context.ensure() as? ComponentActivity)?.activityResultRegistry
 
         activityResultLauncher = activityResultRegistry
             ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
@@ -238,9 +239,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     }
 
     private fun setKeyboardEventListener() {
-        KeyboardVisibilityEvent.setEventListener(
-            context as Activity
-        ) { isOpen: Boolean ->
+        KeyboardVisibilityEvent.setEventListener(context.ensure() as Activity) { isOpen: Boolean ->
             if (!isOpen) {
                 binding.messageTextInput.clearFocus()
             }

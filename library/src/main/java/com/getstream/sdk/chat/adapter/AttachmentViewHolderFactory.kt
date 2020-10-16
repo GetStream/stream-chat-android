@@ -22,10 +22,8 @@ open class AttachmentViewHolderFactory {
     }
 
     lateinit var listenerContainer: ListenerContainer
-        @JvmName("setListenerContainerInternal")
         internal set
     lateinit var bubbleHelper: MessageListView.BubbleHelper
-        @JvmName("setBubbleHelperInternal")
         internal set
 
     open fun getAttachmentViewType(

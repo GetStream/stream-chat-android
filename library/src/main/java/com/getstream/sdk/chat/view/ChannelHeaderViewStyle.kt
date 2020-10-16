@@ -29,7 +29,9 @@ class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyl
         setContext(context)
         val attributes = getContext().obtainStyledAttributes(
             attrs,
-            R.styleable.ChannelHeaderView, 0, 0
+            R.styleable.ChannelHeaderView,
+            0,
+            0
         )
 
         channelTitleText = TextStyle.Builder(attributes).apply {
