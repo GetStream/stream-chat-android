@@ -268,12 +268,11 @@ class MessageListView : ConstraintLayout {
             true
         )
 
-        binding.scrollBottomBtn.setBackgroundResource(backgroundRes);
+        binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
 
         if (!unseenButtonEnabled) {
-            binding.scrollBottomBtn.visibility = View.GONE;
+            binding.scrollBottomBtn.visibility = View.GONE
         }
-
 
         newMessagesTextSingle =
             tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
@@ -756,7 +755,7 @@ class MessageListView : ConstraintLayout {
         override fun onUnreadMessageCountChanged(count: Int) {
             if (count <= 0) {
                 newMessagesTextTV.visibility = GONE
-            } else if (isButtonEnabled){
+            } else if (isButtonEnabled) {
                 newMessagesTextTV.visibility = VISIBLE
                 newMessagesTextTV.text = formatNewMessagesText(count)
             }
