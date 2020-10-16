@@ -239,7 +239,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     }
 
     private fun setKeyboardEventListener() {
-        KeyboardVisibilityEvent.setEventListener(context.ensure() as Activity) { isOpen: Boolean ->
+        KeyboardVisibilityEvent.setEventListener(context as Activity) { isOpen: Boolean ->
             if (!isOpen) {
                 binding.messageTextInput.clearFocus()
             }

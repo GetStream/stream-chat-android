@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import kotlinx.android.synthetic.main.stream_message_list_view.view.*
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -212,7 +213,8 @@ class MessageListView : ConstraintLayout {
 
         hasScrolledUp = false
 
-        buffer.subscribe { wrapper -> handleNewWrapper(wrapper) }
+        buffer.subscribe(::handleNewWrapper)
+        buffer.active()
     }
 
     private fun initScrollButtonBehaviour() {
@@ -230,7 +232,7 @@ class MessageListView : ConstraintLayout {
         }
 
         binding.chatMessagesRV.apply {
-            setLayoutManager(this@MessageListView.layoutManager)
+            layoutManager = this@MessageListView.layoutManager
             setHasFixedSize(true)
             setItemViewCacheSize(20)
         }
@@ -243,7 +245,7 @@ class MessageListView : ConstraintLayout {
     }
 
     private fun initUnseenMessagesView() {
-        binding.newMessagesTV.setVisibility(GONE)
+        binding.newMessagesTV.visibility = GONE
     }
 
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
@@ -452,6 +454,7 @@ class MessageListView : ConstraintLayout {
             // TODO review this, supposed to be the thread parent position
             layoutManager.scrollToPosition(0)
             lastMessageReadHandler.invoke()
+            buffer.active()
             return
         }
 
@@ -459,6 +462,7 @@ class MessageListView : ConstraintLayout {
         if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2)) {
             val newPosition = adapter.itemCount - 1
             layoutManager.scrollToPosition(newPosition)
+            buffer.active()
             return
         }
 
@@ -468,6 +472,7 @@ class MessageListView : ConstraintLayout {
             // typing
             // message updates
             logger.logI("no Scroll no new message")
+            buffer.active()
             return
         }
 
@@ -487,6 +492,7 @@ class MessageListView : ConstraintLayout {
             layoutManager.scrollToPosition(newPosition)
         } else {
             if (newSize == 0) {
+                buffer.active()
                 return
             }
 
