@@ -136,8 +136,9 @@ class ChatImpl implements Chat {
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
         }
+        // TODO: reenable background sync
         domainBuilder
-            .userPresenceEnabled()
+            .userPresenceEnabled().backgroundSyncDisabled()
             .notificationConfig(notificationConfig);
 
         client.setUser(user, userToken, new InitConnectionListener() {
