@@ -1,7 +1,8 @@
 # To be released:
 - Fix a crash related to behaviour changes in 1.3.0-alpha08 of the AndroidX Fragment library
-
 - Replace Glide with Coil in AttachmentViewHolderMedia (Fix GIFs loading issues)
+- Update Offline Support to the [last version](. See changes: )https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.6)
+- Allow setting custom `NotificationHandler` in `Chat.Builder`
 
 # Oct 14th, 2020 - 4.3.0-beta-6
 - Update to Kotlin 1.4.10
