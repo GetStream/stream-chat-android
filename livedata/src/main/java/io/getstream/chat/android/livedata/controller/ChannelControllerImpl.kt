@@ -382,20 +382,31 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        val channel = runChannelQueryOffline(pagination)
+        val queryOfflineJob = scope.async { runChannelQueryOffline(pagination) }
+        // start the online query before queryOfflineJob.await
+        val queryOnlineJob = if (domainImpl.isOnline()) { scope.async { runChannelQueryOnline(pagination) } } else { null }
+
+        val channelEntityPair = queryOfflineJob.await()
+        if (channelEntityPair != null) {
+            updateLiveDataFromChannelEntityPair(channelEntityPair)
+        }
 
         // if we are online we we run the actual API call
-
-        return if (domainImpl.isOnline()) {
-            runChannelQueryOnline(pagination)
+        return if (queryOnlineJob != null) {
+            val response = queryOnlineJob.await()
+            if (response.isSuccess) {
+                updateLiveDataFromChannel(response.data())
+            }
+            response
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
+            val channel = channelEntityPair?.channel
             Result(channel, null)
         }
     }
 
-    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
+    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
         val channelPair = domainImpl.selectAndEnrichChannel(cid, pagination)
 
         channelPair?.let {
@@ -403,11 +414,10 @@ internal class ChannelControllerImpl(
             it.channel.config = domainImpl.getChannelConfig(it.channel.type)
             _loading.postValue(false)
 
-            updateLiveDataFromChannelEntityPair(it)
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-        return channelPair?.channel
+        return channelPair
     }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
@@ -427,7 +437,7 @@ internal class ChannelControllerImpl(
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
             domainImpl.repos.configs.insert(listOf(configEntities))
-            updateLiveDataFromChannel(channelResponse)
+
             domainImpl.storeStateForChannel(channelResponse)
         } else {
             recoveryNeeded = true
@@ -476,7 +486,7 @@ internal class ChannelControllerImpl(
         val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
-            it.updateLastMessageDate(messageEntity)
+            it.updateLastMessage(messageEntity)
             domainImpl.repos.channels.insert(it)
         }
 

@@ -26,7 +26,7 @@ import java.util.Date
         Index(
             value = ["messageId", "userId", "type"],
             unique = true
-        )
+        ), Index(value = ["syncStatus"])
     ]
 )
 internal data class ReactionEntity(@PrimaryKey var messageId: String, var userId: String, var type: String) {

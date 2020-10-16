@@ -33,6 +33,7 @@ import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
+import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
@@ -43,9 +44,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
-import java.lang.Thread.sleep
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -569,8 +570,8 @@ internal class ChatDomainImpl private constructor(
         }
     }
 
-    suspend fun retryFailedEntities() {
-        sleep(1000)
+    private suspend fun retryFailedEntities() {
+        delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
         val messageEntities = repos.messages.retryMessages()
@@ -609,7 +610,7 @@ internal class ChatDomainImpl private constructor(
         // store the messages
         repos.messages.insertMessages(messages)
 
-        logger.logI("stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
+        logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
 
     suspend fun selectAndEnrichChannel(
@@ -641,11 +642,14 @@ internal class ChatDomainImpl private constructor(
     ): List<ChannelEntityPair> {
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
-        val channelMessagesMap = if (pagination.messageLimit > 0) {
+
+        val channelMessagesMap = if (pagination.isRequestingMoreThanLastMessage()) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            channelEntities.map { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) }.toMap()
+
+            // async to run queries in parallel
+            channelEntities.map { scope.async { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) } }.awaitAll().toMap()
         } else {
             emptyMap()
         }
@@ -660,7 +664,7 @@ internal class ChatDomainImpl private constructor(
             // get the config we have stored offline
             channel.config = getChannelConfig(channel.type)
 
-            if (pagination.messageLimit > 0) {
+            if (pagination.isRequestingMoreThanLastMessage()) {
                 val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
                 val messages = messageEntities.map { it.toMessage(userMap) }
                 channel.messages = messages

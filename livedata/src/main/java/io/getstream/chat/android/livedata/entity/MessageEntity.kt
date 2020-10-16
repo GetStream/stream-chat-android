@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
@@ -17,7 +18,7 @@ import java.util.Date
  * and back:
  * messageEntity.toMessage()
  */
-@Entity(tableName = "stream_chat_message")
+@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
 internal data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
     /** the message text */
