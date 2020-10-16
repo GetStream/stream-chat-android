@@ -6,8 +6,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.BOTTOM
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
@@ -26,7 +26,7 @@ internal class UserAvatarConfigurator(
     }
 
     private fun configUserAvatar(messageItem: MessageItem) {
-        val isBottomPosition = BOTTOM in messageItem.positions
+        val isBottomPosition = MessageListItem.Position.Bottom in messageItem.positions
         val message = messageItem.message
 
         binding.avatar.apply {

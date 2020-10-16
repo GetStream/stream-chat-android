@@ -16,8 +16,8 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
@@ -134,7 +134,7 @@ internal class MessageTextConfigurator(
                     bubbleHelper.getDrawableForMessage(
                         messageItem.message,
                         messageItem.isMine,
-                        listOf(MessageViewHolderFactory.Position.MIDDLE)
+                        listOf(MessageListItem.Position.Middle)
                     )
                 } else {
                     bubbleHelper.getDrawableForMessage(

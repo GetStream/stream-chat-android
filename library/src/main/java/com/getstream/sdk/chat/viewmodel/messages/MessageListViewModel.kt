@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
@@ -22,8 +23,10 @@ class MessageListViewModel @JvmOverloads constructor(
     private val loading = MutableLiveData<State>()
     private var threadMessages: LiveData<List<Message>> = MutableLiveData()
     private val messageListData: MessageListItemLiveData
+    private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
     private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
+    private var reads: LiveData<List<ChannelUserRead>>
 
     val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
     val state: LiveData<State> = stateMerger
@@ -37,17 +40,60 @@ class MessageListViewModel @JvmOverloads constructor(
         val channelController = result.data()
         channel = channelController.toChannel()
         currentUser = domain.currentUser
+        reads = channelController.reads
 
         messageListData = MessageListItemLiveData(
             currentUser,
             channelController.messages,
-            threadMessages,
+            reads,
             channelController.typing,
-            channelController.reads
+            false,
+            ::dateSeparator
         )
-
         stateMerger.apply {
             addSource(loading) { value = it }
+            addSource(messageListData) { value = State.Result(it) }
+        }
+    }
+
+    private fun dateSeparator(previous: Message?, message: Message): Boolean {
+        return if (previous == null) {
+            true
+        } else {
+            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+        }
+    }
+
+    private fun threadDateSeparator(previous: Message?, message: Message): Boolean {
+        return if (previous == null) {
+            false
+        } else {
+            (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
+        }
+    }
+
+    private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
+        threadListData = MessageListItemLiveData(
+            currentUser,
+            threadMessages,
+            reads,
+            null,
+            true,
+            ::threadDateSeparator
+        )
+        threadListData?.let {
+            stateMerger.apply {
+                removeSource(messageListData)
+                addSource(it) { value = State.Result(it) }
+            }
+        }
+    }
+
+    private fun resetThread() {
+        threadListData?.let {
+            stateMerger.removeSource(it)
+        }
+        stateMerger.apply {
             addSource(messageListData) { value = State.Result(it) }
         }
     }
@@ -122,13 +168,13 @@ class MessageListViewModel @JvmOverloads constructor(
         val parentId: String = parentMessage.id
         val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
         threadMessages = threadController.messages
-        messageListData.setThreadMessages(threadMessages)
+        setThreadMessages(threadMessages)
         domain.useCases.threadLoadMore.invoke(cid, parentId, MESSAGES_LIMIT).execute()
     }
 
     private fun onNormalModeEntered() {
         currentMode = Mode.Normal
-        messageListData.resetThread()
+        resetThread()
         threadMessages = MutableLiveData()
     }
 

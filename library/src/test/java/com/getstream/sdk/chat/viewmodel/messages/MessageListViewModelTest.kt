@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
@@ -141,8 +140,7 @@ class MessageListViewModelTest {
         stateList.last().apply {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             val state = (this as MessageListViewModel.State.Result)
-            state.messageListItem.listEntities.map {
-                it as MessageListItem.MessageItem
+            state.messageListItem.items.filterIsInstance<MessageListItem.MessageItem>().map {
                 it.message
             } shouldBeEqualTo MESSAGES
         }
@@ -193,23 +191,22 @@ class MessageListViewModelTest {
                     isThread shouldBeEqualTo false
                     isTyping shouldBeEqualTo false
 
-                    listEntities.run {
-                        first().apply {
+                    val messages = items.run {
+                        get(1).apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.Top)
                         }
                         last().apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.Bottom)
                         }
-                        (1 until size - 1).forEach {
+                        (2 until size - 1).forEach {
                             get(it).apply {
                                 this as MessageListItem.MessageItem
-                                positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                                positions shouldBeEqualTo listOf(MessageListItem.Position.Middle)
                             }
                         }
-                        map {
-                            it as MessageListItem.MessageItem
+                        filterIsInstance<MessageListItem.MessageItem>().map {
                             it.message
                         } shouldBeEqualTo MESSAGES
                     }
@@ -239,7 +236,7 @@ class MessageListViewModelTest {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             (this as MessageListViewModel.State.Result).let {
                 it.messageListItem.isThread shouldBeEqualTo true
-                it.messageListItem.listEntities.run {
+                it.messageListItem.items.run {
                     println("JcLog: list -> $this")
                     first().run {
                         this shouldBeInstanceOf MessageListItem.MessageItem::class.java
