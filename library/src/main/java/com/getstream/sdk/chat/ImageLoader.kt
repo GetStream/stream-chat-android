@@ -45,17 +45,15 @@ internal object ImageLoader {
         uri: String?,
         @DrawableRes placeholderResId: Int?,
         onStart: () -> Unit = {},
-        onCancel: () -> Unit = {},
-        onError: (throwable: Throwable) -> Unit = {},
-        onSuccess: () -> Unit = {},
+        onComplete: () -> Unit = {},
     ): RequestDisposable =
         load(uri, getImageLoaderWithGifSupport(context)) {
             placeholderResId?.let { placeholder(it) }
             listener(
                 onStart = { onStart() },
-                onCancel = { onCancel() },
-                onError = { _, throwable -> onError(throwable) },
-                onSuccess = { _, _ -> onSuccess() },
+                onCancel = { onComplete() },
+                onError = { _, _ -> onComplete() },
+                onSuccess = { _, _ -> onComplete() },
             )
         }
 

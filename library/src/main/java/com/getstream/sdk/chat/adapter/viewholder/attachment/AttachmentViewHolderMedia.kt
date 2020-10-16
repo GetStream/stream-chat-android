@@ -70,9 +70,7 @@ class AttachmentViewHolderMedia(
             imageUrl,
             placeholderResId = R.drawable.stream_placeholder,
             onStart = { binding.progressBar.isVisible = true },
-            onCancel = { binding.progressBar.isVisible = false },
-            onError = { binding.progressBar.isVisible = false },
-            onSuccess = { binding.progressBar.isVisible = false },
+            onComplete = { binding.progressBar.isVisible = false },
         )
 
         if (messageItem.message.type != ModelType.message_ephemeral) {
