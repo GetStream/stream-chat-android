@@ -3,24 +3,25 @@ package com.getstream.sdk.chat.utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.LinkedList
 import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 
 internal class StartStopBuffer<T>(
     private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) {
 
-    private val events: Queue<T> = LinkedList<T>()
-    private var active = false
+    private val events: Queue<T> = ConcurrentLinkedQueue()
+    private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
 
     fun hold() {
-        active = false
+        active.set(false)
     }
 
     fun active() {
-        active = true
+        active.set(true)
 
         if (func != null) {
             propagateData()
@@ -28,15 +29,17 @@ internal class StartStopBuffer<T>(
     }
 
     private fun propagateData() {
-        while (active && events.isNotEmpty()) {
-            events.poll()?.let(func!!)
+        GlobalScope.launch(ioDispatcher) {
+            while (active.get() && events.isNotEmpty()) {
+                events.poll()?.let(func!!)
+            }
         }
     }
 
     fun subscribe(func: (T) -> Unit) {
         this.func = func
 
-        if (active) {
+        if (active.get()) {
             propagateData()
         }
     }
@@ -44,8 +47,8 @@ internal class StartStopBuffer<T>(
     fun enqueueData(data: T) {
         events.offer(data)
 
-        GlobalScope.launch(ioDispatcher) {
-            active()
+        if (active.get()) {
+            propagateData()
         }
     }
 }

@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -62,6 +63,8 @@ class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
+
+    var unseenButtonEnabled = true
 
     private var hasScrolledUp = false
 
@@ -212,7 +215,8 @@ class MessageListView : ConstraintLayout {
 
         hasScrolledUp = false
 
-        buffer.subscribe { wrapper -> handleNewWrapper(wrapper) }
+        buffer.subscribe(::handleNewWrapper)
+        buffer.active()
     }
 
     private fun initScrollButtonBehaviour() {
@@ -230,7 +234,7 @@ class MessageListView : ConstraintLayout {
         }
 
         binding.chatMessagesRV.apply {
-            setLayoutManager(this@MessageListView.layoutManager)
+            layoutManager = this@MessageListView.layoutManager
             setHasFixedSize(true)
             setItemViewCacheSize(20)
         }
@@ -243,7 +247,7 @@ class MessageListView : ConstraintLayout {
     }
 
     private fun initUnseenMessagesView() {
-        binding.newMessagesTV.setVisibility(GONE)
+        binding.newMessagesTV.visibility = GONE
     }
 
     private fun parseAttr(context: Context, attrs: AttributeSet?) {
@@ -255,11 +259,21 @@ class MessageListView : ConstraintLayout {
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
         val backgroundRes = tArray.getResourceId(
-            R.styleable.MessageListView_streamButtonBackground,
+            R.styleable.MessageListView_streamScrollButtonBackground,
             R.drawable.stream_shape_round
         )
 
+        unseenButtonEnabled = tArray.getBoolean(
+            R.styleable.MessageListView_streamDefaultScrollButtonEnabled,
+            true
+        )
+
         binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
+
+        if (!unseenButtonEnabled) {
+            binding.scrollBottomBtn.visibility = View.GONE
+        }
+
         newMessagesTextSingle =
             tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
         newMessagesTextPlural =
@@ -422,6 +436,10 @@ class MessageListView : ConstraintLayout {
         buffer.enqueueData(listItem)
     }
 
+    fun scrollToBottom() {
+        layoutManager.scrollToPosition(adapter.itemCount - 1)
+    }
+
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()
         val entities = listItem.items
@@ -452,6 +470,7 @@ class MessageListView : ConstraintLayout {
             // TODO review this, supposed to be the thread parent position
             layoutManager.scrollToPosition(0)
             lastMessageReadHandler.invoke()
+            buffer.active()
             return
         }
 
@@ -459,6 +478,7 @@ class MessageListView : ConstraintLayout {
         if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2)) {
             val newPosition = adapter.itemCount - 1
             layoutManager.scrollToPosition(newPosition)
+            buffer.active()
             return
         }
 
@@ -468,6 +488,7 @@ class MessageListView : ConstraintLayout {
             // typing
             // message updates
             logger.logI("no Scroll no new message")
+            buffer.active()
             return
         }
 
@@ -487,6 +508,7 @@ class MessageListView : ConstraintLayout {
             layoutManager.scrollToPosition(newPosition)
         } else {
             if (newSize == 0) {
+                buffer.active()
                 return
             }
 
@@ -715,7 +737,8 @@ class MessageListView : ConstraintLayout {
         private val unseenBottomBtn: ViewGroup,
         private val newMessagesTextTV: TextView,
         private val newMessagesTextSingle: String?,
-        private val newMessagesTextPlural: String?
+        private val newMessagesTextPlural: String?,
+        private var isButtonEnabled: Boolean = true
     ) : ScrollButtonBehaviour {
         override fun userScrolledUp() {
             if (!unseenBottomBtn.isShown) {
@@ -732,7 +755,7 @@ class MessageListView : ConstraintLayout {
         override fun onUnreadMessageCountChanged(count: Int) {
             if (count <= 0) {
                 newMessagesTextTV.visibility = GONE
-            } else {
+            } else if (isButtonEnabled) {
                 newMessagesTextTV.visibility = VISIBLE
                 newMessagesTextTV.text = formatNewMessagesText(count)
             }

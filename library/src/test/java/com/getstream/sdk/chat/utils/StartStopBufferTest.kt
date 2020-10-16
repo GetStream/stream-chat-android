@@ -20,11 +20,12 @@ class StartStopBufferTest {
             val data = randomString()
             var resultText = ""
 
-            enqueueData(data)
             active()
             subscribe { result ->
                 resultText = result
             }
+
+            enqueueData(data)
 
             resultText `should be equal to` data
         }
@@ -47,4 +48,107 @@ class StartStopBufferTest {
                 resultText `should be equal to` initialValue
             }
         }
+
+    @Test
+    fun `buffer should hold until active is called`() {
+        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+            var lastNumber = "0"
+            val data1 = randomString()
+
+            hold()
+
+            subscribe { data ->
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+
+            lastNumber `should be equal to` "0"
+
+            active()
+
+            lastNumber `should be equal to` data1
+        }
+    }
+
+    @Test
+    fun `buffer hold should correctly stop the buffer`() {
+        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+            var lastNumber = "0"
+            val data1 = randomString()
+            val data2 = randomString()
+            val data3 = randomString()
+
+            hold()
+
+            subscribe { data ->
+                hold()
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+            enqueueData(data2)
+            enqueueData(data3)
+
+            lastNumber `should be equal to` "0"
+
+            active()
+
+            lastNumber `should be equal to` data1
+        }
+    }
+
+    @Test
+    fun `buffer should be able to handle many events`() {
+        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+            var lastNumber = "0"
+            val data1 = randomString()
+            val data2 = randomString()
+            val data3 = randomString()
+
+            hold()
+
+            subscribe { data ->
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+            enqueueData(data2)
+            enqueueData(data3)
+
+            lastNumber `should be equal to` "0"
+
+            active()
+
+            lastNumber `should be equal to` data3
+        }
+    }
+
+    @Test
+    fun `it should be possible use buffer with one item per active`() {
+        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+            var lastNumber = "0"
+            val data1 = "data1"
+            val data2 = "data2"
+            val data3 = "data3"
+
+            hold()
+
+            subscribe { data ->
+                hold()
+                lastNumber = data
+            }
+
+            enqueueData(data1)
+            enqueueData(data2)
+            enqueueData(data3)
+
+            lastNumber `should be equal to` "0"
+
+            active()
+            active()
+
+            lastNumber `should be equal to` data2
+        }
+    }
 }
