@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.application.AppConfig
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
