@@ -51,6 +51,7 @@ internal class QueryChannelsControllerImpl(
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
     // Ensure we don't lose the sort in the channel
+    // TODO: The live list of channels doesn't actually maintain the specified query sort
     override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> queryEntity.channelCids.mapNotNull { cMap[it] } }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
