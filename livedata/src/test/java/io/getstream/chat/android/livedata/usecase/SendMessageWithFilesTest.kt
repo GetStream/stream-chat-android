@@ -26,7 +26,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
 import java.io.File
-import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
 internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
@@ -219,7 +218,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
         invoking {
             sendMessageWithFile(message)
-        } `should throw` InvalidParameterException::class `with message` "cid cant be empty"
+        } `should throw` IllegalArgumentException::class `with message` "cid can not be empty"
     }
 
     @Test
@@ -230,7 +229,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
 
         invoking {
             sendMessageWithFile(message)
-        } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
+        } `should throw` IllegalArgumentException::class `with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
     }
 }
 

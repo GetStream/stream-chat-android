@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.ReactionDao
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
-import java.security.InvalidParameterException
 
 /**
  * We don't do any caching on reactions since usage is infrequent
@@ -29,15 +28,9 @@ internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser:
 
     suspend fun insert(reactionEntities: List<ReactionEntity>) {
         for (reactionEntity in reactionEntities) {
-            if (reactionEntity.messageId.isEmpty()) {
-                throw InvalidParameterException("message id can't be empty when creating a reaction")
-            }
-            if (reactionEntity.type.isEmpty()) {
-                throw InvalidParameterException("type can't be empty when creating a reaction")
-            }
-            if (reactionEntity.userId.isEmpty()) {
-                throw InvalidParameterException("user id can't be empty when creating a reaction")
-            }
+            require(reactionEntity.messageId.isNotEmpty()) { "message id can't be empty when creating a reaction" }
+            require(reactionEntity.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
+            require(reactionEntity.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
         }
 
         reactionDao.insert(reactionEntities)

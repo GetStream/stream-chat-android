@@ -5,7 +5,6 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
-import java.security.InvalidParameterException
 
 public interface ThreadLoadMore {
     /**
@@ -23,9 +22,7 @@ public interface ThreadLoadMore {
 internal class ThreadLoadMoreImpl(private val domainImpl: ChatDomainImpl) : ThreadLoadMore {
     override operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call2<List<Message>> {
         validateCid(cid)
-        if (parentId.isEmpty()) {
-            throw InvalidParameterException("parentId cant be empty")
-        }
+        require(parentId.isNotEmpty()) { "parentId can't be empty" }
 
         val channelController = domainImpl.channel(cid)
         val threadController = channelController.getThread(parentId)

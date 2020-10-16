@@ -39,7 +39,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
 import java.io.File
-import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
 @Ignore
@@ -60,14 +59,14 @@ internal class SendMessageWithAttachmentsImplTest {
     fun `Should throw an exception if the channel cid is empty`() {
         invoking {
             sendMessageWithAttachemen("", randomMessage(), randomFiles())
-        } `should throw` InvalidParameterException::class `with message` "cid cant be empty"
+        } `should throw` IllegalArgumentException::class `with message` "cid can not be empty"
     }
 
     @Test
     fun `Should throw an exception if the channel cid doesn't contain a colon`() {
         invoking {
             sendMessageWithAttachemen(randomString().replace(":", ""), randomMessage(), randomFiles())
-        } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
+        } `should throw` IllegalArgumentException::class `with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
     }
 
     @Test
