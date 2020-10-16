@@ -1,10 +1,14 @@
 # To be released:
 - Improve sync data validation in ChatDomain.Builder
 
+- Significant performance improvements to offline storage
+- Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps
+
 # Oct 14th, 2020 - 0.8.5
+
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
 - Update attachments of message with an old image url, if it's still valid.
-- Add setting attachment data even if attachment upload failed
+- Set attachment fields even if the file upload fails
 - Fix NPE while ChatEvent was handled
 - Improved nullability, restricted some generic type parameters to be non-nullable (set `Any` as their upper bound)
 - Fix method to store date of the last message received into a channel
