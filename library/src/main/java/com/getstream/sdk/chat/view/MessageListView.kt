@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.view
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -34,7 +35,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import kotlinx.android.synthetic.main.stream_message_list_view.view.*
 
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
@@ -63,6 +63,8 @@ class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
+
+    var unseenButtonEnabled = true
 
     private var hasScrolledUp = false
 
@@ -257,11 +259,22 @@ class MessageListView : ConstraintLayout {
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
         val backgroundRes = tArray.getResourceId(
-            R.styleable.MessageListView_streamButtonBackground,
+            R.styleable.MessageListView_streamScrollButtonBackground,
             R.drawable.stream_shape_round
         )
 
-        binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
+        unseenButtonEnabled = tArray.getBoolean(
+            R.styleable.MessageListView_streamDefaultButtonEnabled,
+            true
+        )
+
+        binding.scrollBottomBtn.setBackgroundResource(backgroundRes);
+
+        if (!unseenButtonEnabled) {
+            binding.scrollBottomBtn.visibility = View.GONE;
+        }
+
+
         newMessagesTextSingle =
             tArray.getString(R.styleable.MessageListView_streamNewMessagesTextSingle)
         newMessagesTextPlural =
@@ -422,6 +435,10 @@ class MessageListView : ConstraintLayout {
 
     fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
+    }
+
+    fun scrollToBottom() {
+        layoutManager.scrollToPosition(adapter.itemCount - 1)
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
@@ -721,7 +738,8 @@ class MessageListView : ConstraintLayout {
         private val unseenBottomBtn: ViewGroup,
         private val newMessagesTextTV: TextView,
         private val newMessagesTextSingle: String?,
-        private val newMessagesTextPlural: String?
+        private val newMessagesTextPlural: String?,
+        private var isButtonEnabled: Boolean = true
     ) : ScrollButtonBehaviour {
         override fun userScrolledUp() {
             if (!unseenBottomBtn.isShown) {
@@ -738,7 +756,7 @@ class MessageListView : ConstraintLayout {
         override fun onUnreadMessageCountChanged(count: Int) {
             if (count <= 0) {
                 newMessagesTextTV.visibility = GONE
-            } else {
+            } else if (isButtonEnabled){
                 newMessagesTextTV.visibility = VISIBLE
                 newMessagesTextTV.text = formatNewMessagesText(count)
             }
