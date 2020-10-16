@@ -15,7 +15,7 @@ fun View.visible(isVisible: Boolean) {
 /**
  * Ensures the context being accessed in a View can be cast to Activity
  */
-fun Context.ensure() = when (this) {
+internal fun Context.ensure() = when (this) {
     is ContextWrapper -> baseContext
     else -> this
 }
