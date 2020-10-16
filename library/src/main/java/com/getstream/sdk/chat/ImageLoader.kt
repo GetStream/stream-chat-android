@@ -12,7 +12,6 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.GetRequest
 import coil.request.GetRequestBuilder
-import coil.request.RequestDisposable
 import coil.size.Precision
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
@@ -46,7 +45,7 @@ internal object ImageLoader {
         @DrawableRes placeholderResId: Int?,
         onStart: () -> Unit = {},
         onComplete: () -> Unit = {},
-    ): RequestDisposable =
+    ) {
         load(uri, getImageLoaderWithGifSupport(context)) {
             placeholderResId?.let { placeholder(it) }
             listener(
@@ -56,25 +55,24 @@ internal object ImageLoader {
                 onSuccess = { _, _ -> onComplete() },
             )
         }
+    }
 
     private fun getImageLoaderWithGifSupport(
         context: Context,
         // TODO: We should probably allowHardware for performance improvements but we do software rendering in PorterShapeImageView
         allowHardware: Boolean = false,
         precision: Precision = Precision.EXACT
-    ): coil.ImageLoader {
-        return coil.ImageLoader.Builder(context)
-            .allowHardware(allowHardware)
-            .precision(precision)
-            .componentRegistry {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder())
-                } else {
-                    add(GifDecoder())
-                }
+    ): coil.ImageLoader = coil.ImageLoader.Builder(context)
+        .allowHardware(allowHardware)
+        .precision(precision)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                add(ImageDecoderDecoder())
+            } else {
+                add(GifDecoder())
             }
-            .build()
-    }
+        }
+        .build()
 
     private fun GetRequestBuilder.applyTransformation(
         transformation: ImageTransformation,
