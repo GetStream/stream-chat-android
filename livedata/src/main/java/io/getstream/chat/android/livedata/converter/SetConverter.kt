@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.livedata.gson
 
-class SetConverter {
+internal class SetConverter {
 
     @TypeConverter
     fun stringToSortedSet(data: String?): MutableSet<String> {

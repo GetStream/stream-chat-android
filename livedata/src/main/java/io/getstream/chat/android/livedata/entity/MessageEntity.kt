@@ -18,7 +18,7 @@ import java.util.Date
  * messageEntity.toMessage()
  */
 @Entity(tableName = "stream_chat_message")
-data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
+internal data class MessageEntity(@PrimaryKey var id: String, var cid: String, var userId: String) {
 
     /** the message text */
     var text: String = ""

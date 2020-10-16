@@ -20,7 +20,7 @@ import java.util.Date
  *
  */
 @Entity(tableName = "stream_chat_channel_state")
-data class ChannelEntity(var type: String, var channelId: String) {
+internal data class ChannelEntity(var type: String, var channelId: String) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 

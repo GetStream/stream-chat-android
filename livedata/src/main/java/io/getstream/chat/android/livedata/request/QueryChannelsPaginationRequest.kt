@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.request
 
 import io.getstream.chat.android.client.api.models.QuerySort
 
-data class QueryChannelsPaginationRequest(
+internal data class QueryChannelsPaginationRequest(
     val sort: QuerySort,
     val channelOffset: Int = 0,
     val channelLimit: Int = 30,

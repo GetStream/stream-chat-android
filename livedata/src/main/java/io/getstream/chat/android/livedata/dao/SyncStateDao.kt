@@ -7,7 +7,7 @@ import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 
 @Dao
-interface SyncStateDao {
+internal interface SyncStateDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(syncStateEntity: SyncStateEntity)
 

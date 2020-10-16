@@ -28,11 +28,12 @@ private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
-class QueryChannelsControllerImpl(
+
+internal class QueryChannelsControllerImpl(
     override val filter: FilterObject,
     override val sort: QuerySort,
-    internal val client: ChatClient,
-    internal val domainImpl: ChatDomainImpl
+    val client: ChatClient,
+    val domainImpl: ChatDomainImpl
 ) : QueryChannelsController {
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
@@ -40,7 +41,7 @@ class QueryChannelsControllerImpl(
      * A livedata object with the channels matching this query.
      */
 
-    internal val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
+    val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
     val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 

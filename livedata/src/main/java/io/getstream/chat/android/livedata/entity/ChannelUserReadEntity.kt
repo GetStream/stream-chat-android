@@ -8,7 +8,7 @@ import java.util.Date
  * Efficiently store the channel user read info
  *
  */
-data class ChannelUserReadEntity(var userId: String) {
+internal data class ChannelUserReadEntity(var userId: String) {
     /** how far this user had read */
     var lastRead: Date? = null
 

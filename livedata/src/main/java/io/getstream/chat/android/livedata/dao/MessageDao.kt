@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.entity.MessageEntity
 import java.util.Date
 
 @Dao
-interface MessageDao {
+internal interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(messageEntities: List<MessageEntity>)

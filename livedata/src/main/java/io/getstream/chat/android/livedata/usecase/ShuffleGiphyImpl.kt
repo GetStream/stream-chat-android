@@ -6,6 +6,10 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
+public interface ShuffleGiphy {
+    public operator fun invoke(message: Message): Call2<Message>
+}
+
 /**
  * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
  * Returns new "ephemeral" message with new giphy url.
@@ -14,8 +18,8 @@ import io.getstream.chat.android.livedata.utils.validateCid
  * @return A call object with Message as the return type
  * @see io.getstream.chat.android.livedata.utils.RetryPolicy
  */
-class ShuffleGiphy(var domainImpl: ChatDomainImpl) {
-    operator fun invoke(message: Message): Call2<Message> {
+internal class ShuffleGiphyImpl(private val domainImpl: ChatDomainImpl) : ShuffleGiphy {
+    override operator fun invoke(message: Message): Call2<Message> {
         val cid = message.cid
         validateCid(cid)
 

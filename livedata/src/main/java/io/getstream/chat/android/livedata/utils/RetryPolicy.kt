@@ -9,11 +9,11 @@ import io.getstream.chat.android.client.errors.ChatError
  * - shouldRetry: returns a boolean if the request should be retried
  * - retryTimeout: How many milliseconds to wait till the next attempt
  */
-interface RetryPolicy {
+public interface RetryPolicy {
     /**
      * Should Retry evaluates if we should retry the failure
      */
-    fun shouldRetry(
+    public fun shouldRetry(
         client: ChatClient,
         attempt: Int,
         error: ChatError
@@ -23,7 +23,7 @@ interface RetryPolicy {
      * In the case that we want to retry a failed request the retryTimeout method is called
      * to determine the timeout
      */
-    fun retryTimeout(
+    public fun retryTimeout(
         client: ChatClient,
         attempt: Int,
         error: ChatError

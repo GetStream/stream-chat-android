@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 
 @Dao
-interface ChannelDao {
+internal interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(channelEntity: ChannelEntity)
 

@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 
-interface QueryChannelsLoadMore {
+public interface QueryChannelsLoadMore {
     /**
      * Load more channels for this query
      * @param filter the filter for querying channels, see https://getstream.io/chat/docs/query_channels/?language=kotlin
@@ -19,10 +19,10 @@ interface QueryChannelsLoadMore {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>>
+    public operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int = 30, messageLimit: Int = 10): Call2<List<Channel>>
 }
 
-class QueryChannelsLoadMoreImpl(var domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
+internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
     override operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int, messageLimit: Int): Call2<List<Channel>> {
         val runnable = suspend {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)

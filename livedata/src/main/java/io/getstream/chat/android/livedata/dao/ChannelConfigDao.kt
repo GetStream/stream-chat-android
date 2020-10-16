@@ -7,7 +7,7 @@ import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 
 @Dao
-interface ChannelConfigDao {
+internal interface ChannelConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(channelConfigEntities: List<ChannelConfigEntity>)

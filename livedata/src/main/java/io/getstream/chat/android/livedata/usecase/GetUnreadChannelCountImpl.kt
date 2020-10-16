@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 
-interface GetUnreadChannelCount {
+public interface GetUnreadChannelCount {
     /**
      * Returns the number of channels with unread messages for the given user.
      * You might also be interested in GetTotalUnreadCount
@@ -16,10 +16,10 @@ interface GetUnreadChannelCount {
      * @see io.getstream.chat.android.livedata.usecase.GetTotalUnreadCount
      * @see io.getstream.chat.android.livedata.controller.ChannelController.unreadCount
      */
-    operator fun invoke(): Call2<LiveData<Int>>
+    public operator fun invoke(): Call2<LiveData<Int>>
 }
 
-class GetUnreadChannelCountImpl(var domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
+internal class GetUnreadChannelCountImpl(private val domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
     override operator fun invoke(): Call2<LiveData<Int>> {
         val runnable = suspend {
             Result(domainImpl.channelUnreadCount, null)

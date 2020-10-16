@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 
 @Dao
-interface ReactionDao {
+internal interface ReactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reactionEntity: ReactionEntity)
 

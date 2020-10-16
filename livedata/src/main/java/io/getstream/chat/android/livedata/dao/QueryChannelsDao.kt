@@ -7,7 +7,7 @@ import androidx.room.Query
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 
 @Dao
-interface QueryChannelsDao {
+internal interface QueryChannelsDao {
     /*
     - query channels -> write the query, write many channels
     - notification.new event -> update a single channel

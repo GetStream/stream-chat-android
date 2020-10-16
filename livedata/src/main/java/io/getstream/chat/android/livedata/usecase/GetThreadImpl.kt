@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-interface GetThread {
+public interface GetThread {
     /**
      * Returns a thread controller for the given channel and message id
      *
@@ -17,10 +17,10 @@ interface GetThread {
      * @return A call object with ThreadController as the return type
      * @see io.getstream.chat.android.livedata.controller.ThreadController
      */
-    operator fun invoke(cid: String, parentId: String): Call2<ThreadController>
+    public operator fun invoke(cid: String, parentId: String): Call2<ThreadController>
 }
 
-class GetThreadImpl(var domainImpl: ChatDomainImpl) : GetThread {
+internal class GetThreadImpl(private val domainImpl: ChatDomainImpl) : GetThread {
     override operator fun invoke(cid: String, parentId: String): Call2<ThreadController> {
         validateCid(cid)
 

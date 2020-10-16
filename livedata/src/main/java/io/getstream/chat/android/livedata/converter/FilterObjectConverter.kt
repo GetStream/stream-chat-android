@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.gson
 import java.lang.reflect.Type
 
-class FilterObjectConverter {
+internal class FilterObjectConverter {
     @TypeConverter
     fun stringToObject(data: String?): FilterObject {
         if (data.isNullOrEmpty() || data == "null") {

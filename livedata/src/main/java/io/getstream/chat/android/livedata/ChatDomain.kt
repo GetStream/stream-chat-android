@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
-import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
+import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
@@ -21,34 +21,34 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
  *
  * Use cases are exposed via chatDomain.useCases
  */
-interface ChatDomain {
+public interface ChatDomain {
     /** The current user object */
-    var currentUser: User
+    public var currentUser: User
 
     /** if offline is enabled */
-    var offlineEnabled: Boolean
+    public var offlineEnabled: Boolean
 
     /** if we want to track user presence */
-    var userPresence: Boolean
+    public var userPresence: Boolean
 
     /** if the client connection has been initialized */
-    val initialized: LiveData<Boolean>
+    public val initialized: LiveData<Boolean>
 
     /**
      * LiveData<Boolean> that indicates if we are currently online
      */
-    val online: LiveData<Boolean>
+    public val online: LiveData<Boolean>
 
     /**
      * The total unread message count for the current user.
      * Depending on your app you'll want to show this or the channelUnreadCount
      */
-    val totalUnreadCount: LiveData<Int>
+    public val totalUnreadCount: LiveData<Int>
 
     /**
      * the number of unread channels for the current user
      */
-    val channelUnreadCount: LiveData<Int>
+    public val channelUnreadCount: LiveData<Int>
 
     /**
      * The error event livedata object is triggered when errors in the underlying components occure.
@@ -59,33 +59,34 @@ interface ChatDomain {
      *   })
      *
      */
-    val errorEvents: LiveData<Event<ChatError>>
+    public val errorEvents: LiveData<Event<ChatError>>
 
     /**
      * list of users that you've muted
      */
-    val muted: LiveData<List<Mute>>
+    public val muted: LiveData<List<Mute>>
 
     /**
      * if the current user is banned or not
      */
-    val banned: LiveData<Boolean>
+    public val banned: LiveData<Boolean>
 
     /** The retry policy for retrying failed requests */
-    var retryPolicy: RetryPolicy
+    public var retryPolicy: RetryPolicy
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    var useCases: UseCaseHelper
+    public var useCases: UseCaseHelper
 
-    suspend fun disconnect()
-    fun isOnline(): Boolean
-    fun isOffline(): Boolean
-    fun isInitialized(): Boolean
-    fun getActiveQueries(): List<QueryChannelsControllerImpl>
-    fun clean()
-    fun getChannelConfig(channelType: String): Config
+    public suspend fun disconnect()
+    public fun isOnline(): Boolean
+    public fun isOffline(): Boolean
+    public fun isInitialized(): Boolean
+    public fun getActiveQueries(): List<QueryChannelsController>
+    public fun clean()
+    public fun getChannelConfig(channelType: String): Config
+    public fun getVersion(): String
 
-    data class Builder(
+    public data class Builder(
         private var appContext: Context,
         private var client: ChatClient,
         private var user: User
@@ -107,8 +108,8 @@ interface ChatDomain {
             return this
         }
 
-        fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
-            // TODO: Consider exposing apiKey and userToken by ChatClient to make this function more friendly
+        public fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
+            // TODO: Consider exposing apiKey and userToken by ChatClient to make this public function more friendly
             if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
                 this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
             } else {
@@ -117,48 +118,48 @@ interface ChatDomain {
             return this
         }
 
-        fun backgroundSyncDisabled(): Builder {
+        public fun backgroundSyncDisabled(): Builder {
             this.backgroundSyncEnabled = false
             this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
             return this
         }
 
-        fun offlineEnabled(): Builder {
+        public fun offlineEnabled(): Builder {
             this.offlineEnabled = true
             return this
         }
 
-        fun offlineDisabled(): Builder {
+        public fun offlineDisabled(): Builder {
             this.offlineEnabled = false
             return this
         }
 
-        fun recoveryEnabled(): Builder {
+        public fun recoveryEnabled(): Builder {
             this.recoveryEnabled = true
             return this
         }
 
-        fun recoveryDisabled(): Builder {
+        public fun recoveryDisabled(): Builder {
             this.recoveryEnabled = false
             return this
         }
 
-        fun userPresenceEnabled(): Builder {
+        public fun userPresenceEnabled(): Builder {
             this.userPresence = true
             return this
         }
 
-        fun userPresenceDisabled(): Builder {
+        public fun userPresenceDisabled(): Builder {
             this.userPresence = false
             return this
         }
 
-        fun notificationConfig(notificationConfig: NotificationConfig): Builder {
+        public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
             this.notificationConfig = notificationConfig
             return this
         }
 
-        fun build(): ChatDomain {
+        public fun build(): ChatDomain {
             if (backgroundSyncEnabled) {
                 if (backgroundSyncConfig == BackgroundSyncConfig.UNAVAILABLE) {
                     throw IllegalStateException("ChatDomain.Builder::build. backgroundSyncEnabled must be called with non-empty params.")
@@ -191,15 +192,12 @@ interface ChatDomain {
         }
     }
 
-    companion object {
-
+    public companion object {
         private lateinit var instance: ChatDomain
 
         @JvmStatic
-        fun instance(): ChatDomain {
+        public fun instance(): ChatDomain {
             return instance
         }
     }
-
-    fun getVersion(): String
 }

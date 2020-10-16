@@ -7,7 +7,7 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.security.InvalidParameterException
 
-interface ThreadLoadMore {
+public interface ThreadLoadMore {
     /**
      * Loads more messages for the specified thread
      *
@@ -17,10 +17,10 @@ interface ThreadLoadMore {
      *
      * @return A call object with List<Message> as the return type
      */
-    operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call2<List<Message>>
+    public operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call2<List<Message>>
 }
 
-class ThreadLoadMoreImpl(var domainImpl: ChatDomainImpl) : ThreadLoadMore {
+internal class ThreadLoadMoreImpl(private val domainImpl: ChatDomainImpl) : ThreadLoadMore {
     override operator fun invoke(cid: String, parentId: String, messageLimit: Int): Call2<List<Message>> {
         validateCid(cid)
         if (parentId.isEmpty()) {

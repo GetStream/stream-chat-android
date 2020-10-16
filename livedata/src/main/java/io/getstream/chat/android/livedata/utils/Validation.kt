@@ -5,7 +5,7 @@ import java.security.InvalidParameterException
 /**
  * Validates a cid. Verifies it's not empty and in the format messaging:123
  */
-fun validateCid(cid: String) {
+internal fun validateCid(cid: String) {
     if (cid.isEmpty()) {
         throw InvalidParameterException("cid cant be empty")
     }
