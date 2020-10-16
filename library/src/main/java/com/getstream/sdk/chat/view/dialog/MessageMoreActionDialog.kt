@@ -102,9 +102,9 @@ class MessageMoreActionDialog(
     private fun canCopyOnMessage(): Boolean {
         return !(
             message.deletedAt != null || // TODO: llc cache
-                message.type == ModelType.message_error || message.type == ModelType.message_ephemeral || TextUtils.isEmpty(
-                message.text
-            )
+                message.type == ModelType.message_error ||
+                message.type == ModelType.message_ephemeral ||
+                TextUtils.isEmpty(message.text)
             )
     }
 
