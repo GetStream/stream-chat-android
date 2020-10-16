@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,10 +14,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import org.junit.Rule
 import org.junit.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.runner.RunWith
 import kotlin.system.measureTimeMillis
-
 
 class MessageListItemLiveDataBenchmark {
 

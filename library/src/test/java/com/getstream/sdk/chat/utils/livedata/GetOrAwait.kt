@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.utils.livedata
 
-
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
@@ -8,12 +7,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
 internal fun <T> LiveData<T>.getOrAwaitValue(
-        time: Long = 2,
-        timeUnit: TimeUnit = TimeUnit.SECONDS,
-        afterObserve: () -> Unit = {}
+    time: Long = 2,
+    timeUnit: TimeUnit = TimeUnit.SECONDS,
+    afterObserve: () -> Unit = {}
 ): T {
     var data: T? = null
     val latch = CountDownLatch(1)

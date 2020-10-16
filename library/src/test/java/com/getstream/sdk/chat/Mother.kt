@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat
 
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
@@ -41,39 +40,39 @@ fun randomString(size: Int = 20): String = buildString(capacity = size) {
 }
 
 internal fun randomUser(
-        id: String = randomString(),
-        role: String = randomString(),
-        invisible: Boolean = randomBoolean(),
-        banned: Boolean = randomBoolean(),
-        devices: List<Device> = mutableListOf(),
-        online: Boolean = randomBoolean(),
-        createdAt: Date? = null,
-        updatedAt: Date? = null,
-        lastActive: Date? = null,
-        totalUnreadCount: Int = positiveRandomInt(),
-        unreadChannels: Int = positiveRandomInt(),
-        unreadCount: Int = positiveRandomInt(),
-        mutes: List<Mute> = mutableListOf(),
-        teams: List<String> = listOf(),
-        channelMutes: List<ChannelMute> = emptyList(),
-        extraData: MutableMap<String, Any> = mutableMapOf()
+    id: String = randomString(),
+    role: String = randomString(),
+    invisible: Boolean = randomBoolean(),
+    banned: Boolean = randomBoolean(),
+    devices: List<Device> = mutableListOf(),
+    online: Boolean = randomBoolean(),
+    createdAt: Date? = null,
+    updatedAt: Date? = null,
+    lastActive: Date? = null,
+    totalUnreadCount: Int = positiveRandomInt(),
+    unreadChannels: Int = positiveRandomInt(),
+    unreadCount: Int = positiveRandomInt(),
+    mutes: List<Mute> = mutableListOf(),
+    teams: List<String> = listOf(),
+    channelMutes: List<ChannelMute> = emptyList(),
+    extraData: MutableMap<String, Any> = mutableMapOf()
 ): User = User(
-        id,
-        role,
-        invisible,
-        banned,
-        devices,
-        online,
-        createdAt,
-        updatedAt,
-        lastActive,
-        totalUnreadCount,
-        unreadChannels,
-        unreadCount,
-        mutes,
-        teams,
-        channelMutes,
-        extraData
+    id,
+    role,
+    invisible,
+    banned,
+    devices,
+    online,
+    createdAt,
+    updatedAt,
+    lastActive,
+    totalUnreadCount,
+    unreadChannels,
+    unreadCount,
+    mutes,
+    teams,
+    channelMutes,
+    extraData
 )
 
 fun randomCID() = "${randomString()}:${randomString()}"
@@ -238,12 +237,12 @@ fun createMessageItem(
 ): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)
 
 internal fun createDate(
-        year: Int,
-        month: Int,
-        date: Int,
-        hourOfDay: Int = 0,
-        minute: Int = 0,
-        seconds: Int = 0
+    year: Int,
+    month: Int,
+    date: Int,
+    hourOfDay: Int = 0,
+    minute: Int = 0,
+    seconds: Int = 0
 ): Date {
     val calendar = Calendar.getInstance()
     calendar.set(year, month, date, hourOfDay, minute, seconds)

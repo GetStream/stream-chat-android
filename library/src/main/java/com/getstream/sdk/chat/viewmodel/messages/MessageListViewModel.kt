@@ -26,7 +26,7 @@ class MessageListViewModel @JvmOverloads constructor(
     private var threadListData: MessageListItemLiveData? = null
     private val stateMerger = MediatorLiveData<State>()
     private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
-    private var reads : LiveData<List<ChannelUserRead>>
+    private var reads: LiveData<List<ChannelUserRead>>
 
     val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
     val state: LiveData<State> = stateMerger
@@ -57,7 +57,7 @@ class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun dateSeparator(previous: Message?, message: Message): Boolean {
-        return if (previous==null) {
+        return if (previous == null) {
             true
         } else {
             (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
@@ -65,7 +65,7 @@ class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun threadDateSeparator(previous: Message?, message: Message): Boolean {
-        return if (previous==null) {
+        return if (previous == null) {
             false
         } else {
             (message.getCreatedAtOrThrow().time - previous.getCreatedAtOrThrow().time) > (1000 * 60 * 60 * 4)
@@ -74,12 +74,12 @@ class MessageListViewModel @JvmOverloads constructor(
 
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
-                currentUser,
-                threadMessages,
-                reads,
-                null,
-                true,
-                ::threadDateSeparator
+            currentUser,
+            threadMessages,
+            reads,
+            null,
+            true,
+            ::threadDateSeparator
         )
         threadListData?.let {
             stateMerger.apply {
@@ -87,7 +87,6 @@ class MessageListViewModel @JvmOverloads constructor(
                 addSource(it) { value = State.Result(it) }
             }
         }
-
     }
 
     private fun resetThread() {

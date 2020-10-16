@@ -31,14 +31,14 @@ sealed class MessageListItem {
     }
 
     data class DateSeparatorItem @JvmOverloads constructor(
-            val date: Date,
+        val date: Date,
     ) : MessageListItem()
 
     data class MessageItem @JvmOverloads constructor(
-            val message: Message,
-            val positions: List<Position> = listOf(),
-            val isMine: Boolean = false,
-            val messageReadBy: List<ChannelUserRead> = listOf()
+        val message: Message,
+        val positions: List<Position> = listOf(),
+        val isMine: Boolean = false,
+        val messageReadBy: List<ChannelUserRead> = listOf()
     ) : MessageListItem() {
         fun isTheirs(): Boolean {
             return !isMine
@@ -46,15 +46,15 @@ sealed class MessageListItem {
     }
 
     data class TypingItem @JvmOverloads constructor(
-            val users: List<User>,
+        val users: List<User>,
     ) : MessageListItem()
 
     data class ReadStateItem @JvmOverloads constructor(
-            val reads: List<ChannelUserRead>,
+        val reads: List<ChannelUserRead>,
     ) : MessageListItem()
 
     data class ThreadSeparatorItem @JvmOverloads constructor(
-            val date: Date = Date(),
+        val date: Date = Date(),
     ) : MessageListItem()
 
     sealed class Position {

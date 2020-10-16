@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
-import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,8 +20,6 @@ import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.any
 import org.junit.Rule
 import org.junit.Test
-import org.junit.jupiter.api.extension.ExtendWith
-import org.junit.runner.RunWith
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
@@ -43,11 +40,11 @@ class MessageListItemLiveDataTest {
     }
     private fun isSameDay(date1: Date, date2: Date): Boolean {
         val localDate1: LocalDate = date1.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
         val localDate2: LocalDate = date2.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
         return localDate1.isEqual(localDate2)
     }
 

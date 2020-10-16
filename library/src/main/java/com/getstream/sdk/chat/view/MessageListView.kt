@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 
-
 /**
  * MessageListView renders a list of messages and extends the RecyclerView
  * The most common customizations are
@@ -676,22 +675,22 @@ class MessageListView : ConstraintLayout {
 
     interface BubbleHelper {
         fun getDrawableForMessage(
-                message: Message,
-                mine: Boolean,
-                positions: List<MessageListItem.Position>
+            message: Message,
+            mine: Boolean,
+            positions: List<MessageListItem.Position>
         ): Drawable
 
         fun getDrawableForAttachment(
-                message: Message,
-                mine: Boolean,
-                positions: List<MessageListItem.Position>,
-                attachment: Attachment
+            message: Message,
+            mine: Boolean,
+            positions: List<MessageListItem.Position>,
+            attachment: Attachment
         ): Drawable
 
         fun getDrawableForAttachmentDescription(
-                message: Message,
-                mine: Boolean,
-                positions: List<MessageListItem.Position>
+            message: Message,
+            mine: Boolean,
+            positions: List<MessageListItem.Position>
         ): Drawable
     }
 

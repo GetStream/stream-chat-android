@@ -50,12 +50,12 @@ import java.util.Date
  *
  */
 class MessageListItemLiveData(
-        private val currentUser: User,
-        private val messagesLd: LiveData<List<Message>>,
-        private val readsLd: LiveData<List<ChannelUserRead>>,
-        private val typingLd: LiveData<List<User>>? = null,
-        private val isThread: Boolean = false,
-        private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null
+    private val currentUser: User,
+    private val messagesLd: LiveData<List<Message>>,
+    private val readsLd: LiveData<List<ChannelUserRead>>,
+    private val typingLd: LiveData<List<User>>? = null,
+    private val isThread: Boolean = false,
+    private val dateSeparator: ((previous: Message?, current: Message) -> Boolean)? = null
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -222,5 +222,5 @@ class MessageListItemLiveData(
 
 public fun Message.getCreatedAtOrThrow(): Date {
     val created = createdAt ?: createdLocallyAt
-    return checkNotNull(created) {"a message needs to have a non null value for either createdAt or createdLocallyAt"}
+    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }

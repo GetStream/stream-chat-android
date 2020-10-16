@@ -37,6 +37,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeNull
+import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -141,8 +142,7 @@ class MessageListViewModelTest {
         stateList.last().apply {
             this shouldBeInstanceOf MessageListViewModel.State.Result::class
             val state = (this as MessageListViewModel.State.Result)
-            state.messageListItem.items.map {
-                it as MessageListItem.MessageItem
+            state.messageListItem.items.filterIsInstance<MessageListItem.MessageItem>().map {
                 it.message
             } shouldBeEqualTo MESSAGES
         }
@@ -193,24 +193,23 @@ class MessageListViewModelTest {
                     isThread shouldBeEqualTo false
                     isTyping shouldBeEqualTo false
 
-                    items.run {
-                        first().apply {
+                    val messages = items.run {
+                        get(1).apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.TOP)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.Top)
                         }
                         last().apply {
                             this as MessageListItem.MessageItem
-                            positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.BOTTOM)
+                            positions shouldBeEqualTo listOf(MessageListItem.Position.Bottom)
                         }
-                        (1 until size - 1).forEach {
+                        (2 until size - 1).forEach {
                             get(it).apply {
                                 this as MessageListItem.MessageItem
-                                positions shouldBeEqualTo listOf(MessageViewHolderFactory.Position.MIDDLE)
+                                positions shouldBeEqualTo listOf(MessageListItem.Position.Middle)
                             }
                         }
-                        map {
-                            it as MessageListItem.MessageItem
-                            it.message
+                        filterIsInstance<MessageListItem.MessageItem>().map {
+                                it.message
                         } shouldBeEqualTo MESSAGES
                     }
                 }
