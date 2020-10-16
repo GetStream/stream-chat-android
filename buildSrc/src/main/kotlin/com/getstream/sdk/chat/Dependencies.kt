@@ -50,7 +50,7 @@ private const val TIMBER_VERSION = "4.7.1"
 private const val RECYCLERVIEW_VERSION = "1.2.0-alpha05"
 private const val RETROFIT_VERSION = "2.9.0"
 private const val ROOM_VERSION = "2.2.5"
-private const val STREAM_LIVEDATA_VERSION = "0.8.5"
+private const val STREAM_LIVEDATA_VERSION = "0.8.11-SNAPSHOT"
 
 object Dependencies {
     const val activityKtx = "androidx.activity:activity-ktx:$ACTIVITY_KTX_VERSION"
