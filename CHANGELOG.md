@@ -1,5 +1,6 @@
 # To be released:
 - Improve sync data validation in ChatDomain.Builder
+- Removed many internal implementation classes and methods from the SDK's public API
 
 # Oct 14th, 2020 - 0.8.5
 - Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
