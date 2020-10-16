@@ -112,14 +112,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
         val activityResultRegistry = (context as? ComponentActivity)?.activityResultRegistry
 
-        activityResultLauncher = activityResultRegistry?.register(
-            LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
-            file?.let { messageInputController.onFileCaptured(it) }
-        }
-        selectFilesResultLauncher = activityResultRegistry?.register(
-            LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) {
-            messageInputController.onFilesSelected(it)
-        }
+        activityResultLauncher = activityResultRegistry
+            ?.register(LauncherRequestsKeys.CAPTURE_MEDIA, CaptureMediaContract()) { file: File? ->
+                file?.let { messageInputController.onFileCaptured(it) }
+            }
+        selectFilesResultLauncher = activityResultRegistry
+            ?.register(LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) {
+                messageInputController.onFilesSelected(it)
+            }
     }
 
     override fun onDetachedFromWindow() {
