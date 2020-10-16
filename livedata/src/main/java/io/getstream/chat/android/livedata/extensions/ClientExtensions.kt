@@ -113,12 +113,23 @@ internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
     get() =
         CompositeComparator(data.mapNotNull { it.comparator as? Comparator<ChannelEntityPair> })
 
+private val snakeRegex = "_[a-zA-Z]".toRegex()
+/**
+ * turns created_at into createdAt
+ */
+internal fun String.snakeToLowerCamelCase(): String {
+    return snakeRegex.replace(this) {
+        it.value.replace("_", "")
+            .toUpperCase()
+    }
+}
+
 internal val Map<String, Any>.comparator: Comparator<in ChannelEntityPair>?
     get() =
         (this["field"] as? String)?.let { fieldName ->
             (this["direction"] as? Int)?.let { sortDirection ->
                 Channel::class.declaredMemberProperties
-                    .find { it.name == fieldName }
+                    .find { it.name == fieldName.snakeToLowerCamelCase() }
                     ?.comparator(sortDirection)
             }
         }
