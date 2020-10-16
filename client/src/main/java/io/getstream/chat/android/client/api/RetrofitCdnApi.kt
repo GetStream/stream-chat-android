@@ -2,8 +2,8 @@ package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
+import io.getstream.chat.android.client.call.RetrofitCall
 import okhttp3.MultipartBody
-import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -21,7 +21,7 @@ internal interface RetrofitCdnApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<UploadFileResponse>
+    ): RetrofitCall<UploadFileResponse>
 
     @Multipart
     @POST("/channels/{type}/{id}/file")
@@ -32,7 +32,7 @@ internal interface RetrofitCdnApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<UploadFileResponse>
+    ): RetrofitCall<UploadFileResponse>
 
     @DELETE("/channels/{type}/{id}/file")
     fun deleteFile(
@@ -41,7 +41,7 @@ internal interface RetrofitCdnApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Query("url") url: String
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @DELETE("/channels/{type}/{id}/image")
     fun deleteImage(
@@ -50,5 +50,5 @@ internal interface RetrofitCdnApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Query("url") url: String
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 }

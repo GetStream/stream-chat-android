@@ -17,7 +17,7 @@ internal class RetrofitCallAdapterFactory(
         annotations: Array<out Annotation>,
         retrofit: Retrofit
     ): CallAdapter<*, *>? {
-        if (getRawType(returnType) != Call::class.java) {
+        if (getRawType(returnType) != RetrofitCall::class.java) {
             return null
         }
         if (returnType !is ParameterizedType) {

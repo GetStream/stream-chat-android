@@ -1,7 +1,7 @@
 package io.getstream.chat.android.client.api
 
 import com.google.common.reflect.TypeToken
-import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import junit.framework.Assert.fail
 import okhttp3.mockwebserver.MockWebServer
@@ -33,7 +33,7 @@ internal class RetrofitCallAdapterFactoryTests {
     @Test
     fun `When returning raw call Then should throw an exception`() {
         try {
-            factory[Call::class.java, emptyArray(), retrofit]
+            factory[RetrofitCall::class.java, emptyArray(), retrofit]
             fail()
         } catch (e: IllegalArgumentException) {
             assertThat(e)
@@ -43,7 +43,7 @@ internal class RetrofitCallAdapterFactoryTests {
 
     @Test
     fun `When returning raw response type Then adapter should have the same response type`() {
-        val typeToken: Type = object : TypeToken<Call<String>>() {}.type
+        val typeToken: Type = object : TypeToken<RetrofitCall<String>>() {}.type
         val callAdapter = factory[typeToken, emptyArray(), retrofit]
 
         assertThat(callAdapter).isNotNull
@@ -53,7 +53,7 @@ internal class RetrofitCallAdapterFactoryTests {
 
     @Test
     fun `When returning generic response type Then adapter should have the same response type`() {
-        val typeToken = object : TypeToken<Call<List<String>>>() {}.type
+        val typeToken = object : TypeToken<RetrofitCall<List<String>>>() {}.type
         val callAdapter = factory[typeToken, emptyArray(), retrofit]
 
         assertThat(callAdapter!!.responseType())

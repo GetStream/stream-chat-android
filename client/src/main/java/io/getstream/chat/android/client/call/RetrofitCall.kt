@@ -35,6 +35,8 @@ internal class RetrofitCall<T : Any>(
         call.cancel()
     }
 
+    fun originalCall(): retrofit2.Call<T> = call
+
     private fun execute(call: retrofit2.Call<T>): Result<T> {
         return getResult(call)
     }

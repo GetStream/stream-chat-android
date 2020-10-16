@@ -1,13 +1,11 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.UuidGenerator
 import org.assertj.core.api.Assertions.assertThat
@@ -35,11 +33,10 @@ internal class MessageIdGenerationTests {
     fun before() {
         retroApi = mock(RetrofitApi::class.java)
         uuidGenerator = mock(UuidGenerator::class.java)
-        api = ChatApiImpl(
+        api = ChatApi(
             apiKey,
             retroApi,
             mock(RetrofitCdnApi::class.java),
-            mock(ChatParser::class.java),
             uuidGenerator
         )
         api.setConnection(userId, connectionId)
