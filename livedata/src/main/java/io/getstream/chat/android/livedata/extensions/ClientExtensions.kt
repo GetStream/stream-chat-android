@@ -113,11 +113,11 @@ internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
     get() =
         CompositeComparator(data.mapNotNull { it.comparator as? Comparator<ChannelEntityPair> })
 
-val snakeRegex = "_[a-zA-Z]".toRegex()
+private val snakeRegex = "_[a-zA-Z]".toRegex()
 /**
  * turns created_at into createdAt
  */
-fun String.snakeToLowerCamelCase(): String {
+internal fun String.snakeToLowerCamelCase(): String {
     return snakeRegex.replace(this) {
         it.value.replace("_", "")
             .toUpperCase()
