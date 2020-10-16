@@ -10,6 +10,7 @@ import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.request.hasFilter
 import java.util.Date
 
 class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {

@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -168,6 +169,15 @@ class EventHandlerImpl(
         val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
         val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
 
+        fun addMessageData(cid: String, message: Message) {
+            users.putAll(message.users().associateBy(User::id))
+            messages[message.id] = MessageEntity(message)
+            channelMap[cid]?.let {
+                it.updateLastMessage(MessageEntity(message))
+                channels[it.cid] = it
+            }
+        }
+
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
             @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -177,24 +187,20 @@ class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    addMessageData(event.cid, event.message)
                 }
                 is MessageDeletedEvent -> {
                     event.message.cid = event.cid
-                    users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
                     event.message.cid = event.cid
-                    users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    users.putAll(event.message.users().associateBy(User::id))
-                    messages[event.message.id] = MessageEntity(event.message)
+                    addMessageData(event.cid, event.message)
                 }
                 is NotificationAddedToChannelEvent -> {
                     users.putAll(event.channel.users().associateBy(User::id))
