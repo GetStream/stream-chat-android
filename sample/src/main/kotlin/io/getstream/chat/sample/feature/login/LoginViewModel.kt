@@ -57,20 +57,21 @@ class LoginViewModel(
                 image = user.image
                 name = user.name
             }
-            Chat.getInstance().setUser(
-                chatUser, user.token,
-                object : InitConnectionListener() {
-                    override fun onSuccess(data: ConnectionData) {
-                        _state.postValue(State.RedirectToChannel(cid))
-                        Timber.d("User set successfully")
-                    }
+            Chat.getInstance()
+                .setUser(
+                    chatUser, user.token,
+                    object : InitConnectionListener() {
+                        override fun onSuccess(data: ConnectionData) {
+                            _state.postValue(State.RedirectToChannel(cid))
+                            Timber.d("User set successfully")
+                        }
 
-                    override fun onError(error: ChatError) {
-                        _state.postValue(State.Error(error.message))
-                        Timber.e("Failed to set user $error")
+                        override fun onError(error: ChatError) {
+                            _state.postValue(State.Error(error.message))
+                            Timber.e("Failed to set user $error")
+                        }
                     }
-                }
-            )
+                )
         }
     }
 }
