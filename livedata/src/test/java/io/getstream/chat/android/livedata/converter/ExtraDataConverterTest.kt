@@ -7,7 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ExtraDataConverterTest : BaseTest() {
+internal class ExtraDataConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {
         val converter = ExtraDataConverter()

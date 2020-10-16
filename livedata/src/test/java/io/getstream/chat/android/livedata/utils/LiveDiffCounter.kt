@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.utils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 
-class LiveDiffCounter<T>(var diffCallback: (List<T>, List<T>) -> DiffUtil.DiffResult) : ListUpdateCallback {
+internal class LiveDiffCounter<T>(var diffCallback: (List<T>, List<T>) -> DiffUtil.DiffResult) : ListUpdateCallback {
     var counts = mutableMapOf("events" to 0, "changed" to 0, "moved" to 0, "inserted" to 0, "removed" to 0)
     var new: List<T>? = null
     var old: List<T>? = null

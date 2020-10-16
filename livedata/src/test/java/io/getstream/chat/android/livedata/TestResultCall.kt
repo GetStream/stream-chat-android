@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-class TestResultCall<T : Any>(val result: Result<T>) : Call<T> {
+internal class TestResultCall<T : Any>(val result: Result<T>) : Call<T> {
     override fun cancel() {}
 
     override fun enqueue(callback: (Result<T>) -> Unit) {

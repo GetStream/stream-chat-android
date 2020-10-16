@@ -9,7 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-class PaginationTest {
+internal class PaginationTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.livedata.PaginationTest#createPaginationInput")
