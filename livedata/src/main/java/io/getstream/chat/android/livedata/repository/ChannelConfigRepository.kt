@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
  * The channel config repository stores all channel configs in room as well as in memory
  * Call channelConfigRepository.load to load all configs into memory
  */
-class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
+internal class ChannelConfigRepository(var channelConfigDao: ChannelConfigDao) {
     var channelConfigs: MutableMap<String, Config> = mutableMapOf()
 
     suspend fun load() {

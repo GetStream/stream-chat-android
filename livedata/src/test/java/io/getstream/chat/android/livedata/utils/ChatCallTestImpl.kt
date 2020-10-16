@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
 
-class ChatCallTestImpl<T : Any>(val result: Result<T>) : Call<T> {
+internal class ChatCallTestImpl<T : Any>(val result: Result<T>) : Call<T> {
     var cancelled = false
 
     override fun cancel() {

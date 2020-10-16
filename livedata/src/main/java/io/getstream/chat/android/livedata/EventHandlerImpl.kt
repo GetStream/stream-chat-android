@@ -66,7 +66,7 @@ import io.getstream.chat.android.livedata.extensions.users
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class EventHandlerImpl(
+internal class EventHandlerImpl(
     private val domainImpl: ChatDomainImpl,
     private val runAsync: Boolean = true
 ) {

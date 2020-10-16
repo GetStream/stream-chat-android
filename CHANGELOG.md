@@ -1,5 +1,6 @@
 # To be released:
 - Improve sync data validation in ChatDomain.Builder
+- Removed many internal implementation classes and methods from the SDK's public API
 
 - Significant performance improvements to offline storage
 - Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps

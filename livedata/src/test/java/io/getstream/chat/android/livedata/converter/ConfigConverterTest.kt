@@ -4,7 +4,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseTest
 import org.junit.Test
 
-class ConfigConverterTest : BaseTest() {
+internal class ConfigConverterTest : BaseTest() {
 
     @Test
     fun testSortEncoding() {

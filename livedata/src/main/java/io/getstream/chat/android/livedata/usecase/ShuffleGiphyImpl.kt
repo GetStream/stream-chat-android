@@ -6,18 +6,19 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-public interface EditMessage {
+public interface ShuffleGiphy {
     /**
-     * Edits the specified message. Local storage is updated immediately
-     * The API request is retried according to the retry policy specified on the chatDomain
-     * @param message the message to edit
+     * Performs giphy shuffle operation. Removes the original "ephemeral" message from local storage.
+     * Returns new "ephemeral" message with new giphy url.
+     * API call to remove the message is retried according to the retry policy specified on the chatDomain
+     * @param message the message to send
      * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
     public operator fun invoke(message: Message): Call2<Message>
 }
 
-internal class EditMessageImpl(private val domainImpl: ChatDomainImpl) : EditMessage {
+internal class ShuffleGiphyImpl(private val domainImpl: ChatDomainImpl) : ShuffleGiphy {
     override operator fun invoke(message: Message): Call2<Message> {
         val cid = message.cid
         validateCid(cid)
@@ -25,11 +26,9 @@ internal class EditMessageImpl(private val domainImpl: ChatDomainImpl) : EditMes
         val channelRepo = domainImpl.channel(cid)
 
         val runnable = suspend {
-            channelRepo.editMessage(message)
+            channelRepo.shuffleGiphy(message)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+
+        return CallImpl2(runnable, channelRepo.scope)
     }
 }

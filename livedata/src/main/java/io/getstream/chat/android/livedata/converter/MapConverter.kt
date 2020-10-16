@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import io.getstream.chat.android.livedata.gson
 
-class MapConverter {
+internal class MapConverter {
     @TypeConverter
     fun readMapToString(someObjects: MutableMap<String, ChannelUserReadEntity>?): String {
         return gson.toJson(someObjects)

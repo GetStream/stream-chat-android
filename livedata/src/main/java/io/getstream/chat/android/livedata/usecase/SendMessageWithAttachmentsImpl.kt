@@ -11,16 +11,16 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
 
-interface SendMessageWithAttachments {
+public interface SendMessageWithAttachments {
 
     @Deprecated(
         message = "Use sendMessage() and attachment.upload instead of this useCase",
         level = DeprecationLevel.WARNING
     )
-    operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call2<Message>
+    public operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call2<Message>
 }
 
-class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
+internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
     override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call2<Message> {
         validateCid(cid)
         val channel = domainImpl.channel(cid)

@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.livedata.gson
 
-class ConfigConverter {
+internal class ConfigConverter {
     @TypeConverter
     fun channelConfigToString(channelConfig: Config): String? {
         return gson.toJson(channelConfig)

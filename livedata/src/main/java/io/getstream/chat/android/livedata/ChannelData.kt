@@ -11,7 +11,7 @@ import java.util.Date
  * A class that only stores the channel data and not all the other channel state
  * Using this prevents code bugs and issues caused by confusing the channel data vs the full channel object
  */
-data class ChannelData(var type: String, var channelId: String) {
+public data class ChannelData(var type: String, var channelId: String) {
     var cid: String = "%s:%s".format(type, channelId)
 
     /** created by user */
@@ -27,10 +27,10 @@ data class ChannelData(var type: String, var channelId: String) {
     /** when the channel was deleted */
     var deletedAt: Date? = null
     /** all the custom data provided for this channel */
-    var extraData = mutableMapOf<String, Any>()
+    var extraData: MutableMap<String, Any> = mutableMapOf()
 
     /** create a ChannelData object from a Channel object */
-    constructor(c: Channel) : this(c.type, c.id) {
+    public constructor(c: Channel) : this(c.type, c.id) {
         frozen = c.frozen
         createdAt = c.createdAt
         updatedAt = c.updatedAt
@@ -41,7 +41,7 @@ data class ChannelData(var type: String, var channelId: String) {
     }
 
     /** convert a channelEntity into a channel object */
-    fun toChannel(messages: List<Message>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
+    internal fun toChannel(messages: List<Message>, members: List<Member>, reads: List<ChannelUserRead>, watchers: List<User>, watcherCount: Int): Channel {
         val c = Channel()
         c.type = type
         c.id = channelId

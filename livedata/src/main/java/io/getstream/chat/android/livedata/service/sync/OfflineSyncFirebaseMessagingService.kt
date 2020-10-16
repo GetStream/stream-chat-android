@@ -21,7 +21,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
+internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() {
 
     private val logger = ChatLogger.get("OfflineSyncFirebaseMessagingService")
 

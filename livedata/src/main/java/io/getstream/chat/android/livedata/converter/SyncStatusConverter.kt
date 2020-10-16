@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.converter
 import androidx.room.TypeConverter
 import io.getstream.chat.android.client.utils.SyncStatus
 
-class SyncStatusConverter {
+internal class SyncStatusConverter {
     @TypeConverter
     fun stringToSyncStatus(data: Int): SyncStatus {
         return SyncStatus.fromInt(data)!!

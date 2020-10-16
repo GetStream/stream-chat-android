@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
 
-interface SendMessage {
+public interface SendMessage {
     /**
      * Sends the message. Immediately adds the message to local storage
      * API call to send the message is retried according to the retry policy specified on the chatDomain
@@ -16,10 +16,10 @@ interface SendMessage {
      * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Call2<Message>
+    public operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null): Call2<Message>
 }
 
-class SendMessageImpl(var domainImpl: ChatDomainImpl) : SendMessage {
+internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMessage {
     override operator fun invoke(message: Message, attachmentTransformer: ((at: Attachment, file: File) -> Attachment)?): Call2<Message> {
         val cid = message.cid
         validateCid(cid)

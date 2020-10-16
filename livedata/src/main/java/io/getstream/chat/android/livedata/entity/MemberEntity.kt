@@ -8,7 +8,7 @@ import java.util.Date
 /**
  * Efficiently store the member data
  */
-data class MemberEntity(var userId: String) {
+internal data class MemberEntity(var userId: String) {
     /** the user's role, user, moderator or admin */
     var role: String = ""
 

@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.utils
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 
-class DefaultRetryPolicy : RetryPolicy {
+internal class DefaultRetryPolicy : RetryPolicy {
     override fun shouldRetry(
         client: ChatClient,
         attempt: Int,

@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 
-class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
+internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : QueryChannelRequest() {
 
     var messageFilterDirection: Pagination? = null
     var messageFilterValue: String = ""

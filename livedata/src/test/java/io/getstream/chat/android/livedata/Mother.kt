@@ -28,45 +28,45 @@ import kotlin.random.Random
 private val fixture = JFixture()
 private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
-fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
+internal fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
     Random.nextInt(1, maxInt + 1)
 
-fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
+internal fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
-fun randomInt() = Random.nextInt()
+internal fun randomInt() = Random.nextInt()
 
-fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
+internal fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
 
-fun randomIntBetween(range: IntRange) = Random.nextInt(range.first, range.last)
+internal fun randomIntBetween(range: IntRange) = Random.nextInt(range.first, range.last)
 
-fun randomLong() = Random.nextLong()
+internal fun randomLong() = Random.nextLong()
 
-fun randomBoolean() = Random.nextBoolean()
+internal fun randomBoolean() = Random.nextBoolean()
 
-fun randomString(size: Int = 20): String = buildString(capacity = size) {
+internal fun randomString(size: Int = 20): String = buildString(capacity = size) {
     repeat(size) {
         append(charPool.random())
     }
 }
 
-fun randomCID() = "${randomString()}:${randomString()}"
+internal fun randomCID() = "${randomString()}:${randomString()}"
 
-fun randomFile(extension: String = randomString(3)) = File("${randomString()}.$extension")
+internal fun randomFile(extension: String = randomString(3)) = File("${randomString()}.$extension")
 
-fun randomFiles(
+internal fun randomFiles(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> File = { randomFile() }
 ): List<File> = (1..size).map(creationFunction)
 
-fun randomAttachmentsWithFile(
+internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Attachment = { Attachment(upload = randomFile()) }
 ): List<Attachment> = (1..size).map(creationFunction)
 
-fun randomImageFile() = randomFile(extension = "jpg")
+internal fun randomImageFile() = randomFile(extension = "jpg")
 
-fun randomUser(
+internal fun randomUser(
     id: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
@@ -115,7 +115,7 @@ internal fun randomUserEntity(
     extraData: Map<String, Any> = emptyMap()
 ): UserEntity = UserEntity(id, originalId, role, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
 
-fun randomMessage(
+internal fun randomMessage(
     id: String = randomString(),
     cid: String = randomCID(),
     text: String = randomString(),
@@ -167,7 +167,7 @@ fun randomMessage(
     silent
 )
 
-fun randomChannel(
+internal fun randomChannel(
     cid: String = randomString(),
     id: String = randomString(),
     type: String = randomString(),
@@ -213,42 +213,42 @@ fun randomChannel(
     hiddenMessagesBefore = hiddenMessagesBefore
 )
 
-fun randomChannelEntity(
+internal fun randomChannelEntity(
     type: String = randomString(),
     channelId: String = randomString()
 ): ChannelEntity = ChannelEntity(type, channelId)
 
-fun randomChannelEntityPair(
+internal fun randomChannelEntityPair(
     channel: Channel = randomChannel(),
     channelEntity: ChannelEntity = randomChannelEntity()
 ): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)
 
-fun randomMessageEntity(
+internal fun randomMessageEntity(
     id: String = randomString(),
     cid: String = randomCID(),
     userId: String = randomString()
 ) = MessageEntity(id, cid, userId)
 
-fun randomReactionEntity(
+internal fun randomReactionEntity(
     messageId: String = randomString(),
     userId: String = randomString(),
     type: String = randomString()
 ) = ReactionEntity(messageId, userId, type)
 
-fun randomMemberEntity(userId: String = randomString()) = MemberEntity(userId)
+internal fun randomMemberEntity(userId: String = randomString()) = MemberEntity(userId)
 
-fun randomChannelUserReadEntity(userId: String = randomString()) = ChannelUserReadEntity(userId)
+internal fun randomChannelUserReadEntity(userId: String = randomString()) = ChannelUserReadEntity(userId)
 
-fun randomDate() = Date(randomLong())
+internal fun randomDate() = Date(randomLong())
 
-fun randomMessages(
+internal fun randomMessages(
     size: Int = 20,
     creationFunction: (Int) -> Message = { randomMessage() }
 ): List<Message> = (1..size).map(creationFunction)
 
-fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
+internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 
-fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
+internal fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
     return KFixture(fixture) {
         sameInstance(
             Attachment.UploadState::class.java,

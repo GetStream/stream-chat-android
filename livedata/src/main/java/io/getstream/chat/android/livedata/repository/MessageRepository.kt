@@ -13,7 +13,7 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.hasFilter
 import java.util.Date
 
-class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
+internal class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
     // the message cache, specifically caches messages on which we're receiving events (saving a few trips to the db when you get 10 likes on 1 message)
     var messageCache = LruCache<String, MessageEntity>(cacheSize)
 

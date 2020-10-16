@@ -8,7 +8,7 @@ import io.getstream.chat.android.livedata.gson
 /**
  * QuerySort can be null so we need to handle that here
  */
-class QuerySortConverter {
+internal class QuerySortConverter {
     @TypeConverter
     fun stringToObject(data: String?): QuerySort? {
         if (data.isNullOrEmpty() || data == "null") {
