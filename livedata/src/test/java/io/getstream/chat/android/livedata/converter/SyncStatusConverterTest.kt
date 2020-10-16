@@ -8,7 +8,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SyncStatusConverterTest : BaseTest() {
+internal class SyncStatusConverterTest : BaseTest() {
     @Test
     fun testEncoding() {
         val options = listOf(SyncStatus.SYNC_NEEDED, SyncStatus.FAILED_PERMANENTLY, SyncStatus.COMPLETED)

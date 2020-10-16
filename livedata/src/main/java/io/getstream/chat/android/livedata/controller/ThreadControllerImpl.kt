@@ -14,12 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import wasCreatedAfterOrAt
 
-class ThreadControllerImpl(
+internal class ThreadControllerImpl(
     override val threadId: String,
     val channelControllerImpl: ChannelControllerImpl,
     val client: ChatClient
-) :
-    ThreadController {
+) : ThreadController {
     private val logger = ChatLogger.get("ThreadController")
     private val threadMessages: MutableLiveData<Map<String, Message>> = MutableLiveData(mapOf())
 

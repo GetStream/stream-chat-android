@@ -21,16 +21,16 @@ import androidx.lifecycle.Observer
 /**
  * Used as a wrapper for data that is exposed via a LiveData that represents an event.
  */
-open class Event<out T>(private val content: T) {
+public open class Event<out T>(private val content: T) {
 
     @Suppress("MemberVisibilityCanBePrivate")
-    var hasBeenHandled = false
+    public var hasBeenHandled: Boolean = false
         private set // Allow external read but not write
 
     /**
      * Returns the content and prevents its use again.
      */
-    fun getContentIfNotHandled(): T? {
+    public fun getContentIfNotHandled(): T? {
         return if (hasBeenHandled) {
             null
         } else {
@@ -42,7 +42,7 @@ open class Event<out T>(private val content: T) {
     /**
      * Returns the content, even if it's already been handled.
      */
-    fun peekContent(): T = content
+    public fun peekContent(): T = content
 }
 
 /**
@@ -51,7 +51,7 @@ open class Event<out T>(private val content: T) {
  *
  * [onEventUnhandledContent] is *only* called if the [Event]'s contents has not been handled.
  */
-class EventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) : Observer<Event<T>> {
+public class EventObserver<T>(private val onEventUnhandledContent: (T) -> Unit) : Observer<Event<T>> {
     override fun onChanged(event: Event<T>?) {
         event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)

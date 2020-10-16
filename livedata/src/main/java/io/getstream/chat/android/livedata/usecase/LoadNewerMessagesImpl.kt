@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-interface LoadNewerMessages {
+public interface LoadNewerMessages {
     /**
      * Loads newer messages for the channel
      *
@@ -15,10 +15,10 @@ interface LoadNewerMessages {
      *
      * @return A call object with Channel as the return type
      */
-    operator fun invoke(cid: String, messageLimit: Int): Call2<Channel>
+    public operator fun invoke(cid: String, messageLimit: Int): Call2<Channel>
 }
 
-class LoadNewerMessagesImpl(var domainImpl: ChatDomainImpl) : LoadNewerMessages {
+internal class LoadNewerMessagesImpl(private val domainImpl: ChatDomainImpl) : LoadNewerMessages {
     override operator fun invoke(cid: String, messageLimit: Int): Call2<Channel> {
         validateCid(cid)
         val channelRepo = domainImpl.channel(cid)

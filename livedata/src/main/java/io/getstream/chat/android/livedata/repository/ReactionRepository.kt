@@ -11,7 +11,7 @@ import io.getstream.chat.android.livedata.extensions.isPermanent
 /**
  * We don't do any caching on reactions since usage is infrequent
  */
-class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, var client: ChatClient) {
+internal class ReactionRepository(var reactionDao: ReactionDao, var currentUser: User, var client: ChatClient) {
 
     suspend fun insertReaction(reaction: Reaction) {
         insert(listOf(ReactionEntity(reaction)))

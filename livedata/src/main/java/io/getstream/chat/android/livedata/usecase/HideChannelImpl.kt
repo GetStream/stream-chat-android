@@ -5,7 +5,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-interface HideChannel {
+public interface HideChannel {
     /**
      * Hides the channel with the specified id
      *
@@ -15,10 +15,10 @@ interface HideChannel {
      * @return A call object with Unit as the return type
      * @see <a href="https://getstream.io/chat/docs/channel_delete/?language=kotlin">Hiding a channel</a>
      */
-    operator fun invoke(cid: String, keepHistory: Boolean): Call2<Unit>
+    public operator fun invoke(cid: String, keepHistory: Boolean): Call2<Unit>
 }
 
-class HideChannelImpl(var domainImpl: ChatDomainImpl) : HideChannel {
+internal class HideChannelImpl(private val domainImpl: ChatDomainImpl) : HideChannel {
     override operator fun invoke(cid: String, keepHistory: Boolean): Call2<Unit> {
         validateCid(cid)
         val channelController = domainImpl.channel(cid)

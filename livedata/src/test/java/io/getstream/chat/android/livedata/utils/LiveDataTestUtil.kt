@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-fun <T> LiveData<T>.getOrAwaitValue(
+internal fun <T> LiveData<T>.getOrAwaitValue(
     time: Long = 2,
     timeUnit: TimeUnit = TimeUnit.SECONDS,
     afterObserve: () -> Unit = {}
@@ -47,7 +47,7 @@ fun <T> LiveData<T>.getOrAwaitValue(
     return data as T
 }
 
-suspend fun waitForSetUser(
+internal suspend fun waitForSetUser(
     client: ChatClient,
     user: User,
     token: String,

@@ -5,7 +5,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-interface MarkRead {
+public interface MarkRead {
     /**
      * Marks the messages on the specified channel as read
      *
@@ -15,10 +15,10 @@ interface MarkRead {
      * True if the mark read event was sent.
      * False if there was no need to mark read (IE the messages are already marked as read)
      */
-    operator fun invoke(cid: String): Call2<Boolean>
+    public operator fun invoke(cid: String): Call2<Boolean>
 }
 
-class MarkReadImpl(var domainImpl: ChatDomainImpl) : MarkRead {
+internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
     override operator fun invoke(cid: String): Call2<Boolean> {
         validateCid(cid)
 

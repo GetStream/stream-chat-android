@@ -8,7 +8,7 @@ import java.util.Date
 import java.util.Objects
 
 @Entity(tableName = "stream_channel_query")
-data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort) {
+internal data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort) {
     @PrimaryKey
     var id: String
 

@@ -6,7 +6,7 @@ import io.getstream.chat.android.livedata.entity.ChannelUserReadEntity
 import io.getstream.chat.android.livedata.entity.MemberEntity
 import org.junit.Test
 
-class MapConverterTest : BaseTest() {
+internal class MapConverterTest : BaseTest() {
     // read maps
     @Test
     fun testNullEncoding() {

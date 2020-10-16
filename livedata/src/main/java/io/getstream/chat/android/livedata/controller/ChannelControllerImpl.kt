@@ -79,11 +79,11 @@ private const val KEY_MESSAGE_ACTION = "image_action"
 private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
 private const val MESSAGE_ACTION_SEND = "send"
 
-class ChannelControllerImpl(
-    override var channelType: String,
-    override var channelId: String,
-    var client: ChatClient,
-    var domainImpl: ChatDomainImpl
+internal class ChannelControllerImpl(
+    override val channelType: String,
+    override val channelId: String,
+    val client: ChatClient,
+    val domainImpl: ChatDomainImpl
 ) :
     ChannelController {
     private val editJobs = mutableMapOf<String, Job>()

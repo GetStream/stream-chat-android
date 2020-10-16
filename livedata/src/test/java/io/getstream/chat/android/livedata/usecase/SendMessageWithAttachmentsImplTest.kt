@@ -42,7 +42,7 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Ignore
-class SendMessageWithAttachmentsImplTest {
+internal class SendMessageWithAttachmentsImplTest {
 
     val channelController: ChannelControllerImpl = mock()
     val chatDomain: ChatDomainImpl = mock()

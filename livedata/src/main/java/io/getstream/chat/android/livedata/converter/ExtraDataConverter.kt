@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import io.getstream.chat.android.livedata.gson
 
-class ExtraDataConverter {
+internal class ExtraDataConverter {
     @TypeConverter
     fun stringToMap(data: String?): MutableMap<String, Any> {
         if (data.isNullOrEmpty() || data == "null") {

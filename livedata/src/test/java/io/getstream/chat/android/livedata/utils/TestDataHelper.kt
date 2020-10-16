@@ -46,7 +46,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.UUID
 
-class TestDataHelper {
+internal class TestDataHelper {
     val dotenv = dotenv {
         ignoreIfMissing = true
     }
@@ -255,7 +255,7 @@ class TestDataHelper {
     val syncState = SyncStateEntity(user1.id, lastSyncedAt = Date.from(Instant.now()))
 }
 
-fun calendar(
+internal fun calendar(
     year: Int,
     month: Int,
     date: Int,

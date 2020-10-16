@@ -4,12 +4,13 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.utils.calendar
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-class PaginationTest {
+internal class PaginationTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.livedata.PaginationTest#createPaginationInput")
@@ -18,6 +19,7 @@ class PaginationTest {
         pagination: AnyChannelPaginationRequest,
         expectedList: List<Channel>
     ) {
+        // show an easy to use diff between the two results
         inputList.applyPagination(pagination) `should be equal to` expectedList
     }
 
@@ -147,6 +149,54 @@ class PaginationTest {
                         }
                     },
                     it
+                )
+            },
+            // last_updated is a computed field based on max(createdAt, lastMessageAt)
+            listOf(
+                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2))),
+                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null)),
+                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3)))
+            ).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply {
+                        sort = QuerySort().apply {
+                            desc("last_updated")
+                        }
+                    },
+                    listOf(it[1], it[2], it[0])
+                )
+            },
+            // created_at should map to channel.createdAt
+            listOf(
+                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = calendar(2020, 10, 2))),
+                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4))),
+                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 3)))
+            ).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply {
+                        sort = QuerySort().apply {
+                            desc("created_at")
+                        }
+                    },
+                    listOf(it[1], it[2], it[0])
+                )
+            },
+            // last_message_at should map to channel.lastMessageAt
+            listOf(
+                randomChannelEntityPair(channel = randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2))),
+                randomChannelEntityPair(channel = randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4))),
+                randomChannelEntityPair(channel = randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3)))
+            ).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply {
+                        sort = QuerySort().apply {
+                            desc("last_message_at")
+                        }
+                    },
+                    listOf(it[1], it[2], it[0])
                 )
             }
         )

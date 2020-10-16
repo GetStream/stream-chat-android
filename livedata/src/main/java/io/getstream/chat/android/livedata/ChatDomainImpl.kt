@@ -59,6 +59,8 @@ private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
 private const val CHANNEL_LIMIT = 30
 
+internal val gson = Gson()
+
 /**
  * The Chat Repository exposes livedata objects to make it easier to build your chat UI.
  * It intercepts the various low level events to ensure data stays in sync.
@@ -76,7 +78,7 @@ private const val CHANNEL_LIMIT = 30
  * repo.errorEvents events for errors that happen while interacting with the chat
  *
  */
-class ChatDomainImpl private constructor(
+internal class ChatDomainImpl private constructor(
     internal var client: ChatClient,
     override var currentUser: User,
     private val mainHandler: Handler,
@@ -713,10 +715,4 @@ class ChatDomainImpl private constructor(
     fun postInitialized() {
         _initialized.postValue(true)
     }
-
-    companion object {
-        private val NEVER = Date(0)
-    }
 }
-
-var gson = Gson()

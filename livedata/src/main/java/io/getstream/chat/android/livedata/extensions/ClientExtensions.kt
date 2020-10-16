@@ -72,9 +72,9 @@ internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
     }
 }
 
-const val HTTP_TOO_MANY_REQUESTS = 429
-const val HTTP_TIMEOUT = 408
-const val NETWORK_NOT_AVAILABLE = -1
+private const val HTTP_TOO_MANY_REQUESTS = 429
+private const val HTTP_TIMEOUT = 408
+private const val NETWORK_NOT_AVAILABLE = -1
 
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
@@ -87,7 +87,7 @@ const val NETWORK_NOT_AVAILABLE = -1
  * See the error codes here
  * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
-fun ChatError.isPermanent(): Boolean {
+public fun ChatError.isPermanent(): Boolean {
     var isPermanent = false
     if (this is ChatNetworkError) {
         val networkError: ChatNetworkError = this
@@ -110,12 +110,23 @@ internal val QuerySort.comparator: Comparator<in Channel>
     get() =
         CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
 
+private val snakeRegex = "_[a-zA-Z]".toRegex()
+/**
+ * turns created_at into createdAt
+ */
+internal fun String.snakeToLowerCamelCase(): String {
+    return snakeRegex.replace(this) {
+        it.value.replace("_", "")
+            .toUpperCase()
+    }
+}
+
 internal val Map<String, Any>.comparator: Comparator<in Channel>?
     get() =
         (this["field"] as? String)?.let { fieldName ->
             (this["direction"] as? Int)?.let { sortDirection ->
                 Channel::class.declaredMemberProperties
-                    .find { it.name == fieldName }
+                    .find { it.name == fieldName.snakeToLowerCamelCase() }
                     ?.comparator(sortDirection)
             }
         }

@@ -17,15 +17,14 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.8.5"
+        versionName "0.8.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-
+    
     buildFeatures {
         dataBinding true
     }
@@ -62,10 +61,19 @@ android {
     }
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+        ]
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    api "com.github.getstream:stream-chat-android-client:1.16.7"
+    api "com.github.getstream:stream-chat-android-client:1.16.8"
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"

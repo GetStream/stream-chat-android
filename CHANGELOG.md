@@ -1,8 +1,12 @@
 # To be released:
-- Improve sync data validation in ChatDomain.Builder
 
+# Oct 16th, 2020 - 0.8.6
+- Improve sync data validation in ChatDomain.Builder
+- Removed many internal implementation classes and methods from the SDK's public API
 - Significant performance improvements to offline storage
 - Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps
+- Fix QuerySort 
+- Update client to 1.16.8: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.8
 
 # Oct 14th, 2020 - 0.8.5
 

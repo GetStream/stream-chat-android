@@ -5,7 +5,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
-interface StopTyping {
+public interface StopTyping {
     /**
      * StopTyping should be called when the user submits the text and finishes typing
      *
@@ -13,10 +13,10 @@ interface StopTyping {
      *
      * @return A call object with Boolean as the return type. True when a typing event was sent, false if it wasn't sent
      */
-    operator fun invoke(cid: String): Call2<Boolean>
+    public operator fun invoke(cid: String): Call2<Boolean>
 }
 
-class StopTypingImpl(var domainImpl: ChatDomainImpl) : StopTyping {
+internal class StopTypingImpl(private val domainImpl: ChatDomainImpl) : StopTyping {
     override operator fun invoke(cid: String): Call2<Boolean> {
         validateCid(cid)
 

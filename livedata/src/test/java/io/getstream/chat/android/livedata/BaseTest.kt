@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import org.junit.Rule
 
-open class BaseTest {
+internal open class BaseTest {
 
     var data = TestDataHelper()
 

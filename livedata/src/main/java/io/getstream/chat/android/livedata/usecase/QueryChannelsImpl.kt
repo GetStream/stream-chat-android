@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import kotlinx.coroutines.launch
 
-interface QueryChannels {
+public interface QueryChannels {
     /**
      * Queries offline storage and the API for channels matching the filter
      * Returns a queryChannelsController
@@ -25,10 +25,10 @@ interface QueryChannels {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int = 30, messageLimit: Int = 1): Call2<QueryChannelsController>
+    public operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int = 30, messageLimit: Int = 1): Call2<QueryChannelsController>
 }
 
-class QueryChannelsImpl(var domainImpl: ChatDomainImpl) : QueryChannels {
+internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : QueryChannels {
     override operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int, messageLimit: Int): Call2<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
         val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl

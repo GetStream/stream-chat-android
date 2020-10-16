@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.utils
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.models.Message
 
-data class MessageDiffCallback(
+internal data class MessageDiffCallback(
     var old: List<Message>,
     var new: List<Message>
 ) :

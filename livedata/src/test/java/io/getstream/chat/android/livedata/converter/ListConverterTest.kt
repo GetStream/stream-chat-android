@@ -9,7 +9,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ListConverterTest : BaseTest() {
+internal class ListConverterTest : BaseTest() {
     val converter = ListConverter()
 
     @Test

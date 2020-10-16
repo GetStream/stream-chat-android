@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.gson
 
-class ListConverter {
+internal class ListConverter {
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
         if (data.isNullOrEmpty() || data == "null") {

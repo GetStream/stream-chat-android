@@ -8,7 +8,7 @@ import org.junit.runner.RunWith
 import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
-class DateConverterTest : BaseTest() {
+internal class DateConverterTest : BaseTest() {
     @Test
     fun testNullEncoding() {
         val converter = DateConverter()

@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.utils
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.models.Channel
 
-data class ChannelDiffCallback(
+internal data class ChannelDiffCallback(
     var oldChannels: List<Channel>,
     var newChannels: List<Channel>
 ) :

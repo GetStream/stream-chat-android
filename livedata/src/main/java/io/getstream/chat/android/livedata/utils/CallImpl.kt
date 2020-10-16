@@ -8,19 +8,22 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-interface Call2<T : Any> {
+public interface Call2<T : Any> {
 
     @WorkerThread
-    fun execute(): Result<T>
+    public fun execute(): Result<T>
 
     @UiThread
-    fun enqueue(callback: (Result<T>) -> Unit = {})
+    public fun enqueue(callback: (Result<T>) -> Unit = {})
 
-    fun cancel()
+    public fun cancel()
 }
 
-class CallImpl2<T : Any>(var runnable: suspend () -> Result<T>, var scope: CoroutineScope = GlobalScope) :
-    Call2<T> {
+internal class CallImpl2<T : Any>(
+    var runnable: suspend () -> Result<T>,
+    var scope: CoroutineScope = GlobalScope
+) : Call2<T> {
+
     var canceled: Boolean = false
 
     override fun cancel() {

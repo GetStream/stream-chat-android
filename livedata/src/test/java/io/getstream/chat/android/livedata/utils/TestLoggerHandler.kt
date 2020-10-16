@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 
-class TestLoggerHandler : ChatLoggerHandler {
+internal class TestLoggerHandler : ChatLoggerHandler {
     override fun logT(throwable: Throwable) {
         println("logT: $throwable")
     }
