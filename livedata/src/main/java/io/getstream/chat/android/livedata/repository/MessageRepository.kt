@@ -10,7 +10,6 @@ import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import java.security.InvalidParameterException
 import java.util.Date
 
 class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, var currentUser: User, var client: ChatClient) {
@@ -66,9 +65,7 @@ class MessageRepository(var messageDao: MessageDao, var cacheSize: Int = 100, va
     suspend fun insert(messageEntities: List<MessageEntity>, cache: Boolean = false) {
         if (messageEntities.isEmpty()) return
         for (messageEntity in messageEntities) {
-            if (messageEntity.cid == "") {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
+            require(messageEntity.cid.isNotEmpty()) { "message.cid can not be empty" }
         }
         for (m in messageEntities) {
             if (messageCache.get(m.id) != null || cache) {
