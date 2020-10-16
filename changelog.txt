@@ -1,4 +1,5 @@
 # To be released:
+- Add `lastUpdated` property to `Channel`
 
 # 1.16.7 - Wed 14th of Oct 2020
 - Removed many internal implementation classes and methods from the SDK's public API
