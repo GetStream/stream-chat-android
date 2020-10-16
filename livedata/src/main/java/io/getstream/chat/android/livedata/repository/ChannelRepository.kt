@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.isPermanent
 
-class ChannelRepository(
+internal class ChannelRepository(
     var channelDao: ChannelDao,
     var cacheSize: Int = 100,
     var currentUser: User,

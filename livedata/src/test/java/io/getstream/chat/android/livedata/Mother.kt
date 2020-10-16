@@ -213,12 +213,12 @@ fun randomChannel(
     hiddenMessagesBefore = hiddenMessagesBefore
 )
 
-fun randomChannelEntity(
+internal fun randomChannelEntity(
     type: String = randomString(),
     channelId: String = randomString()
 ): ChannelEntity = ChannelEntity(type, channelId)
 
-fun randomChannelEntityPair(
+internal fun randomChannelEntityPair(
     channel: Channel = randomChannel(),
     channelEntity: ChannelEntity = randomChannelEntity()
 ): ChannelEntityPair = ChannelEntityPair(channel, channelEntity)

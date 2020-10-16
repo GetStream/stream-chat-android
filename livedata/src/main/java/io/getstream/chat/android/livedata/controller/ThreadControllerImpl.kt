@@ -48,6 +48,8 @@ class ThreadControllerImpl(
 
     suspend fun watch(limit: Int = 30): Result<List<Message>> = loadMessages(client.getReplies(threadId, limit), limit)
 
+    // TODO: offline storage for thread load more
+
     private suspend fun loadMessages(call: Call<List<Message>>, limit: Int): Result<List<Message>> =
         withContext(Dispatchers.IO) {
             call.execute().apply {

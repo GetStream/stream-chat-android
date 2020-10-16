@@ -381,16 +381,25 @@ class ChannelControllerImpl(
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        val channel = runChannelQueryOffline(pagination)
-
+        val queryOfflineJob = scope.async { runChannelQueryOffline(pagination) }
+        // start the online query before queryOfflineJob.await
+        val queryOnlineJob = if (domainImpl.isOnline()) { scope.async { runChannelQueryOnline(pagination) } } else { null }
+        val localChannel = queryOfflineJob.await()
+        if (localChannel != null) {
+            updateLiveDataFromLocalChannel(localChannel)
+        }
         // if we are online we we run the actual API call
 
-        return if (domainImpl.isOnline()) {
-            runChannelQueryOnline(pagination)
+        return if (queryOnlineJob != null) {
+            val response = queryOnlineJob.await()
+            if (response.isSuccess) {
+                updateLiveDataFromChannel(response.data())
+            }
+            response
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
-            Result(channel, null)
+            Result(localChannel, null)
         }
     }
 
@@ -401,7 +410,6 @@ class ChannelControllerImpl(
             channel.config = domainImpl.getChannelConfig(channel.type)
             _loading.postValue(false)
 
-            updateLiveDataFromLocalChannel(channel)
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
@@ -425,7 +433,7 @@ class ChannelControllerImpl(
             // first thing here needs to be updating configs otherwise we have a race with receiving events
             val configEntities = ChannelConfigEntity(channelResponse.type, channelResponse.config)
             domainImpl.repos.configs.insert(listOf(configEntities))
-            updateLiveDataFromChannel(channelResponse)
+
             domainImpl.storeStateForChannel(channelResponse)
         } else {
             recoveryNeeded = true
@@ -475,7 +483,7 @@ class ChannelControllerImpl(
         val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
             // update channel lastMessage at and lastMessageAt
-            it.updateLastMessageDate(messageEntity)
+            it.updateLastMessage(messageEntity)
             domainImpl.repos.channels.insert(it)
         }
 

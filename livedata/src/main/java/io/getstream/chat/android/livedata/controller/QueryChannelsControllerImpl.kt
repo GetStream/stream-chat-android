@@ -23,6 +23,7 @@ import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 
 private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
@@ -130,14 +131,6 @@ class QueryChannelsControllerImpl(
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
-        if (channels != null) {
-            // first page replaces the results, second page adds to them
-            if (pagination.isFirstPage) {
-                setChannels(channels)
-            } else {
-                addChannels(channels)
-            }
-        }
         return channels
     }
 
@@ -166,13 +159,6 @@ class QueryChannelsControllerImpl(
             }
 
             domainImpl.storeStateForChannels(channelsResponse)
-
-            if (pagination.isFirstPage) {
-                setChannels(channelsResponse)
-            } else {
-                addChannels(channelsResponse)
-            }
-            domainImpl.repos.queryChannels.insert(queryEntity)
         } else {
             recoveryNeeded = true
             domainImpl.addError(response.error())
@@ -193,14 +179,35 @@ class QueryChannelsControllerImpl(
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val channels = runQueryOffline(pagination)
+        val queryOfflineJob = scope.async { runQueryOffline(pagination) }
+        // start the query online job before waiting for the query offline job
+        val queryOnlineJob = if (domainImpl.isOnline()) {
+            scope.async { runQueryOnline(pagination) }
+        } else { null }
+        val channels = queryOfflineJob.await()
+
+        if (channels != null) {
+            if (pagination.isFirstPage) {
+                setChannels(channels)
+            } else {
+                addChannels(channels)
+            }
+        }
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
         val output: Result<List<Channel>>
-        if (domainImpl.isOnline()) {
-            val result = runQueryOnline(pagination)
+        if (queryOnlineJob != null) {
+            val result = queryOnlineJob.await()
             output = result
+            if (result.isSuccess) {
+                if (pagination.isFirstPage) {
+                    setChannels(output.data())
+                } else {
+                    addChannels(output.data())
+                }
+                domainImpl.repos.queryChannels.insert(queryEntity)
+            }
         } else {
             recoveryNeeded = true
             output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))

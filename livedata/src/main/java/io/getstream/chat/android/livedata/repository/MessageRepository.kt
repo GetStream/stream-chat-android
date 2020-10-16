@@ -9,7 +9,7 @@ import io.getstream.chat.android.livedata.dao.MessageDao
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import java.security.InvalidParameterException
+import io.getstream.chat.android.livedata.request.hasFilter
 import java.util.Date
 
 internal class MessageRepository(
@@ -78,9 +78,7 @@ internal class MessageRepository(
     suspend fun insert(messages: List<Message>, cache: Boolean = false) {
         if (messages.isEmpty()) return
         for (message in messages) {
-            if (message.cid == "") {
-                throw InvalidParameterException("message.cid cant be empty")
-            }
+            require(message.cid.isNotEmpty()) { "message.cid can not be empty" }
         }
         for (m in messages) {
             if (messageCache.get(m.id) != null || cache) {
@@ -121,7 +119,7 @@ internal class MessageRepository(
     }
 
     companion object {
-        private fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
+        internal fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
             val message = Message()
             message.id = id
             message.cid = cid
@@ -150,7 +148,7 @@ internal class MessageRepository(
             message
         }
 
-        fun toEntity(model: Message) = MessageEntity(
+        internal fun toEntity(model: Message) = MessageEntity(
             id = model.id, cid = model.cid, userId = model.user.id,
             text = model.text,
             attachments = model.attachments,

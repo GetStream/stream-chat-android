@@ -17,6 +17,11 @@ import org.junit.runner.RunWith
 internal class MessageRepositoryTest : BaseDomainTest() {
     val repo by lazy { chatDomainImpl.repos.messages }
 
+    private fun AnyChannelPaginationRequest.setFilter(messageFilterDirection: Pagination, messageFilterValue: String) {
+        this.messageFilterDirection = messageFilterDirection
+        this.messageFilterValue = messageFilterValue
+    }
+
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
         repo.insert(data.message1)
@@ -91,7 +96,7 @@ internal class MessageRepositoryTest : BaseDomainTest() {
         // should return message 2 and message 3, with message 3 (the oldest message as the first element)
         messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)
         Truth.assertThat(messages.size).isEqualTo(2)
-        Truth.assertThat(messages.first().id).isEqualTo(message3.id)
+        Truth.assertThat(messages.first().id).isEqualTo(message2.id)
         // request 2 and newer, message 2 (the oldest) should be first
         pagination.setFilter(Pagination.GREATER_THAN_OR_EQUAL, message2.id)
         messages = repo.selectMessagesForChannel(data.message1.cid, data.userMap, pagination)

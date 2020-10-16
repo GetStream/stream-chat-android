@@ -1,12 +1,13 @@
 package io.getstream.chat.android.livedata.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.util.Date
 
-@Entity(tableName = "stream_chat_message")
+@Entity(tableName = "stream_chat_message", indices = [Index(value = ["cid", "createdAt"]), Index(value = ["syncStatus"])])
 internal data class MessageEntity(
     @PrimaryKey
     val id: String,
