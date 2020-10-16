@@ -61,7 +61,7 @@ internal class MessageIdGenerationTests {
                 connectionId,
                 MessageRequest(message)
             )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         api.sendMessage(channelType, channelId, message)
 
@@ -85,7 +85,7 @@ internal class MessageIdGenerationTests {
                 connectionId,
                 MessageRequest(message)
             )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         api.sendMessage(channelType, channelId, message)
 

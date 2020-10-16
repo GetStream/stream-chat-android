@@ -4,6 +4,7 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -96,6 +97,7 @@ internal class ChatParserImpl : ChatParser {
         return builder
             .addConverterFactory(UrlQueryPayloadFactory(gson))
             .addConverterFactory(GsonConverterFactory.create(gson))
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(this))
     }
 
     private fun toError(body: String?): ErrorResponse? {

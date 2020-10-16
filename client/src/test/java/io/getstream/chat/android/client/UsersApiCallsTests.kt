@@ -45,7 +45,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 BanUserRequest(targetUserId, timeout, reason, mock.channelType, mock.channelId)
             )
-        ).thenReturn(RetroSuccess(CompletableResponse()))
+        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
         val result = client.banUser(
             targetUserId,
@@ -74,7 +74,7 @@ internal class UsersApiCallsTests {
                 mock.channelType,
                 mock.channelId
             )
-        ).thenReturn(RetroSuccess(CompletableResponse()))
+        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
         val result = client.unBanUser(
             targetUserId,
@@ -115,7 +115,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
-        ).thenReturn(RetroSuccess(FlagResponse(flag)))
+        ).thenReturn(RetroSuccess(FlagResponse(flag)).toRetrofitCall())
 
         val result = client.flagUser(targetUserId).execute()
 
@@ -149,7 +149,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 mapOf(Pair("target_user_id", targetUserId))
             )
-        ).thenReturn(RetroSuccess(FlagResponse(flag)))
+        ).thenReturn(RetroSuccess(FlagResponse(flag)).toRetrofitCall())
 
         val result = client.flagUser(targetUserId).execute()
 
@@ -182,7 +182,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 mapOf(Pair("target_message_id", targetMessageId))
             )
-        ).thenReturn(RetroSuccess(FlagResponse(flag)))
+        ).thenReturn(RetroSuccess(FlagResponse(flag)).toRetrofitCall())
 
         val result = client.flagMessage(targetMessageId).execute()
 
@@ -202,7 +202,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 request
             )
-        ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))))
+        ).thenReturn(RetroSuccess(QueryUserListResponse(listOf(user))).toRetrofitCall())
 
         val result = client.queryUsers(
             request
@@ -225,7 +225,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 RemoveMembersRequest(listOf("a-id", "b-id"))
             )
-        ).thenReturn(RetroSuccess(ChannelResponse(channel)))
+        ).thenReturn(RetroSuccess(ChannelResponse(channel)).toRetrofitCall())
 
         val result =
             client.removeMembers(mock.channelType, mock.channelId, listOf("a-id", "b-id")).execute()
@@ -251,7 +251,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
-        ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)))
+        ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)).toRetrofitCall())
 
         val result = client.muteUser(targetUser.id).execute()
 
@@ -276,7 +276,7 @@ internal class UsersApiCallsTests {
                 mock.connectionId,
                 MuteUserRequest(targetUser.id, mock.userId)
             )
-        ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)))
+        ).thenReturn(RetroSuccess(MuteUserResponse(mute, mock.user)).toRetrofitCall())
 
         val result = client.unmuteUser(targetUser.id).execute()
 

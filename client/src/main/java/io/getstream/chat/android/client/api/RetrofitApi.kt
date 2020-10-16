@@ -41,9 +41,9 @@ import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersResponse
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.parser.UrlQueryPayload
 import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

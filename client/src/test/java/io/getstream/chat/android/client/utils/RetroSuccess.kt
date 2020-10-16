@@ -1,12 +1,19 @@
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.parser.ChatParserImpl
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-internal class RetroSuccess<T>(val result: T) : Call<T> {
+internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
+
+    fun toRetrofitCall(): RetrofitCall<T> {
+        return RetrofitCall(this, ChatParserImpl())
+    }
+
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }

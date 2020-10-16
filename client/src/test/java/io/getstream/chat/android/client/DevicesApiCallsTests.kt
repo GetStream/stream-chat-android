@@ -34,7 +34,7 @@ internal class DevicesApiCallsTests {
                 mock.userId,
                 mock.connectionId
             )
-        ).thenReturn(RetroSuccess(GetDevicesResponse(listOf(device))))
+        ).thenReturn(RetroSuccess(GetDevicesResponse(listOf(device))).toRetrofitCall())
 
         val result = client.getDevices().execute()
 
@@ -50,7 +50,7 @@ internal class DevicesApiCallsTests {
                 mock.userId,
                 mock.connectionId
             )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<GetDevicesResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getDevices().execute()
 
@@ -70,7 +70,7 @@ internal class DevicesApiCallsTests {
                 mock.connectionId,
                 request
             )
-        ).thenReturn(RetroSuccess(CompletableResponse()))
+        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
         val result = client.addDevice(device.id).execute()
 
@@ -90,7 +90,7 @@ internal class DevicesApiCallsTests {
                 mock.connectionId,
                 request
             )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.addDevice(device.id).execute()
 
@@ -109,7 +109,7 @@ internal class DevicesApiCallsTests {
                 mock.userId,
                 mock.connectionId
             )
-        ).thenReturn(RetroSuccess(CompletableResponse()))
+        ).thenReturn(RetroSuccess(CompletableResponse()).toRetrofitCall())
 
         val result = client.deleteDevice(device.id).execute()
 
@@ -128,7 +128,7 @@ internal class DevicesApiCallsTests {
                 mock.userId,
                 mock.connectionId
             )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<CompletableResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.deleteDevice(device.id).execute()
 
