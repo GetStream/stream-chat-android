@@ -1,4 +1,5 @@
 # To be released:
+# 1.16.8 - Fri 16th of Oct 2020
 - Add `lastUpdated` property to `Channel`
 
 # 1.16.7 - Wed 14th of Oct 2020
