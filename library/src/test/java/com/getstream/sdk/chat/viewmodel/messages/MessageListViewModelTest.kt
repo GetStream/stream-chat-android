@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory
 import com.getstream.sdk.chat.createChannel
 import com.getstream.sdk.chat.createChannelUserRead
 import com.getstream.sdk.chat.createMessage
@@ -37,7 +36,6 @@ import io.getstream.chat.android.livedata.utils.Call2
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeNull
-import org.junit.Ignore
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -209,7 +207,7 @@ class MessageListViewModelTest {
                             }
                         }
                         filterIsInstance<MessageListItem.MessageItem>().map {
-                                it.message
+                            it.message
                         } shouldBeEqualTo MESSAGES
                     }
                 }
