@@ -20,7 +20,6 @@ import org.amshove.kluent.invoking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.security.InvalidParameterException
 
 @RunWith(AndroidJUnit4::class)
 class GetThreadImplTest {
@@ -42,14 +41,14 @@ class GetThreadImplTest {
     fun `Should throw an exception if the channel cid is empty`() {
         invoking {
             getThreadImpl("", randomString())
-        } `should throw` InvalidParameterException::class `with message` "cid cant be empty"
+        } `should throw` IllegalArgumentException::class `with message` "cid can not be empty"
     }
 
     @Test
     fun `Should throw an exception if the channel cid doesn't contain a colon`() {
         invoking {
             getThreadImpl(randomString().replace(":", ""), randomString())
-        } `should throw` InvalidParameterException::class`with message` "cid needs to be in the format channelType:channelId. For example messaging:123"
+        } `should throw` IllegalArgumentException::class`with message` "cid needs to be in the format channelType:channelId. For example, messaging:123"
     }
     @Test
     fun `Should return a ThreadController`() {
