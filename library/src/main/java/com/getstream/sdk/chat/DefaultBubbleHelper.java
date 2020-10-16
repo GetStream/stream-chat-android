@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.getstream.sdk.chat.adapter.MessageListItem;
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -98,11 +97,11 @@ public class DefaultBubbleHelper {
         bottomLeftRadius = style.getMessageBottomLeftCornerRadius(isMine);
     }
 
-    private static void applyStyleDefault(List<Position> positions, boolean isMine, Context context) {
+    private static void applyStyleDefault(List<? extends MessageListItem.Position> positions, boolean isMine, Context context) {
         if (isMine) {
             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(Position.TOP)) {
+            if (positions.contains(MessageListItem.Position.Top.INSTANCE)) {
                 topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
@@ -112,7 +111,7 @@ public class DefaultBubbleHelper {
         } else {
             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(Position.TOP)) {
+            if (positions.contains(MessageListItem.Position.Top.INSTANCE)) {
                 topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {

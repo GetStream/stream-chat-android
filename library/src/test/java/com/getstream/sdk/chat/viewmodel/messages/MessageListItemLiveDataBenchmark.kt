@@ -1,25 +1,29 @@
 package com.getstream.sdk.chat.viewmodel.messages
 
 import androidx.arch.core.executor.testing.InstantExecutorExtension
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.createDate
+import com.getstream.sdk.chat.createMessage
+import com.getstream.sdk.chat.randomUser
+import com.getstream.sdk.chat.utils.livedata.getOrAwaitValue
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.utils.calendar
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import kotlin.system.measureTimeMillis
 
-@ExtendWith(InstantExecutorExtension::class)
+
 class MessageListItemLiveDataBenchmark {
+
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
 
     private val currentUser = randomUser()
 
@@ -39,7 +43,7 @@ class MessageListItemLiveDataBenchmark {
         for (i in (0..5)) {
             val user = randomUser()
             for (y in 0..50) {
-                val message = randomMessage(user = user, createdAt = calendar(2020, 11, i % 28 + 1, 1, i, y))
+                val message = createMessage(user = user, createdAt = createDate(2020, 11, i % 28 + 1, 1, i, y))
                 messages.add(message)
             }
         }
@@ -95,7 +99,7 @@ class MessageListItemLiveDataBenchmark {
 
         val duration = measureTimeMillis {
             for (x in 0..100) {
-                val newMessages = messages + randomMessage()
+                val newMessages = messages + createMessage()
                 messageLd.messagesChanged(newMessages)
             }
         }

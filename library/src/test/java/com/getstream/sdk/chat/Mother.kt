@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import java.io.File
 import java.time.Instant
+import java.util.Calendar
 import java.util.Date
 import kotlin.random.Random
 
@@ -38,6 +39,42 @@ fun randomString(size: Int = 20): String = buildString(capacity = size) {
         append(charPool.random())
     }
 }
+
+internal fun randomUser(
+        id: String = randomString(),
+        role: String = randomString(),
+        invisible: Boolean = randomBoolean(),
+        banned: Boolean = randomBoolean(),
+        devices: List<Device> = mutableListOf(),
+        online: Boolean = randomBoolean(),
+        createdAt: Date? = null,
+        updatedAt: Date? = null,
+        lastActive: Date? = null,
+        totalUnreadCount: Int = positiveRandomInt(),
+        unreadChannels: Int = positiveRandomInt(),
+        unreadCount: Int = positiveRandomInt(),
+        mutes: List<Mute> = mutableListOf(),
+        teams: List<String> = listOf(),
+        channelMutes: List<ChannelMute> = emptyList(),
+        extraData: MutableMap<String, Any> = mutableMapOf()
+): User = User(
+        id,
+        role,
+        invisible,
+        banned,
+        devices,
+        online,
+        createdAt,
+        updatedAt,
+        lastActive,
+        totalUnreadCount,
+        unreadChannels,
+        unreadCount,
+        mutes,
+        teams,
+        channelMutes,
+        extraData
+)
 
 fun randomCID() = "${randomString()}:${randomString()}"
 fun createUser(
@@ -195,7 +232,20 @@ fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand()
 
 fun createMessageItem(
     message: Message = createMessage(),
-    positions: List<MessageViewHolderFactory.Position> = listOf(),
+    positions: List<MessageListItem.Position> = listOf(),
     isMine: Boolean = randomBoolean(),
     messageReadBy: MutableList<ChannelUserRead> = mutableListOf()
 ): MessageListItem.MessageItem = MessageListItem.MessageItem(message, positions, isMine, messageReadBy)
+
+internal fun createDate(
+        year: Int,
+        month: Int,
+        date: Int,
+        hourOfDay: Int = 0,
+        minute: Int = 0,
+        seconds: Int = 0
+): Date {
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month, date, hourOfDay, minute, seconds)
+    return calendar.time
+}

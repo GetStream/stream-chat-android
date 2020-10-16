@@ -5,6 +5,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.getstream.sdk.chat.adapter.MessageListItem
+import com.getstream.sdk.chat.createDate
+import com.getstream.sdk.chat.createMessage
+import com.getstream.sdk.chat.randomUser
+import com.getstream.sdk.chat.utils.livedata.getOrAwaitValue
+import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.times
@@ -12,15 +18,6 @@ import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.livedata.randomMessage
-import io.getstream.chat.android.livedata.randomUser
-import io.getstream.chat.android.livedata.utils.MessageListItem
-import io.getstream.chat.android.livedata.utils.MessageListItem.TypingItem
-import io.getstream.chat.android.livedata.utils.MessageListItemLiveData
-import io.getstream.chat.android.livedata.utils.MessageListItemWrapper
-import io.getstream.chat.android.livedata.utils.calendar
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import org.amshove.kluent.any
 import org.junit.Rule
 import org.junit.Test
@@ -30,9 +27,10 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-@ExtendWith(InstantExecutorExtension::class)
 class MessageListItemLiveDataTest {
 
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
 
     private val currentUser = randomUser()
 
@@ -76,7 +74,7 @@ class MessageListItemLiveDataTest {
         for (i in (0..2)) {
             val user = users[i]
             for (y in 0..2) {
-                val message = randomMessage(user = user, createdAt = calendar(2020, 11, i + 1, i + y))
+                val message = createMessage(user = user, createdAt = createDate(2020, 11, i + 1, i + y))
                 messages.add(message)
             }
         }
@@ -93,7 +91,7 @@ class MessageListItemLiveDataTest {
     // livedata testing
     @Test
     fun `Observe should trigger a recompute`() {
-        val many = oneMessage(randomMessage())
+        val many = oneMessage(createMessage())
         val items = many.getOrAwaitValue().items
         Truth.assertThat(items.size).isEqualTo(2)
         val empty = emptyMessages()
@@ -125,12 +123,12 @@ class MessageListItemLiveDataTest {
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items.size).isEqualTo(1)
-        Truth.assertThat(items.last()).isInstanceOf(TypingItem::class.java)
+        Truth.assertThat(items.last()).isInstanceOf(MessageListItem.TypingItem::class.java)
     }
 
     @Test
     fun `Should return messages with a typing indicator`() {
-        val message = randomMessage()
+        val message = createMessage()
         val messageListItemLd = oneMessage(message)
         messageListItemLd.messagesChanged(listOf(message))
         messageListItemLd.typingChanged(listOf(randomUser()))
@@ -138,7 +136,7 @@ class MessageListItemLiveDataTest {
         Truth.assertThat(items.size).isEqualTo(3)
         Truth.assertThat(items.first()).isInstanceOf(MessageListItem.DateSeparatorItem::class.java)
         Truth.assertThat(items[1]).isInstanceOf(MessageListItem.MessageItem::class.java)
-        Truth.assertThat(items.last()).isInstanceOf(TypingItem::class.java)
+        Truth.assertThat(items.last()).isInstanceOf(MessageListItem.TypingItem::class.java)
     }
 
     // test how we merge read state
