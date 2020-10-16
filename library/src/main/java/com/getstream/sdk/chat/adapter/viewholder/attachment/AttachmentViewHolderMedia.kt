@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.bumptech.glide.Glide
+import com.getstream.sdk.chat.ImageLoader.loadWithGifSupport
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -66,11 +66,12 @@ class AttachmentViewHolderMedia(
         val thumbUrl = attachment.thumbUrl
         val imageUrl = if (thumbUrl.isNullOrEmpty()) attachment.imageUrl else thumbUrl
 
-        Glide.with(context)
-            .asDrawable()
-            .load(imageUrl)
-            .placeholder(R.drawable.stream_placeholder)
-            .into(binding.ivMediaThumb)
+        binding.ivMediaThumb.loadWithGifSupport(
+            imageUrl,
+            placeholderResId = R.drawable.stream_placeholder,
+            onStart = { binding.progressBar.isVisible = true },
+            onComplete = { binding.progressBar.isVisible = false },
+        )
 
         if (messageItem.message.type != ModelType.message_ephemeral) {
             binding.tvMediaTitle.text = attachment.title

@@ -3,9 +3,16 @@ package com.getstream.sdk.chat
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import coil.Coil
+import coil.api.load
+import coil.decode.GifDecoder
+import coil.decode.ImageDecoderDecoder
 import coil.request.GetRequest
 import coil.request.GetRequestBuilder
+import coil.size.Precision
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
@@ -32,6 +39,40 @@ internal object ImageLoader {
                     )?.bitmap
             }
     }
+
+    fun ImageView.loadWithGifSupport(
+        uri: String?,
+        @DrawableRes placeholderResId: Int?,
+        onStart: () -> Unit = {},
+        onComplete: () -> Unit = {},
+    ) {
+        load(uri, getImageLoaderWithGifSupport(context)) {
+            placeholderResId?.let { placeholder(it) }
+            listener(
+                onStart = { onStart() },
+                onCancel = { onComplete() },
+                onError = { _, _ -> onComplete() },
+                onSuccess = { _, _ -> onComplete() },
+            )
+        }
+    }
+
+    private fun getImageLoaderWithGifSupport(
+        context: Context,
+        // TODO: We should probably allowHardware for performance improvements but we do software rendering in PorterShapeImageView
+        allowHardware: Boolean = false,
+        precision: Precision = Precision.EXACT
+    ): coil.ImageLoader = coil.ImageLoader.Builder(context)
+        .allowHardware(allowHardware)
+        .precision(precision)
+        .componentRegistry {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                add(ImageDecoderDecoder())
+            } else {
+                add(GifDecoder())
+            }
+        }
+        .build()
 
     private fun GetRequestBuilder.applyTransformation(
         transformation: ImageTransformation,
