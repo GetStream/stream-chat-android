@@ -264,7 +264,7 @@ class MessageListView : ConstraintLayout {
         )
 
         unseenButtonEnabled = tArray.getBoolean(
-            R.styleable.MessageListView_streamDefaultButtonEnabled,
+            R.styleable.MessageListView_streamDefaultScrollButtonEnabled,
             true
         )
 
