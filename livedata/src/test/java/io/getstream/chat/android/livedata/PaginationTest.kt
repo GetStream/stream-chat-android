@@ -197,6 +197,22 @@ internal class PaginationTest {
                     },
                     listOf(it[1], it[2], it[0])
                 )
+            },
+            // last_message_at should map to channel.lastMessageAt
+            listOf(
+                randomChannelEntityPair(channel = randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2))),
+                randomChannelEntityPair(channel = randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4))),
+                randomChannelEntityPair(channel = randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3)))
+            ).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply {
+                        sort = QuerySort().apply {
+                            desc("last_message_at")
+                        }
+                    },
+                    listOf(it[1], it[2], it[0])
+                )
             }
         )
     }
