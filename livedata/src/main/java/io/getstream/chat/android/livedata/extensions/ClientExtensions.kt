@@ -113,6 +113,10 @@ internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
     get() =
         CompositeComparator(data.mapNotNull { it.comparator as? Comparator<ChannelEntityPair> })
 
+internal val QuerySort.channelComparator: Comparator<in Channel>
+    get() =
+        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
+
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 /**
  * turns created_at into createdAt
