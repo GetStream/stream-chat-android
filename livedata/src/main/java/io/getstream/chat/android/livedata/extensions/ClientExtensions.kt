@@ -115,7 +115,7 @@ internal val QuerySort.comparator: Comparator<in ChannelEntityPair>
 
 internal val QuerySort.channelComparator: Comparator<in Channel>
     get() =
-        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
+        CompositeComparator(data.mapNotNull { it.channelComparator as? Comparator<Channel> })
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 /**
@@ -127,6 +127,16 @@ internal fun String.snakeToLowerCamelCase(): String {
             .toUpperCase()
     }
 }
+
+internal val Map<String, Any>.channelComparator: Comparator<in Channel>?
+    get() =
+        (this["field"] as? String)?.let { fieldName ->
+            (this["direction"] as? Int)?.let { sortDirection ->
+                Channel::class.declaredMemberProperties
+                    .find { it.name == fieldName.snakeToLowerCamelCase() }
+                    ?.channelComparator(sortDirection)
+            }
+        }
 
 internal val Map<String, Any>.comparator: Comparator<in ChannelEntityPair>?
     get() =
@@ -143,6 +153,17 @@ internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<
         Comparator { c0, c1 ->
             (compareProperty.getter.call(c0.channel) as? Comparable<Any>)?.let { a ->
                 (compareProperty.getter.call(c1.channel) as? Comparable<Any>)?.let { b ->
+                    a.compareTo(b) * sortDirection
+                }
+            } ?: EQUAL_ON_COMPARISON
+        }
+    }
+
+internal fun KProperty1<Channel, *>?.channelComparator(sortDirection: Int): Comparator<Channel>? =
+    this?.let { compareProperty ->
+        Comparator { c0, c1 ->
+            (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
+                (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
                     a.compareTo(b) * sortDirection
                 }
             } ?: EQUAL_ON_COMPARISON
