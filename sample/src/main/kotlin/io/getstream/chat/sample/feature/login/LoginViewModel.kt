@@ -60,7 +60,8 @@ class LoginViewModel(
             }
             Chat.getInstance()
                 .setUser(
-                    chatUser, user.token,
+                    chatUser,
+                    user.token,
                     object : InitConnectionListener() {
                         override fun onSuccess(data: ConnectionData) {
                             _state.postValue(State.RedirectToChannel(cid))
