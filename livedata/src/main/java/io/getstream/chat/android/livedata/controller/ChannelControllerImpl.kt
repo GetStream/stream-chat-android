@@ -469,6 +469,7 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
+        newMessage.type = "regular"
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
@@ -694,6 +695,8 @@ internal class ChannelControllerImpl(
                 domainImpl.repos.reactions.insertReaction(reaction)
                 Result(result.data(), null)
             } else {
+                logger.logE("Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}", result.error())
+
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
