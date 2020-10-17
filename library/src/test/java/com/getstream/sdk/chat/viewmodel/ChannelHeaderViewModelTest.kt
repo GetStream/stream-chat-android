@@ -45,7 +45,7 @@ internal class ChannelHeaderViewModelTest {
         whenever(chatDomain.currentUser) doReturn CURRENT_USER
         whenever(chatDomain.useCases) doReturn useCases
         whenever(useCases.watchChannel) doReturn watchChannel
-        whenever(watchChannel.invoke(CID, 30)) doReturn channelControllerCall
+        whenever(watchChannel.invoke(CID, 0)) doReturn channelControllerCall
         whenever(channelControllerCall.execute()) doReturn channelControllerResult
         whenever(channelControllerResult.data()) doReturn channelController
     }

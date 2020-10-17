@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position;
+import com.getstream.sdk.chat.adapter.MessageListItem;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.view.MessageListView;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -28,7 +28,7 @@ public class DefaultBubbleHelper {
         return new MessageListView.BubbleHelper() {
             @NonNull
             @Override
-            public Drawable getDrawableForMessage(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
+            public Drawable getDrawableForMessage(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
@@ -47,7 +47,7 @@ public class DefaultBubbleHelper {
 
             @NotNull
             @Override
-            public Drawable getDrawableForAttachment(@NotNull Message message, boolean mine, @NotNull List<Position> positions, @NotNull Attachment attachment) {
+            public Drawable getDrawableForAttachment(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions, @NotNull Attachment attachment) {
                 if (attachment.getType() == null || attachment.getType().equals(ModelType.attach_unknown))
                     return null;
 
@@ -73,7 +73,7 @@ public class DefaultBubbleHelper {
 
             @NotNull
             @Override
-            public Drawable getDrawableForAttachmentDescription(@NotNull Message message, boolean mine, @NotNull List<Position> positions) {
+            public Drawable getDrawableForAttachmentDescription(@NotNull Message message, boolean mine, @NotNull List<? extends MessageListItem.Position> positions) {
                 if (style.getMessageBubbleDrawable(mine) != -1)
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
@@ -97,11 +97,11 @@ public class DefaultBubbleHelper {
         bottomLeftRadius = style.getMessageBottomLeftCornerRadius(isMine);
     }
 
-    private static void applyStyleDefault(List<Position> positions, boolean isMine, Context context) {
+    private static void applyStyleDefault(List<? extends MessageListItem.Position> positions, boolean isMine, Context context) {
         if (isMine) {
             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(Position.TOP)) {
+            if (positions.contains(MessageListItem.Position.Top.INSTANCE)) {
                 topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
@@ -111,7 +111,7 @@ public class DefaultBubbleHelper {
         } else {
             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(Position.TOP)) {
+            if (positions.contains(MessageListItem.Position.Top.INSTANCE)) {
                 topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {

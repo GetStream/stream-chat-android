@@ -66,7 +66,7 @@ internal class MessageInputViewModelTest {
         When calling useCases.editMessage doReturn editMessage
         When calling useCases.keystroke doReturn keystroke
         When calling useCases.stopTyping doReturn stopTyping
-        When calling watchChannel(eq(CID), eq(30)) doReturn channelControllerCall
+        When calling watchChannel(eq(CID), eq(0)) doReturn channelControllerCall
         When calling channelControllerCall.execute() doReturn channelControllerResult
         When calling channelControllerResult.data() doReturn channelController
         When calling channelController.toChannel() doReturn channel

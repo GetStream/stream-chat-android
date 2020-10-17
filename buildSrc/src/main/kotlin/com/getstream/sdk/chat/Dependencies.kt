@@ -51,6 +51,8 @@ private const val RECYCLERVIEW_VERSION = "1.2.0-alpha05"
 private const val RETROFIT_VERSION = "2.9.0"
 private const val ROOM_VERSION = "2.2.5"
 private const val STREAM_LIVEDATA_VERSION = "0.8.6"
+private const val TRUTH_VERSION = "1.0.1"
+
 
 object Dependencies {
     const val activityKtx = "androidx.activity:activity-ktx:$ACTIVITY_KTX_VERSION"
@@ -125,6 +127,7 @@ object Dependencies {
     const val retrofit = "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
     const val roomRuntime = "androidx.room:room-runtime:$ROOM_VERSION"
     const val streamLivedata = "com.github.getstream:stream-chat-android-livedata:$STREAM_LIVEDATA_VERSION"
+    const val truth = "com.google.truth:truth:$TRUTH_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

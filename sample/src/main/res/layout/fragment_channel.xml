@@ -23,10 +23,11 @@
         app:streamMessageDateShow="true"
         android:clipToPadding="false"
         android:paddingBottom="@dimen/padding_medium"
-        app:streamButtonBackground="@drawable/stream_shape_round"
+        app:streamScrollButtonBackground="@drawable/stream_shape_round"
         app:streamNewMessagesTextSingle="@string/new_messages_single"
         app:streamNewMessagesTextPlural="@string/new_messages_plural"
         app:streamNewMessagesBehaviour="count_new_messages"
+        app:streamDefaultScrollButtonEnabled="true"
         app:streamButtonIcon="@drawable/stream_bottom_arrow"
         />
 
