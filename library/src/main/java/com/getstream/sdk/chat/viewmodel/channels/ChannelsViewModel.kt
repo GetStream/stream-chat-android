@@ -9,6 +9,7 @@ import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
@@ -51,6 +52,8 @@ class ChannelsViewModelImpl(
     private val endPageData: LiveData<ChannelsViewModel.State.EndPageReached>
     private val stateMerger = MediatorLiveData<ChannelsViewModel.State>()
 
+    private val logger = ChatLogger.get("ChannelsViewModelImpl")
+
     override val state: LiveData<ChannelsViewModel.State> = stateMerger
 
     init {
@@ -58,6 +61,8 @@ class ChannelsViewModelImpl(
         queryChannelsController.run {
             loadingData.postValue(ChannelsViewModel.State.Loading)
             channelsData = map(channels) {
+                val messages = it.map { it.messages.lastOrNull()?.text }
+                logger.logI("last message text observing, channelsData found ${messages}")
                 if (it.isEmpty()) {
                     ChannelsViewModel.State.NoChannelsAvailable
                 } else {
@@ -66,6 +71,10 @@ class ChannelsViewModelImpl(
             }
             loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
             endPageData = map(endOfChannels) { ChannelsViewModel.State.EndPageReached(it) }
+        }
+        queryChannelsController.channels.observeForever {
+            val messages = it.map { it.messages.lastOrNull()?.text }
+            logger.logI("last message text observing, found $messages")
         }
 
         stateMerger.addSource(loadingData) { state -> stateMerger.value = state }

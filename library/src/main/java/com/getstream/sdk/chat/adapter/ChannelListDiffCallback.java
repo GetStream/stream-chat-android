@@ -53,10 +53,6 @@ public class ChannelListDiffCallback extends DiffUtil.Callback {
             contentTheSame = false;
         } else if (newChannel.getUpdatedAt() != null && oldChannel.getUpdatedAt().getTime() < newChannel.getUpdatedAt().getTime()) {
             contentTheSame = false;
-        } else if (oldChannel.getLastMessageAt() == null && newChannel.getLastMessageAt() != null) {
-            contentTheSame = false;
-        } else if (newChannel.getLastMessageAt() != null && oldChannel.getLastMessageAt().getTime() < newChannel.getLastMessageAt().getTime()) {
-            contentTheSame = false;
         } else if (!oldChannel.getExtraData().equals(newChannel.getExtraData())) {
             contentTheSame = false;
         } else if (!lastMessagesAreTheSame(oldChannel, newChannel)) {
