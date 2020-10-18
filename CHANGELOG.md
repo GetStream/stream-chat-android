@@ -2,7 +2,7 @@
 
 - Channels now stay sorted based on the QuerySort order (previous behaviour was to sort them once)
 - New messages now default to type "regular"
-- Channel list now correctly updates when you send a new message while offline. This fixes this fixes https://github.com/GetStream/stream-chat-android/issues/698
+- Channel list now correctly updates when you send a new message while offline. This fixes https://github.com/GetStream/stream-chat-android/issues/698
 - Improved error logging
 
 # Oct 16th, 2020 - 0.8.6
