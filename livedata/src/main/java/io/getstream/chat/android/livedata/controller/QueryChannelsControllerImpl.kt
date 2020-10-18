@@ -90,8 +90,7 @@ internal class QueryChannelsControllerImpl(
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             addChannelIfFilterMatches(event.channel)
-        }
-        if (event is CidEvent) {
+        } else if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
