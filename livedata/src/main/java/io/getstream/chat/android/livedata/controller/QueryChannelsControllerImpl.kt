@@ -89,6 +89,7 @@ internal class QueryChannelsControllerImpl(
 
     fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
+            // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
         } else if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
@@ -98,7 +99,10 @@ internal class QueryChannelsControllerImpl(
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
-            updateChannel(domainImpl.channel(event.cid).toChannel())
+            // other events don't add channels to the query
+            if (queryEntity.channelCids.contains(event.cid)) {
+                updateChannel(domainImpl.channel(event.cid).toChannel())
+            }
         }
     }
 

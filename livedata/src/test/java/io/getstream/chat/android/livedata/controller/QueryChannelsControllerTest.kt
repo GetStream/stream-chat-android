@@ -54,6 +54,22 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
+    fun `events for channels not part of the query should be ignored`() {
+        runBlocking(Dispatchers.IO) {
+            val request = QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0)
+            val queryChannelsController = chatDomainImpl.queryChannels(data.filter2, QuerySort())
+
+            queryChannelsController.runQuery(request)
+            val event = data.channelUpdatedEvent2
+            Truth.assertThat(event.channel.cid).isNotIn(queryChannelsController.queryEntity.channelCids)
+
+            queryChannelsController.handleEvent(event)
+            val cids = queryChannelsController.channels.getOrAwaitValue().map { it.cid }
+            Truth.assertThat(event.channel.cid).isNotIn(cids)
+        }
+    }
+
+    @Test
     @Ignore("mock me")
     fun testLoadMore() = runBlocking(Dispatchers.IO) {
         val paginate = QueryChannelsPaginationRequest(QuerySort(), 0, 2, 10, 0)
