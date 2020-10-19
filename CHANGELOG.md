@@ -1,6 +1,6 @@
 # To be released:
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
-
+- Fix unresponsive attachment upload buttons
 - Fix sending GIFs from keyboard
 
 # Oct 16th, 2020 - 4.3.1-beta-1
