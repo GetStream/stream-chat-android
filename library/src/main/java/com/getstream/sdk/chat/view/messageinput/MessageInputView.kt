@@ -39,7 +39,6 @@ import com.getstream.sdk.chat.utils.whenFalse
 import com.getstream.sdk.chat.utils.whenTrue
 import com.getstream.sdk.chat.view.common.ensure
 import com.getstream.sdk.chat.view.common.visible
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -202,7 +201,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
             )
         }
         binding.messageTextInput.setCallback { inputContentInfo, flags, _ ->
-            sendGiphyFromKeyboard(inputContentInfo, flags)
+            sendGifFromKeyboard(inputContentInfo, flags)
         }
     }
 
@@ -310,7 +309,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         binding.sendButton.isEnabled = true
     }
 
-    private fun sendGiphyFromKeyboard(
+    private fun sendGifFromKeyboard(
         inputContentInfo: InputContentInfoCompat,
         flags: Int
     ): Boolean {
@@ -323,14 +322,16 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
                 return false
             }
         }
-        if (inputContentInfo.linkUri == null) return false
-        val url = inputContentInfo.linkUri.toString()
-        val attachment = Attachment()
-        attachment.thumbUrl = url
-        attachment.titleLink = url
-        attachment.title = inputContentInfo.description.label.toString()
-        attachment.type = ModelType.attach_giphy
-        messageInputController.setSelectedAttachments(setOf(AttachmentMetaData(attachment)))
+        messageInputController.setSelectedAttachments(
+            setOf(
+                AttachmentMetaData(
+                    uri = inputContentInfo.contentUri,
+                    type = ModelType.attach_image,
+                    mimeType = ModelType.attach_mime_gif,
+                    title = inputContentInfo.description.label.toString(),
+                )
+            )
+        )
         binding.messageTextInput.setText("")
         onSendMessage()
         return true
