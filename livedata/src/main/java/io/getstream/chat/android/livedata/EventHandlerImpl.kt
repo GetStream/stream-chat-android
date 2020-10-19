@@ -178,6 +178,33 @@ internal class EventHandlerImpl(
             }
         }
 
+        fun addChannel(channel: Channel) {
+            // ensure we store all users for this channel
+            users.putAll(channel.users().associateBy(User::id))
+            // TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour
+            channels[channel.cid] = ChannelEntity(channel)
+        }
+
+        fun addChannelEntity(channelEntity: ChannelEntity, channelUsers: List<User>) {
+            // ensure we store all users for this channel
+            users.putAll(channelUsers.associateBy(User::id))
+            channels[channelEntity.cid] = channelEntity
+        }
+
+        fun getCurrentChannel(cId: String): ChannelEntity? {
+            return channels[cId] ?: channelMap[cId]
+        }
+
+        fun getCurrentMessage(messageId: String): MessageEntity? {
+            return messages[messageId] ?: messageMap[messageId]
+        }
+
+        fun addMessage(messageEntity: MessageEntity, messageUsers: List<User>) {
+            // ensure we store all users for this channel
+            users.putAll(messageUsers.associateBy(User::id))
+            messages[messageEntity.id] = messageEntity
+        }
+
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
             @Suppress("IMPLICIT_CAST_TO_ANY")
@@ -203,8 +230,7 @@ internal class EventHandlerImpl(
                     addMessageData(event.cid, event.message)
                 }
                 is NotificationAddedToChannelEvent -> {
-                    users.putAll(event.channel.users().associateBy(User::id))
-                    channels[event.cid] = ChannelEntity(event.channel)
+                    addChannel(event.channel)
                 }
                 is NotificationInvitedEvent -> {
                     users[event.user.id] = event.user
@@ -213,14 +239,20 @@ internal class EventHandlerImpl(
                     users[event.user.id] = event.user
                 }
                 is ChannelHiddenEvent -> {
-                    channels[event.cid] = ChannelEntity(Channel(cid = event.cid)).apply {
-                        hidden = true
-                        hideMessagesBefore = event.createdAt.takeIf { event.clearHistory }
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
+                            hidden = true
+                            hideMessagesBefore = event.createdAt.takeIf { event.clearHistory }
+                        }
+                        addChannelEntity(updatedChannel, emptyList())
                     }
                 }
                 is ChannelVisibleEvent -> {
-                    channels[event.cid] = ChannelEntity(Channel(cid = event.cid)).apply {
-                        hidden = false
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
+                            hidden = false
+                        }
+                        addChannelEntity(updatedChannel, emptyList())
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
@@ -229,123 +261,118 @@ internal class EventHandlerImpl(
                 is ConnectedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
-                is MessageReadEvent -> {
-                    // get the channel, update reads, write the channel
-                    channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
-                        }
-                    }
-                }
+
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
                     // note that we need to use event.reaction and not event.message
                     // event.message only has a subset of reactions
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
+                    getCurrentMessage(event.reaction.messageId)?.let {
+                        val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                    } ?: Unit
+                        addMessage(updatedMessage, emptyList())
+                    }
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
+                    getCurrentMessage(event.reaction.messageId)?.let {
+                        val updatedMessage = it.apply {
                             removeReaction(event.reaction, false)
                             reactionCounts = event.message.reactionCounts
                         }
-                    } ?: Unit
+                        addMessage(updatedMessage, emptyList())
+                    }
                 }
                 is ReactionUpdateEvent -> {
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
+                    getCurrentMessage(event.reaction.messageId)?.let {
+                        val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
+                        addMessage(updatedMessage, emptyList())
                     }
                 }
                 is MemberAddedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.member.user.id, event.member)
-                        channels[it.cid] = it
-                        users.put(event.member.user.id, event.member.user)
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply { setMember(event.member.user.id, event.member) }
+                        addChannelEntity(updatedChannel, listOf(event.member.user))
                     }
                 }
                 is MemberUpdatedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.member.user.id, event.member)
-                        channels[it.cid] = it
-                        users.put(event.member.user.id, event.member.user)
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply { setMember(event.member.user.id, event.member) }
+                        addChannelEntity(updatedChannel, listOf(event.member.user))
                     }
                 }
                 is MemberRemovedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.user.id, null)
-                        channels[it.cid] = it
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply { setMember(event.user.id, null) }
+                        addChannelEntity(updatedChannel, listOf(event.user))
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.user.id, null)
-                        channels[it.cid] = it
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply { setMember(event.user.id, null) }
+                        addChannelEntity(updatedChannel, listOf(event.user))
                     }
                 }
                 is ChannelUpdatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is ChannelUpdatedByUserEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is ChannelDeletedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is ChannelCreatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is ChannelMuteEvent -> {
-                    channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
+                    addChannel(event.channelMute.channel)
                 }
                 is ChannelsMuteEvent -> {
                     event.channelsMute.forEach {
-                        channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().associateBy(User::id))
+                        addChannel(it.channel)
                     }
                 }
                 is ChannelUnmuteEvent -> {
-                    channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
+                    addChannel(event.channelMute.channel)
                 }
                 is ChannelsUnmuteEvent -> {
                     event.channelsMute.forEach {
-                        channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().associateBy(User::id))
+                        addChannel(it.channel)
                     }
                 }
                 is ChannelTruncatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is NotificationChannelDeletedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    addChannel(event.channel)
+                }
+
+                is MessageReadEvent -> {
+                    // get the channel, update reads, write the channel
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
+                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        }
+                        addChannelEntity(updatedChannel, listOf(event.user))
+                    }
                 }
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
+
+                    getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
+                        addChannelEntity(updatedChannel, listOf(event.user))
                     }
                 }
                 is UserMutedEvent -> {
