@@ -36,7 +36,7 @@ class MessageListViewModel @JvmOverloads constructor(
     init {
         loading.value = State.Loading
 
-        val result = domain.useCases.watchChannel.invoke(cid, MESSAGES_LIMIT).execute()
+        val result = domain.useCases.watchChannel(cid, MESSAGES_LIMIT).execute()
         val channelController = result.data()
         channel = channelController.toChannel()
         currentUser = domain.currentUser
@@ -104,7 +104,7 @@ class MessageListViewModel @JvmOverloads constructor(
                 onEndRegionReached()
             }
             is Event.LastMessageRead -> {
-                domain.useCases.markRead.invoke(cid).enqueue()
+                domain.useCases.markRead(cid).enqueue()
             }
             is Event.ThreadModeEntered -> {
                 onThreadModeEntered(event.parentMessage)
@@ -166,10 +166,10 @@ class MessageListViewModel @JvmOverloads constructor(
     private fun onThreadModeEntered(parentMessage: Message) {
         currentMode = Mode.Thread(parentMessage)
         val parentId: String = parentMessage.id
-        val threadController = domain.useCases.getThread.invoke(cid, parentId).execute().data()
+        val threadController = domain.useCases.getThread(cid, parentId).execute().data()
         threadMessages = threadController.messages
         setThreadMessages(threadMessages)
-        domain.useCases.threadLoadMore.invoke(cid, parentId, MESSAGES_LIMIT).execute()
+        domain.useCases.threadLoadMore(cid, parentId, MESSAGES_LIMIT).enqueue()
     }
 
     private fun onNormalModeEntered() {
