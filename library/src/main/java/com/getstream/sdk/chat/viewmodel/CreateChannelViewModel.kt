@@ -16,15 +16,15 @@ import kotlin.coroutines.CoroutineContext
 
 private val CHANNEL_NAME_REGEX = Regex("^!?[\\w-]*\$")
 
-class CreateChannelViewModel @JvmOverloads constructor(
+public class CreateChannelViewModel @JvmOverloads constructor(
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance(),
     private val ioDispatcher: CoroutineContext = Dispatchers.IO
 ) : ViewModel() {
     private val stateMerger = MediatorLiveData<State>()
-    val state: LiveData<State> = stateMerger
+    public val state: LiveData<State> = stateMerger
 
-    fun onEvent(event: Event) {
+    public fun onEvent(event: Event) {
         if (event is Event.ChannelNameSubmitted) {
             val channelNameCandidate = event.channelName.replace(" ".toRegex(), "-").toLowerCase()
             val isValidName = validateChannelName(channelNameCandidate)
@@ -49,7 +49,7 @@ class CreateChannelViewModel @JvmOverloads constructor(
             this.createdBy = author
         }
         viewModelScope.launch(ioDispatcher) {
-            val result = domain.useCases.createChannel.invoke(channel).execute()
+            val result = domain.useCases.createChannel(channel).execute()
             when {
                 result.isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
@@ -65,14 +65,14 @@ class CreateChannelViewModel @JvmOverloads constructor(
         return channelNameCandidate.isNotEmpty() && channelNameCandidate.matches(CHANNEL_NAME_REGEX)
     }
 
-    sealed class State {
-        object Loading : State()
-        object ChannelCreated : State()
-        object BackendError : State()
-        object ValidationError : State()
+    public sealed class State {
+        public object Loading : State()
+        public object ChannelCreated : State()
+        public object BackendError : State()
+        public object ValidationError : State()
     }
 
-    sealed class Event {
-        data class ChannelNameSubmitted(val channelName: String) : Event()
+    public sealed class Event {
+        public data class ChannelNameSubmitted(val channelName: String) : Event()
     }
 }

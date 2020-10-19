@@ -13,15 +13,15 @@ import com.getstream.sdk.chat.view.MessageListView.HeaderOptionsClickListener
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 
-class ChannelHeaderView @JvmOverloads constructor(
+public class ChannelHeaderView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr) {
     private val binding: StreamViewChannelHeaderBinding
     private val style: ChannelHeaderViewStyle
-    var onBackClick: () -> Unit = { }
-    var currentChannel: Channel? = null
+    public var onBackClick: () -> Unit = { }
+    public var currentChannel: Channel? = null
 
     init {
         binding = initBinding(context)
@@ -29,15 +29,15 @@ class ChannelHeaderView @JvmOverloads constructor(
         applyStyle()
     }
 
-    fun setHeaderTitle(title: String?) {
+    public fun setHeaderTitle(title: String?) {
         binding.tvChannelName.text = title
     }
 
-    fun setHeaderLastActive(lastActive: String?) {
+    public fun setHeaderLastActive(lastActive: String?) {
         binding.tvActive.text = lastActive
     }
 
-    fun setActiveBadge(isActive: Boolean) {
+    public fun setActiveBadge(isActive: Boolean) {
         if (isActive) {
             binding.ivActiveBadge.setImageResource(R.drawable.stream_circle_user_online)
         } else {
@@ -45,7 +45,7 @@ class ChannelHeaderView @JvmOverloads constructor(
         }
     }
 
-    fun configHeaderAvatar(members: List<Member?>?) {
+    public fun configHeaderAvatar(members: List<Member?>?) {
         binding.avatarGroup.setLastActiveUsers(LlcMigrationUtils.getOtherUsers(members), style)
     }
 
@@ -54,13 +54,13 @@ class ChannelHeaderView @JvmOverloads constructor(
             btnBack.setOnClickListener { onBackClick() }
         }
 
-    fun setHeaderOptionsClickListener(headerOptionsClickListener: HeaderOptionsClickListener) {
+    public fun setHeaderOptionsClickListener(headerOptionsClickListener: HeaderOptionsClickListener) {
         binding.btnOption.setOnClickListener {
             currentChannel?.let { headerOptionsClickListener.onHeaderOptionsClick(it) }
         }
     }
 
-    fun setHeaderAvatarGroupClickListener(headerOptionsClickListener: HeaderAvatarGroupClickListener) {
+    public fun setHeaderAvatarGroupClickListener(headerOptionsClickListener: HeaderAvatarGroupClickListener) {
         binding.avatarGroup.setOnClickListener {
             currentChannel?.let { headerOptionsClickListener.onHeaderAvatarGroupClick(it) }
         }

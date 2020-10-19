@@ -33,7 +33,7 @@ internal class UsernameAndDateConfigurator(
             return
         }
 
-        if (style.isUserNameShow && messageItem.isTheirs()) {
+        if (style.isUserNameShow && messageItem.isTheirs) {
             binding.tvUsername.isVisible = true
             binding.tvUsername.text = messageItem.message.user.getExtraValue("name", "")
         } else {
@@ -69,7 +69,7 @@ internal class UsernameAndDateConfigurator(
                 }
                 startToStart = getActiveContentViewResId(messageItem.message, binding)
             }
-            horizontalBias = if (messageItem.isTheirs()) 0f else 1f
+            horizontalBias = if (messageItem.isTheirs) 0f else 1f
         }
     }
 

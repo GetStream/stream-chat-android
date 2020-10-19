@@ -11,7 +11,7 @@ import com.getstream.sdk.chat.view.messageinput.MessageInputStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 
-class MentionsAdapter(
+internal class MentionsAdapter(
     private val style: BaseStyle,
     private val onMentionSelected: (User) -> Unit
 ) : ListAdapter<User, MentionViewHolder>(
@@ -33,7 +33,7 @@ class MentionsAdapter(
         holder.bind(getItem(position))
 }
 
-class MentionViewHolder(
+internal class MentionViewHolder(
     private val binding: StreamItemMentionBinding,
     private val style: BaseStyle,
     private val onUserClicked: (User) -> Unit

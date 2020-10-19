@@ -5,7 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.inflater
 import com.getstream.sdk.chat.databinding.StreamItemThreadSeparatorBinding
 
-class ThreadSeparatorViewHolder(
+internal class ThreadSeparatorViewHolder(
     parent: ViewGroup,
     private val binding: StreamItemThreadSeparatorBinding =
         StreamItemThreadSeparatorBinding.inflate(parent.inflater, parent, false)

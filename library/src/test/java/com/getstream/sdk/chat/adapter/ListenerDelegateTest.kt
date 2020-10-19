@@ -8,7 +8,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_METHOD
 
 @TestInstance(PER_METHOD)
-class ListenerDelegateTest {
+internal class ListenerDelegateTest {
 
     interface TestListener {
         fun call()

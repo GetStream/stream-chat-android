@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.viewholder.attachment.BaseAttachmentViewHolder
 import com.getstream.sdk.chat.view.MessageListViewStyle
 
-class AttachmentListItemAdapter(
+internal class AttachmentListItemAdapter(
     private val messageListItem: MessageItem,
     private val factory: AttachmentViewHolderFactory,
     private val style: MessageListViewStyle

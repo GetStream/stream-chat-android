@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
 
-class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyle() {
+internal class ChannelHeaderViewStyle(context: Context?, attrs: AttributeSet?) : BaseStyle() {
     var channelTitleText: TextStyle
     var lastActiveText: TextStyle
     val isBackButtonShow: Boolean

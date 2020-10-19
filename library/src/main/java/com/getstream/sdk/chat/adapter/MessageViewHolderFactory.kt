@@ -17,33 +17,32 @@ import io.getstream.chat.android.client.models.Channel
 /**
  * Allows you to easily customize message rendering
  */
-open class MessageViewHolderFactory {
-    companion object {
-        const val MESSAGEITEM_DATE_SEPARATOR = 1
-        const val MESSAGEITEM_MESSAGE = 2
-        const val MESSAGEITEM_TYPING = 3
-        const val MESSAGEITEM_THREAD_SEPARATOR = 4
-        const val MESSAGEITEM_NOT_FOUND = 5
+public open class MessageViewHolderFactory {
+    public companion object {
+        public const val MESSAGEITEM_DATE_SEPARATOR: Int = 1
+        public const val MESSAGEITEM_MESSAGE: Int = 2
+        public const val MESSAGEITEM_TYPING: Int = 3
+        public const val MESSAGEITEM_THREAD_SEPARATOR: Int = 4
     }
 
-    lateinit var listenerContainer: ListenerContainer
+    public lateinit var listenerContainer: ListenerContainer
         internal set
-    lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
+    public lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
         internal set
-    lateinit var bubbleHelper: MessageListView.BubbleHelper
+    public lateinit var bubbleHelper: MessageListView.BubbleHelper
         internal set
 
-    open fun getMessageViewType(messageListItem: MessageListItem?): Int {
+    public open fun getMessageViewType(messageListItem: MessageListItem?): Int {
         return when (messageListItem) {
             is DateSeparatorItem -> MESSAGEITEM_DATE_SEPARATOR
             is TypingItem -> MESSAGEITEM_TYPING
             is MessageItem -> MESSAGEITEM_MESSAGE
             is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
-            else -> MESSAGEITEM_NOT_FOUND
+            else -> throw IllegalArgumentException("MessageListItem type could not be determined")
         }
     }
 
-    open fun createMessageViewHolder(
+    public open fun createMessageViewHolder(
         parent: ViewGroup,
         viewType: Int,
         style: MessageListViewStyle,
@@ -74,11 +73,11 @@ open class MessageViewHolderFactory {
             MESSAGEITEM_THREAD_SEPARATOR ->
                 ThreadSeparatorViewHolder(parent)
             else ->
-                throw IllegalArgumentException("Unhandled viewType ($viewType)")
+                throw IllegalArgumentException("Unhandled message view type ($viewType)")
         }
     }
 
-    enum class Position {
+    public enum class Position {
         TOP, MIDDLE, BOTTOM
     }
 }

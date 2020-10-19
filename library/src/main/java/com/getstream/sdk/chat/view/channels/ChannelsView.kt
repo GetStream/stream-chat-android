@@ -17,7 +17,7 @@ private val LOADING_VIEW_ID = R.id.channels_loading_view_id
 private val EMPTY_STATE_VIEW_ID = R.id.channels_empty_state_view_id
 private val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
 
-class ChannelsView @JvmOverloads constructor(
+public class ChannelsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
@@ -38,51 +38,51 @@ class ChannelsView @JvmOverloads constructor(
         }
     }
 
-    fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
+    public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.emptyStateView)
         this.emptyStateView = view.apply { id = EMPTY_STATE_VIEW_ID }
         addView(emptyStateView, layoutParams)
     }
 
-    fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
+    public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.loadingView)
         this.loadingView = view.apply { id = LOADING_VIEW_ID }
         addView(loadingView, layoutParams)
     }
 
-    fun setViewHolderFactory(factory: ChannelViewHolderFactory) {
+    public fun setViewHolderFactory(factory: ChannelViewHolderFactory) {
         this.channelListView.setViewHolderFactory(factory)
     }
 
-    fun setOnChannelClickListener(listener: (Channel) -> Unit) {
+    public fun setOnChannelClickListener(listener: (Channel) -> Unit) {
         channelListView.setOnChannelClickListener(listener)
     }
 
-    fun setOnLongClickListener(listener: ChannelClickListener) {
+    public fun setOnLongClickListener(listener: ChannelClickListener) {
         channelListView.setOnLongClickListener(listener)
     }
 
-    fun setOnEndReachedListener(listener: () -> Unit) {
+    public fun setOnEndReachedListener(listener: () -> Unit) {
         channelListView.setOnEndReachedListener(listener)
     }
 
-    fun setChannels(channels: List<Channel>) {
+    public fun setChannels(channels: List<Channel>) {
         channelListView.setChannels(channels)
     }
 
-    fun hideLoadingView() {
+    public fun hideLoadingView() {
         this.loadingView.visible(false)
     }
 
-    fun showLoadingView() {
+    public fun showLoadingView() {
         this.loadingView.visible(true)
     }
 
-    fun showEmptyStateView() {
+    public fun showEmptyStateView() {
         this.emptyStateView.visible(true)
     }
 
-    fun hideEmptyStateView() {
+    public fun hideEmptyStateView() {
         this.emptyStateView.visible(false)
     }
 

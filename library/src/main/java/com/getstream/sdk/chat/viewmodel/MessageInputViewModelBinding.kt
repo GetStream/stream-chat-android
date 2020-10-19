@@ -8,7 +8,7 @@ import io.getstream.chat.android.client.models.Message
 import java.io.File
 
 @JvmName("bind")
-fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
+public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
     view.messageSendHandler = object : MessageInputView.MessageSendHandler {
         override fun sendMessage(messageText: String) {
             this@bindView.sendMessage(messageText)

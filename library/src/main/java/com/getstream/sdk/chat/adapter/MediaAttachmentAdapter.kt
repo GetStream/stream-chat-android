@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Constant
 import com.getstream.sdk.chat.view.common.visible
 
-class MediaAttachmentAdapter(
+internal class MediaAttachmentAdapter(
     private var attachments: List<AttachmentMetaData> = emptyList(),
     var listener: (attachmentMetaData: AttachmentMetaData) -> Unit = { }
 ) : RecyclerView.Adapter<MediaAttachmentAdapter.MyViewHolder>() {

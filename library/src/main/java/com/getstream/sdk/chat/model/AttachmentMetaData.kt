@@ -5,7 +5,7 @@ import com.getstream.sdk.chat.utils.Utils
 import io.getstream.chat.android.client.models.Attachment
 import java.io.File
 
-data class AttachmentMetaData(
+internal data class AttachmentMetaData(
     var uri: Uri? = null,
     var type: String? = null,
     var mimeType: String? = null,

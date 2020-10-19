@@ -1,10 +1,7 @@
 package com.getstream.sdk.chat.utils
 
-object Constant {
+internal object Constant {
     const val USER_LIMIT = 30
-
-    // Permission Code
-    const val CAPTURE_IMAGE_REQUEST_CODE = 1002
 
     // File Attach
     const val MEDIA_TYPE_IMAGE = 1

@@ -16,7 +16,7 @@ import java.util.Locale
 
 private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
-class CaptureMediaContract : ActivityResultContract<Unit, File>() {
+internal class CaptureMediaContract : ActivityResultContract<Unit, File>() {
 
     private var pictureFile: File? = null
     private var videoFile: File? = null

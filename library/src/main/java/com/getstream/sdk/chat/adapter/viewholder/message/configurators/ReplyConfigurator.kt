@@ -79,7 +79,7 @@ internal class ReplyConfigurator(
         val paramsText = binding.tvReply.layoutParams as ConstraintLayout.LayoutParams
 
         // Set Constraint
-        if (messageItem.isTheirs()) {
+        if (messageItem.isTheirs) {
             binding.ivReply.setBackgroundResource(R.drawable.stream_ic_reply_incoming)
             paramsArrow.horizontalBias = 0f
             paramsArrow.startToStart = getActiveContentViewResId(messageItem.message, binding)

@@ -5,7 +5,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 /**
  * MessageListItemWrapper wraps a list of MessageListItem with a few extra fields.
  */
-data class MessageListItemWrapper(
+public data class MessageListItemWrapper(
     val items: List<MessageListItem> = listOf(),
     var loadingMore: Boolean = false,
     val hasNewMessages: Boolean = false,

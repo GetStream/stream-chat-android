@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 
 @JvmName("bind")
-fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
+public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
     members.observe(lifecycleOwner) { members ->
         view.setHeaderLastActive(members.lastActive(view.context))
         view.configHeaderAvatar(members)

@@ -22,7 +22,7 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 import top.defaults.drawabletoolbox.DrawableBuilder
 
-class AttachmentViewHolderMedia(
+internal class AttachmentViewHolderMedia(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,

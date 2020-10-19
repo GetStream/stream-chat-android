@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.navigation
 
 import com.getstream.sdk.chat.navigation.destinations.ChatDestination
 
-class ChatNavigatorImpl : ChatNavigator {
+internal class ChatNavigatorImpl : ChatNavigator {
     private object EMPTY_HANDLER : ChatNavigationHandler {
         override fun navigate(destination: ChatDestination) = false
     }

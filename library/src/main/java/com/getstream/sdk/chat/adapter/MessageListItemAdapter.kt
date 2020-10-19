@@ -6,7 +6,7 @@ import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 
-class MessageListItemAdapter(
+internal class MessageListItemAdapter(
     private val channel: Channel,
     private val viewHolderFactory: MessageViewHolderFactory,
     private val style: MessageListViewStyle

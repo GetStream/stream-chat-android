@@ -2,7 +2,7 @@ package com.getstream.sdk.chat.utils.livedata
 
 import androidx.lifecycle.Observer
 
-class TestObserver<T> : Observer<T> {
+internal class TestObserver<T> : Observer<T> {
     var lastObservedValue: T? = null
         private set
 

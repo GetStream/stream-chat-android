@@ -95,7 +95,7 @@ internal class IndicatorConfigurator(
 
         binding.readState.apply {
             isVisible = true
-            setReads(readBy, messageItem.isTheirs(), style)
+            setReads(readBy, messageItem.isTheirs, style)
             setOnClickListener {
                 readStateClickListener.onReadStateClick(readBy)
             }

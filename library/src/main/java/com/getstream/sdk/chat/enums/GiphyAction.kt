@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.enums
 
-enum class GiphyAction {
+public enum class GiphyAction {
     SEND,
     SHUFFLE,
     CANCEL
