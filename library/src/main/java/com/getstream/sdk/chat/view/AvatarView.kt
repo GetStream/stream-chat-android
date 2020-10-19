@@ -42,7 +42,6 @@ internal class AvatarView @JvmOverloads constructor(
                 channel?.createBitmap()?.let { listOf(it) }
                     ?: lastActiveUsers.createBitmaps(style).takeUnless { it.isEmpty() }
                     ?: LlcMigrationUtils.getInitials(channel)?.let { listOf(createImageRounded(it, style)) }
-                    ?: listOf()
             )
         }
     }
@@ -67,7 +66,7 @@ internal class AvatarView @JvmOverloads constructor(
             image,
             ImageLoader.ImageTransformation.Circle
         )
-            ?: createImageRounded(LlcMigrationUtils.getInitials(this) ?: "", style)
+            ?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
 
     private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
         take(3).map { it.createBitmap(style) }
