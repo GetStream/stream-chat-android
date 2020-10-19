@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
@@ -12,8 +11,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.io.File
 
 private const val MESSAGE_LIMIT = 30
@@ -50,9 +47,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
 
-        GlobalScope.launch {
-            chatDomain.useCases.sendMessage(message.apply(messageTransformer)).enqueue()
-        }
+        chatDomain.useCases.sendMessage(message.apply(messageTransformer)).enqueue()
     }
 
     fun sendMessageWithAttachments(
@@ -62,11 +57,9 @@ class MessageInputViewModel @JvmOverloads constructor(
     ) {
         // Send message should not be cancelled when viewModel.onCleared is called
         val attachments = attachmentFiles.map { Attachment(upload = it) }.toMutableList()
-        val message = Message(cid = cid, text = message, attachments = attachments).apply(messageTransformer)
-        GlobalScope.launch {
-            chatDomain.useCases.sendMessage(message)
-                .enqueue()
-        }
+        val message =
+            Message(cid = cid, text = message, attachments = attachments).apply(messageTransformer)
+        chatDomain.useCases.sendMessage(message).enqueue()
     }
 
     /**
@@ -76,10 +69,7 @@ class MessageInputViewModel @JvmOverloads constructor(
      */
     fun editMessage(message: Message) {
         stopTyping()
-
-        viewModelScope.launch {
-            chatDomain.useCases.editMessage(message).enqueue()
-        }
+        chatDomain.useCases.editMessage(message).enqueue()
     }
 
     /**
@@ -89,10 +79,7 @@ class MessageInputViewModel @JvmOverloads constructor(
     @Synchronized
     fun keystroke() {
         if (isThread) return
-
-        viewModelScope.launch {
-            chatDomain.useCases.keystroke(cid).enqueue()
-        }
+        chatDomain.useCases.keystroke(cid).enqueue()
     }
 
     /**
@@ -100,8 +87,6 @@ class MessageInputViewModel @JvmOverloads constructor(
      */
     fun stopTyping() {
         if (isThread) return
-        viewModelScope.launch {
-            chatDomain.useCases.stopTyping(cid).enqueue()
-        }
+        chatDomain.useCases.stopTyping(cid).enqueue()
     }
 }
