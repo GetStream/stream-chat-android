@@ -81,7 +81,7 @@ internal class QueryChannelsControllerImpl(
         if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
             channelControllerImpl.updateLiveDataFromChannel(channel)
-            addChannels(listOf(channel.cid))
+            addToQueryResult(listOf(channel.cid))
         }
     }
 
@@ -106,7 +106,7 @@ internal class QueryChannelsControllerImpl(
             logger.logI("received channel event $event")
 
             // update the channels
-            updateChannel(event.cid)
+            refreshChannel(event.cid)
         }
     }
 
@@ -182,7 +182,7 @@ internal class QueryChannelsControllerImpl(
         } else { null }
         val channels = queryOfflineJob.await()
 
-        updateQueryResults(channels, pagination.isFirstPage)
+        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
@@ -191,7 +191,7 @@ internal class QueryChannelsControllerImpl(
             val result = queryOnlineJob.await()
             output = result
             if (result.isSuccess) {
-                updateQueryResults(output.data(), pagination.isFirstPage)
+                updateChannelsAndQueryResults(output.data(), pagination.isFirstPage)
                 domainImpl.repos.queryChannels.insert(queryEntity)
             }
         } else {
@@ -202,44 +202,54 @@ internal class QueryChannelsControllerImpl(
         return output
     }
 
-    private fun updateQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+    /**
+     * Updates the state on the channelController based on the channel object we received
+     * This is used for both the online and offline query flow
+     *
+     * @param channels the list of channels to update
+     * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
+     *
+     */
+    private fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
         if (channels != null) {
             val cIds = channels.map { it.cid }
             // initialize channel repos for all of these channels
             for (c in channels) {
-                val channelRepo = domainImpl.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
+                val channelController = domainImpl.channel(c)
+                channelController.updateLiveDataFromChannel(c)
             }
             // if it's the first page, we replace the current results
             if (isFirstPage) {
-                setChannels(cIds)
+                setQueryResult(cIds)
             } else {
-                addChannels(cIds)
+                addToQueryResult(cIds)
             }
         }
     }
 
     /**
-     * Updates a channel on this query
-     * Note that this only updates channels that are already matching with the query
+     * refreshes a single channel
+     * Note that this only refreshes channels that are already matching with the query
+     * It retrieves the data from the current channelController object
      *
      * @param cId the channel to update
      *
-     * If you want to add to the list of channels use the
+     * If you want to add to the list of channels use the addToQueryResult method
      *
-     * {@link #addChannels(newChannels: List<Channel>) addChannels} method
+     * @see addToQueryResult
      */
-    fun updateChannel(cId: String) {
-        updateChannels(listOf(cId))
+    fun refreshChannel(cId: String) {
+        refreshChannels(listOf(cId))
     }
 
     /**
-     * Updates multiple channels on this query
+     * Refreshes multiple channels on this query
      * Note that it retrieves the data from the current channelController object
      *
-     * @param cIds the channels to update
+     * @param cIds the channels to refresh
+     * @see ChannelController
      */
-    private fun updateChannels(cIds: List<String>) {
+    private fun refreshChannels(cIds: List<String>) {
         val cIdsInQuery = queryEntity.channelCids.intersect(cIds)
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
         val existingChannelMap = _channels.value ?: mapOf()
@@ -251,22 +261,30 @@ internal class QueryChannelsControllerImpl(
     /**
      * Adds the list of channels to the current query.
      * Channels are sorted based on the specified QuerySort
+     * Triggers a refresh of these channels based on the current state on the ChannelController
+     *
+     * @param cIds the list of channel ids to add to the query result
      *
      * @see QuerySort
+     * @see ChannelController
      */
-    private fun addChannels(cIds: List<String>) {
+    private fun addToQueryResult(cIds: List<String>) {
         queryEntity.channelCids = (queryEntity.channelCids + cIds).distinct()
-        updateChannels(cIds)
+        refreshChannels(cIds)
     }
 
     /**
-     * Replaces the existing list of channels with a new list
+     * Replaces the existing list of results for this query with a new list of channels
+     * Channels are sorted based on the specified QuerySort
+     * Triggers a refresh of these channels based on the current state on the ChannelController
      *
+     * @param cIds the new list of channels
      * @see QuerySort
+     * @see ChannelController
      */
-    private fun setChannels(cIds: List<String>) {
+    private fun setQueryResult(cIds: List<String>) {
         // If you query for page 1 we remove the old data
         queryEntity.channelCids = cIds
-        updateChannels(cIds)
+        refreshChannels(cIds)
     }
 }

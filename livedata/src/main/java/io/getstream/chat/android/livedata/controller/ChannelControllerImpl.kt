@@ -483,7 +483,7 @@ internal class ChannelControllerImpl(
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update livedata for currently running queries
         for (query in domainImpl.getActiveQueries()) {
-            query.updateChannel(cid)
+            query.refreshChannel(cid)
         }
 
         // we insert early to ensure we don't lose messages
