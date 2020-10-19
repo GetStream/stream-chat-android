@@ -16,36 +16,36 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 
-private const val MESSAGE_LIMIT = 30
-
-class MessageInputViewModel @JvmOverloads constructor(
+public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance()
 ) : ViewModel() {
     private val channelController: ChannelController =
         chatDomain.useCases.watchChannel(cid, 0).execute().data()
-    private var channelState = MutableLiveData<Channel>(channelController.toChannel())
-    val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
-    val members: LiveData<List<Member>> = channelController.members
-    private var activeThread = MutableLiveData<Message?>()
-    val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
-    fun setActiveThread(parentMessage: Message) {
+    private var channelState = MutableLiveData<Channel>(channelController.toChannel())
+    public val commands: LiveData<List<Command>> = map(channelState) { it.config.commands }
+
+    public val members: LiveData<List<Member>> = channelController.members
+    private var activeThread = MutableLiveData<Message?>()
+    public val editMessage: MutableLiveData<Message?> = MutableLiveData()
+
+    public fun setActiveThread(parentMessage: Message) {
         activeThread.postValue(parentMessage)
     }
 
-    fun getActiveThread(): LiveData<Message?> {
+    public fun getActiveThread(): LiveData<Message?> {
         return activeThread
     }
 
     private val isThread: Boolean
         get() = activeThread.value != null
 
-    fun resetThread() {
+    public fun resetThread() {
         activeThread.postValue(null)
     }
 
-    fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
+    public fun sendMessage(messageText: String, messageTransformer: Message.() -> Unit = { }) {
         val message = Message(cid = cid, text = messageText)
         activeThread.value?.let { message.parentId = it.id }
         stopTyping()
@@ -55,7 +55,7 @@ class MessageInputViewModel @JvmOverloads constructor(
         }
     }
 
-    fun sendMessageWithAttachments(
+    public fun sendMessageWithAttachments(
         message: String,
         attachmentFiles: List<File>,
         messageTransformer: Message.() -> Unit = { }
@@ -74,7 +74,7 @@ class MessageInputViewModel @JvmOverloads constructor(
      *
      * @param message the Message sent
      */
-    fun editMessage(message: Message) {
+    public fun editMessage(message: Message) {
         stopTyping()
 
         viewModelScope.launch {
@@ -87,7 +87,7 @@ class MessageInputViewModel @JvmOverloads constructor(
      * Call this on every keystroke
      */
     @Synchronized
-    fun keystroke() {
+    public fun keystroke() {
         if (isThread) return
 
         viewModelScope.launch {
@@ -98,7 +98,7 @@ class MessageInputViewModel @JvmOverloads constructor(
     /**
      * stopTyping - Sets last typing to null and sends the typing.stop event
      */
-    fun stopTyping() {
+    public fun stopTyping() {
         if (isThread) return
         viewModelScope.launch {
             chatDomain.useCases.stopTyping(cid).enqueue()

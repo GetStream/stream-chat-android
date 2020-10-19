@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.models.User
 import kotlinx.android.synthetic.main.stream_dialog_message_moreaction.*
 import top.defaults.drawabletoolbox.DrawableBuilder
 
-class MessageMoreActionDialog(
+internal class MessageMoreActionDialog(
     context: Context,
     private val channel: Channel,
     private val message: Message,

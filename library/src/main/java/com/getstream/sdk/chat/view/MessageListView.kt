@@ -26,6 +26,14 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
+import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
+import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
+import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
+import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
+import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
+import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -44,7 +52,7 @@ import io.getstream.chat.android.client.models.User
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-class MessageListView : ConstraintLayout {
+public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
 
@@ -64,7 +72,7 @@ class MessageListView : ConstraintLayout {
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
 
-    var unseenButtonEnabled = true
+    public var unseenButtonEnabled: Boolean = true
 
     private var hasScrolledUp = false
 
@@ -182,16 +190,16 @@ class MessageListView : ConstraintLayout {
     private lateinit var attachmentViewHolderFactory: AttachmentViewHolderFactory
     private lateinit var messageViewHolderFactory: MessageViewHolderFactory
 
-    constructor(context: Context) : super(context) {
+    public constructor(context: Context) : super(context) {
         init(context, null)
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         parseAttr(context, attrs)
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
         context,
         attrs,
         defStyle
@@ -346,7 +354,7 @@ class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    fun init(channel: Channel, currentUser: User) {
+    public fun init(channel: Channel, currentUser: User) {
         this.currentUser = currentUser
         this.channel = channel
         initAdapter()
@@ -381,36 +389,36 @@ class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
-    fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {
+    public fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {
         this.scrollButtonBehaviour = scrollButtonBehaviour
     }
 
-    fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
+    public fun setNewMessagesBehaviour(newMessagesBehaviour: NewMessagesBehaviour) {
         this.newMessagesBehaviour = newMessagesBehaviour
     }
 
-    fun setScrollButtonBackgroundResource(@DrawableRes backgroundRes: Int) {
+    public fun setScrollButtonBackgroundResource(@DrawableRes backgroundRes: Int) {
         binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
     }
 
-    fun setScrollButtonBackground(drawable: Drawable?) {
+    public fun setScrollButtonBackground(drawable: Drawable?) {
         binding.scrollBottomBtn.background = drawable
     }
 
-    fun setScrollButtonIconResource(@DrawableRes backgroundRes: Int) {
+    public fun setScrollButtonIconResource(@DrawableRes backgroundRes: Int) {
         binding.scrollIconIV.setImageResource(backgroundRes)
     }
 
-    fun setScrollButtonIcon(drawable: Drawable?) {
+    public fun setScrollButtonIcon(drawable: Drawable?) {
         binding.scrollIconIV.setImageDrawable(drawable)
     }
 
-    fun setAttachmentViewHolderFactory(attachmentViewHolderFactory: AttachmentViewHolderFactory) {
+    public fun setAttachmentViewHolderFactory(attachmentViewHolderFactory: AttachmentViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set AttachmentViewHolderFactory first" }
         this.attachmentViewHolderFactory = attachmentViewHolderFactory
     }
 
-    fun setMessageViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
+    public fun setMessageViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set MessageViewHolderFactory first" }
         this.messageViewHolderFactory = messageViewHolderFactory
     }
@@ -423,20 +431,20 @@ class MessageListView : ConstraintLayout {
         level = DeprecationLevel.WARNING,
         replaceWith = ReplaceWith("setMessageViewHolderFactory(messageViewHolderFactory)")
     )
-    fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
+    public fun setViewHolderFactory(messageViewHolderFactory: MessageViewHolderFactory) {
         setMessageViewHolderFactory(messageViewHolderFactory)
     }
 
-    fun setBubbleHelper(bubbleHelper: BubbleHelper) {
+    public fun setBubbleHelper(bubbleHelper: BubbleHelper) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set BubbleHelper first" }
         this.bubbleHelper = bubbleHelper
     }
 
-    fun displayNewMessage(listItem: MessageListItemWrapper) {
+    public fun displayNewMessage(listItem: MessageListItemWrapper) {
         buffer.enqueueData(listItem)
     }
 
-    fun scrollToBottom() {
+    public fun scrollToBottom() {
         layoutManager.scrollToPosition(adapter.itemCount - 1)
     }
 
@@ -555,7 +563,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param messageClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setMessageClickListener(messageClickListener: MessageClickListener?) {
+    public fun setMessageClickListener(messageClickListener: MessageClickListener?) {
         listenerContainer.messageClickListener =
             messageClickListener ?: DEFAULT_MESSAGE_CLICK_LISTENER
     }
@@ -565,7 +573,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param messageLongClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
+    public fun setMessageLongClickListener(messageLongClickListener: MessageLongClickListener?) {
         listenerContainer.messageLongClickListener =
             messageLongClickListener ?: DEFAULT_MESSAGE_LONG_CLICK_LISTENER
     }
@@ -575,7 +583,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param messageRetryListener The listener to use. If null, the default will be used instead.
      */
-    fun setMessageRetryListener(messageRetryListener: MessageRetryListener?) {
+    public fun setMessageRetryListener(messageRetryListener: MessageRetryListener?) {
         listenerContainer.messageRetryListener =
             messageRetryListener ?: DEFAULT_MESSAGE_RETRY_LISTENER
     }
@@ -585,7 +593,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param attachmentClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setAttachmentClickListener(attachmentClickListener: AttachmentClickListener?) {
+    public fun setAttachmentClickListener(attachmentClickListener: AttachmentClickListener?) {
         listenerContainer.attachmentClickListener =
             attachmentClickListener ?: DEFAULT_ATTACHMENT_CLICK_LISTENER
     }
@@ -595,7 +603,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param reactionViewClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setReactionViewClickListener(reactionViewClickListener: ReactionViewClickListener?) {
+    public fun setReactionViewClickListener(reactionViewClickListener: ReactionViewClickListener?) {
         listenerContainer.reactionViewClickListener =
             reactionViewClickListener ?: DEFAULT_REACTION_VIEW_CLICK_LISTENER
     }
@@ -605,7 +613,7 @@ class MessageListView : ConstraintLayout {
      *
      * @param userClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setUserClickListener(userClickListener: UserClickListener?) {
+    public fun setUserClickListener(userClickListener: UserClickListener?) {
         listenerContainer.userClickListener = userClickListener ?: DEFAULT_USER_CLICK_LISTENER
     }
 
@@ -614,112 +622,112 @@ class MessageListView : ConstraintLayout {
      *
      * @param readStateClickListener The listener to use. If null, the default will be used instead.
      */
-    fun setReadStateClickListener(readStateClickListener: ReadStateClickListener?) {
+    public fun setReadStateClickListener(readStateClickListener: ReadStateClickListener?) {
         listenerContainer.readStateClickListener =
             readStateClickListener ?: DEFAULT_READ_STATE_CLICK_LISTENER
     }
 
-    fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
+    public fun setEndRegionReachedHandler(endRegionReachedHandler: () -> Unit) {
         this.endRegionReachedHandler = endRegionReachedHandler
     }
 
-    fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
+    public fun setLastMessageReadHandler(lastMessageReadHandler: () -> Unit) {
         this.lastMessageReadHandler = lastMessageReadHandler
     }
 
-    fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
+    public fun setOnMessageEditHandler(onMessageEditHandler: (Message) -> Unit) {
         this.onMessageEditHandler = onMessageEditHandler
     }
 
-    fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
+    public fun setOnMessageDeleteHandler(onMessageDeleteHandler: (Message) -> Unit) {
         this.onMessageDeleteHandler = onMessageDeleteHandler
     }
 
-    fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
+    public fun setOnStartThreadHandler(onStartThreadHandler: (Message) -> Unit) {
         this.onStartThreadHandler = onStartThreadHandler
     }
 
-    fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
+    public fun setOnMessageFlagHandler(onMessageFlagHandler: (Message) -> Unit) {
         this.onMessageFlagHandler = onMessageFlagHandler
     }
 
-    fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
+    public fun setOnSendGiphyHandler(onSendGiphyHandler: (Message, GiphyAction) -> Unit) {
         this.onSendGiphyHandler = onSendGiphyHandler
     }
 
-    fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
+    public fun setOnMessageRetryHandler(onMessageRetryHandler: (Message) -> Unit) {
         this.onMessageRetryHandler = onMessageRetryHandler
     }
 
-    fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
+    public fun setOnStartThreadListener(onStartThreadListener: (Message) -> Unit) {
         this.onStartThreadListener = onStartThreadListener
     }
 
-    fun interface HeaderAvatarGroupClickListener {
-        fun onHeaderAvatarGroupClick(channel: Channel)
+    public fun interface HeaderAvatarGroupClickListener {
+        public fun onHeaderAvatarGroupClick(channel: Channel)
     }
 
-    fun interface HeaderOptionsClickListener {
-        fun onHeaderOptionsClick(channel: Channel)
+    public fun interface HeaderOptionsClickListener {
+        public fun onHeaderOptionsClick(channel: Channel)
     }
 
-    fun interface MessageClickListener {
-        fun onMessageClick(message: Message)
+    public fun interface MessageClickListener {
+        public fun onMessageClick(message: Message)
     }
 
-    fun interface MessageRetryListener {
-        fun onRetryMessage(message: Message)
+    public fun interface MessageRetryListener {
+        public fun onRetryMessage(message: Message)
     }
 
-    fun interface MessageLongClickListener {
-        fun onMessageLongClick(message: Message)
+    public fun interface MessageLongClickListener {
+        public fun onMessageLongClick(message: Message)
     }
 
-    fun interface AttachmentClickListener {
-        fun onAttachmentClick(message: Message, attachment: Attachment)
+    public fun interface AttachmentClickListener {
+        public fun onAttachmentClick(message: Message, attachment: Attachment)
     }
 
-    fun interface GiphySendListener {
-        fun onGiphySend(message: Message, action: GiphyAction)
+    public fun interface GiphySendListener {
+        public fun onGiphySend(message: Message, action: GiphyAction)
     }
 
-    fun interface UserClickListener {
-        fun onUserClick(user: User)
+    public fun interface UserClickListener {
+        public fun onUserClick(user: User)
     }
 
-    fun interface ReadStateClickListener {
-        fun onReadStateClick(reads: List<ChannelUserRead>)
+    public fun interface ReadStateClickListener {
+        public fun onReadStateClick(reads: List<ChannelUserRead>)
     }
 
-    fun interface ReactionViewClickListener {
-        fun onReactionViewClick(message: Message)
+    public fun interface ReactionViewClickListener {
+        public fun onReactionViewClick(message: Message)
     }
 
-    interface BubbleHelper {
-        fun getDrawableForMessage(
+    public interface BubbleHelper {
+        public fun getDrawableForMessage(
             message: Message,
             mine: Boolean,
             positions: List<MessageListItem.Position>
         ): Drawable
 
-        fun getDrawableForAttachment(
+        public fun getDrawableForAttachment(
             message: Message,
             mine: Boolean,
             positions: List<MessageListItem.Position>,
             attachment: Attachment
         ): Drawable
 
-        fun getDrawableForAttachmentDescription(
+        public fun getDrawableForAttachmentDescription(
             message: Message,
             mine: Boolean,
             positions: List<MessageListItem.Position>
         ): Drawable
     }
 
-    enum class NewMessagesBehaviour(val value: Int) {
+    public enum class NewMessagesBehaviour(internal val value: Int) {
         SCROLL_TO_BOTTOM(0), COUNT_UPDATE(1);
 
-        companion object {
+        internal companion object {
             fun parseValue(value: Int): NewMessagesBehaviour {
                 return values().find { behaviour -> behaviour.value == value }
                     ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
@@ -727,10 +735,10 @@ class MessageListView : ConstraintLayout {
         }
     }
 
-    interface ScrollButtonBehaviour {
-        fun userScrolledUp()
-        fun userScrolledToTheBottom()
-        fun onUnreadMessageCountChanged(count: Int)
+    public interface ScrollButtonBehaviour {
+        public fun userScrolledUp()
+        public fun userScrolledToTheBottom()
+        public fun onUnreadMessageCountChanged(count: Int)
     }
 
     internal class DefaultScrollButtonBehaviour(

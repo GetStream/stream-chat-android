@@ -6,7 +6,7 @@ import android.util.TypedValue
 import android.widget.TextView
 import com.getstream.sdk.chat.Chat
 
-class TextStyle {
+public class TextStyle {
     private companion object {
         const val UNSET_SIZE = -1
         const val UNSET_COLOR = -1
@@ -14,19 +14,19 @@ class TextStyle {
         const val UNSET_FONT_RESOURCE = -1
     }
 
-    var fontResource: Int = UNSET_FONT_RESOURCE
-    var fontAssetsPath: String? = null
-    var style: Int = -1
-    var size: Int = UNSET_SIZE
-    var color: Int = UNSET_COLOR
-    var hintColor: Int = UNSET_HINT_COLOR
+    public var fontResource: Int = UNSET_FONT_RESOURCE
+    public var fontAssetsPath: String? = null
+    public var style: Int = -1
+    public var size: Int = UNSET_SIZE
+    public var color: Int = UNSET_COLOR
+    public var hintColor: Int = UNSET_HINT_COLOR
 
-    val font: Typeface?
+    public val font: Typeface?
         get() {
             return Chat.getInstance().fonts.getFont(this)
         }
 
-    fun apply(textView: TextView) {
+    public fun apply(textView: TextView) {
         val chatFonts = Chat.getInstance().fonts
 
         if (size != UNSET_SIZE) {
@@ -42,37 +42,37 @@ class TextStyle {
         chatFonts.setFont(this, textView)
     }
 
-    fun hasFont(): Boolean {
+    public fun hasFont(): Boolean {
         return fontAssetsPath != null || fontResource != UNSET_FONT_RESOURCE
     }
 
-    class Builder(private val array: TypedArray) {
+    public class Builder(private val array: TypedArray) {
         private val result: TextStyle = TextStyle()
 
-        fun size(ref: Int): Builder = size(ref, -1)
+        public fun size(ref: Int): Builder = size(ref, -1)
 
-        fun size(ref: Int, defValue: Int): Builder = apply {
+        public fun size(ref: Int, defValue: Int): Builder = apply {
             result.size = array.getDimensionPixelSize(ref, defValue)
         }
 
-        fun font(assetsPath: Int, resId: Int): Builder = apply {
+        public fun font(assetsPath: Int, resId: Int): Builder = apply {
             result.fontAssetsPath = array.getString(assetsPath)
             result.fontResource = array.getResourceId(resId, -1)
         }
 
-        fun color(ref: Int, defValue: Int): Builder = apply {
+        public fun color(ref: Int, defValue: Int): Builder = apply {
             result.color = array.getColor(ref, defValue)
         }
 
-        fun hintColor(ref: Int, defValue: Int): Builder = apply {
+        public fun hintColor(ref: Int, defValue: Int): Builder = apply {
             result.hintColor = array.getColor(ref, defValue)
         }
 
-        fun style(ref: Int, defValue: Int): Builder = apply {
+        public fun style(ref: Int, defValue: Int): Builder = apply {
             result.style = array.getInt(ref, defValue)
         }
 
-        fun build(): TextStyle {
+        public fun build(): TextStyle {
             return result
         }
     }

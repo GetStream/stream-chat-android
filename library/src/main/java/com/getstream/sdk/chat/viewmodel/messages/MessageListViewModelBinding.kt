@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Retr
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
 @JvmName("bind")
-fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
+public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     view.init(channel, currentUser)
     view.setEndRegionReachedHandler { onEvent(EndRegionReached) }
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }

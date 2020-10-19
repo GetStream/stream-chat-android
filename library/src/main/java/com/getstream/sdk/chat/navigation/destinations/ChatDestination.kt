@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 
-abstract class ChatDestination(protected val context: Context) {
-    abstract fun navigate()
+public abstract class ChatDestination(protected val context: Context) {
+    public abstract fun navigate()
 
     protected fun start(intent: Intent) {
         context.startActivity(intent)

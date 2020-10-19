@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.view.View
 
-fun View.visible(isVisible: Boolean) {
+internal fun View.visible(isVisible: Boolean) {
     visibility = if (isVisible) {
         View.VISIBLE
     } else {

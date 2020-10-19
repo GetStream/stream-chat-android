@@ -13,7 +13,7 @@ import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.StringUtility
 import top.defaults.drawabletoolbox.DrawableBuilder
 
-class MediaAttachmentSelectedAdapter(
+internal class MediaAttachmentSelectedAdapter(
     private var selectedAttachments: List<AttachmentMetaData> = emptyList(),
     var cancelListener: (AttachmentMetaData) -> Unit = { }
 ) : RecyclerView.Adapter<MediaAttachmentSelectedAdapter.MyViewHolder>() {

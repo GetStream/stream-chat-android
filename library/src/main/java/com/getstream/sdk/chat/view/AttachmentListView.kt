@@ -8,7 +8,7 @@ import com.getstream.sdk.chat.adapter.AttachmentListItemAdapter
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 
-class AttachmentListView : RecyclerView {
+internal class AttachmentListView : RecyclerView {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)

@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.MessageListItem
 
-abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
+public abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
     itemView: View
 ) : RecyclerView.ViewHolder(itemView) {
 
@@ -13,7 +13,7 @@ abstract class BaseMessageListItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T
      */
     @Suppress("UNCHECKED_CAST")
-    fun bindListItem(messageListItem: MessageListItem) = bind(messageListItem as T)
+    internal fun bindListItem(messageListItem: MessageListItem) = bind(messageListItem as T)
 
     protected abstract fun bind(messageListItem: T)
 

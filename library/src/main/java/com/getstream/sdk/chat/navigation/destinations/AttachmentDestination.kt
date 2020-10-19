@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 
-class AttachmentDestination(
+internal class AttachmentDestination(
     val message: Message,
     val attachment: Attachment,
     context: Context

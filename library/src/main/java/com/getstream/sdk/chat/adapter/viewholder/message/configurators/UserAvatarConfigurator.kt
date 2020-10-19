@@ -46,7 +46,7 @@ internal class UserAvatarConfigurator(
         binding.avatar.updateLayoutParams<ConstraintLayout.LayoutParams> {
             val avatarMargin =
                 context.resources.getDimension(R.dimen.stream_message_avatar_margin).toInt()
-            if (messageItem.isTheirs()) {
+            if (messageItem.isTheirs) {
                 startToStart = ConstraintLayout.LayoutParams.PARENT_ID
                 marginStart = avatarMargin
                 marginEnd = 0

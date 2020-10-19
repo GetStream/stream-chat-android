@@ -12,21 +12,21 @@ import com.getstream.sdk.chat.view.MessageListViewStyle
 /**
  * Allows you to easily customize attachment rendering
  */
-open class AttachmentViewHolderFactory {
+public open class AttachmentViewHolderFactory {
 
-    companion object {
-        const val GENERIC_ATTACHMENT = 1
-        const val IMAGE_ATTACHMENT = 2
-        const val VIDEO_ATTACHMENT = 3
-        const val FILE_ATTACHMENT = 4
+    public companion object {
+        public const val GENERIC_ATTACHMENT: Int = 1
+        public const val IMAGE_ATTACHMENT: Int = 2
+        public const val VIDEO_ATTACHMENT: Int = 3
+        public const val FILE_ATTACHMENT: Int = 4
     }
 
-    lateinit var listenerContainer: ListenerContainer
+    public lateinit var listenerContainer: ListenerContainer
         internal set
-    lateinit var bubbleHelper: MessageListView.BubbleHelper
+    public lateinit var bubbleHelper: MessageListView.BubbleHelper
         internal set
 
-    open fun getAttachmentViewType(
+    public open fun getAttachmentViewType(
         attachmentItem: AttachmentListItem
     ): Int {
         return when (attachmentItem.attachment.type) {
@@ -43,7 +43,7 @@ open class AttachmentViewHolderFactory {
         }
     }
 
-    open fun createAttachmentViewHolder(
+    public open fun createAttachmentViewHolder(
         parent: ViewGroup,
         viewType: Int,
         style: MessageListViewStyle,

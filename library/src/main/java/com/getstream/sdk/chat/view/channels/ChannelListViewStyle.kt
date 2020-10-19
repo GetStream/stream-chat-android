@@ -10,7 +10,7 @@ import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.style.TextStyle
 import com.getstream.sdk.chat.view.BaseStyle
 
-class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
+internal class ChannelListViewStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
 
     @JvmField
     @LayoutRes

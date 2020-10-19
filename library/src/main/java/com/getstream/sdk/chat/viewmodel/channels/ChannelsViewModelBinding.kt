@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
 @JvmName("bind")
-fun ChannelsViewModel.bindView(view: ChannelsView, lifecycle: LifecycleOwner) {
+public fun ChannelsViewModel.bindView(view: ChannelsView, lifecycle: LifecycleOwner) {
     state.observe(lifecycle) {
         when (it) {
             is ChannelsViewModel.State.Result -> {
