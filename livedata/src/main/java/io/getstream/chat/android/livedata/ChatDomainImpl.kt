@@ -29,6 +29,7 @@ import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
@@ -174,7 +175,7 @@ internal class ChatDomainImpl private constructor(
     ) : this(client, currentUser, handler, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
-        repos = RepositoryHelper(client, currentUser, db, scope)
+        repos = RepositoryHelper(RepositoryFactory(db, client, currentUser), scope)
 
         // load channel configs from Room into memory
         initJob = scope.async(scope.coroutineContext) {

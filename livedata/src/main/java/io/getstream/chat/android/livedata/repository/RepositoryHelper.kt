@@ -1,11 +1,9 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.ChatDatabase
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -16,18 +14,16 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 internal class RepositoryHelper(
-    client: ChatClient,
-    currentUser: User,
-    database: ChatDatabase,
+    factory: RepositoryFactory,
     private val scope: CoroutineScope
 ) {
-    val users = UserRepository(database.userDao(), currentUser, 100)
-    val configs = ChannelConfigRepository(database.channelConfigDao())
-    val channels = ChannelRepository(database.channelStateDao(), 100, currentUser, client)
-    val queryChannels = QueryChannelsRepository(database.queryChannelsQDao())
-    val messages = MessageRepository(database.messageDao(), 100)
-    val reactions = ReactionRepository(database.reactionDao(), currentUser, client)
-    val syncState = SyncStateRepository(database.syncStateDao())
+    val users = factory.createUserRepository()
+    val configs = factory.createChannelConfigRepository()
+    val channels = factory.createChannelRepository()
+    val queryChannels = factory.createQueryChannelsRepository()
+    val messages = factory.createMessageRepository()
+    val reactions = factory.createReactionRepository()
+    val syncState = factory.createSyncStateRepository()
 
     private suspend fun getUsersForChannels(
         channelEntities: Collection<ChannelEntity>,
