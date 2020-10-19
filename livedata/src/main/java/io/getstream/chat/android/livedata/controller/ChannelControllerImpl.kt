@@ -469,7 +469,8 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
-        newMessage.type = "regular"
+        // TODO: type should be a sealed/class or enum at the client level
+        newMessage.type = if (newMessage.text.startsWith("/")) { "ephemeral" } else { "regular" }
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
