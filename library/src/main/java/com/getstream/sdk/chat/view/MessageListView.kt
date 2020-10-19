@@ -532,10 +532,9 @@ public class MessageListView : ConstraintLayout {
                     layoutSize
                 )
             )
-            val messageItem = entities.lastOrNull() as MessageItem?
-            val isMine = messageItem?.isMine ?: false
+            val isMine = (entities.lastOrNull() as? MessageItem)?.isMine ?: false
             // Scroll to bottom when the user wrote the message.
-            if (entities.isNotEmpty() && isMine ||
+            if (isMine ||
                 !hasScrolledUp ||
                 newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             ) {
