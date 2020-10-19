@@ -9,6 +9,7 @@ import android.widget.EditText;
 
 import androidx.core.view.inputmethod.EditorInfoCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
+import com.getstream.sdk.chat.model.ModelType;
 
 @SuppressLint("AppCompatCustomView")
 public class GifEditText extends EditText {
@@ -30,7 +31,7 @@ public class GifEditText extends EditText {
     public InputConnection onCreateInputConnection(EditorInfo editorInfo) {
         final InputConnection ic = super.onCreateInputConnection(editorInfo);
         EditorInfoCompat.setContentMimeTypes(editorInfo,
-                new String[]{"image/gif"});
+                new String[]{ModelType.attach_mime_gif});
         if (callback != null)
             return InputConnectionCompat.createWrapper(ic, editorInfo, callback);
         else return null;
