@@ -31,13 +31,11 @@ import com.getstream.sdk.chat.enums.MessageInputType
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.GridSpacingItemDecoration
-import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.TextViewUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.whenFalse
 import com.getstream.sdk.chat.utils.whenTrue
 import com.getstream.sdk.chat.view.common.activity
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -214,8 +212,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
-        val notEmptyMessage =
-            !StringUtility.isEmptyTextMessage(messageText) || attachments.isNotEmpty()
+        val notEmptyMessage = !messageText.isNullOrBlank() || attachments.isNotEmpty()
         binding.activeMessageSend = notEmptyMessage
     }
 
