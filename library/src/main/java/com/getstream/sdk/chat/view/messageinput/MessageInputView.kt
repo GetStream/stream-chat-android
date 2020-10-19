@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +37,7 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.whenFalse
 import com.getstream.sdk.chat.utils.whenTrue
 import com.getstream.sdk.chat.view.common.activity
-import com.getstream.sdk.chat.view.common.visible
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -149,7 +150,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     private fun applyStyle() {
         ActivityResultContracts.GetContent()
         // Attachment Button
-        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
+        binding.ivOpenAttach.isVisible = style.isShowAttachmentButton
         binding.ivOpenAttach.setImageDrawable(style.getAttachmentButtonIcon(false))
         binding.ivOpenAttach.layoutParams.width = style.attachmentButtonWidth
         binding.ivOpenAttach.layoutParams.height = style.attachmentButtonHeight
@@ -357,15 +358,15 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     internal fun showSelectedMediaAttachments(selectedMediaAttachmentAdapter: MediaAttachmentSelectedAdapter) {
         binding.mediaComposer.adapter = selectedMediaAttachmentAdapter
-        binding.mediaComposer.visible(true)
-        binding.fileComposer.visible(false)
+        binding.mediaComposer.isVisible = true
+        binding.fileComposer.isVisible = false
         binding.fileComposer.adapter = null
     }
 
     internal fun showSelectedFileAttachments(selectedFileAttachmentAdapter: FileAttachmentSelectedAdapter) {
         binding.fileComposer.adapter = selectedFileAttachmentAdapter
-        binding.fileComposer.visible(true)
-        binding.mediaComposer.visible(false)
+        binding.fileComposer.isVisible = true
+        binding.mediaComposer.isVisible = false
         binding.mediaComposer.adapter = null
     }
 
@@ -374,25 +375,27 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     }
 
     internal fun showMediaAttachments() {
-        binding.mediaComposer.visible(true)
-        binding.fileComposer.visible(false)
+        binding.mediaComposer.isVisible = true
+        binding.fileComposer.isVisible = false
     }
 
     internal fun showFileAttachments() {
-        binding.mediaComposer.visible(false)
-        binding.fileComposer.visible(true)
+        binding.mediaComposer.isVisible = false
+        binding.fileComposer.isVisible = true
     }
 
-    internal fun showMediaPermissions(shouldBeVisible: Boolean) =
-        binding.ivMediaPermission.visible(shouldBeVisible)
+    internal fun showMediaPermissions(shouldBeVisible: Boolean) {
+        binding.ivMediaPermission.isVisible = shouldBeVisible
+    }
 
-    internal fun showCameraPermissions(shouldBeVisible: Boolean) =
-        binding.ivCameraPermission.visible(shouldBeVisible)
+    internal fun showCameraPermissions(shouldBeVisible: Boolean) {
+        binding.ivCameraPermission.isVisible = shouldBeVisible
+    }
 
     internal fun hideAttachmentsMenu() {
-        binding.clTitle.visible(false)
-        binding.clAddFile.visible(false)
-        binding.clSelectPhoto.visible(false)
+        binding.clTitle.isVisible = false
+        binding.clAddFile.isVisible = false
+        binding.clSelectPhoto.isVisible = false
         binding.root.setBackgroundResource(0)
     }
 
@@ -404,11 +407,13 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         binding.clSelectPhoto.visibility = View.GONE
     }
 
-    internal fun showLoadingTotalAttachments(shouldBeVisible: Boolean) =
-        binding.progressBarFileLoader.visible(shouldBeVisible)
+    internal fun showLoadingTotalAttachments(shouldBeVisible: Boolean) {
+        binding.progressBarFileLoader.isVisible = shouldBeVisible
+    }
 
-    internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) =
-        binding.ivOpenAttach.visible(shouldBeVisible)
+    internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) {
+        binding.ivOpenAttach.isVisible = shouldBeVisible
+    }
 
     public fun showMessage(@StringRes messageResId: Int) {
         Utils.showMessage(context, messageResId)

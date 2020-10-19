@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory
 import com.getstream.sdk.chat.view.channels.ChannelListView.ChannelClickListener
-import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Channel
 
 private val LOADING_VIEW_ID = R.id.channels_loading_view_id
@@ -29,11 +29,11 @@ public class ChannelsView @JvmOverloads constructor(
     init {
         addView(channelListView, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
         emptyStateView.apply {
-            visible(false)
+            isVisible = false
             addView(this, defaultChildLayoutParams())
         }
         loadingView.apply {
-            visible(false)
+            isVisible = false
             addView(loadingView, defaultChildLayoutParams())
         }
     }
@@ -71,19 +71,19 @@ public class ChannelsView @JvmOverloads constructor(
     }
 
     public fun hideLoadingView() {
-        this.loadingView.visible(false)
+        this.loadingView.isVisible = false
     }
 
     public fun showLoadingView() {
-        this.loadingView.visible(true)
+        this.loadingView.isVisible = true
     }
 
     public fun showEmptyStateView() {
-        this.emptyStateView.visible(true)
+        this.emptyStateView.isVisible = true
     }
 
     public fun hideEmptyStateView() {
-        this.emptyStateView.visible(false)
+        this.emptyStateView.isVisible = false
     }
 
     private fun defaultChildLayoutParams() =

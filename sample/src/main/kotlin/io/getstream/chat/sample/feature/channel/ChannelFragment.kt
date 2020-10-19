@@ -3,6 +3,7 @@ package io.getstream.chat.sample.feature.channel
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -13,7 +14,6 @@ import com.getstream.sdk.chat.viewmodel.bindView
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.sample.R
-import io.getstream.chat.sample.common.visible
 import kotlinx.android.synthetic.main.fragment_channel.*
 
 class ChannelFragment : Fragment(R.layout.fragment_channel) {
@@ -75,10 +75,10 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
     }
 
     private fun hideProgressBar() {
-        progressBar.visible(false)
+        progressBar.isVisible = false
     }
 
     private fun showProgressBar() {
-        progressBar.visible(true)
+        progressBar.isVisible = true
     }
 }

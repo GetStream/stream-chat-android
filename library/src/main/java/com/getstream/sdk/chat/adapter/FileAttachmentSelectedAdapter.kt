@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachFileBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.StringUtility
-import com.getstream.sdk.chat.view.common.visible
 
 internal class FileAttachmentSelectedAdapter(
     private var attachments: List<AttachmentMetaData>,
@@ -34,12 +34,12 @@ internal class FileAttachmentSelectedAdapter(
         binding.ivFileThumb.setImageResource(LlcMigrationUtils.getIcon(attachment.mimeType))
         binding.tvFileTitle.text = attachment.title
         binding.ivLargeFileMark.visibility = View.INVISIBLE
-        binding.ivSelectMark.visible(false)
+        binding.ivSelectMark.isVisible = false
         binding.tvClose.visibility = View.INVISIBLE
-        binding.progressBar.visible(false)
+        binding.progressBar.isVisible = false
         binding.tvFileSize.text = StringUtility.convertFileSizeByteCount(attachment.size)
         if (!localAttach) return
-        binding.tvClose.visible(true)
+        binding.tvClose.isVisible = true
         binding.tvClose.setOnClickListener { cancelListener(attachment) }
     }
 

@@ -8,13 +8,13 @@ import android.text.TextUtils
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -51,8 +51,8 @@ internal class MessageMoreActionDialog(
     private fun setupMessageActions() {
         setContentView(R.layout.stream_dialog_message_moreaction)
         setCanceledOnTouchOutside(true)
-        startThreadButton.visible(canThreadOnMessage())
-        copyMessageButton.visible(canCopyOnMessage())
+        startThreadButton.isVisible = canThreadOnMessage()
+        copyMessageButton.isVisible = canCopyOnMessage()
         if (isMessageCreatedByCurrentUser()) {
             editMessageButton.visibility = View.GONE
             deleteMessageButton.visibility = View.GONE
