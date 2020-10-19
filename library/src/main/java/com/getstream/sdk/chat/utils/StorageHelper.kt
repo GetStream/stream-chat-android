@@ -28,12 +28,7 @@ internal class StorageHelper {
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!
         }
-        val cachedFile = File(
-            context.cacheDir,
-            "STREAM_${
-            dateFormat.format(Date().time)
-            }_${attachmentMetaData.getTitleWithExtension()}"
-        )
+        val cachedFile = File(context.cacheDir, getFileName(attachmentMetaData))
         context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
             cachedFile.outputStream().use {
                 inputStream.copyTo(it)
@@ -129,6 +124,9 @@ internal class StorageHelper {
 
         return attachments
     }
+
+    private fun getFileName(attachmentMetaData: AttachmentMetaData): String =
+        "STREAM_${dateFormat.format(Date().time)}_${attachmentMetaData.getTitleWithExtension()}"
 }
 
 private fun AttachmentMetaData.getTitleWithExtension(): String {

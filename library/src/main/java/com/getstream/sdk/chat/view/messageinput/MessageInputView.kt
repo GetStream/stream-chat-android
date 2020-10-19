@@ -323,10 +323,10 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         messageInputController.setSelectedAttachments(
             setOf(
                 AttachmentMetaData(
-                    inputContentInfo.contentUri,
-                    ModelType.attach_image,
-                    ModelType.attach_mime_gif,
-                    inputContentInfo.description.label.toString(),
+                    uri = inputContentInfo.contentUri,
+                    type = ModelType.attach_image,
+                    mimeType = ModelType.attach_mime_gif,
+                    title = inputContentInfo.description.label.toString(),
                 )
             )
         )
