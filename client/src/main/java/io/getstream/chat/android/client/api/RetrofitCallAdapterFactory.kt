@@ -28,7 +28,6 @@ internal class RetrofitCallAdapterFactory(
     }
 
     companion object {
-        @JvmStatic
         fun create(chatParser: ChatParser) = RetrofitCallAdapterFactory(chatParser)
     }
 }

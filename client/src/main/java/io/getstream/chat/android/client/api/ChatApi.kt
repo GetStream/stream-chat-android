@@ -88,7 +88,7 @@ internal class ChatApi(
                 userId,
                 connectionId
             )
-            .originalCall()
+            .call
             .enqueue(RetroProgressCallback(callback))
     }
 
@@ -113,7 +113,7 @@ internal class ChatApi(
                 userId,
                 connectionId
             )
-            .originalCall()
+            .call
             .enqueue(RetroProgressCallback(callback))
     }
 
