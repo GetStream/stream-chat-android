@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import io.getstream.chat.sample.R
+import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.data.user.User
@@ -28,12 +29,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             Observer {
                 when (it) {
                     is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
-                    is State.LoggedIn -> redirectToChannelsScreen()
+                    is State.RedirectToChannels -> redirectToChannelsScreen()
                     is State.Loading -> changeLoadingIndicatorVisibility(true)
                     is State.Error -> showErrorMessage(it.errorMessage)
+                    is State.RedirectToChannel -> redirectToChannel(it.cid)
                 }
             }
         )
+        activity?.intent?.getStringExtra(EXTRA_CHANNEL_ID)?.let { cid ->
+            viewModel.targetChannelDataReceived(cid)
+        }
+    }
+
+    private fun redirectToChannel(cid: String) {
+        findNavController().navigateSafely(LoginFragmentDirections.actionLoginFragmentToChannelFragment(cid))
     }
 
     private fun redirectToChannelsScreen() {

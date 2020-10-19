@@ -1,4 +1,5 @@
 # To be released:
+- Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
 - Fix sending GIFs from keyboard
 - Removed many internal implementation classes and methods from the SDK's public API
@@ -8,7 +9,7 @@
 - Fix a crash related to behaviour changes in 1.3.0-alpha08 of the AndroidX Fragment library
 - Replace Glide with Coil in AttachmentViewHolderMedia (Fix GIFs loading issues)
 - `MessageListView.BubbleHelper`'s methods now have nullability annotations, and use primitive `boolean` values as parameters
-- Update Offline Support to the [last version](. See changes: )https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.6)
+- Update Offline Support to the [last version](https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.6)
 
 # Oct 14th, 2020 - 4.3.0-beta-6
 - Update to Kotlin 1.4.10
