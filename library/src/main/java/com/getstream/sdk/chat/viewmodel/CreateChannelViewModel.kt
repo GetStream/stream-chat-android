@@ -49,7 +49,7 @@ class CreateChannelViewModel @JvmOverloads constructor(
             this.createdBy = author
         }
         viewModelScope.launch(ioDispatcher) {
-            val result = domain.useCases.createChannel.invoke(channel).execute()
+            val result = domain.useCases.createChannel(channel).execute()
             when {
                 result.isSuccess -> {
                     stateMerger.postValue(State.ChannelCreated)
