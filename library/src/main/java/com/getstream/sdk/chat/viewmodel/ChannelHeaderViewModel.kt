@@ -22,7 +22,7 @@ public class ChannelHeaderViewModel @JvmOverloads constructor(
 
     init {
         val channelController: ChannelController =
-            chatDomain.useCases.watchChannel.invoke(cid, 0).execute().data()
+            chatDomain.useCases.watchChannel(cid, 0).execute().data()
         members = channelController.members
         channelState = map(channelController.channelData) { channelController.toChannel() }
         anyOtherUsersOnline = map(members) { members ->
