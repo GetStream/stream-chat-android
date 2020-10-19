@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesResponse
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
@@ -43,9 +42,7 @@ internal class MessagesApiCallsTests {
             mock.retrofitApi
                 .getMessage(messageId, mock.apiKey, mock.userId, mock.connectionId)
         ).thenReturn(
-            RetroSuccess(
-                MessageResponse(message)
-            )
+            RetroSuccess(MessageResponse(message)).toRetrofitCall()
         )
 
         val result = client.getMessage(messageId).execute()
@@ -62,7 +59,7 @@ internal class MessagesApiCallsTests {
             mock.retrofitApi
                 .getMessage(messageId, mock.apiKey, mock.userId, mock.connectionId)
         ).thenReturn(
-            RetroError(mock.serverErrorCode)
+            RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall()
         )
 
         val result = client.getMessage(messageId).execute()
@@ -84,9 +81,7 @@ internal class MessagesApiCallsTests {
             mock.retrofitApi
                 .deleteMessage(messageId, mock.apiKey, mock.userId, mock.connectionId)
         ).thenReturn(
-            RetroSuccess(
-                MessageResponse(message)
-            )
+            RetroSuccess(MessageResponse(message)).toRetrofitCall()
         )
 
         val result = client.deleteMessage(messageId).execute()
@@ -103,9 +98,7 @@ internal class MessagesApiCallsTests {
             mock.retrofitApi
                 .deleteMessage(messageId, mock.apiKey, mock.userId, mock.connectionId)
         ).thenReturn(
-            RetroError(
-                mock.serverErrorCode
-            )
+            RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall()
         )
 
         val result = client.deleteMessage(messageId).execute()
@@ -121,7 +114,6 @@ internal class MessagesApiCallsTests {
 
         val messageText = "message-a"
         val user = User()
-        val channel = Channel()
         val message = Message()
             .apply {
                 this.text = messageText
@@ -148,7 +140,7 @@ internal class MessagesApiCallsTests {
                         )
                     )
                 )
-            )
+            ).toRetrofitCall()
         )
 
         val result = client.searchMessages(searchRequest).execute()
@@ -167,7 +159,7 @@ internal class MessagesApiCallsTests {
         Mockito.`when`(
             mock.retrofitApi
                 .searchMessages(mock.apiKey, mock.connectionId, searchRequest)
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<SearchMessagesResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.searchMessages(searchRequest).execute()
 
@@ -191,7 +183,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     MessageRequest(message)
                 )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         val result = client.sendMessage(mock.channelType, mock.channelId, message).execute()
 
@@ -214,7 +206,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     MessageRequest(message)
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.sendMessage(mock.channelType, mock.channelId, message).execute()
 
@@ -240,7 +232,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     request
                 )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         val result = client.sendAction(request).execute()
 
@@ -262,7 +254,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     request
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.sendAction(request).execute()
 
@@ -287,7 +279,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     limit
                 )
-        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))))
+        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))).toRetrofitCall())
 
         val result = client.getReplies(messageId, limit).execute()
 
@@ -309,7 +301,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     limit
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<GetRepliesResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getReplies(messageId, limit).execute()
 
@@ -336,7 +328,7 @@ internal class MessagesApiCallsTests {
                     limit,
                     firstId
                 )
-        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))))
+        ).thenReturn(RetroSuccess(GetRepliesResponse(listOf(message))).toRetrofitCall())
 
         val result = client.getRepliesMore(messageId, firstId, limit).execute()
 
@@ -360,7 +352,7 @@ internal class MessagesApiCallsTests {
                     limit,
                     firstId
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<GetRepliesResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getRepliesMore(messageId, firstId, limit).execute()
 
@@ -385,7 +377,7 @@ internal class MessagesApiCallsTests {
                     mock.userId,
                     mock.connectionId
                 )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         val result = client.deleteReaction(messageId, reactionType).execute()
 
@@ -407,7 +399,7 @@ internal class MessagesApiCallsTests {
                     mock.userId,
                     mock.connectionId
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.deleteReaction(messageId, reactionType).execute()
 
@@ -433,7 +425,7 @@ internal class MessagesApiCallsTests {
                     offset,
                     limit
                 )
-        ).thenReturn(RetroSuccess(GetReactionsResponse(listOf(reaction))))
+        ).thenReturn(RetroSuccess(GetReactionsResponse(listOf(reaction))).toRetrofitCall())
 
         val result = client.getReactions(messageId, offset, limit).execute()
 
@@ -456,7 +448,7 @@ internal class MessagesApiCallsTests {
                     offset,
                     limit
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<GetReactionsResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getReactions(messageId, offset, limit).execute()
 
@@ -483,7 +475,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     MessageRequest(message)
                 )
-        ).thenReturn(RetroSuccess(MessageResponse(message)))
+        ).thenReturn(RetroSuccess(MessageResponse(message)).toRetrofitCall())
 
         val result = client.updateMessage(message).execute()
 
@@ -510,7 +502,7 @@ internal class MessagesApiCallsTests {
                     mock.connectionId,
                     MessageRequest(message)
                 )
-        ).thenReturn(RetroError(mock.serverErrorCode))
+        ).thenReturn(RetroError<MessageResponse>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.updateMessage(message).execute()
 

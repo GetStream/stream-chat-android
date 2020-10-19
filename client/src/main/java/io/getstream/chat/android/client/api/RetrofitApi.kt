@@ -41,9 +41,9 @@ import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersResponse
+import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.UrlQueryPayload
 import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -62,7 +62,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
         @Body body: MuteChannelRequest
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/unmute/channel")
     fun unMuteChannel(
@@ -70,7 +70,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
         @Body body: MuteChannelRequest
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @GET("/channels")
     fun queryChannels(
@@ -78,7 +78,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
         @UrlQueryPayload @Query("payload") payload: QueryChannelsRequest
-    ): Call<QueryChannelsResponse>
+    ): RetrofitCall<QueryChannelsResponse>
 
     @POST("/channels/{type}/{id}/query")
     fun queryChannel(
@@ -88,7 +88,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
         @Body request: QueryChannelRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/query")
     fun queryChannel(
@@ -97,7 +97,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") clientID: String,
         @Body request: QueryChannelRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateChannel(
@@ -106,7 +106,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: UpdateChannelRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun updateCooldown(
@@ -115,7 +115,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: UpdateCooldownRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @DELETE("/channels/{type}/{id}")
     fun deleteChannel(
@@ -123,7 +123,7 @@ internal interface RetrofitApi {
         @Path("id") channelId: String,
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/stop-watching")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -133,7 +133,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: Map<Any, Any>
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}")
     fun acceptInvite(
@@ -142,7 +142,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: AcceptInviteRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun rejectInvite(
@@ -151,7 +151,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: RejectInviteRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}/hide")
     fun hideChannel(
@@ -160,7 +160,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: HideChannelRequest
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/show")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -170,7 +170,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") clientID: String,
         @Body body: Map<Any, Any>
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/read")
     fun markRead(
@@ -180,14 +180,14 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: MarkReadRequest
-    ): Call<EventResponse>
+    ): RetrofitCall<EventResponse>
 
     @POST("/channels/read")
     fun markAllRead(
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/channels/{type}/{id}/event")
     fun sendEvent(
@@ -197,7 +197,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: SendEventRequest
-    ): Call<EventResponse>
+    ): RetrofitCall<EventResponse>
 
     // endregion
 
@@ -207,20 +207,20 @@ internal interface RetrofitApi {
     fun updateUsers(
         @Query("connection_id") connectionId: String,
         @Body body: UpdateUsersRequest
-    ): Call<UpdateUsersResponse>
+    ): RetrofitCall<UpdateUsersResponse>
 
     @POST("/guest")
     fun getGuestUser(
         @Query("api_key") apiKey: String,
         @Body body: GuestUserRequest
-    ): Call<TokenResponse>
+    ): RetrofitCall<TokenResponse>
 
     @GET("/users")
     fun queryUsers(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersRequest
-    ): Call<QueryUserListResponse>
+    ): RetrofitCall<QueryUserListResponse>
 
     @POST("/channels/{type}/{id}")
     fun addMembers(
@@ -229,7 +229,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Body body: AddMembersRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @POST("/channels/{type}/{id}")
     fun removeMembers(
@@ -238,14 +238,14 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Body body: RemoveMembersRequest
-    ): Call<ChannelResponse>
+    ): RetrofitCall<ChannelResponse>
 
     @GET("/members")
     fun queryMembers(
         @Query("api_key") apiKey: String,
         @Query("connection_id") connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest
-    ): Call<QueryMembersResponse>
+    ): RetrofitCall<QueryMembersResponse>
 
     @POST("/moderation/mute")
     fun muteUser(
@@ -253,7 +253,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body body: MuteUserRequest
-    ): Call<MuteUserResponse>
+    ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/unmute")
     fun unMuteUser(
@@ -261,7 +261,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body body: MuteUserRequest
-    ): Call<MuteUserResponse>
+    ): RetrofitCall<MuteUserResponse>
 
     @POST("/moderation/flag")
     fun flag(
@@ -269,14 +269,14 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body body: Map<String, String>
-    ): Call<FlagResponse>
+    ): RetrofitCall<FlagResponse>
 
     @POST("/moderation/ban")
     fun banUser(
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @Body body: BanUserRequest
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @DELETE("/moderation/ban")
     fun unBanUser(
@@ -285,7 +285,7 @@ internal interface RetrofitApi {
         @Query("target_user_id") targetUserId: String,
         @Query("type") channelType: String,
         @Query("id") channelId: String
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     //endregion
 
@@ -300,7 +300,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body message: MessageRequest
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
@@ -310,7 +310,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body message: MessageRequest
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}")
     fun getMessage(
@@ -318,7 +318,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/action")
     fun sendAction(
@@ -327,7 +327,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: SendActionRequest
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @DELETE("/messages/{id}")
     fun deleteMessage(
@@ -335,7 +335,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/reaction")
     fun sendReaction(
@@ -344,7 +344,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: ReactionRequest
-    ): Call<ReactionResponse>
+    ): RetrofitCall<ReactionResponse>
 
     @DELETE("/messages/{id}/reaction/{type}")
     fun deleteReaction(
@@ -353,7 +353,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @GET("/messages/{id}/reactions")
     fun getReactions(
@@ -362,7 +362,7 @@ internal interface RetrofitApi {
         @Query("client_id") connectionId: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int
-    ): Call<GetReactionsResponse>
+    ): RetrofitCall<GetReactionsResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getReplies(
@@ -371,7 +371,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Query("limit") limit: Int
-    ): Call<GetRepliesResponse>
+    ): RetrofitCall<GetRepliesResponse>
 
     @GET("/messages/{parent_id}/replies")
     fun getRepliesMore(
@@ -381,7 +381,7 @@ internal interface RetrofitApi {
         @Query("client_id") connectionId: String,
         @Query("limit") limit: Int,
         @Query("id_lt") firstId: String
-    ): Call<GetRepliesResponse>
+    ): RetrofitCall<GetRepliesResponse>
 
     //endregion
 
@@ -392,7 +392,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("client_id") connectionId: String,
         @UrlQueryPayload @Query("payload") payload: SearchMessagesRequest
-    ): Call<SearchMessagesResponse>
+    ): RetrofitCall<SearchMessagesResponse>
 
     //endregion
 
@@ -402,7 +402,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<GetDevicesResponse>
+    ): RetrofitCall<GetDevicesResponse>
 
     @POST("devices")
     fun addDevices(
@@ -410,7 +410,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String,
         @Body request: AddDeviceRequest
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     @DELETE("/devices")
     fun deleteDevice(
@@ -418,7 +418,7 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("client_id") connectionId: String
-    ): Call<CompletableResponse>
+    ): RetrofitCall<CompletableResponse>
 
     // endregion
 
@@ -429,7 +429,7 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String,
         @Body request: TranslateMessageRequest
-    ): Call<MessageResponse>
+    ): RetrofitCall<MessageResponse>
 
     @POST("/sync")
     fun getSyncHistory(
@@ -437,8 +437,8 @@ internal interface RetrofitApi {
         @Query("api_key") apiKey: String,
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String
-    ): Call<GetSyncHistoryResponse>
+    ): RetrofitCall<GetSyncHistoryResponse>
 
     @OPTIONS("/connect")
-    fun warmUp(): Call<ResponseBody>
+    fun warmUp(): RetrofitCall<ResponseBody>
 }

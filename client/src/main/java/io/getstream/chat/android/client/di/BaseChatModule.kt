@@ -3,7 +3,6 @@ package io.getstream.chat.android.client.di
 import android.content.Context
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
@@ -32,7 +31,7 @@ internal open class BaseChatModule(
     private val defaultNotifications by lazy {
         buildNotification(config.notificationsHandler, api())
     }
-    private val defaultApi by lazy { buildApi(config, parser()) }
+    private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
 
     //region Modules
@@ -125,15 +124,11 @@ internal open class BaseChatModule(
         )
     }
 
-    private fun buildApi(
-        chatConfig: ChatClientConfig,
-        parser: ChatParser
-    ): ChatApi {
-        return ChatApiImpl(
+    private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
+        return ChatApi(
             chatConfig.apiKey,
             buildRetrofitApi(),
             buildRetrofitCdnApi(),
-            parser,
             UuidGeneratorImpl()
         )
     }

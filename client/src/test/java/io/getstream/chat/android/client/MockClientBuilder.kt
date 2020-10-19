@@ -3,7 +3,6 @@ package io.getstream.chat.android.client
 import android.content.Context
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.ChatApiImpl
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
@@ -14,7 +13,6 @@ import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import io.getstream.chat.android.client.utils.observable.FakeChatSocket
 import java.util.Date
@@ -68,11 +66,10 @@ internal class MockClientBuilder {
         retrofitApi = mock()
         retrofitCdnApi = mock()
         notificationsManager = mock()
-        api = ChatApiImpl(
+        api = ChatApi(
             config.apiKey,
             retrofitApi,
             retrofitCdnApi,
-            ChatParserImpl(),
             UuidGeneratorImpl()
         )
 
