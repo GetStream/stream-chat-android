@@ -65,7 +65,7 @@ private val THREAD_MESSAGES = createMessageList {
 }
 
 @ExtendWith(InstantExecutorExtension::class)
-class MessageListViewModelTest {
+internal class MessageListViewModelTest {
     private val domain: ChatDomain = mock()
     private val client: ChatClient = mock()
     private val useCases: UseCaseHelper = mock()

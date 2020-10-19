@@ -24,7 +24,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
 
-class MessageListItemLiveDataTest {
+internal class MessageListItemLiveDataTest {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()

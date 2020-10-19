@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(InstantExecutorExtension::class)
-class ChannelListViewModelTest {
+internal class ChannelListViewModelTest {
 
     @Test
     fun `Should display channels when there are channels available`() {
