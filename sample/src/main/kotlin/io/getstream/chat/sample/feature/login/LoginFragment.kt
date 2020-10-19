@@ -36,10 +36,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
             }
         )
-        activity?.intent?.apply {
-            getStringExtra(EXTRA_CHANNEL_ID)?.let {
-                viewModel.targetChannelDataReceived(it)
-            }
+        activity?.intent?.getStringExtra(EXTRA_CHANNEL_ID)?.let { cid ->
+            viewModel.targetChannelDataReceived(cid)
         }
     }
 
