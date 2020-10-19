@@ -34,8 +34,8 @@ private const val CHANNEL_LIMIT = 30
 internal class QueryChannelsControllerImpl(
     override val filter: FilterObject,
     override val sort: QuerySort,
-    val client: ChatClient,
-    val domainImpl: ChatDomainImpl
+    private val client: ChatClient,
+    private val domainImpl: ChatDomainImpl
 ) : QueryChannelsController {
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
