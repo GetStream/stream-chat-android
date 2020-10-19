@@ -33,7 +33,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     var frozen: Boolean = false
 
     /** if the channel is hidden (new messages will cause to reappear) */
-    var hidden: Boolean = false
+    var hidden: Boolean? = null
 
     /** hide messages before this date */
     var hideMessagesBefore: Date? = null
@@ -103,6 +103,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
+        c.hidden = hidden
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 

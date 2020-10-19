@@ -483,7 +483,7 @@ internal class ChannelControllerImpl(
         // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
         // Update livedata for currently running queries
         for (query in domainImpl.getActiveQueries()) {
-            query.broadcastChannelUpdate(cid)
+            query.updateChannel(cid)
         }
 
         // we insert early to ensure we don't lose messages
@@ -1073,7 +1073,7 @@ internal class ChannelControllerImpl(
     }
 
     fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
-        setHidden(c.entity.hidden)
+        setHidden(c.entity.hidden ?: false)
         c.entity.hideMessagesBefore?.let { hideMessagesBefore = it }
         updateLiveDataFromChannel(c.channel)
     }

@@ -39,12 +39,9 @@ internal class QueryChannelsControllerImpl(
 ) : QueryChannelsController {
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
-    /**
-     * A livedata object with the channels matching this query.
-     */
 
     val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
-    val job = SupervisorJob()
+    private val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
     private val _endOfChannels = MutableLiveData(false)
@@ -71,19 +68,26 @@ internal class QueryChannelsControllerImpl(
         return QueryChannelsPaginationRequest(sort, channels.size, channelLimit, messageLimit, memberLimit)
     }
 
-    fun handleEvents(events: List<ChatEvent>) {
-        for (event in events) {
-            handleEvent(event)
-        }
-    }
-
+    /**
+     * Members of a channel receive the
+     *
+     * @see NotificationAddedToChannelEvent
+     *
+     * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
+     */
     override fun addChannelIfFilterMatches(
         channel: Channel
     ) {
         if (newChannelEventFilter(channel, filter)) {
             val channelControllerImpl = domainImpl.channel(channel)
             channelControllerImpl.updateLiveDataFromChannel(channel)
-            addChannels(listOf(channel), true)
+            addChannels(listOf(channel.cid))
+        }
+    }
+
+    fun handleEvents(events: List<ChatEvent>) {
+        for (event in events) {
+            handleEvent(event)
         }
     }
 
@@ -91,7 +95,9 @@ internal class QueryChannelsControllerImpl(
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
-        } else if (event is CidEvent) {
+        }
+
+        if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
                 return
@@ -99,21 +105,9 @@ internal class QueryChannelsControllerImpl(
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
-            // other events don't add channels to the query
-            if (queryEntity.channelCids.contains(event.cid)) {
-                updateChannel(domainImpl.channel(event.cid).toChannel())
-            }
+            // update the channels
+            updateChannel(event.cid)
         }
-    }
-
-    internal fun broadcastChannelUpdate(cid: String) {
-        val channel = domainImpl.channel(cid).toChannel()
-        logger.logI("channel ${channel.cid} manually broadcasting update, last message text is ${channel.messages.lastOrNull()?.text}")
-        updateChannel(channel)
-    }
-
-    private fun updateChannel(channel: Channel) {
-        _channels.postValue((_channels.value ?: mapOf()) + mapOf(channel.cid to channel))
     }
 
     suspend fun loadMore(channelLimit: Int = CHANNEL_LIMIT, messageLimit: Int = MESSAGE_LIMIT): Result<List<Channel>> {
@@ -135,10 +129,6 @@ internal class QueryChannelsControllerImpl(
 
         if (queryEntity != null) {
             val channelPairs = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
-            for (p in channelPairs) {
-                val channelRepo = domainImpl.channel(p.channel)
-                channelRepo.updateLiveDataFromChannelEntityPair(p)
-            }
             channels = channelPairs.map { it.channel }
             logger.logI("found ${channelPairs.size} channels in offline storage")
         }
@@ -163,12 +153,6 @@ internal class QueryChannelsControllerImpl(
             val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
             domainImpl.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
-
-            // initialize channel repos for all of these channels
-            for (c in channelsResponse) {
-                val channelRepo = domainImpl.channel(c)
-                channelRepo.updateLiveDataFromChannel(c)
-            }
 
             domainImpl.storeStateForChannels(channelsResponse)
         } else {
@@ -198,13 +182,7 @@ internal class QueryChannelsControllerImpl(
         } else { null }
         val channels = queryOfflineJob.await()
 
-        if (channels != null) {
-            if (pagination.isFirstPage) {
-                setChannels(channels)
-            } else {
-                addChannels(channels)
-            }
-        }
+        updateQueryResults(channels, pagination.isFirstPage)
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
@@ -213,11 +191,7 @@ internal class QueryChannelsControllerImpl(
             val result = queryOnlineJob.await()
             output = result
             if (result.isSuccess) {
-                if (pagination.isFirstPage) {
-                    setChannels(output.data())
-                } else {
-                    addChannels(output.data())
-                }
+                updateQueryResults(output.data(), pagination.isFirstPage)
                 domainImpl.repos.queryChannels.insert(queryEntity)
             }
         } else {
@@ -228,30 +202,71 @@ internal class QueryChannelsControllerImpl(
         return output
     }
 
-    private fun addChannels(newChannels: List<Channel>, onTop: Boolean = false) {
-        // second page adds to the list of channels
-        queryEntity.channelCids = if (onTop) {
-            (newChannels.map { it.cid } + queryEntity.channelCids).distinct()
-        } else {
-            (queryEntity.channelCids + newChannels.map { it.cid }).distinct()
-        }
-
-        _channels.postValue(
-            (_channels.value ?: mapOf()).let { previousChannels ->
-                previousChannels + (queryEntity.channelCids - previousChannels.values.map { channel -> channel.cid })
-                    .map { cid -> domainImpl.channel(cid).toChannel() }
-                    .associateBy { channel -> channel.cid }
+    private fun updateQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+        if (channels != null) {
+            val cIds = channels.map { it.cid }
+            // initialize channel repos for all of these channels
+            for (c in channels) {
+                val channelRepo = domainImpl.channel(c)
+                channelRepo.updateLiveDataFromChannel(c)
             }
-        )
+            // if it's the first page, we replace the current results
+            if (isFirstPage) {
+                setChannels(cIds)
+            } else {
+                addChannels(cIds)
+            }
+        }
     }
 
-    private fun setChannels(channel: List<Channel>) {
-        // first page sets the channels/overwrites..
-        queryEntity.channelCids = channel.map { it.cid }
-        _channels.postValue(
-            queryEntity.channelCids
-                .map { domainImpl.channel(it).toChannel() }
-                .associateBy { it.cid }
-        )
+    /**
+     * Updates a channel on this query
+     * Note that this only updates channels that are already matching with the query
+     *
+     * @param cId the channel to update
+     *
+     * If you want to add to the list of channels use the
+     *
+     * {@link #addChannels(newChannels: List<Channel>) addChannels} method
+     */
+    fun updateChannel(cId: String) {
+        updateChannels(listOf(cId))
+    }
+
+    /**
+     * Updates multiple channels on this query
+     * Note that it retrieves the data from the current channelController object
+     *
+     * @param cIds the channels to update
+     */
+    private fun updateChannels(cIds: List<String>) {
+        val cIdsInQuery = queryEntity.channelCids.intersect(cIds)
+        val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
+        val existingChannelMap = _channels.value ?: mapOf()
+        val merged = (existingChannelMap.values + newChannels).associateBy { it.cid }
+
+        _channels.postValue(merged)
+    }
+
+    /**
+     * Adds the list of channels to the current query.
+     * Channels are sorted based on the specified QuerySort
+     *
+     * @see QuerySort
+     */
+    private fun addChannels(cIds: List<String>) {
+        queryEntity.channelCids = (queryEntity.channelCids + cIds).distinct()
+        updateChannels(cIds)
+    }
+
+    /**
+     * Replaces the existing list of channels with a new list
+     *
+     * @see QuerySort
+     */
+    private fun setChannels(cIds: List<String>) {
+        // If you query for page 1 we remove the old data
+        queryEntity.channelCids = cIds
+        updateChannels(cIds)
     }
 }
