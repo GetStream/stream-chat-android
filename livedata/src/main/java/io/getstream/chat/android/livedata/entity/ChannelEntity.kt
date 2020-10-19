@@ -62,6 +62,8 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     var deletedAt: Date? = null
     /** all the custom data provided for this channel */
     var extraData = mutableMapOf<String, Any>()
+    /** minimum interval between user messages (in seconds) in slow down mode **/
+    var cooldown: Int = 0
 
     /** if the channel has been synced to the servers */
     var syncStatus: SyncStatus = SyncStatus.COMPLETED
@@ -74,6 +76,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
         syncStatus = c.syncStatus
+        cooldown = c.cooldown
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -103,6 +106,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
+        c.cooldown = cooldown
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 

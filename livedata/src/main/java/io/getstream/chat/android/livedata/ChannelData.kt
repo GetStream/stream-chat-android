@@ -28,6 +28,8 @@ public data class ChannelData(var type: String, var channelId: String) {
     var deletedAt: Date? = null
     /** all the custom data provided for this channel */
     var extraData: MutableMap<String, Any> = mutableMapOf()
+    /** minimum interval between user messages (in seconds) in slow down mode **/
+    var cooldown: Int = 0
 
     /** create a ChannelData object from a Channel object */
     public constructor(c: Channel) : this(c.type, c.id) {
@@ -36,6 +38,7 @@ public data class ChannelData(var type: String, var channelId: String) {
         updatedAt = c.updatedAt
         deletedAt = c.deletedAt
         extraData = c.extraData
+        cooldown = c.cooldown
 
         createdBy = c.createdBy
     }
@@ -53,6 +56,7 @@ public data class ChannelData(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
         c.createdBy = createdBy
+        c.cooldown = cooldown
 
         c.messages = messages
         c.members = members
