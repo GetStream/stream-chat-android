@@ -669,7 +669,7 @@ internal class ChatDomainImpl private constructor(
     ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = repos.channels.select(channelIds)
-        val userIdsFromMessages: Set<String> = if (pagination.memberLimit > 0) {
+        val userIdsFromMessages: Set<String> = if (pagination.isRequestingMoreThanLastMessage()) {
             repos.messages.selectUserIdsFromMessagesByChannelsIds(channelIds, pagination)
         } else {
             emptySet()
