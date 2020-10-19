@@ -1,4 +1,5 @@
 # To be released:
+- Fix unresponsive attachment upload buttons
 
 - Fix sending GIFs from keyboard
 
