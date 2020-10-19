@@ -4,6 +4,7 @@ import android.app.Application
 import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
+import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.dataModule
 import loginModule
 import org.koin.android.ext.android.inject
@@ -20,12 +21,14 @@ class App : Application() {
         initKoin()
         Chat.Builder(appConfig.apiKey, this).apply {
             offlineEnabled = true
-            notificationsConfig =
+            val notificationConfig =
                 NotificationConfig(
                     firebaseMessageIdKey = "message_id",
                     firebaseChannelIdKey = "channel_id",
-                    firebaseChannelTypeKey = "channel_type"
+                    firebaseChannelTypeKey = "channel_type",
+                    smallIcon = R.drawable.ic_chat_bubble
                 )
+            notificationHandler = SampleNotificationHandler(this@App, notificationConfig)
         }.build()
     }
 
