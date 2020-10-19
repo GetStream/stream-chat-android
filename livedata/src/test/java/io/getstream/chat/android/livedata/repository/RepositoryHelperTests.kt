@@ -116,8 +116,7 @@ internal class RepositoryHelperTests {
 
     @Test
     fun `Given request less than last message When select channels Should return channels from DB with empty messages`() = runBlockingTest {
-        val paginationRequest = mock<AnyChannelPaginationRequest>()
-        When calling paginationRequest.memberLimit doReturn 0
+        val paginationRequest = AnyChannelPaginationRequest(0)
         When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
         val channelEntity1 = randomChannelEntity().apply {
             cid = "cid1"
@@ -134,5 +133,30 @@ internal class RepositoryHelperTests {
         result.size shouldBeEqualTo 2
         result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
         result.any { it.cid == "cid2" && it.messages.isEmpty() } shouldBeEqualTo true
+    }
+
+    @Test
+    fun `Given request more than last message When select channels Should return channels from DB with messages`() = runBlockingTest {
+        val paginationRequest = AnyChannelPaginationRequest(100)
+        When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
+        val messageEntity1 = randomMessageEntity(id = "messageId1", cid = "cid1", userId = "userId")
+        val messageEntity2 = randomMessageEntity(id = "messageId2", cid = "cid2", userId = "userId")
+        When calling messages.selectMessagesEntitiesForChannel("cid1", paginationRequest) doReturn listOf(messageEntity1)
+        When calling messages.selectMessagesEntitiesForChannel("cid2", paginationRequest) doReturn listOf(messageEntity2)
+        val channelEntity1 = randomChannelEntity().apply {
+            cid = "cid1"
+            createdByUserId = "userId"
+        }
+        val channelEntity2 = randomChannelEntity().apply {
+            cid = "cid2"
+            createdByUserId = "userId"
+        }
+        When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
+
+        val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest, mock())
+
+        result.size shouldBeEqualTo 2
+        result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
+        result.any { it.cid == "cid2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
     }
 }
