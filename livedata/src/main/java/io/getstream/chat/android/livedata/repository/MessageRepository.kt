@@ -29,7 +29,7 @@ internal class MessageRepository(
         return selectMessagesEntitiesForChannel(cid, pagination).map { toModel(it, usersMap) }
     }
 
-    private suspend fun selectMessagesEntitiesForChannel(
+    internal suspend fun selectMessagesEntitiesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest
     ): List<MessageEntity> {
@@ -102,16 +102,6 @@ internal class MessageRepository(
     suspend fun deleteChannelMessage(message: Message) {
         messageDao.deleteMessage(message.cid, message.id)
         messageCache.remove(message.id)
-    }
-
-    suspend fun selectUserIdsFromMessagesByChannelsIds(
-        channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest
-    ): Set<String> {
-        return channelIds.flatMap { channelId -> selectMessagesEntitiesForChannel(channelId, pagination) }
-            .fold(emptySet()) { acc, message ->
-                acc + message.latestReactions.map(ReactionEntity::userId) + message.userId
-            }
     }
 
     internal suspend fun selectSyncNeeded(userMap: Map<String, User>): List<Message> {

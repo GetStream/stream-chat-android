@@ -153,9 +153,9 @@ internal class PaginationTest {
             },
             // last_updated is a computed field based on max(createdAt, lastMessageAt)
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null)),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null),
+                randomChannel(cid = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,
@@ -169,9 +169,9 @@ internal class PaginationTest {
             },
             // created_at should map to channel.createdAt
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4))),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", createdAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", createdAt = calendar(2020, 10, 4)),
+                randomChannel(cid = "b", createdAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,
@@ -185,9 +185,9 @@ internal class PaginationTest {
             },
             // last_message_at should map to channel.lastMessageAt
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4))),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4)),
+                randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,

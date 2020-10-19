@@ -8,16 +8,22 @@ import io.getstream.chat.android.livedata.randomCID
 import io.getstream.chat.android.livedata.randomChannelEntity
 import io.getstream.chat.android.livedata.randomChannelUserReadEntity
 import io.getstream.chat.android.livedata.randomMemberEntity
+import io.getstream.chat.android.livedata.randomMessageEntity
+import io.getstream.chat.android.livedata.randomReactionEntity
 import io.getstream.chat.android.livedata.randomUser
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineScope
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@ExperimentalCoroutinesApi
 internal class RepositoryHelperTests {
 
     private lateinit var chatClient: ChatClient
     private lateinit var chatDatabase: ChatDatabase
     private lateinit var sut: RepositoryHelper
+    private val scope = TestCoroutineScope()
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +37,7 @@ internal class RepositoryHelperTests {
             on { channelConfigDao() } doReturn mock()
             on { syncStateDao() } doReturn mock()
         }
-        sut = RepositoryHelper(chatClient, randomUser(), chatDatabase)
+        sut = RepositoryHelper(chatClient, randomUser(), chatDatabase, scope)
     }
 
     @Test
@@ -63,8 +69,20 @@ internal class RepositoryHelperTests {
         val channels = listOf(channelEntity1, channelEntity2)
         val messageUserId1 = "messageUserId1"
         val messageUserId2 = "messageUserId2"
+        val reactionUserId1 = "reactionUserId1"
+        val reactionUserId2 = "reactionUserId2"
+        val message1 = randomMessageEntity(
+            cid = cid,
+            userId = messageUserId1,
+            latestReactions = listOf(
+                randomReactionEntity(userId = reactionUserId1),
+                randomReactionEntity(userId = reactionUserId2)
+            )
+        )
+        val message2 = randomMessageEntity(cid = cid, userId = messageUserId2)
+        val messageMap = mapOf(cid to listOf(message1, message2))
 
-        val result = sut.calculateUserIds(channels, setOf(messageUserId1, messageUserId2))
+        val result = sut.calculateUserIds(channels, messageMap)
 
         result shouldBeEqualTo setOf(
             authorId1,
@@ -74,7 +92,9 @@ internal class RepositoryHelperTests {
             readId1,
             readId2,
             messageUserId1,
-            messageUserId2
+            messageUserId2,
+            reactionUserId1,
+            reactionUserId2
         )
     }
 }
