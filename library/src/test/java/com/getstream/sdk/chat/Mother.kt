@@ -127,8 +127,12 @@ internal fun createMembers(
     creationFunction: (Int) -> Member = { createMember() }
 ): List<Member> = List(size, creationFunction)
 
-internal fun createChannel(cid: String = randomCID(), config: Config = Config()): Channel =
-    Channel(cid = cid, config = config)
+internal fun createChannel(
+    cid: String = randomCID(),
+    config: Config = Config(),
+    extraData: MutableMap<String, Any> = mutableMapOf()
+): Channel =
+    Channel(cid = cid, config = config, extraData = extraData)
 
 internal fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData =
     AttachmentMetaData(attachment)
