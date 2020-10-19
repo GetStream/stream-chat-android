@@ -12,7 +12,7 @@ import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Attachment
 
-class AttachmentViewHolderFile(
+internal class AttachmentViewHolderFile(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val bubbleHelper: BubbleHelper,

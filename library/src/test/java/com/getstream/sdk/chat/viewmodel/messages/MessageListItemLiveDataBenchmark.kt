@@ -16,7 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.system.measureTimeMillis
 
-class MessageListItemLiveDataBenchmark {
+internal class MessageListItemLiveDataBenchmark {
 
     @get:Rule
     val rule = InstantTaskExecutorRule()

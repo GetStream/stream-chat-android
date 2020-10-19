@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.model
 
-object ModelType {
+internal object ModelType {
     // Channel Type
     const val channel_unknown = "unknown"
     const val channel_livestream = "livestream"

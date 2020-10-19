@@ -195,7 +195,7 @@ internal class MessageTextConfigurator(
         }
 
         binding.tvText.updateLayoutParams<ConstraintLayout.LayoutParams> {
-            horizontalBias = if (messageItem.isTheirs()) 0f else 1f
+            horizontalBias = if (messageItem.isTheirs) 0f else 1f
         }
     }
 }

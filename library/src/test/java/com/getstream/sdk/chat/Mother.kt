@@ -23,17 +23,17 @@ import kotlin.random.Random
 
 private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
-fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
+internal fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
     Random.nextInt(1, maxInt + 1)
 
-fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
+internal fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
-fun randomInt() = Random.nextInt()
-fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
-fun randomLong() = Random.nextLong()
-fun randomBoolean() = Random.nextBoolean()
-fun randomString(size: Int = 20): String = buildString(capacity = size) {
+internal fun randomInt() = Random.nextInt()
+internal fun randomIntBetween(min: Int, max: Int) = Random.nextInt(min, max + 1)
+internal fun randomLong() = Random.nextLong()
+internal fun randomBoolean() = Random.nextBoolean()
+internal fun randomString(size: Int = 20): String = buildString(capacity = size) {
     repeat(size) {
         append(charPool.random())
     }
@@ -75,8 +75,8 @@ internal fun randomUser(
     extraData
 )
 
-fun randomCID() = "${randomString()}:${randomString()}"
-fun createUser(
+internal fun randomCID() = "${randomString()}:${randomString()}"
+internal fun createUser(
     id: String = randomString(),
     role: String = randomString(),
     invisible: Boolean = randomBoolean(),
@@ -112,7 +112,7 @@ fun createUser(
     extraData
 )
 
-fun createMember(
+internal fun createMember(
     user: User = createUser(),
     role: String = randomString(),
     createdAt: Date? = randomDate(),
@@ -122,20 +122,20 @@ fun createMember(
     inviteRejectedAt: Date? = randomDate()
 ): Member = Member(user, role, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
-fun createMembers(
+internal fun createMembers(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Member = { createMember() }
 ): List<Member> = List(size, creationFunction)
 
-fun createChannel(cid: String = randomCID(), config: Config = Config()): Channel =
+internal fun createChannel(cid: String = randomCID(), config: Config = Config()): Channel =
     Channel(cid = cid, config = config)
 
-fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData =
+internal fun createAttachmentMetaDataWithAttachment(attachment: Attachment = createAttachment()): AttachmentMetaData =
     AttachmentMetaData(attachment)
 
-fun createFile(path: String = randomString()): File = File(path)
+internal fun createFile(path: String = randomString()): File = File(path)
 
-fun createAttachment(
+internal fun createAttachment(
     authorName: String? = randomString(),
     titleLink: String? = randomString(),
     thumbUrl: String? = randomString(),
@@ -159,7 +159,7 @@ fun createAttachment(
     fileSize, title, text, type, image, url, name, fallback, uploadFile, uploadState, extraData
 )
 
-fun createMessage(
+internal fun createMessage(
     id: String = randomString(),
     cid: String = randomCID(),
     text: String = randomString(),
@@ -205,31 +205,31 @@ fun createMessage(
     silent = silent
 )
 
-fun randomDate() = Date(randomLong())
+internal fun randomDate() = Date(randomLong())
 
-fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
+internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()
 
-fun createMessageList(
+internal fun createMessageList(
     size: Int = 10,
     creationFunction: (Int) -> Message = { createMessage() }
 ): List<Message> = List(size, creationFunction)
 
-fun createChannelUserRead(
+internal fun createChannelUserRead(
     user: User = createUser(),
     lastReadDate: Date = Date.from(Instant.now()),
     unreadMessages: Int = 0
 ) = ChannelUserRead(user, lastReadDate, unreadMessages)
 
-fun createCommand(
+internal fun createCommand(
     name: String = randomString(),
     description: String = randomString(),
     args: String = randomString(),
     set: String = randomString()
 ): Command = Command(name, description, args, set)
 
-fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
+internal fun createCommands(size: Int = 10): List<Command> = List(size) { createCommand() }
 
-fun createMessageItem(
+internal fun createMessageItem(
     message: Message = createMessage(),
     positions: List<MessageListItem.Position> = listOf(),
     isMine: Boolean = randomBoolean(),

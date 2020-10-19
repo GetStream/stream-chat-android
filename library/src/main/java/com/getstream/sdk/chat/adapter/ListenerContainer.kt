@@ -9,13 +9,13 @@ import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 
-interface ListenerContainer {
-    var messageClickListener: MessageClickListener
-    var messageLongClickListener: MessageLongClickListener
-    var messageRetryListener: MessageRetryListener
-    var attachmentClickListener: AttachmentClickListener
-    var reactionViewClickListener: ReactionViewClickListener
-    var userClickListener: UserClickListener
-    var readStateClickListener: ReadStateClickListener
-    var giphySendListener: GiphySendListener
+public interface ListenerContainer {
+    public var messageClickListener: MessageClickListener
+    public var messageLongClickListener: MessageLongClickListener
+    public var messageRetryListener: MessageRetryListener
+    public var attachmentClickListener: AttachmentClickListener
+    public var reactionViewClickListener: ReactionViewClickListener
+    public var userClickListener: UserClickListener
+    public var readStateClickListener: ReadStateClickListener
+    public var giphySendListener: GiphySendListener
 }

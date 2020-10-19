@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.R
 
-enum class MessageInputType(@StringRes internal val labelId: Int) {
+internal enum class MessageInputType(@StringRes internal val labelId: Int) {
     EDIT_MESSAGE(R.string.stream_input_type_edit_message),
     ADD_FILE(R.string.stream_input_type_add_file),
     UPLOAD_MEDIA(R.string.stream_input_type_select_gallery),
@@ -13,5 +13,5 @@ enum class MessageInputType(@StringRes internal val labelId: Int) {
     MENTION(R.string.stream_input_type_auto_mention);
 }
 
-val MessageInputType.label: String
+internal val MessageInputType.label: String
     get() = Chat.getInstance().strings.get(labelId)

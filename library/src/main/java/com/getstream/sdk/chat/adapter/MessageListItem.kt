@@ -15,9 +15,9 @@ import java.util.zip.Checksum
  * - ThreadSeparatorItem
  * - ReadStateItem
  */
-sealed class MessageListItem {
+public sealed class MessageListItem {
 
-    fun getStableId(): Long {
+    internal fun getStableId(): Long {
         val checksum: Checksum = CRC32()
         val plaintext = when (this) {
             is TypingItem -> "id_typing"
@@ -30,36 +30,35 @@ sealed class MessageListItem {
         return checksum.value
     }
 
-    data class DateSeparatorItem @JvmOverloads constructor(
+    public data class DateSeparatorItem(
         val date: Date,
     ) : MessageListItem()
 
-    data class MessageItem @JvmOverloads constructor(
+    public data class MessageItem(
         val message: Message,
         val positions: List<Position> = listOf(),
         val isMine: Boolean = false,
         val messageReadBy: List<ChannelUserRead> = listOf()
     ) : MessageListItem() {
-        fun isTheirs(): Boolean {
-            return !isMine
-        }
+        public val isTheirs: Boolean
+            get() = !isMine
     }
 
-    data class TypingItem @JvmOverloads constructor(
+    public data class TypingItem(
         val users: List<User>,
     ) : MessageListItem()
 
-    data class ReadStateItem @JvmOverloads constructor(
+    public data class ReadStateItem(
         val reads: List<ChannelUserRead>,
     ) : MessageListItem()
 
-    data class ThreadSeparatorItem @JvmOverloads constructor(
+    public data class ThreadSeparatorItem(
         val date: Date = Date(),
     ) : MessageListItem()
 
-    sealed class Position {
-        object Top : Position()
-        object Middle : Position()
-        object Bottom : Position()
+    public enum class Position {
+        Top,
+        Middle,
+        Bottom,
     }
 }

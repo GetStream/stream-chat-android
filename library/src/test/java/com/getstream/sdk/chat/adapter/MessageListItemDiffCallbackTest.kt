@@ -6,7 +6,7 @@ import org.amshove.kluent.shouldBe
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-class MessageListItemDiffCallbackTest {
+internal class MessageListItemDiffCallbackTest {
 
     private val channelUserRead = createChannelUserRead()
     private val msg = createMessageItem()

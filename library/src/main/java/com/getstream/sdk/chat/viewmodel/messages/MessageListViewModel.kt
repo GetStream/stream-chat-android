@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
 
-class MessageListViewModel @JvmOverloads constructor(
+public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
     private val domain: ChatDomain = ChatDomain.instance(),
     private val client: ChatClient = ChatClient.instance()
@@ -28,10 +28,10 @@ class MessageListViewModel @JvmOverloads constructor(
     private var currentMode: Mode by Delegates.observable(Mode.Normal as Mode) { _, _, newMode -> mode.postValue(newMode) }
     private var reads: LiveData<List<ChannelUserRead>>
 
-    val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
-    val state: LiveData<State> = stateMerger
-    val channel: Channel
-    val currentUser: User
+    public val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
+    public val state: LiveData<State> = stateMerger
+    public val channel: Channel
+    public val currentUser: User
 
     init {
         loading.value = State.Loading
@@ -98,7 +98,7 @@ class MessageListViewModel @JvmOverloads constructor(
         }
     }
 
-    fun onEvent(event: Event) {
+    public fun onEvent(event: Event) {
         when (event) {
             is Event.EndRegionReached -> {
                 onEndRegionReached()
@@ -178,29 +178,29 @@ class MessageListViewModel @JvmOverloads constructor(
         threadMessages = MutableLiveData()
     }
 
-    sealed class State {
-        object Loading : State()
-        data class Result(val messageListItem: MessageListItemWrapper) : State()
-        object NavigateUp : State()
+    public sealed class State {
+        public object Loading : State()
+        public data class Result(val messageListItem: MessageListItemWrapper) : State()
+        public object NavigateUp : State()
     }
 
-    sealed class Event {
-        object BackButtonPressed : Event()
-        object EndRegionReached : Event()
-        object LastMessageRead : Event()
-        data class ThreadModeEntered(val parentMessage: Message) : Event()
-        data class DeleteMessage(val message: Message) : Event()
-        data class FlagMessage(val message: Message) : Event()
-        data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
-        data class RetryMessage(val message: Message) : Event()
+    public sealed class Event {
+        public object BackButtonPressed : Event()
+        public object EndRegionReached : Event()
+        public object LastMessageRead : Event()
+        public data class ThreadModeEntered(val parentMessage: Message) : Event()
+        public data class DeleteMessage(val message: Message) : Event()
+        public data class FlagMessage(val message: Message) : Event()
+        public data class GiphyActionSelected(val message: Message, val action: GiphyAction) : Event()
+        public data class RetryMessage(val message: Message) : Event()
     }
 
-    sealed class Mode {
-        data class Thread(val parentMessage: Message) : Mode()
-        object Normal : Mode()
+    public sealed class Mode {
+        public data class Thread(val parentMessage: Message) : Mode()
+        public object Normal : Mode()
     }
 
-    companion object {
-        internal const val MESSAGES_LIMIT = 30
+    internal companion object {
+        const val MESSAGES_LIMIT = 30
     }
 }

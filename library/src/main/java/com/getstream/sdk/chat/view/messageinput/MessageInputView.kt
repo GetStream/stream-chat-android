@@ -44,7 +44,7 @@ import io.getstream.chat.android.client.models.User
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.io.File
 
-class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
+public class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
     private val binding: StreamViewMessageInputBinding =
         StreamViewMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -57,7 +57,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
 
     private var isKeyboardEventListenerInitialized = false
 
-    var messageText: String
+    public var messageText: String
         get() = binding.messageTextInput.text.toString()
         set(text) {
             if (TextUtils.isEmpty(text)) return
@@ -66,7 +66,7 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
             binding.messageTextInput.setSelection(binding.messageTextInput.text.length)
         }
 
-    var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
+    public var messageSendHandler: MessageSendHandler = object : MessageSendHandler {
         override fun sendMessage(messageText: String) {
             throw IllegalStateException("MessageInputView#messageSendHandler needs to be configured to send messages")
         }
@@ -131,12 +131,14 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     private val mentionsAdapter = MentionsAdapter(style) {
         messageInputController.onUserSelected(messageText, it)
     }
+
     private var typeListeners: List<TypeListener> = listOf()
-    fun addTypeListener(typeListener: TypeListener) {
+
+    public fun addTypeListener(typeListener: TypeListener) {
         typeListeners = typeListeners + typeListener
     }
 
-    fun removeTypeListener(typeListener: TypeListener) {
+    public fun removeTypeListener(typeListener: TypeListener) {
         typeListeners = typeListeners - typeListener
     }
 
@@ -251,11 +253,11 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         binding.messageTextInput.clearFocus()
     }
 
-    fun configureMembers(members: List<Member>) {
+    public fun configureMembers(members: List<Member>) {
         messageInputController.members = members
     }
 
-    fun configureCommands(commands: List<Command>) {
+    public fun configureCommands(commands: List<Command>) {
         messageInputController.channelCommands = commands
     }
 
@@ -341,15 +343,15 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
         commandsAdapter.submitList(commands)
     }
 
-    fun setNormalMode() {
+    public fun setNormalMode() {
         messageInputController.inputMode = InputMode.Normal
     }
 
-    fun setThreadMode(parentMessage: Message) {
+    public fun setThreadMode(parentMessage: Message) {
         messageInputController.inputMode = InputMode.Thread(parentMessage)
     }
 
-    fun setEditMode(oldMessage: Message) {
+    public fun setEditMode(oldMessage: Message) {
         messageInputController.inputMode = InputMode.Edit(oldMessage)
     }
 
@@ -408,25 +410,27 @@ class MessageInputView(context: Context, attrs: AttributeSet?) : RelativeLayout(
     internal fun showOpenAttachmentsMenuButton(shouldBeVisible: Boolean) =
         binding.ivOpenAttach.visible(shouldBeVisible)
 
-    fun showMessage(@StringRes messageResId: Int) = Utils.showMessage(context, messageResId)
-
-    interface TypeListener {
-        fun onKeystroke()
-        fun onStopTyping()
+    public fun showMessage(@StringRes messageResId: Int) {
+        Utils.showMessage(context, messageResId)
     }
 
-    interface MessageSendHandler {
-        fun sendMessage(messageText: String)
-        fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
-        fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
-        fun sendToThreadWithAttachments(
+    public interface TypeListener {
+        public fun onKeystroke()
+        public fun onStopTyping()
+    }
+
+    public interface MessageSendHandler {
+        public fun sendMessage(messageText: String)
+        public fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>)
+        public fun sendToThread(parentMessage: Message, messageText: String, alsoSendToChannel: Boolean)
+        public fun sendToThreadWithAttachments(
             parentMessage: Message,
             message: String,
             alsoSendToChannel: Boolean,
             attachmentsFiles: List<File>
         )
 
-        fun editMessage(oldMessage: Message, newMessageText: String)
+        public fun editMessage(oldMessage: Message, newMessageText: String)
     }
 
     init {

@@ -18,7 +18,7 @@ import com.getstream.sdk.chat.view.BaseStyle
 /**
  * Style for MessageInputStyle customization by xml attributes
  */
-class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
+internal class MessageInputStyle(context: Context, attrs: AttributeSet?) : BaseStyle() {
 
     var inputText: TextStyle
     val isShowAttachmentButton: Boolean

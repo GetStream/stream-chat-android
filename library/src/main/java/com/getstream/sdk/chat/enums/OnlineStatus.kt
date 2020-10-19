@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.enums
 
-enum class OnlineStatus {
+public enum class OnlineStatus {
     CONNECTED,
     CONNECTING,
     NOT_INITIALIZED,

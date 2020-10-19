@@ -5,9 +5,9 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 
-abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+public abstract class BaseAttachmentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    abstract fun bind(attachmentListItem: AttachmentListItem)
+    public abstract fun bind(attachmentListItem: AttachmentListItem)
 
     protected val context: Context
         get() = itemView.context

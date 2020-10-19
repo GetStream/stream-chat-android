@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import com.getstream.sdk.chat.Chat
 
-class WebLinkDestination(url: String, context: Context) : ChatDestination(context) {
+internal class WebLinkDestination(url: String, context: Context) : ChatDestination(context) {
     private val url: String = Chat.getInstance().urlSigner().signFileUrl(url) ?: ""
 
     override fun navigate() {

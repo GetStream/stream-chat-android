@@ -15,32 +15,32 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
-interface ChannelsViewModel {
-    val state: LiveData<State>
+public interface ChannelsViewModel {
+    public val state: LiveData<State>
 
-    fun onEvent(event: Event)
+    public fun onEvent(event: Event)
 
-    sealed class State {
-        data class LoadingNextPage(val isLoading: Boolean) : State()
-        object Loading : State()
-        data class Result(val channels: List<Channel>) : State()
-        data class EndPageReached(val isEndPage: Boolean) : State()
-        object NoChannelsAvailable : State()
-        object NavigateToLoginScreen : State()
+    public sealed class State {
+        public data class LoadingNextPage(val isLoading: Boolean) : State()
+        public object Loading : State()
+        public data class Result(val channels: List<Channel>) : State()
+        public data class EndPageReached(val isEndPage: Boolean) : State()
+        public object NoChannelsAvailable : State()
+        public object NavigateToLoginScreen : State()
     }
 
-    sealed class Event {
-        object ReachedEndOfList : Event()
-        object LogoutClicked : Event()
+    public sealed class Event {
+        public object ReachedEndOfList : Event()
+        public object LogoutClicked : Event()
     }
 
-    companion object {
+    public companion object {
         @JvmField
-        val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
+        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
     }
 }
 
-class ChannelsViewModelImpl(
+public class ChannelsViewModelImpl(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
     private val sort: QuerySort = DEFAULT_SORT

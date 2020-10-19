@@ -10,7 +10,7 @@ import androidx.core.util.contains
 import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.HashMap
 
-class ChatFontsImpl(
+internal class ChatFontsImpl(
     private val style: ChatStyle,
     private val context: Context
 ) : ChatFonts {

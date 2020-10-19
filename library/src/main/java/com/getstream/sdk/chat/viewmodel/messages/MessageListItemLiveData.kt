@@ -49,7 +49,7 @@ import java.util.Date
  * }
  *
  */
-class MessageListItemLiveData(
+internal class MessageListItemLiveData(
     private val currentUser: User,
     private val messagesLd: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,

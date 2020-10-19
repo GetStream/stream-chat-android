@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.enums.label
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import java.util.Date
 
-class DateSeparatorViewHolder(
+internal class DateSeparatorViewHolder(
     parent: ViewGroup,
     private val style: MessageListViewStyle,
     private val binding: StreamItemDateSeparatorBinding =

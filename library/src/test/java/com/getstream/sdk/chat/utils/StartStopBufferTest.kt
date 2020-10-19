@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 
 @ExperimentalCoroutinesApi
-class StartStopBufferTest {
+internal class StartStopBufferTest {
 
     @JvmField
     @RegisterExtension

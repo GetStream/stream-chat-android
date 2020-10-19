@@ -2,27 +2,27 @@ package com.getstream.sdk.chat.style
 
 import androidx.annotation.FontRes
 
-interface ChatStyle {
+public interface ChatStyle {
 
-    fun hasDefaultFont(): Boolean
+    public fun hasDefaultFont(): Boolean
 
-    fun getDefaultTextStyle(): TextStyle
+    public fun getDefaultTextStyle(): TextStyle
 
-    class Builder {
-        var result = ChatStyleImpl()
+    public class Builder {
+        private var result = ChatStyleImpl()
 
-        fun setDefaultFont(assetPath: String): Builder = apply {
+        public fun setDefaultFont(assetPath: String): Builder = apply {
             result.defaultTextStyle = TextStyle().apply {
                 fontAssetsPath = assetPath
             }
         }
 
-        fun setDefaultFont(@FontRes fontRes: Int): Builder = apply {
+        public fun setDefaultFont(@FontRes fontRes: Int): Builder = apply {
             result.defaultTextStyle = TextStyle().apply {
                 fontResource = fontRes
             }
         }
 
-        fun build(): ChatStyle = result
+        public fun build(): ChatStyle = result
     }
 }

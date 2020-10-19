@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, AfterAllCallback {
+internal class TestCoroutineExtension : BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
     val dispatcher = TestCoroutineDispatcher()
     val scope = TestCoroutineScope(dispatcher)
