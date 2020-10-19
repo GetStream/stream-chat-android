@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Attachment;
@@ -36,30 +37,9 @@ public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
 
-    @Nullable
+    @NonNull
     public static String getInitials(User user) {
-        String name = (String) user.getExtraData().get("name");
-
-        if (name == null) {
-            name = "";
-        }
-
-        String[] names = name.split(" ");
-        String firstName = names[0];
-        String lastName = null;
-        try {
-            lastName = names[1];
-        } catch (Exception e) {
-        }
-
-        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
-            return firstName.substring(0, 1).toUpperCase();
-        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
-            return lastName.substring(0, 1).toUpperCase();
-
-        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
-            return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
-        return null;
+        return PrimitivesKt.initials((String) user.getExtraData().get("name"));
     }
 
     @Nullable
@@ -264,28 +244,9 @@ public class LlcMigrationUtils {
         return result;
     }
 
-    @Nullable
+    @NonNull
     public static String getInitials(Channel channel) {
-        String name = (String) channel.getExtraData().get("name");
-        if (name == null) {
-            return "";
-        }
-        String[] names = name.split(" ");
-        String firstName = names[0];
-        String lastName = null;
-        try {
-            lastName = names[1];
-        } catch (Exception e) {
-        }
-
-        if (!TextUtils.isEmpty(firstName) && TextUtils.isEmpty(lastName))
-            return firstName.substring(0, 1).toUpperCase();
-        if (TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
-            return lastName.substring(0, 1).toUpperCase();
-
-        if (!TextUtils.isEmpty(firstName) && !TextUtils.isEmpty(lastName))
-            return firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase();
-        return null;
+        return PrimitivesKt.initials((String) channel.getExtraData().get("name"));
     }
 
     public static Map<String, String> getReactionTypes() {
