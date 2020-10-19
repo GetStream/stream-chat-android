@@ -1,4 +1,7 @@
 # To be released:
+
+# Oct 16th, 2020 - 4.3.1-beta-1
+- Significant performance improvements
 - Fix a crash related to behaviour changes in 1.3.0-alpha08 of the AndroidX Fragment library
 - Replace Glide with Coil in AttachmentViewHolderMedia (Fix GIFs loading issues)
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
