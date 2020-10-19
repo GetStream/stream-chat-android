@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.model.ModelType
@@ -15,7 +16,7 @@ import java.util.Date
 import java.util.Locale
 
 internal class StorageHelper {
-    private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+    private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US)
 
     internal fun getCachedFileFromUri(
         context: Context,
@@ -30,10 +31,8 @@ internal class StorageHelper {
         val cachedFile = File(
             context.cacheDir,
             "STREAM_${
-            dateFormat.format(
-                Date().time
-            )
-            }_${attachmentMetaData.title}"
+            dateFormat.format(Date().time)
+            }_${attachmentMetaData.getTitleWithExtension()}"
         )
         context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
             cachedFile.outputStream().use {
@@ -129,6 +128,16 @@ internal class StorageHelper {
         }
 
         return attachments
+    }
+}
+
+private fun AttachmentMetaData.getTitleWithExtension(): String {
+    val extension = MimeTypeMap.getFileExtensionFromUrl(title)
+    return if (extension.isNullOrEmpty() && !mimeType.isNullOrEmpty()) {
+        "$title.${MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)}"
+    } else {
+        // TODO: Attachment's title should never be null. Review AttachmentMetaData class
+        title ?: ""
     }
 }
 
