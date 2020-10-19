@@ -1,4 +1,5 @@
 # To be released:
+# Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
 - Removed many internal implementation classes and methods from the SDK's public API
