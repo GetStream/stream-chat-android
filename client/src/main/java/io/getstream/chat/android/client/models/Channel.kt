@@ -53,4 +53,8 @@ public data class Channel(
     @IgnoreDeserialisation
     var hiddenMessagesBefore: Date? = null,
     val cooldown: Int = 0
-) : CustomObject
+) : CustomObject {
+
+    val lastUpdated: Date?
+        get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
+}
