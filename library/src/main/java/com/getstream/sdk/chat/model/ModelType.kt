@@ -44,6 +44,7 @@ object ModelType {
     const val attach_mime_mp4 = "video/mp4"
     const val attach_mime_mp3 = "audio/mp3"
     const val attach_mime_m4a = "audio/m4a"
+    const val attach_mime_gif = "image/gif"
 
     // Action Type
     const val action_send = "send"
