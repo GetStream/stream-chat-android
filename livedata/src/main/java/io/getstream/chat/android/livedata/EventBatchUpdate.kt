@@ -11,17 +11,17 @@ import io.getstream.chat.android.livedata.extensions.users
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
  * It updates multiple messages, users and channels at once.
  *
- * val batch = EventBatchUpdate(domainImpl)
+ * val batchBuilder = EventBatchUpdate.Builder()
  *
  * as a first step specify which channels and messages to fetch
- * batch.addToFetchChannels()
- * batch.addToFetchMessages()
+ * batchBuilder.addToFetchChannels()
+ * batchBuilder.addToFetchMessages()
  *
  * as a second step, load the required data for batch updating using
- * batch.fetch()
+ * val batch = batchBuilder.build(domainImpl)
  *
  * third, add the required updates via
- * addUser, addChannel and addMessage methods
+ * batch.addUser, addChannel and addMessage methods
  *
  * fourth, execute the batch using
  * batch.execute()
