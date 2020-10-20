@@ -97,7 +97,6 @@ public interface ChatDomain {
 
         private var userPresence: Boolean = false
         private var offlineEnabled: Boolean = true
-        private var backgroundSyncEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
@@ -112,6 +111,7 @@ public interface ChatDomain {
             // TODO: Consider exposing apiKey and userToken by ChatClient to make this public function more friendly
             if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
                 this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+                throw IllegalArgumentException("apiKey, userToken must not be empty")
             } else {
                 this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
             }
@@ -119,7 +119,6 @@ public interface ChatDomain {
         }
 
         public fun backgroundSyncDisabled(): Builder {
-            this.backgroundSyncEnabled = false
             this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
             return this
         }
@@ -160,13 +159,9 @@ public interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
-            if (backgroundSyncEnabled) {
-                if (backgroundSyncConfig == BackgroundSyncConfig.UNAVAILABLE) {
-                    throw IllegalStateException("ChatDomain.Builder::build. backgroundSyncEnabled must be called with non-empty params.")
-                } else {
-                    storeBackgroundSyncConfig(backgroundSyncConfig)
-                    storeNotificationConfig(notificationConfig)
-                }
+            if (backgroundSyncConfig != BackgroundSyncConfig.UNAVAILABLE) {
+                storeBackgroundSyncConfig(backgroundSyncConfig)
+                storeNotificationConfig(notificationConfig)
             }
             instance = buildImpl()
             return instance
