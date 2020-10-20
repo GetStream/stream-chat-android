@@ -122,6 +122,7 @@ public void openPermissionRequest() {
 ```
 
 * Request Permissions Result
+
 ```java
 @Override
 public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -142,7 +143,6 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
     binding.messageInput.captureMedia(requestCode, resultCode, data);
 }
 ```
-
 
 ### Writing your own message input view
 
@@ -248,8 +248,6 @@ Have a look at the above example and add the following code to `CustomMessageInp
 _Note:_ Do not forget to extend `MessageInputView` and implement `MessageSendListener`.
 
 ```java
-...
-
 public class CustomMessageInputView extends MessageInputView implements MessageSendListener {
 
     private final static String TAG = CustomMessageInputView.class.getSimpleName();
@@ -367,7 +365,6 @@ public class CustomMessageInputView extends MessageInputView implements MessageS
         return attachments;
     }
 }
-
 ```
 
 #### Step 3: Edit activity_channel.xml
@@ -387,8 +384,6 @@ Open `activity_channel.xml` and replace `com.getstream.sdk.chat.view.MessageInpu
 ...
 ```
 
-
 <p align="center">
 <img src="messageinput.png">
 </p>
-
