@@ -36,6 +36,7 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
 
     private lateinit var channelMap: Map<String, ChannelEntity>
     private lateinit var messageMap: Map<String, MessageEntity>
+    // TODO: use a builder approach to have a better concept of steps for this object
     private var fetchCompleted: Boolean = false
 
     fun addMessageData(cid: String, message: Message) {
