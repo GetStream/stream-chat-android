@@ -2,7 +2,6 @@ package io.getstream.chat.sample.common
 
 import android.app.Activity
 import android.content.Context
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -42,14 +41,6 @@ fun EditText.showKeyboard() {
     requestFocus()
     val imm: InputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-}
-
-fun View.visible(isVisible: Boolean) {
-    visibility = if (isVisible) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
 }
 
 fun NavController.navigateSafely(directions: NavDirections) {

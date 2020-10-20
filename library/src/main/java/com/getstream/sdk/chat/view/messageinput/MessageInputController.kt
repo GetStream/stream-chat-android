@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -12,10 +13,8 @@ import com.getstream.sdk.chat.infrastructure.DispatchersProvider
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.PermissionChecker
 import com.getstream.sdk.chat.utils.StorageHelper
-import com.getstream.sdk.chat.utils.StringUtility
 import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.view.PreviewMessageView
-import com.getstream.sdk.chat.view.common.visible
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
@@ -61,16 +60,16 @@ internal class MessageInputController(
     }
 
     private fun configureThreadInputMode() {
-        binding.vPreviewMessage.visible(false)
-        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
-        binding.cbSendAlsoToChannel.visible(true)
+        binding.vPreviewMessage.isVisible = false
+        binding.ivOpenAttach.isVisible = style.isShowAttachmentButton
+        binding.cbSendAlsoToChannel.isVisible = true
         binding.cbSendAlsoToChannel.isChecked = false
     }
 
     private fun configureNormalInputMode() {
-        binding.vPreviewMessage.visible(false)
-        binding.ivOpenAttach.visible(style.isShowAttachmentButton)
-        binding.cbSendAlsoToChannel.visible(false)
+        binding.vPreviewMessage.isVisible = false
+        binding.ivOpenAttach.isVisible = style.isShowAttachmentButton
+        binding.cbSendAlsoToChannel.isVisible = false
     }
 
     private fun configureEditInputMode(message: Message) {
@@ -80,9 +79,9 @@ internal class MessageInputController(
             binding.messageTextInput.setText("")
         }
         binding.messageTextInput.setText(message.text)
-        binding.vPreviewMessage.visible(true)
-        binding.ivOpenAttach.visible(false)
-        binding.cbSendAlsoToChannel.visible(false)
+        binding.vPreviewMessage.isVisible = true
+        binding.ivOpenAttach.isVisible = false
+        binding.cbSendAlsoToChannel.isVisible = false
     }
 
     internal fun onSendMessageClick(message: String) = when (val im = inputMode) {
@@ -149,7 +148,7 @@ internal class MessageInputController(
     }
 
     internal fun configSendButtonEnableState() {
-        if (!StringUtility.isEmptyTextMessage(binding.messageTextInput.text.toString())) {
+        if (!binding.messageTextInput.text.toString().isNullOrBlank()) {
             binding.activeMessageSend = true
         } else {
             binding.activeMessageSend = attachmentsController.selectedAttachments.isNotEmpty()
