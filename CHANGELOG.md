@@ -1,5 +1,12 @@
 # To be released:
 
+- Channel list now correctly updates when you send a new message while offline. This fixes https://github.com/GetStream/stream-chat-android/issues/698
+- Channels now stay sorted based on the QuerySort order (previous behaviour was to sort them once)
+- New messages now default to type "regular" or type "ephemeral" if they start with a /
+- Improved error logging on sendMessage & sendReaction
+- Fixed a race condition that in rare circumstances could cause the channel list to show stale (offline) data
+- Fixed a bug with channel.hidden not working correctly
+
 # Oct 16th, 2020 - 0.8.6
 - Improve sync data validation in ChatDomain.Builder
 - Removed many internal implementation classes and methods from the SDK's public API

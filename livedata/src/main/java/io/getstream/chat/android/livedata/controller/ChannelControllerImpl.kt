@@ -465,6 +465,8 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
+        // TODO: type should be a sealed/class or enum at the client level
+        newMessage.type = if (newMessage.text.startsWith("/")) { "ephemeral" } else { "regular" }
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
@@ -474,8 +476,13 @@ internal class ChannelControllerImpl(
         // TODO remove usage of MessageEntity
         val messageEntity = MessageRepository.toEntity(newMessage)
 
-        // Update livedata
+        // Update livedata in channel controller
         upsertMessage(newMessage)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update livedata for currently running queries
+        for (query in domainImpl.getActiveQueries()) {
+            query.refreshChannel(cid)
+        }
 
         // we insert early to ensure we don't lose messages
         domainImpl.repos.messages.insert(newMessage)
@@ -514,6 +521,9 @@ internal class ChannelControllerImpl(
                 upsertMessage(processedMessage)
                 Result(processedMessage, null)
             } else {
+
+                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}", result.error())
+
                 if (result.error().isPermanent()) {
                     newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
@@ -674,6 +684,8 @@ internal class ChannelControllerImpl(
                 domainImpl.repos.reactions.insertReaction(reaction)
                 Result(result.data(), null)
             } else {
+                logger.logE("Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}", result.error())
+
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
