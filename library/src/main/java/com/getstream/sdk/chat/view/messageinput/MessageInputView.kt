@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -205,7 +206,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun keyStroke(inputMessage: String) {
         messageInputController.checkCommandsOrMentions(messageText)
-        binding.activeMessageSend = inputMessage.isNotBlank()
+        binding.sendButton.isVisible = inputMessage.isNotBlank()
             .whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
             .whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
         configSendButtonEnableState()
@@ -215,7 +216,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
         val attachments = messageInputController.getSelectedAttachments()
         val notEmptyMessage =
             !StringUtility.isEmptyTextMessage(messageText) || attachments.isNotEmpty()
-        binding.activeMessageSend = notEmptyMessage
+        binding.sendButton.isVisible = notEmptyMessage
     }
 
     private fun configAttachmentUI() {
@@ -436,7 +437,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     init {
         applyStyle()
         binding.rvSuggestions.adapter = ConcatAdapter(commandsAdapter, mentionsAdapter)
-        binding.activeMessageSend = false
+        binding.sendButton.isVisible = false
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()

@@ -159,81 +159,79 @@ Create your custom Message input layout named `view_custom_message_input` as sho
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/custom_input_back">
+
+    <EditText
+        android:id="@+id/et_message"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/custom_input_height"
+        android:layout_marginStart="@dimen/custom_input_margin"
+        android:layout_marginEnd="@dimen/custom_input_margin"
+        android:background="@null"
+        android:hint="@string/custom_input_hint"
+        android:textColor="@color/custom_input_text"
+        android:textColorHint="@color/custom_input_hint"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/stream_gray_light"
+        app:layout_constraintTop_toBottomOf="@+id/et_message" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/custom_input_back">
+        android:layout_height="@dimen/custom_input_height"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-        <EditText
-            android:id="@+id/et_message"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/custom_input_height"
+        <Button
+            android:id="@+id/btn_gif"
+            android:layout_width="@dimen/custom_input_send"
+            android:layout_height="@dimen/custom_input_send"
             android:layout_marginStart="@dimen/custom_input_margin"
-            android:layout_marginEnd="@dimen/custom_input_margin"
-            android:background="@null"
-            android:hint="@string/custom_input_hint"
-            android:textColor="@color/custom_input_text"
-            android:textColorHint="@color/custom_input_hint"
+            android:background="@drawable/ic_gif"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/stream_gray_light"
-            app:layout_constraintTop_toBottomOf="@+id/et_message" />
+        <Button
+            android:id="@+id/btn_file"
+            android:layout_width="@dimen/custom_input_send"
+            android:layout_height="@dimen/custom_input_send"
+            android:layout_marginStart="@dimen/custom_input_margin"
+            android:background="@drawable/ic_file"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_gif"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/custom_input_height"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/imageView">
+        <Button
+            android:id="@+id/btn_image"
+            android:layout_width="@dimen/custom_input_send"
+            android:layout_height="@dimen/custom_input_send"
+            android:layout_marginStart="@dimen/custom_input_margin"
+            android:background="@drawable/ic_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_file"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/btn_gif"
-                android:layout_width="@dimen/custom_input_send"
-                android:layout_height="@dimen/custom_input_send"
-                android:layout_marginStart="@dimen/custom_input_margin"
-                android:background="@drawable/ic_gif"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_file"
-                android:layout_width="@dimen/custom_input_send"
-                android:layout_height="@dimen/custom_input_send"
-                android:layout_marginStart="@dimen/custom_input_margin"
-                android:background="@drawable/ic_file"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_gif"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_image"
-                android:layout_width="@dimen/custom_input_send"
-                android:layout_height="@dimen/custom_input_send"
-                android:layout_marginStart="@dimen/custom_input_margin"
-                android:background="@drawable/ic_image"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/btn_file"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/btn_send"
-                android:layout_width="@dimen/custom_input_send"
-                android:layout_height="@dimen/custom_input_send"
-                android:layout_marginEnd="@dimen/custom_input_margin"
-                android:background="@drawable/ic_send"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="@dimen/custom_input_send"
+            android:layout_height="@dimen/custom_input_send"
+            android:layout_marginEnd="@dimen/custom_input_margin"
+            android:background="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 ```
 
 #### Step 2: Create CustomMessageInputView

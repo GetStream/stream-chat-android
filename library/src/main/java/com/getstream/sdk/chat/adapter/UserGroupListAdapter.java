@@ -5,11 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.getstream.sdk.chat.databinding.StreamItemGroupUserBinding;
 
 import java.util.List;
 
-import androidx.recyclerview.widget.RecyclerView;
 import io.getstream.chat.android.client.models.User;
 
 public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdapter.MyViewHolder> {
@@ -57,12 +58,10 @@ public class UserGroupListAdapter extends RecyclerView.Adapter<UserGroupListAdap
         }
 
         public void bind(User user, final View.OnClickListener clickListener) {
-//            binding.viewUserAvator.setUser(user,style);
             binding.btnClose.setOnClickListener((View v) -> {
                 v.setTag(user);
                 clickListener.onClick(v);
             });
-            binding.executePendingBindings();
         }
     }
 }

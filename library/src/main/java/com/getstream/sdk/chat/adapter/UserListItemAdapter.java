@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.databinding.StreamItemUserBinding;
 
 import java.util.List;
 
-import androidx.databinding.DataBindingUtil;
 import io.getstream.chat.android.client.models.User;
 
 public class UserListItemAdapter extends BaseAdapter {
@@ -52,14 +51,14 @@ public class UserListItemAdapter extends BaseAdapter {
         StreamItemUserBinding binding1;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.stream_item_user, null);
-            binding1 = DataBindingUtil.bind(convertView);
+            binding1 = StreamItemUserBinding.bind(convertView);
             convertView.setTag(binding1);
         } else {
             try {
                 binding1 = (StreamItemUserBinding) convertView.getTag();
             } catch (Exception e) {
                 convertView = layoutInflater.inflate(R.layout.stream_item_user, null);
-                binding1 = DataBindingUtil.bind(convertView);
+                binding1 = StreamItemUserBinding.bind(convertView);
             }
         }
 
@@ -71,7 +70,6 @@ public class UserListItemAdapter extends BaseAdapter {
     }
 
     private void configUIs(StreamItemUserBinding binding, User user) {
-//        binding.viewUserAvatar.setUser(user, style);
         binding.tvName.setText(user.getExtraValue("name", ""));
 
         if (user.getOnline())

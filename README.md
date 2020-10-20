@@ -99,10 +99,6 @@ allprojects {
 ~~~gradle
 android {
     ...
-    dataBinding {
-        enabled = true
-    }
-    
     compileOptions {
         
         //for java projects

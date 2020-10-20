@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.view.messageinput
 
 import android.net.Uri
 import android.view.View
+import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentAdapter
 import com.getstream.sdk.chat.adapter.MediaAttachmentSelectedAdapter
@@ -150,9 +151,9 @@ internal class MessageInputController(
 
     internal fun configSendButtonEnableState() {
         if (!StringUtility.isEmptyTextMessage(binding.messageTextInput.text.toString())) {
-            binding.activeMessageSend = true
+            binding.sendButton.isVisible = true
         } else {
-            binding.activeMessageSend = attachmentsController.selectedAttachments.isNotEmpty()
+            binding.sendButton.isVisible = attachmentsController.selectedAttachments.isNotEmpty()
         }
     }
 
