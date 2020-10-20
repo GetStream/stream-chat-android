@@ -44,6 +44,7 @@ class ChatImpl implements Chat {
     private final Context context;
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
+    private final ChatLogger chatLogger;
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
@@ -53,7 +54,8 @@ class ChatImpl implements Chat {
              String apiKey,
              Context context,
              boolean offlineEnabled,
-             ChatNotificationHandler chatNotificationHandler) {
+             ChatNotificationHandler chatNotificationHandler,
+             ChatLogger chatLogger) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -62,6 +64,7 @@ class ChatImpl implements Chat {
         this.context = context;
         this.offlineEnabled = offlineEnabled;
         this.chatNotificationHandler = chatNotificationHandler;
+        this.chatLogger = chatLogger;
 
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler);
@@ -69,39 +72,47 @@ class ChatImpl implements Chat {
         new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
                 .build();
-        ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
+
+        this.chatLogger.logI("Chat", "Initialized: " + getVersion());
     }
 
+    @NotNull
     @Override
     public ChatNavigator getNavigator() {
         return navigator;
     }
 
+    @NotNull
     @Override
     public LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
     }
 
+    @NotNull
     @Override
     public LiveData<Number> getUnreadMessages() {
         return unreadMessages;
     }
 
+    @NotNull
     @Override
     public LiveData<Number> getUnreadChannels() {
         return unreadChannels;
     }
 
+    @NotNull
     @Override
     public LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
+    @NotNull
     @Override
     public ChatStrings getStrings() {
         return chatStrings;
     }
 
+    @NotNull
     @Override
     public UrlSigner urlSigner() {
         return urlSigner;
@@ -119,9 +130,22 @@ class ChatImpl implements Chat {
         return markdown;
     }
 
+    @NotNull
     @Override
     public String getVersion() {
         return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
+    }
+
+    /**
+     * The chat instance's logger can be obtained directly,
+     * or through {@link ChatLogger.Companion.instance}
+     *
+     * @return The chat logger instance
+     */
+    @NotNull
+    @Override
+    public ChatLogger getChatLogger() {
+        return chatLogger;
     }
 
     @Override
@@ -136,9 +160,9 @@ class ChatImpl implements Chat {
             domainBuilder.offlineEnabled();
         }
         domainBuilder
-            .userPresenceEnabled()
-            .backgroundSyncEnabled(apiKey, userToken)
-            .notificationConfig(chatNotificationHandler.getConfig());
+                .userPresenceEnabled()
+                .backgroundSyncEnabled(apiKey, userToken)
+                .notificationConfig(chatNotificationHandler.getConfig());
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
@@ -170,7 +194,7 @@ class ChatImpl implements Chat {
                     CoroutineStart.DEFAULT,
                     (scope, continuation) -> chatDomain.disconnect(continuation));
         } catch (UninitializedPropertyAccessException e) {
-            ChatLogger.Companion.get("ChatImpl").logD("ChatDomain was not initialized yet. No need to disconnect.");
+            chatLogger.logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
         }
     }
 
