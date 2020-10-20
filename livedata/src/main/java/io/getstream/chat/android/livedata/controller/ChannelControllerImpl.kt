@@ -50,13 +50,12 @@ import io.getstream.chat.android.livedata.ChannelData
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.helper.MessageHelper
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
-import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
@@ -385,13 +384,12 @@ internal class ChannelControllerImpl(
         val queryOfflineJob = scope.async { runChannelQueryOffline(pagination) }
         // start the online query before queryOfflineJob.await
         val queryOnlineJob = if (domainImpl.isOnline()) { scope.async { runChannelQueryOnline(pagination) } } else { null }
-
-        val channelEntityPair = queryOfflineJob.await()
-        if (channelEntityPair != null) {
-            updateLiveDataFromChannelEntityPair(channelEntityPair)
+        val localChannel = queryOfflineJob.await()
+        if (localChannel != null) {
+            updateLiveDataFromLocalChannel(localChannel)
         }
-
         // if we are online we we run the actual API call
+
         return if (queryOnlineJob != null) {
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
@@ -401,23 +399,21 @@ internal class ChannelControllerImpl(
         } else {
             // if we are not offline we mark it as needing recovery
             recoveryNeeded = true
-            val channel = channelEntityPair?.channel
-            Result(channel, null)
+            Result(localChannel, null)
         }
     }
 
-    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): ChannelEntityPair? {
-        val channelPair = domainImpl.selectAndEnrichChannel(cid, pagination)
+    suspend fun runChannelQueryOffline(pagination: QueryChannelPaginationRequest): Channel? {
+        val selectedChannel = domainImpl.selectAndEnrichChannel(cid, pagination)
 
-        channelPair?.let {
-            val channel = it.channel
-            it.channel.config = domainImpl.getChannelConfig(it.channel.type)
+        selectedChannel?.also { channel ->
+            channel.config = domainImpl.getChannelConfig(channel.type)
             _loading.postValue(false)
 
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
-        return channelPair
+        return selectedChannel
     }
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
@@ -469,19 +465,27 @@ internal class ChannelControllerImpl(
         }
 
         newMessage.user = domainImpl.currentUser
+        // TODO: type should be a sealed/class or enum at the client level
+        newMessage.type = if (newMessage.text.startsWith("/")) { "ephemeral" } else { "regular" }
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
             newMessage.syncStatus = SyncStatus.SYNC_NEEDED
         }
 
-        val messageEntity = MessageEntity(newMessage)
+        // TODO remove usage of MessageEntity
+        val messageEntity = MessageRepository.toEntity(newMessage)
 
-        // Update livedata
+        // Update livedata in channel controller
         upsertMessage(newMessage)
+        // TODO: an event broadcasting feature for LOCAL/offline events on the LLC would be a cleaner approach
+        // Update livedata for currently running queries
+        for (query in domainImpl.getActiveQueries()) {
+            query.refreshChannel(cid)
+        }
 
         // we insert early to ensure we don't lose messages
-        domainImpl.repos.messages.insertMessage(newMessage)
+        domainImpl.repos.messages.insert(newMessage)
 
         val channelStateEntity = domainImpl.repos.channels.select(newMessage.cid)
         channelStateEntity?.let {
@@ -498,7 +502,7 @@ internal class ChannelControllerImpl(
                 if (it.upload != null) {
                     val result = uploadAttachment(it, attachmentTransformer)
                     if (result.isSuccess) {
-                        attachment = result.data() as Attachment
+                        attachment = result.data()
                     }
                 }
                 attachment
@@ -511,21 +515,22 @@ internal class ChannelControllerImpl(
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
                     syncStatus = SyncStatus.COMPLETED
-                    val entity = MessageEntity(this)
-                    entity.sendMessageCompletedAt = Date()
-                    domainImpl.repos.messages.insert(entity)
+                    domainImpl.repos.messages.insert(this)
                 }
 
                 upsertMessage(processedMessage)
                 Result(processedMessage, null)
             } else {
+
+                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}", result.error())
+
                 if (result.error().isPermanent()) {
                     newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
                     newMessage.syncStatus = SyncStatus.SYNC_NEEDED
                 }
                 upsertMessage(newMessage)
-                domainImpl.repos.messages.insertMessage(newMessage)
+                domainImpl.repos.messages.insert(newMessage)
                 Result(newMessage, result.error())
             }
         } else {
@@ -627,9 +632,7 @@ internal class ChannelControllerImpl(
             val processedMessage: Message = result.data()
             processedMessage.apply {
                 syncStatus = SyncStatus.COMPLETED
-                val entity = MessageEntity(this)
-                entity.sendMessageCompletedAt = Date()
-                domainImpl.repos.messages.insert(entity)
+                domainImpl.repos.messages.insert(this)
             }
             upsertMessage(processedMessage)
             Result(processedMessage)
@@ -668,11 +671,6 @@ internal class ChannelControllerImpl(
         currentMessage?.let {
             it.addReaction(reaction, true)
             upsertMessage(it)
-        }
-        // update the message in the local storage
-        val messageEntity = domainImpl.repos.messages.select(reaction.messageId)
-        messageEntity?.let {
-            it.addReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
             domainImpl.repos.messages.insert(it)
         }
 
@@ -686,6 +684,8 @@ internal class ChannelControllerImpl(
                 domainImpl.repos.reactions.insertReaction(reaction)
                 Result(result.data(), null)
             } else {
+                logger.logE("Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}", result.error())
+
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
                 } else {
@@ -715,11 +715,6 @@ internal class ChannelControllerImpl(
         currentMessage?.let {
             it.removeReaction(reaction, true)
             upsertMessage(it)
-        }
-
-        val messageEntity = domainImpl.repos.messages.select(reaction.messageId)
-        messageEntity?.let {
-            it.removeReaction(reaction, domainImpl.currentUser.id == reaction.user!!.id)
             domainImpl.repos.messages.insert(it)
         }
 
@@ -1061,10 +1056,10 @@ internal class ChannelControllerImpl(
         updateReads(listOf(read))
     }
 
-    fun updateLiveDataFromChannelEntityPair(c: ChannelEntityPair) {
-        setHidden(c.entity.hidden)
-        c.entity.hideMessagesBefore?.let { hideMessagesBefore = it }
-        updateLiveDataFromChannel(c.channel)
+    internal fun updateLiveDataFromLocalChannel(localChannel: Channel) {
+        localChannel.hidden?.let(::setHidden)
+        hideMessagesBefore = localChannel.hiddenMessagesBefore
+        updateLiveDataFromChannel(localChannel)
     }
 
     fun updateLiveDataFromChannel(c: Channel) {
@@ -1108,16 +1103,13 @@ internal class ChannelControllerImpl(
             }
         }
 
-        editedMessage.syncStatus = SyncStatus.IN_PROGRESS
-        if (!online) {
-            editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        editedMessage.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update livedata
         upsertMessage(editedMessage)
 
         // Update Room State
-        domainImpl.repos.messages.insertMessage(editedMessage)
+        domainImpl.repos.messages.insert(editedMessage)
 
         if (online) {
             val runnable = {
@@ -1133,18 +1125,18 @@ internal class ChannelControllerImpl(
                 editedMessage = result.data()
                 editedMessage.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insertMessage(editedMessage)
+                domainImpl.repos.messages.insert(editedMessage)
 
                 return Result(editedMessage, null)
             } else {
-                if (result.error().isPermanent()) {
-                    editedMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                editedMessage.syncStatus = if (result.error().isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    editedMessage.syncStatus = SyncStatus.SYNC_NEEDED
+                    SyncStatus.SYNC_NEEDED
                 }
 
                 upsertMessage(editedMessage)
-                domainImpl.repos.messages.insertMessage(editedMessage)
+                domainImpl.repos.messages.insert(editedMessage)
                 return Result(null, result.error())
             }
         }
@@ -1154,16 +1146,13 @@ internal class ChannelControllerImpl(
     suspend fun deleteMessage(message: Message): Result<Message> {
         val online = domainImpl.isOnline()
         message.deletedAt = Date()
-        message.syncStatus = SyncStatus.IN_PROGRESS
-        if (!online) {
-            message.syncStatus = SyncStatus.SYNC_NEEDED
-        }
+        message.syncStatus = if (!online) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
 
         // Update livedata
         upsertMessage(message)
 
         // Update Room State
-        domainImpl.repos.messages.insertMessage(message)
+        domainImpl.repos.messages.insert(message)
 
         if (online) {
             val runnable = {
@@ -1173,17 +1162,17 @@ internal class ChannelControllerImpl(
             if (result.isSuccess) {
                 message.syncStatus = SyncStatus.COMPLETED
                 upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                domainImpl.repos.messages.insert(message)
                 return Result(result.data(), null)
             } else {
-                if (result.error().isPermanent()) {
-                    message.syncStatus = SyncStatus.FAILED_PERMANENTLY
+                message.syncStatus = if (result.error().isPermanent()) {
+                    SyncStatus.FAILED_PERMANENTLY
                 } else {
-                    message.syncStatus = SyncStatus.SYNC_NEEDED
+                    SyncStatus.SYNC_NEEDED
                 }
 
                 upsertMessage(message)
-                domainImpl.repos.messages.insertMessage(message)
+                domainImpl.repos.messages.insert(message)
                 return Result(null, result.error())
             }
         }

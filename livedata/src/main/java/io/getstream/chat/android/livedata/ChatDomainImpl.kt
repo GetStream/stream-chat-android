@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.os.Handler
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -24,16 +25,15 @@ import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
-import io.getstream.chat.android.livedata.request.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
@@ -44,7 +44,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import java.util.Date
@@ -176,7 +175,7 @@ internal class ChatDomainImpl private constructor(
     ) : this(client, currentUser, handler, offlineEnabled, userPresence, recoveryEnabled) {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
-        repos = RepositoryHelper(client, currentUser, db)
+        repos = RepositoryHelper(RepositoryFactory(db, client, currentUser), scope)
 
         // load channel configs from Room into memory
         initJob = scope.async(scope.coroutineContext) {
@@ -533,7 +532,15 @@ internal class ChatDomainImpl private constructor(
         val updatedChannelIds = mutableSetOf<String>()
         val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(QueryChannelsPaginationRequest(QuerySort(), INITIAL_CHANNEL_OFFSET, CHANNEL_LIMIT, MESSAGE_LIMIT, MEMBER_LIMIT))
+            val response = queryRepo.runQueryOnline(
+                QueryChannelsPaginationRequest(
+                    QuerySort(),
+                    INITIAL_CHANNEL_OFFSET,
+                    CHANNEL_LIMIT,
+                    MESSAGE_LIMIT,
+                    MEMBER_LIMIT
+                )
+            )
             if (response.isSuccess) {
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
@@ -574,9 +581,36 @@ internal class ChatDomainImpl private constructor(
         delay(1000)
         // retry channels, messages and reactions in that order..
         val channelEntities = repos.channels.retryChannels()
-        val messageEntities = repos.messages.retryMessages()
+        val messages = retryMessages()
         val reactionEntities = repos.reactions.retryReactions()
-        logger.logI("Retried ${channelEntities.size} channel entities, ${messageEntities.size} message entities and ${reactionEntities.size} reaction entities")
+        logger.logI("Retried ${channelEntities.size} channel entities, ${messages.size} messages and ${reactionEntities.size} reaction entities")
+    }
+
+    @VisibleForTesting
+    internal suspend fun retryMessages(): List<Message> {
+        val userMap: Map<String, User> = mutableMapOf(currentUser.id to currentUser)
+
+        val messages = repos.messages.selectSyncNeeded(userMap)
+        for (message in messages) {
+            val channel = client.channel(message.cid)
+            // support sending, deleting and editing messages here
+            val result = when {
+                message.deletedAt != null -> channel.deleteMessage(message.id).execute()
+                message.updatedAt != null || message.updatedLocallyAt != null -> {
+                    client.updateMessage(message).execute()
+                }
+                else -> channel.sendMessage(message).execute()
+            }
+
+            if (result.isSuccess) {
+                // TODO: 1.1 image upload support
+                repos.messages.insert(message.copy(syncStatus = SyncStatus.COMPLETED))
+            } else if (result.isError && result.error().isPermanent()) {
+                repos.messages.insert(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY))
+            }
+        }
+
+        return messages
     }
 
     suspend fun storeStateForChannel(channel: Channel) {
@@ -608,7 +642,7 @@ internal class ChatDomainImpl private constructor(
         // store the channel data
         repos.channels.insertChannel(channelsResponse)
         // store the messages
-        repos.messages.insertMessages(messages)
+        repos.messages.insert(messages)
 
         logger.logI("storeStateForChannels stored ${channelsResponse.size} channels, ${configs.size} configs, ${users.size} users and ${messages.size} messages")
     }
@@ -616,65 +650,29 @@ internal class ChatDomainImpl private constructor(
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelPaginationRequest
-    ): ChannelEntityPair? {
-        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
-        return channelStates.getOrNull(0)
+    ): Channel? {
+        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelsPaginationRequest
-    ): ChannelEntityPair? {
-        val channelStates = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest())
-        return channelStates.getOrNull(0)
+    ): Channel? {
+        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: QueryChannelsPaginationRequest
-    ): List<ChannelEntityPair> {
+    ): List<Channel> {
         return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
     }
 
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
-    ): List<ChannelEntityPair> {
-        // fetch the channel entities from room
-        val channelEntities = repos.channels.select(channelIds)
-
-        val channelMessagesMap = if (pagination.isRequestingMoreThanLastMessage()) {
-            // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
-            // sqlite has window functions: https://sqlite.org/windowfunctions.html
-            // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-
-            // async to run queries in parallel
-            channelEntities.map { scope.async { it.cid to repos.messages.selectMessagesForChannel(it.cid, pagination) } }.awaitAll().toMap()
-        } else {
-            emptyMap()
-        }
-
-        // gather the user ids from channels, members and the last message
-        val userMap = repos.getUsersForChannels(channelEntities, channelMessagesMap)
-
-        // convert the channels
-        val channelPairs = mutableListOf<ChannelEntityPair>()
-        for (channelEntity in channelEntities) {
-            val channel = channelEntity.toChannel(userMap)
-            // get the config we have stored offline
-            channel.config = getChannelConfig(channel.type)
-
-            if (pagination.isRequestingMoreThanLastMessage()) {
-                val messageEntities = channelMessagesMap[channel.cid] ?: emptyList()
-                val messages = messageEntities.map { it.toMessage(userMap) }
-                channel.messages = messages
-            }
-
-            val channelPair = ChannelEntityPair(channel, channelEntity)
-
-            channelPairs.add(channelPair)
-        }
-        return channelPairs.toList().applyPagination(pagination)
+    ): List<Channel> {
+        return repos.selectChannels(channelIds, pagination, defaultConfig).applyPagination(pagination)
     }
 
     override fun clean() {

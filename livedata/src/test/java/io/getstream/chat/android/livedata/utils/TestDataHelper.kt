@@ -158,6 +158,16 @@ internal class TestDataHelper {
         config = config1
     }
 
+    val channel5 = Channel().apply {
+        type = "messaging"
+        id = "555-testing"
+        cid = "messaging:555-testing"
+        watcherCount = 444
+        watchers = listOf(watcher1)
+        members = listOf(member1, member2)
+        config = config1
+    }
+
     val reaction1 = Reaction("message-1", "like", 1).apply { user = user1; userId = user1.id; score = 10 }
     val reaction2 = Reaction("message-1", "like", 1).apply { user = user2 }
 
@@ -216,6 +226,8 @@ internal class TestDataHelper {
     val reactionEvent2 = ReactionNewEvent(EventType.REACTION_NEW, Date(), user2, channel1.cid, channel1.type, channel1.id, reactionMessage, reaction2)
 
     val channelUpdatedEvent = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel1Updated.cid, channel1Updated.type, channel1Updated.id, null, channel1Updated)
+    val channelUpdatedEvent2 = ChannelUpdatedEvent(EventType.CHANNEL_UPDATED, Date(), channel5.cid, channel5.type, channel5.id, null, channel5)
+
     val user1TypingStarted = TypingStartEvent(EventType.TYPING_START, Date(), user1, channel1.cid, channel1.type, channel1.id)
     val user3TypingStartedOld = TypingStartEvent(EventType.TYPING_START, getOldDate(), user3, channel1.cid, channel1.type, channel1.id)
 
