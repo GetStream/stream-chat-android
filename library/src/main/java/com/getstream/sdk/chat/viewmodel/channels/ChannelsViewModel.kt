@@ -62,7 +62,7 @@ public class ChannelsViewModelImpl(
             loadingData.postValue(ChannelsViewModel.State.Loading)
             channelsData = map(channels) { it.toState() }
             loadingMoreData = map(loadingMore, ChannelsViewModel.State::LoadingNextPage)
-            endPageData = map(endOfChannels,  ChannelsViewModel.State::EndPageReached)
+            endPageData = map(endOfChannels, ChannelsViewModel.State::EndPageReached)
         }
 
         stateMerger.addSource(loadingData, stateMerger::setValue)
@@ -84,7 +84,7 @@ public class ChannelsViewModelImpl(
         queryChannels().run {
             channelsData = map(channels) { it.toState() }
             loadingMoreData = map(loadingMore, ChannelsViewModel.State::LoadingNextPage)
-            endPageData = map(endOfChannels,  ChannelsViewModel.State::EndPageReached)
+            endPageData = map(endOfChannels, ChannelsViewModel.State::EndPageReached)
         }
 
         stateMerger.addSource(channelsData, stateMerger::setValue)
@@ -111,5 +111,4 @@ public class ChannelsViewModelImpl(
     private fun requestMoreChannels() {
         chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
     }
-
 }
