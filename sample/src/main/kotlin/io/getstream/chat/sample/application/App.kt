@@ -6,7 +6,8 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.dataModule
-import loginModule
+import io.getstream.chat.sample.feature.login.loginModule
+import io.getstream.chat.sample.feature.users.usersModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -44,6 +45,7 @@ class App : Application() {
                 listOf(
                     appModule,
                     dataModule,
+                    usersModule,
                     loginModule
                 )
             )

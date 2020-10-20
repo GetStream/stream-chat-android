@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Stream Chat Sample</string>
-    <string name="login_screen_title">Select user</string>
+    <string name="users_screen_title">Select user</string>
     <string name="new_channel_button">New channel</string>
     <string name="hint_enter_channel_name">Channel name…</string>
     <string name="add_new_channel_title">Add new channel</string>
@@ -10,4 +10,17 @@
     <string name="log_out_title">Log out</string>
     <string name="new_messages_single">%s New Message</string>
     <string name="new_messages_plural">%s New Messages</string>
+
+    <!--Login Screen-->
+    <string name="login_screen_title">Welcome to Stream Chat</string>
+    <string name="login_summary_text">Get started by filing out the following:</string>
+    <string name="login_button_text">Login</string>
+    <string name="login_development_users_text">Development users</string>
+    <string name="login_field_api_key_hint">Client API key</string>
+    <string name="login_field_user_id_hint">User ID</string>
+    <string name="login_field_user_token">User token</string>
+    <string name="login_field_user_name_hint">User name (optional)</string>
+    <string name="login_validation_error">Client API key, user id and user token must not be empty</string>
+    <string name="login_sdk_version_template">Stream SDK v %s</string>
+    <string name="login_sample_data">sample data</string>
 </resources>
