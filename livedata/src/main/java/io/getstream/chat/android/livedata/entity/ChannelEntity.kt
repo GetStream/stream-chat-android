@@ -22,7 +22,11 @@ import java.util.Date
  *
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
-internal data class ChannelEntity(var type: String, var channelId: String) {
+internal data class ChannelEntity(
+    var type: String,
+    var channelId: String,
+    val cooldown: Int = 0
+) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 
@@ -62,21 +66,18 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     var deletedAt: Date? = null
     /** all the custom data provided for this channel */
     var extraData = mutableMapOf<String, Any>()
-    /** minimum interval between user messages (in seconds) in slow down mode **/
-    var cooldown: Int = 0
 
     /** if the channel has been synced to the servers */
     var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** create a ChannelStateEntity from a Channel object */
-    constructor(c: Channel) : this(c.type, c.id) {
+    constructor(c: Channel) : this(c.type, c.id, c.cooldown) {
         frozen = c.frozen
         createdAt = c.createdAt
         updatedAt = c.updatedAt
         deletedAt = c.deletedAt
         extraData = c.extraData
         syncStatus = c.syncStatus
-        cooldown = c.cooldown
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -95,7 +96,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
 
     /** convert a channelEntity into a channel object */
     fun toChannel(userMap: Map<String, User>): Channel {
-        val c = Channel()
+        val c = Channel(cooldown = cooldown)
         c.type = type
         c.id = channelId
         c.cid = cid
@@ -106,7 +107,6 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
-        c.cooldown = cooldown
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 

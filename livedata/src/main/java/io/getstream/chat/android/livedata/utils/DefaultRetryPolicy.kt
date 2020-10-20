@@ -2,7 +2,6 @@ package io.getstream.chat.android.livedata.utils
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.livedata.extensions.isPermanent
 
 internal class DefaultRetryPolicy : RetryPolicy {
     override fun shouldRetry(
@@ -10,7 +9,7 @@ internal class DefaultRetryPolicy : RetryPolicy {
         attempt: Int,
         error: ChatError
     ): Boolean {
-        return attempt < 3 && !error.isPermanent()
+        return attempt < 3
     }
 
     /**
