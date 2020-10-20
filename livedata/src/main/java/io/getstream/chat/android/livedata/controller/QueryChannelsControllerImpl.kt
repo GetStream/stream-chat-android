@@ -128,7 +128,7 @@ internal class QueryChannelsControllerImpl(
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-            val channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
+            channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
