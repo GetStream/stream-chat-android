@@ -1,12 +1,6 @@
-name: Android CI
+name: Stream Chat Android Offline CI
 
-on:
-  pull_request:
-    branches:
-      - '*'
-  push:
-    branches:
-      - '*'
+on: [push, pull_request]
 
 jobs:
   test:
@@ -20,9 +14,9 @@ jobs:
       with:
         java-version: 1.8
     - name: KtLint
-      run: bash ./gradlew ktlintCheck
+      run: bash ./gradlew :stream-chat-android-offline:ktlintCheck
     - name: Unit tests
-      run: bash ./gradlew test --stacktrace
+      run: bash ./gradlew :stream-chat-android-offline:test --stacktrace
     - name: Coverage
       run: ./gradlew jacocoTestReport
     - name: Upload Coverage
@@ -32,11 +26,11 @@ jobs:
       if: failure()
       with:
         name: testDebugUnitTest
-        path: livedata/build/reports/tests/testDebugUnitTest
+        path: stream-chat-android-offline/build/reports/tests/testDebugUnitTest
     - name: Upload testDebugUnitTest Results
       uses: actions/upload-artifact@v2
       if: failure()
       with:
         name: testReleaseUnitTest
-        path: livedata/build/reports/tests/testReleaseUnitTest
+        path: stream-chat-android-offline/build/reports/tests/testReleaseUnitTest
 
