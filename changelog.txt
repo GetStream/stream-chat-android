@@ -1,4 +1,6 @@
 # To be released:
+- Fix ConcurrentModificationException into our `ChatEventsObservable`
+
 # 1.16.8 - Fri 16th of Oct 2020
 - Add `lastUpdated` property to `Channel`
 

@@ -13,7 +13,7 @@ import java.util.Date
 
 internal class ChatEventsObservable(private val socket: ChatSocket) {
 
-    private val subscriptions = mutableSetOf<EventSubscription>()
+    private var subscriptions = setOf<EventSubscription>()
     private var eventsMapper = EventsMapper(this)
 
     private fun onNext(event: ChatEvent) {
@@ -22,7 +22,7 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
                 subscription.onNext(event)
             }
         }
-        subscriptions.removeAll(Disposable::isDisposed)
+        subscriptions = subscriptions.filterNot(Disposable::isDisposed).toSet()
         checkIfEmpty()
     }
 
@@ -56,7 +56,7 @@ internal class ChatEventsObservable(private val socket: ChatSocket) {
             socket.addListener(eventsMapper)
         }
 
-        subscriptions.add(subscription)
+        subscriptions = subscriptions + subscription
 
         return subscription
     }
