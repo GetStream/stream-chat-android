@@ -49,7 +49,6 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     fun addChannel(channel: Channel) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(channel.users())
         // TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour
@@ -57,7 +56,6 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     fun addChannelEntity(channelEntity: ChannelEntity, channelUsers: List<User>) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(channelUsers)
         channels[channelEntity.cid] = channelEntity
@@ -74,19 +72,16 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     fun addMessage(messageEntity: MessageEntity, messageUsers: List<User>) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(messageUsers)
         messages[messageEntity.id] = messageEntity
     }
 
     fun addUsers(newUsers: List<User>) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         users.putAll(newUsers.associateBy(User::id))
     }
 
     fun addUser(newUser: User) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         addUsers(listOf(newUser))
     }
 
@@ -113,6 +108,7 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     suspend fun execute() {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // actually insert the data
         users.remove(domainImpl.currentUser.id)?.let { domainImpl.updateCurrentUser(it) }
         domainImpl.repos.users.insert(users.values.toList())
