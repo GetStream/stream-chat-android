@@ -26,21 +26,39 @@ import io.getstream.chat.android.livedata.extensions.users
  * fourth, execute the batch using
  * batch.execute()
  */
-internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
+internal class EventBatchUpdate private constructor (private val domainImpl: ChatDomainImpl, private val channelMap: Map<String, ChannelEntity>, private val messageMap: Map<String, MessageEntity>) {
     val users: MutableMap<String, User> = mutableMapOf()
     val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
-
     val messages: MutableMap<String, MessageEntity> = mutableMapOf()
-    private val channelsToFetch = mutableSetOf<String>()
-    private val messagesToFetch = mutableSetOf<String>()
 
-    private lateinit var channelMap: Map<String, ChannelEntity>
-    private lateinit var messageMap: Map<String, MessageEntity>
-    // TODO: use a builder approach to have a better concept of steps for this object
-    private var fetchCompleted: Boolean = false
+    internal class Builder {
+        private val channelsToFetch = mutableSetOf<String>()
+        private val messagesToFetch = mutableSetOf<String>()
+
+        fun addToFetchChannels(cIds: List<String>) {
+            channelsToFetch += cIds
+        }
+
+        fun addToFetchChannels(cId: String) {
+            channelsToFetch += listOf(cId)
+        }
+
+        fun addToFetchMessages(ids: List<String>) {
+            messagesToFetch += ids
+        }
+
+        fun addToFetchMessages(id: String) {
+            messagesToFetch += id
+        }
+
+        fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
+            val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
+            val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
+            return EventBatchUpdate(domainImpl, channelMap, messageMap)
+        }
+    }
 
     fun addMessageData(cid: String, message: Message) {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         addMessage(MessageEntity(message), message.users())
 
         getCurrentChannel(cid)?.let {
@@ -63,12 +81,10 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     fun getCurrentChannel(cId: String): ChannelEntity? {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         return channels[cId] ?: channelMap[cId]
     }
 
     fun getCurrentMessage(messageId: String): MessageEntity? {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         return messages[messageId] ?: messageMap[messageId]
     }
 
@@ -86,30 +102,7 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
         addUsers(listOf(newUser))
     }
 
-    fun addToFetchChannels(cIds: List<String>) {
-        channelsToFetch += cIds
-    }
-
-    fun addToFetchChannels(cId: String) {
-        channelsToFetch += listOf(cId)
-    }
-
-    fun addToFetchMessages(ids: List<String>) {
-        messagesToFetch += ids
-    }
-
-    fun addToFetchMessages(id: String) {
-        messagesToFetch += id
-    }
-
-    suspend fun fetch() {
-        messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
-        channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
-        fetchCompleted = true
-    }
-
     suspend fun execute() {
-        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // actually insert the data
         users.remove(domainImpl.currentUser.id)?.let { domainImpl.updateCurrentUser(it) }
         domainImpl.repos.users.insert(users.values.toList())

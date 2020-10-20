@@ -83,10 +83,9 @@ internal class EventHandlerImpl(
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy(ChatEvent::createdAt)
 
-        val batch = EventBatchUpdate(domainImpl)
-
         val eventChannels = events.filterIsInstance<CidEvent>().map { it.cid }
-        batch.addToFetchChannels(eventChannels)
+        val batchBuilder = EventBatchUpdate.Builder()
+        batchBuilder.addToFetchChannels(eventChannels)
 
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
@@ -95,7 +94,7 @@ internal class EventHandlerImpl(
         // break our public API
         @Suppress("USELESS_CAST")
         val eventUsers = events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }
-        batch.addUsers(eventUsers)
+        batchBuilder.addUsers(eventUsers)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -141,25 +140,25 @@ internal class EventHandlerImpl(
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 is ChannelUserUnbannedEvent -> Unit
-                is ReactionNewEvent -> batch.addToFetchMessages(event.reaction.messageId)
-                is ReactionDeletedEvent -> batch.addToFetchMessages(event.reaction.messageId)
-                is ChannelMuteEvent -> batch.addToFetchChannels(event.channelMute.channel.cid)
+                is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
+                is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
+                is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
                 is ChannelsMuteEvent -> {
-                    event.channelsMute.forEach { batch.addToFetchChannels(it.channel.cid) }
+                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
                 }
-                is ChannelUnmuteEvent -> batch.addToFetchChannels(event.channelMute.channel.cid)
+                is ChannelUnmuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
                 is ChannelsUnmuteEvent -> {
-                    event.channelsMute.forEach { batch.addToFetchChannels(it.channel.cid) }
+                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
                 }
-                is MessageDeletedEvent -> batch.addToFetchMessages(event.message.id)
-                is MessageUpdatedEvent -> batch.addToFetchMessages(event.message.id)
-                is NewMessageEvent -> batch.addToFetchMessages(event.message.id)
-                is NotificationMessageNewEvent -> batch.addToFetchMessages(event.message.id)
-                is ReactionUpdateEvent -> batch.addToFetchMessages(event.message.id)
+                is MessageDeletedEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is MessageUpdatedEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is NotificationMessageNewEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is ReactionUpdateEvent -> batchBuilder.addToFetchMessages(event.message.id)
             }.exhaustive
         }
         // actually fetch the data
-        batch.fetch()
+        val batch = batchBuilder.build(domainImpl)
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
