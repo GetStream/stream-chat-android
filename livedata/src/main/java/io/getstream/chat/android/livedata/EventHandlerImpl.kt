@@ -225,7 +225,7 @@ internal class EventHandlerImpl(
                         val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                        batch.addMessage(updatedMessage, emptyList())
+                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
                 }
                 is ReactionDeletedEvent -> {
@@ -235,7 +235,7 @@ internal class EventHandlerImpl(
                             removeReaction(event.reaction, false)
                             reactionCounts = event.message.reactionCounts
                         }
-                        batch.addMessage(updatedMessage, emptyList())
+                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
                 }
                 is ReactionUpdateEvent -> {
@@ -243,7 +243,7 @@ internal class EventHandlerImpl(
                         val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                        batch.addMessage(updatedMessage, emptyList())
+                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
                 }
                 is MemberAddedEvent -> {
@@ -303,6 +303,10 @@ internal class EventHandlerImpl(
                 }
                 is NotificationChannelDeletedEvent -> {
                     batch.addChannel(event.channel)
+                    // note that NotificationChannelDeletedEvent doesn't implement UserEvent
+                    event.user?.let {
+                        batch.addUser(it)
+                    }
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)

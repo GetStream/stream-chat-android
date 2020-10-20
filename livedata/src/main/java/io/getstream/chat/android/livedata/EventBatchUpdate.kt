@@ -36,17 +36,20 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
 
     private lateinit var channelMap: Map<String, ChannelEntity>
     private lateinit var messageMap: Map<String, MessageEntity>
+    private var fetchCompleted: Boolean = false
 
     fun addMessageData(cid: String, message: Message) {
-        users.putAll(message.users().associateBy(User::id))
-        messages[message.id] = MessageEntity(message)
-        channelMap[cid]?.let {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
+        addMessage(MessageEntity(message), message.users())
+
+        getCurrentChannel(cid)?.let {
             it.updateLastMessage(MessageEntity(message))
-            channels[it.cid] = it
+            addChannelEntity(it, emptyList())
         }
     }
 
     fun addChannel(channel: Channel) {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(channel.users())
         // TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour
@@ -54,30 +57,36 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     }
 
     fun addChannelEntity(channelEntity: ChannelEntity, channelUsers: List<User>) {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(channelUsers)
         channels[channelEntity.cid] = channelEntity
     }
 
     fun getCurrentChannel(cId: String): ChannelEntity? {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         return channels[cId] ?: channelMap[cId]
     }
 
     fun getCurrentMessage(messageId: String): MessageEntity? {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         return messages[messageId] ?: messageMap[messageId]
     }
 
     fun addMessage(messageEntity: MessageEntity, messageUsers: List<User>) {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         // ensure we store all users for this channel
         addUsers(messageUsers)
         messages[messageEntity.id] = messageEntity
     }
 
     fun addUsers(newUsers: List<User>) {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         users.putAll(newUsers.associateBy(User::id))
     }
 
     fun addUser(newUser: User) {
+        require(fetchCompleted) { "be sure to run batch.fetch before calling this method" }
         addUsers(listOf(newUser))
     }
 
@@ -100,6 +109,7 @@ internal class EventBatchUpdate(private val domainImpl: ChatDomainImpl) {
     suspend fun fetch() {
         messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
         channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
+        fetchCompleted = true
     }
 
     suspend fun execute() {
