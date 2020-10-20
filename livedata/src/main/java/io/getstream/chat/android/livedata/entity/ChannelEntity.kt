@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.livedata.repository.MessageRepository
 import java.util.Date
 
 /**
@@ -33,7 +34,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     var frozen: Boolean = false
 
     /** if the channel is hidden (new messages will cause to reappear) */
-    var hidden: Boolean = false
+    var hidden: Boolean? = null
 
     /** hide messages before this date */
     var hideMessagesBefore: Date? = null
@@ -56,10 +57,13 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
 
     /** when the channel was created */
     var createdAt: Date? = null
+
     /** when the channel was updated */
     var updatedAt: Date? = null
+
     /** when the channel was deleted */
     var deletedAt: Date? = null
+
     /** all the custom data provided for this channel */
     var extraData = mutableMapOf<String, Any>()
 
@@ -74,6 +78,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         deletedAt = c.deletedAt
         extraData = c.extraData
         syncStatus = c.syncStatus
+        hidden = c.hidden
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -84,7 +89,8 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
             reads[r.getUserId()] = ChannelUserReadEntity(r)
         }
         c.messages.lastOrNull()?.let { message ->
-            lastMessage = MessageEntity(message)
+            // TODO Reconsider not to use MessageEntity (maybe just id)
+            lastMessage = MessageRepository.toEntity(message)
             lastMessageAt = message.createdAt
         }
         createdByUserId = c.createdBy.id
@@ -103,11 +109,13 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
         c.extraData = extraData
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
+        c.hidden = hidden
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 
         lastMessage?.let {
-            c.messages = listOf(it.toMessage(userMap))
+            // TODO Reconsider how not to use MessageRepository.toModel
+            c.messages = listOf(MessageRepository.toModel(it, userMap))
         }
 
         c.read = reads.values.map { it.toChannelUserRead(userMap) }
@@ -119,7 +127,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     }
 
     /** updates last message and lastMessageAt on this channel entity */
-    fun updateLastMessage(messageEntity: MessageEntity) {
+    internal fun updateLastMessage(messageEntity: MessageEntity) {
         val createdAt = messageEntity.createdAt ?: messageEntity.createdLocallyAt
         val messageEntityCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 

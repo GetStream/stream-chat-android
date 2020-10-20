@@ -61,8 +61,10 @@ import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
-import io.getstream.chat.android.livedata.entity.MessageEntity
+import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.removeReaction
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.MessageRepository
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -91,7 +93,7 @@ internal class EventHandlerImpl(
         val users: MutableMap<String, User> = mutableMapOf()
         val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
 
-        val messages: MutableMap<String, MessageEntity> = mutableMapOf()
+        val messages: MutableMap<String, Message> = mutableMapOf()
         val channelsToFetch = mutableSetOf<String>()
         val messagesToFetch = mutableSetOf<String>()
 
@@ -167,13 +169,15 @@ internal class EventHandlerImpl(
         }
         // actually fetch the data
         val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
-        val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
+        val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList(), users.toMap()).associateBy { it.id }
 
         fun addMessageData(cid: String, message: Message) {
             users.putAll(message.users().associateBy(User::id))
-            messages[message.id] = MessageEntity(message)
+            messages[message.id] = message
             channelMap[cid]?.let {
-                it.updateLastMessage(MessageEntity(message))
+                // TODO remove usage of MessageEntity
+                val messageEntity = MessageRepository.toEntity(message)
+                it.updateLastMessage(messageEntity)
                 channels[it.cid] = it
             }
         }

@@ -75,7 +75,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
         val query = QueryChannelsEntity(query.filter, query.sort)
         query.channelCids = listOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
-        chatDomainImpl.repos.messages.insertMessage(data.message1)
+        chatDomainImpl.repos.messages.insert(data.message1)
         chatDomainImpl.storeStateForChannel(data.channel1)
         chatDomainImpl.setOffline()
         val channels = queryControllerImpl.runQueryOffline(QueryChannelsPaginationRequest(query.sort, 0, 2, 10, 0))

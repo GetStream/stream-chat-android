@@ -83,6 +83,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         val liveChannel = channelControllerImpl.toChannel()
         var roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
+            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
@@ -96,16 +97,17 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
         Truth.assertThat(liveChannel.lastMessageAt).isEqualTo(message1.createdAt)
         Truth.assertThat(roomChannel!!.lastMessageAt).isEqualTo(message1.createdAt)
 
-        var messageEntities = chatDomainImpl.repos.messages.retryMessages()
-        Truth.assertThat(messageEntities.size).isEqualTo(1)
+        var messages = chatDomainImpl.retryMessages()
+        Truth.assertThat(messages.size).isEqualTo(1)
 
         // now we go online and retry, after the retry all state should be updated
         chatDomainImpl.setOnline()
-        messageEntities = chatDomainImpl.repos.messages.retryMessages()
-        Truth.assertThat(messageEntities.size).isEqualTo(1)
+        messages = chatDomainImpl.retryMessages()
+        Truth.assertThat(messages.size).isEqualTo(1)
 
         roomMessages = chatDomainImpl.repos.messages.selectMessagesForChannel(
             message1.cid,
+            data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
         liveMessages = channelControllerImpl.messages.getOrAwaitValue()

@@ -25,7 +25,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun newMessageEvent() = runBlocking(Dispatchers.IO) {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
         Truth.assertThat(message).isNotNull()
     }
 
@@ -33,7 +33,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun newMessageNotificationEvent() = runBlocking(Dispatchers.IO) {
         // new messages should be stored in room
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
         Truth.assertThat(message).isNotNull()
     }
 
@@ -48,7 +48,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun truncate() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelTruncatedEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -59,7 +59,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun notificationTruncate() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.notificationChannelTruncated)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
@@ -70,7 +70,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
     fun channelDelete() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.eventHandler.handleEvent(data.newMessageEventNotification)
         chatDomainImpl.eventHandler.handleEvent(data.channelDeletedEvent)
-        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id)
+        val message = chatDomainImpl.repos.messages.select(data.newMessageEvent.message.id, data.userMap)
         val channel = chatDomainImpl.repos.channels.select(data.channel1.cid)
         Truth.assertThat(message).isNull()
         Truth.assertThat(channel!!.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
@@ -137,7 +137,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.reactionEvent) }
         // fetch the message
         var message = runBlocking(Dispatchers.IO) {
-            chatDomainImpl.repos.messages.select(messageId)!!
+            chatDomainImpl.repos.messages.select(messageId, data.userMap)!!
         }
         // reaction from yourself (so it goes into ownReactions)
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(1)
@@ -149,7 +149,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         // add a reaction from a different user, it should not go into own reaction
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.reactionEvent2) }
         message = runBlocking(Dispatchers.IO) {
-            chatDomainImpl.repos.messages.select(messageId)!!
+            chatDomainImpl.repos.messages.select(messageId, data.userMap)!!
         }
         Truth.assertThat(message.reactionCounts["like"]).isEqualTo(2)
         Truth.assertThat(message.latestReactions.size).isEqualTo(2)

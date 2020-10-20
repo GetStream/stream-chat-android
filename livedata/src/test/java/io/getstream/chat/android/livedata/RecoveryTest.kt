@@ -25,7 +25,7 @@ internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
             data.channel1.cid,
             QueryChannelPaginationRequest()
         )
-        Truth.assertThat(channelState!!.channel.messages.size).isEqualTo(2)
+        Truth.assertThat(channelState!!.messages.size).isEqualTo(2)
     }
 }
 
