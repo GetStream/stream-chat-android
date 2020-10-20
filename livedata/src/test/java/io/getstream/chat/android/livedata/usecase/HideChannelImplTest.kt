@@ -80,7 +80,7 @@ internal class HideChannelImplTest : BaseConnectedIntegrationTest() {
         val channelController = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val channelControllerImpl = chatDomainImpl.channel(data.channel1.cid)
         // add a message that should no longer be visible afterwards
-        chatDomainImpl.repos.messages.insertMessage(data.message2Older)
+        chatDomainImpl.repos.messages.insert(data.message2Older)
         channelControllerImpl.handleEvent(data.newMessageEvent2)
         // keep history = false, so messages should go bye bye
         val result = chatDomain.useCases.hideChannel(data.channel1.cid, false).execute()

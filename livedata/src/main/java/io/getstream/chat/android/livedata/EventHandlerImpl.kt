@@ -87,6 +87,7 @@ internal class EventHandlerImpl(
 
         val eventChannels = events.filterIsInstance<CidEvent>().map { it.cid }
         batch.addToFetchChannels(eventChannels)
+
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
         // inject a null instance into property `user` that doesn't allow null values.
@@ -231,10 +232,8 @@ internal class EventHandlerImpl(
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
-                        val updatedMessage = it.apply {
-                            removeReaction(event.reaction, false)
-                            reactionCounts = event.message.reactionCounts
-                        }
+                        val updatedMessage = it.copy(reactionCounts = event.message.reactionCounts)
+                        it.removeReaction(event.reaction, false)
                         batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
                 }
