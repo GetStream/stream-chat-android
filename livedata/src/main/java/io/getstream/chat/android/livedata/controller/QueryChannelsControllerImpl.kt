@@ -18,7 +18,7 @@ import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.extensions.channelComparator
+import io.getstream.chat.android.livedata.extensions.comparator
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.CoroutineScope
@@ -49,7 +49,7 @@ internal class QueryChannelsControllerImpl(
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.channelComparator) }
+    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -128,9 +128,8 @@ internal class QueryChannelsControllerImpl(
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-            val channelPairs = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
-            channels = channelPairs.map { it.channel }
-            logger.logI("found ${channelPairs.size} channels in offline storage")
+            val channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
+            logger.logI("found ${channels.size} channels in offline storage")
         }
 
         return channels

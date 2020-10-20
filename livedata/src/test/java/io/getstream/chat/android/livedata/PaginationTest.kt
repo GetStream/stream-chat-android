@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.livedata.entity.ChannelEntityPair
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.calendar
@@ -15,9 +15,9 @@ internal class PaginationTest {
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.livedata.PaginationTest#createPaginationInput")
     internal fun `Should return a list of channelEntityPairs properly sorted by pagination param`(
-        inputList: List<ChannelEntityPair>,
+        inputList: List<Channel>,
         pagination: AnyChannelPaginationRequest,
-        expectedList: List<ChannelEntityPair>
+        expectedList: List<Channel>
     ) {
         // show an easy to use diff between the two results
         inputList.applyPagination(pagination) `should be equal to` expectedList
@@ -26,68 +26,54 @@ internal class PaginationTest {
     companion object {
         @JvmStatic
         fun createPaginationInput() = listOf(
-            Arguments.of(listOf<ChannelEntityPair>(), AnyChannelPaginationRequest(), listOf<ChannelEntityPair>()),
-            listOf(randomChannelEntityPair()).let { Arguments.of(it, AnyChannelPaginationRequest(), it) },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b"))
-            ).let { Arguments.of(it, AnyChannelPaginationRequest(), it) },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "a"))
-            ).let { Arguments.of(it, AnyChannelPaginationRequest(), it) },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b"))
-            ).let {
+            Arguments.of(listOf<Channel>(), AnyChannelPaginationRequest(), listOf<Channel>()),
+            listOf(randomChannel()).let { Arguments.of(it, AnyChannelPaginationRequest(), it) },
+            listOf(randomChannel(cid = "a"), randomChannel(cid = "b")).let {
                 Arguments.of(
                     it,
-                    AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply { asc("cid") }
-                    },
+                    AnyChannelPaginationRequest(),
+                    it
+                )
+            },
+            listOf(randomChannel(cid = "b"), randomChannel(cid = "a")).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest(),
+                    it
+                )
+            },
+            listOf(randomChannel(cid = "a"), randomChannel(cid = "b")).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { asc("cid") } },
+                    it
+                )
+            },
+            listOf(randomChannel(cid = "b"), randomChannel(cid = "a")).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { asc("cid") } },
+                    it.reversed()
+                )
+            },
+            listOf(randomChannel(cid = "a"), randomChannel(cid = "b")).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { desc("cid") } },
+                    it.reversed()
+                )
+            },
+            listOf(randomChannel(cid = "b"), randomChannel(cid = "a")).let {
+                Arguments.of(
+                    it,
+                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { desc("cid") } },
                     it
                 )
             },
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "a"))
-            ).let {
-                Arguments.of(
-                    it,
-                    AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply { asc("cid") }
-                    },
-                    it.reversed()
-                )
-            },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b"))
-            ).let {
-                Arguments.of(
-                    it,
-                    AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply { desc("cid") }
-                    },
-                    it.reversed()
-                )
-            },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "a"))
-            ).let {
-                Arguments.of(
-                    it,
-                    AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply { desc("cid") }
-                    },
-                    it
-                )
-            },
-            listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "b"))
+                randomChannel(cid = "a"),
+                randomChannel(cid = "b", type = "a"),
+                randomChannel(cid = "b", type = "b")
             ).let {
                 Arguments.of(
                     it,
@@ -101,9 +87,9 @@ internal class PaginationTest {
                 )
             },
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "a"))
+                randomChannel(cid = "a"),
+                randomChannel(cid = "b", type = "b"),
+                randomChannel(cid = "b", type = "a")
             ).let {
                 Arguments.of(
                     it,
@@ -117,9 +103,9 @@ internal class PaginationTest {
                 )
             },
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "b"))
+                randomChannel(cid = "a"),
+                randomChannel(cid = "b", type = "a"),
+                randomChannel(cid = "b", type = "b")
             ).let {
                 Arguments.of(
                     it,
@@ -133,9 +119,9 @@ internal class PaginationTest {
                 )
             },
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "a"))
+                randomChannel(cid = "a"),
+                randomChannel(cid = "b", type = "b"),
+                randomChannel(cid = "b", type = "a")
             ).let {
                 Arguments.of(
                     it,
@@ -149,9 +135,9 @@ internal class PaginationTest {
                 )
             },
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "a")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "b")),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", type = "a"))
+                randomChannel(cid = "a"),
+                randomChannel(cid = "b", type = "b"),
+                randomChannel(cid = "b", type = "a")
             ).let {
                 Arguments.of(
                     it,
@@ -167,9 +153,9 @@ internal class PaginationTest {
             },
             // last_updated is a computed field based on max(createdAt, lastMessageAt)
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null)),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null),
+                randomChannel(cid = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,
@@ -183,9 +169,9 @@ internal class PaginationTest {
             },
             // created_at should map to channel.createdAt
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", createdAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", createdAt = calendar(2020, 10, 4))),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", createdAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", createdAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", createdAt = calendar(2020, 10, 4)),
+                randomChannel(cid = "b", createdAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,
@@ -199,9 +185,9 @@ internal class PaginationTest {
             },
             // last_message_at should map to channel.lastMessageAt
             listOf(
-                randomChannelEntityPair(channel = randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2))),
-                randomChannelEntityPair(channel = randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4))),
-                randomChannelEntityPair(channel = randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3)))
+                randomChannel(cid = "c", lastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(cid = "a", lastMessageAt = calendar(2020, 10, 4)),
+                randomChannel(cid = "b", lastMessageAt = calendar(2020, 10, 3))
             ).let {
                 Arguments.of(
                     it,
