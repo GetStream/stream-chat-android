@@ -10,4 +10,8 @@
     <string name="log_out_title">Log out</string>
     <string name="new_messages_single">%s New Message</string>
     <string name="new_messages_plural">%s New Messages</string>
+    <string name="hide_channel_dialog">Would you like to hide this channel?</string>
+    <string name="deny">No</string>
+    <string name="confirm">Yes</string>
+
 </resources>

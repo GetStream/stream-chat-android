@@ -2,10 +2,13 @@ package io.getstream.chat.sample.feature.channels
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.getstream.sdk.chat.view.channels.ChannelListView
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import com.getstream.sdk.chat.viewmodel.channels.bindView
@@ -40,6 +43,19 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
         channelsListView.setOnChannelClickListener {
             findNavController().navigateSafely(ChannelsFragmentDirections.actionOpenChannel(it.cid))
         }
+
+        channelsListView.setOnLongClickListener(
+            ChannelListView.ChannelClickListener { channel ->
+                AlertDialog.Builder(requireContext())
+                    .setMessage(R.string.hide_channel_dialog)
+                    .setNegativeButton(R.string.deny) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        viewModel.hideChannel(channel)
+                    }.show()
+            }
+        )
 
         addNewChannelButton.setOnClickListener {
             findNavController().navigateSafely(R.id.action_to_create_channel)
