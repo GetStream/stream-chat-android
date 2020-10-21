@@ -38,4 +38,10 @@ internal class ChatErrorTest : BaseConnectedIntegrationTest() {
         val error = ChatNetworkError.create(0, "", 500, null)
         Truth.assertThat(error.isPermanent()).isFalse()
     }
+
+    @Test
+    fun `cool down period error should be permanent`() {
+        val error = ChatNetworkError.create(60, "", 403, null)
+        Truth.assertThat(error.isPermanent()).isTrue()
+    }
 }
