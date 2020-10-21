@@ -38,6 +38,10 @@ internal class ChannelRepository(
         }
     }
 
+    suspend fun insertChannels(channels: Collection<Channel>) {
+        insert(channels.map(::ChannelEntity))
+    }
+
     suspend fun insert(channelEntities: List<ChannelEntity>) {
         if (channelEntities.isEmpty()) return
         channelDao.insertMany(channelEntities)

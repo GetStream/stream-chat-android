@@ -72,6 +72,40 @@ internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
     }
 }
 
+internal val Channel.lastMessage: Message?
+    get() = messages.lastOrNull()
+
+internal fun Channel.updateLastMessage(message: Message) {
+    val createdAt = message.createdAt ?: message.createdLocallyAt
+    val messageCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
+
+    val updateNeeded = message.id == lastMessage?.id
+    val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
+    if (newLastMessage || updateNeeded) {
+        lastMessageAt = messageCreatedAt
+        messages = messages + message
+    }
+}
+
+internal fun Channel.setMember(userId: String, member: Member?) {
+    if (member == null) {
+        members.firstOrNull { it.user.id == userId }?.also { foundMember ->
+            members = members - foundMember
+        }
+    } else {
+        members = members + member
+    }
+}
+
+internal fun Channel.updateReads(newRead: ChannelUserRead) {
+    val oldRead = read.firstOrNull { it.user == newRead.user }
+    read = if (oldRead != null) {
+        read - oldRead + newRead
+    } else {
+        read + newRead
+    }
+}
+
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private const val HTTP_TIMEOUT = 408
 private const val NETWORK_NOT_AVAILABLE = -1
@@ -111,6 +145,7 @@ internal val QuerySort.comparator: Comparator<in Channel>
         CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
+
 /**
  * turns created_at into createdAt
  */

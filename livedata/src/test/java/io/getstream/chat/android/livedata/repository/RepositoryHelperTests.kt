@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.repository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.randomCID
 import io.getstream.chat.android.livedata.randomChannelEntity
 import io.getstream.chat.android.livedata.randomChannelUserReadEntity
@@ -115,48 +116,84 @@ internal class RepositoryHelperTests {
     }
 
     @Test
-    fun `Given request less than last message When select channels Should return channels from DB with empty messages`() = runBlockingTest {
-        val paginationRequest = AnyChannelPaginationRequest(0)
-        When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
-        val channelEntity1 = randomChannelEntity().apply {
-            cid = "cid1"
-            createdByUserId = "userId"
-        }
-        val channelEntity2 = randomChannelEntity().apply {
-            cid = "cid2"
-            createdByUserId = "userId"
-        }
-        When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
+    fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
+        runBlockingTest {
+            val paginationRequest = AnyChannelPaginationRequest(0)
+            When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
+            val channelEntity1 = randomChannelEntity().apply {
+                cid = "cid1"
+                createdByUserId = "userId"
+            }
+            val channelEntity2 = randomChannelEntity().apply {
+                cid = "cid2"
+                createdByUserId = "userId"
+            }
+            When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
 
-        val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest, mock())
+            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
-        result.size shouldBeEqualTo 2
-        result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
-        result.any { it.cid == "cid2" && it.messages.isEmpty() } shouldBeEqualTo true
-    }
+            result.size shouldBeEqualTo 2
+            result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
+            result.any { it.cid == "cid2" && it.messages.isEmpty() } shouldBeEqualTo true
+        }
 
     @Test
-    fun `Given request more than last message When select channels Should return channels from DB with messages`() = runBlockingTest {
-        val paginationRequest = AnyChannelPaginationRequest(100)
-        When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
-        val messageEntity1 = randomMessageEntity(id = "messageId1", cid = "cid1", userId = "userId")
-        val messageEntity2 = randomMessageEntity(id = "messageId2", cid = "cid2", userId = "userId")
-        When calling messages.selectMessagesEntitiesForChannel("cid1", paginationRequest) doReturn listOf(messageEntity1)
-        When calling messages.selectMessagesEntitiesForChannel("cid2", paginationRequest) doReturn listOf(messageEntity2)
-        val channelEntity1 = randomChannelEntity().apply {
-            cid = "cid1"
-            createdByUserId = "userId"
-        }
-        val channelEntity2 = randomChannelEntity().apply {
-            cid = "cid2"
-            createdByUserId = "userId"
-        }
-        When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
+    fun `Given request more than last message When select channels Should return channels from DB with messages`() =
+        runBlockingTest {
+            val paginationRequest = AnyChannelPaginationRequest(100)
+            When calling users.selectUserMap(any()) doReturn mapOf("userId" to randomUser(id = "userId"))
+            val messageEntity1 = randomMessageEntity(id = "messageId1", cid = "cid1", userId = "userId")
+            val messageEntity2 = randomMessageEntity(id = "messageId2", cid = "cid2", userId = "userId")
+            When calling messages.selectMessagesEntitiesForChannel("cid1", paginationRequest) doReturn listOf(
+                messageEntity1
+            )
+            When calling messages.selectMessagesEntitiesForChannel("cid2", paginationRequest) doReturn listOf(
+                messageEntity2
+            )
+            val channelEntity1 = randomChannelEntity().apply {
+                cid = "cid1"
+                createdByUserId = "userId"
+            }
+            val channelEntity2 = randomChannelEntity().apply {
+                cid = "cid2"
+                createdByUserId = "userId"
+            }
+            When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
 
-        val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest, mock())
+            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
+
+            result.size shouldBeEqualTo 2
+            result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
+            result.any { it.cid == "cid2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
+        }
+
+    @Test
+    fun `Given Db contains all required data When select messages Should return message list`() = runBlockingTest {
+        val reaction1 = randomReactionEntity(userId = "reactionUserId1")
+        val reaction2 = randomReactionEntity(userId = "reactionUserId2")
+        val message1 = randomMessageEntity(
+            id = "messageId1",
+            userId = "messageUserId1",
+            latestReactions = listOf(reaction1, reaction2)
+        )
+        val message2 = randomMessageEntity(id = "messageId2", userId = "messageUserId2")
+        When calling messages.selectEntities(listOf("messageId1", "messageId2")) doReturn listOf(message1, message2)
+        When calling users.selectUserMap(
+            listOf(
+                "reactionUserId1",
+                "reactionUserId2",
+                "messageUserId1",
+                "messageUserId2"
+            )
+        ) doReturn listOf(
+            randomUser(id = "reactionUserId1"),
+            randomUser(id = "reactionUserId2"),
+            randomUser(id = "messageUserId1"),
+            randomUser(id = "messageUserId2")
+        ).associateBy(User::id)
+
+        val result = sut.selectMessages(listOf("messageId1", "messageId2"))
 
         result.size shouldBeEqualTo 2
-        result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
-        result.any { it.cid == "cid2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
     }
 }

@@ -6,7 +6,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.repository.MessageRepository
@@ -83,6 +82,7 @@ internal data class ChannelEntity(
         extraData = c.extraData
         syncStatus = c.syncStatus
         hidden = c.hidden
+        hideMessagesBefore = c.hiddenMessagesBefore
 
         members = mutableMapOf()
         for (m in c.members) {
@@ -114,6 +114,7 @@ internal data class ChannelEntity(
         c.lastMessageAt = lastMessageAt
         c.syncStatus = syncStatus
         c.hidden = hidden
+        c.hiddenMessagesBefore = hideMessagesBefore
 
         c.members = members.values.mapNotNull { it.toMember(userMap) }
 
@@ -147,14 +148,6 @@ internal data class ChannelEntity(
     fun updateReads(read: ChannelUserRead) {
         val readEntity = ChannelUserReadEntity(read)
         reads[read.getUserId()] = readEntity
-    }
-
-    fun setMember(userId: String, member: Member?) {
-        if (member == null) {
-            members.remove(userId)
-        } else {
-            members[userId] = MemberEntity(member)
-        }
     }
 
     private fun max(date: Date?, otherDate: Date?): Date? =

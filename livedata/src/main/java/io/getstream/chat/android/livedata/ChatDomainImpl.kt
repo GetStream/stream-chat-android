@@ -672,7 +672,7 @@ internal class ChatDomainImpl private constructor(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
     ): List<Channel> {
-        return repos.selectChannels(channelIds, pagination, defaultConfig).applyPagination(pagination)
+        return repos.selectChannels(channelIds, defaultConfig, pagination).applyPagination(pagination)
     }
 
     override fun clean() {

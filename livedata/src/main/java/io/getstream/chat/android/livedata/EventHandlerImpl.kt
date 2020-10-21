@@ -56,15 +56,12 @@ import io.getstream.chat.android.client.events.UserUnmutedEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.removeReaction
-import io.getstream.chat.android.livedata.extensions.users
-import io.getstream.chat.android.livedata.repository.MessageRepository
+import io.getstream.chat.android.livedata.extensions.setMember
+import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -90,21 +87,16 @@ internal class EventHandlerImpl(
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy(ChatEvent::createdAt)
 
-        val users: MutableMap<String, User> = mutableMapOf()
-        val channels: MutableMap<String, ChannelEntity> = mutableMapOf()
+        val batchBuilder = EventBatchUpdate.Builder()
+        batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
-        val messages: MutableMap<String, Message> = mutableMapOf()
-        val channelsToFetch = mutableSetOf<String>()
-        val messagesToFetch = mutableSetOf<String>()
-
-        events.filterIsInstance<CidEvent>().onEach { channelsToFetch += it.cid }
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
         // inject a null instance into property `user` that doesn't allow null values.
         // This is a workaround, while we identify which event type is, that omit null values without
         // break our public API
         @Suppress("USELESS_CAST")
-        users += events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }.associateBy(User::id)
+        batchBuilder.addUsers(events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? })
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -150,37 +142,25 @@ internal class EventHandlerImpl(
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
                 is ChannelUserUnbannedEvent -> Unit
-                is ReactionNewEvent -> messagesToFetch += event.reaction.messageId
-                is ReactionDeletedEvent -> messagesToFetch += event.reaction.messageId
-                is ChannelMuteEvent -> channelsToFetch += event.channelMute.channel.cid
+                is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
+                is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
+                is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
                 is ChannelsMuteEvent -> {
-                    event.channelsMute.forEach { channelsToFetch.add(it.channel.cid) }
+                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
                 }
-                is ChannelUnmuteEvent -> channelsToFetch += event.channelMute.channel.cid
+                is ChannelUnmuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
                 is ChannelsUnmuteEvent -> {
-                    event.channelsMute.forEach { channelsToFetch.add(it.channel.cid) }
+                    event.channelsMute.forEach { batchBuilder.addToFetchChannels(it.channel.cid) }
                 }
-                is MessageDeletedEvent -> messagesToFetch += event.message.id
-                is MessageUpdatedEvent -> messagesToFetch += event.message.id
-                is NewMessageEvent -> messagesToFetch += event.message.id
-                is NotificationMessageNewEvent -> messagesToFetch += event.message.id
-                is ReactionUpdateEvent -> messagesToFetch += event.message.id
+                is MessageDeletedEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is MessageUpdatedEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is NewMessageEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is NotificationMessageNewEvent -> batchBuilder.addToFetchMessages(event.message.id)
+                is ReactionUpdateEvent -> batchBuilder.addToFetchMessages(event.message.id)
             }.exhaustive
         }
         // actually fetch the data
-        val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
-        val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList(), users.toMap()).associateBy { it.id }
-
-        fun addMessageData(cid: String, message: Message) {
-            users.putAll(message.users().associateBy(User::id))
-            messages[message.id] = message
-            channelMap[cid]?.let {
-                // TODO remove usage of MessageEntity
-                val messageEntity = MessageRepository.toEntity(message)
-                it.updateLastMessage(messageEntity)
-                channels[it.cid] = it
-            }
-        }
+        val batch = batchBuilder.build(domainImpl)
 
         // step 2. second pass through the events, make a list of what we need to update
         loop@ for (event in events) {
@@ -191,40 +171,42 @@ internal class EventHandlerImpl(
                 is NewMessageEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message)
                 }
                 is MessageDeletedEvent -> {
                     event.message.cid = event.cid
-                    addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message)
                 }
                 is MessageUpdatedEvent -> {
                     event.message.cid = event.cid
-                    addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationMessageNewEvent -> {
                     event.message.cid = event.cid
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.cid, event.message)
                 }
                 is NotificationAddedToChannelEvent -> {
-                    users.putAll(event.channel.users().associateBy(User::id))
-                    channels[event.cid] = ChannelEntity(event.channel)
+                    batch.addChannel(event.channel)
                 }
                 is NotificationInvitedEvent -> {
-                    users[event.user.id] = event.user
+                    batch.addUser(event.user)
                 }
                 is NotificationInviteAcceptedEvent -> {
-                    users[event.user.id] = event.user
+                    batch.addUser(event.user)
                 }
                 is ChannelHiddenEvent -> {
-                    channels[event.cid] = ChannelEntity(Channel(cid = event.cid)).apply {
-                        hidden = true
-                        hideMessagesBefore = event.createdAt.takeIf { event.clearHistory }
+                    batch.getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
+                            hidden = true
+                            hiddenMessagesBefore = event.createdAt.takeIf { event.clearHistory }
+                        }
+                        batch.addChannel(updatedChannel)
                     }
                 }
                 is ChannelVisibleEvent -> {
-                    channels[event.cid] = ChannelEntity(Channel(cid = event.cid)).apply {
-                        hidden = false
+                    batch.getCurrentChannel(event.cid)?.let {
+                        batch.addChannel(it.apply { hidden = false })
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
@@ -233,142 +215,135 @@ internal class EventHandlerImpl(
                 is ConnectedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
-                is MessageReadEvent -> {
-                    // get the channel, update reads, write the channel
-                    channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
-                        }
-                    }
-                }
+
                 is ReactionNewEvent -> {
                     // get the message, update the reaction data, update the message
                     // note that we need to use event.reaction and not event.message
                     // event.message only has a subset of reactions
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
+                    batch.getCurrentMessage(event.reaction.messageId)?.let {
+                        val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                    } ?: Unit
+                        batch.addMessage(updatedMessage)
+                    }
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
-                            removeReaction(event.reaction, false)
-                            reactionCounts = event.message.reactionCounts
-                        }
-                    } ?: Unit
+                    batch.getCurrentMessage(event.reaction.messageId)?.also {
+                        val updatedMessage = it.copy(reactionCounts = event.message.reactionCounts)
+                            .apply { removeReaction(event.reaction, false) }
+                        batch.addMessage(updatedMessage)
+                    }
                 }
                 is ReactionUpdateEvent -> {
-                    messageMap[event.reaction.messageId]?.let {
-                        messages[it.id] = it.apply {
+                    batch.getCurrentMessage(event.reaction.messageId)?.let {
+                        val updatedMessage = it.apply {
                             addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
+                        batch.addMessage(updatedMessage)
                     }
                 }
                 is MemberAddedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.member.user.id, event.member)
-                        channels[it.cid] = it
-                        users.put(event.member.user.id, event.member.user)
+                    batch.getCurrentChannel(event.cid)?.let {
+                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
                     }
                 }
                 is MemberUpdatedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.member.user.id, event.member)
-                        channels[it.cid] = it
-                        users.put(event.member.user.id, event.member.user)
+                    batch.getCurrentChannel(event.cid)?.let {
+                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
                     }
                 }
                 is MemberRemovedEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.user.id, null)
-                        channels[it.cid] = it
+                    batch.getCurrentChannel(event.cid)?.let {
+                        batch.addChannel(it.apply { setMember(event.user.id, null) })
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
-                    channelMap[event.cid]?.let {
-                        it.setMember(event.user.id, null)
-                        channels[it.cid] = it
+                    batch.getCurrentChannel(event.cid)?.let {
+                        batch.addChannel(it.apply { setMember(event.user.id, null) })
                     }
                 }
                 is ChannelUpdatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
                 }
                 is ChannelUpdatedByUserEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
                 }
                 is ChannelDeletedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
                 }
                 is ChannelCreatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
                 }
                 is ChannelMuteEvent -> {
-                    channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channelMute.channel)
                 }
                 is ChannelsMuteEvent -> {
                     event.channelsMute.forEach {
-                        channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().associateBy(User::id))
+                        batch.addChannel(it.channel)
                     }
                 }
                 is ChannelUnmuteEvent -> {
-                    channels[event.channelMute.channel.cid] = ChannelEntity(event.channelMute.channel)
-                    users.putAll(event.channelMute.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channelMute.channel)
                 }
                 is ChannelsUnmuteEvent -> {
                     event.channelsMute.forEach {
-                        channels[it.channel.cid] = ChannelEntity(it.channel)
-                        users.putAll(it.channel.users().associateBy(User::id))
+                        batch.addChannel(it.channel)
                     }
                 }
                 is ChannelTruncatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
                 }
                 is NotificationChannelDeletedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
+                    // note that NotificationChannelDeletedEvent doesn't implement UserEvent
+                    event.user?.let {
+                        batch.addUser(it)
+                    }
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     domainImpl.updateCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
-                    channels[event.cid] = ChannelEntity(event.channel)
-                    users.putAll(event.channel.users().associateBy(User::id))
+                    batch.addChannel(event.channel)
+                }
+
+                is MessageReadEvent -> {
+                    // get the channel, update reads, write the channel
+                    batch.getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
+                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        }
+                        batch.addChannel(updatedChannel)
+                    }
                 }
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
-                    channelMap[event.cid]?.let {
-                        channels[it.cid] = it.apply {
+
+                    batch.getCurrentChannel(event.cid)?.let {
+                        val updatedChannel = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
+                        batch.addChannel(updatedChannel)
                     }
                 }
                 is UserMutedEvent -> {
-                    users[event.targetUser.id] = event.targetUser
+                    batch.addUser(event.targetUser)
                 }
                 is UsersMutedEvent -> {
-                    event.targetUsers.forEach { users[it.id] = it }
+                    batch.addUsers(event.targetUsers)
                 }
                 is UserUnmutedEvent -> {
-                    users[event.targetUser.id] = event.targetUser
+                    batch.addUser(event.targetUser)
                 }
                 is UsersUnmutedEvent -> {
-                    event.targetUsers.forEach { users[it.id] = it }
+                    batch.addUsers(event.targetUsers)
                 }
                 is GlobalUserBannedEvent -> {
-                    users[event.user.id] = event.user.apply { banned = true }
+                    batch.addUser(event.user.apply { banned = true })
                 }
                 is GlobalUserUnbannedEvent -> {
-                    users[event.user.id] = event.user.apply { banned = false }
+                    batch.addUser(event.user.apply { banned = false })
                 }
                 is TypingStartEvent,
                 is TypingStopEvent,
@@ -386,12 +361,9 @@ internal class EventHandlerImpl(
                 is UserStopWatchingEvent -> Unit
             }.exhaustive
         }
-        // actually insert the data
-        users.remove(domainImpl.currentUser.id)?.let { domainImpl.updateCurrentUser(it) }
-        domainImpl.repos.users.insert(users.values.toList())
-        domainImpl.repos.channels.insert(channels.values.toList())
-        // we only cache messages for which we're receiving events
-        domainImpl.repos.messages.insert(messages.values.toList(), true)
+
+        // execute the batch
+        batch.execute()
 
         // handle delete and truncate events
         for (event in events) {
