@@ -52,19 +52,21 @@ internal class EventBatchUpdate private constructor (private val domainImpl: Cha
         }
 
         fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
-            val messageMap = domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
-            val channelMap = domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
+            // TODO fix it
+            val messageMap: Map<String, MessageEntity> = emptyMap()//domainImpl.repos.messages.select(messagesToFetch.toList()).associateBy { it.id }
+            val channelMap: Map<String, ChannelEntity> = emptyMap()//domainImpl.repos.channels.select(channelsToFetch.toList()).associateBy { it.cid }
             return EventBatchUpdate(domainImpl, channelMap, messageMap)
         }
     }
 
     fun addMessageData(cid: String, message: Message) {
-        addMessage(MessageEntity(message), message.users())
+        // TODO rewrite it
+        /*addMessage(MessageEntity(message), message.users())
 
         getCurrentChannel(cid)?.let {
             it.updateLastMessage(MessageEntity(message))
             addChannelEntity(it, emptyList())
-        }
+        }*/
     }
 
     fun addChannel(channel: Channel) {
@@ -108,6 +110,7 @@ internal class EventBatchUpdate private constructor (private val domainImpl: Cha
         domainImpl.repos.users.insert(users.values.toList())
         domainImpl.repos.channels.insert(channels.values.toList())
         // we only cache messages for which we're receiving events
-        domainImpl.repos.messages.insert(messages.values.toList(), true)
+        // TODO fixit
+        //domainImpl.repos.messages.insert(messages.values.toList(), true)
     }
 }

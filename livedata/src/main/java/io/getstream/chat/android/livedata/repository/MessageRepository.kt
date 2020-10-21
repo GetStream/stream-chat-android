@@ -61,14 +61,30 @@ internal class MessageRepository(
     suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
         val cachedMessages: MutableList<Message> = mutableListOf()
         for (messageId in messageIds) {
-            val messageEntity = messageCache.get(messageId)
-            messageEntity?.let { cachedMessages.add(it) }
+            val cachedMessage = messageCache.get(messageId)
+            cachedMessage?.let { cachedMessages.add(it) }
         }
         val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
         val dbMessages = messageDao.select(missingMessageIds).map { toModel(it, usersMap) }.toMutableList()
 
         dbMessages.addAll(cachedMessages)
         return dbMessages
+    }
+
+    /**
+     * Shouldn't be exposed to business logic. It could be used only by the Repository layer (RepositoryHelper).
+     */
+    internal suspend fun selectEntities(messageIds: List<String>): List<MessageEntity> {
+        val cachedEntities = messageIds.fold(emptyList<MessageEntity>()) { acc, id ->
+            val cachedMessage = messageCache[id]
+            if (cachedMessage != null) {
+                acc + toEntity(cachedMessage)
+            } else {
+                acc
+            }
+        }
+        val missingIds: List<String> = messageIds - cachedEntities.map(MessageEntity::id)
+        return messageDao.select(missingIds) + cachedEntities
     }
 
     suspend fun select(messageId: String, usersMap: Map<String, User>): Message? {

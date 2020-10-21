@@ -94,7 +94,8 @@ internal class EventHandlerImpl(
         // break our public API
         @Suppress("USELESS_CAST")
         val eventUsers = events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }
-        batchBuilder.addUsers(eventUsers)
+        // TODO fixit
+        // batchBuilder.addUsers(eventUsers)
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -223,7 +224,8 @@ internal class EventHandlerImpl(
                     // event.message only has a subset of reactions
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
                         val updatedMessage = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // TODO fixit
+                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
                         batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
@@ -232,14 +234,16 @@ internal class EventHandlerImpl(
                     // get the message, update the reaction data, update the message
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
                         val updatedMessage = it.copy(reactionCounts = event.message.reactionCounts)
-                        it.removeReaction(event.reaction, false)
+                        // TODO fixit
+                        // it.removeReaction(event.reaction, false)
                         batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
                 }
                 is ReactionUpdateEvent -> {
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
                         val updatedMessage = it.apply {
-                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            // TODO fixit
+                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
                         batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
                     }
