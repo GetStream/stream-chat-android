@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.repository
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
@@ -41,11 +42,12 @@ internal class RepositoryHelper(
             acc + channel.createdByUserId.orEmpty() +
                 channel.members.keys +
                 channel.reads.keys +
-                channelMessagesMap[channel.cid]?.flatMap { message ->
-                    message.latestReactions.map(ReactionEntity::userId) + message.userId
-                }.orEmpty()
+                channelMessagesMap[channel.cid]?.flatMap(::userIdsFor).orEmpty()
         }
     }
+
+    private fun userIdsFor(message: MessageEntity): List<String> =
+        message.latestReactions.map(ReactionEntity::userId) + message.userId
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
@@ -79,5 +81,11 @@ internal class RepositoryHelper(
                 messages = messagesMap[cid] ?: emptyList()
             }
         }
+    }
+
+    internal suspend fun selectMessages(messageIds: List<String>): List<Message> {
+        val entities = messages.selectEntities(messageIds)
+        val userMap = users.selectUserMap(entities.flatMap(::userIdsFor))
+        return entities.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
     }
 }
