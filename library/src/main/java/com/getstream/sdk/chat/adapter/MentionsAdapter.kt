@@ -40,7 +40,6 @@ internal class MentionViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(user: User) {
-        binding.user = user
         binding.avatar.setUser(user, style)
         binding.tvUsername.text = user.name
         (style as? MessageInputStyle)?.inputBackgroundText?.apply(binding.tvUsername)

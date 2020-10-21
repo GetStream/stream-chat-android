@@ -6,31 +6,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import androidx.databinding.ViewDataBinding;
+import androidx.viewbinding.ViewBinding;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemCommandBinding;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.view.BaseStyle;
-import com.getstream.sdk.chat.view.messageinput.MessageInputStyle;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
+import com.getstream.sdk.chat.view.messageinput.MessageInputStyle;
 
 import java.util.List;
 
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import io.getstream.chat.android.client.models.Command;
 import io.getstream.chat.android.client.models.User;
 
 public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends BaseAdapter {
 
-    private final String TAG = CommandMentionListItemAdapter.class.getSimpleName();
     private LayoutInflater layoutInflater;
-    private Context context;
     private List<Object> commands;
     private boolean isCommand;
     private STYLE style;
 
     public CommandMentionListItemAdapter(Context context, List<Object> commands, STYLE style, boolean isCommand) {
-        this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.commands = commands;
         this.style = style;
@@ -54,10 +52,15 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewDataBinding binding;
+        ViewBinding binding;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(isCommand ? R.layout.stream_item_command : R.layout.stream_item_mention, null);
-            binding = DataBindingUtil.bind(convertView);
+            if (isCommand) {
+                convertView = layoutInflater.inflate(R.layout.stream_item_command, null);
+                binding = StreamItemCommandBinding.bind(convertView);
+            } else {
+                convertView = layoutInflater.inflate(R.layout.stream_item_mention, null);
+                binding = StreamItemMentionBinding.bind(convertView);
+            }
             convertView.setTag(binding);
         } else {
             binding = (ViewDataBinding) convertView.getTag();
@@ -73,7 +76,9 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
 
     public void configCommands(StreamItemCommandBinding binding, int position) {
         Command command = (Command) commands.get(position);
-        binding.setCommand(command);
+        binding.tvCommand.setText(command.getName());
+        binding.tvArg.setText(command.getArgs());
+        binding.tvDes.setText(command.getDescription());
         if (style instanceof MessageInputStyle) {
             MessageInputStyle style_ = (MessageInputStyle) style;
 
@@ -85,7 +90,6 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
 
     public void configMentions(StreamItemMentionBinding binding, int position) {
         User user = (User) commands.get(position);
-        binding.setUser(user);
         binding.avatar.setUser(user, style);
         if (style instanceof MessageInputStyle) {
             MessageInputStyle style_ = (MessageInputStyle) style;

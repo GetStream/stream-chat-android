@@ -105,10 +105,6 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
     }
-
-    buildFeatures {
-        dataBinding true
-    }
 }
 
 dependencies {

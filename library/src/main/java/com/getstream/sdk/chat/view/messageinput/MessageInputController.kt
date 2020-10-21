@@ -149,9 +149,9 @@ internal class MessageInputController(
 
     internal fun configSendButtonEnableState() {
         if (!binding.messageTextInput.text.toString().isNullOrBlank()) {
-            binding.activeMessageSend = true
+            binding.sendButton.isVisible = true
         } else {
-            binding.activeMessageSend = attachmentsController.selectedAttachments.isNotEmpty()
+            binding.sendButton.isVisible = attachmentsController.selectedAttachments.isNotEmpty()
         }
     }
 
