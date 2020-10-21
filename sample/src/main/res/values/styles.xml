@@ -14,6 +14,7 @@
         <item name="android:padding">12dp</item>
         <item name="android:singleLine">true</item>
         <item name="android:inputType">text</item>
+        <item name="android:imeOptions">actionNext</item>
     </style>
 
 </resources>
