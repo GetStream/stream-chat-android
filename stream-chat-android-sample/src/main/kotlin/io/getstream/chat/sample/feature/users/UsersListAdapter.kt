@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.feature.login
+package io.getstream.chat.sample.feature.users
 
 import android.view.LayoutInflater
 import android.view.View
