@@ -100,3 +100,6 @@ lint/tmp/
 stream-chat-android-components-sample/app-config-custom.json
 /attachments/*
 .cxx
+/projectFilesBackup/
+/projectFilesBackup1/
+/sample/app-config-custom.json

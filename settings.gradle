@@ -1,5 +1,7 @@
 include (
 		':stream-chat-android',
 		':stream-chat-android-sample',
-		':stream-chat-android-offline'
+		':stream-chat-android-offline',
+		':stream-chat-android-client',
+		':stream-chat-android-client-sample'
 )

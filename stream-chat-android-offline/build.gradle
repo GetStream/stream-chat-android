@@ -1,17 +1,18 @@
 import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: "com.hiya.jacoco-android"
 
 group = 'com.github.getstream'
-version = com.getstream.sdk.chat.Configuration.versionName
+version = Configuration.versionName
 
 android {
     compileSdkVersion 28
@@ -75,7 +76,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
 
-    api "com.github.getstream:stream-chat-android-client:1.16.8"
+    api project(":stream-chat-android-client")
 
     def room_version = "2.2.5"
     def work_version = "2.4.0"
