@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.uploader
 
-import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.ProgressCallback
 import java.io.File
 
@@ -13,7 +12,7 @@ public interface FileUploader {
         callback: ProgressCallback
     )
 
-    public fun sendFile(channelType: String, channelId: String, file: File): Call<String>
+    public fun sendFile(channelType: String, channelId: String, file: File): String
 
     public fun sendImage(
         channelType: String,
@@ -22,9 +21,9 @@ public interface FileUploader {
         callback: ProgressCallback
     )
 
-    public fun sendImage(channelType: String, channelId: String, file: File): Call<String>
+    public fun sendImage(channelType: String, channelId: String, file: File): String
 
-    public fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
+    public fun deleteFile(channelType: String, channelId: String, url: String)
 
-    public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
+    public fun deleteImage(channelType: String, channelId: String, url: String)
 }
