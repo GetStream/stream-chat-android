@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChatDatabase - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata</a>&nbsp;/&nbsp;<a href="./index.html">ChatDatabase</a><br/>
+<br/>
+<h1>ChatDatabase</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">ChatDatabase</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">RoomDatabase</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">ChatDatabase</span><span class="symbol">(</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="channel-config-dao.html">channelConfigDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">channelConfigDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-channel-config-dao/index.html"><span class="identifier">ChannelConfigDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-state-dao.html">channelStateDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">channelStateDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-channel-dao/index.html"><span class="identifier">ChannelDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="message-dao.html">messageDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">messageDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-message-dao/index.html"><span class="identifier">MessageDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="query-channels-q-dao.html">queryChannelsQDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">queryChannelsQDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-query-channels-dao/index.html"><span class="identifier">QueryChannelsDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="reaction-dao.html">reactionDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">reactionDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-reaction-dao/index.html"><span class="identifier">ReactionDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="sync-state-dao.html">syncStateDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">syncStateDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-sync-state-dao/index.html"><span class="identifier">SyncStateDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="user-dao.html">userDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">userDao</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-user-dao/index.html"><span class="identifier">UserDao</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="get-database.html">getDatabase</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getDatabase</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDatabase.Companion$getDatabase(android.content.Context, kotlin.String)/context">context</span><span class="symbol">:</span>&nbsp;<a href="https://developer.android.com/reference/android/content/Context.html"><span class="identifier">Context</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.ChatDatabase.Companion$getDatabase(android.content.Context, kotlin.String)/userId">userId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">ChatDatabase</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

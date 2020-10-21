@@ -1,0 +1,115 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChannelRepository - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.repository</a>&nbsp;/&nbsp;<a href="./index.html">ChannelRepository</a><br/>
+<br/>
+<h1>ChannelRepository</h1>
+<code><span class="keyword">class </span><span class="identifier">ChannelRepository</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">ChannelRepository</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$<init>(io.getstream.chat.android.livedata.dao.ChannelDao, kotlin.Int, io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.ChatClient)/channelDao">channelDao</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.dao/-channel-dao/index.html"><span class="identifier">ChannelDao</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$<init>(io.getstream.chat.android.livedata.dao.ChannelDao, kotlin.Int, io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.ChatClient)/cacheSize">cacheSize</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$<init>(io.getstream.chat.android.livedata.dao.ChannelDao, kotlin.Int, io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.ChatClient)/currentUser">currentUser</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$<init>(io.getstream.chat.android.livedata.dao.ChannelDao, kotlin.Int, io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.ChatClient)/client">client</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChatClient</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="cache-size.html">cacheSize</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cacheSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-cache.html">channelCache</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelCache</span><span class="symbol">: </span><span class="identifier">LruCache</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-dao.html">channelDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelDao</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-channel-dao/index.html"><span class="identifier">ChannelDao</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="client.html">client</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">client</span><span class="symbol">: </span><span class="identifier">ChatClient</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="current-user.html">currentUser</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">currentUser</span><span class="symbol">: </span><span class="identifier">User</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="delete.html">delete</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">delete</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$delete(kotlin.String)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert.html">insert</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insert</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$insert(io.getstream.chat.android.livedata.entity.ChannelEntity)/channelEntity">channelEntity</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insert</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$insert(kotlin.collections.List((io.getstream.chat.android.livedata.entity.ChannelEntity)))/channelEntities">channelEntities</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert-channel.html">insertChannel</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertChannel</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$insertChannel(io.getstream.chat.android.client.models.Channel)/channel">channel</span><span class="symbol">:</span>&nbsp;<span class="identifier">Channel</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertChannel</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$insertChannel(kotlin.collections.List((io.getstream.chat.android.client.models.Channel)))/channels">channels</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="retry-channels.html">retryChannels</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">retryChannels</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select.html">select</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">select</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$select(kotlin.String)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">select</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.ChannelRepository$select(kotlin.collections.List((kotlin.String)))/channelCIDs">channelCIDs</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select-sync-needed.html">selectSyncNeeded</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">selectSyncNeeded</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-channel-entity/index.html"><span class="identifier">ChannelEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

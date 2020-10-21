@@ -1,0 +1,132 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UserEntity - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.entity</a>&nbsp;/&nbsp;<a href="./index.html">UserEntity</a><br/>
+<br/>
+<h1>UserEntity</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">UserEntity</span></code>
+<p>The UserEntity, id is a required field
+All other fields are optional and can be null</p>
+<p>You can convert a User object from the low level client to a UserEntity like this
+val userEntity = UserEntity(user)
+and back:
+userEntity.toUser()</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>create a userEntity from a user object</p>
+<code><span class="identifier">UserEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.UserEntity$<init>(io.getstream.chat.android.client.models.User)/user">user</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">)</span></code>
+<p>The UserEntity, id is a required field
+All other fields are optional and can be null</p>
+<code><span class="identifier">UserEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.UserEntity$<init>(kotlin.String)/id">id</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="banned.html">banned</a></h4>
+</td>
+<td>
+<p>if the current user id banned</p>
+<code><span class="keyword">var </span><span class="identifier">banned</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="created-at.html">createdAt</a></h4>
+</td>
+<td>
+<p>when the user was created</p>
+<code><span class="keyword">var </span><span class="identifier">createdAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="extra-data.html">extraData</a></h4>
+</td>
+<td>
+<p>all the custom data provided for this user</p>
+<code><span class="keyword">var </span><span class="identifier">extraData</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="id.html">id</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">id</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="invisible.html">invisible</a></h4>
+</td>
+<td>
+<p>only provided for the current user, invisible marks the user as offline for other users</p>
+<code><span class="keyword">var </span><span class="identifier">invisible</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="last-active.html">lastActive</a></h4>
+</td>
+<td>
+<p>last active date</p>
+<code><span class="keyword">var </span><span class="identifier">lastActive</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mutes.html">mutes</a></h4>
+</td>
+<td>
+<p>only provided for the current user, list of users you've muted</p>
+<code><span class="keyword">var </span><span class="identifier">mutes</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="original-id.html">originalId</a></h4>
+</td>
+<td>
+<p>used for storing the current user</p>
+<code><span class="keyword">var </span><span class="identifier">originalId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="role.html">role</a></h4>
+</td>
+<td>
+<p>the user's role</p>
+<code><span class="keyword">var </span><span class="identifier">role</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="updated-at.html">updatedAt</a></h4>
+</td>
+<td>
+<p>when the user was updated</p>
+<code><span class="keyword">var </span><span class="identifier">updatedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-user.html">toUser</a></h4>
+</td>
+<td>
+<p>converts a user entity into a user</p>
+<code><span class="keyword">fun </span><span class="identifier">toUser</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">User</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

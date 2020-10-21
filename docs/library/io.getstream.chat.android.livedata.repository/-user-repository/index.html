@@ -1,0 +1,113 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>UserRepository - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.repository</a>&nbsp;/&nbsp;<a href="./index.html">UserRepository</a><br/>
+<br/>
+<h1>UserRepository</h1>
+<code><span class="keyword">class </span><span class="identifier">UserRepository</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">UserRepository</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$<init>(io.getstream.chat.android.livedata.dao.UserDao, kotlin.Int, io.getstream.chat.android.client.models.User)/userDao">userDao</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.dao/-user-dao/index.html"><span class="identifier">UserDao</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$<init>(io.getstream.chat.android.livedata.dao.UserDao, kotlin.Int, io.getstream.chat.android.client.models.User)/cacheSize">cacheSize</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;100<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$<init>(io.getstream.chat.android.livedata.dao.UserDao, kotlin.Int, io.getstream.chat.android.client.models.User)/currentUser">currentUser</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">?</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="cache-size.html">cacheSize</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">cacheSize</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="current-user.html">currentUser</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">currentUser</span><span class="symbol">: </span><span class="identifier">User</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="user-cache.html">userCache</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">userCache</span><span class="symbol">: </span><span class="identifier">LruCache</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.entity/-user-entity/index.html"><span class="identifier">UserEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="user-dao.html">userDao</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">userDao</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.dao/-user-dao/index.html"><span class="identifier">UserDao</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="insert.html">insert</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insert</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$insert(kotlin.collections.List((io.getstream.chat.android.livedata.entity.UserEntity)))/userEntities">userEntities</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-user-entity/index.html"><span class="identifier">UserEntity</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert-many-users.html">insertManyUsers</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertManyUsers</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$insertManyUsers(kotlin.collections.List((io.getstream.chat.android.client.models.User)))/users">users</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">User</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert-me.html">insertMe</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertMe</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$insertMe(io.getstream.chat.android.client.models.User)/user">user</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="insert-user.html">insertUser</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">insertUser</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$insertUser(io.getstream.chat.android.client.models.User)/user">user</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select.html">select</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">select</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$select(kotlin.String)/userId">userId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.entity/-user-entity/index.html"><span class="identifier">UserEntity</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">select</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$select(kotlin.collections.List((kotlin.String)))/userIds">userIds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata.entity/-user-entity/index.html"><span class="identifier">UserEntity</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select-me.html">selectMe</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">selectMe</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">User</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="select-user-map.html">selectUserMap</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">selectUserMap</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.repository.UserRepository$selectUserMap(kotlin.collections.List((kotlin.String)))/userIds">userIds</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">User</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
