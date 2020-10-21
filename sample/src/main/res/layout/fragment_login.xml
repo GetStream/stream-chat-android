@@ -99,15 +99,6 @@
             android:hint="@string/login_field_user_name_hint"
             tools:ignore="Autofill" />
 
-        <View
-            android:id="@+id/bottomGap"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/loginButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userNameEditText" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/loginButton"
             style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
@@ -128,7 +119,7 @@
             android:id="@+id/developmentUsers"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:autoLink="web"
+            android:background="?selectableItemBackground"
             android:gravity="center"
             android:text="@string/login_development_users_text"
             android:textColor="@color/colorPrimary"
