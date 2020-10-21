@@ -51,12 +51,12 @@ internal class RepositoryHelper(
 
     internal suspend fun selectChannels(
         channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest,
-        defaultConfig: Config
+        defaultConfig: Config,
+        pagination: AnyChannelPaginationRequest? = null
     ): List<Channel> {
         // fetch the channel entities from room
         val channelEntities = channels.select(channelIds)
-        val messageEntitiesMap = if (pagination.isRequestingMoreThanLastMessage()) {
+        val messageEntitiesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary

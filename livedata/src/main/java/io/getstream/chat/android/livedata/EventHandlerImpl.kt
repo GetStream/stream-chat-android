@@ -58,6 +58,10 @@ import io.getstream.chat.android.client.events.UsersMutedEvent
 import io.getstream.chat.android.client.events.UsersUnmutedEvent
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.extensions.addReaction
+import io.getstream.chat.android.livedata.extensions.removeReaction
+import io.getstream.chat.android.livedata.extensions.setMember
+import io.getstream.chat.android.livedata.extensions.updateReads
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -83,9 +87,8 @@ internal class EventHandlerImpl(
     internal suspend fun updateOfflineStorageFromEvents(events: List<ChatEvent>) {
         events.sortedBy(ChatEvent::createdAt)
 
-        val eventChannels = events.filterIsInstance<CidEvent>().map { it.cid }
         val batchBuilder = EventBatchUpdate.Builder()
-        batchBuilder.addToFetchChannels(eventChannels)
+        batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
         // For some reason backend is not sending us the user instance into some events that they should
         // and we are not able to identify which event type is. Gson, because it is using reflection,
@@ -93,9 +96,7 @@ internal class EventHandlerImpl(
         // This is a workaround, while we identify which event type is, that omit null values without
         // break our public API
         @Suppress("USELESS_CAST")
-        val eventUsers = events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? }
-        // TODO fixit
-        // batchBuilder.addUsers(eventUsers)
+        batchBuilder.addUsers(events.filterIsInstance<UserEvent>().mapNotNull { it.user as User? })
 
         // step 1. see which data we need to retrieve from offline storage
         for (event in events) {
@@ -198,17 +199,14 @@ internal class EventHandlerImpl(
                     batch.getCurrentChannel(event.cid)?.let {
                         val updatedChannel = it.apply {
                             hidden = true
-                            hideMessagesBefore = event.createdAt.takeIf { event.clearHistory }
+                            hiddenMessagesBefore = event.createdAt.takeIf { event.clearHistory }
                         }
-                        batch.addChannelEntity(updatedChannel, emptyList())
+                        batch.addChannel(updatedChannel)
                     }
                 }
                 is ChannelVisibleEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
-                            hidden = false
-                        }
-                        batch.addChannelEntity(updatedChannel, emptyList())
+                        batch.addChannel(it.apply { hidden = false })
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
@@ -224,52 +222,45 @@ internal class EventHandlerImpl(
                     // event.message only has a subset of reactions
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
                         val updatedMessage = it.apply {
-                            // TODO fixit
-                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
+                        batch.addMessage(updatedMessage)
                     }
                 }
                 is ReactionDeletedEvent -> {
                     // get the message, update the reaction data, update the message
-                    batch.getCurrentMessage(event.reaction.messageId)?.let {
+                    batch.getCurrentMessage(event.reaction.messageId)?.also {
                         val updatedMessage = it.copy(reactionCounts = event.message.reactionCounts)
-                        // TODO fixit
-                        // it.removeReaction(event.reaction, false)
-                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
+                            .apply { removeReaction(event.reaction, false) }
+                        batch.addMessage(updatedMessage)
                     }
                 }
                 is ReactionUpdateEvent -> {
                     batch.getCurrentMessage(event.reaction.messageId)?.let {
                         val updatedMessage = it.apply {
-                            // TODO fixit
-                            // addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
+                            addReaction(event.reaction, domainImpl.currentUser.id == event.user.id)
                         }
-                        batch.addMessage(updatedMessage, listOfNotNull(event.reaction.user))
+                        batch.addMessage(updatedMessage)
                     }
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply { setMember(event.member.user.id, event.member) }
-                        batch.addChannelEntity(updatedChannel, listOf(event.member.user))
+                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
                     }
                 }
                 is MemberUpdatedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply { setMember(event.member.user.id, event.member) }
-                        batch.addChannelEntity(updatedChannel, listOf(event.member.user))
+                        batch.addChannel(it.apply { setMember(event.member.user.id, event.member) })
                     }
                 }
                 is MemberRemovedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply { setMember(event.user.id, null) }
-                        batch.addChannelEntity(updatedChannel, listOf(event.user))
+                        batch.addChannel(it.apply { setMember(event.user.id, null) })
                     }
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply { setMember(event.user.id, null) }
-                        batch.addChannelEntity(updatedChannel, listOf(event.user))
+                        batch.addChannel(it.apply { setMember(event.user.id, null) })
                     }
                 }
                 is ChannelUpdatedEvent -> {
@@ -323,7 +314,7 @@ internal class EventHandlerImpl(
                         val updatedChannel = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
-                        batch.addChannelEntity(updatedChannel, listOf(event.user))
+                        batch.addChannel(updatedChannel)
                     }
                 }
                 is NotificationMarkReadEvent -> {
@@ -333,7 +324,7 @@ internal class EventHandlerImpl(
                         val updatedChannel = it.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
-                        batch.addChannelEntity(updatedChannel, listOf(event.user))
+                        batch.addChannel(updatedChannel)
                     }
                 }
                 is UserMutedEvent -> {

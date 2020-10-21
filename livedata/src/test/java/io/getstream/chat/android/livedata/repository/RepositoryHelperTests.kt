@@ -130,7 +130,7 @@ internal class RepositoryHelperTests {
             }
             When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest, mock())
+            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.isEmpty() } shouldBeEqualTo true
@@ -160,7 +160,7 @@ internal class RepositoryHelperTests {
             }
             When calling channels.select(listOf("cid1", "cid2")) doReturn listOf(channelEntity1, channelEntity2)
 
-            val result = sut.selectChannels(listOf("cid1", "cid2"), paginationRequest, mock())
+            val result = sut.selectChannels(listOf("cid1", "cid2"), mock(), paginationRequest)
 
             result.size shouldBeEqualTo 2
             result.any { it.cid == "cid1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true

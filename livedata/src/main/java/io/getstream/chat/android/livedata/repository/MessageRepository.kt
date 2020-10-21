@@ -31,9 +31,9 @@ internal class MessageRepository(
 
     internal suspend fun selectMessagesEntitiesForChannel(
         cid: String,
-        pagination: AnyChannelPaginationRequest
+        pagination: AnyChannelPaginationRequest?
     ): List<MessageEntity> {
-        if (pagination.hasFilter()) {
+        if (pagination != null && pagination.hasFilter()) {
             // handle the differences between gt, gte, lt and lte
             val message = messageDao.select(pagination.messageFilterValue)
             if (message?.createdAt == null) return listOf()
@@ -55,7 +55,7 @@ internal class MessageRepository(
                 }
             }
         }
-        return messageDao.messagesForChannel(cid, pagination.messageLimit)
+        return messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
     }
 
     suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
@@ -125,6 +125,8 @@ internal class MessageRepository(
     }
 
     companion object {
+        private const val DEFAULT_MESSAGE_LIMIT = 100
+
         internal fun toModel(entity: MessageEntity, userMap: Map<String, User>): Message = with(entity) {
             val message = Message()
             message.id = id
