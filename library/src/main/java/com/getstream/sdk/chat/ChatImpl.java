@@ -17,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.ChatLoggerHandler;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
@@ -44,7 +46,6 @@ class ChatImpl implements Chat {
     private final Context context;
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
-    private final ChatLogger chatLogger;
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
@@ -55,7 +56,8 @@ class ChatImpl implements Chat {
              Context context,
              boolean offlineEnabled,
              ChatNotificationHandler chatNotificationHandler,
-             ChatLogger chatLogger) {
+             ChatLogLevel chatLogLevel,
+             ChatLoggerHandler chatLoggerHandler) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -64,16 +66,18 @@ class ChatImpl implements Chat {
         this.context = context;
         this.offlineEnabled = offlineEnabled;
         this.chatNotificationHandler = chatNotificationHandler;
-        this.chatLogger = chatLogger;
 
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler);
         }
+
         new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
+                .logLevel(chatLogLevel)
+                .loggerHandler(chatLoggerHandler)
                 .build();
 
-        this.chatLogger.logI("Chat", "Initialized: " + getVersion());
+        ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
     @NotNull
@@ -136,18 +140,6 @@ class ChatImpl implements Chat {
         return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
     }
 
-    /**
-     * The chat instance's logger can be obtained directly,
-     * or through {@link ChatLogger.Companion.instance}
-     *
-     * @return The chat logger instance
-     */
-    @NotNull
-    @Override
-    public ChatLogger getChatLogger() {
-        return chatLogger;
-    }
-
     @Override
     public void setUser(@NotNull User user,
                         @NotNull String userToken,
@@ -194,7 +186,7 @@ class ChatImpl implements Chat {
                     CoroutineStart.DEFAULT,
                     (scope, continuation) -> chatDomain.disconnect(continuation));
         } catch (UninitializedPropertyAccessException e) {
-            chatLogger.logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
+            ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
         }
     }
 

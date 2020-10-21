@@ -3,7 +3,6 @@ package io.getstream.chat.sample.application
 import android.app.Application
 import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.R
@@ -32,8 +31,8 @@ class App : Application() {
                 )
 
             notificationHandler = SampleNotificationHandler(this@App, notificationConfig)
-
-            chatLoggerConfig = ChatLogger.Config(chatLogLevel(), SampleLoggingHandler())
+            chatLogLevel = chatLogLevel()
+            chatLoggerHandler = SampleLoggingHandler()
         }.build()
     }
 

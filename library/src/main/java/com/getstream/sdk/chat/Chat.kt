@@ -11,7 +11,9 @@ import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -27,7 +29,6 @@ public interface Chat {
     public val currentUser: LiveData<User>
     public val markdown: ChatMarkdown
     public val version: String
-    public val chatLogger: ChatLogger
 
     public fun setUser(
         user: User,
@@ -44,7 +45,8 @@ public interface Chat {
         public var markdown: ChatMarkdown = ChatMarkdownImpl(context)
         public var offlineEnabled: Boolean = false
         public var notificationHandler: ChatNotificationHandler = ChatNotificationHandler(context)
-        public var chatLoggerConfig: ChatLogger.Config? = null
+        public var chatLogLevel: ChatLogLevel = ChatLogLevel.ALL
+        public var chatLoggerHandler: ChatLoggerHandler? = null
 
         public fun build(): Chat = ChatImpl(
             ChatFontsImpl(style, context),
@@ -56,13 +58,11 @@ public interface Chat {
             context,
             offlineEnabled,
             notificationHandler,
-            resolveLogger()
+            chatLogLevel,
+            chatLoggerHandler
         ).apply {
             instance = this
         }
-
-        private fun resolveLogger(): ChatLogger =
-            chatLoggerConfig?.let(ChatLogger::Builder)?.build() ?: ChatLogger.instance
     }
 
     public companion object {
