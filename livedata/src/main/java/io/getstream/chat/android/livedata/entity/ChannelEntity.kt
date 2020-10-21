@@ -22,7 +22,11 @@ import java.util.Date
  *
  */
 @Entity(tableName = "stream_chat_channel_state", indices = [Index(value = ["syncStatus"])])
-internal data class ChannelEntity(var type: String, var channelId: String) {
+internal data class ChannelEntity(
+    var type: String,
+    var channelId: String,
+    val cooldown: Int = 0
+) {
     @PrimaryKey
     var cid: String = "%s:%s".format(type, channelId)
 
@@ -70,7 +74,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
     var syncStatus: SyncStatus = SyncStatus.COMPLETED
 
     /** create a ChannelStateEntity from a Channel object */
-    constructor(c: Channel) : this(c.type, c.id) {
+    constructor(c: Channel) : this(c.type, c.id, c.cooldown) {
         frozen = c.frozen
         createdAt = c.createdAt
         updatedAt = c.updatedAt
@@ -98,7 +102,7 @@ internal data class ChannelEntity(var type: String, var channelId: String) {
 
     /** convert a channelEntity into a channel object */
     fun toChannel(userMap: Map<String, User>): Channel {
-        val c = Channel()
+        val c = Channel(cooldown = cooldown)
         c.type = type
         c.id = channelId
         c.cid = cid

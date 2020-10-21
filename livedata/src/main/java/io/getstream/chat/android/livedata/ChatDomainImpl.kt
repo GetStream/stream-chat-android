@@ -267,7 +267,7 @@ internal class ChatDomainImpl private constructor(
 
         while (true) {
             result = runnable().execute()
-            if (result.isSuccess) {
+            if (result.isSuccess || result.error().isPermanent()) {
                 break
             } else {
                 // retry logic
