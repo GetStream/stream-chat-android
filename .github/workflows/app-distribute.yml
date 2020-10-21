@@ -1,4 +1,4 @@
-name: Android CI
+name: App Distribute CI
 
 on:
   push:
@@ -20,22 +20,22 @@ jobs:
     - name: Prepare environment
       run: |
         git fetch --unshallow
-        echo "${{ secrets.RELEASE_KEYSTORE }}" > sample/.sign/release.keystore.asc
-        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch sample/.sign/release.keystore.asc > sample/.sign/release.keystore
-        echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > sample/.sign/keystore.properties.asc
-        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch sample/.sign/keystore.properties.asc > sample/.sign/keystore.properties
+        echo "${{ secrets.RELEASE_KEYSTORE }}" > stream-chat-android-sample/.sign/release.keystore.asc
+        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/release.keystore.asc > stream-chat-android-sample/.sign/release.keystore
+        echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > stream-chat-android-sample/.sign/keystore.properties.asc
+        gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch stream-chat-android-sample/.sign/keystore.properties.asc > stream-chat-android-sample/.sign/keystore.properties
     - name: Assemble
-      run: bash ./gradlew :sample:assemble --stacktrace
+      run: bash ./gradlew :stream-chat-android-sample:assemble --stacktrace
     - name: Upload testDebugUnitTest Results
       uses: actions/upload-artifact@v2
       with:
-        name: sample-release
-        path: sample/build/outputs/apk/release/
+        name: stream-chat-android-sample-release
+        path: stream-chat-android-sample/build/outputs/apk/release/
     - name: Upload artifact to Firebase App Distribution
       uses: wzieba/Firebase-Distribution-Github-Action@v1
       with:
         appId: ${{secrets.FIREBASE_APP_ID}}
         token: ${{secrets.FIREBASE_TOKEN}}
         groups: stream-testers
-        file: sample/build/outputs/apk/release/sample-release.apk
+        file: stream-chat-android-sample/build/outputs/apk/release/stream-chat-android-sample-release.apk
 

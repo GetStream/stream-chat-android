@@ -1,10 +1,10 @@
 *.iml
 buildSrc/build
-sample/release/*
-sample/.sign/keystore.properties
-sample/.sign/keystore.properties.asc
-sample/.sign/release.keystore
-sample/.sign/release.keystore.asc
+stream-chat-android-components-sample/release/*
+stream-chat-android-components-sample/.sign/keystore.properties
+stream-chat-android-components-sample/.sign/keystore.properties.asc
+stream-chat-android-components-sample/.sign/release.keystore
+stream-chat-android-components-sample/.sign/release.keystore.asc
 .gradle
 /local.properties
 /.idea/
@@ -12,5 +12,5 @@ sample/.sign/release.keystore.asc
 /build
 /captures
 .externalNativeBuild
-/sample/app-config-custom.json
+stream-chat-android-components-sample/app-config-custom.json
 /attachments/*
