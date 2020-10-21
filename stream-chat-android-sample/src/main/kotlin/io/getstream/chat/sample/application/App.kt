@@ -31,14 +31,8 @@ class App : Application() {
                 )
 
             notificationHandler = SampleNotificationHandler(this@App, notificationConfig)
-            chatLogLevel = chatLogLevel()
             chatLoggerHandler = SampleLoggingHandler()
         }.build()
-    }
-
-    private fun chatLogLevel(): ChatLogLevel = when {
-        BuildConfig.DEBUG -> ChatLogLevel.ALL
-        else -> ChatLogLevel.NOTHING
     }
 
     private fun initKoin() {
