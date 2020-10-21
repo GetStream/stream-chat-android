@@ -25,9 +25,14 @@ class LoginViewModel(
     val state: LiveData<State> = _state
 
     fun loginButtonClicked(credentials: LoginCredentials) {
-        _state.postValue(State.Loading)
-        initChatSdk(credentials)
-        initChatUser(credentials)
+        val invalidFields = getInvalidFields(credentials)
+        if (invalidFields.isEmpty()) {
+            _state.postValue(State.Loading)
+            initChatSdk(credentials)
+            initChatUser(credentials)
+        } else {
+            _state.postValue(State.ValidationError(invalidFields))
+        }
     }
 
     fun targetChannelDataReceived(cid: String) {
@@ -86,6 +91,20 @@ class LoginViewModel(
                 }
             )
     }
+
+    private fun getInvalidFields(credentials: LoginCredentials): List<ValidatedField> {
+        return ArrayList<ValidatedField>().apply {
+            if (credentials.apiKey.isNullOrEmpty()) {
+                add(ValidatedField.API_KEY)
+            }
+            if (credentials.userId.isNullOrEmpty()) {
+                add(ValidatedField.USER_ID)
+            }
+            if (credentials.userToken.isNullOrEmpty()) {
+                add(ValidatedField.USER_TOKEN)
+            }
+        }
+    }
 }
 
 sealed class State {
@@ -93,6 +112,7 @@ sealed class State {
     object Loading : State()
     data class RedirectToChannel(val cid: String) : State()
     data class Error(val errorMessage: String?) : State()
+    data class ValidationError(val invalidFields: List<ValidatedField>): State()
 }
 
 data class LoginCredentials(
@@ -101,3 +121,9 @@ data class LoginCredentials(
     val userToken: String,
     val userName: String
 )
+
+enum class ValidatedField {
+    API_KEY,
+    USER_ID,
+    USER_TOKEN
+}

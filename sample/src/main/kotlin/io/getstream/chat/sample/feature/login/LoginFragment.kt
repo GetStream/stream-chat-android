@@ -25,12 +25,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             redirectToUsersScreen()
         }
         loginButton.setOnClickListener {
-            val credentials = collectCredentials()
-            if (validateCredentials(credentials)) {
-                viewModel.loginButtonClicked(credentials)
-            } else {
-                showToast(getString(R.string.login_validation_error))
-            }
+            viewModel.loginButtonClicked(collectCredentials())
         }
 
         viewModel.state.observe(
@@ -39,8 +34,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 when (it) {
                     is State.RedirectToChannels -> redirectToChannelsScreen()
                     is State.RedirectToChannel -> redirectToChannel(it.cid)
-                    is State.Loading -> changeLoadingIndicatorVisibility(true)
+                    is State.Loading -> showLoading()
                     is State.Error -> showErrorMessage(it.errorMessage)
+                    is State.ValidationError -> showValidationErrors(it.invalidFields)
                 }
             }
         )
@@ -59,15 +55,32 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         )
     }
 
-    private fun validateCredentials(credentials: LoginCredentials): Boolean {
-        return credentials.apiKey.isNotEmpty() &&
-            credentials.userId.isNotEmpty() &&
-            credentials.userToken.isNotEmpty()
+    private fun showLoading() {
+        changeLoadingIndicatorVisibility(true)
+        clearValidationErrors()
     }
 
     private fun showErrorMessage(errorMessage: String?) {
         changeLoadingIndicatorVisibility(false)
         showToast(errorMessage ?: getString(R.string.backend_error_info))
+    }
+
+    private fun showValidationErrors(invalidFields: List<ValidatedField>) {
+        changeLoadingIndicatorVisibility(false)
+
+        invalidFields.forEach {
+            when (it) {
+                ValidatedField.API_KEY -> apiKeyEditText
+                ValidatedField.USER_ID -> userIdEditText
+                ValidatedField.USER_TOKEN -> userTokenEditText
+            }.error = getString(R.string.login_validation_error)
+        }
+    }
+
+    private fun clearValidationErrors() {
+        apiKeyEditText.error = null
+        userIdEditText.error = null
+        userTokenEditText.error = null
     }
 
     private fun changeLoadingIndicatorVisibility(isVisible: Boolean) {
@@ -84,9 +97,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun redirectToChannel(cid: String) {
         findNavController().navigateSafely(
-            LoginFragmentDirections.actionLoginFragmentToChannelFragment(
-                cid
-            )
+            LoginFragmentDirections.actionLoginFragmentToChannelFragment(cid)
         )
     }
 }
