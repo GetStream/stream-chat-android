@@ -52,7 +52,7 @@ android {
 
 dependencies {
 
-    implementation project(':client')
+    implementation project(':stream-chat-android-client')
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

@@ -1,1 +1,4 @@
-include ':client', ':sample'
+include (
+    ':stream-chat-android-client',
+    ':stream-chat-android-client-sample'
+)
