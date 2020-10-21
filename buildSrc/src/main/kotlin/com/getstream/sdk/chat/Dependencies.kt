@@ -67,6 +67,8 @@ private const val STETHO_VERSION = "1.5.1"
 private const val TIMBER_VERSION = "4.7.1"
 private const val TRUTH_VERSION = "1.1"
 private const val WORK_VERSION = "2.4.0"
+private const val FLIPPER_VERSION = "0.63.0"
+private const val FLIPPER_SO_LOADER_VERSION= "0.9.0"
 
 
 object Dependencies {
@@ -168,6 +170,9 @@ object Dependencies {
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:$WORK_VERSION"
     const val workTesting = "androidx.work:work-testing:$WORK_VERSION"
+    const val flipper = "com.facebook.flipper:flipper:${FLIPPER_VERSION}"
+    const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}"
+    const val flipperLoader = "com.facebook.soloader:soloader:${FLIPPER_SO_LOADER_VERSION}"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()

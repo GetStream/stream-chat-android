@@ -139,6 +139,10 @@ dependencies {
 
     implementation Dependencies.timber
 
+    implementation Dependencies.flipper
+    implementation Dependencies.flipperNetwork
+    implementation Dependencies.flipperLoader
+
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
 
