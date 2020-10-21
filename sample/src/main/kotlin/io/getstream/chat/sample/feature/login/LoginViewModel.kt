@@ -112,7 +112,7 @@ sealed class State {
     object Loading : State()
     data class RedirectToChannel(val cid: String) : State()
     data class Error(val errorMessage: String?) : State()
-    data class ValidationError(val invalidFields: List<ValidatedField>): State()
+    data class ValidationError(val invalidFields: List<ValidatedField>) : State()
 }
 
 data class LoginCredentials(
