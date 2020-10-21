@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import org.junit.Before
 import org.junit.Test
@@ -61,7 +62,7 @@ internal class ClientConnectionTests {
     private lateinit var api: ChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
-    private lateinit var retrofitCdnApi: RetrofitCdnApi
+    private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
     private lateinit var logger: ChatLogger
     private lateinit var notificationsManager: ChatNotifications
@@ -72,15 +73,15 @@ internal class ClientConnectionTests {
     fun before() {
         socket = mock()
         retrofitApi = mock()
-        retrofitCdnApi = mock()
+        fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
         initConnectionListener = mock()
         api = ChatApi(
             config.apiKey,
             retrofitApi,
-            retrofitCdnApi,
-            UuidGeneratorImpl()
+            UuidGeneratorImpl(),
+            fileUploader
         )
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->

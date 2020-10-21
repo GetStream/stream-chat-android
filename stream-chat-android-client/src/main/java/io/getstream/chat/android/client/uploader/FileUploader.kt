@@ -5,6 +5,8 @@ import java.io.File
 
 public interface FileUploader {
 
+    public fun setConnection(userId: String, connectionId: String)
+
     public fun sendFile(
         channelType: String,
         channelId: String,
@@ -12,7 +14,7 @@ public interface FileUploader {
         callback: ProgressCallback
     )
 
-    public fun sendFile(channelType: String, channelId: String, file: File): String
+    public fun sendFile(channelType: String, channelId: String, file: File): String?
 
     public fun sendImage(
         channelType: String,
@@ -21,7 +23,7 @@ public interface FileUploader {
         callback: ProgressCallback
     )
 
-    public fun sendImage(channelType: String, channelId: String, file: File): String
+    public fun sendImage(channelType: String, channelId: String, file: File): String?
 
     public fun deleteFile(channelType: String, channelId: String, url: String)
 

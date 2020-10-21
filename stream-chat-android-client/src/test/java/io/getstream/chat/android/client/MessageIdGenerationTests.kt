@@ -2,10 +2,10 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.RetrofitApi
-import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.UuidGenerator
 import org.assertj.core.api.Assertions.assertThat
@@ -36,8 +36,8 @@ internal class MessageIdGenerationTests {
         api = ChatApi(
             apiKey,
             retroApi,
-            mock(RetrofitCdnApi::class.java),
-            uuidGenerator
+            uuidGenerator,
+            mock(FileUploader::class.java)
         )
         api.setConnection(userId, connectionId)
     }
