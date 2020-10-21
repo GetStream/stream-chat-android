@@ -12,7 +12,6 @@ import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler

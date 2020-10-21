@@ -2,7 +2,6 @@ package io.getstream.chat.sample.application
 
 import android.app.Application
 import com.getstream.sdk.chat.Chat
-import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.R
