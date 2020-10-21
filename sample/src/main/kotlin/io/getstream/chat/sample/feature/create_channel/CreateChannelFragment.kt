@@ -2,6 +2,7 @@ package io.getstream.chat.sample.feature.create_channel
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -10,7 +11,6 @@ import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.hideKeyboard
 import io.getstream.chat.sample.common.showKeyboard
 import io.getstream.chat.sample.common.showToast
-import io.getstream.chat.sample.common.visible
 import kotlinx.android.synthetic.main.fragment_new_channel.*
 
 class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
@@ -31,7 +31,7 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
                     is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
                     is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
                     is CreateChannelViewModel.State.BackendError -> { renderBackendError() }
-                    is CreateChannelViewModel.State.Loading -> { progressBar.visible(true) }
+                    is CreateChannelViewModel.State.Loading -> { progressBar.isVisible = true }
                 }
             }
         )

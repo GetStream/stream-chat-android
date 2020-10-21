@@ -1,356 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <data>
-
-        <variable
-            name="activeMessageSend"
-            type="boolean" />
-    </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvSuggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:background="@drawable/stream_round_thread_toolbar"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/stream_item_mention" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSuggestions"
-            android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingBottom="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/text_b"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="vertical"
-            android:background="@drawable/stream_round_thread_toolbar"
-            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            tools:listitem="@layout/stream_item_mention"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_title"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_command"
+            style="@style/text_b"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingBottom="20dp"
-            android:visibility="gone"
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+            app:layout_constraintStart_toEndOf="@+id/tv_title"
+            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+
+        <Button
+            android:id="@+id/btn_close"
+            style="@style/text"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center"
+            app:backgroundTint="@null"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_add_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_title">
+
+        <LinearLayout
+            android:id="@+id/select_media"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/tv_title"
-                style="@style/text_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/tv_command"
-                style="@style/text_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-                app:layout_constraintStart_toEndOf="@+id/tv_title"
-                app:layout_constraintTop_toTopOf="@+id/tv_title" />
-
-            <Button
-                android:id="@+id/btn_close"
-                style="@style/text"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="20dp"
-                app:backgroundTint="@null"
-                android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_title" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_add_file"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_title">
-
-            <LinearLayout
-                android:id="@+id/select_media"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <FrameLayout
-                    android:layout_width="30dp"
-                    android:layout_height="30dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/stream_round_thread_close"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/stream_ic_image_black"
-                        android:gravity="center" />
-
-                    <ImageView
-                        android:id="@+id/iv_media_permission"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="end"
-                        android:layout_margin="3dp"
-                        android:src="@drawable/stream_ic_error" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tv_upload_photo_video"
-                    style="@style/text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:text="@string/stream_input_upload_media" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/select_camera"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/select_media">
-
-                <FrameLayout
-                    android:layout_width="30dp"
-                    android:layout_height="30dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/stream_round_thread_close"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/stream_ic_camera"
-                        android:gravity="center" />
-
-                    <ImageView
-                        android:id="@+id/iv_camera_permission"
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="end"
-                        android:layout_margin="3dp"
-                        android:src="@drawable/stream_ic_error" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tv_upload_camera"
-                    style="@style/text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:text="@string/stream_input_take_picture" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/select_file"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
-                android:background="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/select_camera">
-
-                <FrameLayout
-                    android:layout_width="30dp"
-                    android:layout_height="30dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/stream_round_thread_close"
-                        android:gravity="center" />
-
-                    <TextView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="center"
-                        android:background="@drawable/stream_ic_folder"
-                        android:gravity="center" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/tv_upload_file"
-                    style="@style/text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:text="@string/stream_input_upload_file" />
-            </LinearLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_select_photo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="10dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/ll_composer"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cl_title">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_media"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@layout/stream_item_select_photo" />
-
-            <ProgressBar
-                android:id="@+id/progressBar_file_loader"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_composer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
             <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="10dp">
+                android:layout_width="30dp"
+                android:layout_height="30dp">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/media_composer"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
-                    android:visibility="gone" />
+                    android:layout_height="match_parent"
+                    android:background="@drawable/stream_round_thread_close"
+                    android:gravity="center" />
 
-                <ListView
-                    android:id="@+id/file_composer"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:divider="@null"
-                    android:visibility="gone" />
+                <TextView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/stream_ic_image_black"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:id="@+id/iv_media_permission"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/stream_ic_error" />
             </FrameLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_upload_photo_video"
+                style="@style/text"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginStart="15dp"
+                android:text="@string/stream_input_upload_media" />
+        </LinearLayout>
 
-                <com.getstream.sdk.chat.view.PreviewMessageView
-                    android:id="@+id/vPreviewMessage"
+        <LinearLayout
+            android:id="@+id/select_camera"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/select_media">
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp">
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:visibility="gone"
-                    />
+                    android:layout_height="match_parent"
+                    android:background="@drawable/stream_round_thread_close"
+                    android:gravity="center" />
 
-                <ImageView
-                    android:id="@+id/iv_openAttach"
-                    android:layout_width="@dimen/stream_attachment_button_width"
-                    android:layout_height="@dimen/stream_attachment_button_height"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginBottom="13dp"
-                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <com.getstream.sdk.chat.utils.GifEditText
-                    android:id="@+id/message_text_input"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:inputType="textCapSentences|textMultiLine"
-                    android:maxLines="7"
-                    android:padding="17dp"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
-                    app:layout_constraintEnd_toStartOf="@+id/sendButton"
-                    app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
-                    app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage" />
+                    android:background="@drawable/stream_ic_camera"
+                    android:gravity="center" />
 
                 <ImageView
-                    android:id="@+id/sendButton"
-                    android:layout_width="@dimen/stream_input_button_width"
-                    android:layout_height="@dimen/stream_input_button_height"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="13dp"
-                    app:isGone="@{!activeMessageSend}"
-                    app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    android:id="@+id/iv_camera_permission"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_gravity="end"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/stream_ic_error" />
+            </FrameLayout>
 
-                <CheckBox
-                    android:id="@+id/cbSendAlsoToChannel"
+            <TextView
+                android:id="@+id/tv_upload_camera"
+                style="@style/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="@string/stream_input_take_picture" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/select_file"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/select_camera">
+
+            <FrameLayout
+                android:layout_width="30dp"
+                android:layout_height="30dp">
+
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:text="@string/stream_input_also_send_to_channel"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_height="match_parent"
+                    android:background="@drawable/stream_round_thread_close"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/stream_ic_folder"
+                    android:gravity="center" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_upload_file"
+                style="@style/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="@string/stream_input_upload_file" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_select_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="10dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/ll_composer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_title">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_media"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/stream_item_select_photo" />
+
+        <ProgressBar
+            android:id="@+id/progressBar_file_loader"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_composer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/media_composer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/file_composer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:divider="@null"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.getstream.sdk.chat.view.PreviewMessageView
+                android:id="@+id/vPreviewMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_openAttach"
+                android:layout_width="@dimen/stream_attachment_button_width"
+                android:layout_height="@dimen/stream_attachment_button_height"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="13dp"
+                app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.getstream.sdk.chat.utils.GifEditText
+                android:id="@+id/message_text_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@null"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="7"
+                android:padding="17dp"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
+                app:layout_constraintEnd_toStartOf="@+id/sendButton"
+                app:layout_constraintStart_toEndOf="@+id/iv_openAttach"
+                app:layout_constraintTop_toBottomOf="@+id/vPreviewMessage" />
+
+            <ImageView
+                android:id="@+id/sendButton"
+                android:layout_width="@dimen/stream_input_button_width"
+                android:layout_height="@dimen/stream_input_button_height"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="13dp"
+                app:layout_constraintBottom_toTopOf="@+id/cbSendAlsoToChannel"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <CheckBox
+                android:id="@+id/cbSendAlsoToChannel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stream_input_also_send_to_channel"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

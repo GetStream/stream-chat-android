@@ -32,7 +32,7 @@ The best place to start is the [Android Chat Tutorial](https://getstream.io/tuto
 
 This repo includes a fully functional example app. To run the example app:
 
-```
+```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
@@ -82,7 +82,7 @@ The low-level Chat API docs are available for both [Kotlin](https://getstream.io
 
 - **Step 1** Add repository into root build.gradle
 
-~~~gradle
+```gradle
 allprojects {
     repositories {
     ...
@@ -90,19 +90,15 @@ allprojects {
         url 'https://jitpack.io' }
     }
 }
-~~~
+```
 
 - **Step 2** Add library dependency into app build.gradle
 
 > See the jitpack badge above for the latest version number
 
-~~~gradle
+```gradle
 android {
     ...
-    dataBinding {
-        enabled = true
-    }
-    
     compileOptions {
         
         //for java projects
@@ -116,7 +112,7 @@ android {
 dependencies {
     implementation 'com.github.GetStream:stream-chat-android:version'
 }
-~~~
+```
 
 ## Proguard/R8
 
@@ -125,7 +121,6 @@ If you're using Proguard/R8, you'll want to have a look at the [proguard file we
 ## Setup Stream Chat
 
 Make sure to initialize the SDK only once; the best place to do this is in your `Application` class.
-
 
 ```java
 public class App extends Application {
@@ -155,10 +150,8 @@ public class MainActivity extends AppCompatActivity {
 Connection status to Chat is available via `Chat.getInstance().getOnlineStatus()` which returns a LiveData object you can attach observers to.
 
 ```java
-
 Chat.getInstance().getOnlineStatus().observe(...);
 ```
-
 
 ## Markdown support
 
@@ -170,20 +163,20 @@ Currently SDK doesn't support all `Markwon` features and limited to this plugins
 - [StrikethroughPlugin](https://noties.io/Markwon/docs/v4/ext-strikethrough/)
 
 If you want to use another library for `Markdown` or extend the `Markwon` plugins you can use the code below
+
 ```java
 Chat chat = new Chat.Builder(apiKey, this)
     .markdown((textView, text) -> {
         textView.setText(text)
     })
-    .build()
+    .build();
 ```
-
-
 
 ## Debug and development
 
 ### Logging
 By default, logging is disabled. You enable logs and set log level when initializing `Chat`:
+
 ```java
 Chat chat = new Chat.Builder("api-key", context).logLevel(ChatLogLevel.ALL).build()
 ```
@@ -207,21 +200,21 @@ This guide assumes that you're working on your own project in the `project` fold
 
 1. First of all, you'll want to clone this repo
 
-```
+```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-2. Next you'll edit your project's settings.graddle and add this
+2. Next you'll edit your project's `settings.gradle` and add this
 
-```
+```gradle
 include ':chat'
 
-project(":chat").projectDir=new File("ABSOLUTEPATHTOstream-chat-android here")
+project(":chat").projectDir = new File("ABSOLUTEPATHTOstream-chat-android here")
 ```
 
 3. Open up your `project/app/build.gradle` and replace the production SDK with your local copy
 
-```
+```gradle
 //implementation 'com.github.getstream:stream-chat-android:version'
 implementation project(':chat')
 ```
@@ -230,8 +223,7 @@ implementation project(':chat')
 
 Add the following to the buildscript {} entry.
 
-```
-
+```gradle
 buildscript {
 ...
 
@@ -246,12 +238,11 @@ buildscript {
     
 ...
 }
-
 ```
 
 Next, set up these libraries in the dependencies. (They are needed to compile stream-chat-android)
 
-```
+```gradle
 buildscript {
     dependecies {
     ....
@@ -276,7 +267,7 @@ Hit build/clean project in android studio and build your app.
 
 Not setting the lifecycle owner on a data binding can cause the channel list loading icon to spin forever.
 
-```
+```java
 mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
 mBinding.setLifecycleOwner(this);
 ```
@@ -285,6 +276,7 @@ It's also possible that the permissions for your app are cached. Try uninstallin
 
 ### Images are not loaded
 In most cases you can try to see the reason in logcat with tag `Glide`. One of the reasons is that app tries to load image from http url, but not https. To fix it you need to define [network security config](https://developer.android.com/training/articles/security-config).
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -292,12 +284,16 @@ In most cases you can try to see the reason in logcat with tag `Glide`. One of t
     <base-config cleartextTrafficPermitted="true" />
 </network-security-config>
 ```
+
 And update your `Manifest`:
+
 ```xml
 <application
     android:networkSecurityConfig="@xml/network_security_config"/>
 ```
+
 ### Localize the UI with Translations
+
 You can translate all [strings](https://github.com/GetStream/stream-chat-android/blob/master/library/src/main/res/values/strings.xml) of SDK by overriding string keys.<br/>
 The example app has a few examples:
 - [German](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-de/strings.xml)

@@ -40,7 +40,9 @@ internal class CommandViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(command: Command) {
-        binding.command = command
+        binding.tvCommand.text = command.name
+        binding.tvArg.text = command.args
+        binding.tvDes.text = command.description
         (style as? MessageInputStyle)?.inputBackgroundText?.let {
             it.apply(binding.tvCommand)
             it.apply(binding.tvDes)

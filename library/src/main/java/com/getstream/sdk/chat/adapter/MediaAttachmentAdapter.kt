@@ -2,12 +2,12 @@ package com.getstream.sdk.chat.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Constant
-import com.getstream.sdk.chat.view.common.visible
 
 internal class MediaAttachmentAdapter(
     private var attachments: List<AttachmentMetaData> = emptyList(),
@@ -59,10 +59,9 @@ internal class MediaAttachmentAdapter(
             Glide.with(binding.ivMedia.context)
                 .load(attachment.uri)
                 .into(binding.ivMedia)
-            binding.ivSelectMark.visible(attachment.isSelected)
-            binding.ivLargeFileMark.visible(attachment.size > Constant.MAX_UPLOAD_FILE_SIZE)
+            binding.ivSelectMark.isVisible = attachment.isSelected
+            binding.ivLargeFileMark.isVisible = attachment.size > Constant.MAX_UPLOAD_FILE_SIZE
             itemView.setOnClickListener { listener(attachment) }
-            binding.executePendingBindings()
         }
     }
 }

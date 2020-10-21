@@ -4,14 +4,6 @@ import android.content.ContextWrapper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
-internal fun View.visible(isVisible: Boolean) {
-    visibility = if (isVisible) {
-        View.VISIBLE
-    } else {
-        View.GONE
-    }
-}
-
 /**
  * Ensures the context being accessed in a View can be cast to Activity
  */
