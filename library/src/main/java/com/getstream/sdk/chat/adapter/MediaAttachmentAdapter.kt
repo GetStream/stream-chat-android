@@ -62,7 +62,6 @@ internal class MediaAttachmentAdapter(
             binding.ivSelectMark.isVisible = attachment.isSelected
             binding.ivLargeFileMark.isVisible = attachment.size > Constant.MAX_UPLOAD_FILE_SIZE
             itemView.setOnClickListener { listener(attachment) }
-            binding.executePendingBindings()
         }
     }
 }

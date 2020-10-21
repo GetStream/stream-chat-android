@@ -204,7 +204,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
 
     private fun keyStroke(inputMessage: String) {
         messageInputController.checkCommandsOrMentions(messageText)
-        binding.activeMessageSend = inputMessage.isNotBlank()
+        binding.sendButton.isVisible = inputMessage.isNotBlank()
             .whenTrue { typeListeners.forEach(TypeListener::onKeystroke) }
             .whenFalse { typeListeners.forEach(TypeListener::onStopTyping) }
         configSendButtonEnableState()
@@ -213,7 +213,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     private fun configSendButtonEnableState() {
         val attachments = messageInputController.getSelectedAttachments()
         val notEmptyMessage = !messageText.isNullOrBlank() || attachments.isNotEmpty()
-        binding.activeMessageSend = notEmptyMessage
+        binding.sendButton.isVisible = notEmptyMessage
     }
 
     private fun configAttachmentUI() {
@@ -438,7 +438,7 @@ public class MessageInputView(context: Context, attrs: AttributeSet?) : Relative
     init {
         applyStyle()
         binding.rvSuggestions.adapter = ConcatAdapter(commandsAdapter, mentionsAdapter)
-        binding.activeMessageSend = false
+        binding.sendButton.isVisible = false
         configOnClickListener()
         configInputEditText()
         configAttachmentUI()
