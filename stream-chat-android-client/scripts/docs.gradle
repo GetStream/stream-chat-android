@@ -1,0 +1,25 @@
+/**
+ * Compiles source code and documentation into release aar
+ */
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    getArchiveClassifier().set('sources')
+}
+
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    getArchiveClassifier().set('javadoc')
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}

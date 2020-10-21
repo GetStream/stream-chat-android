@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>MemberEntity - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.entity</a>&nbsp;/&nbsp;<a href="./index.html">MemberEntity</a><br/>
+<br/>
+<h1>MemberEntity</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">MemberEntity</span></code>
+<p>Efficiently store the member data</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>creates a memberEntity from the member</p>
+<code><span class="identifier">MemberEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.MemberEntity$<init>(io.getstream.chat.android.client.models.Member)/r">r</span><span class="symbol">:</span>&nbsp;<span class="identifier">Member</span><span class="symbol">)</span></code>
+<p>Efficiently store the member data</p>
+<code><span class="identifier">MemberEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.MemberEntity$<init>(kotlin.String)/userId">userId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="created-at.html">createdAt</a></h4>
+</td>
+<td>
+<p>when the user became a member</p>
+<code><span class="keyword">var </span><span class="identifier">createdAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="invite-accepted-at.html">inviteAcceptedAt</a></h4>
+</td>
+<td>
+<p>the date the invite was accepted</p>
+<code><span class="keyword">var </span><span class="identifier">inviteAcceptedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="invite-rejected-at.html">inviteRejectedAt</a></h4>
+</td>
+<td>
+<p>the date the invite was rejected</p>
+<code><span class="keyword">var </span><span class="identifier">inviteRejectedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-invited.html">isInvited</a></h4>
+</td>
+<td>
+<p>if this is an invite</p>
+<code><span class="keyword">var </span><span class="identifier">isInvited</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="role.html">role</a></h4>
+</td>
+<td>
+<p>the user's role, user, moderator or admin</p>
+<code><span class="keyword">var </span><span class="identifier">role</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="updated-at.html">updatedAt</a></h4>
+</td>
+<td>
+<p>when the membership data was last updated</p>
+<code><span class="keyword">var </span><span class="identifier">updatedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="user-id.html">userId</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">userId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-member.html">toMember</a></h4>
+</td>
+<td>
+<p>converts a member entity into a member</p>
+<code><span class="keyword">fun </span><span class="identifier">toMember</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.MemberEntity$toMember(kotlin.collections.Map((kotlin.String, io.getstream.chat.android.client.models.User)))/userMap">userMap</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">User</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Member</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

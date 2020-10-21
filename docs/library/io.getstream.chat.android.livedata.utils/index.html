@@ -1,0 +1,91 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>io.getstream.chat.android.livedata.utils - library</title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">library</a>&nbsp;/&nbsp;<a href="./index.html">io.getstream.chat.android.livedata.utils</a><br/>
+<br/>
+<h2>Package io.getstream.chat.android.livedata.utils</h2>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-call2/index.html">Call2</a></h4>
+</td>
+<td>
+<code><span class="keyword">interface </span><span class="identifier">Call2</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-call-impl2/index.html">CallImpl2</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CallImpl2</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-call2/index.html"><span class="identifier">Call2</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-channel-unread-count-live-data/index.html">ChannelUnreadCountLiveData</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">ChannelUnreadCountLiveData</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-default-retry-policy/index.html">DefaultRetryPolicy</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">DefaultRetryPolicy</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="-retry-policy/index.html"><span class="identifier">RetryPolicy</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-event/index.html">Event</a></h4>
+</td>
+<td>
+<p>Used as a wrapper for data that is exposed via a LiveData that represents an event.</p>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">Event</span><span class="symbol">&lt;</span><span class="keyword">out</span>&nbsp;<span class="identifier">T</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-event-observer/index.html">EventObserver</a></h4>
+</td>
+<td>
+<p>An <a href="#">Observer</a> for <a href="-event/index.html">Event</a>s, simplifying the pattern of checking if the <a href="-event/index.html">Event</a>'s content has
+already been handled.</p>
+<code><span class="keyword">class </span><span class="identifier">EventObserver</span><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Observer</span><span class="symbol">&lt;</span><a href="-event/index.html"><span class="identifier">Event</span></a><span class="symbol">&lt;</span><span class="identifier">T</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-retry-policy/index.html">RetryPolicy</a></h4>
+</td>
+<td>
+<p>When creating a channel, adding a reaction or sending any temporary error will trigger the retry policy
+The retry policy interface exposes 2 methods</p>
+<code><span class="keyword">interface </span><span class="identifier">RetryPolicy</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="compute-unread-count.html">computeUnreadCount</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">computeUnreadCount</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.utils$computeUnreadCount(io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.models.ChannelUserRead, kotlin.collections.List((io.getstream.chat.android.client.models.Message)))/currentUser">currentUser</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.utils$computeUnreadCount(io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.models.ChannelUserRead, kotlin.collections.List((io.getstream.chat.android.client.models.Message)))/read">read</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChannelUserRead</span><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.utils$computeUnreadCount(io.getstream.chat.android.client.models.User, io.getstream.chat.android.client.models.ChannelUserRead, kotlin.collections.List((io.getstream.chat.android.client.models.Message)))/messages">messages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="validate-cid.html">validateCid</a></h4>
+</td>
+<td>
+<p>Validates a cid. Verifies it's not empty and in the format messaging:123</p>
+<code><span class="keyword">fun </span><span class="identifier">validateCid</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.utils$validateCid(kotlin.String)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

@@ -1,0 +1,528 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChannelControllerImpl - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.controller</a>&nbsp;/&nbsp;<a href="./index.html">ChannelControllerImpl</a><br/>
+<br/>
+<h1>ChannelControllerImpl</h1>
+<code><span class="keyword">class </span><span class="identifier">ChannelControllerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-channel-controller/index.html"><span class="identifier">ChannelController</span></a></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">ChannelControllerImpl</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$<init>(kotlin.String, kotlin.String, io.getstream.chat.android.client.ChatClient, io.getstream.chat.android.livedata.ChatDomainImpl)/channelType">channelType</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$<init>(kotlin.String, kotlin.String, io.getstream.chat.android.client.ChatClient, io.getstream.chat.android.livedata.ChatDomainImpl)/channelId">channelId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$<init>(kotlin.String, kotlin.String, io.getstream.chat.android.client.ChatClient, io.getstream.chat.android.livedata.ChatDomainImpl)/client">client</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChatClient</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$<init>(kotlin.String, kotlin.String, io.getstream.chat.android.client.ChatClient, io.getstream.chat.android.livedata.ChatDomainImpl)/domainImpl">domainImpl</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata/-chat-domain-impl/index.html"><span class="identifier">ChatDomainImpl</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="active-thread-map-impl.html">activeThreadMapImpl</a></h4>
+</td>
+<td>
+<p>stores the mapping from cid to channelRepository</p>
+<code><span class="keyword">var </span><span class="identifier">activeThreadMapImpl</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html"><span class="identifier">ConcurrentHashMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../-thread-controller-impl/index.html"><span class="identifier">ThreadControllerImpl</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-controller.html">channelController</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">channelController</span><span class="symbol">: </span><span class="identifier">ChannelController</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-data.html">channelData</a></h4>
+</td>
+<td>
+<p>LiveData object with the channel data</p>
+<code><span class="keyword">val </span><span class="identifier">channelData</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="../../io.getstream.chat.android.livedata/-channel-data/index.html"><span class="identifier">ChannelData</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-id.html">channelId</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="channel-type.html">channelType</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">channelType</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="cid.html">cid</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">cid</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="client.html">client</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">client</span><span class="symbol">: </span><span class="identifier">ChatClient</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="domain-impl.html">domainImpl</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">domainImpl</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata/-chat-domain-impl/index.html"><span class="identifier">ChatDomainImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="end-of-newer-messages.html">endOfNewerMessages</a></h4>
+</td>
+<td>
+<p>set to true if there are no more newer messages to load</p>
+<code><span class="keyword">val </span><span class="identifier">endOfNewerMessages</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="end-of-older-messages.html">endOfOlderMessages</a></h4>
+</td>
+<td>
+<p>set to true if there are no more older messages to load</p>
+<code><span class="keyword">val </span><span class="identifier">endOfOlderMessages</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="hidden.html">hidden</a></h4>
+</td>
+<td>
+<p>if the channel is currently hidden</p>
+<code><span class="keyword">val </span><span class="identifier">hidden</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="job.html">job</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">job</span><span class="symbol">: </span><span class="identifier">CompletableJob</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="loading.html">loading</a></h4>
+</td>
+<td>
+<p>if we are currently loading</p>
+<code><span class="keyword">val </span><span class="identifier">loading</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="loading-newer-messages.html">loadingNewerMessages</a></h4>
+</td>
+<td>
+<p>if we are currently loading newer messages</p>
+<code><span class="keyword">val </span><span class="identifier">loadingNewerMessages</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="loading-older-messages.html">loadingOlderMessages</a></h4>
+</td>
+<td>
+<p>if we are currently loading older messages</p>
+<code><span class="keyword">val </span><span class="identifier">loadingOlderMessages</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="members.html">members</a></h4>
+</td>
+<td>
+<p>the list of members of this channel</p>
+<code><span class="keyword">val </span><span class="identifier">members</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Member</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="messages.html">messages</a></h4>
+</td>
+<td>
+<p>a list of messages sorted by message.createdAt</p>
+<code><span class="keyword">val </span><span class="identifier">messages</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="muted.html">muted</a></h4>
+</td>
+<td>
+<p>if the channel is currently muted</p>
+<code><span class="keyword">val </span><span class="identifier">muted</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="read.html">read</a></h4>
+</td>
+<td>
+<p>read status for the current user</p>
+<code><span class="keyword">val </span><span class="identifier">read</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="reads.html">reads</a></h4>
+</td>
+<td>
+<p>how far every user in this channel has read</p>
+<code><span class="keyword">val </span><span class="identifier">reads</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="recovery-needed.html">recoveryNeeded</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">recoveryNeeded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="scope.html">scope</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">scope</span><span class="symbol">: </span><span class="identifier">CoroutineScope</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="typing.html">typing</a></h4>
+</td>
+<td>
+<p>who is currently typing (current user is excluded from this)</p>
+<code><span class="keyword">val </span><span class="identifier">typing</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">User</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="unread-count.html">unreadCount</a></h4>
+</td>
+<td>
+<p>unread count for this channel, calculated based on read state (this works even if you're offline)</p>
+<code><span class="keyword">val </span><span class="identifier">unreadCount</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="watcher-count.html">watcherCount</a></h4>
+</td>
+<td>
+<p>the number of people currently watching the channel</p>
+<code><span class="keyword">val </span><span class="identifier">watcherCount</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="watchers.html">watchers</a></h4>
+</td>
+<td>
+<p>the list of users currently watching this channel</p>
+<code><span class="keyword">val </span><span class="identifier">watchers</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">User</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="clean.html">clean</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">clean</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="delete-message.html">deleteMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">deleteMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$deleteMessage(io.getstream.chat.android.client.models.Message)/message">message</span><span class="symbol">:</span>&nbsp;<span class="identifier">Message</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="delete-reaction.html">deleteReaction</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">deleteReaction</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$deleteReaction(io.getstream.chat.android.client.models.Reaction)/reaction">reaction</span><span class="symbol">:</span>&nbsp;<span class="identifier">Reaction</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="edit-message.html">editMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">editMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$editMessage(io.getstream.chat.android.client.models.Message)/message">message</span><span class="symbol">:</span>&nbsp;<span class="identifier">Message</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-config.html">getConfig</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getConfig</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Config</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-message.html">getMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$getMessage(kotlin.String)/messageId">messageId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Message</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-thread.html">getThread</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getThread</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$getThread(kotlin.String)/threadId">threadId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-thread-controller-impl/index.html"><span class="identifier">ThreadControllerImpl</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="get-thread-messages.html">getThreadMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getThreadMessages</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$getThreadMessages(kotlin.String)/threadId">threadId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">MutableLiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="handle-event.html">handleEvent</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">handleEvent</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$handleEvent(io.getstream.chat.android.client.events.ChatEvent)/event">event</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChatEvent</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="handle-events.html">handleEvents</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">handleEvents</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$handleEvents(kotlin.collections.List((io.getstream.chat.android.client.events.ChatEvent)))/events">events</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">ChatEvent</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="hide.html">hide</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">hide</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$hide(kotlin.Boolean)/clearHistory">clearHistory</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="is-hidden.html">isHidden</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">isHidden</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="keystroke.html">keystroke</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">keystroke</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load-more-messages-request.html">loadMoreMessagesRequest</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">loadMoreMessagesRequest</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadMoreMessagesRequest(kotlin.Int, io.getstream.chat.android.client.api.models.Pagination)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadMoreMessagesRequest(kotlin.Int, io.getstream.chat.android.client.api.models.Pagination)/direction">direction</span><span class="symbol">:</span>&nbsp;<span class="identifier">Pagination</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.request/-query-channel-pagination-request/index.html"><span class="identifier">QueryChannelPaginationRequest</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load-more-thread-messages.html">loadMoreThreadMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">loadMoreThreadMessages</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadMoreThreadMessages(kotlin.String, kotlin.Int, io.getstream.chat.android.client.api.models.Pagination)/threadId">threadId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadMoreThreadMessages(kotlin.String, kotlin.Int, io.getstream.chat.android.client.api.models.Pagination)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadMoreThreadMessages(kotlin.String, kotlin.Int, io.getstream.chat.android.client.api.models.Pagination)/direction">direction</span><span class="symbol">:</span>&nbsp;<span class="identifier">Pagination</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load-newer-messages.html">loadNewerMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">loadNewerMessages</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadNewerMessages(kotlin.Int)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="load-older-messages.html">loadOlderMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">loadOlderMessages</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$loadOlderMessages(kotlin.Int)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="mark-read.html">markRead</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">markRead</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="remove-messages-before.html">removeMessagesBefore</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeMessagesBefore</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$removeMessagesBefore(java.util.Date)/t">t</span><span class="symbol">:</span>&nbsp;<a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="run-channel-query.html">runChannelQuery</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">runChannelQuery</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$runChannelQuery(io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest)/pagination">pagination</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.request/-query-channel-pagination-request/index.html"><span class="identifier">QueryChannelPaginationRequest</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="run-channel-query-offline.html">runChannelQueryOffline</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">runChannelQueryOffline</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$runChannelQueryOffline(io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest)/pagination">pagination</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.request/-query-channel-pagination-request/index.html"><span class="identifier">QueryChannelPaginationRequest</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Channel</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="run-channel-query-online.html">runChannelQueryOnline</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">runChannelQueryOnline</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$runChannelQueryOnline(io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest)/pagination">pagination</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.request/-query-channel-pagination-request/index.html"><span class="identifier">QueryChannelPaginationRequest</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="send-message.html">sendMessage</a></h4>
+</td>
+<td>
+<ul><li>Generate an ID</li>
+<li>Insert the message into offline storage with sync status set to Sync Needed</li>
+<li>If we're online do the send message request</li>
+<li>If the request fails we retry according to the retry policy set on the repo</li>
+</ul>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">sendMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$sendMessage(io.getstream.chat.android.client.models.Message)/message">message</span><span class="symbol">:</span>&nbsp;<span class="identifier">Message</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="send-reaction.html">sendReaction</a></h4>
+</td>
+<td>
+<p>sendReaction posts the reaction on local storage
+message reaction count should increase, latest reactions and own_reactions should be updated</p>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">sendReaction</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$sendReaction(io.getstream.chat.android.client.models.Reaction)/reaction">reaction</span><span class="symbol">:</span>&nbsp;<span class="identifier">Reaction</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><span class="identifier">Reaction</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-typing.html">setTyping</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setTyping</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$setTyping(kotlin.String, io.getstream.chat.android.client.events.ChatEvent)/userId">userId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$setTyping(kotlin.String, io.getstream.chat.android.client.events.ChatEvent)/event">event</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChatEvent</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-watcher-count.html">setWatcherCount</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setWatcherCount</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$setWatcherCount(kotlin.Int)/watcherCount">watcherCount</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-watchers.html">setWatchers</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">setWatchers</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$setWatchers(kotlin.collections.List((io.getstream.chat.android.client.models.Watcher)))/watchers">watchers</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Watcher</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="show.html">show</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">show</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="sorted-messages.html">sortedMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sortedMessages</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="stop-typing.html">stopTyping</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">stopTyping</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Result</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="to-channel.html">toChannel</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">toChannel</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Channel</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-channel-data.html">updateChannelData</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateChannelData</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$updateChannelData(io.getstream.chat.android.client.models.Channel)/channel">channel</span><span class="symbol">:</span>&nbsp;<span class="identifier">Channel</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-live-data-from-channel.html">updateLiveDataFromChannel</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateLiveDataFromChannel</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$updateLiveDataFromChannel(io.getstream.chat.android.client.models.Channel)/c">c</span><span class="symbol">:</span>&nbsp;<span class="identifier">Channel</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-live-data-from-channel-entity-pair.html">updateLiveDataFromChannelEntityPair</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateLiveDataFromChannelEntityPair</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$updateLiveDataFromChannelEntityPair(io.getstream.chat.android.livedata.entity.ChannelEntityPair)/c">c</span><span class="symbol">:</span>&nbsp;<a href="../../io.getstream.chat.android.livedata.entity/-channel-entity-pair/index.html"><span class="identifier">ChannelEntityPair</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-read.html">updateRead</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateRead</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$updateRead(io.getstream.chat.android.client.models.ChannelUserRead)/read">read</span><span class="symbol">:</span>&nbsp;<span class="identifier">ChannelUserRead</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="update-reads.html">updateReads</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">updateReads</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$updateReads(kotlin.collections.List((io.getstream.chat.android.client.models.ChannelUserRead)))/reads">reads</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="upsert-event-message.html">upsertEventMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">upsertEventMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$upsertEventMessage(io.getstream.chat.android.client.models.Message)/message">message</span><span class="symbol">:</span>&nbsp;<span class="identifier">Message</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="upsert-member.html">upsertMember</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">upsertMember</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$upsertMember(io.getstream.chat.android.client.models.Member)/member">member</span><span class="symbol">:</span>&nbsp;<span class="identifier">Member</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="upsert-message.html">upsertMessage</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">upsertMessage</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$upsertMessage(io.getstream.chat.android.client.models.Message)/message">message</span><span class="symbol">:</span>&nbsp;<span class="identifier">Message</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="upsert-messages.html">upsertMessages</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">upsertMessages</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$upsertMessages(kotlin.collections.List((io.getstream.chat.android.client.models.Message)))/messages">messages</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="watch.html">watch</a></h4>
+</td>
+<td>
+<code><span class="keyword">suspend</span> <span class="keyword">fun </span><span class="identifier">watch</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.controller.ChannelControllerImpl$watch(kotlin.Int)/limit">limit</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a>&nbsp;<span class="symbol">=</span>&nbsp;30<span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

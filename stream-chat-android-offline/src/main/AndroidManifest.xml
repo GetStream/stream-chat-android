@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.getstream.chat.android.livedata">
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <application>
+        <service android:name=".service.sync.OfflineSyncFirebaseMessagingService"/>
+    </application>
+</manifest>

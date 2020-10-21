@@ -1,0 +1,102 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>QueryChannelsController - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.controller</a>&nbsp;/&nbsp;<a href="./index.html">QueryChannelsController</a><br/>
+<br/>
+<h1>QueryChannelsController</h1>
+<code><span class="keyword">interface </span><span class="identifier">QueryChannelsController</span></code>
+<p>The QueryChannelsController is a small helper to show a list of channels</p>
+<ul><li>.channels a livedata object with the list of channels. this list</li>
+<li>.loading if we're currently loading</li>
+<li>.loadingMore if we're currently loading more channels</li>
+</ul>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="channels.html">channels</a></h4>
+</td>
+<td>
+<p>The list of channels</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">channels</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Channel</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="end-of-channels.html">endOfChannels</a></h4>
+</td>
+<td>
+<p>If we've reached the end of the channels</p>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">endOfChannels</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="filter.html">filter</a></h4>
+</td>
+<td>
+<p>The filter used for this query</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">filter</span><span class="symbol">: </span><span class="identifier">FilterObject</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="loading.html">loading</a></h4>
+</td>
+<td>
+<p>If we are currently loading channels</p>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">loading</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="loading-more.html">loadingMore</a></h4>
+</td>
+<td>
+<p>If we are currently loading more channels</p>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">loadingMore</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="new-channel-event-filter.html">newChannelEventFilter</a></h4>
+</td>
+<td>
+<p>When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
+determines if the channel should be added to the query or not.
+Return true to add the channel, return false to ignore it.
+By default it will simply add every channel for which this event is received</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">newChannelEventFilter</span><span class="symbol">: </span><span class="symbol">(</span><span class="symbol">(</span><span class="identifier">Channel</span><span class="symbol">,</span>&nbsp;<span class="identifier">FilterObject</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="recovery-needed.html">recoveryNeeded</a></h4>
+</td>
+<td>
+<p>If the API call failed and we need to rerun this query</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">recoveryNeeded</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="sort.html">sort</a></h4>
+</td>
+<td>
+<p>The sort used for this query</p>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">sort</span><span class="symbol">: </span><span class="identifier">QuerySort</span><span class="symbol">?</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="../-query-channels-controller-impl/index.html">QueryChannelsControllerImpl</a></h4>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">QueryChannelsControllerImpl</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">QueryChannelsController</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

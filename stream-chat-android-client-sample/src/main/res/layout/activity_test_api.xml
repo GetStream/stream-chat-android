@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/buttonsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnQueryChannels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Query channels" />
+
+        <Button
+            android:id="@+id/btnUpdateChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update channel" />
+
+        <Button
+            android:id="@+id/btnAcceptInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Accept invite" />
+
+        <Button
+            android:id="@+id/btnRejectInvite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reject invite" />
+
+        <Button
+            android:id="@+id/btnHideChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hide channel" />
+
+        <Button
+            android:id="@+id/btnShowChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show channel" />
+
+        <Button
+            android:id="@+id/btnMarkReadMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mark read message" />
+
+        <Button
+            android:id="@+id/btnWatchChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Watch channel" />
+
+        <Button
+            android:id="@+id/btnStopWatching"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop watching" />
+
+        <Button
+                android:id="@+id/btnGetMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get message" />
+
+        <Button
+                android:id="@+id/btnCheckTyping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check typing" />
+
+        <Button
+                android:id="@+id/btnUpdateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Update message" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
