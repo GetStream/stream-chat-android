@@ -193,14 +193,12 @@ public class LlcMigrationUtils {
     public static boolean lastMessagesAreTheSame(Channel a, Channel b) {
         Message oldLastMessage = computeLastMessage(a);
         Message newLastMessage = computeLastMessage(b);
-        if (oldLastMessage != null &&
-                newLastMessage != null &&
-                newLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt() != null &&
-                oldLastMessage.getUpdatedAt().getTime() < newLastMessage.getUpdatedAt().getTime()) {
+        if (oldLastMessage == null && newLastMessage == null) {
+            return true;
+        } else if (oldLastMessage == null || newLastMessage == null) {
             return false;
         } else {
-            return true;
+            return oldLastMessage.equals(newLastMessage);
         }
     }
 
