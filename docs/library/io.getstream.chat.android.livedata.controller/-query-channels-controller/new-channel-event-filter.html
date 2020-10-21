@@ -1,0 +1,18 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>QueryChannelsController.newChannelEventFilter - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.controller</a>&nbsp;/&nbsp;<a href="index.html">QueryChannelsController</a>&nbsp;/&nbsp;<a href="./new-channel-event-filter.html">newChannelEventFilter</a><br/>
+<br/>
+<h1>newChannelEventFilter</h1>
+<a name="io.getstream.chat.android.livedata.controller.QueryChannelsController$newChannelEventFilter"></a>
+<code><span class="keyword">abstract</span> <span class="keyword">var </span><span class="identifier">newChannelEventFilter</span><span class="symbol">: </span><span class="symbol">(</span><span class="symbol">(</span><span class="identifier">Channel</span><span class="symbol">,</span>&nbsp;<span class="identifier">FilterObject</span><span class="symbol">)</span>&nbsp;<span class="symbol">-&gt;</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a><span class="symbol">)</span><span class="symbol">?</span></code>
+<p>When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
+determines if the channel should be added to the query or not.
+Return true to add the channel, return false to ignore it.
+By default it will simply add every channel for which this event is received</p>
+</BODY>
+</HTML>

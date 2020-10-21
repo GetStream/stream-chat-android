@@ -1,9 +1,13 @@
 # To be released:
+# Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
-- Fix sending GIFs from keyboard
 - Removed many internal implementation classes and methods from the SDK's public API
-- Allow specifying a custom `ChatLogger.Config` in `Chat.Builder`
+- Fix sending GIFs from keyboard
+- Fix unresponsive attachment upload buttons
+- Fix method to obtain initials from user to be shown into the avatar
+- Fix method to obtain initials from channel to be shown into the avatar
+- Allow setting `ChatLoggerHandler` and `ChatLogLevel` in `Chat.Builder`
 
 # Oct 16th, 2020 - 4.3.1-beta-1
 - Significant performance improvements

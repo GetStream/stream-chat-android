@@ -1,0 +1,123 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ReactionEntity - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.entity</a>&nbsp;/&nbsp;<a href="./index.html">ReactionEntity</a><br/>
+<br/>
+<h1>ReactionEntity</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ReactionEntity</span></code>
+<p>The ReactionEntity</p>
+<p>message id, user id and type are required
+created at and score are optional. score allows you to implement
+reactions where one user can like/clap something multiple times</p>
+<p>You can convert a Reaction object from the low level client to a ReactionEntity like this:
+val reactionEntity = ReactionEntity(reaction)
+and back:
+reactionEntity.toUser()</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<p>create a reactionEntity from a reaction object</p>
+<code><span class="identifier">ReactionEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.ReactionEntity$<init>(io.getstream.chat.android.client.models.Reaction)/r">r</span><span class="symbol">:</span>&nbsp;<span class="identifier">Reaction</span><span class="symbol">)</span></code>
+<p>The ReactionEntity</p>
+<code><span class="identifier">ReactionEntity</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.ReactionEntity$<init>(kotlin.String, kotlin.String, kotlin.String)/messageId">messageId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.entity.ReactionEntity$<init>(kotlin.String, kotlin.String, kotlin.String)/userId">userId</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.entity.ReactionEntity$<init>(kotlin.String, kotlin.String, kotlin.String)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="created-at.html">createdAt</a></h4>
+</td>
+<td>
+<p>when the reaction was created</p>
+<code><span class="keyword">var </span><span class="identifier">createdAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="deleted-at.html">deletedAt</a></h4>
+</td>
+<td>
+<p>when the reaction was deleted, this field is only stored in the local db</p>
+<code><span class="keyword">var </span><span class="identifier">deletedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="extra-data.html">extraData</a></h4>
+</td>
+<td>
+<p>all the custom data provided for this reaction</p>
+<code><span class="keyword">var </span><span class="identifier">extraData</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="message-id.html">messageId</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">messageId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="score.html">score</a></h4>
+</td>
+<td>
+<p>the score, used if you want to allow users to clap/like etc multiple times</p>
+<code><span class="keyword">var </span><span class="identifier">score</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="sync-status.html">syncStatus</a></h4>
+</td>
+<td>
+<p>if the reaction has been synced to the servers</p>
+<code><span class="keyword">var </span><span class="identifier">syncStatus</span><span class="symbol">: </span><span class="identifier">SyncStatus</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="type.html">type</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">type</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="updated-at.html">updatedAt</a></h4>
+</td>
+<td>
+<p>when the reaction was updated</p>
+<code><span class="keyword">var </span><span class="identifier">updatedAt</span><span class="symbol">: </span><a href="https://docs.oracle.com/javase/6/docs/api/java/util/Date.html"><span class="identifier">Date</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="user-id.html">userId</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">userId</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="to-reaction.html">toReaction</a></h4>
+</td>
+<td>
+<p>converts a reaction entity into a Reaction</p>
+<code><span class="keyword">fun </span><span class="identifier">toReaction</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.entity.ReactionEntity$toReaction(kotlin.collections.Map((kotlin.String, io.getstream.chat.android.client.models.User)))/userMap">userMap</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<span class="identifier">User</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Reaction</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

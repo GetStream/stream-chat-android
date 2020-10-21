@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.getstream.sdk.chat">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:networkSecurityConfig="@xml/network_security_config">
+        <activity android:name=".view.activity.AttachmentMediaActivity" />
+        <activity android:name=".view.activity.AttachmentDocumentActivity" />
+        <activity android:name=".view.activity.AttachmentActivity" />
+
+        <service
+            android:name="io.getstream.chat.android.livedata.service.sync.OfflineSyncFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="io.getstream.chat.android.client.receivers.NotificationMessageReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.getstream.sdk.chat.READ" />
+                <action android:name="com.getstream.sdk.chat.REPLY" />
+            </intent-filter>
+        </receiver>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.streamfileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/stream_filepaths"
+                />
+        </provider>
+        <provider
+            android:authorities="${applicationId}.FrescoContentProvider"
+            android:name=".utils.frescoimageviewer.FrescoContentProvider"
+            android:enabled="true"
+            android:exported="false"
+            />
+    </application>
+
+</manifest>

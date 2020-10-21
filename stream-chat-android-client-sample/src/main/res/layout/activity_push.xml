@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <io.getstream.chat.android.client.sample.utils.CommandsView android:layout_width="match_parent"
+
+                                                                    android:id="@+id/commandsViewA"
+                                                                    android:layout_height="wrap_content"/>
+    </ScrollView>
+
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+
+        <io.getstream.chat.android.client.sample.utils.CommandsView android:layout_width="match_parent"
+                                                                    android:layout_weight="1"
+                                                                    android:id="@+id/commandsViewB"
+                                                                    android:layout_height="0dp"/>
+
+    </ScrollView>
+
+</LinearLayout>

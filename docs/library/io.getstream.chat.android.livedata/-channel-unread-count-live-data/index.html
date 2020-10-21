@@ -1,0 +1,105 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>ChannelUnreadCountLiveData - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata</a>&nbsp;/&nbsp;<a href="./index.html">ChannelUnreadCountLiveData</a><br/>
+<br/>
+<h1>ChannelUnreadCountLiveData</h1>
+<code><span class="keyword">class </span><span class="identifier">ChannelUnreadCountLiveData</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span></code>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-init-.html">&lt;init&gt;</a></h4>
+</td>
+<td>
+<code><span class="identifier">ChannelUnreadCountLiveData</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$<init>(io.getstream.chat.android.client.models.User, androidx.lifecycle.LiveData((io.getstream.chat.android.client.models.ChannelUserRead)), androidx.lifecycle.LiveData((kotlin.collections.List((io.getstream.chat.android.client.models.Message)))))/currentUser">currentUser</span><span class="symbol">:</span>&nbsp;<span class="identifier">User</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$<init>(io.getstream.chat.android.client.models.User, androidx.lifecycle.LiveData((io.getstream.chat.android.client.models.ChannelUserRead)), androidx.lifecycle.LiveData((kotlin.collections.List((io.getstream.chat.android.client.models.Message)))))/readLiveData">readLiveData</span><span class="symbol">:</span>&nbsp;<span class="identifier">LiveData</span><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$<init>(io.getstream.chat.android.client.models.User, androidx.lifecycle.LiveData((io.getstream.chat.android.client.models.ChannelUserRead)), androidx.lifecycle.LiveData((kotlin.collections.List((io.getstream.chat.android.client.models.Message)))))/messagesLiveData">messagesLiveData</span><span class="symbol">:</span>&nbsp;<span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span><span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="current-user.html">currentUser</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">currentUser</span><span class="symbol">: </span><span class="identifier">User</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="message-observer.html">messageObserver</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">messageObserver</span><span class="symbol">: </span><span class="identifier">Observer</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="messages.html">messages</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">messages</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="messages-live-data.html">messagesLiveData</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">messagesLiveData</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Message</span><span class="symbol">&gt;</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="read.html">read</a></h4>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">read</span><span class="symbol">: </span><span class="identifier">ChannelUserRead</span><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="read-live-data.html">readLiveData</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">readLiveData</span><span class="symbol">: </span><span class="identifier">LiveData</span><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="read-observer.html">readObserver</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">readObserver</span><span class="symbol">: </span><span class="identifier">Observer</span><span class="symbol">&lt;</span><span class="identifier">ChannelUserRead</span><span class="symbol">&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="calculate-unread-count.html">calculateUnreadCount</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">calculateUnreadCount</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">?</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="observe.html">observe</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">observe</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$observe(androidx.lifecycle.LifecycleOwner, androidx.lifecycle.Observer((kotlin.Int)))/owner">owner</span><span class="symbol">:</span>&nbsp;<span class="identifier">LifecycleOwner</span><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$observe(androidx.lifecycle.LifecycleOwner, androidx.lifecycle.Observer((kotlin.Int)))/observer">observer</span><span class="symbol">:</span>&nbsp;<span class="identifier">Observer</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="observe-forever.html">observeForever</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">observeForever</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData$observeForever(androidx.lifecycle.Observer((kotlin.Int)))/observer">observer</span><span class="symbol">:</span>&nbsp;<span class="identifier">Observer</span><span class="symbol">&lt;</span><span class="keyword">in</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html"><span class="identifier">Int</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

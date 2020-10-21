@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SendReactionImpl.invoke - library</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">library</a>&nbsp;/&nbsp;<a href="../index.html">io.getstream.chat.android.livedata.usecase</a>&nbsp;/&nbsp;<a href="index.html">SendReactionImpl</a>&nbsp;/&nbsp;<a href="./invoke.html">invoke</a><br/>
+<br/>
+<h1>invoke</h1>
+<a name="io.getstream.chat.android.livedata.usecase.SendReactionImpl$invoke(kotlin.String, io.getstream.chat.android.client.models.Reaction)"></a>
+<code><span class="keyword">operator</span> <span class="keyword">fun </span><span class="identifier">invoke</span><span class="symbol">(</span><span class="identifier" id="io.getstream.chat.android.livedata.usecase.SendReactionImpl$invoke(kotlin.String, io.getstream.chat.android.client.models.Reaction)/cid">cid</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.getstream.chat.android.livedata.usecase.SendReactionImpl$invoke(kotlin.String, io.getstream.chat.android.client.models.Reaction)/reaction">reaction</span><span class="symbol">:</span>&nbsp;<span class="identifier">Reaction</span><span class="symbol">)</span><span class="symbol">: </span><a href="../../io.getstream.chat.android.livedata.utils/-call2/index.html"><span class="identifier">Call2</span></a><span class="symbol">&lt;</span><span class="identifier">Reaction</span><span class="symbol">&gt;</span></code>
+<p>Sends the reaction. Immediately adds the reaction to local storage and updates the reaction fields on the related message.
+API call to send the reaction is retried according to the retry policy specified on the chatDomain</p>
+<h3>Parameters</h3>
+<p><a name="cid"></a>
+<code>cid</code> - : the full channel id IE messaging:123</p>
+<p><a name="reaction"></a>
+<code>reaction</code> - the reaction to add</p>
+<p><strong>Return</strong><br/>
+A call object with Reaction as the return type</p>
+<p><strong>See Also</strong><br/>
+<p><a href="../../io.getstream.chat.android.livedata.utils/-retry-policy/index.html">io.getstream.chat.android.livedata.utils.RetryPolicy</a></p>
+</p>
+</BODY>
+</HTML>

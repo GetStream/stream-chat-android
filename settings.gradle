@@ -1,47 +1,7 @@
-include ':library', ':sample'
-
-/*
- compositeBuild allow you to easily work on multiple projects at once
- you can use the debugger and edit code as if it was a single project
- this replaces the need to use mavenLocal publish commands and edit versions
- android studio also supports this gradle feature
- to work you need to have the client, livedata and main repo in the same top level folder, ie
- folder
- - stream-chat-android-client
- - stream-chat-android-livedata
- - stream-chat-android
- add/remove the project .composite file to enable/disable (this file should is added to the gitignore)
-
- Enabling composite builds:
- open the stream-chat-android project
- > touch ../stream-chat-android-livedata/.composite
- > rerun the gradle sync in your editor
- > the livedata folder will show up in your stream-chat-android project
-
- Disabling composite builds
- open the stream-chat-android project
- > rm ../stream-chat-android-livedata/.composite
- > rerun the gradle sync in your editor
- > the livedata folder will no longer show up in your stream-chat-android project
- */
-
-
-if (new File(rootDir, '../stream-chat-android-livedata/.composite').exists()) {
-
-    includeBuild("../stream-chat-android-livedata") {
-        dependencySubstitution {
-            // project spec is validated, if you get it wrong you get an error
-            // module spec is not validated, if you get it wrong you just dont get a local version of the module
-            substitute(module("com.github.getstream:stream-chat-android-livedata:")).with(project(":livedata"))
-        }
-    }
-}
-
-if (new File(rootDir, '../stream-chat-android-client/.composite').exists()) {
-
-    includeBuild("../stream-chat-android-client") {
-        dependencySubstitution {
-            substitute(module("com.github.getstream:stream-chat-android-client:")).with(project(":client"))
-        }
-    }
-}
+include (
+		':stream-chat-android',
+		':stream-chat-android-sample',
+		':stream-chat-android-offline',
+		':stream-chat-android-client',
+		':stream-chat-android-client-sample'
+)

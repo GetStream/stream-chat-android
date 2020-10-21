@@ -1,0 +1,187 @@
+import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.Configuration
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.hiya.jacoco-android'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.getstream'
+version = Configuration.versionName
+
+def DEFAULT_API_ENDPOINT = 'chat-us-east-1.stream-io-api.com'
+def DEFAULT_API_KEEP_ALIVE_TIMEOUT = 1000 * 45
+def DEFAULT_API_TIMEOUT = 1000 * 6
+def DEFAULT_CDN_TIMEOUT = 1000 * 6
+
+android {
+    compileSdkVersion Configuration.compileSdkVersion
+
+    defaultConfig {
+
+        versionName Configuration.versionName
+
+        buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
+        buildConfigField "int", "DEFAULT_API_TIMEOUT", "$DEFAULT_API_TIMEOUT"
+        buildConfigField "int", "DEFAULT_CDN_TIMEOUT", "$DEFAULT_CDN_TIMEOUT"
+        buildConfigField "int", "DEFAULT_API_KEEP_ALIVE_TIMEOUT", "$DEFAULT_API_KEEP_ALIVE_TIMEOUT"
+
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            unitTests.returnDefaultValues = true
+            // Show the result of every unit test, even if it passes.
+            all {
+                testLogging {
+                    events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        all {
+            it.java.srcDir "src/$it.name/kotlin"
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        noStdlib = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+        ]
+    }
+}
+
+dependencies {
+
+    api project(":stream-chat-android-offline")
+
+    implementation Dependencies.kotlinSTDLib
+    implementation Dependencies.appCompat
+    implementation Dependencies.constraintLayout
+    implementation Dependencies.androidLegacySupport
+    api Dependencies.recyclerview
+    implementation Dependencies.activityKtx
+    implementation Dependencies.fragmentKtx
+    implementation Dependencies.lifecycleExtension
+    implementation Dependencies.lifecycleViewModelKTX
+
+    implementation Dependencies.roomRuntime
+
+    implementation Dependencies.okhttp
+    implementation Dependencies.loggingInterceptor
+
+    implementation Dependencies.retrofit
+    implementation Dependencies.gsonConverter
+
+    implementation Dependencies.gson
+
+    implementation Dependencies.glideRedirect
+    implementation(Dependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    kapt Dependencies.glideCompiler
+
+    implementation Dependencies.drawabletoolbox
+    implementation Dependencies.marwonCore
+    implementation Dependencies.marwonLinkify
+    implementation Dependencies.marwonextStrikethrough
+    implementation Dependencies.marwonImage
+
+    implementation Dependencies.fresco
+    implementation Dependencies.photodraweeview
+    implementation Dependencies.keyboardVisibilityEvent
+    implementation Dependencies.dexter
+
+    implementation Dependencies.firebaseMessaging
+
+    implementation Dependencies.androidxMedia
+    implementation Dependencies.coil
+    implementation Dependencies.coilGif
+
+    // ExoPlayer
+    api Dependencies.exoplayerCore
+    api Dependencies.exoplayerDash
+    api Dependencies.exoplayerHls
+    api Dependencies.exoplayerSmoothstreaming
+
+    // Tests
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+
+    testImplementation Dependencies.truth
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.androidxCoreTest
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.coroutinesTest
+
+}
+
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    destinationDir = file("../docs/")
+    exclude '**/utils'
+    exclude '**/storage'
+    exclude '**/interfaces'
+    exclude '**/Command.java'
+    exclude '**/Device.java'
+    exclude '**/TokenService.java'
+    exclude '**/ModelType.java'
+    failOnError false
+}
+
+task copyJar(type: Copy) {
+    description = 'Copying the jar'
+    from "$buildDir/intermediates/full_jar/release/createFullJarRelease"
+    into file('../attachments')
+    include 'full.jar'
+}
+
+task copyAar(type: Copy) {
+    description = 'Copying the aar'
+    from "$buildDir/outputs/aar"
+    into file('../attachments')
+    include 'library-release.aar'
+}
+
+project.afterEvaluate {
+    preBuild.dependsOn copyAar
+}
+
+clean.dependsOn copyAar
+clean.mustRunAfter copyAar
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}

@@ -50,7 +50,6 @@ private const val TIMBER_VERSION = "4.7.1"
 private const val RECYCLERVIEW_VERSION = "1.2.0-alpha05"
 private const val RETROFIT_VERSION = "2.9.0"
 private const val ROOM_VERSION = "2.2.5"
-private const val STREAM_LIVEDATA_VERSION = "0.8.6"
 private const val TRUTH_VERSION = "1.0.1"
 
 
@@ -93,6 +92,7 @@ object Dependencies {
     const val junitJupiterApi = "org.junit.jupiter:junit-jupiter-api:$JUNIT5_VERSION"
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:$JUNIT5_VERSION"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:$JUNIT5_VERSION"
+    const val junitVintageEngine = "org.junit.vintage:junit-vintage-engine:$JUNIT5_VERSION"
     const val keyboardVisibilityEvent = "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:$KEYBOARD_VISIBILITY_EVENT_VERSION"
     const val kluent = "org.amshove.kluent:kluent:$KLUENT_VERSION"
     const val koinAndroidxExt = "org.koin:koin-androidx-ext:$KOIN_VERSION"
@@ -104,6 +104,7 @@ object Dependencies {
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
     const val kotlinSTDLib = "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
     const val ktlintPlugin = "org.jlleitschuh.gradle:ktlint-gradle:$KTLINT_VERSION"
+    const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:$KOTLIN_VERSION"
     const val leakCanary = "com.squareup.leakcanary:leakcanary-android:$LEAK_CANARY_VERSION"
     const val lifecycleExtension = "androidx.lifecycle:lifecycle-extensions:$LIFECYCLE_EXTENSION_VERSION"
     const val lifecycleViewModelKTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:$LIFECYCLE_VIEWMODEL_KTX_VERSION"
@@ -126,7 +127,6 @@ object Dependencies {
     const val recyclerview = "androidx.recyclerview:recyclerview:$RECYCLERVIEW_VERSION"
     const val retrofit = "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
     const val roomRuntime = "androidx.room:room-runtime:$ROOM_VERSION"
-    const val streamLivedata = "com.github.getstream:stream-chat-android-livedata:$STREAM_LIVEDATA_VERSION"
     const val truth = "com.google.truth:truth:$TRUTH_VERSION"
 
     @JvmStatic
