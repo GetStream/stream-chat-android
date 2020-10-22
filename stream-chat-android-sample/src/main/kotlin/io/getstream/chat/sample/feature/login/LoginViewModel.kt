@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.ChatInitializer
+import io.getstream.chat.sample.application.FirebaseLogger
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.User
@@ -74,6 +75,7 @@ class LoginViewModel(
                             _state.postValue(State.RedirectToChannels)
                         }
                         Timber.d("User set successfully")
+                        FirebaseLogger.userId = data.user.id
                     }
 
                     override fun onError(error: ChatError) {
