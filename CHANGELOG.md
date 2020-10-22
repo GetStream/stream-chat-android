@@ -9,6 +9,7 @@
 - Fix unresponsive attachment upload buttons
 - Fix method to obtain initials from user to be shown into the avatar
 - Fix method to obtain initials from channel to be shown into the avatar
+- Allow setting `ChatLoggerHandler` and `ChatLogLevel` in `Chat.Builder`
 
 # Oct 16th, 2020 - 4.3.1-beta-1
 - Significant performance improvements

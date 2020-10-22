@@ -18,6 +18,7 @@ class ChatInitializer(private val context: Context) {
                     smallIcon = R.drawable.ic_chat_bubble
                 )
             notificationHandler = SampleNotificationHandler(context, notificationConfig)
+            chatLoggerHandler = SampleLoggingHandler()
         }.build()
     }
 }
