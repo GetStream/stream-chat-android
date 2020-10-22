@@ -1,15 +1,12 @@
 package io.getstream.chat.sample.feature.login
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.sample.R
-import io.getstream.chat.sample.application.SampleNotificationHandler
+import io.getstream.chat.sample.application.ChatInitializer
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.User
@@ -18,7 +15,7 @@ import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class LoginViewModel(
-    private val applicationContext: Context,
+    private val chatInitializer: ChatInitializer,
     private val userRepository: UserRepository
 ) : ViewModel() {
     private val _state = MutableLiveData<State>()
@@ -48,17 +45,7 @@ class LoginViewModel(
     }
 
     private fun initChatSdk(credentials: LoginCredentials) {
-        Chat.Builder(credentials.apiKey, applicationContext).apply {
-            offlineEnabled = true
-            val notificationConfig =
-                NotificationConfig(
-                    firebaseMessageIdKey = "message_id",
-                    firebaseChannelIdKey = "channel_id",
-                    firebaseChannelTypeKey = "channel_type",
-                    smallIcon = R.drawable.ic_chat_bubble
-                )
-            notificationHandler = SampleNotificationHandler(applicationContext, notificationConfig)
-        }.build()
+        chatInitializer.init(credentials.apiKey)
     }
 
     private fun initChatUser(loginCredentials: LoginCredentials) {

@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.AppConfig
+import io.getstream.chat.sample.application.ChatInitializer
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
 import io.getstream.chat.sample.data.user.User
@@ -15,7 +16,8 @@ import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class UsersViewModel(
-    appConfig: AppConfig,
+    private val appConfig: AppConfig,
+    private val chatInitializer: ChatInitializer,
     private val userRepository: UserRepository
 ) : ViewModel() {
     private val _state = MutableLiveData<State>()
@@ -27,6 +29,15 @@ class UsersViewModel(
 
     fun userClicked(user: User) {
         _state.postValue(State.Loading)
+        initChatSdk()
+        initChatUser(user)
+    }
+
+    private fun initChatSdk() {
+        chatInitializer.init(appConfig.apiKey)
+    }
+
+    private fun initChatUser(user: User) {
         userRepository.user = user
         val chatUser = ChatUser().apply {
             id = user.id
