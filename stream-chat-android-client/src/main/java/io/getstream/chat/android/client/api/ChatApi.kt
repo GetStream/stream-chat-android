@@ -71,14 +71,14 @@ internal class ChatApi(
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ) = fileUploader.sendFile(channelType, channelId, file, callback)
+    ): Unit = fileUploader.sendFile(channelType, channelId, file, callback)
 
     fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ) = fileUploader.sendImage(channelType, channelId, file, callback)
+    ): Unit = fileUploader.sendImage(channelType, channelId, file, callback)
 
     fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
         return FileUploaderCall {
