@@ -20,7 +20,7 @@ object FirebaseLogger : ChatLoggerHandler {
             return
         }
 
-        val logTag = tag?.let { "[$it]" } ?: ""
+        val logTag = tag ?: ""
         val logMsg = message ?: ""
 
         logger.log("[$logTag] $logMsg")
