@@ -6,6 +6,7 @@ import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
@@ -29,6 +30,18 @@ class App : Application() {
         configFlipper()
     }
 
+    private fun Application.configFlipper() {
+        SoLoader.init(this, false)
+
+        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
+            AndroidFlipperClient.getInstance(this).apply {
+                addPlugin(InspectorFlipperPlugin(this@App, DescriptorMapping.withDefaults()))
+                addPlugin(DatabasesFlipperPlugin(this@App))
+                addPlugin(NetworkFlipperPlugin())
+            }.start()
+        }
+    }
+
     private fun initKoin() {
         startKoin {
             if (BuildConfig.DEBUG) {
@@ -46,17 +59,6 @@ class App : Application() {
                 )
             )
             koin.createRootScope()
-        }
-    }
-
-    private fun Application.configFlipper() {
-        SoLoader.init(this, false);
-
-        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
-            AndroidFlipperClient.getInstance(this).apply {
-                addPlugin(InspectorFlipperPlugin(this@App, DescriptorMapping.withDefaults()))
-                addPlugin(DatabasesFlipperPlugin(this@App))
-            }.start()
         }
     }
 }
