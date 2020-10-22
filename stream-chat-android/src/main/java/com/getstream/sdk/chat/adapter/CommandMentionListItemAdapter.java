@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import androidx.databinding.ViewDataBinding;
 import androidx.viewbinding.ViewBinding;
 
 import com.getstream.sdk.chat.R;
@@ -63,7 +62,7 @@ public class CommandMentionListItemAdapter<STYLE extends BaseStyle> extends Base
             }
             convertView.setTag(binding);
         } else {
-            binding = (ViewDataBinding) convertView.getTag();
+            binding = (ViewBinding) convertView.getTag();
         }
 
         if (isCommand) {
