@@ -1,4 +1,6 @@
 # To be released:
+- Create custom login screen in sample app
+
 # Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
