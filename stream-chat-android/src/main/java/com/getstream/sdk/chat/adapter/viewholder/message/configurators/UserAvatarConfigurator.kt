@@ -26,7 +26,7 @@ internal class UserAvatarConfigurator(
     }
 
     private fun configUserAvatar(messageItem: MessageItem) {
-        val isBottomPosition = MessageListItem.Position.Bottom in messageItem.positions
+        val isBottomPosition = MessageListItem.Position.BOTTOM in messageItem.positions
         val message = messageItem.message
 
         binding.avatar.apply {
