@@ -83,6 +83,11 @@ public class ChannelsViewModelImpl(
         }.exhaustive
     }
 
+    public fun hideChannel(channel: Channel) {
+        loadingData.postValue(ChannelsViewModel.State.Loading)
+        chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
+    }
+
     private fun requestMoreChannels() {
         chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
     }
