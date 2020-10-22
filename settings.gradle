@@ -5,3 +5,10 @@ include (
 		':stream-chat-android-client',
 		':stream-chat-android-client-sample'
 )
+
+buildCache {
+	local {
+		enabled = true
+		removeUnusedEntriesAfterDays = 7
+	}
+}
