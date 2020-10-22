@@ -6,5 +6,9 @@
 
     <color name="grey">#DBDBDB</color>
     <color name="grey_light">#F5F5F5</color>
+    <color name="grey_dark">#989898</color>
     <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="login_text">@color/black</color>
 </resources>
