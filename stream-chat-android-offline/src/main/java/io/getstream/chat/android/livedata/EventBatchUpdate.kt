@@ -27,48 +27,13 @@ import io.getstream.chat.android.livedata.extensions.users
  */
 internal class EventBatchUpdate private constructor(
     private val domainImpl: ChatDomainImpl,
-    channelMap: Map<String, Channel>,
-    messageMap: Map<String, Message>
+    private val channelMap: MutableMap<String, Channel>,
+    private val messageMap: MutableMap<String, Message>,
+    private val userMap: MutableMap<String, User>
 ) {
-    private var users: Map<String, User> = emptyMap()
-    private var channels: Map<String, Channel> = channelMap
-    private var messages: Map<String, Message> = messageMap
-
-    internal class Builder {
-        private var channelsToFetch = setOf<String>()
-        private var messagesToFetch = setOf<String>()
-        private var users = setOf<User>()
-
-        fun addToFetchChannels(cIds: List<String>) {
-            channelsToFetch = channelsToFetch + cIds
-        }
-
-        fun addToFetchChannels(cId: String) {
-            channelsToFetch = channelsToFetch + listOf(cId)
-        }
-
-        fun addToFetchMessages(ids: List<String>) {
-            messagesToFetch = messagesToFetch + ids
-        }
-
-        fun addToFetchMessages(id: String) {
-            messagesToFetch = messagesToFetch + id
-        }
-
-        fun addUsers(usersToAdd: List<User>) {
-            users = users + usersToAdd
-        }
-
-        suspend fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
-            val messageMap: Map<String, Message> = domainImpl.repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
-            val channelMap: Map<String, Channel> = domainImpl.repos.selectChannels(channelsToFetch.toList(), domainImpl.defaultConfig).associateBy(Channel::cid)
-            return EventBatchUpdate(domainImpl, channelMap, messageMap)
-        }
-    }
 
     fun addMessageData(cid: String, message: Message) {
         addMessage(message)
-
         getCurrentChannel(cid)?.also { channel -> channel.updateLastMessage(message) }
     }
 
@@ -76,34 +41,74 @@ internal class EventBatchUpdate private constructor(
         // ensure we store all users for this channel
         addUsers(channel.users())
         // TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour
-        channels = channels + (channel.cid to channel)
+        channelMap += (channel.cid to channel)
     }
 
-    fun getCurrentChannel(cId: String): Channel? = channels[cId]
-    fun getCurrentMessage(messageId: String): Message? = messages[messageId]
+    fun getCurrentChannel(cId: String): Channel? = channelMap[cId]
+    fun getCurrentMessage(messageId: String): Message? = messageMap[messageId]
 
     fun addMessage(message: Message) {
         // ensure we store all users for this channel
         addUsers(message.users())
-        messages = messages + (message.id to message)
+        messageMap += (message.id to message)
     }
 
     fun addUsers(newUsers: List<User>) {
-        users = users + newUsers.associateBy(User::id)
+        userMap += newUsers.associateBy(User::id)
     }
 
     fun addUser(newUser: User) {
-        users = users + (newUser.id to newUser)
+        userMap += (newUser.id to newUser)
     }
 
     suspend fun execute() {
         // actually insert the data
         val currentUser = domainImpl.currentUser
         domainImpl.updateCurrentUser(currentUser)
-        users = users - currentUser.id
-        domainImpl.repos.users.insert(users.values.toList())
-        domainImpl.repos.channels.insertChannels(channels.values)
+        userMap -= currentUser.id
+        domainImpl.repos.users.insert(userMap.values.toList())
+        domainImpl.repos.channels.insertChannels(channelMap.values)
         // we only cache messages for which we're receiving events
-        domainImpl.repos.messages.insert(messages.values.toList(), true)
+        domainImpl.repos.messages.insert(messageMap.values.toList(), true)
+    }
+
+    internal class Builder {
+        private val channelsToFetch = mutableSetOf<String>()
+        private val messagesToFetch = mutableSetOf<String>()
+        private val users = mutableSetOf<User>()
+
+        fun addToFetchChannels(cIds: List<String>) {
+            channelsToFetch += cIds
+        }
+
+        fun addToFetchChannels(cId: String) {
+            channelsToFetch += cId
+        }
+
+        fun addToFetchMessages(ids: List<String>) {
+            messagesToFetch += ids
+        }
+
+        fun addToFetchMessages(id: String) {
+            messagesToFetch += id
+        }
+
+        fun addUsers(usersToAdd: List<User>) {
+            users += usersToAdd
+        }
+
+        suspend fun build(domainImpl: ChatDomainImpl): EventBatchUpdate {
+            val messageMap: Map<String, Message> =
+                domainImpl.repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
+            val channelMap: Map<String, Channel> =
+                domainImpl.repos.selectChannels(channelsToFetch.toList(), domainImpl.defaultConfig)
+                    .associateBy(Channel::cid)
+            return EventBatchUpdate(
+                domainImpl,
+                channelMap.toMutableMap(),
+                messageMap.toMutableMap(),
+                users.associateBy(User::id).toMutableMap()
+            )
+        }
     }
 }
