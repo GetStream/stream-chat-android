@@ -117,5 +117,3 @@ dependencies {
         exclude group: "org.hamcrest", module: "hamcrest"
     }
 }
-
-apply from: 'scripts/docs.gradle'

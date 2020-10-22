@@ -16,7 +16,6 @@ buildscript {
         classpath Dependencies.kotlinGradlePlugin
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.jacoco
-        classpath Dependencies.dokka
         classpath Dependencies.androidMavenGradlePlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
