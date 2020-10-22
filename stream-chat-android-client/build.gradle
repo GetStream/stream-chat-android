@@ -84,6 +84,8 @@ dependencies {
 
     implementation 'com.github.mrmike:ok2curl:0.6.0'
 
+    implementation Dependencies.coroutinesCore
+
     debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
 
     // Tests

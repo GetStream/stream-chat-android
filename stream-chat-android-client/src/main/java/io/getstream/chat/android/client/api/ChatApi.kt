@@ -46,6 +46,8 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import java.io.File
 import java.util.Date
 import kotlin.collections.set
@@ -54,7 +56,8 @@ internal class ChatApi(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
     private val uuidGenerator: UuidGenerator,
-    private val fileUploader: FileUploader
+    private val fileUploader: FileUploader,
+    private val coroutineScope: CoroutineScope = GlobalScope
 ) {
 
     private var userId: String = ""
@@ -81,28 +84,28 @@ internal class ChatApi(
     ): Unit = fileUploader.sendImage(channelType, channelId, file, callback)
 
     fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
-        return FileUploaderCall {
+        return FileUploaderCall(coroutineScope) {
             val result = fileUploader.sendFile(channelType, channelId, file)
             Result(result, null)
         }
     }
 
     fun sendImage(channelType: String, channelId: String, file: File): Call<String> {
-        return FileUploaderCall {
+        return FileUploaderCall(coroutineScope) {
             val result = fileUploader.sendImage(channelType, channelId, file)
             Result(result, null)
         }
     }
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
-        return FileUploaderCall {
+        return FileUploaderCall(coroutineScope) {
             fileUploader.deleteFile(channelType, channelId, url)
             Result(Unit, null)
         }
     }
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
-        return FileUploaderCall {
+        return FileUploaderCall(coroutineScope) {
             fileUploader.deleteImage(channelType, channelId, url)
             Result(Unit, null)
         }
