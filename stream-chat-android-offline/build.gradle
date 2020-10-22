@@ -5,7 +5,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'org.jetbrains.dokka'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
@@ -55,10 +54,6 @@ android {
         debug {
             testCoverageEnabled true
         }
-    }
-    dokka {
-        outputFormat = 'html'
-        outputDirectory = "$rootDir/docs"
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlinX'
@@ -127,9 +122,4 @@ dependencies {
     androidTestImplementation "org.mockito:mockito-core:3.4.6"
     androidTestImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
     androidTestImplementation "org.amshove.kluent:kluent:1.61"
-}
-
-task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
 }
