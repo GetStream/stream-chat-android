@@ -12,7 +12,7 @@ buildscript {
     }
 
     dependencies {
-        classpath Dependencies.androidBuildToolGradlePlugin
+        classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.jacoco
@@ -22,8 +22,6 @@ buildscript {
         classpath Dependencies.firebasePlugin
         classpath Dependencies.ktlintPlugin
         classpath Dependencies.gradleVersionsPlugin
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
 }
 
