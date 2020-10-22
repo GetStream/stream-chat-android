@@ -1,12 +1,10 @@
 package io.getstream.chat.sample.application
 
 import android.app.Application
-import com.getstream.sdk.chat.Chat
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.sample.BuildConfig
-import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.dataModule
-import loginModule
+import io.getstream.chat.sample.feature.login.loginModule
+import io.getstream.chat.sample.feature.users.usersModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -14,24 +12,13 @@ import org.koin.core.context.startKoin
 
 class App : Application() {
     private val appConfig: AppConfig by inject()
+    private val chatInitializer: ChatInitializer by inject()
 
     override fun onCreate() {
         super.onCreate()
         DebugMetricsHelper().init()
         initKoin()
-        Chat.Builder(appConfig.apiKey, this).apply {
-            offlineEnabled = true
-            val notificationConfig =
-                NotificationConfig(
-                    firebaseMessageIdKey = "message_id",
-                    firebaseChannelIdKey = "channel_id",
-                    firebaseChannelTypeKey = "channel_type",
-                    smallIcon = R.drawable.ic_chat_bubble
-                )
-
-            notificationHandler = SampleNotificationHandler(this@App, notificationConfig)
-            chatLoggerHandler = SampleLoggingHandler()
-        }.build()
+        chatInitializer.init(appConfig.apiKey)
     }
 
     private fun initKoin() {
@@ -46,6 +33,7 @@ class App : Application() {
                 listOf(
                     appModule,
                     dataModule,
+                    usersModule,
                     loginModule
                 )
             )

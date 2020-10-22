@@ -1,4 +1,5 @@
-import io.getstream.chat.sample.feature.login.LoginViewModel
+package io.getstream.chat.sample.feature.login
+
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
