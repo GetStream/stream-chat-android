@@ -12,6 +12,7 @@ import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.view.MessageListViewStyle
+import io.getstream.chat.android.client.models.name
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -35,7 +36,7 @@ internal class UsernameAndDateConfigurator(
 
         if (style.isUserNameShow && messageItem.isTheirs) {
             binding.tvUsername.isVisible = true
-            binding.tvUsername.text = messageItem.message.user.getExtraValue("name", "")
+            binding.tvUsername.text = messageItem.message.user.name
         } else {
             binding.tvUsername.isVisible = false
         }
