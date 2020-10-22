@@ -35,16 +35,14 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         } catch (e: UninitializedPropertyAccessException) {
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
             val user = User(id = syncConfig.userId)
-            if (syncConfig.apiKey.isNotEmpty()) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    val client = initClient(
-                        this@OfflineSyncFirebaseMessagingService,
-                        user,
-                        syncConfig.userToken,
-                        syncConfig.apiKey
-                    )
-                    client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
-                }
+            GlobalScope.launch(Dispatchers.IO) {
+                val client = initClient(
+                    this@OfflineSyncFirebaseMessagingService,
+                    user,
+                    syncConfig.userToken,
+                    syncConfig.apiKey
+                )
+                client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
             }
         }
     }

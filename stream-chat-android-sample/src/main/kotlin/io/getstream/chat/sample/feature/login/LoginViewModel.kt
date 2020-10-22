@@ -44,6 +44,11 @@ class LoginViewModel(
         }
     }
 
+    /**
+     * You would normally initialize the Chat SDK only once in the Application class,
+     * but since we allow changing API keys at runtime in this demo app, we have to
+     * reinitialize the Chat SDK here with the new API key.
+     */
     private fun initChatSdk(credentials: LoginCredentials) {
         chatInitializer.init(credentials.apiKey)
     }
