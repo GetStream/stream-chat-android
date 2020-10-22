@@ -1180,6 +1180,7 @@ internal class ChannelControllerImpl(
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
         channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.hidden = _hidden.value
 
         return channel
     }
