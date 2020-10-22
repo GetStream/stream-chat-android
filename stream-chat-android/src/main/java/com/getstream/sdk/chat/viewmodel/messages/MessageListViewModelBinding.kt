@@ -11,7 +11,6 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Giph
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
-import io.getstream.chat.android.client.logger.ChatLogger
 
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
@@ -27,9 +26,6 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
 
     state.observe(lifecycleOwner) { state ->
-        ChatLogger.Companion.get("${this::class.java.simpleName}@{${System.identityHashCode(this)}}")
-            .logW("-> View@{${System.identityHashCode(view)}}")
-
         if (state is MessageListViewModel.State.Result) {
             view.displayNewMessage(state.messageListItem)
         }
