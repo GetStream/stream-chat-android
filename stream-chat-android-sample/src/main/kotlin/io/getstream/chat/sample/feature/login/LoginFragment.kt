@@ -11,6 +11,7 @@ import io.getstream.chat.sample.R
 import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
+import io.getstream.chat.sample.common.trimmedText
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.loadingProgressBar
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -48,26 +49,25 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun collectCredentials(): LoginCredentials {
         return LoginCredentials(
-            apiKey = apiKeyEditText.text.toString().trim(),
-            userId = userIdEditText.text.toString().trim(),
-            userToken = userTokenEditText.text.toString().trim(),
-            userName = userNameEditText.text.toString().trim()
+            apiKey = apiKeyEditText.trimmedText,
+            userId = userIdEditText.trimmedText,
+            userToken = userTokenEditText.trimmedText,
+            userName = userNameEditText.trimmedText
         )
     }
 
     private fun showLoading() {
-        changeLoadingIndicatorVisibility(true)
+        loadingProgressBar.isVisible = true
         clearValidationErrors()
     }
 
     private fun showErrorMessage(errorMessage: String?) {
-        changeLoadingIndicatorVisibility(false)
+        loadingProgressBar.isVisible = false
         showToast(errorMessage ?: getString(R.string.backend_error_info))
     }
 
     private fun showValidationErrors(invalidFields: List<ValidatedField>) {
-        changeLoadingIndicatorVisibility(false)
-
+        loadingProgressBar.isVisible = false
         invalidFields.forEach {
             when (it) {
                 ValidatedField.API_KEY -> apiKeyEditText
@@ -81,10 +81,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         apiKeyEditText.error = null
         userIdEditText.error = null
         userTokenEditText.error = null
-    }
-
-    private fun changeLoadingIndicatorVisibility(isVisible: Boolean) {
-        loadingProgressBar.isVisible = isVisible
     }
 
     private fun redirectToChannelsScreen() {

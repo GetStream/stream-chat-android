@@ -21,6 +21,5 @@
     <string name="login_field_user_token">User token</string>
     <string name="login_field_user_name_hint">User name (optional)</string>
     <string name="login_sdk_version_template">Stream SDK v %s</string>
-    <string name="login_sample_data">sample data</string>
     <string name="login_validation_error">This field is required</string>
 </resources>
