@@ -22,6 +22,7 @@ import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.utils.SyncStatus
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
@@ -60,23 +61,20 @@ internal class IndicatorConfigurator(
             return
         }
 
-        // TODO: llc add sync
-        //
-        // switch (this.message.getSyncStatus()) {
-        //     case Sync.LOCAL_ONLY:
-        //         pb_deliver.setVisibility(View.VISIBLE);
-        //         iv_deliver.setVisibility(View.GONE);
-        //         break;
-        //     case Sync.SYNCED:
-        //         pb_deliver.setVisibility(View.GONE);
-        //         iv_deliver.setVisibility(View.VISIBLE);
-        //         break;
-        //     case Sync.IN_MEMORY: // Same as LOCAL_FAILED
-        //     case Sync.LOCAL_FAILED:
-        //         pb_deliver.setVisibility(View.GONE);
-        //         iv_deliver.setVisibility(View.GONE);
-        //         break;
-        // }
+        when (message.syncStatus) {
+            SyncStatus.IN_PROGRESS -> {
+                binding.pbDeliver.isVisible = true
+                binding.ivDeliver.isVisible = false
+            }
+            SyncStatus.COMPLETED -> {
+                binding.pbDeliver.isVisible = false
+                binding.ivDeliver.isVisible = true
+            }
+            SyncStatus.SYNC_NEEDED, SyncStatus.FAILED_PERMANENTLY -> {
+                binding.pbDeliver.isVisible = false
+                binding.ivDeliver.isVisible = false
+            }
+        }
     }
 
     private fun configReadIndicator(messageItem: MessageItem) {

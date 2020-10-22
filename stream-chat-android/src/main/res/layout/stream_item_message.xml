@@ -158,9 +158,8 @@
         android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:src="@drawable/stream_ic_delivered_unseen"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/avatar"
-        app:layout_constraintStart_toEndOf="@id/avatar"
-        app:layout_constraintTop_toTopOf="@id/avatar" />
+        app:layout_constraintBottom_toBottomOf="@id/tv_text"
+        app:layout_constraintEnd_toStartOf="@id/tv_text" />
 
     <ProgressBar
         android:id="@+id/pb_deliver"
@@ -168,8 +167,7 @@
         android:layout_height="@dimen/stream_message_deliver_heigth"
         android:layout_marginStart="@dimen/stream_message_deliver_margin_start"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/avatar"
-        app:layout_constraintStart_toEndOf="@id/avatar"
-        app:layout_constraintTop_toTopOf="@id/avatar" />
+        app:layout_constraintBottom_toBottomOf="@id/tv_text"
+        app:layout_constraintEnd_toStartOf="@id/tv_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
