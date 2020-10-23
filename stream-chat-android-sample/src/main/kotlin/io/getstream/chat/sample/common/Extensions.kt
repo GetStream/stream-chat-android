@@ -43,6 +43,9 @@ fun EditText.showKeyboard() {
     imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
+val EditText.trimmedText: String
+    get() = text.trim().toString()
+
 fun NavController.navigateSafely(directions: NavDirections) {
     currentDestination?.getAction(directions.actionId)?.let { navigate(directions) }
 }
