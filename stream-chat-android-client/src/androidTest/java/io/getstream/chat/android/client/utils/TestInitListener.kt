@@ -3,7 +3,7 @@ package io.getstream.chat.android.client.utils
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
 
-class TestInitListener : InitConnectionListener() {
+internal class TestInitListener : InitConnectionListener() {
 
     private var data: ConnectionData? = null
     private var error: ChatError? = null
