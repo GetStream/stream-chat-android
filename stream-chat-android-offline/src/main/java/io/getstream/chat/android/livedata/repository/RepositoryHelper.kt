@@ -42,6 +42,7 @@ internal class RepositoryHelper(
             acc + channel.createdByUserId.orEmpty() +
                 channel.members.keys +
                 channel.reads.keys +
+                channel.lastMessage?.let(::userIdsFor).orEmpty() +
                 channelMessagesMap[channel.cid]?.flatMap(::userIdsFor).orEmpty()
         }
     }

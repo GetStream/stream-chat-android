@@ -6,6 +6,7 @@
 - Improved error logging on sendMessage & sendReaction
 - Fixed a race condition that in rare circumstances could cause the channel list to show stale (offline) data
 - Fixed a bug with channel.hidden not working correctly
+- Fixed crash with absence of user in the UserMap
 
 # Oct 16th, 2020 - 0.8.6
 - Improve sync data validation in ChatDomain.Builder
