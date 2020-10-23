@@ -112,7 +112,6 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = true
         warmUp()
-        notifications.onSetUser()
         getTokenAndConnect {
             socket.connectAnonymously()
         }

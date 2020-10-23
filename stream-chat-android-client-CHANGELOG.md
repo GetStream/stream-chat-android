@@ -1,5 +1,6 @@
 # To be released:
 - Fix ConcurrentModificationException in `ChatEventsObservable`
+- Fix anonymous user authentication
 
 # 1.16.8 - Fri 16th of Oct 2020
 - Add `lastUpdated` property to `Channel`

@@ -102,4 +102,5 @@ dependencies {
     }
     androidTestImplementation Dependencies.junit4
     androidTestImplementation Dependencies.espressoCore
+    androidTestImplementation Dependencies.androidxTestJunit
 }
