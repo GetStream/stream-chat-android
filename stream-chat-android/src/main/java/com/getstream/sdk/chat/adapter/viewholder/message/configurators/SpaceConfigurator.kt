@@ -2,8 +2,8 @@ package com.getstream.sdk.chat.adapter.viewholder.message.configurators
 
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
+import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.TOP
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 
 internal class SpaceConfigurator(
@@ -11,7 +11,7 @@ internal class SpaceConfigurator(
 ) : Configurator {
 
     override fun configure(messageItem: MessageItem) {
-        if (TOP in messageItem.positions) {
+        if (MessageListItem.Position.TOP in messageItem.positions) {
             // TOP
             binding.spaceHeader.isVisible = true
             binding.spaceSameUser.isVisible = false
