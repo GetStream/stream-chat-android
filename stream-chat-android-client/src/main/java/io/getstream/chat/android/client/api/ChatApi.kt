@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MuteChannelRequest
 import io.getstream.chat.android.client.api.models.MuteUserRequest
-import io.getstream.chat.android.client.api.models.ProgressRequestBody
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryMembersRequest
@@ -22,7 +21,6 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.ReactionRequest
 import io.getstream.chat.android.client.api.models.RejectInviteRequest
 import io.getstream.chat.android.client.api.models.RemoveMembersRequest
-import io.getstream.chat.android.client.api.models.RetroProgressCallback
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.SendEventRequest
@@ -33,7 +31,6 @@ import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.Flag
@@ -43,11 +40,14 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.uploader.FileUploaderCall
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.UuidGenerator
-import okhttp3.MultipartBody.Part.Companion.createFormData
-import okhttp3.RequestBody.Companion.asRequestBody
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import java.io.File
 import java.util.Date
 import kotlin.collections.set
@@ -55,8 +55,9 @@ import kotlin.collections.set
 internal class ChatApi(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
-    private val retrofitCdnApi: RetrofitCdnApi,
-    private val uuidGenerator: UuidGenerator
+    private val uuidGenerator: UuidGenerator,
+    private val fileUploader: FileUploader,
+    private val coroutineScope: CoroutineScope = GlobalScope
 ) {
 
     private var userId: String = ""
@@ -72,93 +73,79 @@ internal class ChatApi(
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ) {
-        val body = ProgressRequestBody(
-            file,
-            callback
-        )
-        val part = createFormData("file", file.name, body)
-
-        retrofitCdnApi
-            .sendFile(
-                channelType,
-                channelId,
-                part,
-                apiKey,
-                userId,
-                connectionId
-            )
-            .call
-            .enqueue(RetroProgressCallback(callback))
-    }
+    ): Unit = fileUploader.sendFile(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        connectionId = connectionId,
+        file = file,
+        callback = callback
+    )
 
     fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ) {
-        val body = ProgressRequestBody(
-            file,
-            callback
-        )
-        val part = createFormData("file", file.name, body)
+    ): Unit = fileUploader.sendImage(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        connectionId = connectionId,
+        file = file,
+        callback = callback
+    )
 
-        retrofitCdnApi
-            .sendImage(
-                channelType,
-                channelId,
-                part,
-                apiKey,
-                userId,
-                connectionId
+    fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
+        return FileUploaderCall(coroutineScope) {
+            val result = fileUploader.sendFile(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                file = file
             )
-            .call
-            .enqueue(RetroProgressCallback(callback))
+            Result(result, null)
+        }
     }
 
-    fun sendFile(
-        channelType: String,
-        channelId: String,
-        file: File
-    ): Call<String> {
-        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
-
-        return retrofitCdnApi.sendFile(
-            channelType,
-            channelId,
-            part,
-            apiKey,
-            userId,
-            connectionId
-        ).map { it.file }
-    }
-
-    fun sendImage(
-        channelType: String,
-        channelId: String,
-        file: File
-    ): Call<String> {
-        val part = createFormData("file", file.name, file.asRequestBody(file.getMediaType()))
-
-        return retrofitCdnApi.sendImage(
-            channelType,
-            channelId,
-            part,
-            apiKey,
-            userId,
-            connectionId
-        ).map { it.file }
+    fun sendImage(channelType: String, channelId: String, file: File): Call<String> {
+        return FileUploaderCall(coroutineScope) {
+            val result = fileUploader.sendImage(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                file = file
+            )
+            Result(result, null)
+        }
     }
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
-        return retrofitCdnApi.deleteFile(channelType, channelId, apiKey, connectionId, url)
-            .map { Unit }
+        return FileUploaderCall(coroutineScope) {
+            fileUploader.deleteFile(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                url = url
+            )
+            Result(Unit, null)
+        }
     }
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
-        return retrofitCdnApi.deleteImage(channelType, channelId, apiKey, connectionId, url)
-            .map { Unit }
+        return FileUploaderCall(coroutineScope) {
+            fileUploader.deleteImage(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                url = url
+            )
+            Result(Unit, null)
+        }
     }
 
     fun addDevice(firebaseToken: String): Call<Unit> {
