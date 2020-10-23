@@ -7,7 +7,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
-import com.getstream.sdk.chat.adapter.MessageViewHolderFactory.Position.BOTTOM
+import com.getstream.sdk.chat.adapter.MessageListItem.Position.BOTTOM
 import com.getstream.sdk.chat.adapter.updateConstraints
 import com.getstream.sdk.chat.adapter.viewholder.message.getActiveContentViewResId
 import com.getstream.sdk.chat.adapter.viewholder.message.isDeleted
@@ -15,18 +15,15 @@ import com.getstream.sdk.chat.adapter.viewholder.message.isEphemeral
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.adapter.viewholder.message.isInThread
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
-import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.utils.SyncStatus
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
     private val style: MessageListViewStyle,
-    private val channel: Channel,
     private val readStateClickListener: MessageListView.ReadStateClickListener
 ) : Configurator {
 
@@ -41,42 +38,33 @@ internal class IndicatorConfigurator(
         binding.pbDeliver.isVisible = false
 
         val message = messageItem.message
-        val lastMessage = LlcMigrationUtils.computeLastMessage(channel)
-        val messageDate = message.createdAt ?: message.createdLocallyAt
-        val lastMessageDate = lastMessage?.createdAt ?: lastMessage?.createdLocallyAt
 
         if (message.isDeleted() ||
             message.isFailed() ||
-            lastMessage == null ||
             message.id.isEmpty() ||
             BOTTOM !in messageItem.positions ||
             messageItem.messageReadBy.isNotEmpty() ||
             !messageItem.isMine ||
-            messageDate?.time ?: 0 < lastMessageDate?.time ?: 0 ||
-            message.type == ModelType.message_ephemeral ||
             message.isInThread() ||
             message.isEphemeral()
         ) {
             return
         }
 
-        // TODO: llc add sync
-        //
-        // switch (this.message.getSyncStatus()) {
-        //     case Sync.LOCAL_ONLY:
-        //         pb_deliver.setVisibility(View.VISIBLE);
-        //         iv_deliver.setVisibility(View.GONE);
-        //         break;
-        //     case Sync.SYNCED:
-        //         pb_deliver.setVisibility(View.GONE);
-        //         iv_deliver.setVisibility(View.VISIBLE);
-        //         break;
-        //     case Sync.IN_MEMORY: // Same as LOCAL_FAILED
-        //     case Sync.LOCAL_FAILED:
-        //         pb_deliver.setVisibility(View.GONE);
-        //         iv_deliver.setVisibility(View.GONE);
-        //         break;
-        // }
+        when (message.syncStatus) {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
+                binding.pbDeliver.isVisible = true
+                binding.ivDeliver.isVisible = false
+            }
+            SyncStatus.COMPLETED -> {
+                binding.pbDeliver.isVisible = false
+                binding.ivDeliver.isVisible = true
+            }
+            SyncStatus.FAILED_PERMANENTLY -> {
+                binding.pbDeliver.isVisible = false
+                binding.ivDeliver.isVisible = false
+            }
+        }
     }
 
     private fun configReadIndicator(messageItem: MessageItem) {
