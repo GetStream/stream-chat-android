@@ -144,14 +144,14 @@ internal class MessageListItemLiveData(
             val user = message.user
             val positions = mutableListOf<MessageListItem.Position>()
             if (previousMessage == null || previousMessage.user != user) {
-                positions.add(MessageListItem.Position.Top)
+                positions.add(MessageListItem.Position.TOP)
             }
             if (nextMessage == null || nextMessage.user != user) {
-                positions.add(MessageListItem.Position.Bottom)
+                positions.add(MessageListItem.Position.BOTTOM)
             }
             if (previousMessage != null && nextMessage != null) {
                 if (previousMessage.user == user && nextMessage.user == user) {
-                    positions.add(MessageListItem.Position.Middle)
+                    positions.add(MessageListItem.Position.MIDDLE)
                 }
             }
             // date separators

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit.SECONDS
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ClientInstrumentationTests {
+internal class ClientInstrumentationTests {
 
     val apiKey = "qk4nn7rpcn75"
     val token =

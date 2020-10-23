@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -128,8 +129,8 @@ internal open class BaseChatModule(
         return ChatApi(
             chatConfig.apiKey,
             buildRetrofitApi(),
-            buildRetrofitCdnApi(),
-            UuidGeneratorImpl()
+            UuidGeneratorImpl(),
+            StreamFileUploader(chatConfig.apiKey, buildRetrofitCdnApi())
         )
     }
 

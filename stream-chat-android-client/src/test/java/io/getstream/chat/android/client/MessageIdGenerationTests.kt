@@ -1,8 +1,9 @@
 package io.getstream.chat.android.client
 
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.RetrofitApi
-import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MessageResponse
 import io.getstream.chat.android.client.models.Message
@@ -11,8 +12,6 @@ import io.getstream.chat.android.client.utils.UuidGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.mock
 
 internal class MessageIdGenerationTests {
 
@@ -31,13 +30,13 @@ internal class MessageIdGenerationTests {
 
     @Before
     fun before() {
-        retroApi = mock(RetrofitApi::class.java)
-        uuidGenerator = mock(UuidGenerator::class.java)
+        retroApi = mock()
+        uuidGenerator = mock()
         api = ChatApi(
             apiKey,
             retroApi,
-            mock(RetrofitCdnApi::class.java),
-            uuidGenerator
+            uuidGenerator,
+            mock()
         )
         api.setConnection(userId, connectionId)
     }
@@ -48,8 +47,8 @@ internal class MessageIdGenerationTests {
         val message = Message()
         message.text = messageText
 
-        `when`(uuidGenerator.generate()).thenReturn(randomUuid)
-        `when`(
+        whenever(uuidGenerator.generate()).thenReturn(randomUuid)
+        whenever(
             retroApi.sendMessage(
                 channelType,
                 channelId,
@@ -73,7 +72,7 @@ internal class MessageIdGenerationTests {
         message.text = messageText
         message.id = preGeneratedId
 
-        `when`(
+        whenever(
             retroApi.sendMessage(
                 channelType,
                 channelId,
