@@ -46,8 +46,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         activity?.intent?.apply {
             val channelId = getStringExtra(EXTRA_CHANNEL_ID)
             val channelType = getStringExtra(EXTRA_CHANNEL_TYPE)
-            val cid = "$channelType:$channelId"
-            viewModel.targetChannelDataReceived(cid)
+            if (!channelId.isNullOrBlank() || !channelType.isNullOrBlank()) {
+                val cid = "$channelType:$channelId"
+                viewModel.targetChannelDataReceived(cid)
+            }
         }
     }
 
