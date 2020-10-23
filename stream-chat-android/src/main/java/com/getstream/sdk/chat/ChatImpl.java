@@ -17,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
+import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.client.logger.ChatLogger;
+import io.getstream.chat.android.client.logger.ChatLoggerHandler;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
@@ -53,7 +55,9 @@ class ChatImpl implements Chat {
              String apiKey,
              Context context,
              boolean offlineEnabled,
-             ChatNotificationHandler chatNotificationHandler) {
+             ChatNotificationHandler chatNotificationHandler,
+             ChatLogLevel chatLogLevel,
+             ChatLoggerHandler chatLoggerHandler) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -66,42 +70,53 @@ class ChatImpl implements Chat {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler);
         }
+
         new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
+                .logLevel(chatLogLevel)
+                .loggerHandler(chatLoggerHandler)
                 .build();
+
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
 
+    @NotNull
     @Override
     public ChatNavigator getNavigator() {
         return navigator;
     }
 
+    @NotNull
     @Override
     public LiveData<OnlineStatus> getOnlineStatus() {
         return onlineStatus;
     }
 
+    @NotNull
     @Override
     public LiveData<Number> getUnreadMessages() {
         return unreadMessages;
     }
 
+    @NotNull
     @Override
     public LiveData<Number> getUnreadChannels() {
         return unreadChannels;
     }
 
+    @NotNull
     @Override
     public LiveData<User> getCurrentUser() {
         return currentUser;
     }
 
+    @NotNull
     @Override
     public ChatStrings getStrings() {
         return chatStrings;
     }
 
+    @NotNull
     @Override
     public UrlSigner urlSigner() {
         return urlSigner;
@@ -119,6 +134,7 @@ class ChatImpl implements Chat {
         return markdown;
     }
 
+    @NotNull
     @Override
     public String getVersion() {
         return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
@@ -136,9 +152,9 @@ class ChatImpl implements Chat {
             domainBuilder.offlineEnabled();
         }
         domainBuilder
-            .userPresenceEnabled()
-            .backgroundSyncEnabled(apiKey, userToken)
-            .notificationConfig(chatNotificationHandler.getConfig());
+                .userPresenceEnabled()
+                .backgroundSyncEnabled(apiKey, userToken)
+                .notificationConfig(chatNotificationHandler.getConfig());
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
@@ -170,7 +186,7 @@ class ChatImpl implements Chat {
                     CoroutineStart.DEFAULT,
                     (scope, continuation) -> chatDomain.disconnect(continuation));
         } catch (UninitializedPropertyAccessException e) {
-            ChatLogger.Companion.get("ChatImpl").logD("ChatDomain was not initialized yet. No need to disconnect.");
+            ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
         }
     }
 

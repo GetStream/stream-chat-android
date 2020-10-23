@@ -11,6 +11,8 @@ import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
@@ -42,21 +44,23 @@ public interface Chat {
         public var markdown: ChatMarkdown = ChatMarkdownImpl(context)
         public var offlineEnabled: Boolean = false
         public var notificationHandler: ChatNotificationHandler = ChatNotificationHandler(context)
+        public var chatLogLevel: ChatLogLevel = ChatLogLevel.ALL
+        public var chatLoggerHandler: ChatLoggerHandler? = null
 
-        public fun build(): Chat {
-            return ChatImpl(
-                ChatFontsImpl(style, context),
-                ChatStringsImpl(context),
-                navigationHandler,
-                urlSigner,
-                markdown,
-                apiKey,
-                context,
-                offlineEnabled,
-                notificationHandler
-            ).apply {
-                instance = this
-            }
+        public fun build(): Chat = ChatImpl(
+            ChatFontsImpl(style, context),
+            ChatStringsImpl(context),
+            navigationHandler,
+            urlSigner,
+            markdown,
+            apiKey,
+            context,
+            offlineEnabled,
+            notificationHandler,
+            chatLogLevel,
+            chatLoggerHandler
+        ).apply {
+            instance = this
         }
     }
 

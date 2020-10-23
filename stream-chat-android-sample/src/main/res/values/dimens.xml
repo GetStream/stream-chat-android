@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="padding_medium">16dp</dimen>
+
+    <dimen name="login_controls_corner_radius">24dp</dimen>
 </resources>
