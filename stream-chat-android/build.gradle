@@ -23,7 +23,6 @@ android {
     compileSdkVersion Configuration.compileSdkVersion
 
     defaultConfig {
-
         versionName Configuration.versionName
 
         buildConfigField "String", "DEFAULT_API_ENDPOINT", "\"$DEFAULT_API_ENDPOINT\""
@@ -79,18 +78,17 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-
     api project(":stream-chat-android-offline")
 
-    implementation Dependencies.kotlinSTDLib
-    implementation Dependencies.appCompat
+    implementation Dependencies.kotlinStdLib
+    implementation Dependencies.androidxAppCompat
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidLegacySupport
     api Dependencies.recyclerview
     implementation Dependencies.activityKtx
     implementation Dependencies.fragmentKtx
-    implementation Dependencies.lifecycleExtension
-    implementation Dependencies.lifecycleViewModelKTX
+    implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleViewModelKtx
 
     implementation Dependencies.roomRuntime
 
@@ -98,7 +96,7 @@ dependencies {
     implementation Dependencies.loggingInterceptor
 
     implementation Dependencies.retrofit
-    implementation Dependencies.gsonConverter
+    implementation Dependencies.retrofitGsonConverter
 
     implementation Dependencies.gson
 
@@ -139,49 +137,7 @@ dependencies {
     testImplementation Dependencies.truth
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.androidxCoreTest
+    testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.kluent
     testImplementation Dependencies.coroutinesTest
-
-}
-
-
-task javadoc(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    destinationDir = file("../docs/")
-    exclude '**/utils'
-    exclude '**/storage'
-    exclude '**/interfaces'
-    exclude '**/Command.java'
-    exclude '**/Device.java'
-    exclude '**/TokenService.java'
-    exclude '**/ModelType.java'
-    failOnError false
-}
-
-task copyJar(type: Copy) {
-    description = 'Copying the jar'
-    from "$buildDir/intermediates/full_jar/release/createFullJarRelease"
-    into file('../attachments')
-    include 'full.jar'
-}
-
-task copyAar(type: Copy) {
-    description = 'Copying the aar'
-    from "$buildDir/outputs/aar"
-    into file('../attachments')
-    include 'library-release.aar'
-}
-
-project.afterEvaluate {
-    preBuild.dependsOn copyAar
-}
-
-clean.dependsOn copyAar
-clean.mustRunAfter copyAar
-
-task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
 }
