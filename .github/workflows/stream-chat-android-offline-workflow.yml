@@ -18,7 +18,7 @@ jobs:
     - name: Unit tests
       run: bash ./gradlew :stream-chat-android-offline:test --stacktrace
     - name: Coverage
-      run: ./gradlew jacocoTestReport
+      run: ./gradlew :stream-chat-android-offline:jacocoTestReport
     - name: Upload Coverage
       run: bash <(curl -s https://codecov.io/bash)
     - name: Upload testDebugUnitTest Results
