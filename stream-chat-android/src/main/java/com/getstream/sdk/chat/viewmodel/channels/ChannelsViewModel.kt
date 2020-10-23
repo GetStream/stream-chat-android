@@ -86,8 +86,4 @@ public class ChannelsViewModelImpl(
     private fun requestMoreChannels() {
         chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
     }
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }
