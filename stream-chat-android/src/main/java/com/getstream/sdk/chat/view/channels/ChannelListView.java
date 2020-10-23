@@ -17,6 +17,7 @@ import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 
 import java.util.List;
 
+import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
 
