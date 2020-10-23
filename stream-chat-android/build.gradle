@@ -78,18 +78,17 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 }
 
 dependencies {
-
     api project(":stream-chat-android-offline")
 
-    implementation Dependencies.kotlinSTDLib
-    implementation Dependencies.appCompat
+    implementation Dependencies.kotlinStdLib
+    implementation Dependencies.androidxAppCompat
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidLegacySupport
     api Dependencies.recyclerview
     implementation Dependencies.activityKtx
     implementation Dependencies.fragmentKtx
-    implementation Dependencies.lifecycleExtension
-    implementation Dependencies.lifecycleViewModelKTX
+    implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleViewModelKtx
 
     implementation Dependencies.roomRuntime
 
@@ -97,7 +96,7 @@ dependencies {
     implementation Dependencies.loggingInterceptor
 
     implementation Dependencies.retrofit
-    implementation Dependencies.gsonConverter
+    implementation Dependencies.retrofitGsonConverter
 
     implementation Dependencies.gson
 
@@ -138,8 +137,7 @@ dependencies {
     testImplementation Dependencies.truth
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.androidxCoreTest
+    testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.kluent
     testImplementation Dependencies.coroutinesTest
-
 }

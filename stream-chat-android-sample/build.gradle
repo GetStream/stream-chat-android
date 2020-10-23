@@ -110,16 +110,15 @@ android {
 dependencies {
     implementation project(":stream-chat-android")
 
-    implementation Dependencies.kotlinSTDLib
+    implementation Dependencies.kotlinStdLib
 
-    implementation Dependencies.appCompat
-
-    implementation Dependencies.androidXKTX
     implementation Dependencies.activityKtx
-    implementation Dependencies.fragmentKtx
-    implementation Dependencies.lifecycleExtension
-    implementation Dependencies.materialComponents
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.androidxCoreKtx
+    implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
+    implementation Dependencies.fragmentKtx
+    implementation Dependencies.materialComponents
 
     implementation Dependencies.navigationRuntimeKTX
     implementation Dependencies.navigationFragmentKTX
@@ -129,7 +128,6 @@ dependencies {
 
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
-
 
     implementation Dependencies.koinAndroidxExt
     implementation Dependencies.koinAndroidxScope
@@ -143,6 +141,4 @@ dependencies {
     annotationProcessor Dependencies.glideCompiler
 
     //debugImplementation Dependencies.leakCanary
-
-    testImplementation Dependencies.koinTest
 }
