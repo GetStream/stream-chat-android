@@ -57,8 +57,8 @@ public sealed class MessageListItem {
     ) : MessageListItem()
 
     public enum class Position {
-        Top,
-        Middle,
-        Bottom,
+        TOP,
+        MIDDLE,
+        BOTTOM,
     }
 }

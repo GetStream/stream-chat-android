@@ -101,7 +101,7 @@ public class DefaultBubbleHelper {
         if (isMine) {
             topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(MessageListItem.Position.Top)) {
+            if (positions.contains(MessageListItem.Position.TOP)) {
                 topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
@@ -111,7 +111,7 @@ public class DefaultBubbleHelper {
         } else {
             topRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
             bottomRightRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
-            if (positions.contains(MessageListItem.Position.Top)) {
+            if (positions.contains(MessageListItem.Position.TOP)) {
                 topLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius1);
                 bottomLeftRadius = context.getResources().getDimensionPixelSize(R.dimen.stream_message_corner_radius2);
             } else {
