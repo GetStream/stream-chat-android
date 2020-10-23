@@ -77,6 +77,7 @@ dependencies {
     debugImplementation Dependencies.stethoOkhttp
 
     // Tests
+    testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
