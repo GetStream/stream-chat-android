@@ -69,10 +69,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-jacocoAndroidUnitTestReport {
-    excludes += ['io/getstream/chat/android/client/*']
-}
-
 dependencies {
     api project(":stream-chat-android-client")
 

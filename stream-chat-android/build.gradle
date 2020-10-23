@@ -77,10 +77,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
-jacocoAndroidUnitTestReport {
-    excludes += ['io/getstream/chat/android/client/*', 'io/getstream/chat/android/livedata/*']
-}
-
 dependencies {
     api project(":stream-chat-android-offline")
 
