@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.events.ChatEvent
 
-class EventsConsumer(val expected: List<Class<out ChatEvent>>) {
+internal class EventsConsumer(val expected: List<Class<out ChatEvent>>) {
 
     var received = mutableListOf<ChatEvent>()
 

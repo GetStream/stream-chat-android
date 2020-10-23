@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.utils
 
 import androidx.test.platform.app.InstrumentationRegistry
 
-class Utils {
+internal class Utils {
     companion object {
         fun runOnUi(call: () -> Unit): ThenVerify {
             InstrumentationRegistry.getInstrumentation().runOnMainSync {
