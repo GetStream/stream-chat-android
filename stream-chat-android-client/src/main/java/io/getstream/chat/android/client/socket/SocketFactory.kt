@@ -49,13 +49,21 @@ internal class SocketFactory(
     }
 
     private fun buildUserDetailJson(user: User?): String {
-        val data = mutableMapOf<String, Any>()
-        user?.let {
-            data["user_details"] = user
-            data["user_id"] = user.id
-        }
-        data["server_determines_connection_id"] = true
-        data["X-STREAM-CLIENT"] = ChatClient.instance().getVersion()
+        val user = user ?: User(ANONYMOUS_USER_ID)
+        val data = mapOf(
+            "user_details" to user,
+            "user_id" to user.id,
+            "server_determines_connection_id" to true,
+            "X-STREAM-CLIENT" to ChatClient.instance().getVersion()
+        )
         return parser.toJson(data)
+    }
+
+    companion object {
+        /**
+         *  It doesn't matter what user id we send to the server for anonymous user
+         *  as the server will always return the user with "!anon" user id
+         */
+        private const val ANONYMOUS_USER_ID = "anon"
     }
 }
