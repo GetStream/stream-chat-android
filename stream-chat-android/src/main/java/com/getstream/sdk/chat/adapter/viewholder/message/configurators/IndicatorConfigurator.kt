@@ -15,7 +15,6 @@ import com.getstream.sdk.chat.adapter.viewholder.message.isEphemeral
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.adapter.viewholder.message.isInThread
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
-import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
@@ -54,7 +53,6 @@ internal class IndicatorConfigurator(
             messageItem.messageReadBy.isNotEmpty() ||
             !messageItem.isMine ||
             messageDate?.time ?: 0 < lastMessageDate?.time ?: 0 ||
-            message.type == ModelType.message_ephemeral ||
             message.isInThread() ||
             message.isEphemeral()
         ) {
@@ -62,7 +60,7 @@ internal class IndicatorConfigurator(
         }
 
         when (message.syncStatus) {
-            SyncStatus.IN_PROGRESS -> {
+            SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED -> {
                 binding.pbDeliver.isVisible = true
                 binding.ivDeliver.isVisible = false
             }
@@ -70,7 +68,7 @@ internal class IndicatorConfigurator(
                 binding.pbDeliver.isVisible = false
                 binding.ivDeliver.isVisible = true
             }
-            SyncStatus.SYNC_NEEDED, SyncStatus.FAILED_PERMANENTLY -> {
+            SyncStatus.FAILED_PERMANENTLY -> {
                 binding.pbDeliver.isVisible = false
                 binding.ivDeliver.isVisible = false
             }
