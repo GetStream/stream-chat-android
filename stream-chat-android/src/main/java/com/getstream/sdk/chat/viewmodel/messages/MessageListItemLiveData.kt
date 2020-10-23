@@ -173,9 +173,11 @@ internal class MessageListItemLiveData(
      * We also sort the read state for easier merging of the lists
      */
     private fun addReads(messages: List<MessageListItem>, reads: List<ChannelUserRead>?): List<MessageListItem> {
-        if (reads == null || reads.isEmpty() || messages.isEmpty()) return messages
+        if (reads == null || messages.isEmpty()) return messages
+        // filter your own read status and sort by last read
+        val sortedReads = reads.filter{it.user.id != currentUser.id}.sortedBy { it.lastRead }.toMutableList()
+        if (sortedReads.isEmpty()) return messages
 
-        val sortedReads = reads.sortedBy { it.lastRead }.toMutableList()
         val messagesCopy = messages.toMutableList()
 
         // start at the end, optimized for the most common scenario that most people are watching the chat
