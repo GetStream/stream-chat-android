@@ -70,7 +70,6 @@ internal class MessageListItemViewHolder(
         val indicatorConfigurator = IndicatorConfigurator(
             binding,
             style,
-            channel,
             readStateClickListener
         )
         val reactionConfigurator = ReactionConfigurator(

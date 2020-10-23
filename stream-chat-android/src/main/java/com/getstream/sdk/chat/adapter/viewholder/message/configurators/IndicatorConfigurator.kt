@@ -15,18 +15,15 @@ import com.getstream.sdk.chat.adapter.viewholder.message.isEphemeral
 import com.getstream.sdk.chat.adapter.viewholder.message.isFailed
 import com.getstream.sdk.chat.adapter.viewholder.message.isInThread
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
 import com.getstream.sdk.chat.view.MessageListViewStyle
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.utils.SyncStatus
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
     private val style: MessageListViewStyle,
-    private val channel: Channel,
     private val readStateClickListener: MessageListView.ReadStateClickListener
 ) : Configurator {
 
@@ -41,18 +38,13 @@ internal class IndicatorConfigurator(
         binding.pbDeliver.isVisible = false
 
         val message = messageItem.message
-        val lastMessage = LlcMigrationUtils.computeLastMessage(channel)
-        val messageDate = message.createdAt ?: message.createdLocallyAt
-        val lastMessageDate = lastMessage?.createdAt ?: lastMessage?.createdLocallyAt
 
         if (message.isDeleted() ||
             message.isFailed() ||
-            lastMessage == null ||
             message.id.isEmpty() ||
             BOTTOM !in messageItem.positions ||
             messageItem.messageReadBy.isNotEmpty() ||
             !messageItem.isMine ||
-            messageDate?.time ?: 0 < lastMessageDate?.time ?: 0 ||
             message.isInThread() ||
             message.isEphemeral()
         ) {
