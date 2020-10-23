@@ -38,7 +38,7 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
             messagesViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
 
-        channelHeaderView.onBackClick = { backButtonHandler() }
+        channelHeaderView.onBackClick = backButtonHandler
 
         activity?.apply {
             onBackPressedDispatcher.addCallback(
