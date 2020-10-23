@@ -118,7 +118,6 @@ internal class ChatClientImpl(
     }
 
     override fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
-        config.isAnonymous = true
         return api.getGuestUser(userId, userName)
     }
 
