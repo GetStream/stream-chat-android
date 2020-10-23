@@ -48,7 +48,7 @@ internal class ClientConnectionTests {
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
         ChatNotificationHandler(context),
-        FakeTokenManager(token)
+        tokenManager = FakeTokenManager(token)
     )
 
     private val connectedEvent = ConnectedEvent(

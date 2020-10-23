@@ -34,6 +34,12 @@ internal open class BaseChatModule(
     }
     private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
+    private val defaultFileUploader by lazy {
+        StreamFileUploader(
+            config.apiKey,
+            buildRetrofitCdnApi()
+        )
+    }
 
     //region Modules
 
@@ -130,7 +136,7 @@ internal open class BaseChatModule(
             chatConfig.apiKey,
             buildRetrofitApi(),
             UuidGeneratorImpl(),
-            StreamFileUploader(chatConfig.apiKey, buildRetrofitCdnApi())
+            chatConfig.fileUploader ?: defaultFileUploader
         )
     }
 

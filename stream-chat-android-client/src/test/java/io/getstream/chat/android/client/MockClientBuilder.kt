@@ -59,7 +59,7 @@ internal class MockClientBuilder {
             1000,
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationHandler(context)
+            ChatNotificationHandler(context),
         )
 
         socket = FakeChatSocket()

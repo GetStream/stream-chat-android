@@ -2,6 +2,7 @@
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
 - Add message sending/sent indicators in `MessageListView`
+- Add possibility to replace default FileUploader
 
 # Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
