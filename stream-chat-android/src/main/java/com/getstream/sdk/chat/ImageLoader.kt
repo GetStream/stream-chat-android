@@ -7,9 +7,9 @@ import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import coil.Coil
-import coil.load
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.load
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.transform.BlurTransformation
