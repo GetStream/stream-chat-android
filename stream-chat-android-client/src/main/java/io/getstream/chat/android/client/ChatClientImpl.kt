@@ -112,13 +112,13 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = true
         warmUp()
-        notifications.onSetUser()
         getTokenAndConnect {
             socket.connectAnonymously()
         }
     }
 
     override fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
+        config.isAnonymous = true
         return api.getGuestUser(userId, userName)
     }
 

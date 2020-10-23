@@ -13,6 +13,7 @@ import io.getstream.chat.android.client.utils.TestInitListener
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
 import org.awaitility.Awaitility.await
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit.SECONDS
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit.SECONDS
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ClientInstrumentationTests {
+internal class ClientInstrumentationTests {
 
     val apiKey = "qk4nn7rpcn75"
     val token =
@@ -64,6 +65,7 @@ class ClientInstrumentationTests {
         }
     }
 
+    @Ignore
     @Test
     fun connectedEventDelivery() {
         runOnUi {
@@ -73,6 +75,32 @@ class ClientInstrumentationTests {
                 client.subscribe(connectedEventConsumer::onEvent)
             }
         }.andThen {
+            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+        }
+    }
+
+    @Test
+    fun anonymousUserConnection() {
+        runOnUi {
+            val client = ChatClient.Builder(apiKey, context).build()
+            client.setAnonymousUser(setUserListener)
+            client.subscribe(connectedEventConsumer::onEvent)
+        }.andThen {
+            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+        }
+    }
+
+    @Test
+    fun guestUserConnection() {
+        runOnUi {
+            val client = ChatClient.Builder(apiKey, context).build()
+            client.getGuestToken("test-user-id", "Test name").enqueue {
+                client.setUser(it.data().user, it.data().token, setUserListener)
+            }
+            client.subscribe(connectedEventConsumer::onEvent)
+        }.andThen {
+            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
             await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
