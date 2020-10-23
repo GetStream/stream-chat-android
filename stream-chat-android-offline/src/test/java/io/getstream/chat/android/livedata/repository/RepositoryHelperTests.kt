@@ -66,6 +66,8 @@ internal class RepositoryHelperTests {
         val memberId2 = "memberId2"
         val readId1 = "readId1"
         val readId2 = "readId2"
+        val lastMessageUserId = "lastMessageUserId"
+        val lastMessageReactionUserId = "lastMessageReactionUserId"
         val channelEntity1 = randomChannelEntity().apply {
             this.cid = cid
             this.createdByUserId = authorId1
@@ -80,6 +82,10 @@ internal class RepositoryHelperTests {
                     readId1 to randomChannelUserReadEntity(readId1),
                     readId2 to randomChannelUserReadEntity(readId2)
                 )
+            )
+            lastMessage = randomMessageEntity(
+                userId = lastMessageUserId,
+                latestReactions = listOf(randomReactionEntity(userId = lastMessageReactionUserId))
             )
         }
         val channelEntity2 = randomChannelEntity().apply { createdByUserId = authorId2 }
@@ -111,7 +117,9 @@ internal class RepositoryHelperTests {
             messageUserId1,
             messageUserId2,
             reactionUserId1,
-            reactionUserId2
+            reactionUserId2,
+            lastMessageReactionUserId,
+            lastMessageUserId
         )
     }
 
