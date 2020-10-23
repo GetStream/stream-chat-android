@@ -192,6 +192,15 @@ internal class ChannelControllerImplTest : BaseDomainTest() {
         }
     }
 
+    @Test
+    fun `Should include hidden property in the toChannel method`() {
+        runBlocking(Dispatchers.IO) {
+            When calling chatClient.hideChannel(any(), any(), any()) doReturn TestResultCall(Result(Unit))
+
+            channelController.toChannel().hidden shouldBeEqualTo false
+        }
+    }
+
     private fun givenMockedFileUploads(result: Result<String>) {
         When calling chatClient.sendImage(any(), any(), any()) doReturn TestResultCall(result)
         When calling chatClient.sendFile(any(), any(), any()) doReturn TestResultCall(result)
