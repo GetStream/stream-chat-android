@@ -73,39 +73,77 @@ internal class ChatApi(
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ): Unit = fileUploader.sendFile(channelType, channelId, userId, connectionId, file, callback)
+    ): Unit = fileUploader.sendFile(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        connectionId = connectionId,
+        file = file,
+        callback = callback
+    )
 
     fun sendImage(
         channelType: String,
         channelId: String,
         file: File,
         callback: ProgressCallback
-    ): Unit = fileUploader.sendImage(channelType, channelId, userId, connectionId, file, callback)
+    ): Unit = fileUploader.sendImage(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        connectionId = connectionId,
+        file = file,
+        callback = callback
+    )
 
     fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
         return FileUploaderCall(coroutineScope) {
-            val result = fileUploader.sendFile(channelType, channelId, userId, connectionId, file)
+            val result = fileUploader.sendFile(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                file = file
+            )
             Result(result, null)
         }
     }
 
     fun sendImage(channelType: String, channelId: String, file: File): Call<String> {
         return FileUploaderCall(coroutineScope) {
-            val result = fileUploader.sendImage(channelType, channelId, userId, connectionId, file)
+            val result = fileUploader.sendImage(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                file = file
+            )
             Result(result, null)
         }
     }
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
         return FileUploaderCall(coroutineScope) {
-            fileUploader.deleteFile(channelType, channelId, userId, connectionId, url)
+            fileUploader.deleteFile(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                url = url
+            )
             Result(Unit, null)
         }
     }
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
         return FileUploaderCall(coroutineScope) {
-            fileUploader.deleteImage(channelType, channelId, userId, connectionId, url)
+            fileUploader.deleteImage(
+                channelType = channelType,
+                channelId = channelId,
+                userId = userId,
+                connectionId = connectionId,
+                url = url
+            )
             Result(Unit, null)
         }
     }
