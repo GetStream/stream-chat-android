@@ -30,7 +30,7 @@ internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
         messages = channelControllerImpl.messages.getOrAwaitValue()
         val liveLastMessage = messages.last()
         Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
-        Truth.assertThat(liveLastMessage.extraData).isEqualTo(updatedMessage.extraData)
+        Truth.assertThat(liveLastMessage.extraData).containsAtLeastEntriesIn(updatedMessage.extraData)
         Truth.assertThat(liveLastMessage.extraData["plaid"]).isEqualTo(true)
         // verify it's not the same object (since that breaks diffUtils)
         Truth.assertThat(liveLastMessage === updatedMessage).isFalse()
