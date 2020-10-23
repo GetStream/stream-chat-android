@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.BuildConfig
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
+import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.common.trimmedText
@@ -42,8 +43,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
         )
 
-        activity?.intent?.getStringExtra(EXTRA_CHANNEL_ID)?.let { cid ->
-            viewModel.targetChannelDataReceived(cid)
+        activity?.intent?.apply {
+            val channelId = getStringExtra(EXTRA_CHANNEL_ID)
+            val channelType = getStringExtra(EXTRA_CHANNEL_TYPE)
+            if (!channelId.isNullOrBlank() && !channelType.isNullOrBlank()) {
+                val cid = "$channelType:$channelId"
+                viewModel.targetChannelDataReceived(cid)
+            }
         }
     }
 
