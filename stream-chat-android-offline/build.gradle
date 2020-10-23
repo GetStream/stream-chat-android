@@ -60,6 +60,12 @@ android {
     }
 }
 
+kapt {
+    arguments {
+        arg("room.incremental", "true")
+    }
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
