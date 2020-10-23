@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.PerformanceHelper
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.observable.Disposable
@@ -662,16 +663,18 @@ internal class ChatDomainImpl private constructor(
 
     suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
-        pagination: QueryChannelsPaginationRequest
+        pagination: QueryChannelsPaginationRequest,
+        shouldLog: Boolean = false
     ): List<Channel> {
-        return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest())
+        return selectAndEnrichChannels(channelIds, pagination.toAnyChannelPaginationRequest(), shouldLog)
     }
 
     private suspend fun selectAndEnrichChannels(
         channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest
+        pagination: AnyChannelPaginationRequest,
+        shouldLog: Boolean = false
     ): List<Channel> {
-        return repos.selectChannels(channelIds, defaultConfig, pagination).applyPagination(pagination)
+        return repos.selectChannels(channelIds, defaultConfig, pagination, shouldLog).apply { PerformanceHelper.task("applyPagination") { applyPagination(pagination) } }
     }
 
     override fun clean() {

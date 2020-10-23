@@ -9,6 +9,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.PerformanceHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
@@ -138,11 +139,19 @@ public fun ChatError.isPermanent(): Boolean {
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
-    sortedWith(pagination.sort.comparator).drop(pagination.channelOffset).take(pagination.channelLimit)
+    let {
+        val comparator = PerformanceHelper.task("Get comparator") { pagination.sort.comparator }
+        PerformanceHelper.task("Sorting") { sortedWith(comparator) }
+    }.drop(pagination.channelOffset).take(pagination.channelLimit).toList()
 
 internal val QuerySort.comparator: Comparator<in Channel>
     get() =
-        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
+        CompositeComparator(
+            data.mapNotNull {
+                val comparator = PerformanceHelper.task("getComparator") { it.comparator as? Comparator<Channel> }
+                comparator
+            }
+        )
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 

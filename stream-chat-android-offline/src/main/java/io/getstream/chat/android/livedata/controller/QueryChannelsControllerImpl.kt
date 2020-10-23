@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
+import io.getstream.chat.android.client.utils.PerformanceHelper
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -58,6 +59,8 @@ internal class QueryChannelsControllerImpl(
 
     private val _loadingMore = MutableLiveData(false)
     override val loadingMore: LiveData<Boolean> = _loadingMore
+    private var firstTaskStarted = false
+    private var firstTaskFinished = false
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,
@@ -124,11 +127,11 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryEntity = domainImpl.repos.queryChannels.select(queryEntity.id)
+        val queryEntity = PerformanceHelper.suspendTask("selectQuery") { domainImpl.repos.queryChannels.select(queryEntity.id) }
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-            channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
+            channels = PerformanceHelper.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination, true) }
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
@@ -161,7 +164,7 @@ internal class QueryChannelsControllerImpl(
         return response
     }
 
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> = PerformanceHelper.suspendTask("runQuery") {
         val loader = if (pagination.isFirstPage) {
             _loading
         } else {
@@ -169,19 +172,21 @@ internal class QueryChannelsControllerImpl(
         }
         if (loader.value == true) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
-            return Result(null, ChatError("Another query channels request is in progress. Ignoring this request."))
+            return@suspendTask Result(null, ChatError("Another query channels request is in progress. Ignoring this request."))
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = scope.async { runQueryOffline(pagination) }
+        val queryOfflineJob = scope.async { PerformanceHelper.suspendTask("runQueryOffline") { runQueryOffline(pagination) } }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            scope.async { runQueryOnline(pagination) }
+            scope.async { PerformanceHelper.suspendTask("runQueryOnline") { runQueryOnline(pagination) } }
         } else { null }
         val channels = queryOfflineJob.await()
 
-        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
+        PerformanceHelper.task("updateChannelsAndQueryResults1") {
+            updateChannelsAndQueryResults(channels, pagination.isFirstPage)
+        }
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
@@ -194,11 +199,12 @@ internal class QueryChannelsControllerImpl(
                 domainImpl.repos.queryChannels.insert(queryEntity)
             }
         } else {
+            PerformanceHelper.log("Online job is null")
             recoveryNeeded = true
             output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.postValue(false)
-        return output
+        return@suspendTask output
     }
 
     /**

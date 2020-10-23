@@ -58,6 +58,36 @@ internal class MessageRepository(
         return messageDao.messagesForChannel(cid, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
     }
 
+    internal suspend fun selectMessagesEntitiesForChannels(
+        cids: List<String>,
+        pagination: AnyChannelPaginationRequest?
+    ): Map<String, List<MessageEntity>> {
+        if (pagination != null && pagination.hasFilter()) {
+            // handle the differences between gt, gte, lt and lte
+            val message = messageDao.select(pagination.messageFilterValue)
+            if (message?.createdAt == null) return emptyMap()
+            val messageLimit = pagination.messageLimit
+            val messageTime = message.createdAt
+
+            when (pagination.messageFilterDirection) {
+                else -> return TODO()
+                /*Pagination.GREATER_THAN_OR_EQUAL -> {
+                    return messageDao.messagesForChannelEqualOrNewerThan(cids, messageLimit, messageTime)
+                }
+                Pagination.GREATER_THAN -> {
+                    return messageDao.messagesForChannelNewerThan(cids, messageLimit, messageTime)
+                }
+                Pagination.LESS_THAN_OR_EQUAL -> {
+                    return messageDao.messagesForChannelEqualOrOlderThan(cids, messageLimit, messageTime)
+                }
+                Pagination.LESS_THAN -> {
+                    return messageDao.messagesForChannelOlderThan(cids, messageLimit, messageTime)
+                }*/
+            }
+        }
+        return messageDao.messagesForChannel(cids, pagination?.messageLimit ?: DEFAULT_MESSAGE_LIMIT)
+    }
+
     suspend fun select(messageIds: List<String>, usersMap: Map<String, User>): List<Message> {
         val cachedMessages: MutableList<Message> = mutableListOf()
         for (messageId in messageIds) {

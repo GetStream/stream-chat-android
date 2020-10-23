@@ -4,15 +4,22 @@ package com.getstream.sdk.chat.viewmodel.channels
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
+import io.getstream.chat.android.client.utils.PerformanceHelper
 
 @JvmName("bind")
 public fun ChannelsViewModel.bindView(
     view: ChannelsView,
     lifecycle: LifecycleOwner
 ): ChannelsViewModel = apply {
+    var shown = false
+    PerformanceHelper.startTask("Load channels")
     state.observe(lifecycle) {
         when (it) {
             is ChannelsViewModel.State.Result -> {
+                if (!shown) {
+                    shown = true
+                    PerformanceHelper.stopTask("Load channels")
+                }
                 view.setChannels(it.channels)
                 view.hideEmptyStateView()
                 view.hideLoadingView()
