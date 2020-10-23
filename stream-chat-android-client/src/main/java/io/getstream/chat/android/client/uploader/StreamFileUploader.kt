@@ -14,28 +14,14 @@ internal class StreamFileUploader(
     private val retrofitCdnApi: RetrofitCdnApi
 ) : FileUploader {
 
-    private var userId: String? = null
-    private var connectionId: String? = null
-
-    override fun setConnection(userId: String, connectionId: String) {
-        this.userId = userId
-        this.connectionId = connectionId
-    }
-
     override fun sendFile(
         channelType: String,
         channelId: String,
+        userId: String,
+        connectionId: String,
         file: File,
         callback: ProgressCallback
     ) {
-        val userId = requireNotNull(
-            userId,
-            { "UserID cannot be null. Ensure that you set connection before sending the file." }
-        )
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before sending the file." }
-        )
         val body = ProgressRequestBody(file, callback)
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
@@ -52,15 +38,13 @@ internal class StreamFileUploader(
             .enqueue(RetroProgressCallback(callback))
     }
 
-    override fun sendFile(channelType: String, channelId: String, file: File): String? {
-        val userId = requireNotNull(
-            userId,
-            { "UserID cannot be null. Ensure that you set connection before sending the file." }
-        )
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before sending the file." }
-        )
+    override fun sendFile(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        file: File
+    ): String? {
         val part = MultipartBody.Part.createFormData(
             "file",
             file.name,
@@ -86,17 +70,11 @@ internal class StreamFileUploader(
     override fun sendImage(
         channelType: String,
         channelId: String,
+        userId: String,
+        connectionId: String,
         file: File,
         callback: ProgressCallback
     ) {
-        val userId = requireNotNull(
-            userId,
-            { "UserID cannot be null. Ensure that you set connection before sending the image." }
-        )
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before sending the image." }
-        )
         val body = ProgressRequestBody(file, callback)
         val part = MultipartBody.Part.createFormData("file", file.name, body)
 
@@ -113,15 +91,13 @@ internal class StreamFileUploader(
             .enqueue(RetroProgressCallback(callback))
     }
 
-    override fun sendImage(channelType: String, channelId: String, file: File): String? {
-        val userId = requireNotNull(
-            userId,
-            { "UserID cannot be null. Ensure that you set connection before sending the image." }
-        )
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before sending the image." }
-        )
+    override fun sendImage(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        file: File
+    ): String? {
         val part = MultipartBody.Part.createFormData(
             "file",
             file.name,
@@ -144,19 +120,23 @@ internal class StreamFileUploader(
         }
     }
 
-    override fun deleteFile(channelType: String, channelId: String, url: String) {
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before deleting file." }
-        )
+    override fun deleteFile(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        url: String
+    ) {
         retrofitCdnApi.deleteFile(channelType, channelId, apiKey, connectionId, url).execute()
     }
 
-    override fun deleteImage(channelType: String, channelId: String, url: String) {
-        val connectionId = requireNotNull(
-            connectionId,
-            { "ConnectionID cannot be null. Ensure that you set connection before deleting image." }
-        )
+    override fun deleteImage(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        connectionId: String,
+        url: String
+    ) {
         retrofitCdnApi.deleteImage(channelType, channelId, apiKey, connectionId, url).execute()
     }
 }

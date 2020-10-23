@@ -48,7 +48,6 @@ internal class StreamFileUploaderTest {
         retrofitCdnApi = mock()
         shadowOf(MimeTypeMap.getSingleton())
         streamFileUploader = StreamFileUploader(apiKey, retrofitCdnApi)
-        streamFileUploader.setConnection(userId, connectionId)
     }
 
     @Test
@@ -56,7 +55,7 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
-        streamFileUploader.sendFile(channelType, channelId, File(""))
+        streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
         verify(retrofitCdnApi).sendFile(
             eq(channelType),
@@ -74,7 +73,8 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
-        val result = streamFileUploader.sendFile(channelType, channelId, File(""))
+        val result =
+            streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
         result shouldBeEqualTo file
     }
@@ -84,7 +84,8 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
-        val result = streamFileUploader.sendFile(channelType, channelId, File(""))
+        val result =
+            streamFileUploader.sendFile(channelType, channelId, userId, connectionId, File(""))
 
         result.shouldBeNull()
     }
@@ -94,7 +95,14 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendFile(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
-        streamFileUploader.sendFile(channelType, channelId, File(""), progressCallback)
+        streamFileUploader.sendFile(
+            channelType,
+            channelId,
+            userId,
+            connectionId,
+            File(""),
+            progressCallback
+        )
 
         verify(retrofitCdnApi).sendFile(
             eq(channelType),
@@ -111,7 +119,7 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
-        streamFileUploader.sendImage(channelType, channelId, File(""))
+        streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
         verify(retrofitCdnApi).sendImage(
             eq(channelType),
@@ -129,7 +137,8 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse(file)).toRetrofitCall()
         )
-        val result = streamFileUploader.sendImage(channelType, channelId, File(""))
+        val result =
+            streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
         result shouldBeEqualTo file
     }
@@ -139,7 +148,8 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroError<UploadFileResponse>(500).toRetrofitCall()
         )
-        val result = streamFileUploader.sendImage(channelType, channelId, File(""))
+        val result =
+            streamFileUploader.sendImage(channelType, channelId, userId, connectionId, File(""))
 
         result.shouldBeNull()
     }
@@ -149,7 +159,14 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.sendImage(any(), any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(UploadFileResponse("file")).toRetrofitCall()
         )
-        streamFileUploader.sendImage(channelType, channelId, File(""), progressCallback)
+        streamFileUploader.sendImage(
+            channelType,
+            channelId,
+            userId,
+            connectionId,
+            File(""),
+            progressCallback
+        )
 
         verify(retrofitCdnApi).sendImage(
             eq(channelType),
@@ -166,7 +183,7 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.deleteFile(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(CompletableResponse()).toRetrofitCall()
         )
-        streamFileUploader.deleteFile(channelType, channelId, url)
+        streamFileUploader.deleteFile(channelType, channelId, userId, connectionId, url)
 
         verify(retrofitCdnApi).deleteFile(
             eq(channelType),
@@ -182,7 +199,7 @@ internal class StreamFileUploaderTest {
         whenever(retrofitCdnApi.deleteImage(any(), any(), any(), any(), any())).thenReturn(
             RetroSuccess(CompletableResponse()).toRetrofitCall()
         )
-        streamFileUploader.deleteImage(channelType, channelId, url)
+        streamFileUploader.deleteImage(channelType, channelId, userId, connectionId, url)
 
         verify(retrofitCdnApi).deleteImage(
             eq(channelType),
