@@ -10,7 +10,6 @@ import okhttp3.Request
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.UUID
 
 internal class SocketFactory(
     private val eventsParser: EventsParser,
@@ -50,7 +49,7 @@ internal class SocketFactory(
     }
 
     private fun buildUserDetailJson(user: User?): String {
-        val user = user ?: anonymousUser()
+        val user = user ?: User(ANONYMOUS_USER_ID)
         val data = mapOf(
             "user_details" to user,
             "user_id" to user.id,
@@ -60,11 +59,11 @@ internal class SocketFactory(
         return parser.toJson(data)
     }
 
-    /**
-     * It doesn't matter what user id we send to the server as the anonymous
-     * user id will always be "!anon"
-     */
-    private fun anonymousUser(): User {
-        return User(UUID.randomUUID().toString())
+    companion object {
+        /**
+         *  It doesn't matter what user id we send to the server for anonymous user
+         *  as the server will always return the user with "!anon" user id
+         */
+        private const val ANONYMOUS_USER_ID = "anon"
     }
 }
