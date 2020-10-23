@@ -7,11 +7,10 @@ import android.os.Build
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import coil.Coil
-import coil.api.load
+import coil.load
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.request.GetRequest
-import coil.request.GetRequestBuilder
+import coil.request.ImageRequest
 import coil.size.Precision
 import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
@@ -30,7 +29,7 @@ internal object ImageLoader {
             ?.let {
                 (
                     Coil.execute(
-                        GetRequest.Builder(context)
+                        ImageRequest.Builder(context)
                             .data(it)
                             .applyTransformation(transformation, context)
                             .build()
@@ -74,10 +73,10 @@ internal object ImageLoader {
         }
         .build()
 
-    private fun GetRequestBuilder.applyTransformation(
+    private fun ImageRequest.Builder.applyTransformation(
         transformation: ImageTransformation,
         context: Context
-    ): GetRequestBuilder =
+    ): ImageRequest.Builder =
         when (transformation) {
             is ImageTransformation.None -> this
             is ImageTransformation.Circle -> transformations(CircleCropTransformation())
