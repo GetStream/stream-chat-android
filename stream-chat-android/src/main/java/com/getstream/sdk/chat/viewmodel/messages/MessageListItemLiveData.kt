@@ -175,7 +175,7 @@ internal class MessageListItemLiveData(
     private fun addReads(messages: List<MessageListItem>, reads: List<ChannelUserRead>?): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
-        val sortedReads = reads.filter{it.user.id != currentUser.id}.sortedBy { it.lastRead }.toMutableList()
+        val sortedReads = reads.filter { it.user.id != currentUser.id }.sortedBy { it.lastRead }.toMutableList()
         if (sortedReads.isEmpty()) return messages
 
         val messagesCopy = messages.toMutableList()
