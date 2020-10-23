@@ -1,5 +1,6 @@
 # To be released:
 - Create custom login screen in sample app
+- Add message sending/sent indicators in `MessageListView`
 
 # Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
