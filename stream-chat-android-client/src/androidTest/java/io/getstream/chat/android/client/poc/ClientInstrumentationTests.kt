@@ -91,7 +91,7 @@ internal class ClientInstrumentationTests {
         }
     }
 
-    @Ignore("Fails because getGuestToken() without JWT auth header")
+    @Ignore("Fails because getGuestToken() call must be performed without JWT auth header")
     @Test
     fun guestUserConnection() {
         runOnUi {
