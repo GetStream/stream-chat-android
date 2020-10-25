@@ -72,8 +72,8 @@ internal class ChannelListViewModelTest {
     }
 
     companion object {
-        val mockChannels = listOf(Channel(cid = "1"), Channel(cid = "2"))
-        val moreChannels = listOf(Channel(cid = "3"), Channel(cid = "3"))
+        val mockChannels = listOf(Channel(cid = "1", hidden = false), Channel(cid = "2", hidden = false))
+        val moreChannels = listOf(Channel(cid = "3", hidden = false), Channel(cid = "3", hidden = false))
     }
 }
 

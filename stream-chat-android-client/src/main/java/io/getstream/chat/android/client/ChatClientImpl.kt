@@ -98,6 +98,7 @@ internal class ChatClientImpl(
         if (!ensureUserNotSet(listener)) {
             return
         }
+        state.user = user
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)

@@ -1,4 +1,5 @@
 *.iml
+.composite
 buildSrc/build
 stream-chat-android-sample/release/*
 stream-chat-android-sample/.sign/keystore.properties

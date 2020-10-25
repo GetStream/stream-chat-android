@@ -251,10 +251,13 @@ internal class QueryChannelsControllerImpl(
     private fun refreshChannels(cIds: List<String>) {
         val cIdsInQuery = queryEntity.channelCids.intersect(cIds)
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
-        val existingChannelMap = _channels.value ?: mapOf()
-        val merged = (existingChannelMap.values + newChannels).associateBy { it.cid }
+        val existingChannelMap = _channels.value?.toMutableMap() ?: mutableMapOf()
 
-        _channels.postValue(merged)
+        newChannels.forEach { channel ->
+            existingChannelMap[channel.cid] = channel
+        }
+
+        _channels.postValue(existingChannelMap)
     }
 
     /**

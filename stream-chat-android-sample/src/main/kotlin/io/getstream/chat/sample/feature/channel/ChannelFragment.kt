@@ -12,7 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.bindView
-import com.getstream.sdk.chat.viewmodel.factory.ChatViewModelFactory
+import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.sample.R
@@ -22,7 +22,7 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
 
     private val cid: String by lazy { navArgs<ChannelFragmentArgs>().value.cid }
 
-    private val viewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(cid) }
+    private val viewModelFactory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(cid) }
 
     private val messagesViewModel: MessageListViewModel by viewModels { viewModelFactory }
 

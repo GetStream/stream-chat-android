@@ -5,7 +5,21 @@ import io.getstream.chat.android.client.parser.IgnoreDeserialisation
 import io.getstream.chat.android.client.parser.IgnoreSerialisation
 import java.util.Date
 
+/**
+ * The only required field on the User data class is the user id.
+ *
+ * You can also store custom data as you'd like.
+ *
+ * @code
+ *
+ * val user = User("summer-brook-2").apply {
+ *     extraData["name"] = "Paranoid Android"
+ *     extraData["image"] = "https://bit.ly/2TIt8NR"
+ * }
+ *
+ */
 public data class User(
+    /** the user id, this field is the only required field */
     var id: String = "",
     var role: String = "",
 

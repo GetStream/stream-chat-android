@@ -154,12 +154,11 @@ class ChatImpl implements Chat {
         domainBuilder
                 .userPresenceEnabled()
                 .backgroundSyncEnabled(apiKey, userToken)
-                .notificationConfig(chatNotificationHandler.getConfig());
+                .notificationConfig(chatNotificationHandler.getConfig()).build();
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
             public void onSuccess(@NotNull ConnectionData data) {
-                domainBuilder.build().setCurrentUser(user);
                 callbacks.onSuccess(data);
             }
 

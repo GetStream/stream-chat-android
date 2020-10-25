@@ -52,6 +52,12 @@ android {
 
 }
 
+kapt {
+    arguments {
+        arg("room.incremental", "true")
+    }
+}
+
 dependencies {
     implementation project(':stream-chat-android-client')
 

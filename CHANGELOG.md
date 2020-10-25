@@ -1,7 +1,14 @@
 # To be released:
+
+- Add message sending/sent indicators in `MessageListView`
+- Provide ChannelViewModelFactory and ChannelsViewModelFactory by the library to simplify setup
+- Fixes for https://github.com/GetStream/stream-chat-android/issues/698 and https://github.com/GetStream/stream-chat-android/issues/723
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
-- Add message sending/sent indicators in `MessageListView`
+- Fixes a race condition where client.getCurrentUser() was set too late
+- Support for hiding channels
+- Makes the number of channels return configurable by adding the limit param to ChannelsViewModelFactory
+- Don't show read state for the current user
 
 # Oct 19th, 2020 - 4.3.1-beta-2
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
