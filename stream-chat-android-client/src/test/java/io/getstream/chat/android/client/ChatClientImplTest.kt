@@ -49,7 +49,7 @@ internal class ChatClientImplTest {
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
             ChatNotificationHandler(mock()),
-            FakeTokenManager("")
+            tokenManager = FakeTokenManager("")
         )
 
         socket = FakeChatSocket()
