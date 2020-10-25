@@ -522,7 +522,7 @@ internal class ChannelControllerImpl(
                 Result(processedMessage, null)
             } else {
 
-                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}", result.error())
+                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}", result.error())
 
                 if (result.error().isPermanent()) {
                     newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY

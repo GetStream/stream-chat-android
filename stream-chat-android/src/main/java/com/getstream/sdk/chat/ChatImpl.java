@@ -74,7 +74,7 @@ class ChatImpl implements Chat {
         new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
                 .logLevel(chatLogLevel)
-               // .loggerHandler(chatLoggerHandler)
+                .loggerHandler(chatLoggerHandler)
                 .build();
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
