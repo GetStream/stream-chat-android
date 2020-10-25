@@ -98,6 +98,7 @@ internal class ChatClientImpl(
         if (!ensureUserNotSet(listener)) {
             return
         }
+        state.user = user
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
@@ -112,7 +113,6 @@ internal class ChatClientImpl(
         connectionListener = listener
         config.isAnonymous = true
         warmUp()
-        notifications.onSetUser()
         getTokenAndConnect {
             socket.connectAnonymously()
         }

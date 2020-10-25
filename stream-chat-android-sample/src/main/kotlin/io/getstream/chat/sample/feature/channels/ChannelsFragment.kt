@@ -3,21 +3,26 @@ package io.getstream.chat.sample.feature.channels
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.getstream.sdk.chat.view.channels.ChannelListView
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import com.getstream.sdk.chat.viewmodel.channels.bindView
+import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.navigateSafely
 import kotlinx.android.synthetic.main.fragment_channels.*
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels) {
-    private val viewModel by lazy { ChannelsViewModelImpl() }
+
+    private val viewModel: ChannelsViewModelImpl by viewModels { ChannelsViewModelFactory() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.bindView(channelsListView, this@ChannelsFragment)
+        viewModel.bindView(channelsListView, viewLifecycleOwner)
 
         viewModel.state.observe(
             viewLifecycleOwner,
@@ -44,6 +49,19 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
         addNewChannelButton.setOnClickListener {
             findNavController().navigateSafely(R.id.action_to_create_channel)
         }
+
+        channelsListView.setOnLongClickListener(
+            ChannelListView.ChannelClickListener { channel ->
+                AlertDialog.Builder(requireContext())
+                    .setMessage(R.string.hide_channel_dialog)
+                    .setNegativeButton(R.string.deny) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        viewModel.hideChannel(channel)
+                    }.show()
+            }
+        )
 
         activity?.apply {
             onBackPressedDispatcher.addCallback(

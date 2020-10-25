@@ -5,12 +5,14 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.bindView
+import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
 import io.getstream.chat.sample.R
@@ -18,26 +20,41 @@ import kotlinx.android.synthetic.main.fragment_channel.*
 
 class ChannelFragment : Fragment(R.layout.fragment_channel) {
 
+    private val cid: String by lazy { navArgs<ChannelFragmentArgs>().value.cid }
+
+    private val viewModelFactory: ChannelViewModelFactory by lazy { ChannelViewModelFactory(cid) }
+
+    private val messagesViewModel: MessageListViewModel by viewModels { viewModelFactory }
+
+    private val channelHeaderViewModel: ChannelHeaderViewModel by viewModels { viewModelFactory }
+
+    private val messageInputViewModel: MessageInputViewModel by viewModels { viewModelFactory }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val cid = navArgs<ChannelFragmentArgs>().value.cid
+        initMessagesViewModel()
+        initHeaderViewModel()
+        initMessageInputViewModel()
 
-        val messagesViewModel = MessageListViewModel(cid)
-            .apply { bindView(messageListView, viewLifecycleOwner) }
-            .apply {
-                state.observe(
-                    viewLifecycleOwner,
-                    Observer {
-                        when (it) {
-                            is MessageListViewModel.State.Loading -> showProgressBar()
-                            is MessageListViewModel.State.Result -> hideProgressBar()
-                            is MessageListViewModel.State.NavigateUp -> navigateUp()
-                        }
+        val backButtonHandler = {
+            messagesViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
+        }
+
+        channelHeaderView.onBackClick = backButtonHandler
+
+        activity?.apply {
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        backButtonHandler()
                     }
-                )
-            }
+                }
+            )
+        }
+    }
 
-        ChannelHeaderViewModel(cid).bindView(channelHeaderView, this)
-        MessageInputViewModel(cid).apply {
+    private fun initMessageInputViewModel() {
+        messageInputViewModel.apply {
             bindView(messageInputView, viewLifecycleOwner)
             messagesViewModel.mode.observe(
                 viewLifecycleOwner,
@@ -52,22 +69,27 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                 editMessage.postValue(it)
             }
         }
+    }
 
-        val backButtonHandler = {
-            messagesViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
-        }
-        channelHeaderView.onBackClick = { backButtonHandler() }
+    private fun initHeaderViewModel() {
+        channelHeaderViewModel.bindView(channelHeaderView, viewLifecycleOwner)
+    }
 
-        activity?.apply {
-            onBackPressedDispatcher.addCallback(
-                viewLifecycleOwner,
-                object : OnBackPressedCallback(true) {
-                    override fun handleOnBackPressed() {
-                        backButtonHandler()
+    private fun initMessagesViewModel() {
+        messagesViewModel
+            .apply { bindView(messageListView, viewLifecycleOwner) }
+            .apply {
+                state.observe(
+                    viewLifecycleOwner,
+                    Observer {
+                        when (it) {
+                            is MessageListViewModel.State.Loading -> showProgressBar()
+                            is MessageListViewModel.State.Result -> hideProgressBar()
+                            is MessageListViewModel.State.NavigateUp -> navigateUp()
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
     }
 
     private fun navigateUp() {

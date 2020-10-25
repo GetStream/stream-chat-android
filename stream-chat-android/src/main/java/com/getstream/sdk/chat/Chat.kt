@@ -30,6 +30,15 @@ public interface Chat {
     public val markdown: ChatMarkdown
     public val version: String
 
+    /**
+     * Sets the user and connects to Stream's API
+     *
+     * @param user The user object
+     * @param token The token, typically provided by your backend during authentication
+     * @param callbacks optional callback to listen to connect events
+     *
+     * @see User
+     */
     public fun setUser(
         user: User,
         token: String,

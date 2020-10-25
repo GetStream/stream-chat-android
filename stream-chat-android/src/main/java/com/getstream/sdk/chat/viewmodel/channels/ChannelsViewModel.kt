@@ -43,7 +43,8 @@ public interface ChannelsViewModel {
 public class ChannelsViewModelImpl(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
-    private val sort: QuerySort = DEFAULT_SORT
+    private val sort: QuerySort = DEFAULT_SORT,
+    private val limit: Int = 30
 ) : ChannelsViewModel, ViewModel() {
     private val channelsData: LiveData<ChannelsViewModel.State>
     private val loadingMoreData: LiveData<ChannelsViewModel.State.LoadingNextPage>
@@ -54,14 +55,14 @@ public class ChannelsViewModelImpl(
     override val state: LiveData<ChannelsViewModel.State> = stateMerger
 
     init {
-        val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort).execute().data()
+        val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
         queryChannelsController.run {
             loadingData.postValue(ChannelsViewModel.State.Loading)
-            channelsData = map(channels) {
-                if (it.isEmpty()) {
+            channelsData = map(channels) { channelList ->
+                if (channelList.isEmpty()) {
                     ChannelsViewModel.State.NoChannelsAvailable
                 } else {
-                    ChannelsViewModel.State.Result(it)
+                    ChannelsViewModel.State.Result(channelList.filter { it.hidden == false })
                 }
             }
             loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
@@ -81,6 +82,11 @@ public class ChannelsViewModelImpl(
                 stateMerger.postValue(ChannelsViewModel.State.NavigateToLoginScreen)
             }
         }.exhaustive
+    }
+
+    public fun hideChannel(channel: Channel) {
+        loadingData.postValue(ChannelsViewModel.State.Loading)
+        chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
     }
 
     private fun requestMoreChannels() {

@@ -87,10 +87,10 @@ internal class ChannelControllerImpl(
 ) :
     ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
-    private val _messages = MutableLiveData<MutableMap<String, Message>>()
+    private val _messages = MutableLiveData<Map<String, Message>>()
     private val _watcherCount = MutableLiveData<Int>()
-    private val _typing = MutableLiveData<MutableMap<String, ChatEvent>>()
-    private val _reads = MutableLiveData<MutableMap<String, ChannelUserRead>>()
+    private val _typing = MutableLiveData<Map<String, ChatEvent>>()
+    private val _reads = MutableLiveData<Map<String, ChannelUserRead>>()
     private val _read = MutableLiveData<ChannelUserRead>()
     private val _endOfNewerMessages = MutableLiveData(false)
     private val _endOfOlderMessages = MutableLiveData(false)
@@ -98,7 +98,7 @@ internal class ChannelControllerImpl(
     private val _hidden = MutableLiveData(false)
     private val _muted = MutableLiveData(false)
     private val _watchers = MutableLiveData<Map<String, User>>(mapOf())
-    private val _members = MutableLiveData<MutableMap<String, Member>>()
+    private val _members = MutableLiveData<Map<String, Member>>()
     private val _loadingOlderMessages = MutableLiveData(false)
     private val _loadingNewerMessages = MutableLiveData(false)
     private val _channelData = MutableLiveData<ChannelData>()
@@ -522,7 +522,7 @@ internal class ChannelControllerImpl(
                 Result(processedMessage, null)
             } else {
 
-                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}", result.error())
+                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}", result.error())
 
                 if (result.error().isPermanent()) {
                     newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -773,7 +773,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun upsertMessages(messages: List<Message>) {
-        val copy = _messages.value ?: mutableMapOf()
+        var copy = _messages.value ?: mapOf()
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -794,16 +794,13 @@ internal class ChannelControllerImpl(
         }
 
         // update all the fresh messages
-        for (message in freshMessages) {
-            copy[message.id] = message.copy()
-        }
+        copy = copy + messages.map { it.copy() }.associateBy(Message::id)
         _messages.postValue(copy)
     }
 
     private fun removeLocalMessage(message: Message) {
-        val messages = _messages.value ?: mutableMapOf()
-        messages.remove(message.id)
-        _messages.postValue(messages)
+        val messages = _messages.value ?: mapOf()
+        _messages.postValue(messages - message.id)
     }
 
     override fun clean() {
@@ -814,14 +811,14 @@ internal class ChannelControllerImpl(
         }
 
         // Cleanup typing events that are older than 15 seconds
-        val copy = _typing.value ?: mutableMapOf()
+        var copy = _typing.value ?: mapOf()
         var changed = false
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.SECOND, -15)
         val old = calendar.time
         for ((userId, typing) in copy.toList()) {
             if (typing.createdAt.before(old)) {
-                copy.remove(userId)
+                copy = copy - userId
                 changed = true
             }
         }
@@ -831,14 +828,14 @@ internal class ChannelControllerImpl(
     }
 
     fun setTyping(userId: String, event: ChatEvent?) {
-        val copy = _typing.value ?: mutableMapOf()
+        val copy = _typing.value?.toMutableMap() ?: mutableMapOf()
         if (event == null) {
             copy.remove(userId)
         } else {
             copy[userId] = event
         }
         copy.remove(domainImpl.currentUser.id)
-        _typing.postValue(copy)
+        _typing.postValue(copy.toMap())
     }
 
     private fun setHidden(hidden: Boolean) {
@@ -1016,17 +1013,13 @@ internal class ChannelControllerImpl(
     }
 
     private fun deleteMember(userId: String) {
-        val copy = _members.value ?: mutableMapOf()
-        copy.remove(userId)
-        _members.postValue(copy)
+        val copy = _members.value ?: mapOf()
+        _members.postValue(copy - userId)
     }
 
     fun upsertMembers(members: List<Member>) {
-        val channelMembers = _members.value ?: mutableMapOf()
-        members.forEach {
-            channelMembers[it.user.id] = it
-        }
-        _members.postValue(channelMembers)
+        val channelMembers = _members.value ?: mapOf()
+        _members.postValue(channelMembers + members.associateBy { it.user.id })
     }
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
@@ -1044,10 +1037,7 @@ internal class ChannelControllerImpl(
             _read.postValue(it)
             println("updateReads for current user to ${it.lastRead} on channel $cid")
         }
-        for (r in reads) {
-            copy[r.getUserId()] = r
-        }
-        _reads.postValue(copy)
+        _reads.postValue(copy + reads.associateBy(ChannelUserRead::getUserId))
     }
 
     fun updateRead(
@@ -1076,11 +1066,8 @@ internal class ChannelControllerImpl(
     }
 
     private fun setMembers(members: List<Member>) {
-        val copy = _members.value ?: mutableMapOf()
-        for (m in members) {
-            copy[m.getUserId()] = m
-        }
-        _members.postValue(copy)
+        val copy = _members.value ?: mapOf()
+        _members.postValue(copy + members.associateBy(Member::getUserId))
     }
 
     fun updateChannelData(channel: Channel) {
@@ -1193,6 +1180,7 @@ internal class ChannelControllerImpl(
         channel.config = getConfig()
         channel.unreadCount = computeUnreadCount(domainImpl.currentUser, _read.value, messages)
         channel.lastMessageAt = messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt }
+        channel.hidden = _hidden.value
 
         return channel
     }
