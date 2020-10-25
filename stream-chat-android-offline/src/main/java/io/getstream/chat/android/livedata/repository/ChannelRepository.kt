@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.dao.ChannelDao
 import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.extensions.isPermanent
 
 internal class ChannelRepository(
     var channelDao: ChannelDao,
