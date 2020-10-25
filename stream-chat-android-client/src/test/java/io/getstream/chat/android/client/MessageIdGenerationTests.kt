@@ -3,6 +3,7 @@ package io.getstream.chat.android.client
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.models.MessageRequest
 import io.getstream.chat.android.client.api.models.MessageResponse
@@ -26,15 +27,18 @@ internal class MessageIdGenerationTests {
 
     lateinit var uuidGenerator: UuidGenerator
     private lateinit var retroApi: RetrofitApi
+    private lateinit var retroAnonymousApi: RetrofitAnonymousApi
     private lateinit var api: ChatApi
 
     @Before
     fun before() {
         retroApi = mock()
+        retroAnonymousApi = mock()
         uuidGenerator = mock()
         api = ChatApi(
             apiKey,
             retroApi,
+            retroAnonymousApi,
             uuidGenerator,
             mock()
         )
