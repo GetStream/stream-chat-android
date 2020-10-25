@@ -1,8 +1,5 @@
 # To be released:
-
-- Add message sending/sent indicators in `MessageListView`
-- Provide ChannelViewModelFactory and ChannelsViewModelFactory by the library to simplify setup
-- Fixes for https://github.com/GetStream/stream-chat-android/issues/698 and https://github.com/GetStream/stream-chat-android/issues/723
+## stream-chat-anddroid
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
 - Add message sending/sent indicators in `MessageListView`
@@ -10,9 +7,12 @@
 - Fixes a race condition where client.getCurrentUser() was set too late
 - Support for hiding channels
 - Makes the number of channels return configurable by adding the limit param to ChannelsViewModelFactory
+- Add message sending/sent indicators in `MessageListView`
+- Provide ChannelViewModelFactory and ChannelsViewModelFactory by the library to simplify setup
+- Fixes for https://github.com/GetStream/stream-chat-android/issues/698 and https://github.com/GetStream/stream-chat-android/issues/723
 - Don't show read state for the current user
 
-# Oct 19th, 2020 - 4.3.1-beta-2
+# Oct 19th, 2020 - 4.3.1-beta-2 (stream-chat-android)
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
 - Removed many internal implementation classes and methods from the SDK's public API
@@ -22,14 +22,14 @@
 - Fix method to obtain initials from channel to be shown into the avatar
 - Allow setting `ChatLoggerHandler` and `ChatLogLevel` in `Chat.Builder`
 
-# Oct 16th, 2020 - 4.3.1-beta-1
+# Oct 16th, 2020 - 4.3.1-beta-1 (stream-chat-android)
 - Significant performance improvements
 - Fix a crash related to behaviour changes in 1.3.0-alpha08 of the AndroidX Fragment library
 - Replace Glide with Coil in AttachmentViewHolderMedia (Fix GIFs loading issues)
 - `MessageListView.BubbleHelper`'s methods now have nullability annotations, and use primitive `boolean` values as parameters
 - Update Offline Support to the [last version](https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.6)
 
-# Oct 14th, 2020 - 4.3.0-beta-6
+# Oct 14th, 2020 - 4.3.0-beta-6 (stream-chat-android)
 - Update to Kotlin 1.4.10
 - Fix Typing view behavior
 - Fix NPE asking for `Attachment::type`
@@ -37,7 +37,7 @@
 - Limit max lines displayed in link previews (5 lines by default, customizable via `streamAttachmentPreviewMaxLines` attribute on `MessageListView`)
 - Update Offline Support to the [last version](. See changes: )https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.5)
 
-# Oct 9th, 2020 - 4.3.0-beta-5
+# Oct 9th, 2020 - 4.3.0-beta-5 (stream-chat-android)
 - Improve selecting non-media attachments
 - Fix showing attachments captured with camera
 - Add setting type and file size when creating AttachmentMetaData from file
@@ -45,14 +45,14 @@
 - Replace isMedia flag with getting type from attachment if possible
 - Update ExoPlayer dependency to version [2.12.0](https://github.com/google/ExoPlayer/blob/release-v2/RELEASENOTES.md#2120-2020-09-11)
 
-# Oct 7th, 2020 - 4.3.0-beta-4
+# Oct 7th, 2020 - 4.3.0-beta-4 (stream-chat-android)
 - For Java clients, the `bindView` methods used to bind a ViewModel and its UI component together are now available with friendlier syntax.
 - Calls such as `MessageListViewModelBindingKt.bindView(...);` should be replaced with calls like `MessageListViewModelBinding.bind(...);`
 - The `ChannelListViewModelBindingKt` class has been renamed to `ChannelsViewModelBinding`, to match the name of the ViewModel it's associated with.
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.4
 
-# Oct 2nd, 2020 - 4.3.0-beta-3
+# Oct 2nd, 2020 - 4.3.0-beta-3 (stream-chat-android)
 - Removed several parameters of `BaseAttachmentViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `AttachmentViewHolderFactory` as constructor parameters
 - Moved `BaseAttachmentViewHolder` to a new package
 - Fix setting read state when user's last read equals message created date
@@ -64,7 +64,7 @@
 - Moved `MessageInputView` class to a new package.
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.2
 
-# Sep 30th, 2020 - 4.3.0-beta-2
+# Sep 30th, 2020 - 4.3.0-beta-2 (stream-chat-android)
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
 - Removed `position` parameter from `MessageClickListener`
@@ -72,17 +72,17 @@
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.1
 
-# Sep 23rd, 2020 - 4.3.0-beta-1
+# Sep 23rd, 2020 - 4.3.0-beta-1 (stream-chat-android)
 
 - Update livedata/client to latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.0
 
-# Sep 23rd, 2020 - 4.2.11-beta-13
+# Sep 23rd, 2020 - 4.2.11-beta-13 (stream-chat-android)
 - Adjust ChatSocketListener to new events(NewMessageEvent, NotificationMarkReadEvent, NotificationMessageNewEvent) properties.
 - Fix "load more channels"
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.6
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.7
 
-# Sep 18th, 2020 - 4.2.11-beta-12
+# Sep 18th, 2020 - 4.2.11-beta-12 (stream-chat-android)
 - Implement Giphy actions handler
 - Fix .gif preview rendering on message list 
 - Fix thread shown issue after sending message to a channel 
@@ -96,23 +96,23 @@
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.6
 
-# Sep 4th, 2020 - 4.2.11-beta-11
+# Sep 4th, 2020 - 4.2.11-beta-11 (stream-chat-android)
 
 - Fix uploading files and capturing images on Android >= 10
 - Fix `AvatarView`: Render lastActiveUsers avatars when channel image is not present
 
-# Aug 28th, 2020 - 4.2.11-beta-9
+# Aug 28th, 2020 - 4.2.11-beta-9 (stream-chat-android)
 
 - Update event structure
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.1
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.2
 
-## Aug 23th, 2020 - 4.2.11-beta-8
+## Aug 23th, 2020 - 4.2.11-beta-8 (stream-chat-android)
 - Fix Upload Files
 - Update RecyclerView Lib
 - Update Notification Customization
 
-## Aug 5th, 2020 - 4.2.11-beta-7
+## Aug 5th, 2020 - 4.2.11-beta-7 (stream-chat-android)
 
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.9
 - Fix channel name validation in CreateChannelViewModel
@@ -120,7 +120,7 @@
 - Fix Fresco initialization
 - Fix method to add/remove reaction
 
-## Jul 13th, 2020 - 4.2.11-beta-6
+## Jul 13th, 2020 - 4.2.11-beta-6 (stream-chat-android)
 
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.10.0
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.6.7
@@ -134,61 +134,61 @@
 - Add option to send a message to a thread
 - Allow to switch user / logout
 
-## Jun 4th, 2020 - 4.2.11-beta-5
+## Jun 4th, 2020 - 4.2.11-beta-5 (stream-chat-android)
 
 - Update livedata dependency to fix crash when NotificationMarkReadEvent received
 - Add mavenLocal() repository
 
-## Jun 4th, 2020 - 4.2.11-beta-4
+## Jun 4th, 2020 - 4.2.11-beta-4 (stream-chat-android)
 
 - Fix crash when command (`/`) is typed.
 
-## Jun 3rd, 2020 - 4.2.11-beta
+## Jun 3rd, 2020 - 4.2.11-beta (stream-chat-android)
 
 - Fix `AvatarView` crash when the view is not attached
 
-## May 15th, 2020 - 4.2.10-beta
+## May 15th, 2020 - 4.2.10-beta (stream-chat-android)
 
 - Update to the latest livedata: 0.6.1
 
-## May 29th, 2020 - 4.2.9-beta-3
+## May 29th, 2020 - 4.2.9-beta-3 (stream-chat-android)
 
 - Fix AttachmentViewHolder crash when user sends message with plain/no-media url
 
-## May 15th, 2020 - 4.2.9-beta-2
+## May 15th, 2020 - 4.2.9-beta-2 (stream-chat-android)
 
 - Update to the latest livedata: 0.6.0
 
-## May 15th, 2020 - 4.2.8-beta-1
+## May 15th, 2020 - 4.2.8-beta-1 (stream-chat-android)
 
 - Update to the latest livedata: 0.4.6
 
-## May 15th, 2020 - 4.2.6
+## May 15th, 2020 - 4.2.6 (stream-chat-android)
 
 - Fix Avatar crash if channel/user initials are empty
 
-## May 13th, 2020 - 4.2.5
+## May 13th, 2020 - 4.2.5 (stream-chat-android)
 
 - Create new `AvatarView`
 - Glide Redirect issues resolved
 - Bugfix release for livedata, updated to 0.4.2
 
-## March 11th, 2020 - 3.6.5
+## March 11th, 2020 - 3.6.5 (stream-chat-android)
 
 - Fix reaction score parser casting exception
 
-## March 3rd, 2020 - 3.6.5
+## March 3rd, 2020 - 3.6.5 (stream-chat-android)
 
 - Fix crash on sending Google gif
 
-## March 3rd, 2020 - 3.6.4
+## March 3rd, 2020 - 3.6.4 (stream-chat-android)
 
 - Update default endpoint: from `chat-us-east-1.stream-io-api.com` to `chat-us-east-staging.stream-io-api.com`
 - update target api level to 29
 - Fixed media playback error on api 29 devices
 - Added score field to reaction model
 
-## January 28th, 2020 - 3.6.3
+## January 28th, 2020 - 3.6.3 (stream-chat-android)
 
 - ViewModel & ViewHolder classes now use protected instead of private variables to allow customization via subclassing
 - ChannelViewHolderFactory is now easier to customize
@@ -196,12 +196,12 @@
 - Documentation improvements
 - Fix problem with wrong scroll position
 
-## January 10th, 2020 - 3.6.2
+## January 10th, 2020 - 3.6.2 (stream-chat-android)
 
 - Enable multiline edit text
 - Fix deprecated getColumnIndexOrThrow for 29 Api Level
 
-## January 7th, 2020 - 3.6.1
+## January 7th, 2020 - 3.6.1 (stream-chat-android)
 
 - Add navigation components with handler to override default behaviour
 
@@ -210,7 +210,7 @@
 ###
 - `OpenCameraViewListener` is replaced with CameraDestination
 
-## January 6th, 2020 - 3.6.0
+## January 6th, 2020 - 3.6.0 (stream-chat-android)
 
 - Add `MessageSendListener` interface for sending Message
 - Update `README` about Customizing MessageInputView
@@ -239,7 +239,7 @@
 
 To keep the same behavior pass `new HideChannelRequest()` as request parameter to match with the new signature.
 
-## December 9th, 2019 - 3.5.0
+## December 9th, 2019 - 3.5.0 (stream-chat-android)
 
 - Fix set typeFace without custom font
 - Fix channel.watch (data payload was not sent)
@@ -248,14 +248,14 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Add Message Link Text Color attrs
 - Add custom api endpoint config to sample app and SDK
 
-## November 28th, 2019 - 3.4.1
+## November 28th, 2019 - 3.4.1 (stream-chat-android)
 
 - Fix Giphy buttons alignments
 - Add Giphy error cases handling
 - Update http related issues documentation
 
 
-## November 28th, 2019 - 3.4.0
+## November 28th, 2019 - 3.4.0 (stream-chat-android)
 
 - Custom font fot the whole SDK
 - Custom font per TextView
@@ -264,7 +264,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Fix Edit/Delete thread parent message
 - Replace fadein/fadeout animation of parent/current thread with default RecyclerView animation
 
-## November 5th, 2019 - 3.3.0
+## November 5th, 2019 - 3.3.0 (stream-chat-android)
 
 - Fix Concurrent modification when removing member from channel
 - Fix automention input issue
@@ -278,7 +278,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Add Message Username and Date attrs
 
 
-## November 5th, 2019 - 3.2.1
+## November 5th, 2019 - 3.2.1 (stream-chat-android)
 
 - Fixed transparency issues with user profile images on older devices
 - Better channel header title for channels without a name
@@ -292,11 +292,11 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Fixed channel header title position issue when Last Active is hidden
 
 
-## October 25th, 2019 - 3.2.0
+## October 25th, 2019 - 3.2.0 (stream-chat-android)
 
 - Added event interceptors to `ChannelListViewModel`
 
-## October 24th, 2019 - 3.1.0
+## October 24th, 2019 - 3.1.0 (stream-chat-android)
 
 - Add channel to list when the user is added
 - Add `onUserDisconnected` event
@@ -304,15 +304,15 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Fix bug with `setUser` when user data is not correctly URI encoded
 - Add debug/info logging
 - Add Attrs for DateSeparator
-## Oct 23th, 2019 - 3.0.2
+## Oct 23th, 2019 - 3.0.2 (stream-chat-android)
 
 - Fix NPE with restore from background and null users
 
-## Oct 22th, 2019 - 3.0.1
+## Oct 22th, 2019 - 3.0.1 (stream-chat-android)
 
 - Fix NPE with empty channel lists
 
-## Oct 21th, 2019 - 3.0.0
+## Oct 21th, 2019 - 3.0.0 (stream-chat-android)
 
 - Added support for message search `client.searchMessages`
 - Better support for query user options
@@ -326,7 +326,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 
 - `Channel.update` signature has changed
 
-## Oct 16th, 2019 - 2.3.0
+## Oct 16th, 2019 - 2.3.0 (stream-chat-android)
 
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
@@ -341,7 +341,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Added support for accepting and rejecting channel invites
 - Expose current user LiveData with `StreamChat.getCurrentUser()`
 
-## Oct 14th, 2019 - 2.2.1
+## Oct 14th, 2019 - 2.2.1 (stream-chat-android)
 
 - Renamed `FileSendResponse` to `UploadFileResponse`
 - Renamed `SendFileCallback` to `UploadFileCallback`
@@ -354,7 +354,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Add support for add/remove channel members
 - Expose channel unread messages counts for any user in the channel
 
-## Oct 9, 2019 - 2.2.0
+## Oct 9, 2019 - 2.2.0 (stream-chat-android)
 
 - Limit message input height to 7 rows
 - Fixed thread safety issues on Client.java
@@ -372,7 +372,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Add support for update channel endpoint
 - Add PermissionRequestListener for Permission Request
 
-## September 28, 2019 - 2.1.0
+## September 28, 2019 - 2.1.0 (stream-chat-android)
 
 - Improved support for regenerating expired tokens
 
@@ -381,12 +381,12 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - `MessageInputView#progressCapturedMedia(int requestCode, int resultCode, Intent data)` renamed into `captureMedia(int requestCode, int resultCode, Intent data)`
 - `binding.messageInput.permissionResult(requestCode, permissions, grantResults)` in `onRequestPermissionsResult(requestCode, permissions, grantResults) of `ChannelActivity`
 
-## September 28, 2019 - 2.0.1
+## September 28, 2019 - 2.0.1 (stream-chat-android)
 
 - Fix channel list ordering when a channel is added directly from Android
 - Better Proguard support
 
-## September 26, 2019 - 2.0.0
+## September 26, 2019 - 2.0.0 (stream-chat-android)
 
 - Simplify random access to channels
 - Channel query and watch methods now work the same as they do on all other SDKs
