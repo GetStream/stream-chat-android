@@ -71,11 +71,12 @@ class ChatImpl implements Chat {
             navigator.setHandler(navigationHandler);
         }
 
-        new ChatClient.Builder(this.apiKey, context)
+        ChatClient.Builder Builder = new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
                 .logLevel(chatLogLevel)
                 .loggerHandler(chatLoggerHandler)
-                .build();
+
+        builder.
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
