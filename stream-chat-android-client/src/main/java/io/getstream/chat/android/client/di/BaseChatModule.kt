@@ -6,6 +6,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
+import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
@@ -78,9 +79,11 @@ internal open class BaseChatModule(
         writeTimeout: Long,
         readTimeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean = false
     ): Retrofit {
-        val clientBuilder = clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser)
+        val clientBuilder =
+            clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser, isAnonymousApi)
 
         val builder = Retrofit.Builder()
             .baseUrl(endpoint)
@@ -94,7 +97,8 @@ internal open class BaseChatModule(
         writeTimeout: Long,
         readTimeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .followRedirects(false)
@@ -104,19 +108,31 @@ internal open class BaseChatModule(
             .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
             .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
             // interceptors
-            .addInterceptor(HeadersInterceptor(config))
+            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
                 TokenAuthInterceptor(
                     config.tokenManager,
-                    parser
-                ) { config.isAnonymous }
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
             )
             .addInterceptor(
                 CurlInterceptor {
                     logger().logI("CURL", it)
                 }
             )
+    }
+
+    private fun getAnonymousProvider(
+        config: ChatClientConfig,
+        isAnonymousApi: Boolean
+    ): () -> Boolean {
+        return if (isAnonymousApi) {
+            { true }
+        } else {
+            { config.isAnonymous }
+        }
     }
 
     private fun buildSocket(
@@ -134,21 +150,23 @@ internal open class BaseChatModule(
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return ChatApi(
             chatConfig.apiKey,
-            buildRetrofitApi(),
+            buildRetrofitApi(RetrofitApi::class.java, false),
+            buildRetrofitApi(RetrofitAnonymousApi::class.java, true),
             UuidGeneratorImpl(),
             chatConfig.fileUploader ?: defaultFileUploader
         )
     }
 
-    private fun buildRetrofitApi(): RetrofitApi {
+    private fun <T> buildRetrofitApi(apiClass: Class<T>, isAnonymousApi: Boolean): T {
         return buildRetrofit(
             config.httpUrl,
             config.baseTimeout,
             config.baseTimeout,
             config.baseTimeout,
             config,
-            parser()
-        ).create(RetrofitApi::class.java)
+            parser(),
+            isAnonymousApi
+        ).create(apiClass)
     }
 
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {

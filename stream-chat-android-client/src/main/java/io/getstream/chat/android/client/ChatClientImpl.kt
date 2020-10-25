@@ -283,6 +283,7 @@ internal class ChatClientImpl(
         connectionListener = null
         socket.disconnect()
         state.reset()
+        config.isAnonymous = false
     }
 
     //region: api calls

@@ -62,6 +62,7 @@ internal class ClientConnectionTests {
     private lateinit var api: ChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
+    private lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
     private lateinit var logger: ChatLogger
@@ -73,6 +74,7 @@ internal class ClientConnectionTests {
     fun before() {
         socket = mock()
         retrofitApi = mock()
+        retrofitAnonymousApi = mock()
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
@@ -80,6 +82,7 @@ internal class ClientConnectionTests {
         api = ChatApi(
             config.apiKey,
             retrofitApi,
+            retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader
         )

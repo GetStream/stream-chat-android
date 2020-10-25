@@ -55,6 +55,7 @@ import kotlin.collections.set
 internal class ChatApi(
     private val apiKey: String,
     private val retrofitApi: RetrofitApi,
+    private val retrofitAnonymousApi: RetrofitAnonymousApi,
     private val uuidGenerator: UuidGenerator,
     private val fileUploader: FileUploader,
     private val coroutineScope: CoroutineScope = GlobalScope
@@ -504,7 +505,7 @@ internal class ChatApi(
     }
 
     fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
-        return retrofitApi.getGuestUser(apiKey, GuestUserRequest(userId, userName))
+        return retrofitAnonymousApi.getGuestUser(apiKey, GuestUserRequest(userId, userName))
             .map {
                 GuestUser(it.user, it.accessToken)
             }
