@@ -2,6 +2,19 @@ package io.getstream.chat.android.client.models
 
 import io.getstream.chat.android.client.utils.FilterObject
 
+/**
+ * Stream supports a limited set of filters for querying channels, users and members.
+ * The example below shows how to filter for channels of type messaging where the current
+ * user is a member
+ *
+ * @code
+ * val filter = Filters.and(
+ *     Filters.eq("type", "messaging"),
+ *     Filters.`in`("members", listOf(user.id))
+ * )
+ *
+ * See <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin" target="_top">Query Channels Documentation</a>
+ */
 public object Filters {
 
     @JvmStatic
