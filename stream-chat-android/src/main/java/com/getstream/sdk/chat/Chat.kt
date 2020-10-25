@@ -22,10 +22,6 @@ public interface Chat {
     public val strings: ChatStrings
     public fun urlSigner(): UrlSigner
     public val fonts: ChatFonts
-    public val onlineStatus: LiveData<OnlineStatus>
-    public val unreadMessages: LiveData<Number>
-    public val unreadChannels: LiveData<Number>
-    public val currentUser: LiveData<User>
     public val markdown: ChatMarkdown
     public val version: String
 

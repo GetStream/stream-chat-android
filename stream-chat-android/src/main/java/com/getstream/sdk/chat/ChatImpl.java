@@ -32,10 +32,6 @@ import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.GlobalScope;
 
 class ChatImpl implements Chat {
-    private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
-    private MutableLiveData<Number> unreadMessages = new MutableLiveData<>();
-    private MutableLiveData<Number> unreadChannels = new MutableLiveData<>();
-    private MutableLiveData<User> currentUser = new MutableLiveData<>();
 
     private final ChatNavigator navigator = new ChatNavigatorImpl();
     private final ChatStrings chatStrings;
@@ -84,30 +80,6 @@ class ChatImpl implements Chat {
     @Override
     public ChatNavigator getNavigator() {
         return navigator;
-    }
-
-    @NotNull
-    @Override
-    public LiveData<OnlineStatus> getOnlineStatus() {
-        return onlineStatus;
-    }
-
-    @NotNull
-    @Override
-    public LiveData<Number> getUnreadMessages() {
-        return unreadMessages;
-    }
-
-    @NotNull
-    @Override
-    public LiveData<Number> getUnreadChannels() {
-        return unreadChannels;
-    }
-
-    @NotNull
-    @Override
-    public LiveData<User> getCurrentUser() {
-        return currentUser;
     }
 
     @NotNull
@@ -190,7 +162,6 @@ class ChatImpl implements Chat {
     }
 
     protected void init() {
-        initSocketListener();
         initLifecycle();
     }
 
@@ -208,26 +179,6 @@ class ChatImpl implements Chat {
         });
     }
 
-    private void initSocketListener() {
-        client().addSocketListener(new ChatSocketListener(
-                onlineStatus -> {
-                    ChatImpl.this.onlineStatus.postValue(onlineStatus);
-                    return Unit.INSTANCE;
-                },
-                user -> {
-                    currentUser.postValue(user);
-                    return Unit.INSTANCE;
-                },
-                newUnreadMessages -> {
-                    unreadMessages.postValue(newUnreadMessages);
-                    return Unit.INSTANCE;
-                },
-                newUnreadChannels -> {
-                    unreadChannels.postValue(newUnreadChannels);
-                    return Unit.INSTANCE;
-                }
-        ));
-    }
 
     private ChatClient client() {
         return ChatClient.instance();
