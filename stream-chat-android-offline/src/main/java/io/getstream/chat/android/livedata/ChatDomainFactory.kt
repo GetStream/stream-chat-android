@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import androidx.room.Room
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 
 internal class ChatDomainFactory {

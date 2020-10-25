@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.utils
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 
 internal class DefaultRetryPolicy : RetryPolicy {

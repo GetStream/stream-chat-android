@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Mute

@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata.repository
 
 import androidx.collection.LruCache
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.SyncStatus

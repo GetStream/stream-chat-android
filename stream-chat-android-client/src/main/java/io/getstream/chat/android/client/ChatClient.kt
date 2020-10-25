@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
-public class ChatClient(
+public class ChatClient internal constructor(
     private val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
@@ -115,7 +115,7 @@ public class ChatClient(
         }
     }
 
-    public fun setAnonymousUser(listener: InitConnectionListener?) {
+    public fun setAnonymousUser(listener: InitConnectionListener? = null) {
         connectionListener = listener
         config.isAnonymous = true
         warmUp()
@@ -160,11 +160,13 @@ public class ChatClient(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort,
-        members: List<Member>
+        sort: QuerySort = DEFAULT_SORT,
+        members: List<Member> = emptyList()
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
+
+
 
     public fun sendImage(
         channelType: String,
@@ -386,7 +388,7 @@ public class ChatClient(
     public fun hideChannel(
         channelType: String,
         channelId: String,
-        clearHistory: Boolean
+        clearHistory: Boolean = false
     ): Call<Unit> {
         return api.hideChannel(channelType, channelId, clearHistory)
     }
@@ -399,7 +401,7 @@ public class ChatClient(
         channelType: String,
         channelId: String,
         updateMessage: Message?,
-        channelExtraData: Map<String, Any>
+        channelExtraData: Map<String, Any> = emptyMap()
     ): Call<Channel> =
         api.updateChannel(
             channelType,
@@ -428,7 +430,7 @@ public class ChatClient(
         eventType: String,
         channelType: String,
         channelId: String,
-        extraData: Map<Any, Any>
+        extraData: Map<Any, Any> = emptyMap()
     ): Call<ChatEvent> {
         return api.sendEvent(eventType, channelType, channelId, extraData)
     }
@@ -768,5 +770,8 @@ public class ChatClient(
         public fun instance(): ChatClient {
             return instance
         }
+
+        @JvmField
+        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
     }
 }
