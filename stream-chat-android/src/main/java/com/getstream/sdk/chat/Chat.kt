@@ -16,6 +16,7 @@ import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.socket.InitConnectionListener
+import io.getstream.chat.android.client.uploader.FileUploader
 
 public interface Chat {
     public val navigator: ChatNavigator
@@ -55,6 +56,7 @@ public interface Chat {
         public var notificationHandler: ChatNotificationHandler = ChatNotificationHandler(context)
         public var chatLogLevel: ChatLogLevel = ChatLogLevel.ALL
         public var chatLoggerHandler: ChatLoggerHandler? = null
+        public var fileUploader: FileUploader? = null
 
         public fun build(): Chat = ChatImpl(
             ChatFontsImpl(style, context),
@@ -67,7 +69,8 @@ public interface Chat {
             offlineEnabled,
             notificationHandler,
             chatLogLevel,
-            chatLoggerHandler
+            chatLoggerHandler,
+            fileUploader
         ).apply {
             instance = this
         }

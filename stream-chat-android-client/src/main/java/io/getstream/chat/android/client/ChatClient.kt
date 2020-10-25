@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.ChatObservable
@@ -316,6 +317,7 @@ public interface ChatClient {
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
+        private var fileUploader: FileUploader? = null
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -334,6 +336,11 @@ public interface ChatClient {
 
         public fun notifications(notificationsHandler: ChatNotificationHandler): Builder {
             this.notificationsHandler = notificationsHandler
+            return this
+        }
+
+        public fun fileUploader(fileUploader: FileUploader): Builder {
+            this.fileUploader = fileUploader
             return this
         }
 
@@ -396,7 +403,8 @@ public interface ChatClient {
                 cdnTimeout,
                 warmUp,
                 ChatLogger.Config(logLevel, loggerHandler),
-                notificationsHandler
+                notificationsHandler,
+                fileUploader
             )
 
             val module = ChatModule(appContext, config)

@@ -5,6 +5,8 @@
 - Fixes for https://github.com/GetStream/stream-chat-android/issues/698 and https://github.com/GetStream/stream-chat-android/issues/723
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
+- Add message sending/sent indicators in `MessageListView`
+- Add possibility to replace default FileUploader
 - Fixes a race condition where client.getCurrentUser() was set too late
 - Support for hiding channels
 - Makes the number of channels return configurable by adding the limit param to ChannelsViewModelFactory

@@ -1,5 +1,6 @@
 # To be released:
 - Fix ConcurrentModificationException in `ChatEventsObservable`
+- Add possibility to replace default FileUploader
 - Fix anonymous user authentication
 
 # 1.16.8 - Fri 16th of Oct 2020

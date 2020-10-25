@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.logger.ChatLoggerHandler;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler;
 import io.getstream.chat.android.client.socket.InitConnectionListener;
+import io.getstream.chat.android.client.uploader.FileUploader;
 import io.getstream.chat.android.livedata.ChatDomain;
 import kotlin.UninitializedPropertyAccessException;
 import kotlin.Unit;
@@ -57,7 +58,8 @@ class ChatImpl implements Chat {
              boolean offlineEnabled,
              ChatNotificationHandler chatNotificationHandler,
              ChatLogLevel chatLogLevel,
-             ChatLoggerHandler chatLoggerHandler) {
+             @Nullable ChatLoggerHandler chatLoggerHandler,
+             @Nullable FileUploader fileUploader) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
         this.urlSigner = urlSigner;
@@ -71,12 +73,20 @@ class ChatImpl implements Chat {
             navigator.setHandler(navigationHandler);
         }
 
-        ChatClient.Builder Builder = new ChatClient.Builder(this.apiKey, context)
-                .notifications(chatNotificationHandler)
-                .logLevel(chatLogLevel)
-                .loggerHandler(chatLoggerHandler)
 
-        builder.
+        ChatClient.Builder chatBuilder = new ChatClient.Builder(this.apiKey, context)
+                .notifications(chatNotificationHandler)
+                .logLevel(chatLogLevel);
+
+        if (chatLoggerHandler != null) {
+            chatBuilder.loggerHandler(chatLoggerHandler);
+        }
+
+        if (fileUploader != null) {
+            chatBuilder.fileUploader(fileUploader);
+        }
+
+        chatBuilder.build();
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
