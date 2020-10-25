@@ -7,7 +7,6 @@ import assertions.`should be equal to result`
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.TestResultCall
 import io.getstream.chat.android.livedata.positiveRandomInt

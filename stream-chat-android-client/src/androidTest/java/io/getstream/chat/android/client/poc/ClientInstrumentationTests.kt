@@ -3,11 +3,9 @@ package io.getstream.chat.android.client.poc
 import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitListener
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
