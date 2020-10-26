@@ -143,10 +143,10 @@ public fun ChatError.isPermanent(): Boolean {
 
 public fun ChatClient.domain(): ChatDomain {
 
-    // init based on configs set on ChatClient
+    // The builder/config logic happens at the ChatClient level
+    val domainBuilder = ChatDomain.Builder(appContext, this).setConfig(offlineConfig)
 
-    // val domainBuilder = ChatDomain.Builder(config)
-    // val domain = domainBuilder.build()
+    // We use listeners to tie into the ChatClient's setUser and disconnect flow
     //
     // // hookup listeners for pre set User and disconnect()
     // setPreUserConnectListener {

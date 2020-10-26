@@ -89,14 +89,14 @@ public interface ChatDomain {
     public data class Builder(
         private var appContext: Context,
         private var client: ChatClient,
-        private var user: User
+        private var user: User? = null
     ) {
         private val factory: ChatDomainFactory = ChatDomainFactory()
 
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
-        private var offlineEnabled: Boolean = true
+        private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
         private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
@@ -107,13 +107,23 @@ public interface ChatDomain {
             return this
         }
 
+        public fun setUser(user: User) {
+            this.user = user
+        }
+
+        public fun setConfig(config: ChatClient.OfflineConfig) {
+            userPresence = config.userPresence
+            storageEnabled = config.storageEnabled
+            // TODO: finish this method
+        }
+
         public fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
             // TODO: Consider exposing apiKey and userToken by ChatClient to make this public function more friendly
-            if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
+            if (apiKey.isEmpty() || user?.id.isNullOrEmpty() || userToken.isEmpty()) {
                 this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
                 throw IllegalArgumentException("apiKey, userToken must not be empty")
             } else {
-                this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
+                this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user!!.id, userToken)
             }
             return this
         }
@@ -124,12 +134,12 @@ public interface ChatDomain {
         }
 
         public fun offlineEnabled(): Builder {
-            this.offlineEnabled = true
+            this.storageEnabled = true
             return this
         }
 
         public fun offlineDisabled(): Builder {
-            this.offlineEnabled = false
+            this.storageEnabled = false
             return this
         }
 
@@ -167,8 +177,10 @@ public interface ChatDomain {
             return instance
         }
 
-        internal fun buildImpl() =
-            factory.create(appContext, client, user, database, offlineEnabled, userPresence, recoveryEnabled)
+        internal fun buildImpl(): ChatDomainImpl {
+            val u = checkNotNull(user) {"user needs to be set before calling build"}
+            return factory.create(appContext, client, u, database, storageEnabled, userPresence, recoveryEnabled)
+        }
 
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {

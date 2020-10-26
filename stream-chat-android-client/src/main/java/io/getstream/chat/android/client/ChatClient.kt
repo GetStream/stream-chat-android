@@ -50,11 +50,14 @@ import java.io.File
 import java.util.Date
 
 public class ChatClient internal constructor(
-    private val config: ChatClientConfig,
+    public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications
+    private val notifications: ChatNotifications,
+    public val offlineConfig: OfflineConfig,
+    public val appContext: Context
 ) {
+
 
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
@@ -649,6 +652,12 @@ public class ChatClient internal constructor(
         }
     }
 
+    public class OfflineConfig() {
+        public var userPresence: Boolean = false
+        public var storageEnabled: Boolean = true
+        public var recoveryEnabled: Boolean = true
+    }
+
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
@@ -660,6 +669,7 @@ public class ChatClient internal constructor(
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
+        private var offlineConfig = OfflineConfig()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -698,6 +708,14 @@ public class ChatClient internal constructor(
 
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
+        }
+
+        public fun disableUserPresence(): Builder = apply {
+            offlineConfig.userPresence = false
+        }
+
+        public fun enableUserPresence(): Builder = apply {
+            offlineConfig.userPresence = true
         }
 
         public fun baseUrl(value: String): Builder {
@@ -755,7 +773,10 @@ public class ChatClient internal constructor(
                 config,
                 module.api(),
                 module.socket(),
-                module.notifications()
+                module.notifications(),
+                offlineConfig,
+                appContext
+
             )
             instance = result
 
