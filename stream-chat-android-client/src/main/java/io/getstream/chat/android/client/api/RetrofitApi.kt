@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.models.MuteUserRequest
 import io.getstream.chat.android.client.api.models.MuteUserResponse
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResponse
 import io.getstream.chat.android.client.api.models.QueryMembersRequest
 import io.getstream.chat.android.client.api.models.QueryMembersResponse
 import io.getstream.chat.android.client.api.models.QueryUserListResponse
