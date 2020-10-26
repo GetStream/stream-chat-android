@@ -490,13 +490,8 @@ internal class ChatDomainImpl private constructor(
             )
         }
 
-    private fun queryEvents(cids: List<String>): List<ChatEvent> {
-        val response = client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
-        if (response.isError) {
-            throw response.error().cause ?: IllegalStateException(response.error().message)
-        }
-        return response.data()
-    }
+    private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
+        client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
 
     /**
      * replay events for all active channels
@@ -517,10 +512,12 @@ internal class ChatDomainImpl private constructor(
         val now = Date()
 
         return if (cids.isNotEmpty()) {
-            val events = queryEvents(cids)
-            eventHandler.updateOfflineStorageFromEvents(events)
-            syncState?.let { it.lastSyncedAt = now }
-            Result(events, null)
+            queryEvents(cids).also { resultChatEvent ->
+                if (resultChatEvent.isSuccess) {
+                    eventHandler.updateOfflineStorageFromEvents(resultChatEvent.data())
+                    syncState?.let { it.lastSyncedAt = now }
+                }
+            }
         } else {
             Result(emptyList(), null)
         }
