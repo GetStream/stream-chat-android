@@ -108,6 +108,7 @@ public class ChatClient internal constructor(
             return
         }
         state.user = user
+        // TODO: fire a handler here that the chatDomain can tie into
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
@@ -291,6 +292,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+        // TODO: fire a handler here that the chatDomain can tie into
         connectionListener = null
         socket.disconnect()
         state.reset()
