@@ -26,8 +26,14 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
 
     state.observe(lifecycleOwner) { state ->
-        if (state is MessageListViewModel.State.Result) {
-            view.displayNewMessage(state.messageListItem)
+        when (state) {
+            is MessageListViewModel.State.Loading -> {
+                view.showLoadingView()
+            }
+            is MessageListViewModel.State.Result -> {
+                view.displayNewMessage(state.messageListItem)
+                view.hideLoadingView()
+            }
         }
     }
 }

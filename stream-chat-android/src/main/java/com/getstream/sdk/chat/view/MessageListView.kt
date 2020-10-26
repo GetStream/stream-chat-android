@@ -3,12 +3,15 @@ package com.getstream.sdk.chat.view
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.Chat
@@ -52,6 +55,9 @@ import io.getstream.chat.android.client.models.User
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
+
+private val LOADING_VIEW_ID = R.id.message_list_loading_view_id
+
 public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
@@ -71,6 +77,10 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var loadingView: View
+    private lateinit var loadingViewContainer: ViewGroup
+    private lateinit var emptyStateView: View
+    private lateinit var emptyStateViewContainer: ViewGroup
 
     public var unseenButtonEnabled: Boolean = true
 
@@ -214,6 +224,7 @@ public class MessageListView : ConstraintLayout {
         initRecyclerView()
         initUnseenMessagesButton()
         initUnseenMessagesView()
+        initLoadingView()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -225,6 +236,16 @@ public class MessageListView : ConstraintLayout {
 
         buffer.subscribe(::handleNewWrapper)
         buffer.active()
+    }
+
+    private fun initLoadingView() {
+        loadingView = binding.defaultProgressbar
+        loadingViewContainer = binding.loadingViewContainer
+    }
+
+    private fun initEmptyStateView() {
+        emptyStateView = binding.defaultEmptyStateView
+        emptyStateViewContainer = binding.emptyStateViewContainer
     }
 
     private fun initScrollButtonBehaviour() {
@@ -389,6 +410,34 @@ public class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
+    public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
+        loadingViewContainer.removeView(loadingView)
+        loadingView = view.apply { id = LOADING_VIEW_ID }
+        loadingViewContainer.addView(loadingView, layoutParams)
+    }
+
+    public fun showLoadingView() {
+        loadingViewContainer.isVisible = true
+    }
+
+    public fun hideLoadingView() {
+        loadingViewContainer.isVisible = false
+    }
+
+    public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
+        emptyStateViewContainer.removeView(emptyStateView)
+        emptyStateView = view.apply { id = LOADING_VIEW_ID }
+        emptyStateViewContainer.addView(emptyStateView, layoutParams)
+    }
+
+    public fun showEmptyStateView() {
+        emptyStateView.isVisible = true
+    }
+
+    public fun hideEmptyStateView() {
+        emptyStateView.isVisible = false
+    }
+
     public fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {
         this.scrollButtonBehaviour = scrollButtonBehaviour
     }
@@ -447,6 +496,12 @@ public class MessageListView : ConstraintLayout {
     public fun scrollToBottom() {
         layoutManager.scrollToPosition(adapter.itemCount - 1)
     }
+
+    private fun defaultChildLayoutParams() = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT,
+        Gravity.CENTER
+    )
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()

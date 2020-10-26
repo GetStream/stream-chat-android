@@ -1,7 +1,9 @@
 package io.getstream.chat.sample.feature.channels
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -15,6 +17,7 @@ import com.getstream.sdk.chat.viewmodel.channels.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.navigateSafely
+import kotlinx.android.synthetic.main.fragment_channel.*
 import kotlinx.android.synthetic.main.fragment_channels.*
 
 class ChannelsFragment : Fragment(R.layout.fragment_channels) {

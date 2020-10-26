@@ -79,5 +79,6 @@
 
     <!--Channels list view -->
     <string name="stream_channels_empty_state_label">No channels available</string>
+    <string name="messages_empty_state_label">No messages</string>
 
 </resources>
