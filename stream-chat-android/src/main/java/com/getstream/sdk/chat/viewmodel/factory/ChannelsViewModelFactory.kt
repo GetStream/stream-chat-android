@@ -9,7 +9,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
-@Suppress("UNCHECKED_CAST")
 /**
  * Creates a channels view model factory
  *
@@ -27,7 +26,13 @@ public class ChannelsViewModelFactory(
     ),
     private val sort: QuerySort = ChannelsViewModel.DEFAULT_SORT,
     private val limit: Int = 30
-) : ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T =
-        ChannelsViewModelImpl(ChatDomain.instance(), filter, sort, limit) as T
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        require(modelClass == ChannelsViewModel::class) {
+            "ChannelsViewModelFactory can only create instances of ChannelsViewModel"
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return ChannelsViewModelImpl(ChatDomain.instance(), filter, sort, limit) as T
+    }
 }
