@@ -10,7 +10,7 @@ apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: "com.hiya.jacoco-android"
 
-group = 'com.github.getstream'
+group = Configuration.artifactGroup
 version = Configuration.versionName
 
 android {
@@ -20,7 +20,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "0.8.6"
+        versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
