@@ -40,7 +40,7 @@ public interface ChannelsViewModel {
     }
 }
 
-public class ChannelsViewModelImpl(
+internal class ChannelsViewModelImpl(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
     private val sort: QuerySort = DEFAULT_SORT,
