@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.api.QueryChannelsResponse
 import io.getstream.chat.android.client.api.models.AcceptInviteRequest
 import io.getstream.chat.android.client.api.models.ChannelResponse
 import io.getstream.chat.android.client.api.models.CompletableResponse
@@ -9,6 +8,7 @@ import io.getstream.chat.android.client.api.models.HideChannelRequest
 import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsResponse
 import io.getstream.chat.android.client.api.models.RejectInviteRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.events.MessageReadEvent
