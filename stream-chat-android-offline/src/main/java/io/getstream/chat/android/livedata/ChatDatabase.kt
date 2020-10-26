@@ -5,13 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import io.getstream.chat.android.livedata.converter.ChannelsQuerySortConverter
 import io.getstream.chat.android.livedata.converter.ConfigConverter
 import io.getstream.chat.android.livedata.converter.DateConverter
 import io.getstream.chat.android.livedata.converter.ExtraDataConverter
 import io.getstream.chat.android.livedata.converter.FilterObjectConverter
 import io.getstream.chat.android.livedata.converter.ListConverter
 import io.getstream.chat.android.livedata.converter.MapConverter
-import io.getstream.chat.android.livedata.converter.ChannelsQuerySortConverter
 import io.getstream.chat.android.livedata.converter.SetConverter
 import io.getstream.chat.android.livedata.converter.SyncStatusConverter
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
@@ -39,7 +39,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
         ChannelConfigEntity::class,
         SyncStateEntity::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = false
 )
 

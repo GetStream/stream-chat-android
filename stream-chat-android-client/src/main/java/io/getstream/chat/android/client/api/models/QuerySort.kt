@@ -65,6 +65,9 @@ public class QuerySort<T> {
         private const val ASC = 1
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
+
+        public inline fun <reified T> QuerySort<T>.asc(fieldName: String): QuerySort<T> = asc(fieldName, T::class.java)
+        public inline fun <reified T> QuerySort<T>.desc(fieldName: String): QuerySort<T> = desc(fieldName, T::class.java)
     }
 
     public enum class SortDirection(public val value: Int) {
