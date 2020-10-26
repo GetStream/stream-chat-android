@@ -63,6 +63,7 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var loadMoreListener: EndlessScrollListener
 
     public var unseenButtonEnabled: Boolean = true
 
@@ -103,6 +104,8 @@ public class MessageListView : ConstraintLayout {
      * If you are allowed to scroll up or not
      */
     private var lockScrollUp = true
+
+    private var loadMoreThreshold = 0
 
     private val logger = ChatLogger.get("MessageListView")
 
@@ -268,6 +271,12 @@ public class MessageListView : ConstraintLayout {
             true
         )
 
+        loadMoreThreshold = tArray.getInteger(
+            R.styleable.MessageListView_streamLoadMoreThreshold,
+            context.resources.getInteger(R.integer.stream_load_more_threshold)
+        )
+        require(loadMoreThreshold >= 0) { "streamLoadMoreThreshold value must not be negative" }
+
         binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
 
         if (!unseenButtonEnabled) {
@@ -300,7 +309,18 @@ public class MessageListView : ConstraintLayout {
         return adapter.itemCount - 1
     }
 
+    public fun setLoadingMore(loadingMore: Boolean) {
+        if (::loadMoreListener.isInitialized) {
+            loadMoreListener.enabled = !loadingMore
+        }
+    }
+
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
+        loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
+            endRegionReachedHandler()
+        }
+        binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
+
         binding.chatMessagesRV.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -310,9 +330,6 @@ public class MessageListView : ConstraintLayout {
 
                     val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
                     val currentLastVisible = layoutManager.findLastVisibleItemPosition()
-                    if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
-                        endRegionReachedHandler.invoke()
-                    }
 
                     hasScrolledUp = currentLastVisible < lastPosition()
                     lastVisiblePosition = currentLastVisible
