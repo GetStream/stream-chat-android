@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.api.models.GetReactionsResponse
 import io.getstream.chat.android.client.api.models.GetRepliesResponse
 import io.getstream.chat.android.client.api.models.GetSyncHistory
 import io.getstream.chat.android.client.api.models.GetSyncHistoryResponse
-import io.getstream.chat.android.client.api.models.GuestUserRequest
 import io.getstream.chat.android.client.api.models.HideChannelRequest
 import io.getstream.chat.android.client.api.models.MarkReadRequest
 import io.getstream.chat.android.client.api.models.MessageRequest
@@ -35,7 +34,6 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesResponse
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.SendEventRequest
-import io.getstream.chat.android.client.api.models.TokenResponse
 import io.getstream.chat.android.client.api.models.TranslateMessageRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
@@ -208,12 +206,6 @@ internal interface RetrofitApi {
         @Query("connection_id") connectionId: String,
         @Body body: UpdateUsersRequest
     ): RetrofitCall<UpdateUsersResponse>
-
-    @POST("/guest")
-    fun getGuestUser(
-        @Query("api_key") apiKey: String,
-        @Body body: GuestUserRequest
-    ): RetrofitCall<TokenResponse>
 
     @GET("/users")
     fun queryUsers(
