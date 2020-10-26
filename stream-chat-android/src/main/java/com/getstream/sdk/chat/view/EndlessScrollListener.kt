@@ -18,7 +18,7 @@ internal class EndlessScrollListener(
         }
         val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
         layoutManager?.let {
-            if (scrollStateReset && it.findFirstVisibleItemPosition() < loadMoreThreshold) {
+            if (scrollStateReset && it.findFirstVisibleItemPosition() <= loadMoreThreshold) {
                 scrollStateReset = false
                 recyclerView.post {
                     if (enabled) {
