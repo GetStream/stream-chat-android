@@ -1,5 +1,12 @@
 # To be released:
 ## stream-chat-anddroid
+
+## stream-chat-android-client
+
+## stream-chat-android-offline
+
+# Oct 26th, 2020 - 4.4.0
+## stream-chat-anddroid
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
 - Add message sending/sent indicators in `MessageListView`
