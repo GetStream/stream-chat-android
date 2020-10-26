@@ -17,6 +17,15 @@
 - Add possibility to replace default FileUploader
 - Fix anonymous user authentication
 
+## stream-chat-android-offline
+- Channel list now correctly updates when you send a new message while offline. This fixes https://github.com/GetStream/stream-chat-android/issues/698
+- Channels now stay sorted based on the QuerySort order (previous behaviour was to sort them once)
+- New messages now default to type "regular" or type "ephemeral" if they start with a /
+- Improved error logging on sendMessage & sendReaction
+- Fixed a race condition that in rare circumstances could cause the channel list to show stale (offline) data
+- Fixed a bug with channel.hidden not working correctly
+- Fixed crash with absence of user in the UserMap
+
 # Oct 19th, 2020 - 4.3.1-beta-2 (stream-chat-android)
 - Allow setting custom `NotificationHandler` in `Chat.Builder`
 - Fix unresponsive attachment upload buttons
@@ -34,6 +43,14 @@
 - `MessageListView.BubbleHelper`'s methods now have nullability annotations, and use primitive `boolean` values as parameters
 - Update Offline Support to the [last version](https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.6)
 
+# Oct 16th, 2020 - 0.8.6 (stream-chat-android-offline)
+- Improve sync data validation in ChatDomain.Builder
+- Removed many internal implementation classes and methods from the SDK's public API
+- Significant performance improvements to offline storage
+- Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps
+- Fix QuerySort 
+- Update client to 1.16.8: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.8
+
 # 1.16.8 - Fri 16th of Oct 2020 (stream-chat-android-client)
 - Add `lastUpdated` property to `Channel`
 
@@ -49,6 +66,15 @@
 - Removed many internal implementation classes and methods from the SDK's public API
 - Improved nullability, restricted many generic type parameters to be non-nullable (set `Any` as their upper bound)
 - Use AttachmentsHelper to validate imageUrl instead of just url.
+
+# Oct 14th, 2020 - 0.8.5 (stream-chat-android-offline)
+- Use `createdLocallyAt` and `updatedLocallyAt` properties in ChannelController and ThreadController
+- Update attachments of message with an old image url, if it's still valid.
+- Set attachment fields even if the file upload fails
+- Fix NPE while ChatEvent was handled
+- Improved nullability, restricted some generic type parameters to be non-nullable (set `Any` as their upper bound)
+- Fix method to store date of the last message received into a channel
+- Update client to 1.16.7: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.7
 
 # Oct 9th, 2020 - 4.3.0-beta-5 (stream-chat-android)
 - Improve selecting non-media attachments
@@ -69,10 +95,21 @@
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.4
 
+# Oct 7th, 2020 - 0.8.4 (stream-chat-android-offline)
+- Update client to 1.16.5: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.5
+
 # 1.16.5 - Wed 7th of Oct 2020 (stream-chat-android-client)
 - Add autocomplete filter
 - Add @JvmOverloads to QueryUsersRequest constructor
 - Improve java interop of `TokenManager`
+
+# Oct 5th, 2020 - 0.8.3 (stream-chat-android-offline)
+- Improved message attachment handling. Message is now first added to local storage and the attachment is uploaded afterwards.
+- Editing messages now works while offline
+- Deprecate SendMessageWithAttachments in favor of SendMessage while specifying attachment.upload
+- Fix a bug that caused messages not to load if member limit wasn't specified
+- Fix a crash related to reaction data structure
+- Fix a bug where network errors (temporary ones) are detected as permanent errors
 
 # 1.16.4 - Mon 5th of Oct 2020 (stream-chat-android-client)
 - Add `attachment.upload` and `attachment.uploadState` fields for livedata upload status. These fields are currently unused if you only use the low level client.
@@ -89,6 +126,9 @@
 - Moved `MessageInputView` class to a new package.
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.2
 
+# Oct 2nd, 2020 - 0.8.2 (stream-chat-android-offline)
+- Request members by default when querying channels
+
 # Sep 30th, 2020 - 4.3.0-beta-2 (stream-chat-android)
 - Removed several parameters of `BaseMessageListItemViewHolder#bind`, `Context` is now available as a property instead, others should be passed in through the `MessageViewHolderFactory` as constructor parameters
 - Attachment customization methods moved from `MessageViewHolderFactory` to a separate `AttachmentViewHolderFactory` class
@@ -96,6 +136,12 @@
 - Moved `BaseMessageListItemViewHolder` to a new package
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.1
+
+# Sep 30th, 2020 - 0.8.1 (stream-chat-android-offline)
+- Handle the new `ChannelUpdatedByUserEvent` 
+- Update client to 1.16.1: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
+- Improve online status handling
+- Replace posting an empty channels map when the channels query wasn't run online and offline storage is empty with error
 
 # 1.16.2 - Wed 30 Sep 2020 (stream-chat-android-client)
 - Add `ChatClient::enableSlowMode` method to enable slow mode
@@ -131,6 +177,13 @@ We recommend using one of these alternatives:
 - channelController.channelData livedata object provided by the livedata package (automatically updated if channel data changes)
 - channelController.toChannel() function provided by the livedata package
 
+# Sep 23rd, 2020 - 0.8.0 (stream-chat-android-offline)
+- Update client to 1.16.0: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.0
+
+# Sep 23rd, 2020 - 0.7.7 (stream-chat-android-offline)
+- Fix crash when map channels DB entity to Channel
+- Add posting empty channels map when queryChannels fails either offline and online which prevents infinite loader
+
 # 1.15.6 - Wed 23 Sep 2020 (stream-chat-android-client)
 - Convert ChatError to plain class. Changes in ChatLogger interface.
 - Update events fields related to read status - remove "unread_messages" field and add "unread_channels" to NewMessageEvent, NotificationMarkReadEvent, and NotificationMessageNewEvent
@@ -157,13 +210,35 @@ We recommend using one of these alternatives:
 - Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.7.6
 
+# Sep 18th, 2020 - 0.7.6 (stream-chat-android-offline)
+- Store needed users in DB
+- Stop trying to execute background sync in case ChatDomain.offlineEnabled is set to false
+- Fix Socket Connection/Reconnection
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.5
+
 # 1.15.5 - Fri 18 Sep 2020 (stream-chat-android-client)
 - Fix Socket Connection/Reconnection
+
+# Sep 15th, 2020 - 0.7.5 (stream-chat-android-offline)
+- Fix offline support for adding and removing reactions
+- Fix crash when creating a channel while channel.createdBy is not set
+
+# Sep 14th, 2020 - 0.7.4 (stream-chat-android-offline)
+- Remove duplicates of new channels
+- Improve tests
+- Remove some message's properties that are not used anymore GetStream/stream-chat-android-client#69
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.4
 
 # 1.15.4 - Fri 11 Sep 2020 (stream-chat-android-client)
 - Fix Socket Disconnection
 - Remove useless message's properties (isStartDay, isYesterday, isToday, date, time and commandInfo)
 - Forbid setting new user when previous one wasn't disconnected
+
+# Sep 8th, 2020 - 0.7.3 (stream-chat-android-offline)
+- Add usecase to send Giphy command
+- Add usecase to shuffle a Gif on Giphy command message
+- Add usecase to cancel Giphy Command
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.3
 
 # 1.15.3 - Tue 7 Sep 2020 (stream-chat-android-client)
 - Add send action operation to ChannelController
@@ -193,6 +268,17 @@ We recommend using one of these alternatives:
 - Update RecyclerView Lib
 - Update Notification Customization
 
+# Aug 28th, 2020 - 0.7.2 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.1
+
+# Aug 28th, 2020 - 0.7.1 (stream-chat-android-offline)
+- Keep order when retry to send a message
+- Fix message sync logic and message sending success event emitting
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.15.0
+
+# Aug 20th, 2020 - 0.7.0 (stream-chat-android-offline)
+- Update to version 0.7.0
+
 # 1.15.0 - Thu 20 Aug 2020 (stream-chat-android-client)
 - Refactor ChatEvents Structure
 
@@ -216,6 +302,9 @@ We recommend using one of these alternatives:
 - Fix Fresco initialization
 - Fix method to add/remove reaction
 
+# Aug 3nd, 2020 - 0.6.9 (stream-chat-android-offline)
+- Fix `QuerySort`
+
 # 1.13.0 - Tue 28 Jul 2020 (stream-chat-android-client)
 - Add `Client.flagUser()` method to flag an User
 - Add `Client.flagMessage()` method to flag a Message
@@ -225,6 +314,9 @@ We recommend using one of these alternatives:
 - Fix NPE on TokenManagerImpl
 - Upgrade Kotlin to version 1.3.72
 - Add Kotlin Proguard Rules
+
+# Jul 20th, 2020 - 0.6.8 (stream-chat-android-offline)
+- Fix `NotificationAddedToChannelEvent` event handling
 
 # 1.12.2 - Fri 17 Jul 2020 (stream-chat-android-client)
 - Add customer proguard rules
@@ -251,6 +343,10 @@ We recommend using one of these alternatives:
 # 1.11.0 - Mon 06 Jul 2020 (stream-chat-android-client)
 - Fix message mentioned users
 
+# Jul 3nd, 2020 - 0.6.7 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.10.0
+- Implement Thread Behavior
+
 # 1.10.0 - Wed 29 June 2020 (stream-chat-android-client)
 - Add mute and unmute channels
 - Add `notification.channel_mutes_updated` socket even handling
@@ -260,6 +356,9 @@ We recommend using one of these alternatives:
 
 # 1.9.3 - Wed 29 June 2020 (stream-chat-android-client)
 - Add raw socket events logging. See with tag `Chat:Events`
+
+# Jun 24th, 2020 - 0.6.6 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.9.2
 
 # 1.9.2 - Wed 24 June 2020 (stream-chat-android-client)
 - Add `show_in_channel` attribute to `Message` entity
@@ -277,11 +376,24 @@ We recommend using one of these alternatives:
 - Fix inhered events parsing
 - Fix custom url setter of ChatClient.Builder
 
+# Jun 16th, 2020 - 0.6.5 (stream-chat-android-offline)
+- Fixed crash caused by `NotificationMarkReadEvent.user` value being sent null.
+- Solution: using the current user which was set to the ChatDomain instead of relying on event's data.
+
 # 1.8.0 - Thu 12 June 2020 (stream-chat-android-client)
 - Add sync api call
 
+# Jun 12th, 2020 - 0.6.4 (stream-chat-android-offline)
+- Add attachment.type when upload a file or image
+
 # 1.7.0 - Thu 12 June 2020 (stream-chat-android-client)
 - Add query members call
+
+# Jun 11th, 2020 - 0.6.3 (stream-chat-android-offline)
+- Create a new UseCase to send messages with attachments
+
+# Jun 11th, 2020 - 0.6.2 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.6.1
 
 # 1.6.1 - Thu 11 June 2020 (stream-chat-android-client)
 - Add MimeType on sendFile and sendImage methods
@@ -308,8 +420,18 @@ We recommend using one of these alternatives:
 # 1.5.2 - Tue 2 June 2020 (stream-chat-android-client)
 - Fix `ConcurrentModificationException` on multithread access to socket listeners
 
+# May 30th, 2020 - 0.6.1 (stream-chat-android-offline)
+- Use the new low level client syntax for creating a channel with members
+- Fallback to a default channel config if the real channel config isn't available yet. This fixes GetStream/stream-chat-android#486
+
+# May 27th, 2020 - 0.6.0 (stream-chat-android-offline)
+- Update client to the latest version: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.5.0
+
 # 1.5.1 - Wed 27 May 2020 (stream-chat-android-client)
 - Add filter contains with any value
+
+# May 26th, 2020 - 0.5.2 (stream-chat-android-offline)
+- Test cases for notification removed from channel had the wrong data structure. This caused a crash when this event was triggered.
 
 # 1.5.0 - Mon 26 May 2020 (stream-chat-android-client)
 🚨 Breaking change:
@@ -323,9 +445,26 @@ We recommend using one of these alternatives:
 - Fix loop on client.create
 - Fix crash when backend sends first event without me
 
+# May 25th, 2020 - 0.5.1 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.4.16
+
 # 1.4.16 - Mon 25 May 2020 (stream-chat-android-client)
 Breaking change:
 - `Command` fields are mandatory and marked as non-nullable
+
+# May 24th, 2020 - 0.5.0 (stream-chat-android-offline)
+Livedata now supports all events exposed by the chat API. The 3 new events are:
+- Channel truncated
+- Notification channel truncated
+- Channel Deleted
+This release also improves how new channels are created.
+
+# May 23rd, 2020 - 0.4.8 (stream-chat-android-offline)
+- NotificationMessageNew doesn't specify event.message.cid, this was causing issues with offline storage. The test suite has been updated and the issue is now resolved. Also see: GetStream/stream-chat-android#490
+
+# May 23rd, 2020 - 0.4.7 (stream-chat-android-offline)
+- Fixed NPE on MemberRemoved event GetStream/stream-chat-android#476
+- Updates low level client to fix GetStream/stream-chat-android#492
 
 # 1.4.15 - Fri 22 May 2020 (stream-chat-android-client)
 - Add events: `ChannelTruncated`, `NotificationChannelTruncated`, `NotificationChannelDeleted`
@@ -337,6 +476,9 @@ Breaking change:
 # 1.4.12 - Fri 22 May 2020 (stream-chat-android-client)
 🚨 Breaking change:
 - `Member` model is cleaned up from non existing fields
+
+# May 20th, 2020 - 0.4.6 (stream-chat-android-offline)
+- Update client to the latest version. See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.4.11
 
 # 1.4.11 - Tue 19 May 2020 (stream-chat-android-client)
 🚨 Breaking change:
@@ -359,8 +501,17 @@ Breaking change:
 # 1.4.8 - Mon 18 May 2020 (stream-chat-android-client)
 - Add handling invalid event payload
 
+# May 16th, 2020 - 0.4.5 (stream-chat-android-offline)
+- Improved handling of unread counts. Fixes GetStream/stream-chat-android#475
+
+# May 16th, 2020 - 0.4.4 (stream-chat-android-offline)
+- GetStream/stream-chat-android#476
+
 ## May 15th, 2020 - 4.2.10-beta (stream-chat-android)
 - Update to the latest livedata: 0.6.1
+
+# May 15th, 2020 - 0.4.3 (stream-chat-android-offline)
+- Resolves this ticket: GetStream/stream-chat-android#479
 
 ## May 29th, 2020 - 4.2.9-beta-3 (stream-chat-android)
 - Fix AttachmentViewHolder crash when user sends message with plain/no-media url
@@ -385,12 +536,45 @@ Breaking change:
 - Glide Redirect issues resolved
 - Bugfix release for livedata, updated to 0.4.2
 
+# May 13th, 2020 - 0.4.2 (stream-chat-android-offline)
+-NotificationAddedToChannelEvent cid parsing didn't work correctly. This has been fixed in 0.4.2
+
+# May 13th, 2020 - 0.4.1 (stream-chat-android-offline)
+- There was an issue with the 0.4.0 and the data structure for NotificationMarkRead
+
+# May 13th, 2020 - 0.4.0 (stream-chat-android-offline)
+## Features:
+- Massive improvement to javadoc/dokka
+- Support for user ban events. Exposed via chatDomain.banned
+- Muted users are available via chatDomain.muted
+- Support for notificationMarkRead, invite and removed from channel events
+- Support for deleting channels
+- Support for silent messages
+- Creating channels with both members and additional data works now
+- User presence is enabled
+
+##Bugfixes:
+- No longer denormalizing channelData.lastMessageAt
+- Fixed an issue with channel event handling and the usage of channel.id vs channel.cid
+- Changed channelData.createdBy from lateinit to a regular field
+
+##Other:
+- Moved from Travis to Github actions
+
 # 1.4.5 - Tue 12 May 2020 (stream-chat-android-client)
 - add message.silent field
 - add extension properties `name` and `image` to `Channel` and `User`
 
 ## March 11th, 2020 - 3.6.5 (stream-chat-android)
 - Fix reaction score parser casting exception
+
+# May 8th, 2020 - 0.3.4 (stream-chat-android-offline)
+- added support for muting users
+- store the current user in offline storage
+- performance tests
+- removed launcher icons from lib
+- forward compatibility with new event sync endpoint
+- support for reaction scores
 
 # 1.4.3 - Thu 7 May 2020 (stream-chat-android-client)
 - fix type erasure of parsed collections: `LinkedTreeMap`, but not `List<Reaction>`
@@ -399,6 +583,12 @@ Breaking change:
 - add `reactionScores` to `Message`
 - fix null write crash of CustomObject nullable field
 - fix extraData duplicated fields
+
+# May 2nd, 2020 - 0.3.1 (stream-chat-android-offline)
+- Make the channel unread counts easily accessible via channel.unreadCount
+- Support for muting users
+- Detection for permanent vs temporary errors (which helps improve retry logic)
+- Bugfix: Fixes edge cases where recovery flow runs before the existing API calls complete
 
 # 1.4.0 - Fri 1 May 2020 (stream-chat-android-client)
 - fix `QueryChannelRequest` when `withMessages/withMembers` is called, but messages were not returned
@@ -414,6 +604,18 @@ Breaking change:
 - fix expired token case on socket connection
 - fix client crash if TokenProvider throws an exception
 
+# Apr 29th, 2020 - 0.3.0 (stream-chat-android-offline)
+- Handle edge cases where events are received out of order
+- KTlint, travis and coverage reporting
+- Interfaces for use cases and controllers for easier testing
+- Channel data to isolate channel data vs rest of channel state
+- Java version of code examples
+- Handle edge cases for channels with more than 100 members
+- Test coverage on mark read
+- Bugfix queryChannelsController returning duplicate channels
+- Support for hiding and showing channels
+- Full offline pagination support (including the difference between GTE and GT filters)
+
 # 1.2.2 - Wed 29 Apr 2020 (stream-chat-android-client)
 🚨 Breaking changes:
 - fields of models are moved to constructors: `io.getstream.chat.android.client.models`
@@ -422,6 +624,18 @@ Breaking change:
 ✅ Other changes
 - added local error codes with descriptions: `io.getstream.chat.android.client.errors.ChatErrorCode`
 - fix uncaught java.lang.ExceptionInInitializerError while parsing custom object
+
+# Apr 22nd, 2020 - 0.2.1 (stream-chat-android-offline)
+- Better handling for missing cids
+
+# Apr 22nd, 2020 - 0.2.0 (stream-chat-android-offline)
+- Test suite > 100 tests
+- Sample app (stream-chat-android) works
+- Full offline sync for channels, messages and reactions
+- Easy to use livedata objects for building your own UI
+
+# Apr 22nd, 2020 - 0.1.0 (stream-chat-android-offline)
+- First Release
 
 ## March 3rd, 2020 - 3.6.5 (stream-chat-android)
 - Fix crash on sending Google gif
