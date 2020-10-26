@@ -11,7 +11,7 @@ import io.getstream.chat.android.livedata.converter.ExtraDataConverter
 import io.getstream.chat.android.livedata.converter.FilterObjectConverter
 import io.getstream.chat.android.livedata.converter.ListConverter
 import io.getstream.chat.android.livedata.converter.MapConverter
-import io.getstream.chat.android.livedata.converter.QuerySortConverter
+import io.getstream.chat.android.livedata.converter.ChannelsQuerySortConverter
 import io.getstream.chat.android.livedata.converter.SetConverter
 import io.getstream.chat.android.livedata.converter.SyncStatusConverter
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
@@ -45,7 +45,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 
 @TypeConverters(
     FilterObjectConverter::class,
-    QuerySortConverter::class,
+    ChannelsQuerySortConverter::class,
     ExtraDataConverter::class,
     ListConverter::class,
     MapConverter::class,

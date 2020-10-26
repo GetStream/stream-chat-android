@@ -36,14 +36,14 @@ public interface ChannelsViewModel {
 
     public companion object {
         @JvmField
-        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
+        public val DEFAULT_SORT: QuerySort<Channel> = QuerySort<Channel>().desc(Channel::lastUpdated)
     }
 }
 
 public class ChannelsViewModelImpl(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
-    private val sort: QuerySort = DEFAULT_SORT,
+    private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ChannelsViewModel, ViewModel() {
     private val channelsData: LiveData<ChannelsViewModel.State>

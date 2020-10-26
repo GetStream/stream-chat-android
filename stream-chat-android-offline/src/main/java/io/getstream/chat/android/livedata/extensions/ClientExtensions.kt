@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.PerformanceHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
 
 private const val EQUAL_ON_COMPARISON = 0
 
@@ -138,49 +137,24 @@ public fun ChatError.isPermanent(): Boolean {
     return isPermanent
 }
 
-internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
+internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> = asSequence().
     let {
         val comparator = PerformanceHelper.task("Get comparator") { pagination.sort.comparator }
         PerformanceHelper.task("Sorting") { sortedWith(comparator) }
     }.drop(pagination.channelOffset).take(pagination.channelLimit).toList()
 
-internal val QuerySort.comparator: Comparator<in Channel>
-    get() =
-        CompositeComparator(
-            data.mapNotNull {
-                val comparator = PerformanceHelper.task("getComparator") { it.comparator as? Comparator<Channel> }
-                comparator
-            }
-        )
+internal val QuerySort<Channel>.comparator: Comparator<in Channel>
+    get() = CompositeComparator(this.sortSpecifications.mapNotNull { it.comparator as? Comparator<Channel> })
 
-private val snakeRegex = "_[a-zA-Z]".toRegex()
+internal val QuerySort.FieldSortSpecification<Channel>.comparator: Comparator<in Channel>?
+    get() = this.field.comparator(this.sortDirection)
 
-/**
- * turns created_at into createdAt
- */
-internal fun String.snakeToLowerCamelCase(): String {
-    return snakeRegex.replace(this) {
-        it.value.replace("_", "")
-            .toUpperCase()
-    }
-}
-
-internal val Map<String, Any>.comparator: Comparator<in Channel>?
-    get() =
-        (this["field"] as? String)?.let { fieldName ->
-            (this["direction"] as? Int)?.let { sortDirection ->
-                Channel::class.declaredMemberProperties
-                    .find { it.name == fieldName.snakeToLowerCamelCase() }
-                    ?.comparator(sortDirection)
-            }
-        }
-
-internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<Channel>? =
+internal fun KProperty1<Channel, out Comparable<*>?>?.comparator(sortDirection: QuerySort.SortDirection): Comparator<Channel>? =
     this?.let { compareProperty ->
         Comparator { c0, c1 ->
             (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
                 (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
-                    a.compareTo(b) * sortDirection
+                    a.compareTo(b) * sortDirection.value
                 }
             } ?: EQUAL_ON_COMPARISON
         }

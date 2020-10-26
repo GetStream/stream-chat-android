@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelMute
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.Filters
@@ -214,7 +215,7 @@ fun queryUsers2() {
     val filter = Filters.`in`("id", listOf("jessica"))
     val offset = 0
     val limit = 10
-    val sort = QuerySort().desc("last_active")
+    val sort = QuerySort<User>().desc(User::lastActive)
 
     val request = QueryUsersRequest(filter, offset, limit, sort)
 
@@ -479,7 +480,7 @@ fun queryChannels() {
         .put("type", "messaging")
     val offset = 0
     val limit = 10
-    val sort = QuerySort().desc("last_message_at")
+    val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
     val request = QueryChannelsRequest(filter, offset, limit, sort)
     request.watch = true
     request.state = true
@@ -640,7 +641,7 @@ fun queryMuted() {
     val offset = 0
     val limit = 10
     val messageLimit = 0
-    val sort = QuerySort()
+    val sort = QuerySort<Channel>()
 
     val mutedFiler = Filters.eq("muted", false)
 

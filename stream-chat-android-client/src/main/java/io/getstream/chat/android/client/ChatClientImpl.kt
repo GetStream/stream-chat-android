@@ -154,7 +154,7 @@ internal class ChatClientImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort,
+        sort: QuerySort<Member>,
         members: List<Member>
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)

@@ -21,7 +21,7 @@ public interface QueryChannelsController {
     /**
      * The sort used for this query
      */
-    public val sort: QuerySort
+    public val sort: QuerySort<Channel>
     /**
      * When the NotificationAddedToChannelEvent is triggered the newChannelEventFilter
      * determines if the channel should be added to the query or not.

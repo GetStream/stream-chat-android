@@ -480,7 +480,7 @@ internal class ChatDomainImpl private constructor(
      */
     fun queryChannels(
         filter: FilterObject,
-        sort: QuerySort
+        sort: QuerySort<Channel>
     ): QueryChannelsControllerImpl =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             QueryChannelsControllerImpl(
@@ -534,7 +534,7 @@ internal class ChatDomainImpl private constructor(
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(
                 QueryChannelsPaginationRequest(
-                    QuerySort(),
+                    QuerySort<Channel>(),
                     INITIAL_CHANNEL_OFFSET,
                     CHANNEL_LIMIT,
                     MESSAGE_LIMIT,

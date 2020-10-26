@@ -210,8 +210,8 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
 
     private fun getQueryUserRequest(): QueryUsersRequest {
         val filter = FilterObject("type", "messaging")
-        val sort = QuerySort()
-            .asc("last_active")
+        val sort = QuerySort<User>()
+            .asc(User::lastActive)
         // return QueryUsers(0, 10, filter, sort)
         return QueryUsersRequest(filter, 0, 10)
     }

@@ -10,13 +10,13 @@ import java.util.ArrayList
 
 internal class QuerySortAdapter(
     private val gson: Gson
-) : TypeAdapter<QuerySort>() {
-    override fun write(out: JsonWriter, value: QuerySort?) {
+) : TypeAdapter<QuerySort<*>>() {
+    override fun write(out: JsonWriter, value: QuerySort<*>?) {
         val adapter = gson.getAdapter(ArrayList::class.java)
-        adapter.write(out, value?.data as? ArrayList<*>)
+        adapter.write(out, value?.toMap() as? ArrayList<*>)
     }
 
-    override fun read(`in`: JsonReader?): QuerySort? {
+    override fun read(`in`: JsonReader?): QuerySort<*>? {
         throw IOException("QuerySort must not be deserialized")
     }
 }

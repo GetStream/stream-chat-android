@@ -73,8 +73,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     private val disposables = mutableListOf<Disposable>()
     lateinit var client: ChatClient
 
-    val filter = FilterObject("type", "messaging")
-    val sort = QuerySort().asc("created_at")
     val request = QueryChannelRequest().withWatch().withMessages(10)
     val stagingEndpoint = "chat-us-east-staging.stream-io-api.com"
 
