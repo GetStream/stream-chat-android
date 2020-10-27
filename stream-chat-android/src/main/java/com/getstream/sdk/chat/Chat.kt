@@ -82,5 +82,9 @@ public interface Chat {
         @JvmStatic
         public fun getInstance(): Chat = instance
             ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
+
+        @JvmStatic
+        public fun instance(): Chat = instance
+            ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
     }
 }
