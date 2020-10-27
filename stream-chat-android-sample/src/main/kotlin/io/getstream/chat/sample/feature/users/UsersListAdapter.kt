@@ -1,16 +1,16 @@
 package io.getstream.chat.sample.feature.users
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.user.User
-import kotlinx.android.synthetic.main.item_user.view.*
+import io.getstream.chat.sample.databinding.ItemUserBinding
 
-class UsersListAdapter(val listener: User.() -> Unit) : RecyclerView.Adapter<UsersListViewHolder>() {
+class UsersListAdapter(val listener: User.() -> Unit) :
+    RecyclerView.Adapter<UsersListViewHolder>() {
     private var items = mutableListOf<User>()
 
     fun setUsers(users: List<User>) {
@@ -20,8 +20,9 @@ class UsersListAdapter(val listener: User.() -> Unit) : RecyclerView.Adapter<Use
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersListViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
-        return UsersListViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemUserBinding.inflate(inflater, parent, false)
+        return UsersListViewHolder(binding)
     }
 
     override fun getItemCount(): Int = items.size
@@ -35,10 +36,13 @@ class UsersListAdapter(val listener: User.() -> Unit) : RecyclerView.Adapter<Use
     }
 }
 
-class UsersListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class UsersListViewHolder(
+    private val binding: ItemUserBinding
+) : RecyclerView.ViewHolder(binding.root) {
+
     fun bindUser(user: User) {
         itemView.apply {
-            name.text = user.name
+            binding.name.text = user.name
             Glide.with(this)
                 .load(user.image)
                 .centerCrop()
@@ -46,7 +50,7 @@ class UsersListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 .error(R.drawable.ic_avatar_placeholder)
                 .fallback(R.drawable.ic_avatar_placeholder)
                 .transform(CircleCrop())
-                .into(avatar)
+                .into(binding.avatar)
         }
     }
 }

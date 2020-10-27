@@ -1,7 +1,9 @@
 package io.getstream.chat.sample.feature.login
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,20 +15,36 @@ import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.common.trimmedText
-import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_login.loadingProgressBar
+import io.getstream.chat.sample.databinding.FragmentLoginBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginFragment : Fragment(R.layout.fragment_login) {
+class LoginFragment : Fragment() {
 
     private val viewModel: LoginViewModel by viewModel()
 
+    private var _binding: FragmentLoginBinding? = null
+    protected val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.VERSION_NAME)
-        developmentUsers.setOnClickListener {
+        binding.sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.VERSION_NAME)
+        binding.developmentUsers.setOnClickListener {
             redirectToUsersScreen()
         }
-        loginButton.setOnClickListener {
+        binding.loginButton.setOnClickListener {
             viewModel.loginButtonClicked(collectCredentials())
         }
 
@@ -55,38 +73,38 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun collectCredentials(): LoginCredentials {
         return LoginCredentials(
-            apiKey = apiKeyEditText.trimmedText,
-            userId = userIdEditText.trimmedText,
-            userToken = userTokenEditText.trimmedText,
-            userName = userNameEditText.trimmedText
+            apiKey = binding.apiKeyEditText.trimmedText,
+            userId = binding.userIdEditText.trimmedText,
+            userToken = binding.userTokenEditText.trimmedText,
+            userName = binding.userNameEditText.trimmedText
         )
     }
 
     private fun showLoading() {
-        loadingProgressBar.isVisible = true
+        binding.loadingProgressBar.isVisible = true
         clearValidationErrors()
     }
 
     private fun showErrorMessage(errorMessage: String?) {
-        loadingProgressBar.isVisible = false
+        binding.loadingProgressBar.isVisible = false
         showToast(errorMessage ?: getString(R.string.backend_error_info))
     }
 
     private fun showValidationErrors(invalidFields: List<ValidatedField>) {
-        loadingProgressBar.isVisible = false
+        binding.loadingProgressBar.isVisible = false
         invalidFields.forEach {
             when (it) {
-                ValidatedField.API_KEY -> apiKeyEditText
-                ValidatedField.USER_ID -> userIdEditText
-                ValidatedField.USER_TOKEN -> userTokenEditText
+                ValidatedField.API_KEY -> binding.apiKeyEditText
+                ValidatedField.USER_ID -> binding.userIdEditText
+                ValidatedField.USER_TOKEN -> binding.userTokenEditText
             }.error = getString(R.string.login_validation_error)
         }
     }
 
     private fun clearValidationErrors() {
-        apiKeyEditText.error = null
-        userIdEditText.error = null
-        userTokenEditText.error = null
+        binding.apiKeyEditText.error = null
+        binding.userIdEditText.error = null
+        binding.userTokenEditText.error = null
     }
 
     private fun redirectToChannelsScreen() {
