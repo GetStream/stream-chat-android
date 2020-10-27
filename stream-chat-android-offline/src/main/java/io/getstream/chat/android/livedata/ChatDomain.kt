@@ -210,11 +210,11 @@ public interface ChatDomain {
     }
 
     public companion object {
-        private lateinit var instance: ChatDomain
+        private var instance: ChatDomain?
 
         @JvmStatic
         public fun instance(): ChatDomain {
-            return instance
+            return checkNotNull(instance) {"ChatDomain.instance() isn't available yet. Be sure to call ChatDomain.build() and ChatClient.setUser() before trying to retrieve the chatDomain.instance()"}
         }
     }
 }

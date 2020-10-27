@@ -47,18 +47,6 @@ public class ChatUX internal constructor(
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler)
         }
-
-        // disconnnect when the app is stopped
-        // TODO: move this to the low level client
-        StreamLifecycleObserver(object : LifecycleHandler {
-            override fun resume() {
-                client.reconnectSocket()
-            }
-
-            override fun stopped() {
-                client.disconnectSocket()
-            }
-        })
     }
 
     public data class Builder(

@@ -1,6 +1,10 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -56,7 +60,7 @@ public class ChatClient internal constructor(
     private val notifications: ChatNotifications,
     public val offlineConfig: OfflineConfig,
     public val appContext: Context
-) {
+) : LifecycleObserver {
 
 
     private val state = ClientState()
@@ -64,7 +68,7 @@ public class ChatClient internal constructor(
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
 
-    public val disconnectListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
+    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User) -> Unit>()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
 
     init {
@@ -93,7 +97,20 @@ public class ChatClient internal constructor(
             }
         }
 
+        // disconnect when the app is stopped
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
         logger.logI("Initialised: " + getVersion())
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public fun onResume() {
+        reconnectSocket()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public fun onStopped() {
+        disconnectSocket()
     }
 
     //region Set user
