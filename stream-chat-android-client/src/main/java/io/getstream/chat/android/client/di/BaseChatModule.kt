@@ -27,8 +27,8 @@ internal open class BaseChatModule(
     private val config: ChatClientConfig
 ) {
 
-    private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
-    private val defaultParser by lazy { ChatParserImpl() }
+    private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
+    private val defaultParser: ChatParser by lazy { ChatParserImpl() }
     private val defaultNotifications by lazy {
         buildNotification(config.notificationsHandler, api())
     }
@@ -43,23 +43,23 @@ internal open class BaseChatModule(
 
     //region Modules
 
-    open fun api(): ChatApi {
+    fun api(): ChatApi {
         return defaultApi
     }
 
-    open fun socket(): ChatSocket {
+    fun socket(): ChatSocket {
         return defaultSocket
     }
 
-    open fun parser(): ChatParser {
+    fun parser(): ChatParser {
         return defaultParser
     }
 
-    open fun logger(): ChatLogger {
+    fun logger(): ChatLogger {
         return defaultLogger
     }
 
-    open fun notifications(): ChatNotifications {
+    fun notifications(): ChatNotifications {
         return defaultNotifications
     }
 
