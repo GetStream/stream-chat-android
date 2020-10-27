@@ -141,24 +141,6 @@ public fun ChatError.isPermanent(): Boolean {
     return isPermanent
 }
 
-public fun ChatClient.domain(): ChatDomain {
-
-    // The builder/config logic happens at the ChatClient level
-    val domainBuilder = ChatDomain.Builder(appContext, this).setConfig(offlineConfig)
-
-    // We use listeners to tie into the ChatClient's setUser and disconnect flow
-    //
-    // // hookup listeners for pre set User and disconnect()
-    // setPreUserConnectListener {
-    //     domainBuilder.setUser(it).build()
-    // }
-    //
-    // setDisconnectListener {
-    //     GlobalScope.launch { domain.disconnect() }
-    // }
-    return ChatDomain.instance()
-}
-
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
     sortedWith(pagination.sort.comparator).drop(pagination.channelOffset).take(pagination.channelLimit)
 
