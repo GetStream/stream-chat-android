@@ -146,11 +146,11 @@ internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginatio
 internal val QuerySort<Channel>.comparator: Comparator<in Channel>
     get() = CompositeComparator(this.sortSpecifications.mapNotNull { it.comparator as? Comparator<Channel> })
 
-internal val QuerySort.FieldSortSpecification<Channel>.comparator: Comparator<in Channel>?
-    get() = this.field.comparator(this.sortDirection)
+internal val QuerySort.SortSpecification<Channel>.comparator: Comparator<in Channel>?
+    get() = (this.sortAttribute as? QuerySort.SortAttribute.FieldSortAttribute<Channel>)?.field?.comparator(this.sortDirection)
 
-internal fun KProperty1<Channel, out Comparable<*>?>?.comparator(sortDirection: QuerySort.SortDirection): Comparator<Channel>? =
-    this?.let { compareProperty ->
+internal fun KProperty1<Channel, Comparable<*>?>.comparator(sortDirection: QuerySort.SortDirection): Comparator<Channel>? =
+    this.let { compareProperty ->
         Comparator { c0, c1 ->
             (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
                 (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->

@@ -39,7 +39,7 @@ internal class ChannelsQuerySortConverter {
 
     private fun QuerySort<*>.getListOfSpecification(): List<Map<String, String>> = sortSpecifications.map {
         mapOf(
-            KEY_FIELD_NAME to it.field.name,
+            KEY_FIELD_NAME to it.sortAttribute.name,
             KEY_SORT_DIRECTION to it.sortDirection.value.toString()
         )
     }

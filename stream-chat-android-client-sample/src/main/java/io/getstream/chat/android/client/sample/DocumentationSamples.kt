@@ -215,7 +215,7 @@ fun queryUsers2() {
     val filter = Filters.`in`("id", listOf("jessica"))
     val offset = 0
     val limit = 10
-    val sort = QuerySort<User>().desc(User::lastActive)
+    val sort = QuerySort.desc(User::lastActive)
 
     val request = QueryUsersRequest(filter, offset, limit, sort)
 
@@ -480,7 +480,7 @@ fun queryChannels() {
         .put("type", "messaging")
     val offset = 0
     val limit = 10
-    val sort = QuerySort<Channel>().desc(Channel::lastMessageAt)
+    val sort = QuerySort.desc(Channel::lastMessageAt)
     val request = QueryChannelsRequest(filter, offset, limit, sort)
     request.watch = true
     request.state = true
