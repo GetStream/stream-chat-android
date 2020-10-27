@@ -31,6 +31,11 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
                 view.showLoadingView()
             }
             is MessageListViewModel.State.Result -> {
+                if (state.messageListItem.items.isEmpty()) {
+                    view.showEmptyStateView()
+                } else {
+                    view.hideEmptyStateView()
+                }
                 view.displayNewMessage(state.messageListItem)
                 view.hideLoadingView()
             }
