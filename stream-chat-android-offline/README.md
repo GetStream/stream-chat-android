@@ -5,7 +5,7 @@
 
 # Stream Chat Livedata & Offline
 
-This repo adds offline support and livedata support to Stream's Chat SDK. 
+This module adds offline support and provides LiveData APIs to Stream's Chat SDK. 
 
 ## Offline
 
