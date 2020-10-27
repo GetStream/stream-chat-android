@@ -1,6 +1,6 @@
 # Stream Chat Livedata & Offline
 
-This module adds offline support and provides LiveData APIs to Stream's Chat SDK. 
+This module adds offline support and provides LiveData APIs to [Stream's Chat SDK](https://github.com/GetStream/stream-chat-android). 
 
 ## Offline
 
