@@ -14,13 +14,11 @@ internal class ChatModule(appContext: Context, config: ChatClientConfig) : BaseC
     }
 
     override fun clientBuilder(
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser
     ): OkHttpClient.Builder {
-        return super.clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser)
+        return super.clientBuilder(timeout, config, parser)
             .addNetworkInterceptor(StethoInterceptor())
     }
 }

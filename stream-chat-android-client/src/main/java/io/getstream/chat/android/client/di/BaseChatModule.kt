@@ -74,35 +74,31 @@ internal open class BaseChatModule(
 
     private fun buildRetrofit(
         endpoint: String,
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser
     ): Retrofit {
-        val clientBuilder = clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser)
+        val okHttpClient = clientBuilder(timeout, config, parser).build()
 
-        val builder = Retrofit.Builder()
+        val retrofitBuilder = Retrofit.Builder()
             .baseUrl(endpoint)
-            .client(clientBuilder.build())
+            .client(okHttpClient)
 
-        return parser.configRetrofit(builder).build()
+        return parser.configRetrofit(retrofitBuilder).build()
     }
 
     protected open fun clientBuilder(
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser
     ): OkHttpClient.Builder {
         return OkHttpClient.Builder()
             .followRedirects(false)
             // timeouts
-            .callTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-            .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
-            .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+            .callTimeout(timeout, TimeUnit.MILLISECONDS)
+            .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+            .readTimeout(timeout, TimeUnit.MILLISECONDS)
             // interceptors
             .addInterceptor(HeadersInterceptor(config))
             .addInterceptor(HttpLoggingInterceptor())
@@ -144,8 +140,6 @@ internal open class BaseChatModule(
         return buildRetrofit(
             config.httpUrl,
             config.baseTimeout,
-            config.baseTimeout,
-            config.baseTimeout,
             config,
             parser()
         ).create(RetrofitApi::class.java)
@@ -154,8 +148,6 @@ internal open class BaseChatModule(
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {
         return buildRetrofit(
             config.cdnHttpUrl,
-            config.cdnTimeout,
-            config.cdnTimeout,
             config.cdnTimeout,
             config,
             parser()
