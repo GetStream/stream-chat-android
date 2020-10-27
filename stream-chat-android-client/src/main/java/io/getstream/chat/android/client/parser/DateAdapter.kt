@@ -13,10 +13,10 @@ private const val DATE_FORMAT_WITHOUTH_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 internal class DateAdapter : TypeAdapter<Date>() {
 
-    private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault()).apply {
+    private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
-    private val dateFormatWithoutNanoseconds = SimpleDateFormat(DATE_FORMAT_WITHOUTH_NANOSECONDS, Locale.getDefault()).apply {
+    private val dateFormatWithoutNanoseconds = SimpleDateFormat(DATE_FORMAT_WITHOUTH_NANOSECONDS, Locale.US).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 

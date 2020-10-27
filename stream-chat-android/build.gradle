@@ -11,7 +11,7 @@ apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.github.getstream'
+group = Configuration.artifactGroup
 version = Configuration.versionName
 
 def DEFAULT_API_ENDPOINT = 'chat-us-east-1.stream-io-api.com'

@@ -4,5 +4,6 @@ object Configuration {
 	const val compileSdkVersion = 29
 	const val targetSdkVersion = 29
 	const val minSdkVersion = 21
-	const val versionName = "4.3.1-beta-2"
+	const val versionName = "4.4.0"
+	const val artifactGroup = "com.github.getstream"
 }

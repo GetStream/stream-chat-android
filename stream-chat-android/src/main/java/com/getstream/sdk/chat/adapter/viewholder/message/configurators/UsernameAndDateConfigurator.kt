@@ -75,6 +75,6 @@ internal class UsernameAndDateConfigurator(
     }
 
     private companion object {
-        val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm", Locale.ENGLISH)
+        val TIME_DATEFORMAT: DateFormat = SimpleDateFormat("HH:mm", Locale.US)
     }
 }
