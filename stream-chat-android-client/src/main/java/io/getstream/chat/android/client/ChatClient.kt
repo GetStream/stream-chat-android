@@ -64,6 +64,9 @@ public class ChatClient internal constructor(
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
 
+    public val disconnectListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
+    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
+
     init {
         eventsObservable.subscribe { event ->
 
@@ -108,7 +111,10 @@ public class ChatClient internal constructor(
             return
         }
         state.user = user
-        // TODO: fire a handler here that the chatDomain can tie into
+        // fire a handler here that the chatDomain and chatUX can use
+        for (listener in preSetUserListeners) {
+            listener(user)
+        }
         connectionListener = listener
         config.isAnonymous = false
         config.tokenManager.setTokenProvider(tokenProvider)
@@ -292,7 +298,10 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
-        // TODO: fire a handler here that the chatDomain can tie into
+        // fire a handler here that the chatDomain and chatUX can use
+        for (listener in disconnectListeners) {
+            listener(state.user)
+        }
         connectionListener = null
         socket.disconnect()
         state.reset()

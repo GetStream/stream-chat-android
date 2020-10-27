@@ -96,6 +96,16 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
 
+        init {
+            client.preSetUserListeners.add {
+                // start the db
+            }
+            client.disconnectListeners.add {
+                // disconnect the db
+            }
+
+        }
+
         private val factory: ChatDomainFactory = ChatDomainFactory()
 
         private var database: ChatDatabase? = null
@@ -168,6 +178,7 @@ public interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+            // TODO: we should just store the build config and listen to set user...
             if (backgroundSyncConfig != BackgroundSyncConfig.UNAVAILABLE) {
                 storeBackgroundSyncConfig(backgroundSyncConfig)
                 storeNotificationConfig(notificationConfig)
