@@ -63,7 +63,6 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private lateinit var loadMoreListener: EndlessScrollListener
 
     public var unseenButtonEnabled: Boolean = true
 
@@ -97,6 +96,10 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
+    private val loadMoreListener = EndlessScrollListener {
+        endRegionReachedHandler()
+    }
+
     private lateinit var channel: Channel
     private lateinit var currentUser: User
 
@@ -104,8 +107,6 @@ public class MessageListView : ConstraintLayout {
      * If you are allowed to scroll up or not
      */
     private var lockScrollUp = true
-
-    private var loadMoreThreshold = 0
 
     private val logger = ChatLogger.get("MessageListView")
 
@@ -261,6 +262,11 @@ public class MessageListView : ConstraintLayout {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
+        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+            R.styleable.MessageListView_streamLoadMoreThreshold,
+            context.resources.getInteger(R.integer.stream_load_more_threshold)
+        )
+
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
             R.drawable.stream_shape_round
@@ -270,12 +276,6 @@ public class MessageListView : ConstraintLayout {
             R.styleable.MessageListView_streamDefaultScrollButtonEnabled,
             true
         )
-
-        loadMoreThreshold = tArray.getInteger(
-            R.styleable.MessageListView_streamLoadMoreThreshold,
-            context.resources.getInteger(R.integer.stream_load_more_threshold)
-        )
-        require(loadMoreThreshold >= 0) { "streamLoadMoreThreshold value must not be negative" }
 
         binding.scrollBottomBtn.setBackgroundResource(backgroundRes)
 
@@ -310,17 +310,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun setLoadingMore(loadingMore: Boolean) {
-        if (::loadMoreListener.isInitialized) {
-            loadMoreListener.enabled = !loadingMore
-        }
+        loadMoreListener.paginationEnabled = !loadingMore
     }
 
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
-        loadMoreListener = EndlessScrollListener(loadMoreThreshold) {
-            endRegionReachedHandler()
-        }
         binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
-
         binding.chatMessagesRV.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
