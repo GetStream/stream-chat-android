@@ -1,10 +1,7 @@
-![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-client.svg)
-[![Build Status](https://travis-ci.com/GetStream/stream-chat-android-client.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-client)
-[![codecov](https://codecov.io/gh/GetStream/stream-chat-android-client/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-android-client)
 
 # Stream Chat Client
 
-`Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications. This library supports both Kotlin and Java usage. If you can choose we recommend using Kotlin.
+`Stream Chat Client` is the official low-level Android SDK for [Stream Chat](https://github.com/GetStream/stream-chat-android), a service for building chat and messaging applications. This library supports both Kotlin and Java usage. If you can choose we recommend using Kotlin.
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android which comes with a collection of re-usable and customizable UI components.
 
