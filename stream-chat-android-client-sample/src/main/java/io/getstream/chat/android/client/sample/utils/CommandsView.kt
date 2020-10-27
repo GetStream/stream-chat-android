@@ -9,7 +9,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
@@ -32,7 +31,6 @@ import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.R
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
 import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser

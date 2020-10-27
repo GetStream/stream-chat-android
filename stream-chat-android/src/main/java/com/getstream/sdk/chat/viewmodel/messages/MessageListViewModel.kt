@@ -12,7 +12,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.PerformanceHelper
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
 

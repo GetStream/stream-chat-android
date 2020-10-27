@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.PerformanceHelper
+import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import kotlin.reflect.KProperty1
 
@@ -137,10 +137,10 @@ public fun ChatError.isPermanent(): Boolean {
     return isPermanent
 }
 
-internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> = asSequence().
-    let {
-        val comparator = PerformanceHelper.task("Get comparator") { pagination.sort.comparator }
-        PerformanceHelper.task("Sorting") { sortedWith(comparator) }
+internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> = asSequence()
+    .let {
+        val comparator = PerformanceUtils.task("Get comparator") { pagination.sort.comparator }
+        PerformanceUtils.task("Sorting") { sortedWith(comparator) }
     }.drop(pagination.channelOffset).take(pagination.channelLimit).toList()
 
 internal val QuerySort<Channel>.comparator: Comparator<in Channel>

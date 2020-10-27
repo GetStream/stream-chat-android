@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.utils
 
 import android.util.Log
 
-public object PerformanceHelper {
+public object PerformanceUtils {
     private var tasks: Map<String, Long> = emptyMap()
 
     public fun startTask(taskName: String) {
@@ -14,7 +14,7 @@ public object PerformanceHelper {
 
     public fun stopTask(taskName: String) {
         val startTime = tasks[taskName]
-        if (startTime == null){
+        if (startTime == null) {
             log("There is no such task \"$taskName\"")
             return
         } else {
@@ -24,7 +24,7 @@ public object PerformanceHelper {
     }
 
     private fun measure(taskName: String, startTime: Long) {
-        val duration = (System.currentTimeMillis() - startTime)/ 1000.0
+        val duration = (System.currentTimeMillis() - startTime) / 1000.0
         log("Task \"$taskName\" completed for $duration seconds")
     }
 

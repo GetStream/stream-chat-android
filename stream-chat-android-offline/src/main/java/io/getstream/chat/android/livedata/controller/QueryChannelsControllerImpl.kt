@@ -14,7 +14,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.PerformanceHelper
+import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -127,11 +127,11 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryEntity = PerformanceHelper.suspendTask("selectQuery") { domainImpl.repos.queryChannels.select(queryEntity.id) }
+        val queryEntity = PerformanceUtils.suspendTask("selectQuery") { domainImpl.repos.queryChannels.select(queryEntity.id) }
         var channels: List<Channel>? = null
 
         if (queryEntity != null) {
-            channels = PerformanceHelper.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination, true) }
+            channels = PerformanceUtils.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination, true) }
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
@@ -164,7 +164,7 @@ internal class QueryChannelsControllerImpl(
         return response
     }
 
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> = PerformanceHelper.suspendTask("runQuery") {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> = PerformanceUtils.suspendTask("runQuery") {
         val loader = if (pagination.isFirstPage) {
             _loading
         } else {
@@ -177,14 +177,14 @@ internal class QueryChannelsControllerImpl(
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = scope.async { PerformanceHelper.suspendTask("runQueryOffline") { runQueryOffline(pagination) } }
+        val queryOfflineJob = scope.async { PerformanceUtils.suspendTask("runQueryOffline") { runQueryOffline(pagination) } }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            scope.async { PerformanceHelper.suspendTask("runQueryOnline") { runQueryOnline(pagination) } }
+            scope.async { PerformanceUtils.suspendTask("runQueryOnline") { runQueryOnline(pagination) } }
         } else { null }
         val channels = queryOfflineJob.await()
 
-        PerformanceHelper.task("updateChannelsAndQueryResults1") {
+        PerformanceUtils.task("updateChannelsAndQueryResults1") {
             updateChannelsAndQueryResults(channels, pagination.isFirstPage)
         }
 
@@ -199,7 +199,7 @@ internal class QueryChannelsControllerImpl(
                 domainImpl.repos.queryChannels.insert(queryEntity)
             }
         } else {
-            PerformanceHelper.log("Online job is null")
+            PerformanceUtils.log("Online job is null")
             recoveryNeeded = true
             output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }

@@ -21,7 +21,7 @@ internal class ChannelsQuerySortConverter {
             // cast floats to ints
             val fieldName = map[KEY_FIELD_NAME] ?: error("Serialization error of QuerySort")
             val direction = map[KEY_SORT_DIRECTION]?.toInt() ?: error("Serialization error of QuerySort")
-            when(direction) {
+            when (direction) {
                 QuerySort.SortDirection.ASC.value -> result.asc(fieldName)
                 QuerySort.SortDirection.DESC.value -> result.desc(fieldName)
                 else -> error("Direction must be ASC/DESC")
@@ -39,7 +39,8 @@ internal class ChannelsQuerySortConverter {
 
     private fun QuerySort<*>.getListOfSpecification(): List<Map<String, String>> = sortSpecifications.map {
         mapOf(
-            KEY_FIELD_NAME to it.field.name, KEY_SORT_DIRECTION to it.sortDirection.value.toString()
+            KEY_FIELD_NAME to it.field.name,
+            KEY_SORT_DIRECTION to it.sortDirection.value.toString()
         )
     }
 

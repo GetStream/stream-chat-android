@@ -35,7 +35,7 @@ internal interface MessageDao {
 
     @Transaction
     suspend fun messagesForChannel(cids: List<String>, limit: Int = 100): Map<String, List<MessageEntity>> {
-        return cids.map { cid -> cid to messagesForChannel(cid, limit)}.toMap()
+        return cids.map { cid -> cid to messagesForChannel(cid, limit) }.toMap()
     }
 
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND createdAt < :deleteMessagesBefore")

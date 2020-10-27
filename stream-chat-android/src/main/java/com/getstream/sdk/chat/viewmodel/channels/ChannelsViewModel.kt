@@ -13,7 +13,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.PerformanceHelper
+import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.livedata.ChatDomain
 
 public interface ChannelsViewModel {
@@ -57,7 +57,7 @@ public class ChannelsViewModelImpl(
 
     init {
         var shown = false
-        PerformanceHelper.startTask("Init VM")
+        PerformanceUtils.startTask("Init VM")
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
         queryChannelsController.run {
             loadingData.postValue(ChannelsViewModel.State.Loading)
@@ -68,7 +68,7 @@ public class ChannelsViewModelImpl(
                     ChannelsViewModel.State.Result(channelList.filter { it.hidden == false }).also {
                         if (!shown) {
                             shown = true
-                            PerformanceHelper.stopTask("Init VM")
+                            PerformanceUtils.stopTask("Init VM")
                         }
                     }
                 }
