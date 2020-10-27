@@ -688,7 +688,7 @@ internal class ChatApi(
     }
 
     fun warmUp() {
-        retrofitApi.warmUp().enqueue { }
+        retrofitAnonymousApi.warmUp().enqueue()
     }
 
     private fun <T : Any> noConnectionIdError(): ErrorCall<T> {

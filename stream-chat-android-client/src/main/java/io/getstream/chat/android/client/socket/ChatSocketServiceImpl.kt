@@ -35,7 +35,7 @@ internal class ChatSocketServiceImpl private constructor(
     )
 
     private var state: State by Delegates.observable(
-        State.Disconnected(true) as State,
+        State.Disconnected as State,
         { _, oldState, newState ->
             if (oldState != newState) {
                 logger.logI("updateState: ${newState.javaClass.simpleName}")
@@ -50,11 +50,12 @@ internal class ChatSocketServiceImpl private constructor(
                     }
                     is State.Disconnected -> {
                         releaseSocket()
-                        if (!newState.connectionWillFollow) {
-                            healthMonitor.stop()
-                        } else {
-                            healthMonitor.onDisconnected()
-                        }
+                        healthMonitor.onDisconnected()
+                        callListeners { it.onDisconnected() }
+                    }
+                    is State.DisconnectedPermanently -> {
+                        releaseSocket()
+                        healthMonitor.stop()
                         callListeners { it.onDisconnected() }
                     }
                 }
@@ -63,9 +64,11 @@ internal class ChatSocketServiceImpl private constructor(
     )
 
     override fun onSocketError(error: ChatError) {
-        logger.logE(error)
-        callListeners { it.onError(error) }
-        (error as? ChatNetworkError)?.let(::onChatNetworkError)
+        if (state != State.DisconnectedPermanently) {
+            logger.logE(error)
+            callListeners { it.onError(error) }
+            (error as? ChatNetworkError)?.let(::onChatNetworkError)
+        }
     }
 
     private fun onChatNetworkError(error: ChatNetworkError) = when (error.streamCode) {
@@ -79,20 +82,20 @@ internal class ChatSocketServiceImpl private constructor(
         ChatErrorCode.TOKEN_EXPIRED.code -> {
             tokenManager.expireToken()
             tokenManager.loadSync()
-            state = State.Disconnected(true)
+            state = State.Disconnected
         }
         ChatErrorCode.UNDEFINED_TOKEN.code,
         ChatErrorCode.INVALID_TOKEN.code,
         ChatErrorCode.API_KEY_NOT_FOUND.code -> {
-            state = State.Disconnected(false)
+            state = State.DisconnectedPermanently
         }
         ChatErrorCode.NETWORK_FAILED.code,
         ChatErrorCode.SOCKET_CLOSED.code,
         ChatErrorCode.SOCKET_FAILURE.code -> {
-            state = State.Disconnected(true)
+            state = State.Disconnected
         }
         else -> {
-            state = State.Disconnected(true)
+            state = State.Disconnected
         }
     }
 
@@ -113,7 +116,7 @@ internal class ChatSocketServiceImpl private constructor(
         apiKey: String,
         user: User?
     ) {
-        state = State.Disconnected(true)
+        state = State.Disconnected
         logger.logI("connect")
         this.endpoint = endpoint
         this.apiKey = apiKey
@@ -122,7 +125,7 @@ internal class ChatSocketServiceImpl private constructor(
     }
 
     override fun disconnect() {
-        state = State.Disconnected(false)
+        state = State.DisconnectedPermanently
     }
 
     override fun onConnectionResolved(event: ConnectedEvent) {
@@ -165,7 +168,8 @@ internal class ChatSocketServiceImpl private constructor(
     private sealed class State {
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
-        data class Disconnected(val connectionWillFollow: Boolean) : State()
+        object Disconnected : State()
+        object DisconnectedPermanently : State()
     }
 
     companion object {
@@ -173,6 +177,9 @@ internal class ChatSocketServiceImpl private constructor(
             tokenManager: TokenManager,
             socketFactory: SocketFactory,
             eventsParser: EventsParser
-        ): ChatSocketServiceImpl = ChatSocketServiceImpl(tokenManager, socketFactory).also { eventsParser.setSocketService(it) }
+        ): ChatSocketServiceImpl {
+            return ChatSocketServiceImpl(tokenManager, socketFactory)
+                .also { eventsParser.setSocketService(it) }
+        }
     }
 }

@@ -47,6 +47,18 @@ class ChatImpl implements Chat {
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
 
+    private StreamLifecycleObserver streamLifecycleObserver = new StreamLifecycleObserver(new LifecycleHandler() {
+        @Override
+        public void resume() {
+            client().reconnectSocket();
+        }
+
+        @Override
+        public void stopped() {
+            client().disconnectSocket();
+        }
+    });
+
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
              @Nullable ChatNavigationHandler navigationHandler,
@@ -185,6 +197,7 @@ class ChatImpl implements Chat {
     public void disconnect() {
         ChatClient.instance().disconnect();
         disconnectChatDomainIfAlreadyInitialized();
+        streamLifecycleObserver.dispose();
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
@@ -202,22 +215,9 @@ class ChatImpl implements Chat {
 
     protected void init() {
         initSocketListener();
-        initLifecycle();
+        streamLifecycleObserver.observe();
     }
 
-    private void initLifecycle() {
-        new StreamLifecycleObserver(new LifecycleHandler() {
-            @Override
-            public void resume() {
-                client().reconnectSocket();
-            }
-
-            @Override
-            public void stopped() {
-                client().disconnectSocket();
-            }
-        });
-    }
 
     private void initSocketListener() {
         client().addSocketListener(new ChatSocketListener(
