@@ -41,6 +41,8 @@ public class ChatUX internal constructor(
 
     private val navigator: ChatNavigator = ChatNavigatorImpl()
 
+    // TODO: would be nice to support configuring the loading icon in 1 place
+
     init {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler)

@@ -92,6 +92,8 @@ public interface ChatDomain {
         private var user: User? = null
     ) {
 
+        public constructor(client: ChatClient) : this(client.appContext, client, null)
+
         public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
 
         private val factory: ChatDomainFactory = ChatDomainFactory()
@@ -112,12 +114,6 @@ public interface ChatDomain {
 
         public fun setUser(user: User) {
             this.user = user
-        }
-
-        public fun setConfig(config: ChatClient.OfflineConfig) {
-            userPresence = config.userPresence
-            storageEnabled = config.storageEnabled
-            // TODO: finish this method
         }
 
         public fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
