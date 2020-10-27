@@ -594,6 +594,10 @@ public class ChatClient internal constructor(
         return state.user
     }
 
+    public fun getCurrentToken(): String {
+        return state.token
+    }
+
     public fun isSocketConnected(): Boolean {
         return state.socketConnected
     }

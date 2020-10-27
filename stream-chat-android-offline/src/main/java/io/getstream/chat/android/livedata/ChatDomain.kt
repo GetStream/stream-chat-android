@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -15,8 +17,6 @@ import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -24,7 +24,8 @@ import kotlinx.coroutines.launch
  * Use cases are exposed via chatDomain.useCases
  */
 public interface ChatDomain {
-    /** The current user object */
+
+    /** the current user on the chatDomain object, same as client.getCurrentUser() */
     public var currentUser: User
 
     /** if offline is enabled */
@@ -98,15 +99,12 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
 
-        // TODO: this factory is needlessly complex, we don't need it
-        private val factory: ChatDomainFactory = ChatDomainFactory()
-
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
         private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
-        private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        private var backgroundSyncEnabled: Boolean = true
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
@@ -115,22 +113,13 @@ public interface ChatDomain {
             return this
         }
 
-        public fun setUser(user: User) {
-            this.user = user
-        }
-
-        public fun backgroundSyncEnabled(): Builder {
-            if (user?.id.isNullOrEmpty() || userToken.isEmpty()) {
-                this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
-                throw IllegalArgumentException("apiKey, userToken must not be empty")
-            } else {
-                this.backgroundSyncConfig = BackgroundSyncConfig(client.config.apiKey, user!!.id, userToken)
-            }
+        public fun enableBackgroundSync(): Builder {
+            backgroundSyncEnabled = true
             return this
         }
 
-        public fun backgroundSyncDisabled(): Builder {
-            this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        public fun disableBackgroundSync(): Builder {
+            backgroundSyncEnabled = false
             return this
         }
 
@@ -169,26 +158,17 @@ public interface ChatDomain {
             return this
         }
 
-        public fun build(): ChatDomain? {
-            if (backgroundSyncConfig != BackgroundSyncConfig.UNAVAILABLE) {
-                storeBackgroundSyncConfig(backgroundSyncConfig)
-                storeNotificationConfig(notificationConfig)
-            }
-            instance = buildImpl()
-            return instance
+        public fun build(): ChatDomain {
+            storeNotificationConfig(notificationConfig)
+
+            ChatDomain.instance = buildImpl()
+
+            return ChatDomain.instance()
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            val u = checkNotNull(user) {"user needs to be set before calling build"}
-            return factory.create(appContext, client, u, database, storageEnabled, userPresence, recoveryEnabled)
-        }
-
-        private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
-            if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
-                syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    put(backgroundSyncConfig)
-                }
-            }
+            val handler =  Handler(Looper.getMainLooper())
+            return ChatDomainImpl(client, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
@@ -202,7 +182,6 @@ public interface ChatDomain {
 
     public companion object {
         private var instance: ChatDomain? = null
-        public lateinit var wrapper: ChatDomainWrapper
 
         @JvmStatic
         public fun instance(): ChatDomain {

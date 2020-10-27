@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.ChatUX;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView;
 
@@ -48,7 +49,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             iv_audio.setVisibility(View.GONE);
 
 
-        playVideo(Chat.getInstance().urlSigner().signFileUrl(url));
+        playVideo(ChatUX.instance().getUrlSigner().signFileUrl(url));
     }
 
     /**
@@ -57,7 +58,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(Chat.getInstance().urlSigner().signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(ChatUX.instance().getUrlSigner().signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }

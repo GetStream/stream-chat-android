@@ -34,16 +34,20 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             ChatClient.instance().onNewTokenReceived(token, this)
         } catch (e: UninitializedPropertyAccessException) {
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-            val user = User(id = syncConfig.userId)
-            GlobalScope.launch(Dispatchers.IO) {
-                val client = initClient(
-                    this@OfflineSyncFirebaseMessagingService,
-                    user,
-                    syncConfig.userToken,
-                    syncConfig.apiKey
-                )
-                client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
+            syncConfig?.let {
+                val config = it
+                val user = User(id = config.userId)
+                GlobalScope.launch(Dispatchers.IO) {
+                    val client = initClient(
+                        this@OfflineSyncFirebaseMessagingService,
+                        user,
+                        config.userToken,
+                        config.apiKey
+                    )
+                    client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
+                }
             }
+
         }
     }
 
@@ -63,18 +67,22 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                     .onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
             } catch (e: UninitializedPropertyAccessException) {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-                if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
-                    val user = User(id = syncConfig.userId)
+
+                syncConfig?.let {
+                    val config = it
+                    val user = User(id = config.userId)
                     val client = initClient(
                         this@OfflineSyncFirebaseMessagingService,
                         user,
-                        syncConfig.userToken,
-                        syncConfig.apiKey
+                        config.userToken,
+                        config.apiKey
                     )
                     val domain = initDomain(user, client)
                     performSync(domain, cid)
                     client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
                 }
+
+
             } finally {
                 stopForeground(true)
                 stopSelf()

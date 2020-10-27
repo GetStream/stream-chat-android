@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.utils.exhaustive
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -78,7 +79,7 @@ public class ChannelsViewModelImpl(
         when (event) {
             is ChannelsViewModel.Event.ReachedEndOfList -> requestMoreChannels()
             is ChannelsViewModel.Event.LogoutClicked -> {
-                Chat.getInstance().disconnect()
+                ChatClient.instance().disconnect()
                 stateMerger.postValue(ChannelsViewModel.State.NavigateToLoginScreen)
             }
         }.exhaustive

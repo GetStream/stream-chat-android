@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.AppConfig
@@ -49,7 +50,7 @@ class UsersViewModel(
             image = user.image
             name = user.name
         }
-        Chat.getInstance().setUser(
+        ChatClient.instance().setUser(
             chatUser,
             user.token,
             object : InitConnectionListener() {

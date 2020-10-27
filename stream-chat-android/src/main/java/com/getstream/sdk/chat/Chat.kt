@@ -18,6 +18,8 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.uploader.FileUploader
 
+
+@Deprecated(message = "The Chat interface has been replaced by ChatUX. Have a look at the updated android tutorial for details.")
 public interface Chat {
     public val navigator: ChatNavigator
     public val strings: ChatStrings

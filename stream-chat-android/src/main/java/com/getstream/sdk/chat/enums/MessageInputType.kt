@@ -2,6 +2,7 @@ package com.getstream.sdk.chat.enums
 
 import androidx.annotation.StringRes
 import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.R
 
 internal enum class MessageInputType(@StringRes internal val labelId: Int) {
@@ -14,4 +15,4 @@ internal enum class MessageInputType(@StringRes internal val labelId: Int) {
 }
 
 internal val MessageInputType.label: String
-    get() = Chat.getInstance().strings.get(labelId)
+    get() = ChatUX.instance().strings.get(labelId)

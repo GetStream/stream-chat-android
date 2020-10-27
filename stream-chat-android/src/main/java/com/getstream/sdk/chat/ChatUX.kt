@@ -28,18 +28,18 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see ChatFonts
  */
 public class ChatUX internal constructor(
-    private val client: ChatClient,
-    private val chatDomain: ChatDomain,
-    private val fonts: ChatFonts,
-    private val strings: ChatStrings,
-    private val navigationHandler: ChatNavigationHandler? = null,
-    private val markdown: ChatMarkdown,
-    private val urlSigner: UrlSigner
+    public val client: ChatClient,
+    public val chatDomain: ChatDomain,
+    public val fonts: ChatFonts,
+    public val strings: ChatStrings,
+    public val navigationHandler: ChatNavigationHandler? = null,
+    public val markdown: ChatMarkdown,
+    public val urlSigner: UrlSigner
 ) {
     public val version: String
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
 
-    private val navigator: ChatNavigator = ChatNavigatorImpl()
+    public val navigator: ChatNavigator = ChatNavigatorImpl()
 
     // TODO: would be nice to support configuring the loading icon in 1 place
 

@@ -12,6 +12,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
@@ -144,7 +145,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            Chat.getInstance()
+            ChatUX.instance()
                 .navigator
                 .navigate(AttachmentDestination(message, attachment, context))
         }
