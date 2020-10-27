@@ -89,13 +89,17 @@ internal open class BaseChatModule(
             .build()
     }
 
+    // Create Builders from a single client to share threadpools
+    private val baseClient: OkHttpClient by lazy { OkHttpClient() }
+    private fun baseClientBuilder(): OkHttpClient.Builder =
+        baseClient.newBuilder().followRedirects(false)
+
     protected open fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser
     ): OkHttpClient.Builder {
-        return OkHttpClient.Builder()
-            .followRedirects(false)
+        return baseClientBuilder()
             // timeouts
             .callTimeout(timeout, TimeUnit.MILLISECONDS)
             .connectTimeout(timeout, TimeUnit.MILLISECONDS)
