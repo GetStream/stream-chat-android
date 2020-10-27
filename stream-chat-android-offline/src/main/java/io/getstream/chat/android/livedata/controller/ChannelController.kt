@@ -5,6 +5,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChannelData
 
@@ -26,7 +27,7 @@ public interface ChannelController {
     public val channelType: String
     public val channelId: String
     /** a list of messages sorted by message.createdAt */
-    public val messages: LiveData<List<Message>>
+    public val messages: LiveData<MessagesUpdate>
     /** the number of people currently watching the channel */
     public val watcherCount: LiveData<Int>
     /** the list of users currently watching this channel */

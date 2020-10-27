@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import java.util.Date
 
@@ -51,7 +52,7 @@ import java.util.Date
  */
 internal class MessageListItemLiveData(
     private val currentUser: User,
-    private val messagesLd: LiveData<List<Message>>,
+    messagesLd: LiveData<MessagesUpdate>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
@@ -81,11 +82,11 @@ internal class MessageListItemLiveData(
     }
 
     @UiThread
-    internal fun messagesChanged(messages: List<Message>) {
-        messageItemsBase = groupMessages(messages)
+    internal fun messagesChanged(messagesUpdate: MessagesUpdate) {
+        messageItemsBase = groupMessages(messagesUpdate.messages)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value)
         val out = messageItemsWithReads + typingItems
-        val wrapped = wrapMessages(out, hasNewMessages)
+        val wrapped = wrapMessages(out, hasNewMessages, messagesUpdate.isLoadingMore)
         value = wrapped
     }
 
@@ -93,7 +94,7 @@ internal class MessageListItemLiveData(
     internal fun readsChanged(reads: List<ChannelUserRead>) {
         messageItemsWithReads = addReads(messageItemsBase, reads)
         val out = messageItemsWithReads + typingItems
-        value = wrapMessages(out)
+        value = wrapMessages(out, false, false)
     }
 
     /**
@@ -107,7 +108,7 @@ internal class MessageListItemLiveData(
         if (newTypingUsers != typingUsers) {
             typingUsers = newTypingUsers
             typingItems = usersAsTypingItems(newTypingUsers)
-            value = wrapMessages(messageItemsWithReads + typingItems)
+            value = wrapMessages(messageItemsWithReads + typingItems, false, false)
         }
     }
 
@@ -209,8 +210,14 @@ internal class MessageListItemLiveData(
         return messagesCopy
     }
 
-    private fun wrapMessages(items: List<MessageListItem>, hasNewMessages: Boolean = false): MessageListItemWrapper {
-        return MessageListItemWrapper(items = items, isThread = isThread, isTyping = typingUsers.isNotEmpty(), hasNewMessages = hasNewMessages)
+    private fun wrapMessages(items: List<MessageListItem>, hasNewMessages: Boolean = false, isLoadingMore: Boolean): MessageListItemWrapper {
+        return MessageListItemWrapper(
+            items = items,
+            isThread = isThread,
+            isTyping = typingUsers.isNotEmpty(),
+            hasNewMessages = hasNewMessages,
+            loadingMore = isLoadingMore
+        )
     }
 
     private fun usersAsTypingItems(users: List<User>): List<MessageListItem> {
