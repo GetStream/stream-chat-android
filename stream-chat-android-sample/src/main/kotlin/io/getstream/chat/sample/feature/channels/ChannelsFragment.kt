@@ -1,9 +1,7 @@
 package io.getstream.chat.sample.feature.channels
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
