@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.viewmodel.messages
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.utils.exhaustive
@@ -11,6 +12,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.ChatDomain
 import kotlin.properties.Delegates
@@ -94,7 +96,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private fun setThreadMessages(threadMessages: LiveData<List<Message>>) {
         threadListData = MessageListItemLiveData(
             currentUser,
-            threadMessages,
+            Transformations.map(threadMessages) { messages -> MessagesUpdate(false, messages) },
             reads,
             null,
             true,

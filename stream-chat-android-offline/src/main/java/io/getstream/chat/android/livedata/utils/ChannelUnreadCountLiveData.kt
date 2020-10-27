@@ -5,23 +5,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 
 internal class ChannelUnreadCountLiveData(
     val currentUser: User,
-    val readLiveData: LiveData<ChannelUserRead>,
-    val messagesLiveData: LiveData<List<Message>>
+    private val readLiveData: LiveData<ChannelUserRead>,
+    private val messagesLiveData: LiveData<MessagesUpdate>
 ) : LiveData<Int>() {
     var read: ChannelUserRead? = null
     var messages: List<Message>? = null
 
-    val readObserver = Observer<ChannelUserRead> { read ->
+    private val readObserver = Observer<ChannelUserRead> { read ->
         this.read = read
         calculateUnreadCount()?.let { value = it }
     }
 
-    val messageObserver = Observer<List<Message>> { messages ->
-        this.messages = messages
+    private val messageObserver = Observer<MessagesUpdate> { messagesUpdate ->
+        this.messages = messagesUpdate.messages
         calculateUnreadCount()?.let { value = it }
     }
 
