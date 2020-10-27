@@ -225,6 +225,7 @@ public class MessageListView : ConstraintLayout {
         initUnseenMessagesButton()
         initUnseenMessagesView()
         initLoadingView()
+        initEmptyStateView()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -321,6 +322,15 @@ public class MessageListView : ConstraintLayout {
 
         val scrollButtonArrow = findViewById<ImageView>(R.id.scrollIconIV)
         scrollButtonArrow.setImageResource(arrowIconRes)
+
+        tArray.getText(R.styleable.MessageListView_streamMessagesEmptyStateLabelText)
+            ?.let { emptyStateText ->
+                emptyStateView.let {
+                    if (it is TextView) {
+                        it.text = emptyStateText
+                    }
+                }
+            }
 
         tArray.recycle()
     }
@@ -431,11 +441,11 @@ public class MessageListView : ConstraintLayout {
     }
 
     public fun showEmptyStateView() {
-        emptyStateView.isVisible = true
+        emptyStateViewContainer.isVisible = true
     }
 
     public fun hideEmptyStateView() {
-        emptyStateView.isVisible = false
+        emptyStateViewContainer.isVisible = false
     }
 
     public fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {

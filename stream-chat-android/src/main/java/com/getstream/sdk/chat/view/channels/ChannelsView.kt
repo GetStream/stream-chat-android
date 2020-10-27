@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.res.use
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory
@@ -35,6 +36,19 @@ public class ChannelsView @JvmOverloads constructor(
         loadingView.apply {
             isVisible = false
             addView(loadingView, defaultChildLayoutParams())
+        }
+        parseAttrs(attrs)
+    }
+
+    private fun parseAttrs(attrs: AttributeSet?) {
+        context.obtainStyledAttributes(attrs, R.styleable.ChannelsView, 0, 0).use {
+            it.getText(R.styleable.ChannelsView_streamChannelsEmptyStateLabelText)?.let { emptyStateText ->
+                emptyStateView.apply {
+                    if (this is TextView) {
+                        text = emptyStateText
+                    }
+                }
+            }
         }
     }
 
