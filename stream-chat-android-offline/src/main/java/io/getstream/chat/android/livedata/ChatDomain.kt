@@ -15,6 +15,8 @@ import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -96,16 +98,7 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
 
-        init {
-            client.preSetUserListeners.add {
-                // start the db
-            }
-            client.disconnectListeners.add {
-                // disconnect the db
-            }
-
-        }
-
+        // TODO: this factory is needlessly complex, we don't need it
         private val factory: ChatDomainFactory = ChatDomainFactory()
 
         private var database: ChatDatabase? = null
@@ -126,13 +119,12 @@ public interface ChatDomain {
             this.user = user
         }
 
-        public fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
-            // TODO: Consider exposing apiKey and userToken by ChatClient to make this public function more friendly
-            if (apiKey.isEmpty() || user?.id.isNullOrEmpty() || userToken.isEmpty()) {
+        public fun backgroundSyncEnabled(): Builder {
+            if (user?.id.isNullOrEmpty() || userToken.isEmpty()) {
                 this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
                 throw IllegalArgumentException("apiKey, userToken must not be empty")
             } else {
-                this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user!!.id, userToken)
+                this.backgroundSyncConfig = BackgroundSyncConfig(client.config.apiKey, user!!.id, userToken)
             }
             return this
         }
@@ -177,8 +169,7 @@ public interface ChatDomain {
             return this
         }
 
-        public fun build(): ChatDomain {
-            // TODO: we should just store the build config and listen to set user...
+        public fun build(): ChatDomain? {
             if (backgroundSyncConfig != BackgroundSyncConfig.UNAVAILABLE) {
                 storeBackgroundSyncConfig(backgroundSyncConfig)
                 storeNotificationConfig(notificationConfig)
@@ -210,7 +201,8 @@ public interface ChatDomain {
     }
 
     public companion object {
-        private var instance: ChatDomain?
+        private var instance: ChatDomain? = null
+        public lateinit var wrapper: ChatDomainWrapper
 
         @JvmStatic
         public fun instance(): ChatDomain {

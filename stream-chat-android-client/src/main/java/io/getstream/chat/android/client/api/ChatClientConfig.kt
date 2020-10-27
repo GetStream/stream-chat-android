@@ -6,19 +6,16 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 
-internal class ChatClientConfig(
-    val apiKey: String,
-    var httpUrl: String,
-    var cdnHttpUrl: String,
-    var wssUrl: String,
-    var baseTimeout: Long,
-    var cdnTimeout: Long,
-    val warmUp: Boolean,
-    val loggerConfig: ChatLogger.Config,
-    val notificationsHandler: ChatNotificationHandler,
-    val fileUploader: FileUploader? = null,
-    val tokenManager: TokenManager = TokenManagerImpl()
+public class ChatClientConfig(
+    public val apiKey: String,
+    public var httpUrl: String,
+    public var cdnHttpUrl: String,
+    public var wssUrl: String,
+    public var baseTimeout: Long,
+    public var cdnTimeout: Long,
+    public val warmUp: Boolean,
+    public val loggerConfig: ChatLogger.Config,
 ) {
 
-    var isAnonymous: Boolean = false
+    public var isAnonymous: Boolean = false
 }

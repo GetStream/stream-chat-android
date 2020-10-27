@@ -42,6 +42,8 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
@@ -58,8 +60,10 @@ public class ChatClient internal constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
-    public val offlineConfig: OfflineConfig,
-    public val appContext: Context
+    public val appContext: Context,
+    private val notificationsHandler: ChatNotificationHandler,
+    private val fileUploader: FileUploader? = null,
+    private val tokenManager: TokenManager = TokenManagerImpl()
 ) : LifecycleObserver {
 
 
@@ -68,7 +72,7 @@ public class ChatClient internal constructor(
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
 
-    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User) -> Unit>()
+    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User?) -> Unit>()
     public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
 
     init {
@@ -134,7 +138,7 @@ public class ChatClient internal constructor(
         }
         connectionListener = listener
         config.isAnonymous = false
-        config.tokenManager.setTokenProvider(tokenProvider)
+        tokenManager.setTokenProvider(tokenProvider)
         warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
@@ -659,7 +663,7 @@ public class ChatClient internal constructor(
     }
 
     private fun getTokenAndConnect(connect: () -> Unit) {
-        config.tokenManager.loadAsync {
+        tokenManager.loadAsync {
             connect()
         }
     }
@@ -697,7 +701,8 @@ public class ChatClient internal constructor(
         private var loggerHandler: ChatLoggerHandler? = null
         private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
-        private var offlineConfig = OfflineConfig()
+        private val tokenManager: TokenManager = TokenManagerImpl()
+
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -736,14 +741,6 @@ public class ChatClient internal constructor(
 
         public fun disableWarmUp(): Builder = apply {
             warmUp = false
-        }
-
-        public fun disableUserPresence(): Builder = apply {
-            offlineConfig.userPresence = false
-        }
-
-        public fun enableUserPresence(): Builder = apply {
-            offlineConfig.userPresence = true
         }
 
         public fun baseUrl(value: String): Builder {
@@ -791,20 +788,20 @@ public class ChatClient internal constructor(
                 cdnTimeout,
                 warmUp,
                 ChatLogger.Config(logLevel, loggerHandler),
-                notificationsHandler,
-                fileUploader
+
             )
 
-            val module = ChatModule(appContext, config)
+            val module = ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager)
 
             val result = ChatClient(
                 config,
                 module.api(),
                 module.socket(),
                 module.notifications(),
-                offlineConfig,
-                appContext
-
+                appContext,
+                notificationsHandler,
+                fileUploader,
+                tokenManager
             )
             instance = result
 

@@ -107,7 +107,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     private fun initDomain(user: User, client: ChatClient): ChatDomain {
-        return ChatDomain.Builder(applicationContext, client, user).build()
+        return ChatDomain.Builder(applicationContext, client, user).build()!!
     }
 
     private suspend fun initClient(
