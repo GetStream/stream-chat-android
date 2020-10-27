@@ -19,7 +19,7 @@ import java.util.Date
 
 /**
  * Used for integrations tests.
- * Initialises mock internals of [ChatClientImpl]
+ * Initialises mock internals of [ChatClient]
  */
 internal class MockClientBuilder {
 
@@ -73,7 +73,7 @@ internal class MockClientBuilder {
             fileUploader
         )
 
-        client = ChatClientImpl(config, api, socket, notificationsManager)
+        client = ChatClient(config, api, socket, notificationsManager)
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)

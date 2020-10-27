@@ -1,5 +1,6 @@
 package io.getstream.chat.android.livedata.extensions
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -9,7 +10,10 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -135,6 +139,24 @@ public fun ChatError.isPermanent(): Boolean {
         }
     }
     return isPermanent
+}
+
+public fun ChatClient.domain(): ChatDomain {
+
+    // The builder/config logic happens at the ChatClient level
+    val domainBuilder = ChatDomain.Builder(appContext, this).setConfig(offlineConfig)
+
+    // We use listeners to tie into the ChatClient's setUser and disconnect flow
+    //
+    // // hookup listeners for pre set User and disconnect()
+    // setPreUserConnectListener {
+    //     domainBuilder.setUser(it).build()
+    // }
+    //
+    // setDisconnectListener {
+    //     GlobalScope.launch { domain.disconnect() }
+    // }
+    return ChatDomain.instance()
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
