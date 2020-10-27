@@ -97,7 +97,6 @@ internal class ChatParserImpl : ChatParser {
         return builder
             .addConverterFactory(UrlQueryPayloadFactory(gson))
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(this))
     }
 
     private fun toError(body: String?): ErrorResponse? {

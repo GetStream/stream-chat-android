@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -80,11 +81,12 @@ internal open class BaseChatModule(
     ): Retrofit {
         val okHttpClient = clientBuilder(timeout, config, parser).build()
 
-        val retrofitBuilder = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(endpoint)
             .client(okHttpClient)
-
-        return parser.configRetrofit(retrofitBuilder).build()
+            .also(parser::configRetrofit)
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser))
+            .build()
     }
 
     protected open fun clientBuilder(
