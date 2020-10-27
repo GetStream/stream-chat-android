@@ -1,5 +1,9 @@
 # To be released:
-## stream-chat-anddroid
+## stream-chat-android
+- Add empty state views to channel list view and message list view components
+- Allow setting custom empty state views
+- Add loading view to message list view
+- Allow setting custom loading view
 
 ## stream-chat-android-client
 
