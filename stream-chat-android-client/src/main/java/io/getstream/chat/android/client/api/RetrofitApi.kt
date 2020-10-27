@@ -41,11 +41,9 @@ import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.UrlQueryPayload
-import okhttp3.ResponseBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.OPTIONS
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -430,7 +428,4 @@ internal interface RetrofitApi {
         @Query("user_id") userId: String,
         @Query("connection_id") connectionId: String
     ): RetrofitCall<GetSyncHistoryResponse>
-
-    @OPTIONS("/connect")
-    fun warmUp(): RetrofitCall<ResponseBody>
 }
