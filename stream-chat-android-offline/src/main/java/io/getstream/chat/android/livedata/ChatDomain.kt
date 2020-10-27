@@ -91,6 +91,9 @@ public interface ChatDomain {
         private var client: ChatClient,
         private var user: User? = null
     ) {
+
+        public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
+
         private val factory: ChatDomainFactory = ChatDomainFactory()
 
         private var database: ChatDatabase? = null

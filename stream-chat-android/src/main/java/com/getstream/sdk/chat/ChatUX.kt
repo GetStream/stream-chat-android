@@ -7,63 +7,54 @@ import com.getstream.sdk.chat.style.ChatFonts
 import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
+import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.livedata.ChatDomain
 
 /**
  * ChatUX handles any configuration for the Chat UI elements. It replaces the older Chat class.
+ *
+ * @param client the low level chat client
+ * @param chatDomain the chat domain interface used for offline storage and state
+ * @param fonts allows you to overwrite fonts
+ * @param strings allows you to customize strings
+ * @param navigationHandler navigation handler for customizing things such as the media browsing experience
+ * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
+ * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
+ *
+ * @see ChatMarkdown
+ * @see UrlSigner
+ * @see ChatStrings
+ * @see ChatFonts
  */
 public class ChatUX internal constructor(
     private val client: ChatClient,
     private val chatDomain: ChatDomain,
+    private val fonts: ChatFonts,
+    private val strings: ChatStrings,
+    private val navigationHandler: ChatNavigationHandler? = null,
+    private val markdown: ChatMarkdown,
+    private val urlSigner: UrlSigner
 ) {
+    public val version: String
+        get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
 
-    /** allows you to configure the fonts used by the UX components */
-    public val fonts: ChatFonts
-
-    /** global hook to overwrite any string lookups for the chat components */
-    public val strings: ChatStrings
-
-    /** navigation handler for customizing things such as the media browsing experience */
-    public val navigationHandler: ChatNavigationHandler? = null
-
-    /** interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules */
-    public val markdown: ChatMarkdown
-
-    /** url signing logic, enables you to add authorization tokens for images, video etc. */
-    public val urlSigner: UrlSigner
-
-    private val navigator: ChatNavigator
+    private val navigator: ChatNavigator = ChatNavigatorImpl()
 
     init {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler)
         }
 
-    }
-
-    val navigator: ChatNavigator = ChatNavigatorImpl()
-
-    val version: String
-        get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
-
-
-    protected fun init() {
-        initLifecycle()
-    }
-
-    private fun initLifecycle() {
+        // disconnnect when the app is stopped
+        // TODO: move this to the low level client
         StreamLifecycleObserver(object : LifecycleHandler {
             override fun resume() {
-                client().reconnectSocket()
+                client.reconnectSocket()
             }
 
             override fun stopped() {
-                client().disconnectSocket()
+                client.disconnectSocket()
             }
         })
     }
@@ -73,19 +64,36 @@ public class ChatUX internal constructor(
         private var chatDomain: ChatDomain
     ) {
 
-        val style = style: ChatStyle = ChatStyle.Builder().build()
-        public var navigationHandler: ChatNavigationHandler? = null
-        public var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
-        public var markdown: ChatMarkdown = ChatMarkdownImpl(client.context)
-        public var fonts = ChatFontsImpl(style, client.context)
+        private val style = ChatStyle.Builder().build()
+        private var navigationHandler: ChatNavigationHandler? = null
+        private var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
+        private var markdown: ChatMarkdown = ChatMarkdownImpl(client.appContext)
+        private var fonts: ChatFonts = ChatFontsImpl(style, client.appContext)
+        private var strings: ChatStrings = ChatStringsImpl(client.appContext)
 
         public fun withMarkdown(markdown: ChatMarkdown) {
+            this.markdown = markdown
+        }
 
+        public fun withUrlSigner(signer: UrlSigner) {
+            this.urlSigner = signer
+        }
+
+        public fun withNavigationHandler(handler: ChatNavigationHandler) {
+            this.navigationHandler = handler
+        }
+
+        public fun withFonts(fonts: ChatFonts) {
+            this.fonts = fonts
+        }
+
+        public fun withStrings(strings: ChatStrings) {
+            this.strings = strings
         }
 
         public fun build(): ChatUX {
 
-            instance = ChatUX(client, chatDomain)
+            instance = ChatUX(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
             return instance
         }
     }
