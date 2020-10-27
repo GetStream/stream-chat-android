@@ -22,7 +22,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val viewModel: LoginViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.VERSION_NAME)
+        sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.STREAM_CHAT_UI_VERSION)
         developmentUsers.setOnClickListener {
             redirectToUsersScreen()
         }

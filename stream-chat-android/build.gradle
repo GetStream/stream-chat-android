@@ -30,6 +30,8 @@ android {
         buildConfigField "int", "DEFAULT_CDN_TIMEOUT", "$DEFAULT_CDN_TIMEOUT"
         buildConfigField "int", "DEFAULT_API_KEEP_ALIVE_TIMEOUT", "$DEFAULT_API_KEEP_ALIVE_TIMEOUT"
 
+        buildConfigField 'String', 'STREAM_CHAT_UI_VERSION', "\"$version\""
+
         minSdkVersion Configuration.minSdkVersion
         targetSdkVersion Configuration.targetSdkVersion
         vectorDrawables.useSupportLibrary = true
@@ -84,7 +86,7 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidLegacySupport
-    api Dependencies.recyclerview
+    api Dependencies.androidxRecyclerview
     implementation Dependencies.activityKtx
     implementation Dependencies.fragmentKtx
     implementation Dependencies.androidxLifecycleExtensions
@@ -92,8 +94,9 @@ dependencies {
 
     implementation Dependencies.roomRuntime
 
+    implementation platform(Dependencies.okhttpBom)
     implementation Dependencies.okhttp
-    implementation Dependencies.loggingInterceptor
+    implementation Dependencies.okhttpLoggingInterceptor
 
     implementation Dependencies.retrofit
     implementation Dependencies.retrofitGsonConverter
@@ -107,16 +110,17 @@ dependencies {
     kapt Dependencies.glideCompiler
 
     implementation Dependencies.drawabletoolbox
-    implementation Dependencies.marwonCore
-    implementation Dependencies.marwonLinkify
-    implementation Dependencies.marwonextStrikethrough
-    implementation Dependencies.marwonImage
+    implementation Dependencies.markwonCore
+    implementation Dependencies.markwonLinkify
+    implementation Dependencies.markwonextStrikethrough
+    implementation Dependencies.markwonImage
 
     implementation Dependencies.fresco
     implementation Dependencies.photodraweeview
     implementation Dependencies.keyboardVisibilityEvent
     implementation Dependencies.dexter
 
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
 
     implementation Dependencies.androidxMedia

@@ -116,6 +116,7 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxPreferences
     implementation Dependencies.constraintLayout
     implementation Dependencies.fragmentKtx
     implementation Dependencies.materialComponents
@@ -124,8 +125,7 @@ dependencies {
     implementation Dependencies.navigationFragmentKTX
     implementation Dependencies.navigationUIKTX
 
-    implementation Dependencies.preferences
-
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
