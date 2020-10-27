@@ -51,10 +51,6 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                 }
             )
         }
-        // ProgressBar(activity).apply {
-        //     setBackgroundColor(Color.BLUE)
-        //     messageListView.setLoadingView(this)
-        // }
     }
 
     private fun initMessageInputViewModel() {
