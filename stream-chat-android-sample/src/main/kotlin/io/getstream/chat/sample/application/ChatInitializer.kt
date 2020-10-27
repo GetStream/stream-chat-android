@@ -2,23 +2,29 @@ package io.getstream.chat.sample.application
 
 import android.content.Context
 import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.ChatUX
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.R
 
 class ChatInitializer(private val context: Context) {
 
     fun init(apiKey: String) {
-        Chat.Builder(apiKey, context).apply {
-            offlineEnabled = true
-            val notificationConfig =
-                NotificationConfig(
-                    firebaseMessageIdKey = "message_id",
-                    firebaseChannelIdKey = "channel_id",
-                    firebaseChannelTypeKey = "channel_type",
-                    smallIcon = R.drawable.ic_chat_bubble
-                )
-            notificationHandler = SampleNotificationHandler(context, notificationConfig)
-            chatLoggerHandler = FirebaseLogger
-        }.build()
+
+        val notificationConfig =
+            NotificationConfig(
+                firebaseMessageIdKey = "message_id",
+                firebaseChannelIdKey = "channel_id",
+                firebaseChannelTypeKey = "channel_type",
+                smallIcon = R.drawable.ic_chat_bubble
+            )
+        val notificationHandler = SampleNotificationHandler(context, notificationConfig)
+
+        val client = ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler).logLevel(ChatLogLevel.ALL).build()
+        val domain = ChatDomain.Builder(client).offlineEnabled().notificationConfig(notificationConfig).build()
+        val ux = ChatUX.Builder(client, domain).build()
+
     }
 }

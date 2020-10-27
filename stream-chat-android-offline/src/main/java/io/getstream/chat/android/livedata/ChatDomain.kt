@@ -153,6 +153,7 @@ public interface ChatDomain {
             return this
         }
 
+        // TODO: do we even need this, or is it enough to have it at the low level client?
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
             this.notificationConfig = notificationConfig
             return this
