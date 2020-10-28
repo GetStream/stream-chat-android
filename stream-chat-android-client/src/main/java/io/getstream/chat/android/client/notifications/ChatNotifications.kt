@@ -106,15 +106,12 @@ internal class ChatNotifications private constructor(
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
-
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
         getChannel.zipWith(getMessage).enqueue { result ->
             if (result.isSuccess) {
-
-                val channel = result.data().first
-                val message = result.data().second
+                val (channel, message) = result.data()
 
                 handler.getDataLoadListener()?.onLoadSuccess(channel, message)
                 onRequiredDataLoaded(channel, message)

@@ -2,96 +2,70 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.utils.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 internal object ZipCall {
 
-    fun <A : Any, B : Any, C : Any> zip(
-        callA: Call<A>,
-        callB: Call<B>,
-        callC: Call<C>
-    ): Call<Triple<A, B, C>> {
-        return object : Call<Triple<A, B, C>> {
-            override fun cancel() {
-                // Empty
-            }
-
-            override fun execute(): Result<Triple<A, B, C>> {
-                val resultA = callA.execute()
-
-                if (!resultA.isSuccess) return Result(null, resultA.error())
-                val resultB = callB.execute()
-                if (!resultB.isSuccess) return Result(null, resultB.error())
-                val resultC = callC.execute()
-                if (!resultC.isSuccess) return Result(null, resultC.error())
-
-                return Result(Triple(resultA.data(), resultB.data(), resultC.data()), null)
-            }
-
-            override fun enqueue(callback: (Result<Triple<A, B, C>>) -> Unit) {
-                callA.enqueue { resultA ->
-
-                    if (!resultA.isSuccess) {
-                        callback(Result(null, resultA.error()))
-                    } else {
-                        callB.enqueue { resultB ->
-                            if (!resultB.isSuccess) {
-                                callback(Result(null, resultB.error()))
-                            } else {
-
-                                callC.enqueue { resultC ->
-                                    if (!resultC.isSuccess) {
-                                        callback(Result(null, resultC.error()))
-                                    } else {
-
-                                        val dataA = resultA.data()
-                                        val dataB = resultB.data()
-                                        val dataC = resultC.data()
-
-                                        callback(Result(Triple(dataA, dataB, dataC), null))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     fun <A : Any, B : Any> zip(callA: Call<A>, callB: Call<B>): Call<Pair<A, B>> {
         return object : Call<Pair<A, B>> {
+            private var job: Job? = null
+
             override fun cancel() {
-                // Empty
+                job?.cancel()
             }
 
             override fun execute(): Result<Pair<A, B>> {
-                val resultA = callA.execute()
+                val job = Job()
+                this.job = job
 
-                if (!resultA.isSuccess) return getErrorA(resultA)
-                val resultB = callB.execute()
-                if (!resultB.isSuccess) return getErrorB(resultB)
+                return runBlocking(job) {
+                    val deferredA = async { callA.await() }
+                    val deferredB = async { callB.await() }
 
-                return Result(Pair(resultA.data(), resultB.data()), null)
+                    val resultA = deferredA.await()
+                    if (resultA.isError) {
+                        deferredB.cancel()
+                        return@runBlocking getErrorA(resultA)
+                    }
+
+                    val resultB = deferredB.await()
+                    if (resultB.isError) {
+                        return@runBlocking getErrorB(resultB)
+                    }
+
+                    Result(Pair(resultA.data(), resultB.data()), null)
+                }
             }
 
             override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
-                callA.enqueue { resultA ->
+                suspend fun performCallback(result: Result<Pair<A,B>>) {
+                    withContext(Dispatchers.Main) { callback(result) }
+                }
 
-                    if (!resultA.isSuccess) {
-                        callback(getErrorA(resultA))
-                    } else {
-                        callB.enqueue { resultB ->
-                            if (!resultB.isSuccess) {
-                                callback(getErrorB(resultB))
-                            } else {
+                job = GlobalScope.launch {
+                    val deferredA = async { callA.await() }
+                    val deferredB = async { callB.await() }
 
-                                val dataA = resultA.data()
-                                val dataB = resultB.data()
-
-                                callback(Result(Pair(dataA, dataB), null))
-                            }
-                        }
+                    val resultA = deferredA.await()
+                    if (resultA.isError) {
+                        deferredB.cancel()
+                        performCallback(getErrorA(resultA))
+                        return@launch
                     }
+
+                    val resultB = deferredB.await()
+                    if (resultB.isError) {
+                        performCallback(getErrorB(resultB))
+                        return@launch
+                    }
+
+                    performCallback(Result(Pair(resultA.data(), resultB.data()), null))
                 }
             }
         }
