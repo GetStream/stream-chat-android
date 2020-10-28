@@ -375,9 +375,6 @@ public class MessageListView : ConstraintLayout {
 
                     lastViewedPosition = max(currentLastVisible, lastViewedPosition)
 
-                    logger.logI("lastViewedPosition: $lastViewedPosition")
-                    logger.logI("adapter size: ${adapter.itemCount}")
-
                     val unseenItems = adapter.itemCount - lastViewedPosition - 1
                     scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
 
@@ -633,11 +630,7 @@ public class MessageListView : ConstraintLayout {
                 !hasScrolledUp ||
                 newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             ) {
-//                logger.logI("scroll to bottom!")
-//                layoutManager.scrollToPosition(adapter.itemCount - 1)
-
-                val unseenItems = newSize - lastViewedPosition - 1
-                scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
+                layoutManager.scrollToPosition(adapter.itemCount - 1)
             } else {
                 val unseenItems = newSize - lastViewedPosition - 1
                 scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
