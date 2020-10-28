@@ -11,28 +11,27 @@ import retrofit2.Response
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser
-) : ChatCallImpl<T>() {
+) : Call<T>{
+
+    @Volatile
+    protected var canceled = false
+
+    override fun cancel() {
+        canceled = true
+        call.cancel()
+    }
 
     override fun execute(): Result<T> {
         val result = execute(call)
-        if (!result.isSuccess) errorHandler?.invoke(result.error())
-        else nextHandler?.invoke(result.data())
         return result
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
         enqueue(call) {
             if (!canceled) {
-                if (!it.isSuccess) errorHandler?.invoke(it.error())
-                else nextHandler?.invoke(it.data())
                 callback(it)
             }
         }
-    }
-
-    override fun cancel() {
-        super.cancel()
-        call.cancel()
     }
 
     private fun execute(call: retrofit2.Call<T>): Result<T> {

@@ -10,7 +10,11 @@ internal object ZipCall {
         callB: Call<B>,
         callC: Call<C>
     ): Call<Triple<A, B, C>> {
-        return object : ChatCallImpl<Triple<A, B, C>>() {
+        return object : Call<Triple<A, B, C>> {
+            override fun cancel() {
+                // Empty
+            }
+
             override fun execute(): Result<Triple<A, B, C>> {
                 val resultA = callA.execute()
 
@@ -55,7 +59,11 @@ internal object ZipCall {
     }
 
     fun <A : Any, B : Any> zip(callA: Call<A>, callB: Call<B>): Call<Pair<A, B>> {
-        return object : ChatCallImpl<Pair<A, B>>() {
+        return object : Call<Pair<A, B>> {
+            override fun cancel() {
+                // Empty
+            }
+
             override fun execute(): Result<Pair<A, B>> {
                 val resultA = callA.execute()
 

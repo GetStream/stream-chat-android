@@ -15,3 +15,11 @@ public interface Call<T : Any> {
     public fun cancel()
 
 }
+
+internal fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
+    return MapCall(this, mapper)
+}
+
+internal fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
+    return ZipCall.zip(this, call)
+}

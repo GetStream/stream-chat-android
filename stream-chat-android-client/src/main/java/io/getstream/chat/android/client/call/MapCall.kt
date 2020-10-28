@@ -5,17 +5,23 @@ import io.getstream.chat.android.client.utils.Result
 internal class MapCall<T: Any, K: Any>(
     private val call: Call<T>,
     private val mapper: (T) -> K
-) : ChatCallImpl<K>() {
+) : Call<K> {
+
+    @Volatile
+    protected var canceled = false
+
+    override fun cancel() {
+        canceled = true
+    }
+
     override fun execute(): Result<K> {
         val resultA = call.execute()
 
         return if (resultA.isSuccess) {
             val data = mapper(resultA.data())
-            nextHandler?.invoke(data)
             Result(data, null)
         } else {
             val error = resultA.error()
-            errorHandler?.invoke(error)
             Result(null, error)
         }
     }
@@ -25,11 +31,9 @@ internal class MapCall<T: Any, K: Any>(
             if (!canceled) {
                 if (it.isSuccess) {
                     val data = mapper(it.data())
-                    nextHandler?.invoke(data)
                     callback(Result(data, null))
                 } else {
                     val error = it.error()
-                    errorHandler?.invoke(error)
                     callback(Result(null, error))
                 }
             }
