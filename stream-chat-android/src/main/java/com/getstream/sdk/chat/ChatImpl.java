@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.uploader.FileUploader;
 import io.getstream.chat.android.livedata.ChatDomain;
-import kotlin.UninitializedPropertyAccessException;
 import kotlin.Unit;
 import kotlinx.coroutines.BuildersKt;
 import kotlinx.coroutines.CoroutineStart;
@@ -189,15 +188,16 @@ class ChatImpl implements Chat {
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
-        try {
-            final ChatDomain chatDomain = ChatDomain.instance();
-            BuildersKt.launch(GlobalScope.INSTANCE,
-                    Dispatchers.getIO(),
-                    CoroutineStart.DEFAULT,
-                    (scope, continuation) -> chatDomain.disconnect(continuation));
-        } catch (UninitializedPropertyAccessException e) {
+        if (!ChatDomain.Companion.isInitialized()) {
             ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
+            return;
         }
+
+        final ChatDomain chatDomain = ChatDomain.instance();
+        BuildersKt.launch(GlobalScope.INSTANCE,
+                Dispatchers.getIO(),
+                CoroutineStart.DEFAULT,
+                (scope, continuation) -> chatDomain.disconnect(continuation));
     }
 
     protected void init() {
