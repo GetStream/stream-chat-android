@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Flag
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
@@ -54,6 +55,8 @@ private val MESSAGES = createMessageList {
         parentId = null
     )
 }
+private val MESSAGES_UPDATE = MessagesUpdate(false, MESSAGES)
+
 private val MESSAGE = createMessage(createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_PARENT_MESSAGE = createMessage(text = "parent message", createdAt = Date.from(Instant.now()), user = CURRENT_USER)
 private val THREAD_MESSAGES = createMessageList {
@@ -88,7 +91,7 @@ internal class MessageListViewModelTest {
     private val flagCall: Call<Flag> = mock()
     private val flagResult: Call<Flag> = mock()
 
-    private val messages = MutableLiveData<List<Message>>()
+    private val messages = MutableLiveData<MessagesUpdate>()
     private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<List<User>>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
@@ -120,7 +123,7 @@ internal class MessageListViewModelTest {
         whenever(threadController.messages) doReturn MutableLiveData(listOf(THREAD_PARENT_MESSAGE) + THREAD_MESSAGES)
         whenever(client.flagMessage(any())) doReturn flagCall
 
-        messages.value = MESSAGES
+        messages.value = MESSAGES_UPDATE
         reads.value = listOf(CHANNEL_USER_READ)
 
         domain.useCases.shouldNotBeNull()

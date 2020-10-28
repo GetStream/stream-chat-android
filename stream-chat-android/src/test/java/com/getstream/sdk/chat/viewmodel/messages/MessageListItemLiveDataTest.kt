@@ -16,6 +16,7 @@ import com.nhaarman.mockitokotlin2.times
 import com.nhaarman.mockitokotlin2.verify
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import org.amshove.kluent.any
 import org.junit.Rule
@@ -49,19 +50,19 @@ internal class MessageListItemLiveDataTest {
     }
 
     private fun emptyMessages(): MessageListItemLiveData {
-        val messages: LiveData<List<Message>> = MutableLiveData(listOf())
+        val messagesUpdate: LiveData<MessagesUpdate> = MutableLiveData(MessagesUpdate(false, listOf()))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesUpdate, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun oneMessage(message: Message): MessageListItemLiveData {
-        val messages: LiveData<List<Message>> = MutableLiveData(listOf(message))
+        val messagesUpdate: LiveData<MessagesUpdate> = MutableLiveData(MessagesUpdate(false, listOf(message)))
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf())
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messages, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesUpdate, reads, typing, false, ::simpleDateGroups)
     }
 
     private fun manyMessages(): MessageListItemLiveData {
@@ -75,14 +76,14 @@ internal class MessageListItemLiveDataTest {
                 messages.add(message)
             }
         }
-        val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
+        val messagesUpdatesLd: LiveData<MessagesUpdate> = MutableLiveData(MessagesUpdate(false, messages))
         // user 0 read till the end, user 1 read the first message, user 3 read is missing
         val read1 = ChannelUserRead(users[0], messages.last().createdAt)
         val read2 = ChannelUserRead(users[1], messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesUpdatesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     // livedata testing
@@ -127,7 +128,7 @@ internal class MessageListItemLiveDataTest {
     fun `Should return messages with a typing indicator`() {
         val message = createMessage()
         val messageListItemLd = oneMessage(message)
-        messageListItemLd.messagesChanged(listOf(message))
+        messageListItemLd.messagesChanged(MessagesUpdate(false, listOf(message)))
         messageListItemLd.typingChanged(listOf(randomUser()))
         val items = messageListItemLd.getOrAwaitValue().items
         Truth.assertThat(items.size).isEqualTo(3)
