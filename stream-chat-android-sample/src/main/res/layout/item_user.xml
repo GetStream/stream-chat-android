@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?selectableItemBackground"
@@ -13,8 +12,7 @@
         android:layout_height="46dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:background="@drawable/shape_rounded_grey" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/name"
@@ -22,7 +20,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
-        android:text="@string/login_advanced_options"
+        android:text="@string/users_advanced_options"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="16sp" />
 
@@ -32,7 +30,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
-        android:text="@string/login_stream_test_account"
+        android:text="@string/users_stream_test_account"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/grey_dark" />
 

@@ -73,13 +73,13 @@ class LoginViewModel(
 
     private fun getInvalidFields(credentials: LoginCredentials): List<ValidatedField> {
         return ArrayList<ValidatedField>().apply {
-            if (credentials.apiKey.isNullOrEmpty()) {
+            if (credentials.apiKey.isEmpty()) {
                 add(ValidatedField.API_KEY)
             }
-            if (credentials.userId.isNullOrEmpty()) {
+            if (credentials.userId.isEmpty()) {
                 add(ValidatedField.USER_ID)
             }
-            if (credentials.userToken.isNullOrEmpty()) {
+            if (credentials.userToken.isEmpty()) {
                 add(ValidatedField.USER_TOKEN)
             }
         }

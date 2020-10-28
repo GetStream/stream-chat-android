@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/login_advanced_options"
+            android:text="@string/users_advanced_options"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -102,8 +102,6 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userNameEditText"
             style="@style/LoginEditText"
-            android:inputType="textMultiLine"
-            android:singleLine="false"
             android:imeOptions="actionDone"
             tools:ignore="RtlHardcoded" />
 
