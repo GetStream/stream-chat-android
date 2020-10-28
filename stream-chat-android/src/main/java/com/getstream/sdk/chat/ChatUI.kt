@@ -87,16 +87,16 @@ public class ChatUI internal constructor(
         public fun build(): ChatUI {
 
             instance = ChatUI(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
-            return instance
+            return instance()
         }
     }
 
     public companion object {
-        private lateinit var instance: ChatUI
+        private var instance: ChatUI? = null
 
         @JvmStatic
         public fun instance(): ChatUI {
-            return instance
+            return checkNotNull(instance) {"Be sure to call ChatUI.Builder().build() before using ChatUI.instance()"}
         }
     }
 }
