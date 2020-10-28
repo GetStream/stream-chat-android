@@ -164,7 +164,6 @@ public interface ChatDomain {
 
             ChatDomain.instance = buildImpl()
 
-
             return ChatDomain.instance()
         }
 

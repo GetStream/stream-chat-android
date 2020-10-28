@@ -77,7 +77,6 @@ internal class MockClientBuilder {
 
         )
 
-
         client = ChatClient(
             config,
             api,

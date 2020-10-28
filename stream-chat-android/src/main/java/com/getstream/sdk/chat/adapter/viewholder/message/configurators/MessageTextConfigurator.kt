@@ -184,11 +184,7 @@ internal class MessageTextConfigurator(
                     isLongClick = false
                     return
                 }
-<<<<<<< HEAD
                 ChatUX.instance().navigator.navigate(WebLinkDestination(url, context))
-=======
-                Chat.instance().navigator.navigate(WebLinkDestination(url, context))
->>>>>>> b21f67e9547f6bae07f5916013b10d75895b21a3
             }
         }
     }

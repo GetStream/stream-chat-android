@@ -37,7 +37,7 @@ public class ChatUX internal constructor(
     public val urlSigner: UrlSigner
 ) {
     public val version: String
-        get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME
+        get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
     public val navigator: ChatNavigator = ChatNavigatorImpl()
 

@@ -91,7 +91,6 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
-
         val mockedContext: Context = mock()
 
         client = ChatClient(

@@ -185,7 +185,12 @@ class ChatImpl implements Chat {
                 .notificationConfig(chatNotificationHandler.getConfig()).build();
 
         // create a copy ChatUX implementation for backward compat
-        new ChatUX.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings()).withNavigationHandler(navigationHandler).build();
+        ChatUX.Builder uxBuilder = new ChatUX.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
+
+        if (navigationHandler != null) {
+            uxBuilder.withNavigationHandler(navigationHandler);
+        }
+        uxBuilder.build();
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override

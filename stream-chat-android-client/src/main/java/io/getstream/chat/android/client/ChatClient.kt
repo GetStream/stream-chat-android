@@ -100,7 +100,6 @@ public class ChatClient internal constructor(
             }
         }
 
-
         // disconnect when the app is stopped
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
@@ -252,7 +251,6 @@ public class ChatClient internal constructor(
         socket.disconnect()
     }
 
-
     public fun reconnectSocket() {
         val user = state.user
         if (user != null) socket.connect(user)
@@ -332,7 +330,6 @@ public class ChatClient internal constructor(
         connectionListener = null
         socket.disconnect()
         state.reset()
-
     }
 
     //region: api calls
@@ -478,7 +475,7 @@ public class ChatClient internal constructor(
     }
 
     public fun getVersion(): String {
-        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE
+        return BuildConfig.STREAM_CHAT_CLIENT_VERSION + "-" + BuildConfig.BUILD_TYPE
     }
 
     public fun acceptInvite(
@@ -504,7 +501,6 @@ public class ChatClient internal constructor(
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
     }
-
 
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
@@ -541,7 +537,6 @@ public class ChatClient internal constructor(
     public fun unMuteChannel(channelType: String, channelId: String): Call<Unit> {
         return api.unMuteChannel(channelType, channelId)
     }
-
 
     public fun unmuteUser(userId: String): Call<Mute> = api.unmuteUser(userId)
 
@@ -607,7 +602,6 @@ public class ChatClient internal constructor(
         return state.user
     }
 
-
     public fun getCurrentToken(): String {
         return state.token
     }
@@ -625,7 +619,6 @@ public class ChatClient internal constructor(
         val id = cid.split(":")[1]
         return channel(type, id)
     }
-
 
     public fun createChannel(
         channelType: String,
@@ -670,7 +663,6 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
-
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
         if (connectedEvent != null) {
             val user = connectedEvent.me
@@ -696,7 +688,6 @@ public class ChatClient internal constructor(
             api.warmUp()
         }
     }
-
 
     private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
         return if (state.user != null) {
@@ -831,8 +822,11 @@ public class ChatClient internal constructor(
         private var instance: ChatClient? = null
         @JvmField
         public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
-        public fun instance(): ChatClient = instance
-            ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+
+        @JvmStatic
+        public fun instance(): ChatClient {
+            return instance ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+        }
 
         public val isInitialized: Boolean
             get() = instance != null

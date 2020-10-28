@@ -1,6 +1,5 @@
 package com.getstream.sdk.chat.utils
 
-<<<<<<< HEAD
 import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.R
 import io.getstream.chat.android.client.models.Message
