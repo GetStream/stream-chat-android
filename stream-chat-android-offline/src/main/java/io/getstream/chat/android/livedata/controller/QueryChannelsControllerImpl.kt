@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.extensions.comparator
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.CoroutineScope
@@ -58,8 +57,6 @@ internal class QueryChannelsControllerImpl(
 
     private val _loadingMore = MutableLiveData(false)
     override val loadingMore: LiveData<Boolean> = _loadingMore
-    private var firstTaskStarted = false
-    private var firstTaskFinished = false
 
     fun loadMoreRequest(
         channelLimit: Int = CHANNEL_LIMIT,

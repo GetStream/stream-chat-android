@@ -8,8 +8,24 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 public class QuerySort<T : Any> {
-    public var sortSpecifications: List<SortSpecification<T>> = emptyList()
-        private set
+    private var sortSpecifications: List<SortSpecification<T>> = emptyList()
+
+    public val comparator: Comparator<in T>
+    get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
+
+    private val SortSpecification<T>.comparator: Comparator<T>?
+        get() = (this.sortAttribute as? FieldSortAttribute<T>)?.field?.comparator(this.sortDirection)
+
+    private fun KProperty1<T, Comparable<*>?>.comparator(sortDirection: SortDirection): Comparator<T>? =
+        this.let { compareProperty ->
+            Comparator { c0, c1 ->
+                (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
+                    (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
+                        a.compareTo(b) * sortDirection.value
+                    }
+                } ?: EQUAL_ON_COMPARISON
+            }
+        }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySort<T> {
         sortSpecifications = sortSpecifications + sortSpecification
@@ -52,6 +68,8 @@ public class QuerySort<T : Any> {
         listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value)
     }.toMap()
 
+    public fun toList(): List<Pair<String, SortDirection>> = sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
+
     private fun getSortFeature(fieldName: String, javaClass: Class<T>): SortAttribute<T> {
         val kClass = Reflection.createKotlinClass(javaClass) as KClass<T>
         return getSortFeature(fieldName, kClass)
@@ -63,21 +81,34 @@ public class QuerySort<T : Any> {
             ?: SortAttribute.FieldNameSortAttribute(fieldName)
     }
 
-    public data class SortSpecification<T>(
+    private data class SortSpecification<T>(
         val sortAttribute: SortAttribute<T>,
         val sortDirection: SortDirection
     )
 
-    public sealed class SortAttribute<T>(public val name: String) {
-        public class FieldSortAttribute<T>(public val field: KProperty1<T, Comparable<*>?>, name: String) :
-            SortAttribute<T>(name)
+    private sealed class SortAttribute<T>(val name: String) {
+        class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, name: String) : SortAttribute<T>(name)
+        class FieldNameSortAttribute<T>(fieldName: String) : SortAttribute<T>(fieldName)
+    }
 
-        public class FieldNameSortAttribute<T>(fieldName: String) : SortAttribute<T>(fieldName)
+    public enum class SortDirection(public val value: Int) {
+        DESC(-1), ASC(1)
+    }
+
+    internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
+        override fun compare(o1: T, o2: T): Int =
+            comparators.fold(EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
+                when (currentComparisonValue) {
+                    EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
+                    else -> currentComparisonValue
+                }
+            }
     }
 
     public companion object {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
+        private const val EQUAL_ON_COMPARISON = 0
 
         public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> = asc(fieldName, T::class)
         public inline fun <reified T : Any> QuerySort<T>.descByName(fieldName: String): QuerySort<T> =
@@ -90,9 +121,5 @@ public class QuerySort<T : Any> {
 
         public inline fun <reified T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> =
             QuerySort<T>().desc(field)
-    }
-
-    public enum class SortDirection(public val value: Int) {
-        DESC(-1), ASC(1)
     }
 }

@@ -41,10 +41,10 @@ internal class QueryChannelsRepository(var queryChannelsDao: QueryChannelsDao) {
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsWithSorts {
             val queryEntity =
                 QueryChannelsEntity(getId(queryChannelsSpec), queryChannelsSpec.filter, queryChannelsSpec.cids)
-            val sortInnerEntities = queryChannelsSpec.sort.sortSpecifications.map {
+            val sortInnerEntities = queryChannelsSpec.sort.toList().map { (name, sortDirection) ->
                 ChannelSortInnerEntity(
-                    it.sortAttribute.name,
-                    it.sortDirection.value,
+                    name,
+                    sortDirection.value,
                     queryEntity.id
                 )
             }
