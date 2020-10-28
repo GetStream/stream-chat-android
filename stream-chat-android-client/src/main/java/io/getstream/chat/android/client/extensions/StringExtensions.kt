@@ -17,8 +17,5 @@ public fun String.snakeToLowerCamelCase(): String {
  * turns createdAt into created_at
  */
 public fun String.camelCaseToSnakeCase(): String {
-    return camelRegex.replace(this) {
-        it.value.replace("_", "")
-            .toUpperCase()
-    }
+    return camelRegex.replace(this) { "_${it.value}" }.toLowerCase()
 }
