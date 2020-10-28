@@ -3,7 +3,6 @@ import com.getstream.sdk.chat.Configuration
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'de.mannodermaus.android-junit5'
@@ -22,15 +21,14 @@ android {
         versionCode 1
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'STREAM_CHAT_OFFLINE_VERSION', "\"$version\""
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    
-    buildFeatures {
-        dataBinding true
-    }
+
     testOptions.unitTests {
         includeAndroidResources = true
         all {
@@ -107,7 +105,7 @@ dependencies {
     testImplementation Dependencies.androidxTest
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.androidxArchCoreTest
-    testImplementation Dependencies.recyclerview // for performance test
+    testImplementation Dependencies.androidxRecyclerview // for performance test
     testImplementation Dependencies.roomTesting
     testImplementation Dependencies.workTesting
 

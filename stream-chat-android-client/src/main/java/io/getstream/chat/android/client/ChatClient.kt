@@ -41,7 +41,11 @@ public interface ChatClient {
 
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null)
 
-    public fun setUser(user: User, tokenProvider: TokenProvider, listener: InitConnectionListener? = null)
+    public fun setUser(
+        user: User,
+        tokenProvider: TokenProvider,
+        listener: InitConnectionListener? = null
+    )
 
     public fun setAnonymousUser(listener: InitConnectionListener? = null)
 
@@ -63,7 +67,11 @@ public interface ChatClient {
 
     public fun channel(channelType: String, channelId: String): ChannelController
 
-    public fun createChannel(channelType: String, channelId: String, members: List<String>): Call<Channel>
+    public fun createChannel(
+        channelType: String,
+        channelId: String,
+        members: List<String>
+    ): Call<Channel>
 
     public fun createChannel(channelType: String, members: List<String>): Call<Channel>
 
@@ -253,7 +261,12 @@ public interface ChatClient {
         request: QueryChannelRequest
     ): Call<Channel>
 
-    public fun markMessageRead(channelType: String, channelId: String, messageId: String): Call<Unit>
+    public fun markMessageRead(
+        channelType: String,
+        channelId: String,
+        messageId: String
+    ): Call<Unit>
+
     public fun showChannel(channelType: String, channelId: String): Call<Unit>
     public fun hideChannel(
         channelType: String,
@@ -316,7 +329,8 @@ public interface ChatClient {
         private var logLevel = ChatLogLevel.ALL
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
+        private var notificationsHandler: ChatNotificationHandler =
+            ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
 
         public fun logLevel(level: ChatLogLevel): Builder {
@@ -422,11 +436,10 @@ public interface ChatClient {
     }
 
     public companion object {
-        private lateinit var instance: ChatClient
+        private var instance: ChatClient? = null
 
         @JvmStatic
-        public fun instance(): ChatClient {
-            return instance
-        }
+        public fun instance(): ChatClient = instance
+            ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
     }
 }

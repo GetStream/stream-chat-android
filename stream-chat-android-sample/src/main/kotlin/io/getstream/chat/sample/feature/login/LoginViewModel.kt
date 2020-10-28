@@ -52,7 +52,7 @@ class LoginViewModel(
             token = loginCredentials.userToken
         )
 
-        Chat.getInstance()
+        Chat.instance()
             .setUser(
                 chatUser,
                 loginCredentials.userToken,

@@ -83,7 +83,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        webView.loadUrl(Chat.getInstance().urlSigner().signFileUrl(url));
+        webView.loadUrl(Chat.instance().urlSigner().signFileUrl(url));
     }
 
 
@@ -101,7 +101,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .load(Chat.getInstance().urlSigner().signImageUrl(url))
+                .load(Chat.instance().urlSigner().signImageUrl(url))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
@@ -109,13 +109,13 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(Chat.getInstance().urlSigner().signFileUrl(url));
+            view.loadUrl(Chat.instance().urlSigner().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, Chat.getInstance().urlSigner().signFileUrl(url));
+            super.onPageFinished(view, Chat.instance().urlSigner().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
 

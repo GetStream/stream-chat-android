@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class LlcMigrationUtilsTest {
 
+    /** [provideNames] */
     @ParameterizedTest
     @MethodSource("com.getstream.sdk.chat.utils.LlcMigrationUtilsTest#provideNames")
     fun `Should return initials of the user name`(name: String, initials: String) {
@@ -17,6 +18,7 @@ internal class LlcMigrationUtilsTest {
         LlcMigrationUtils.getInitials(user) `should be equal to` initials
     }
 
+    /** [provideNames] */
     @ParameterizedTest
     @MethodSource("com.getstream.sdk.chat.utils.LlcMigrationUtilsTest#provideNames")
     fun `Should return initials of the channel name`(name: String, initials: String) {

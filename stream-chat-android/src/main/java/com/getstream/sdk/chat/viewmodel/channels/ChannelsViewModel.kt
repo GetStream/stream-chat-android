@@ -78,7 +78,7 @@ public class ChannelsViewModelImpl(
         when (event) {
             is ChannelsViewModel.Event.ReachedEndOfList -> requestMoreChannels()
             is ChannelsViewModel.Event.LogoutClicked -> {
-                Chat.getInstance().disconnect()
+                Chat.instance().disconnect()
                 stateMerger.postValue(ChannelsViewModel.State.NavigateToLoginScreen)
             }
         }.exhaustive

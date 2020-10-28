@@ -9,8 +9,11 @@
     <string name="log_out_title">Log out</string>
     <string name="new_messages_single">%s New Message</string>
     <string name="new_messages_plural">%s New Messages</string>
+    <string name="sdk_version_template">Stream SDK v %s</string>
 
-
+    <string name="hide_channel_dialog">Would you like to hide this channel?</string>
+    <string name="deny">No</string>
+    <string name="confirm">Yes</string>
 
     <!--Users Screen-->
     <string name="users_screen_title">Welcome to Stream Chat</string>
@@ -24,11 +27,6 @@
     <string name="login_field_user_id_hint">User ID</string>
     <string name="login_field_user_token">User token</string>
     <string name="login_field_user_name_hint">User name (optional)</string>
-    <string name="login_sdk_version_template">Stream SDK v %s</string>
     <string name="login_validation_error">This field is required</string>
     <string name="login_custom_settings">Custom settings</string>
-
-    <string name="hide_channel_dialog">Would you like to hide this channel?</string>
-    <string name="deny">No</string>
-    <string name="confirm">Yes</string>
 </resources>

@@ -3,4 +3,5 @@
     <dimen name="padding_medium">16dp</dimen>
 
     <dimen name="login_controls_corner_radius">12dp</dimen>
+    <dimen name="login_avatar_size">46dp</dimen>
 </resources>

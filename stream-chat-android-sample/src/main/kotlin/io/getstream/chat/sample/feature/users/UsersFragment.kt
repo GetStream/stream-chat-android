@@ -1,7 +1,9 @@
 package io.getstream.chat.sample.feature.users
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,12 +17,10 @@ import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.data.user.User
-import kotlinx.android.synthetic.main.fragment_users.*
-import kotlinx.android.synthetic.main.fragment_users.loadingProgressBar
-import kotlinx.android.synthetic.main.fragment_users.sdkVersion
+import io.getstream.chat.sample.databinding.FragmentUsersBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class UsersFragment : Fragment(R.layout.fragment_users) {
+class UsersFragment : Fragment() {
 
     private val viewModel: UsersViewModel by viewModel()
 
@@ -29,15 +29,32 @@ class UsersFragment : Fragment(R.layout.fragment_users) {
         optionsClickListener = ::redirectToLoginScreen
     )
 
+    private var _binding: FragmentUsersBinding? = null
+    protected val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentUsersBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        usersList.adapter = adapter
-        usersList.addItemDecoration(
+        binding.usersList.adapter = adapter
+        binding.usersList.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
                 LinearLayoutManager.VERTICAL
             )
         )
-        sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.VERSION_NAME)
+        binding.sdkVersion.text = getString(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_UI_VERSION)
 
         viewModel.state.observe(
             viewLifecycleOwner,
@@ -89,7 +106,7 @@ class UsersFragment : Fragment(R.layout.fragment_users) {
     }
 
     private fun changeLoadingIndicatorVisibility(isVisible: Boolean) {
-        loadingProgressBar.isVisible = isVisible
-        usersList.isVisible = !isVisible
+        binding.loadingProgressBar.isVisible = isVisible
+        binding.usersList.isVisible = !isVisible
     }
 }

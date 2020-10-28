@@ -136,7 +136,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="@string/login_sdk_version_template" />
+        tools:text="@string/sdk_version_template" />
 
     <ProgressBar
         android:id="@+id/loadingProgressBar"

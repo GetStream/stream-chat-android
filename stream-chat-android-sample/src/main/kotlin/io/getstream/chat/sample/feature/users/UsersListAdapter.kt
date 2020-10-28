@@ -1,20 +1,20 @@
 package io.getstream.chat.sample.feature.users
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.user.User
-import kotlinx.android.synthetic.main.item_user.view.*
+import io.getstream.chat.sample.databinding.ItemOptionsBinding
+import io.getstream.chat.sample.databinding.ItemUserBinding
 
 class UsersListAdapter(
     val userClickListener: (User) -> Unit,
     val optionsClickListener: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var items = mutableListOf<User>()
+    private val items = mutableListOf<User>()
 
     fun setUsers(users: List<User>) {
         items.clear()
@@ -23,13 +23,12 @@ class UsersListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
         return if (viewType == VIEW_TYPE_OPTIONS) {
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_options, parent, false)
+            ItemOptionsBinding.inflate(inflater, parent, false)
                 .let { FooterViewHolder(it) }
         } else {
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_user, parent, false)
+            ItemUserBinding.inflate(inflater, parent, false)
                 .let { UsersListViewHolder(it) }
         }
     }
@@ -63,12 +62,14 @@ class UsersListAdapter(
     }
 }
 
-class FooterViewHolder(view: View) : RecyclerView.ViewHolder(view)
+class FooterViewHolder(binding: ItemOptionsBinding) : RecyclerView.ViewHolder(binding.root)
 
-class UsersListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class UsersListViewHolder(
+    private val binding: ItemUserBinding
+) : RecyclerView.ViewHolder(binding.root) {
     fun bindUser(user: User) {
         itemView.apply {
-            name.text = user.name
+            binding.nameTextView.text = user.name
             Glide.with(this)
                 .load(user.image)
                 .centerCrop()
@@ -76,7 +77,7 @@ class UsersListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 .error(R.drawable.ic_avatar_placeholder)
                 .fallback(R.drawable.ic_avatar_placeholder)
                 .transform(CircleCrop())
-                .into(avatar)
+                .into(binding.avatarImageView)
         }
     }
 }
