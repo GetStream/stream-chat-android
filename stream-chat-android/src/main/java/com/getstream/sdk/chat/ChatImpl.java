@@ -148,7 +148,7 @@ class ChatImpl implements Chat {
     @NotNull
     @Override
     public String getVersion() {
-        return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
+        return BuildConfig.STREAM_CHAT_UI_VERSION + "-" + BuildConfig.BUILD_TYPE;
     }
 
     @Override

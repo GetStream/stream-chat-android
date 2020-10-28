@@ -39,11 +39,11 @@ import androidx.annotation.Nullable;
  */
 @SuppressWarnings("WeakerAccess")
 public class MediaSourceProvider {
-    protected static final String USER_AGENT_FORMAT = "ExoMedia %s (%d) / Android %s / %s";
+    protected static final String USER_AGENT_FORMAT = "ExoMedia %s / Android %s / %s";
 
     @NonNull
     @SuppressLint("DefaultLocale")
-    protected String userAgent = String.format(USER_AGENT_FORMAT, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE, Build.VERSION.RELEASE, Build.MODEL);
+    protected String userAgent = String.format(USER_AGENT_FORMAT, BuildConfig.STREAM_CHAT_UI_VERSION, Build.VERSION.RELEASE, Build.MODEL);
 
     @Nullable
     protected static SourceTypeBuilder findByProviders(@NonNull Uri uri) {

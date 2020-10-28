@@ -40,7 +40,7 @@ class LoginFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.VERSION_NAME)
+        binding.sdkVersion.text = getString(R.string.login_sdk_version_template, BuildConfig.STREAM_CHAT_UI_VERSION)
         binding.developmentUsers.setOnClickListener {
             redirectToUsersScreen()
         }

@@ -21,6 +21,8 @@ android {
         versionCode 1
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'STREAM_CHAT_OFFLINE_VERSION', "\"$version\""
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -103,7 +105,7 @@ dependencies {
     testImplementation Dependencies.androidxTest
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.androidxArchCoreTest
-    testImplementation Dependencies.recyclerview // for performance test
+    testImplementation Dependencies.androidxRecyclerview // for performance test
     testImplementation Dependencies.roomTesting
     testImplementation Dependencies.workTesting
 
