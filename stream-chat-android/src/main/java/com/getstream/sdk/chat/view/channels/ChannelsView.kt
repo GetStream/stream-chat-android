@@ -14,15 +14,13 @@ import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory
 import com.getstream.sdk.chat.view.channels.ChannelListView.ChannelClickListener
 import io.getstream.chat.android.client.models.Channel
 
-private val LOADING_VIEW_ID = R.id.channels_loading_view_id
-private val EMPTY_STATE_VIEW_ID = R.id.channels_empty_state_view_id
-private val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
-
 public class ChannelsView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
+    private val CHANNEL_LIST_VIEW_ID = R.id.channels_list_view_id
+
     private var emptyStateView: View = defaultEmptyStateView()
     private var loadingView: View = defaultLoadingView()
     private val channelListView: ChannelListView = ChannelListView(context, attrs, defStyleAttr).apply { id = CHANNEL_LIST_VIEW_ID }
@@ -54,13 +52,11 @@ public class ChannelsView @JvmOverloads constructor(
 
     public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.emptyStateView)
-        this.emptyStateView = view.apply { id = EMPTY_STATE_VIEW_ID }
         addView(emptyStateView, layoutParams)
     }
 
     public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.loadingView)
-        this.loadingView = view.apply { id = LOADING_VIEW_ID }
         addView(loadingView, layoutParams)
     }
 
@@ -103,12 +99,9 @@ public class ChannelsView @JvmOverloads constructor(
     private fun defaultChildLayoutParams() =
         LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
 
-    private fun defaultLoadingView(): View = ProgressBar(context).apply {
-        id = LOADING_VIEW_ID
-    }
+    private fun defaultLoadingView(): View = ProgressBar(context)
 
     private fun defaultEmptyStateView(): View = TextView(context).apply {
         setText(R.string.stream_channels_empty_state_label)
-        id = EMPTY_STATE_VIEW_ID
     }
 }

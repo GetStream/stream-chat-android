@@ -57,7 +57,6 @@ import io.getstream.chat.android.client.models.User
  */
 
 public class MessageListView : ConstraintLayout {
-    private val LOADING_VIEW_ID = R.id.message_list_loading_view_id
 
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
@@ -422,7 +421,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
         loadingViewContainer.removeView(loadingView)
-        loadingView = view.apply { id = LOADING_VIEW_ID }
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
@@ -436,7 +434,6 @@ public class MessageListView : ConstraintLayout {
 
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
         emptyStateViewContainer.removeView(emptyStateView)
-        emptyStateView = view.apply { id = LOADING_VIEW_ID }
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
