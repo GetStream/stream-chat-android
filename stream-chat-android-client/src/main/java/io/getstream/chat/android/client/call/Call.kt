@@ -1,6 +1,5 @@
 package io.getstream.chat.android.client.call
 
-import androidx.annotation.UiThread
 import androidx.annotation.WorkerThread
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -27,7 +26,6 @@ public interface Call<T : Any> {
      * Executes the call asynchronously, on a background thread. Safe to call from the main
      * thread. The [callback] will always be invoked on the main thread.
      */
-    @UiThread
     public fun enqueue(callback: (Result<T>) -> Unit = {})
 
     /**
