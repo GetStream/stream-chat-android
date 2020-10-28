@@ -29,6 +29,7 @@ android {
 
     testOptions.unitTests {
         includeAndroidResources = true
+        returnDefaultValues = true
         all {
             testLogging {
                 events 'failed', 'standardOut', 'standardError'
