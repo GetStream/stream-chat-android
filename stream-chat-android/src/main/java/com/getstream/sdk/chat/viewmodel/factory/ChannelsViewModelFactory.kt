@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.FilterObject
@@ -33,6 +32,6 @@ public class ChannelsViewModelFactory(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return ChannelsViewModelImpl(ChatDomain.instance(), filter, sort, limit) as T
+        return ChannelsViewModel(ChatDomain.instance(), filter, sort, limit) as T
     }
 }
