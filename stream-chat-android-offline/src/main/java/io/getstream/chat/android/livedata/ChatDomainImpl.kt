@@ -184,13 +184,20 @@ internal class ChatDomainImpl internal constructor(
     internal fun clearState() {
         _initialized.value = false
         _online.value = false
-        _totalUnreadCount.value = null
-        _channelUnreadCount.value = null
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
         _errorEvent.value = null
         _banned.value = false
         _mutedUsers.value = emptyList()
-        activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
+        if (activeChannelMapImpl != null ) {
+            activeChannelMapImpl.clear()
+        }
+
+        if (activeQueryMapImpl != null) {
+            activeQueryMapImpl.clear()
+        }
+
+
     }
 
     private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {

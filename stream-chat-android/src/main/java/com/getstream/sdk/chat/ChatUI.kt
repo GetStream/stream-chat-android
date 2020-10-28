@@ -96,7 +96,7 @@ public class ChatUI internal constructor(
 
         @JvmStatic
         public fun instance(): ChatUI {
-            return checkNotNull(instance) {"Be sure to call ChatUI.Builder().build() before using ChatUI.instance()"}
+            return checkNotNull(instance) { "Be sure to call ChatUI.Builder().build() before using ChatUI.instance()" }
         }
     }
 }
