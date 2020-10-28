@@ -441,5 +441,8 @@ public interface ChatClient {
         @JvmStatic
         public fun instance(): ChatClient = instance
             ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+
+        public val isInitialized: Boolean
+            get() = instance != null
     }
 }

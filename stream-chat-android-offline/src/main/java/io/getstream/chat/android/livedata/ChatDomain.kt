@@ -202,5 +202,8 @@ public interface ChatDomain {
         @JvmStatic
         public fun instance(): ChatDomain = instance
             ?: throw IllegalStateException("ChatDomain.Builder::build() must be called before obtaining ChatDomain instance")
+
+        public val isInitialized: Boolean
+            get() = instance != null
     }
 }
