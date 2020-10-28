@@ -7,6 +7,7 @@
 ## stream-chat-android
 
 ## stream-chat-android-client
+- Fix guest user authentication
 
 ## stream-chat-android-offline
 
