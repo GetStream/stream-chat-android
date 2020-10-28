@@ -574,7 +574,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         // Scroll to bottom position for typing indicator
-        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2)) {
+        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2) && !hasScrolledUp) {
             val newPosition = adapter.itemCount - 1
             layoutManager.scrollToPosition(newPosition)
             buffer.active()
