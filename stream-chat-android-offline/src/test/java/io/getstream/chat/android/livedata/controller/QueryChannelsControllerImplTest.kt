@@ -31,7 +31,7 @@ internal class QueryChannelsControllerImplTest {
 
         sut.addChannelIfFilterMatches(newChannel)
 
-        verify(channelController).updateLiveDataFromChannel(eq(newChannel))
+        verify(channelController).updateLiveDataFromChannel(newChannel)
     }
 
     @Test
