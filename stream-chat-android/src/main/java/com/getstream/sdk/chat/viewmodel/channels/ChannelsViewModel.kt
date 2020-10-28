@@ -7,7 +7,6 @@ import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.utils.exhaustive
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel.Companion.DEFAULT_SORT
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -21,27 +20,27 @@ public class ChannelsViewModel(
     private val sort: QuerySort = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModel() {
-    private val channelsData: LiveData<ChannelsViewModel.State>
-    private val loadingMoreData: LiveData<ChannelsViewModel.State.LoadingNextPage>
-    private val loadingData = MutableLiveData<ChannelsViewModel.State.Loading>()
-    private val endPageData: LiveData<ChannelsViewModel.State.EndPageReached>
-    private val stateMerger = MediatorLiveData<ChannelsViewModel.State>()
+    private val channelsData: LiveData<State>
+    private val loadingMoreData: LiveData<State.LoadingNextPage>
+    private val loadingData = MutableLiveData<State.Loading>()
+    private val endPageData: LiveData<State.EndPageReached>
+    private val stateMerger = MediatorLiveData<State>()
 
-    public val state: LiveData<ChannelsViewModel.State> = stateMerger
+    public val state: LiveData<State> = stateMerger
 
     init {
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
         queryChannelsController.run {
-            loadingData.postValue(ChannelsViewModel.State.Loading)
+            loadingData.postValue(State.Loading)
             channelsData = map(channels) { channelList ->
                 if (channelList.isEmpty()) {
-                    ChannelsViewModel.State.NoChannelsAvailable
+                    State.NoChannelsAvailable
                 } else {
-                    ChannelsViewModel.State.Result(channelList.filter { it.hidden == false })
+                    State.Result(channelList.filter { it.hidden == false })
                 }
             }
-            loadingMoreData = map(loadingMore) { ChannelsViewModel.State.LoadingNextPage(it) }
-            endPageData = map(endOfChannels) { ChannelsViewModel.State.EndPageReached(it) }
+            loadingMoreData = map(loadingMore) { State.LoadingNextPage(it) }
+            endPageData = map(endOfChannels) { State.EndPageReached(it) }
         }
 
         stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
@@ -49,18 +48,18 @@ public class ChannelsViewModel(
         stateMerger.addSource(loadingMoreData) { state -> stateMerger.value = state }
     }
 
-    public fun onEvent(event: ChannelsViewModel.Event) {
+    public fun onEvent(event: Event) {
         when (event) {
-            is ChannelsViewModel.Event.ReachedEndOfList -> requestMoreChannels()
-            is ChannelsViewModel.Event.LogoutClicked -> {
+            is Event.ReachedEndOfList -> requestMoreChannels()
+            is Event.LogoutClicked -> {
                 Chat.instance().disconnect()
-                stateMerger.postValue(ChannelsViewModel.State.NavigateToLoginScreen)
+                stateMerger.postValue(State.NavigateToLoginScreen)
             }
         }.exhaustive
     }
 
     public fun hideChannel(channel: Channel) {
-        loadingData.postValue(ChannelsViewModel.State.Loading)
+        loadingData.postValue(State.Loading)
         chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
     }
 
@@ -69,17 +68,17 @@ public class ChannelsViewModel(
     }
 
     public sealed class State {
-        public data class LoadingNextPage(val isLoading: Boolean) : ChannelsViewModel.State()
-        public object Loading : ChannelsViewModel.State()
-        public data class Result(val channels: List<Channel>) : ChannelsViewModel.State()
-        public data class EndPageReached(val isEndPage: Boolean) : ChannelsViewModel.State()
-        public object NoChannelsAvailable : ChannelsViewModel.State()
-        public object NavigateToLoginScreen : ChannelsViewModel.State()
+        public data class LoadingNextPage(val isLoading: Boolean) : State()
+        public object Loading : State()
+        public data class Result(val channels: List<Channel>) : State()
+        public data class EndPageReached(val isEndPage: Boolean) : State()
+        public object NoChannelsAvailable : State()
+        public object NavigateToLoginScreen : State()
     }
 
     public sealed class Event {
-        public object ReachedEndOfList : ChannelsViewModel.Event()
-        public object LogoutClicked : ChannelsViewModel.Event()
+        public object ReachedEndOfList : Event()
+        public object LogoutClicked : Event()
     }
 
     public companion object {
