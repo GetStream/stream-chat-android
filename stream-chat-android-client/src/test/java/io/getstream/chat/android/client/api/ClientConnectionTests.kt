@@ -7,7 +7,6 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -92,7 +91,7 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
-        client = ChatClientImpl(
+        client = ChatClient(
             config,
             api,
             socket,
