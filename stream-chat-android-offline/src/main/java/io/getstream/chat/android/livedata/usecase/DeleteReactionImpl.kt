@@ -1,10 +1,10 @@
 package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface DeleteReaction {

@@ -1,6 +1,6 @@
-package io.getstream.chat.android.livedata.utils
+package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.internal.InternalStreamChatApi
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -9,7 +9,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-internal class CoroutineCall<T : Any>(
+@InternalStreamChatApi
+public class CoroutineCall<T : Any>(
     private val scope: CoroutineScope,
     private val runnable: suspend () -> Result<T>
 ) : Call<T> {

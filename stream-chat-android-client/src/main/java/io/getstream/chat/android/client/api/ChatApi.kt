@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.api.models.UpdateCooldownRequest
 import io.getstream.chat.android.client.api.models.UpdateUsersRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -42,7 +43,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.uploader.FileUploader
-import io.getstream.chat.android.client.uploader.FileUploaderCall
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.Result
@@ -99,7 +99,7 @@ internal class ChatApi(
     )
 
     fun sendFile(channelType: String, channelId: String, file: File): Call<String> {
-        return FileUploaderCall(coroutineScope) {
+        return CoroutineCall(coroutineScope) {
             val result = fileUploader.sendFile(
                 channelType = channelType,
                 channelId = channelId,
@@ -112,7 +112,7 @@ internal class ChatApi(
     }
 
     fun sendImage(channelType: String, channelId: String, file: File): Call<String> {
-        return FileUploaderCall(coroutineScope) {
+        return CoroutineCall(coroutineScope) {
             val result = fileUploader.sendImage(
                 channelType = channelType,
                 channelId = channelId,
@@ -125,7 +125,7 @@ internal class ChatApi(
     }
 
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
-        return FileUploaderCall(coroutineScope) {
+        return CoroutineCall(coroutineScope) {
             fileUploader.deleteFile(
                 channelType = channelType,
                 channelId = channelId,
@@ -138,7 +138,7 @@ internal class ChatApi(
     }
 
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
-        return FileUploaderCall(coroutineScope) {
+        return CoroutineCall(coroutineScope) {
             fileUploader.deleteImage(
                 channelType = channelType,
                 channelId = channelId,

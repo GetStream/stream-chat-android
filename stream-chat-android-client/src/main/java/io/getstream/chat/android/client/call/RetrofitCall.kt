@@ -6,12 +6,13 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
+import retrofit2.Callback
 import retrofit2.Response
 
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser
-) : Call<T>{
+) : Call<T> {
 
     @Volatile
     protected var canceled = false
@@ -38,18 +39,15 @@ internal class RetrofitCall<T : Any>(
     }
 
     private fun enqueue(call: retrofit2.Call<T>, callback: (Result<T>) -> Unit) {
-        call.enqueue(
-            object : retrofit2.Callback<T> {
-
-                override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
-                    callback(getResult(response))
-                }
-
-                override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
-                    callback(failedResult(t))
-                }
+        call.enqueue(object : Callback<T> {
+            override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
+                callback(getResult(response))
             }
-        )
+
+            override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
+                callback(failedResult(t))
+            }
+        })
     }
 
     private fun failedResult(t: Throwable): Result<T> {

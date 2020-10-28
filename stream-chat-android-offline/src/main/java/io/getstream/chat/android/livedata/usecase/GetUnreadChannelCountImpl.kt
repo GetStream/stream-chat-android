@@ -2,9 +2,9 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CoroutineCall
 
 public interface GetUnreadChannelCount {
     /**
