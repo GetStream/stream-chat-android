@@ -107,7 +107,7 @@ internal class ChannelControllerImpl(
     val unfilteredMessages: LiveData<List<Message>> = Transformations.map(_messages) { it.second.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<MessagesUpdate> = Transformations.map(_messages) { (isLoadingMore, messageMap),  ->
+    override val messages: LiveData<MessagesUpdate> = Transformations.map(_messages) { (isLoadingMore, messageMap), ->
         // TODO: consider removing this check
         val messages = messageMap.values
             .asSequence()
