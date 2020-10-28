@@ -51,6 +51,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+@AuthenticatedApi
 internal interface RetrofitApi {
 
     // region channels

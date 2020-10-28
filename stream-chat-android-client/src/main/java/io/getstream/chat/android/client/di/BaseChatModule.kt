@@ -2,6 +2,8 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import com.moczul.ok2curl.CurlInterceptor
+import io.getstream.chat.android.client.api.AnonymousApi
+import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.HeadersInterceptor
@@ -80,7 +82,7 @@ internal open class BaseChatModule(
         readTimeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
-        isAnonymousApi: Boolean = false
+        isAnonymousApi: Boolean
     ): Retrofit {
         val clientBuilder =
             clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser, isAnonymousApi)
@@ -146,14 +148,14 @@ internal open class BaseChatModule(
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return ChatApi(
             chatConfig.apiKey,
-            buildRetrofitApi(RetrofitApi::class.java, false),
-            buildRetrofitApi(RetrofitAnonymousApi::class.java, true),
+            buildRetrofitApi(RetrofitApi::class.java),
+            buildRetrofitApi(RetrofitAnonymousApi::class.java),
             UuidGeneratorImpl(),
             chatConfig.fileUploader ?: defaultFileUploader
         )
     }
 
-    private fun <T> buildRetrofitApi(apiClass: Class<T>, isAnonymousApi: Boolean): T {
+    private fun <T> buildRetrofitApi(apiClass: Class<T>): T {
         return buildRetrofit(
             config.httpUrl,
             config.baseTimeout,
@@ -161,18 +163,35 @@ internal open class BaseChatModule(
             config.baseTimeout,
             config,
             parser(),
-            isAnonymousApi
+            apiClass.isAnonymousApi
         ).create(apiClass)
     }
 
+    private val Class<*>.isAnonymousApi: Boolean
+        get() {
+            val anon = this.annotations.any { it is AnonymousApi }
+            val auth = this.annotations.any { it is AuthenticatedApi }
+
+            if (anon && auth) {
+                throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")
+            }
+
+            if (anon) return true
+            if (auth) return false
+
+            throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
+        }
+
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+        val apiClass = RetrofitCdnApi::class.java
         return buildRetrofit(
             config.cdnHttpUrl,
             config.cdnTimeout,
             config.cdnTimeout,
             config.cdnTimeout,
             config,
-            parser()
-        ).create(RetrofitCdnApi::class.java)
+            parser(),
+            apiClass.isAnonymousApi
+        ).create(apiClass)
     }
 }
