@@ -58,8 +58,7 @@ internal class MockClientBuilder {
             1000,
             1000,
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationHandler(context),
+            ChatLogger.Config(ChatLogLevel.NOTHING, null)
         )
 
         socket = FakeChatSocket()
@@ -70,10 +69,18 @@ internal class MockClientBuilder {
             config.apiKey,
             retrofitApi,
             UuidGeneratorImpl(),
-            fileUploader
+            fileUploader,
+
         )
 
-        client = ChatClient(config, api, socket, notificationsManager)
+        client = ChatClient(
+            config,
+            api,
+            socket,
+            notificationsManager,
+            mock(),
+            ChatNotificationHandler(context),
+        )
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)

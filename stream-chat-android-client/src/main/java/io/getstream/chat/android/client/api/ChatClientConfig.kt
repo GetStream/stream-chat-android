@@ -1,10 +1,6 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.logger.ChatLogger
-import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
-import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.token.TokenManagerImpl
-import io.getstream.chat.android.client.uploader.FileUploader
 
 public class ChatClientConfig(
     public val apiKey: String,

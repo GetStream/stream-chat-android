@@ -1,7 +1,6 @@
 package com.getstream.sdk.chat.enums
 
 import androidx.annotation.StringRes
-import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.R
 

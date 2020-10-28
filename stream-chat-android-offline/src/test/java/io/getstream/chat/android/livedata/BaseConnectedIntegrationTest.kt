@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity

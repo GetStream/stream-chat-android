@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.controllers
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent

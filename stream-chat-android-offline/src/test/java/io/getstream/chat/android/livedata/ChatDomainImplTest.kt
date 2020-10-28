@@ -4,6 +4,7 @@ import android.os.Handler
 import androidx.arch.core.executor.testing.InstantExecutorExtension
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -36,7 +37,7 @@ internal class ChatDomainImplTest {
         val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = true
-        sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled)
+        sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled, false)
     }
 
     @Test

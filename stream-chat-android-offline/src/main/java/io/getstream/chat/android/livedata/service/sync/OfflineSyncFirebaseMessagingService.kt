@@ -47,7 +47,6 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                     client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
                 }
             }
-
         }
     }
 
@@ -81,8 +80,6 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                     performSync(domain, cid)
                     client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
                 }
-
-
             } finally {
                 stopForeground(true)
                 stopSelf()

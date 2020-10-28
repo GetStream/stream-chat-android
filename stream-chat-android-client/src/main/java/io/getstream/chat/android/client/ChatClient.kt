@@ -60,12 +60,11 @@ public class ChatClient internal constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
-    public val appContext: Context,
+    public var appContext: Context,
     private val notificationsHandler: ChatNotificationHandler,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl()
 ) : LifecycleObserver {
-
 
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
@@ -120,6 +119,7 @@ public class ChatClient internal constructor(
     //region Set user
 
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
+        state.token = token
         setUser(user, ImmediateTokenProvider(token), listener)
     }
 
@@ -196,8 +196,6 @@ public class ChatClient internal constructor(
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
-
-
 
     public fun sendImage(
         channelType: String,
@@ -668,6 +666,9 @@ public class ChatClient internal constructor(
 
     private fun getTokenAndConnect(connect: () -> Unit) {
         tokenManager.loadAsync {
+            if (it.isSuccess) {
+                state.token = it.data()
+            }
             connect()
         }
     }
@@ -688,12 +689,6 @@ public class ChatClient internal constructor(
         }
     }
 
-    public class OfflineConfig() {
-        public var userPresence: Boolean = false
-        public var storageEnabled: Boolean = true
-        public var recoveryEnabled: Boolean = true
-    }
-
     public class Builder(private val apiKey: String, private val appContext: Context) {
 
         private var baseUrl: String = "chat-us-east-1.stream-io-api.com"
@@ -706,7 +701,6 @@ public class ChatClient internal constructor(
         private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
-
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level

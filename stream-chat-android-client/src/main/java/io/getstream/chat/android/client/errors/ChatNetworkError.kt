@@ -10,7 +10,7 @@ public class ChatNetworkError private constructor(
     cause
 ) {
     override fun toString(): String {
-        return "ChatNetworkError http status ${statusCode}, stream error code ${streamCode}: $description"
+        return "ChatNetworkError http status $statusCode, stream error code $streamCode: $description"
     }
 
     public companion object {

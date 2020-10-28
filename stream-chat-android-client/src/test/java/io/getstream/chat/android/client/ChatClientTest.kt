@@ -48,8 +48,7 @@ internal class ChatClientTest {
             1000,
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationHandler(mock()),
-            tokenManager = FakeTokenManager("")
+
         )
 
         socket = FakeChatSocket()
@@ -57,7 +56,10 @@ internal class ChatClientTest {
             config = config,
             api = mock(),
             socket = socket,
-            notifications = mock()
+            notifications = mock(),
+            appContext = mock(),
+            notificationsHandler = ChatNotificationHandler(mock()),
+            tokenManager = FakeTokenManager("")
         )
         result = mutableListOf()
     }

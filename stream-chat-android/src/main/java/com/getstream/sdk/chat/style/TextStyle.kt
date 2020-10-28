@@ -4,7 +4,6 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.widget.TextView
-import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.ChatUX
 
 public class TextStyle {

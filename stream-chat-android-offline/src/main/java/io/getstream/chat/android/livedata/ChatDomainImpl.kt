@@ -1,6 +1,7 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
@@ -43,8 +44,15 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.*
-import java.lang.Runnable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -80,13 +88,17 @@ internal val gson = Gson()
  */
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
+    internal var u: User? = null,
+    internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
-    override var offlineEnabled: Boolean = false,
+    override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
-    internal var backgroundSyncEnabled: Boolean
+    internal var backgroundSyncEnabled: Boolean = false
 ) :
     ChatDomain {
+    constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled)
+
     private val _initialized = MutableLiveData(false)
     private val _online = MutableLiveData(false)
     private val _totalUnreadCount = MutableLiveData<Int>()
@@ -97,7 +109,6 @@ internal class ChatDomainImpl internal constructor(
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(client.appContext) }
-
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
@@ -187,13 +198,16 @@ internal class ChatDomainImpl internal constructor(
         Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
     }
 
+    fun isTestRunner(): Boolean {
+        return Build.FINGERPRINT.toLowerCase().contains("robolectric")
+    }
 
     internal fun setUser(user: User) {
         clearState()
 
         currentUser = user
 
-        if (backgroundSyncEnabled) {
+        if (backgroundSyncEnabled && !isTestRunner()) {
             val config = BackgroundSyncConfig(client.config.apiKey, client.getCurrentUser()!!.id, client.getCurrentToken())
             if (config.isValid()) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
@@ -202,7 +216,7 @@ internal class ChatDomainImpl internal constructor(
             }
         }
 
-        database = createDatabase(client.appContext, user, offlineEnabled)
+        database = db ?: createDatabase(client.appContext, user, offlineEnabled)
 
         repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
 
@@ -241,7 +255,7 @@ internal class ChatDomainImpl internal constructor(
         useCases = UseCaseHelper(this)
 
         // if the user is already defined, just call setUser ourselves
-        val current = client.getCurrentUser()
+        val current = u ?: client.getCurrentUser()
         if (current != null) {
             setUser(current)
         }
@@ -399,7 +413,6 @@ internal class ChatDomainImpl internal constructor(
     var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
     private var activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
-
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)

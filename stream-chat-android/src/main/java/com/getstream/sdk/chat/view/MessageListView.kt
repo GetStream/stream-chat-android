@@ -11,7 +11,6 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R

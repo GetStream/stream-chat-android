@@ -57,7 +57,7 @@ internal class EventsParser(
     }
 
     private fun onFailure(webSocket: WebSocket, chatError: ChatError, response: Response?) {
-        logger.logE("onFailure ${chatError.toString()}", chatError)
+        logger.logE("onFailure $chatError", chatError)
         // Called when socket is disconnected by client also (client.disconnect())
         service.onSocketError(ChatNetworkError.create(ChatErrorCode.SOCKET_FAILURE, chatError.cause))
     }

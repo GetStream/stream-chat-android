@@ -96,5 +96,4 @@ public class ChatUX internal constructor(
             return instance
         }
     }
-
 }

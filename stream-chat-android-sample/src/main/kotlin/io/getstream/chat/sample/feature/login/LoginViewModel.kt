@@ -3,7 +3,6 @@ package io.getstream.chat.sample.feature.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.Chat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener

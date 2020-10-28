@@ -10,8 +10,11 @@ import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
+import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.controllers.ChannelController
@@ -119,7 +122,7 @@ internal open class BaseDomainTest {
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
 
-        return mock {
+        val client: ChatClient = mock {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
@@ -145,6 +148,7 @@ internal open class BaseDomainTest {
                 )
             )
         }
+        return client
     }
 
     fun createConnectedMockClient(): ChatClient {
@@ -186,7 +190,6 @@ internal open class BaseDomainTest {
                 )
             )
         }
-
         When calling client.setUser(any(), any<String>(), any()) doAnswer {
             (it.arguments[2] as InitConnectionListener).onSuccess(
                 InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString())

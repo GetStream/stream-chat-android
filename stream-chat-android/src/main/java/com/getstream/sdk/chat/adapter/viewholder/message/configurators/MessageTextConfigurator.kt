@@ -14,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem

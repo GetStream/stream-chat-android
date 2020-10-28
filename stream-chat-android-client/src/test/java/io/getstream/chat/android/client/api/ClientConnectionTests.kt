@@ -46,8 +46,7 @@ internal class ClientConnectionTests {
         1000,
         false,
         ChatLogger.Config(ChatLogLevel.NOTHING, null),
-        ChatNotificationHandler(context),
-        tokenManager = FakeTokenManager(token)
+
     )
 
     private val connectedEvent = ConnectedEvent(
@@ -80,7 +79,8 @@ internal class ClientConnectionTests {
             config.apiKey,
             retrofitApi,
             UuidGeneratorImpl(),
-            fileUploader
+            fileUploader,
+
         )
 
         whenever(socket.addListener(anyOrNull())) doAnswer { invocationOnMock ->
@@ -88,11 +88,16 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
+        val mockedContext: Context = mock()
+
         client = ChatClient(
             config,
             api,
             socket,
-            notificationsManager
+            notificationsManager,
+            mockedContext,
+            ChatNotificationHandler(context),
+            tokenManager = FakeTokenManager(token)
         )
     }
 

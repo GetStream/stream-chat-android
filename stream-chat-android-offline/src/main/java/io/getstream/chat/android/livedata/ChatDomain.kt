@@ -11,7 +11,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
@@ -153,7 +152,7 @@ public interface ChatDomain {
             return this
         }
 
-        // TODO: do we even need this, or is it enough to have it at the low level client?
+        // TODO: do we even need this, or is it better to have it at the low level client?
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
             this.notificationConfig = notificationConfig
             return this
@@ -168,8 +167,8 @@ public interface ChatDomain {
         }
 
         internal fun buildImpl(): ChatDomainImpl {
-            val handler =  Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled)
+            val handler = Handler(Looper.getMainLooper())
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {
@@ -186,7 +185,7 @@ public interface ChatDomain {
 
         @JvmStatic
         public fun instance(): ChatDomain {
-            return checkNotNull(instance) {"ChatDomain.instance() isn't available yet. Be sure to call ChatDomain.build() and ChatClient.setUser() before trying to retrieve the chatDomain.instance()"}
+            return checkNotNull(instance) { "ChatDomain.instance() isn't available yet. Be sure to call ChatDomain.build() and ChatClient.setUser() before trying to retrieve the chatDomain.instance()" }
         }
     }
 }
