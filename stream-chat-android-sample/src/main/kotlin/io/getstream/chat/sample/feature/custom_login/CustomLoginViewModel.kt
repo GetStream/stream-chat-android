@@ -51,12 +51,13 @@ class CustomLoginViewModel(
             name = loginCredentials.userName,
             token = loginCredentials.userToken
         )
+    }
 
     private fun initChatUser(chatUser: ChatUser, token: String, cid: String? = null) {
         ChatClient.instance()
             .setUser(
                 chatUser,
-                loginCredentials.userToken,
+                token,
                 object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         _state.postValue(State.RedirectToChannels)
