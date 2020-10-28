@@ -23,7 +23,7 @@ internal class SendMessageImplTest : BaseConnectedIntegrationTest() {
         val result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result as Result<Any>)
 
-        val messages = channelState.messages.getOrAwaitValue()
+        val messages = channelState.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.last()).isEqualTo(message1)
 
         val message = client.getMessage(result.data().id).execute().data()

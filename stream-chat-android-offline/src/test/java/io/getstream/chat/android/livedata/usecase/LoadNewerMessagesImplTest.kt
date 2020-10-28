@@ -22,11 +22,11 @@ internal class LoadNewerMessagesImplTest : BaseConnectedIntegrationTest() {
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 0).execute().data()
         val result = chatDomain.useCases.loadNewerMessages(data.channel1.cid, 10).execute()
         assertSuccess(result as Result<Any>)
-        var messages = channelState.messages.getOrAwaitValue()
+        var messages = channelState.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.size).isGreaterThan(0)
         val result2 = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result2 as Result<Any>)
-        messages = channelState.messages.getOrAwaitValue()
+        messages = channelState.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.last()).isEqualTo(message1)
     }
 }

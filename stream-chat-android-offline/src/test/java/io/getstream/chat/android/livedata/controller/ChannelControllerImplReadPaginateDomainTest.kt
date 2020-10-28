@@ -38,7 +38,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
         channelControllerImpl.watch()
 
         // the message should still show up
-        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue().messages
         val channelData = channelControllerImpl.channelData.getOrAwaitValue()
         val channel = channelControllerImpl.toChannel()
 
@@ -59,7 +59,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
         // write a message
         channelControllerImpl.sendMessage(message)
 
-        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue().messages
         val channel = channelControllerImpl.toChannel()
 
         Truth.assertThat(messages.size).isGreaterThan(0)
@@ -81,7 +81,7 @@ internal class ChannelControllerImplReadPaginateDomainTest : BaseConnectedIntegr
         // verify we have messages as well
         val channelId = channelRepos.first().cid
 
-        val messages = chatDomainImpl.channel(channelId).messages.getOrAwaitValue()
+        val messages = chatDomainImpl.channel(channelId).messages.getOrAwaitValue().messages
         Truth.assertThat(messages.size).isGreaterThan(0)
     }
 }

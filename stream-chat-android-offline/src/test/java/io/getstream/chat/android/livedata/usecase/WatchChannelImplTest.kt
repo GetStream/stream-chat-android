@@ -22,11 +22,11 @@ internal class WatchChannelImplTest : BaseConnectedIntegrationTest() {
         val channelController = result0.data()
         val result = chatDomain.useCases.loadOlderMessages(data.channel1.cid, 10).execute()
         assertSuccess(result)
-        var messages = channelController.messages.getOrAwaitValue()
+        var messages = channelController.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.size).isGreaterThan(0)
         val result2 = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result2)
-        messages = channelController.messages.getOrAwaitValue()
+        messages = channelController.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.last()).isEqualTo(message1)
     }
 }
