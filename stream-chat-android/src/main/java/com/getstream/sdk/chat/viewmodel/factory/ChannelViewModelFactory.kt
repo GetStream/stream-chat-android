@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  * @see ChannelHeaderViewModel
  * @see MessageInputViewModel
  */
-public class StreamViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
+public class ChannelViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
         MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
@@ -24,7 +24,7 @@ public class StreamViewModelFactory(private val cid: String) : ViewModelProvider
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         val viewModel: ViewModel? = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException("StreamViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+            ?: throw IllegalArgumentException("ChannelViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
