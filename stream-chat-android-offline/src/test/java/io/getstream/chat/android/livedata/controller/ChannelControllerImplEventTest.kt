@@ -29,7 +29,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     @Test
     fun eventNewMessage() {
         channelControllerImpl.handleEvent(data.newMessageEvent)
-        Truth.assertThat(channelControllerImpl.messages.getOrAwaitValue())
+        Truth.assertThat(channelControllerImpl.messages.getOrAwaitValue().messages)
             .isEqualTo(listOf(data.newMessageEvent.message))
     }
 
@@ -124,7 +124,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
 
         channelControllerImpl.handleEvent(data.reactionEvent)
 
-        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue().messages
         Truth.assertThat(messages).isEqualTo(listOf(messageWithCid))
     }
 }
