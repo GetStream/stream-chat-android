@@ -14,6 +14,7 @@
 - Fix guest user authentication
 
 ## stream-chat-android-offline
+- Add GetChannelController use cases which allows to get ChannelController for Channel
 
 # Oct 26th, 2020 - 4.4.0
 ## stream-chat-android
