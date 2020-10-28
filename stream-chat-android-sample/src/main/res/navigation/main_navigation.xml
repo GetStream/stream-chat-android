@@ -2,23 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/userLoginFragment">
 
     <fragment
-        android:id="@+id/loginFragment"
-        android:name="io.getstream.chat.sample.feature.login.LoginFragment"
-        android:label="LoginFragment">
-
+        android:id="@+id/userLoginFragment"
+        android:name="io.getstream.chat.sample.feature.user_login.UserLoginFragment"
+        android:label="UserLoginFragment">
         <action
-            android:id="@+id/action_loginFragment_to_usersFragment"
-            app:destination="@id/usersFragment" />
-
-        <action
-            android:id="@+id/action_loginFragment_to_channelsFragment"
+            android:id="@+id/action_userLoginFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
 
         <action
-            android:id="@+id/action_loginFragment_to_channelFragment"
+            android:id="@+id/action_userLoginFragment_to_customLoginFragment"
+            app:destination="@id/customLoginFragment" />
+
+        <action
+            android:id="@+id/action_userLoginFragment_to_channelFragment"
             app:destination="@id/channelFragment">
             <argument
                 android:name="cid"
@@ -28,13 +27,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/usersFragment"
-        android:name="io.getstream.chat.sample.feature.users.UsersFragment"
-        android:label="UsersFragment">
+        android:id="@+id/customLoginFragment"
+        android:name="io.getstream.chat.sample.feature.custom_login.CustomLoginFragment"
+        android:label="CustomLoginFragment">
         <action
-            android:id="@+id/action_usersFragment_to_channelsFragment"
+            android:id="@+id/action_customLoginFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/channelsFragment"
         android:name="io.getstream.chat.sample.feature.channels.ChannelsFragment"
@@ -52,9 +52,10 @@
             android:id="@+id/action_to_create_channel"
             app:destination="@id/createChannelFragment" />
         <action
-            android:id="@+id/action_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_to_userLoginFragment"
+            app:destination="@id/userLoginFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/channelFragment"
         android:name="io.getstream.chat.sample.feature.channel.ChannelFragment"
@@ -69,6 +70,7 @@
             android:id="@+id/action_channelFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/createChannelFragment"
         android:name="io.getstream.chat.sample.feature.create_channel.CreateChannelFragment"
@@ -77,4 +79,5 @@
             android:id="@+id/action_to_channels"
             app:destination="@id/channelsFragment" />
     </fragment>
+
 </navigation>
