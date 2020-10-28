@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 internal class ErrorCall<T : Any>(private val e: ChatError) : Call<T> {
     override fun cancel() {
-        // Empty
+        // Not supported
     }
 
     override fun execute(): Result<T> {

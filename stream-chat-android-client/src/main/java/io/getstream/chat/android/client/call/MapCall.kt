@@ -1,17 +1,17 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class MapCall<T : Any, K : Any>(
     private val call: Call<T>,
     private val mapper: (T) -> K
 ) : Call<K> {
 
-    @Volatile
-    protected var canceled = false
+    protected var canceled = AtomicBoolean(false)
 
     override fun cancel() {
-        canceled = true
+        canceled.set(true)
     }
 
     override fun execute(): Result<K> {
@@ -28,7 +28,7 @@ internal class MapCall<T : Any, K : Any>(
 
     override fun enqueue(callback: (Result<K>) -> Unit) {
         call.enqueue callback@ {
-            if (canceled) {
+            if (canceled.get()) {
                 return@callback
             }
 
