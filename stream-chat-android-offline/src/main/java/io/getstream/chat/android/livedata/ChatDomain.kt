@@ -184,6 +184,11 @@ public interface ChatDomain {
         private var instance: ChatDomain? = null
 
         @JvmStatic
+        public fun isReady(): Boolean {
+            return instance != null
+        }
+
+        @JvmStatic
         public fun instance(): ChatDomain {
             return checkNotNull(instance) { "ChatDomain.instance() isn't available yet. Be sure to call ChatDomain.build() and ChatClient.setUser() before trying to retrieve the chatDomain.instance()" }
         }

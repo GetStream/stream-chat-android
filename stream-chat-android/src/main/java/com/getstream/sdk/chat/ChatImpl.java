@@ -156,6 +156,8 @@ class ChatImpl implements Chat {
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
         final ChatClient client = ChatClient.instance();
+        // this behaviour is wrong, note how ChatClient raises an error if you try to call setUser
+        // while already being connected
         client.disconnect();
         disconnectChatDomainIfAlreadyInitialized();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
@@ -189,15 +191,13 @@ class ChatImpl implements Chat {
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
-        try {
-            final ChatDomain chatDomain = ChatDomain.instance();
-            BuildersKt.launch(GlobalScope.INSTANCE,
-                    Dispatchers.getIO(),
-                    CoroutineStart.DEFAULT,
-                    (scope, continuation) -> chatDomain.disconnect(continuation));
-        } catch (UninitializedPropertyAccessException e) {
-            ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
-        }
+        if (!ChatDomain.isReady()) return;
+
+        final ChatDomain chatDomain = ChatDomain.instance();
+        BuildersKt.launch(GlobalScope.INSTANCE,
+                Dispatchers.getIO(),
+                CoroutineStart.DEFAULT,
+                (scope, continuation) -> chatDomain.disconnect(continuation));
     }
 
     protected void init() {
