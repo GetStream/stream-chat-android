@@ -40,7 +40,7 @@ public class ChatUI internal constructor(
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
     public val navigator: ChatNavigator = ChatNavigatorImpl()
-    
+
     init {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler)

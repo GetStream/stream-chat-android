@@ -87,7 +87,9 @@ internal val gson = Gson()
  */
 internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
-    internal var u: User? = null,
+    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
+    // the userOverwrite field is here for backwards compatibility
+    internal var userOverwrite: User? = null,
     internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
     override var offlineEnabled: Boolean = true,
@@ -254,18 +256,22 @@ internal class ChatDomainImpl internal constructor(
         useCases = UseCaseHelper(this)
 
         // if the user is already defined, just call setUser ourselves
-        val current = u ?: client.getCurrentUser()
+        val current = userOverwrite ?: client.getCurrentUser()
         if (current != null) {
             setUser(current)
         }
-        // listen to future user changes
-        client.preSetUserListeners.add {
-            setUser(it)
-        }
-        // disconnect if the low level client disconnects
-        client.disconnectListeners.add {
-            GlobalScope.launch {
-                disconnect()
+        // past behaviour was to set the user on the chat domain
+        // the new syntax is to automatically pick up changes from the client
+        if (userOverwrite == null) {
+            // listen to future user changes
+            client.preSetUserListeners.add {
+                setUser(it)
+            }
+            // disconnect if the low level client disconnects
+            client.disconnectListeners.add {
+                GlobalScope.launch {
+                    disconnect()
+                }
             }
         }
 
