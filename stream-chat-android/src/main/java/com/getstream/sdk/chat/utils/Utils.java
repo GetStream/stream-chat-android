@@ -70,7 +70,7 @@ public class Utils {
         Glide.with(view.getContext())
                 .asBitmap()
                 //TODO: llc add glide signing
-                //.load(StreamChat.getInstance().getUploadStorage().signGlideUrl(url))
+                //.load(StreamChat.instance().getUploadStorage().signGlideUrl(url))
                 .centerCrop()
                 .into(new BitmapImageViewTarget(view) {
                     @Override
@@ -94,12 +94,12 @@ public class Utils {
     }
 
     public static void showMessage(Context context, @StringRes int stringRes, Object... formatArgs) {
-        String s = Chat.getInstance().getStrings().get(stringRes, formatArgs);
+        String s = Chat.instance().getStrings().get(stringRes, formatArgs);
         showMessage(context, s);
     }
 
     public static void showMessage(Context context, @StringRes int stringRes) {
-        String s = Chat.getInstance().getStrings().get(stringRes);
+        String s = Chat.instance().getStrings().get(stringRes);
         showMessage(context, s);
     }
 

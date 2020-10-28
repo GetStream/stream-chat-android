@@ -132,7 +132,7 @@ public class App extends Application {
 }
 ```
 
-With this, you will be able to retrieve Chat instance from any part of your application using `Chat.getInstance()`. Here's an example:
+With this, you will be able to retrieve Chat instance from any part of your application using `Chat.instance()`. Here's an example:
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -140,17 +140,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Chat chat = Chat.getInstance();
+        Chat chat = Chat.instance();
         ...
     }
 ```
 
 ## Online status
 
-Connection status to Chat is available via `Chat.getInstance().getOnlineStatus()` which returns a LiveData object you can attach observers to.
+Connection status to Chat is available via `Chat.instance().getOnlineStatus()` which returns a LiveData object you can attach observers to.
 
 ```java
-Chat.getInstance().getOnlineStatus().observe(...);
+Chat.instance().getOnlineStatus().observe(...);
 ```
 
 ## Markdown support

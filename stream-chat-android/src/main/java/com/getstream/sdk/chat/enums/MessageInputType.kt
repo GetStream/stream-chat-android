@@ -14,4 +14,4 @@ internal enum class MessageInputType(@StringRes internal val labelId: Int) {
 }
 
 internal val MessageInputType.label: String
-    get() = Chat.getInstance().strings.get(labelId)
+    get() = Chat.instance().strings.get(labelId)

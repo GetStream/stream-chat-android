@@ -63,7 +63,7 @@ class LoginViewModel(
     }
 
     private fun initChatUser(chatUser: ChatUser, token: String, cid: String? = null) {
-        Chat.getInstance()
+        Chat.instance()
             .setUser(
                 chatUser,
                 token,

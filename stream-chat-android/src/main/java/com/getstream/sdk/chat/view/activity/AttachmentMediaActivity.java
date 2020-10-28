@@ -48,7 +48,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
             iv_audio.setVisibility(View.GONE);
 
 
-        playVideo(Chat.getInstance().urlSigner().signFileUrl(url));
+        playVideo(Chat.instance().urlSigner().signFileUrl(url));
     }
 
     /**
@@ -57,7 +57,7 @@ public class AttachmentMediaActivity extends AppCompatActivity {
      * @param url media url
      */
     public void playVideo(String url) {
-        videoView.setVideoURI(Uri.parse(Chat.getInstance().urlSigner().signFileUrl(url)));
+        videoView.setVideoURI(Uri.parse(Chat.instance().urlSigner().signFileUrl(url)));
         videoView.setOnPreparedListener(() -> videoView.start());
     }
 }
