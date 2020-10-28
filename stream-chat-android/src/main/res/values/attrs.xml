@@ -111,7 +111,7 @@
     </declare-styleable>
     <declare-styleable name="ChannelsView">
     <!--Custom ChannelListLayout-->
-        <!-- Text of the default empty state label -->
+        <!-- Text of the empty state label -->
         <attr name="streamChannelsEmptyStateLabelText" format="string"/>
     </declare-styleable>
     <!--MessageInputView-->
