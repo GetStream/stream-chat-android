@@ -28,9 +28,6 @@ internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl)
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)
         }
-        return CallImpl2(
-            runnable,
-            domainImpl.scope
-        )
+        return CallImpl2(runnable, domainImpl.scope)
     }
 }

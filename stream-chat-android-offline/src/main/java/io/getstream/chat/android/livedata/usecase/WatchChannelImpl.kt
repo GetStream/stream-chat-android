@@ -24,21 +24,18 @@ public interface WatchChannel {
 internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchChannel {
     override operator fun invoke(cid: String, messageLimit: Int): Call<ChannelController> {
         validateCid(cid)
-        val channelControllerImpl = domainImpl.channel(cid)
-        val channelControllerI: ChannelController = channelControllerImpl
+
+        val channelController = domainImpl.channel(cid)
 
         if (messageLimit> 0) {
-            channelControllerImpl.scope.launch {
-                channelControllerImpl.watch(messageLimit)
+            channelController.scope.launch {
+                channelController.watch(messageLimit)
             }
         }
 
         val runnable = suspend {
-            Result(channelControllerI, null)
+            Result<ChannelController>(channelController, null)
         }
-        return CallImpl2(
-            runnable,
-            channelControllerImpl.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

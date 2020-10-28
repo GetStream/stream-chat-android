@@ -22,15 +22,10 @@ internal class DeleteReactionImpl(private val domainImpl: ChatDomainImpl) : Dele
     override operator fun invoke(cid: String, reaction: Reaction): Call<Message> {
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-
-            channelRepo.deleteReaction(reaction)
+            channelController.deleteReaction(reaction)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

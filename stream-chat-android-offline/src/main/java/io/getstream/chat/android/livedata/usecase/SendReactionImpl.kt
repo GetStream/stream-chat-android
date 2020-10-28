@@ -22,15 +22,10 @@ internal class SendReactionImpl(private val domainImpl: ChatDomainImpl) : SendRe
     override operator fun invoke(cid: String, reaction: Reaction): Call<Reaction> {
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-
-            channelRepo.sendReaction(reaction)
+            channelController.sendReaction(reaction)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

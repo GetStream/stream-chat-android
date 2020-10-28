@@ -20,14 +20,11 @@ public interface ShowChannel {
 internal class ShowChannelImpl(private val domainImpl: ChatDomainImpl) : ShowChannel {
     override operator fun invoke(cid: String): Call<Unit> {
         validateCid(cid)
-        val channelController = domainImpl.channel(cid)
 
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
             channelController.show()
         }
-        return CallImpl2(
-            runnable,
-            channelController.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

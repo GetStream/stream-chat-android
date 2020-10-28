@@ -21,15 +21,12 @@ public interface HideChannel {
 internal class HideChannelImpl(private val domainImpl: ChatDomainImpl) : HideChannel {
     override operator fun invoke(cid: String, keepHistory: Boolean): Call<Unit> {
         validateCid(cid)
-        val channelController = domainImpl.channel(cid)
 
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
             val clearHistory = !keepHistory
             channelController.hide(clearHistory)
         }
-        return CallImpl2(
-            runnable,
-            channelController.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

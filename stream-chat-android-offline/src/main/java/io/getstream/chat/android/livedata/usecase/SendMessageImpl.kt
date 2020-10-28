@@ -24,12 +24,10 @@ internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMes
         val cid = message.cid
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-            channelRepo.sendMessage(message, attachmentTransformer)
+            channelController.sendMessage(message, attachmentTransformer)
         }
-
-        return CallImpl2(runnable, channelRepo.scope)
+        return CallImpl2(runnable, channelController.scope)
     }
 }

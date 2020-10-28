@@ -22,15 +22,10 @@ internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
     override operator fun invoke(cid: String): Call<Boolean> {
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-
-            channelRepo.markRead()
+            channelController.markRead()
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

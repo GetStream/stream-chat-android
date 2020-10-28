@@ -22,8 +22,7 @@ internal class RetrofitCall<T : Any>(
     }
 
     override fun execute(): Result<T> {
-        val result = execute(call)
-        return result
+        return execute(call)
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
@@ -81,7 +80,6 @@ internal class RetrofitCall<T : Any>(
     }
 
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
-
         var data: T? = null
         var error: ChatError? = null
 

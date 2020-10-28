@@ -21,9 +21,6 @@ internal class CreateChannelImpl(private val domainImpl: ChatDomainImpl) : Creat
         val runnable = suspend {
             domainImpl.createChannel(channel)
         }
-        return CallImpl2(
-            runnable,
-            domainImpl.scope
-        )
+        return CallImpl2(runnable, domainImpl.scope)
     }
 }

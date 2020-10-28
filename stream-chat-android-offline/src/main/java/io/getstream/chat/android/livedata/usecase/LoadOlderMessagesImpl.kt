@@ -21,13 +21,11 @@ public interface LoadOlderMessages {
 internal class LoadOlderMessagesImpl(private val domainImpl: ChatDomainImpl) : LoadOlderMessages {
     override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
         validateCid(cid)
-        val channelRepo = domainImpl.channel(cid)
+
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-            channelRepo.loadOlderMessages(messageLimit)
+            channelController.loadOlderMessages(messageLimit)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

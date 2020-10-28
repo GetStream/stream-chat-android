@@ -24,9 +24,6 @@ internal class GetTotalUnreadCountImpl(private val domainImpl: ChatDomainImpl) :
         val runnable = suspend {
             Result(domainImpl.totalUnreadCount, null)
         }
-        return CallImpl2(
-            runnable,
-            domainImpl.scope
-        )
+        return CallImpl2(runnable, domainImpl.scope)
     }
 }

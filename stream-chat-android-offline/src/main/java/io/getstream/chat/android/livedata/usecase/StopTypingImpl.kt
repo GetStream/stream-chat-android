@@ -20,15 +20,10 @@ internal class StopTypingImpl(private val domainImpl: ChatDomainImpl) : StopTypi
     override operator fun invoke(cid: String): Call<Boolean> {
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-
-            channelRepo.stopTyping()
+            channelController.stopTyping()
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

@@ -30,9 +30,6 @@ internal class ThreadLoadMoreImpl(private val domainImpl: ChatDomainImpl) : Thre
         val runnable = suspend {
             threadController.loadOlderMessages(messageLimit)
         }
-        return CallImpl2(
-            runnable,
-            channelController.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

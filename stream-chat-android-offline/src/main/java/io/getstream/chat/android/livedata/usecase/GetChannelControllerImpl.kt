@@ -22,14 +22,11 @@ public interface GetChannelController {
 internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) : GetChannelController {
     override operator fun invoke(cid: String): Call<ChannelController> {
         validateCid(cid)
-        val channelControllerImpl = domainImpl.channel(cid)
 
+        val channelControllerImpl = domainImpl.channel(cid)
         val runnable = suspend {
-            Result(channelControllerImpl as ChannelController, null)
+            Result<ChannelController>(channelControllerImpl, null)
         }
-        return CallImpl2(
-            runnable,
-            channelControllerImpl.scope
-        )
+        return CallImpl2(runnable, channelControllerImpl.scope)
     }
 }

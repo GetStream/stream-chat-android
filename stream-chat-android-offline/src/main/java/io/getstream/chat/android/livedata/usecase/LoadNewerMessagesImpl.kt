@@ -21,13 +21,11 @@ public interface LoadNewerMessages {
 internal class LoadNewerMessagesImpl(private val domainImpl: ChatDomainImpl) : LoadNewerMessages {
     override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
         validateCid(cid)
-        val channelRepo = domainImpl.channel(cid)
+
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-            channelRepo.loadNewerMessages(messageLimit)
+            channelController.loadNewerMessages(messageLimit)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

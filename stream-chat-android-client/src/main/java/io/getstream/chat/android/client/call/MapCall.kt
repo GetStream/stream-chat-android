@@ -2,7 +2,7 @@ package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.utils.Result
 
-internal class MapCall<T: Any, K: Any>(
+internal class MapCall<T : Any, K : Any>(
     private val call: Call<T>,
     private val mapper: (T) -> K
 ) : Call<K> {
@@ -27,15 +27,17 @@ internal class MapCall<T: Any, K: Any>(
     }
 
     override fun enqueue(callback: (Result<K>) -> Unit) {
-        call.enqueue {
-            if (!canceled) {
-                if (it.isSuccess) {
-                    val data = mapper(it.data())
-                    callback(Result(data, null))
-                } else {
-                    val error = it.error()
-                    callback(Result(null, error))
-                }
+        call.enqueue callback@ {
+            if (canceled) {
+                return@callback
+            }
+
+            if (it.isSuccess) {
+                val data = mapper(it.data())
+                callback(Result(data, null))
+            } else {
+                val error = it.error()
+                callback(Result(null, error))
             }
         }
     }

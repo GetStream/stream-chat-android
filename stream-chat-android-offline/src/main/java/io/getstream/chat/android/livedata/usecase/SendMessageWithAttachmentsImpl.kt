@@ -23,21 +23,19 @@ public interface SendMessageWithAttachments {
 internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
     override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call<Message> {
         validateCid(cid)
-        val channel = domainImpl.channel(cid)
+
+        val channelController = domainImpl.channel(cid)
         message.cid = cid
         val runnable = suspend {
-            val attachments = uploadFiles(channel, files, attachmentTransformer)
+            val attachments = uploadFiles(channelController, files, attachmentTransformer)
             if (attachments.isError) {
                 Result(attachments.error())
             } else {
                 message.attachments.addAll(attachments.data())
-                channel.sendMessage(message)
+                channelController.sendMessage(message)
             }
         }
-        return CallImpl2(
-            runnable,
-            channel.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 
     private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Result<List<Attachment>> =
@@ -85,6 +83,6 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
                 )
             }
         }
-}
 
-internal fun String?.isImageMimetype() = this?.contains("image") ?: false
+    private fun String?.isImageMimetype() = this?.contains("image") ?: false
+}

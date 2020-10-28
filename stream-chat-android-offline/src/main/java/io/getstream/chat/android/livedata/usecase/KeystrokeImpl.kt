@@ -20,14 +20,11 @@ public interface Keystroke {
 internal class KeystrokeImpl(private val domainImpl: ChatDomainImpl) : Keystroke {
     override operator fun invoke(cid: String): Call<Boolean> {
         validateCid(cid)
-        val channelController = domainImpl.channel(cid)
 
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
             channelController.keystroke()
         }
-        return CallImpl2(
-            runnable,
-            channelController.scope
-        )
+        return CallImpl2(runnable, channelController.scope)
     }
 }

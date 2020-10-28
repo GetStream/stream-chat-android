@@ -22,12 +22,10 @@ internal class CancelMessageImpl(private val domainImpl: ChatDomainImpl) : Cance
         val cid = message.cid
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-            channelRepo.cancelMessage(message)
+            channelController.cancelMessage(message)
         }
-
-        return CallImpl2(runnable, channelRepo.scope)
+        return CallImpl2(runnable, channelController.scope)
     }
 }

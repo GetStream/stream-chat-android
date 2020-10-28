@@ -23,12 +23,10 @@ internal class SendGiphyImpl(private val domainImpl: ChatDomainImpl) : SendGiphy
         val cid = message.cid
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
+        val channelController = domainImpl.channel(cid)
         val runnable = suspend {
-            channelRepo.sendGiphy(message)
+            channelController.sendGiphy(message)
         }
-
-        return CallImpl2(runnable, channelRepo.scope)
+        return CallImpl2(runnable, channelController.scope)
     }
 }
