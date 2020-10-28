@@ -15,3 +15,4 @@ internal enum class MessageInputType(@StringRes internal val labelId: Int) {
 
 internal val MessageInputType.label: String
     get() = ChatUX.instance().strings.get(labelId)
+

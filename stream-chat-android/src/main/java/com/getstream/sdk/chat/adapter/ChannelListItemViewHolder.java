@@ -145,6 +145,7 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
         if (!TextUtils.isEmpty(lastMessage.getText())) {
             String text = StringUtility.getDeletedOrMentionedText(lastMessage);
             ChatUX.instance().getMarkdown().setText(tv_last_message, text);
+
             return;
         }
 

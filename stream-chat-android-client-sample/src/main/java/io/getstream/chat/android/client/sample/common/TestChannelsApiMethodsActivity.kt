@@ -17,25 +17,12 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
-import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.sample.databinding.ActivityTestApiBinding
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.android.synthetic.main.activity_test_api.btnAcceptInvite
-import kotlinx.android.synthetic.main.activity_test_api.btnCheckTyping
-import kotlinx.android.synthetic.main.activity_test_api.btnGetMessage
-import kotlinx.android.synthetic.main.activity_test_api.btnHideChannel
-import kotlinx.android.synthetic.main.activity_test_api.btnMarkReadMessage
-import kotlinx.android.synthetic.main.activity_test_api.btnQueryChannels
-import kotlinx.android.synthetic.main.activity_test_api.btnRejectInvite
-import kotlinx.android.synthetic.main.activity_test_api.btnShowChannel
-import kotlinx.android.synthetic.main.activity_test_api.btnStopWatching
-import kotlinx.android.synthetic.main.activity_test_api.btnUpdateChannel
-import kotlinx.android.synthetic.main.activity_test_api.btnUpdateMessage
-import kotlinx.android.synthetic.main.activity_test_api.btnWatchChannel
-import kotlinx.android.synthetic.main.activity_test_api.buttonsContainer
 
 class TestChannelsApiMethodsActivity : AppCompatActivity() {
 
@@ -66,13 +53,16 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     val benderFToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVuZGVyLWYifQ.7xHlQUI276vLSd_0r5TqqPxjEjwOYr6kelhODLRgUs4\n"
 
+    private lateinit var binding: ActivityTestApiBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_test_api)
+        binding = ActivityTestApiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val ctx = this
 
-        buttonsContainer.children.iterator().forEach {
+        binding.buttonsContainer.children.iterator().forEach {
             it.isEnabled = false
         }
 
@@ -111,23 +101,24 @@ class TestChannelsApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
+        binding.apply {
+            buttonsContainer.children.iterator().forEach {
+                it.isEnabled = true
+            }
 
-        buttonsContainer.children.iterator().forEach {
-            it.isEnabled = true
+            btnQueryChannels.setOnClickListener { queryChannels() }
+            btnUpdateChannel.setOnClickListener { updateChannel() }
+            btnStopWatching.setOnClickListener { stopWatching() }
+            btnAcceptInvite.setOnClickListener { acceptInvite() }
+            btnRejectInvite.setOnClickListener { rejectInvite() }
+            btnHideChannel.setOnClickListener { hideChannel() }
+            btnShowChannel.setOnClickListener { showChannel() }
+            btnMarkReadMessage.setOnClickListener { markReadMessage() }
+            btnWatchChannel.setOnClickListener { watchChannel() }
+            btnGetMessage.setOnClickListener { getMessage() }
+            btnCheckTyping.setOnClickListener { checkTyping() }
+            btnUpdateMessage.setOnClickListener { updatedMessage() }
         }
-
-        btnQueryChannels.setOnClickListener { queryChannels() }
-        btnUpdateChannel.setOnClickListener { updateChannel() }
-        btnStopWatching.setOnClickListener { stopWatching() }
-        btnAcceptInvite.setOnClickListener { acceptInvite() }
-        btnRejectInvite.setOnClickListener { rejectInvite() }
-        btnHideChannel.setOnClickListener { hideChannel() }
-        btnShowChannel.setOnClickListener { showChannel() }
-        btnMarkReadMessage.setOnClickListener { markReadMessage() }
-        btnWatchChannel.setOnClickListener { watchChannel() }
-        btnGetMessage.setOnClickListener { getMessage() }
-        btnCheckTyping.setOnClickListener { checkTyping() }
-        btnUpdateMessage.setOnClickListener { updatedMessage() }
     }
 
     private fun updatedMessage() {

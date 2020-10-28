@@ -57,6 +57,7 @@ internal class CreateChannelViewModelTest {
         whenever(createChannelResult.isSuccess) doReturn true
     }
 
+    /** [provideChannelName] */
     @ParameterizedTest
     @MethodSource("com.getstream.sdk.chat.viewmodel.CreateChannelViewModelTest#provideChannelName")
     fun `Should inform about validation error`(channelNameCandidate: String) {

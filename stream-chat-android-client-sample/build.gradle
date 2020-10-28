@@ -2,7 +2,6 @@ import com.getstream.sdk.chat.Dependencies
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
@@ -49,7 +48,9 @@ android {
         xmlReport false
         htmlReport false
     }
-
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 kapt {
@@ -66,7 +67,7 @@ dependencies {
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
-    implementation Dependencies.recyclerview
+    implementation Dependencies.androidxRecyclerview
 
     // RxJava
     implementation Dependencies.rxjava2Android
@@ -78,6 +79,7 @@ dependencies {
     kapt Dependencies.roomCompiler
 
     // Firebase
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.firebaseCore
 

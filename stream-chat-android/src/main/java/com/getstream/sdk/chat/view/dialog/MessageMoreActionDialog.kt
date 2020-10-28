@@ -12,13 +12,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.ReactionDialogAdapter
+import com.getstream.sdk.chat.databinding.StreamDialogMessageMoreactionBinding
 import com.getstream.sdk.chat.model.ModelType
 import com.getstream.sdk.chat.utils.Utils
+import com.getstream.sdk.chat.utils.inflater
 import com.getstream.sdk.chat.view.MessageListViewStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import kotlinx.android.synthetic.main.stream_dialog_message_moreaction.*
 import top.defaults.drawabletoolbox.DrawableBuilder
 
 internal class MessageMoreActionDialog(
@@ -49,47 +50,48 @@ internal class MessageMoreActionDialog(
     }
 
     private fun setupMessageActions() {
-        setContentView(R.layout.stream_dialog_message_moreaction)
+        val binding = StreamDialogMessageMoreactionBinding.inflate(context.inflater)
+        setContentView(binding.root)
         setCanceledOnTouchOutside(true)
-        startThreadButton.isVisible = canThreadOnMessage()
-        copyMessageButton.isVisible = canCopyOnMessage()
+        binding.startThreadButton.isVisible = canThreadOnMessage()
+        binding.copyMessageButton.isVisible = canCopyOnMessage()
         if (isMessageCreatedByCurrentUser()) {
-            editMessageButton.visibility = View.GONE
-            deleteMessageButton.visibility = View.GONE
-            flagMessageButton.setOnClickListener {
+            binding.editMessageButton.visibility = View.GONE
+            binding.deleteMessageButton.visibility = View.GONE
+            binding.flagMessageButton.setOnClickListener {
                 onMessageFlagHandler(message)
                 dismiss()
             }
         } else {
-            flagMessageButton.visibility = View.GONE
-            editMessageButton.setOnClickListener {
+            binding.flagMessageButton.visibility = View.GONE
+            binding.editMessageButton.setOnClickListener {
                 onMessageEditHandler(message)
                 dismiss()
             }
-            deleteMessageButton.setOnClickListener {
+            binding.deleteMessageButton.setOnClickListener {
                 onMessageDeleteHandler(message)
                 dismiss()
             }
         }
 
         if (canReactOnMessage()) {
-            reactionsContainer.background = DrawableBuilder()
+            binding.reactionsContainer.background = DrawableBuilder()
                 .rectangle()
                 .solidColor(style.reactionInputBgColor)
-                .cornerRadii(reactionsContainer.height / 2, reactionsContainer.height / 2, 0, 0)
+                .cornerRadii(binding.reactionsContainer.height / 2, binding.reactionsContainer.height / 2, 0, 0)
                 .build()
-            reactionsRecyclerView.layoutManager =
+            binding.reactionsRecyclerView.layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             val reactionAdapter = ReactionDialogAdapter(message, style) { dismiss() }
-            reactionsRecyclerView.adapter = reactionAdapter
+            binding.reactionsRecyclerView.adapter = reactionAdapter
         } else {
-            reactionsContainer.visibility = View.GONE
+            binding.reactionsContainer.visibility = View.GONE
         }
-        startThreadButton.setOnClickListener {
+        binding.startThreadButton.setOnClickListener {
             onStartThreadHandler(message)
             dismiss()
         }
-        copyMessageButton.setOnClickListener {
+        binding.copyMessageButton.setOnClickListener {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("label", message.text)
             clipboard.setPrimaryClip(clip)

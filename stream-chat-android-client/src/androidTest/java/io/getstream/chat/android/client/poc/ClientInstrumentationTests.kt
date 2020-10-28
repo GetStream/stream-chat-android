@@ -89,7 +89,6 @@ internal class ClientInstrumentationTests {
         }
     }
 
-    @Ignore("Fails because getGuestToken() call must be performed without JWT auth header")
     @Test
     fun guestUserConnection() {
         runOnUi {
@@ -99,8 +98,8 @@ internal class ClientInstrumentationTests {
             }
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {
-            await().atMost(5, SECONDS).until(setUserListener::onSuccessIsCalled)
-            await().atMost(5, SECONDS).until(connectedEventConsumer::isReceived)
+            await().atMost(50, SECONDS).until(setUserListener::onSuccessIsCalled)
+            await().atMost(50, SECONDS).until(connectedEventConsumer::isReceived)
         }
     }
 

@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.sample.common.BaseChannelsListFragment
 import io.getstream.chat.android.client.sample.common.Channel
 import io.getstream.chat.android.client.sample.utils.PaginationListener
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_channels.*
 
 class ChannelsListFragment : BaseChannelsListFragment() {
 
@@ -36,10 +35,9 @@ class ChannelsListFragment : BaseChannelsListFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerChannels.addOnScrollListener(
+        binding.recyclerChannels.addOnScrollListener(
             object : PaginationListener(10) {
 
                 override fun loadMoreItems() {
@@ -56,7 +54,7 @@ class ChannelsListFragment : BaseChannelsListFragment() {
             }
         )
 
-        recyclerChannels.adapter = adapter
+        binding.recyclerChannels.adapter = adapter
 
         loadNextPage()
     }

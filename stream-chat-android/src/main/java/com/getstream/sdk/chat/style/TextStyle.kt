@@ -29,6 +29,7 @@ public class TextStyle {
     public fun apply(textView: TextView) {
         val chatFonts = ChatUX.instance().fonts
 
+
         if (size != UNSET_SIZE) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size.toFloat())
         }

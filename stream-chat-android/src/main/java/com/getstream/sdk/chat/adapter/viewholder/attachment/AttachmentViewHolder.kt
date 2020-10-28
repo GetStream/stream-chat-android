@@ -8,7 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.bumptech.glide.Glide
-import com.getstream.sdk.chat.Chat.Companion.getInstance
+import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.FileAttachmentSelectedAdapter
@@ -138,7 +138,7 @@ internal class AttachmentViewHolder(
             attachUrl = "https:$attachUrl"
         }
         Glide.with(context)
-            .load(getInstance().urlSigner().signImageUrl(attachUrl))
+            .load(Chat.instance().urlSigner().signImageUrl(attachUrl))
             .into(mediaBinding.ivMediaThumb)
 
         if (messageItem.message.type != ModelType.message_ephemeral) {

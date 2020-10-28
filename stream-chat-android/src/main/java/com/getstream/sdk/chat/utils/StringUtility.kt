@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat.utils
 
+<<<<<<< HEAD
 import com.getstream.sdk.chat.ChatUX
 import com.getstream.sdk.chat.R
 import io.getstream.chat.android.client.models.Message
@@ -21,6 +22,7 @@ internal object StringUtility {
 
         if (message.deletedAt != null) {
             text = "_" + ChatUX.instance().strings.get(R.string.stream_delete_message) + "_"
+
             return text
         }
         if (!message.mentionedUsers.isNullOrEmpty()) {

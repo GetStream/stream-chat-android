@@ -100,6 +100,7 @@ public class ChatClient internal constructor(
             }
         }
 
+
         // disconnect when the app is stopped
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
@@ -139,6 +140,7 @@ public class ChatClient internal constructor(
         connectionListener = listener
         config.isAnonymous = false
         tokenManager.setTokenProvider(tokenProvider)
+
         warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
@@ -250,6 +252,7 @@ public class ChatClient internal constructor(
         socket.disconnect()
     }
 
+
     public fun reconnectSocket() {
         val user = state.user
         if (user != null) socket.connect(user)
@@ -263,6 +266,10 @@ public class ChatClient internal constructor(
         socket.removeListener(listener)
     }
 
+    @Deprecated(
+        message = "Use subscribe() on the client directly instead",
+        level = DeprecationLevel.WARNING
+    )
     public fun events(): ChatObservable {
         return socket.events()
     }
@@ -317,6 +324,7 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+
         // fire a handler here that the chatDomain and chatUX can use
         for (listener in disconnectListeners) {
             listener(state.user)
@@ -324,6 +332,7 @@ public class ChatClient internal constructor(
         connectionListener = null
         socket.disconnect()
         state.reset()
+
     }
 
     //region: api calls
@@ -496,6 +505,7 @@ public class ChatClient internal constructor(
         return updateUsers(listOf(user)).map { it.first() }
     }
 
+
     public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
         return api.queryUsers(query)
     }
@@ -532,12 +542,17 @@ public class ChatClient internal constructor(
         return api.unMuteChannel(channelType, channelId)
     }
 
+
     public fun unmuteUser(userId: String): Call<Mute> = api.unmuteUser(userId)
 
     public fun unmuteCurrentUser(): Call<Mute> = api.unmuteCurrentUser()
 
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
+    @Deprecated(
+        message = "We are going to replace with flagUser()",
+        replaceWith = ReplaceWith("this.flagUser(userId)")
+    )
     public fun flag(userId: String): Call<Flag> = flagUser(userId)
 
     public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
@@ -592,6 +607,7 @@ public class ChatClient internal constructor(
         return state.user
     }
 
+
     public fun getCurrentToken(): String {
         return state.token
     }
@@ -609,6 +625,7 @@ public class ChatClient internal constructor(
         val id = cid.split(":")[1]
         return channel(type, id)
     }
+
 
     public fun createChannel(
         channelType: String,
@@ -653,6 +670,7 @@ public class ChatClient internal constructor(
         return api.getSyncHistory(channelsIds, lastSyncAt)
     }
 
+
     private fun callConnectionListener(connectedEvent: ConnectedEvent?, error: ChatError?) {
         if (connectedEvent != null) {
             val user = connectedEvent.me
@@ -679,6 +697,7 @@ public class ChatClient internal constructor(
         }
     }
 
+
     private fun ensureUserNotSet(listener: InitConnectionListener?): Boolean {
         return if (state.user != null) {
             logger.logE("Trying to set user without disconnecting the previous one - make sure that previously set user is disconnected.")
@@ -698,7 +717,8 @@ public class ChatClient internal constructor(
         private var logLevel = ChatLogLevel.ALL
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
-        private var notificationsHandler: ChatNotificationHandler = ChatNotificationHandler(appContext)
+        private var notificationsHandler: ChatNotificationHandler =
+            ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
 
@@ -808,14 +828,13 @@ public class ChatClient internal constructor(
     }
 
     public companion object {
-        private lateinit var instance: ChatClient
-
-        @JvmStatic
-        public fun instance(): ChatClient {
-            return instance
-        }
-
+        private var instance: ChatClient? = null
         @JvmField
         public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
+        public fun instance(): ChatClient = instance
+            ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+
+        public val isInitialized: Boolean
+            get() = instance != null
     }
 }

@@ -22,9 +22,16 @@ internal class ChatModule(appContext: Context, config: ChatClientConfig, notific
         writeTimeout: Long,
         readTimeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
-        return super.clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser)
-            .addNetworkInterceptor(StethoInterceptor())
+        return super.clientBuilder(
+            connectTimeout,
+            writeTimeout,
+            readTimeout,
+            config,
+            parser,
+            isAnonymousApi
+        ).addNetworkInterceptor(StethoInterceptor())
     }
 }

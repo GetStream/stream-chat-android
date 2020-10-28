@@ -3,6 +3,7 @@ package io.getstream.chat.android.livedata.service.sync
 import android.content.Context
 import android.content.SharedPreferences
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.livedata.utils.getNonNullString
 
 private const val NOTIFICATION_CONFIG_PREFS_NAME = "stream_notification_config_store"
 private const val KEY_ERROR_CONTENT = "key_error_content"
@@ -42,11 +43,11 @@ internal class NotificationConfigStore(context: Context) {
         val notificationChannelIdResId = prefs.getInt(KEY_NOTIFICATION_CHANNEL_ID, DEFAULT_INT)
         val notificationChannelNameResId = prefs.getInt(KEY_NOTIFICATION_CHANNEL_NAME, DEFAULT_INT)
         val smallIconDrawableResId = prefs.getInt(KEY_SMALL_ICON, DEFAULT_INT)
-        val firebaseChannelIdKey = prefs.getString(KEY_FIREBASE_CHANNEL_ID_KEY, "")
-        val firebaseChannelTypeKey = prefs.getString(KEY_FIREBASE_CHANNEL_TYPE_KEY, "")
-        val firebaseChannelNameKey = prefs.getString(KEY_FIREBASE_CHANNEL_NAME_KEY, "")
-        val firebaseMessageIdKey = prefs.getString(KEY_FIREBASE_MESSAGE_ID_KEY, "")
-        val firebaseMessageTextKey = prefs.getString(KEY_FIREBASE_MESSAGE_TEXT_KEY, "")
+        val firebaseMessageIdKey = prefs.getNonNullString(KEY_FIREBASE_MESSAGE_ID_KEY, "")
+        val firebaseMessageTextKey = prefs.getNonNullString(KEY_FIREBASE_MESSAGE_TEXT_KEY, "")
+        val firebaseChannelIdKey = prefs.getNonNullString(KEY_FIREBASE_CHANNEL_ID_KEY, "")
+        val firebaseChannelTypeKey = prefs.getNonNullString(KEY_FIREBASE_CHANNEL_TYPE_KEY, "")
+        val firebaseChannelNameKey = prefs.getNonNullString(KEY_FIREBASE_CHANNEL_NAME_KEY, "")
 
         return NotificationConfig(
             notificationChannelIdResId,

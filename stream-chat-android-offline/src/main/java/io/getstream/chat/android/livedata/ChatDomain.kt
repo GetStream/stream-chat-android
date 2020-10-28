@@ -159,9 +159,11 @@ public interface ChatDomain {
         }
 
         public fun build(): ChatDomain {
+
             storeNotificationConfig(notificationConfig)
 
             ChatDomain.instance = buildImpl()
+
 
             return ChatDomain.instance()
         }
@@ -184,13 +186,10 @@ public interface ChatDomain {
         private var instance: ChatDomain? = null
 
         @JvmStatic
-        public fun isReady(): Boolean {
-            return instance != null
-        }
+        public fun instance(): ChatDomain = instance
+            ?: throw IllegalStateException("ChatDomain.Builder::build() must be called before obtaining ChatDomain instance")
 
-        @JvmStatic
-        public fun instance(): ChatDomain {
-            return checkNotNull(instance) { "ChatDomain.instance() isn't available yet. Be sure to call ChatDomain.build() and ChatClient.setUser() before trying to retrieve the chatDomain.instance()" }
-        }
+        public val isInitialized: Boolean
+            get() = instance != null
     }
 }
