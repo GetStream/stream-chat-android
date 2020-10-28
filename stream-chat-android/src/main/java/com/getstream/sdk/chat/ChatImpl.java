@@ -33,6 +33,7 @@ import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.GlobalScope;
 
 class ChatImpl implements Chat {
+    private final ChatNavigationHandler navigationHandler;
     private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
     private MutableLiveData<Number> unreadMessages = new MutableLiveData<>();
     private MutableLiveData<Number> unreadChannels = new MutableLiveData<>();
@@ -62,6 +63,7 @@ class ChatImpl implements Chat {
              @Nullable FileUploader fileUploader) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
+        this.navigationHandler = navigationHandler;
         this.urlSigner = urlSigner;
         this.markdown = markdown;
         this.apiKey = apiKey;
@@ -87,6 +89,8 @@ class ChatImpl implements Chat {
         }
 
         chatBuilder.build();
+
+
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
@@ -164,10 +168,13 @@ class ChatImpl implements Chat {
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
         }
-        domainBuilder
+        ChatDomain domain = domainBuilder
                 .userPresenceEnabled()
                 .enableBackgroundSync()
                 .notificationConfig(chatNotificationHandler.getConfig()).build();
+
+        // create a copy ChatUX implementation for backward compat
+        new ChatUX.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings()).withNavigationHandler(navigationHandler).build();
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
@@ -203,6 +210,8 @@ class ChatImpl implements Chat {
     protected void init() {
         initSocketListener();
         initLifecycle();
+
+
     }
 
     private void initLifecycle() {

@@ -61,24 +61,29 @@ public class ChatUX internal constructor(
         private var fonts: ChatFonts = ChatFontsImpl(style, client.appContext)
         private var strings: ChatStrings = ChatStringsImpl(client.appContext)
 
-        public fun withMarkdown(markdown: ChatMarkdown) {
+        public fun withMarkdown(markdown: ChatMarkdown): Builder {
             this.markdown = markdown
+            return this
         }
 
-        public fun withUrlSigner(signer: UrlSigner) {
+        public fun withUrlSigner(signer: UrlSigner): Builder {
             this.urlSigner = signer
+            return this
         }
 
-        public fun withNavigationHandler(handler: ChatNavigationHandler) {
+        public fun withNavigationHandler(handler: ChatNavigationHandler): Builder {
             this.navigationHandler = handler
+            return this
         }
 
-        public fun withFonts(fonts: ChatFonts) {
+        public fun withFonts(fonts: ChatFonts): Builder {
             this.fonts = fonts
+            return this
         }
 
-        public fun withStrings(strings: ChatStrings) {
+        public fun withStrings(strings: ChatStrings): Builder {
             this.strings = strings
+            return this
         }
 
         public fun build(): ChatUX {
