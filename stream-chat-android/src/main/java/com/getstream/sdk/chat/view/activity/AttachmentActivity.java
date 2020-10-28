@@ -10,8 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.ChatUX;
+import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
@@ -84,7 +83,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.VISIBLE);
 
-        webView.loadUrl(ChatUX.instance().getUrlSigner().signFileUrl(url));
+        webView.loadUrl(ChatUI.instance().getUrlSigner().signFileUrl(url));
     }
 
 
@@ -102,7 +101,7 @@ public class AttachmentActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
 
         Glide.with(this)
-                .load(ChatUX.instance().getUrlSigner().signImageUrl(url))
+                .load(ChatUI.instance().getUrlSigner().signImageUrl(url))
                 .placeholder(R.drawable.stream_placeholder)
                 .into(iv_image);
     }
@@ -110,13 +109,13 @@ public class AttachmentActivity extends AppCompatActivity {
     private class AppWebViewClients extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(ChatUX.instance().getUrlSigner().signFileUrl(url));
+            view.loadUrl(ChatUI.instance().getUrlSigner().signFileUrl(url));
             return true;
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            super.onPageFinished(view, ChatUX.instance().getUrlSigner().signFileUrl(url));
+            super.onPageFinished(view, ChatUI.instance().getUrlSigner().signFileUrl(url));
             progressBar.setVisibility(View.GONE);
         }
 

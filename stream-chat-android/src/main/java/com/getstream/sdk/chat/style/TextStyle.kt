@@ -4,7 +4,7 @@ import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.util.TypedValue
 import android.widget.TextView
-import com.getstream.sdk.chat.ChatUX
+import com.getstream.sdk.chat.ChatUI
 
 public class TextStyle {
     private companion object {
@@ -23,11 +23,11 @@ public class TextStyle {
 
     public val font: Typeface?
         get() {
-            return ChatUX.instance().fonts.getFont(this)
+            return ChatUI.instance().fonts.getFont(this)
         }
 
     public fun apply(textView: TextView) {
-        val chatFonts = ChatUX.instance().fonts
+        val chatFonts = ChatUI.instance().fonts
 
         if (size != UNSET_SIZE) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size.toFloat())

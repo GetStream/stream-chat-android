@@ -27,7 +27,7 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see ChatStrings
  * @see ChatFonts
  */
-public class ChatUX internal constructor(
+public class ChatUI internal constructor(
     public val client: ChatClient,
     public val chatDomain: ChatDomain,
     public val fonts: ChatFonts,
@@ -40,9 +40,7 @@ public class ChatUX internal constructor(
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
     public val navigator: ChatNavigator = ChatNavigatorImpl()
-
-    // TODO: would be nice to support configuring the loading icon in 1 place
-
+    
     init {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler)
@@ -86,18 +84,18 @@ public class ChatUX internal constructor(
             return this
         }
 
-        public fun build(): ChatUX {
+        public fun build(): ChatUI {
 
-            instance = ChatUX(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
+            instance = ChatUI(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
             return instance
         }
     }
 
     public companion object {
-        private lateinit var instance: ChatUX
+        private lateinit var instance: ChatUI
 
         @JvmStatic
-        public fun instance(): ChatUX {
+        public fun instance(): ChatUI {
             return instance
         }
     }

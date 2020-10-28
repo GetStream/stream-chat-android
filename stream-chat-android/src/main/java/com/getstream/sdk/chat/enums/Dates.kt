@@ -1,7 +1,7 @@
 package com.getstream.sdk.chat.enums
 
 import androidx.annotation.StringRes
-import com.getstream.sdk.chat.ChatUX
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.R
 
 internal enum class Dates(@StringRes internal val labelId: Int) {
@@ -11,4 +11,4 @@ internal enum class Dates(@StringRes internal val labelId: Int) {
 }
 
 internal val Dates.label: String
-    get() = ChatUX.instance().strings.get(labelId)
+    get() = ChatUI.instance().strings.get(labelId)

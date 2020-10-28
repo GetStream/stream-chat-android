@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import com.getstream.sdk.chat.ChatUX
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
 import com.getstream.sdk.chat.adapter.MessageListItem.Position.MIDDLE
@@ -83,7 +83,7 @@ internal class MessageTextConfigurator(
         }
 
         val text = StringUtility.getDeletedOrMentionedText(message)
-        val markdown = ChatUX.instance().markdown
+        val markdown = ChatUI.instance().markdown
         markdown.setText(binding.tvText, text)
     }
 
@@ -184,7 +184,7 @@ internal class MessageTextConfigurator(
                     isLongClick = false
                     return
                 }
-                ChatUX.instance().navigator.navigate(WebLinkDestination(url, context))
+                ChatUI.instance().navigator.navigate(WebLinkDestination(url, context))
             }
         }
     }

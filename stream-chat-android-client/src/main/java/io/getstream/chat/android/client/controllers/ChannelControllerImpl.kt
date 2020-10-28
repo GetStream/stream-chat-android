@@ -347,11 +347,11 @@ internal class ChannelControllerImpl(
     }
 
     override fun keystroke(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_START, channelType, channelId, emptyMap())
+        return client.sendEvent(EventType.TYPING_START, channelType, channelId)
     }
 
     override fun stopTyping(): Call<ChatEvent> {
-        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId, emptyMap())
+        return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
     }
 
     override fun queryMembers(

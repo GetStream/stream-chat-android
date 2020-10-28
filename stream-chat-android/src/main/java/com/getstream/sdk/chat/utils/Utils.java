@@ -33,8 +33,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.getstream.sdk.chat.Chat;
-import com.getstream.sdk.chat.ChatUX;
+import com.getstream.sdk.chat.ChatUI;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -96,12 +95,12 @@ public class Utils {
 
     public static void showMessage(Context context, @StringRes int stringRes, Object... formatArgs) {
 
-        String s = ChatUX.instance().getStrings().get(stringRes, formatArgs);
+        String s = ChatUI.instance().getStrings().get(stringRes, formatArgs);
         showMessage(context, s);
     }
 
     public static void showMessage(Context context, @StringRes int stringRes) {
-        String s = ChatUX.instance().getStrings().get(stringRes);
+        String s = ChatUI.instance().getStrings().get(stringRes);
         showMessage(context, s);
     }
 

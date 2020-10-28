@@ -48,18 +48,6 @@ class ChatImpl implements Chat {
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
 
-    private StreamLifecycleObserver streamLifecycleObserver = new StreamLifecycleObserver(new LifecycleHandler() {
-        @Override
-        public void resume() {
-            client().reconnectSocket();
-        }
-
-        @Override
-        public void stopped() {
-            client().disconnectSocket();
-        }
-    });
-
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
              @Nullable ChatNavigationHandler navigationHandler,
@@ -185,7 +173,7 @@ class ChatImpl implements Chat {
                 .notificationConfig(chatNotificationHandler.getConfig()).build();
 
         // create a copy ChatUX implementation for backward compat
-        ChatUX.Builder uxBuilder = new ChatUX.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
+        ChatUI.Builder uxBuilder = new ChatUI.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
 
         if (navigationHandler != null) {
             uxBuilder.withNavigationHandler(navigationHandler);
@@ -211,7 +199,6 @@ class ChatImpl implements Chat {
     public void disconnect() {
         ChatClient.instance().disconnect();
         disconnectChatDomainIfAlreadyInitialized();
-        streamLifecycleObserver.dispose();
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {

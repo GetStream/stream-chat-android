@@ -1,6 +1,6 @@
 package com.getstream.sdk.chat.utils
 
-import com.getstream.sdk.chat.ChatUX
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.R
 import io.getstream.chat.android.client.models.Message
 import java.text.DecimalFormat
@@ -20,7 +20,7 @@ internal object StringUtility {
         var text = message.text.replace("^[\r\n]+|[\r\n]+$".toRegex(), "")
 
         if (message.deletedAt != null) {
-            text = "_" + ChatUX.instance().strings.get(R.string.stream_delete_message) + "_"
+            text = "_" + ChatUI.instance().strings.get(R.string.stream_delete_message) + "_"
 
             return text
         }

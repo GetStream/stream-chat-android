@@ -1,7 +1,7 @@
 package io.getstream.chat.sample.application
 
 import android.content.Context
-import com.getstream.sdk.chat.ChatUX
+import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
@@ -23,6 +23,6 @@ class ChatInitializer(private val context: Context) {
 
         val client = ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler).logLevel(ChatLogLevel.ALL).build()
         val domain = ChatDomain.Builder(client).offlineEnabled().notificationConfig(notificationConfig).build()
-        val ux = ChatUX.Builder(client, domain).build()
+        val ux = ChatUI.Builder(client, domain).build()
     }
 }
