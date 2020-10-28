@@ -128,11 +128,7 @@ internal open class BaseChatModule(
         config: ChatClientConfig,
         isAnonymousApi: Boolean
     ): () -> Boolean {
-        return if (isAnonymousApi) {
-            { true }
-        } else {
-            { config.isAnonymous }
-        }
+        return { isAnonymousApi || config.isAnonymous }
     }
 
     private fun buildSocket(
