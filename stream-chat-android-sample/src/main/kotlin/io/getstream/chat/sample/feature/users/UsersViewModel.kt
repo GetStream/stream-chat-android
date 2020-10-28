@@ -42,7 +42,7 @@ class UsersViewModel(
         chatInitializer.init(appConfig.apiKey)
     }
 
-    private fun initChatUser(user: User) {
+    private fun initChatUser(user: User, cid: String? = null) {
         userRepository.user = user
         val chatUser = ChatUser().apply {
             id = user.id
@@ -54,7 +54,11 @@ class UsersViewModel(
             user.token,
             object : InitConnectionListener() {
                 override fun onSuccess(data: ConnectionData) {
-                    _state.postValue(State.RedirectToChannels)
+                    if (cid != null) {
+                        _state.postValue(State.RedirectToChannel(cid))
+                    } else {
+                        _state.postValue(State.RedirectToChannels)
+                    }
                     Timber.d("User set successfully")
                 }
 
@@ -65,11 +69,19 @@ class UsersViewModel(
             }
         )
     }
+
+    fun targetChannelDataReceived(cid: String) {
+        val user = userRepository.user
+        if (userRepository.user != User.None) {
+            initChatUser(user, cid)
+        }
+    }
 }
 
 sealed class State {
     data class AvailableUsers(val availableUsers: List<User>) : State()
     object RedirectToChannels : State()
+    data class RedirectToChannel(val cid: String) : State()
     object Loading : State()
     data class Error(val errorMessage: String?) : State()
 }

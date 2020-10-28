@@ -11,20 +11,22 @@
         android:id="@+id/avatar"
         android:layout_width="46dp"
         android:layout_height="46dp"
+        android:background="@drawable/shape_circle_grey"
+        android:padding="6dp"
+        android:src="@drawable/ic_settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:background="@drawable/shape_rounded_grey" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
         android:text="@string/login_advanced_options"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <TextView
         android:id="@+id/subtitle"
@@ -32,7 +34,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
-        android:text="@string/login_stream_test_account"
+        android:text="@string/login_custom_settings"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/grey_dark" />
 
@@ -40,7 +42,7 @@
         android:id="@+id/flow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="name,subtitle"
+        app:constraint_referenced_ids="title,subtitle"
         app:flow_lastVerticalStyle="packed"
         app:flow_maxElementsWrap="1"
         app:flow_wrapMode="chain"
@@ -50,15 +52,15 @@
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:src="@drawable/ic_arrow_right"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/flow"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

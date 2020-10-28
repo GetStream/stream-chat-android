@@ -28,7 +28,7 @@ class ChannelsFragment : Fragment(R.layout.fragment_channels) {
             viewLifecycleOwner,
             Observer {
                 if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
-                    findNavController().navigateSafely(R.id.action_to_loginFragment)
+                    findNavController().navigateSafely(R.id.action_to_usersFragment)
                 }
             }
         )

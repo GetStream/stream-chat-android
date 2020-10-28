@@ -2,38 +2,39 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/usersFragment">
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="io.getstream.chat.sample.feature.login.LoginFragment"
         android:label="LoginFragment">
-
-        <action
-            android:id="@+id/action_loginFragment_to_usersFragment"
-            app:destination="@id/usersFragment" />
-
         <action
             android:id="@+id/action_loginFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
-
-        <action
-            android:id="@+id/action_loginFragment_to_channelFragment"
-            app:destination="@id/channelFragment">
-            <argument
-                android:name="cid"
-                app:argType="string"
-                app:nullable="false" />
-        </action>
     </fragment>
 
     <fragment
         android:id="@+id/usersFragment"
         android:name="io.getstream.chat.sample.feature.users.UsersFragment"
         android:label="UsersFragment">
+
         <action
             android:id="@+id/action_usersFragment_to_channelsFragment"
             app:destination="@id/channelsFragment" />
+
+        <action
+            android:id="@+id/action_usersFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+
+        <action
+            android:id="@+id/action_usersFragment_to_channelFragment"
+            app:destination="@id/channelFragment">
+            <argument
+                android:name="cid"
+                app:argType="string"
+                app:nullable="false" />
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/channelsFragment"
@@ -52,8 +53,8 @@
             android:id="@+id/action_to_create_channel"
             app:destination="@id/createChannelFragment" />
         <action
-            android:id="@+id/action_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_to_usersFragment"
+            app:destination="@id/usersFragment" />
     </fragment>
     <fragment
         android:id="@+id/channelFragment"
