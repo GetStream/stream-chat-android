@@ -69,7 +69,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ProgressBar
-            android:id="@+id/defaultProgressbar"
+            android:id="@+id/defaultLoadingView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </FrameLayout>
