@@ -13,7 +13,7 @@ private val resClass = ResClass()
  * [path] "/model.member.json"
  */
 internal fun loadResource(path: String): String {
-    return convert(resClass.javaClass.getResourceAsStream(path))
+    return convert(requireNotNull(resClass.javaClass.getResourceAsStream(path)))
 }
 
 internal fun convert(inputStream: InputStream): String {

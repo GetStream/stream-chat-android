@@ -1,7 +1,9 @@
 package io.getstream.chat.sample.feature.channel
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -15,10 +17,9 @@ import com.getstream.sdk.chat.viewmodel.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelViewModelFactory
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 import com.getstream.sdk.chat.viewmodel.messages.bindView
-import io.getstream.chat.sample.R
-import kotlinx.android.synthetic.main.fragment_channel.*
+import io.getstream.chat.sample.databinding.FragmentChannelBinding
 
-class ChannelFragment : Fragment(R.layout.fragment_channel) {
+class ChannelFragment : Fragment() {
 
     private val cid: String by lazy { navArgs<ChannelFragmentArgs>().value.cid }
 
@@ -30,6 +31,23 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
 
     private val messageInputViewModel: MessageInputViewModel by viewModels { viewModelFactory }
 
+    private var _binding: FragmentChannelBinding? = null
+    protected val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentChannelBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initMessagesViewModel()
         initHeaderViewModel()
@@ -39,7 +57,7 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
             messagesViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
         }
 
-        channelHeaderView.onBackClick = backButtonHandler
+        binding.channelHeaderView.onBackClick = backButtonHandler
 
         activity?.apply {
             onBackPressedDispatcher.addCallback(
@@ -55,7 +73,7 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
 
     private fun initMessageInputViewModel() {
         messageInputViewModel.apply {
-            bindView(messageInputView, viewLifecycleOwner)
+            bindView(binding.messageInputView, viewLifecycleOwner)
             messagesViewModel.mode.observe(
                 viewLifecycleOwner,
                 Observer {
@@ -65,19 +83,19 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
                     }
                 }
             )
-            messageListView.setOnMessageEditHandler {
+            binding.messageListView.setOnMessageEditHandler {
                 editMessage.postValue(it)
             }
         }
     }
 
     private fun initHeaderViewModel() {
-        channelHeaderViewModel.bindView(channelHeaderView, viewLifecycleOwner)
+        channelHeaderViewModel.bindView(binding.channelHeaderView, viewLifecycleOwner)
     }
 
     private fun initMessagesViewModel() {
         messagesViewModel
-            .apply { bindView(messageListView, viewLifecycleOwner) }
+            .apply { bindView(binding.messageListView, viewLifecycleOwner) }
             .apply {
                 state.observe(
                     viewLifecycleOwner,
@@ -97,10 +115,10 @@ class ChannelFragment : Fragment(R.layout.fragment_channel) {
     }
 
     private fun hideProgressBar() {
-        progressBar.isVisible = false
+        binding.progressBar.isVisible = false
     }
 
     private fun showProgressBar() {
-        progressBar.isVisible = true
+        binding.progressBar.isVisible = true
     }
 }

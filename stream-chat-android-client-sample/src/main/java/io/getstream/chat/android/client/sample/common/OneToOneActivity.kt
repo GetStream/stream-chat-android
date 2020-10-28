@@ -3,16 +3,16 @@ package io.getstream.chat.android.client.sample.common
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.sample.databinding.ActivityPushBinding
 import io.getstream.chat.android.client.sample.utils.UserConfig
-import kotlinx.android.synthetic.main.activity_push.*
 
 class OneToOneActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityPushBinding
 
     private val clients = mutableListOf<ChatClient>()
 
     val userA = UserConfig(
-
         "stream-eugene",
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RyZWFtLWV1Z2VuZSJ9.-WNauu6xV56sHM39ZrhxDeBiKjA972O5AYo-dVXva6I",
         "d2q3juekvgsf"
@@ -26,18 +26,19 @@ class OneToOneActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_push)
+        binding = ActivityPushBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val members = listOf(userA.userId, userB.userId)
         val local = "http://127.0.0.1:3000"
 
-        commandsViewA.setUser(userA, members, false)
-        commandsViewB.setUser(userB, members, false)
+        binding.commandsViewA.setUser(userA, members, false)
+        binding.commandsViewB.setUser(userB, members, false)
     }
 
     override fun onDestroy() {
-        commandsViewA.destroy()
-        commandsViewB.destroy()
+        binding.commandsViewA.destroy()
+        binding.commandsViewB.destroy()
         super.onDestroy()
     }
 }

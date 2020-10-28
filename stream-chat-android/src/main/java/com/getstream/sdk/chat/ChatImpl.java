@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.InitConnectionListener;
 import io.getstream.chat.android.client.uploader.FileUploader;
 import io.getstream.chat.android.livedata.ChatDomain;
-import kotlin.UninitializedPropertyAccessException;
 import kotlin.Unit;
 import kotlinx.coroutines.BuildersKt;
 import kotlinx.coroutines.CoroutineStart;
@@ -47,6 +46,18 @@ class ChatImpl implements Chat {
     private final Context context;
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
+
+    private StreamLifecycleObserver streamLifecycleObserver = new StreamLifecycleObserver(new LifecycleHandler() {
+        @Override
+        public void resume() {
+            client().reconnectSocket();
+        }
+
+        @Override
+        public void stopped() {
+            client().disconnectSocket();
+        }
+    });
 
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
@@ -148,7 +159,7 @@ class ChatImpl implements Chat {
     @NotNull
     @Override
     public String getVersion() {
-        return BuildConfig.BUILD_TYPE + ":" + BuildConfig.VERSION_NAME;
+        return BuildConfig.STREAM_CHAT_UI_VERSION + "-" + BuildConfig.BUILD_TYPE;
     }
 
     @Override
@@ -186,38 +197,27 @@ class ChatImpl implements Chat {
     public void disconnect() {
         ChatClient.instance().disconnect();
         disconnectChatDomainIfAlreadyInitialized();
+        streamLifecycleObserver.dispose();
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
-        try {
-            final ChatDomain chatDomain = ChatDomain.instance();
-            BuildersKt.launch(GlobalScope.INSTANCE,
-                    Dispatchers.getIO(),
-                    CoroutineStart.DEFAULT,
-                    (scope, continuation) -> chatDomain.disconnect(continuation));
-        } catch (UninitializedPropertyAccessException e) {
+        if (!ChatDomain.Companion.isInitialized()) {
             ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
+            return;
         }
+
+        final ChatDomain chatDomain = ChatDomain.instance();
+        BuildersKt.launch(GlobalScope.INSTANCE,
+                Dispatchers.getIO(),
+                CoroutineStart.DEFAULT,
+                (scope, continuation) -> chatDomain.disconnect(continuation));
     }
 
     protected void init() {
         initSocketListener();
-        initLifecycle();
+        streamLifecycleObserver.observe();
     }
 
-    private void initLifecycle() {
-        new StreamLifecycleObserver(new LifecycleHandler() {
-            @Override
-            public void resume() {
-                client().reconnectSocket();
-            }
-
-            @Override
-            public void stopped() {
-                client().disconnectSocket();
-            }
-        });
-    }
 
     private void initSocketListener() {
         client().addSocketListener(new ChatSocketListener(

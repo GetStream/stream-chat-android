@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class PaginationTest {
 
+    /** [createPaginationInput] */
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.livedata.PaginationTest#createPaginationInput")
     internal fun `Should return a list of channelEntityPairs properly sorted by pagination param`(

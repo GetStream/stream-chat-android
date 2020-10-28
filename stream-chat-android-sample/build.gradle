@@ -3,7 +3,6 @@ import com.getstream.sdk.chat.Configuration
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
@@ -105,6 +104,10 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -116,6 +119,7 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxPreferences
     implementation Dependencies.constraintLayout
     implementation Dependencies.fragmentKtx
     implementation Dependencies.materialComponents
@@ -124,8 +128,7 @@ dependencies {
     implementation Dependencies.navigationFragmentKTX
     implementation Dependencies.navigationUIKTX
 
-    implementation Dependencies.preferences
-
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 

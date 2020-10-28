@@ -32,6 +32,7 @@ internal class AttachmentHelperTests {
         result shouldBeEqualTo false
     }
 
+    /** [nonValidUrls] */
     @ParameterizedTest
     @MethodSource("nonValidUrls")
     fun `When has valid image url if attachment url is not valid Should return false`(notValidUrl: String) {

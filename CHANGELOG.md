@@ -1,4 +1,9 @@
 # To be released:
+
+## Common changes for all artifacts
+- Updated dependencies to latest versions (AGP 4.1, OkHttp 4.9, Coroutines 1.3.9, ExoPlayer 2.12.1, etc.)
+    - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
+
 ## stream-chat-android
 - Add empty state views to channel list view and message list view components
 - Allow setting custom empty state views
@@ -6,11 +11,12 @@
 - Allow setting custom loading view
 
 ## stream-chat-android-client
+- Fix guest user authentication
 
 ## stream-chat-android-offline
 
 # Oct 26th, 2020 - 4.4.0
-## stream-chat-anddroid
+## stream-chat-android
 - Create custom login screen in sample app
 - Bump Coil to 1.0.0
 - Add message sending/sent indicators in `MessageListView`

@@ -83,7 +83,7 @@ internal class MessageTextConfigurator(
         }
 
         val text = StringUtility.getDeletedOrMentionedText(message)
-        val markdown = Chat.getInstance().markdown
+        val markdown = Chat.instance().markdown
         markdown.setText(binding.tvText, text)
     }
 
@@ -184,7 +184,7 @@ internal class MessageTextConfigurator(
                     isLongClick = false
                     return
                 }
-                Chat.getInstance().navigator.navigate(WebLinkDestination(url, context))
+                Chat.instance().navigator.navigate(WebLinkDestination(url, context))
             }
         }
     }
