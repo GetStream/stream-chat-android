@@ -27,7 +27,7 @@ public class ChannelsViewModelFactory(
     private val limit: Int = 30
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        require(modelClass == ChannelsViewModel::class) {
+        require(modelClass == ChannelsViewModel::class.java) {
             "ChannelsViewModelFactory can only create instances of ChannelsViewModel"
         }
 
