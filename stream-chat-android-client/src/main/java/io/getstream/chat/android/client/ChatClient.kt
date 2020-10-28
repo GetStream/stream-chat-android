@@ -60,7 +60,7 @@ public class ChatClient internal constructor(
     private val api: ChatApi,
     private val socket: ChatSocket,
     private val notifications: ChatNotifications,
-    public var appContext: Context,
+    private var appContext: Context,
     private val notificationsHandler: ChatNotificationHandler,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl()

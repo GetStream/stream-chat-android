@@ -74,7 +74,6 @@ class ChatImpl implements Chat {
             navigator.setHandler(navigationHandler);
         }
 
-
         ChatClient.Builder chatBuilder = new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
                 .logLevel(chatLogLevel);
@@ -173,7 +172,7 @@ class ChatImpl implements Chat {
                 .notificationConfig(chatNotificationHandler.getConfig()).build();
 
         // create a copy ChatUX implementation for backward compat
-        ChatUI.Builder uxBuilder = new ChatUI.Builder(client(),domain).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
+        ChatUI.Builder uxBuilder = new ChatUI.Builder(client(), domain, context).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
 
         if (navigationHandler != null) {
             uxBuilder.withNavigationHandler(navigationHandler);

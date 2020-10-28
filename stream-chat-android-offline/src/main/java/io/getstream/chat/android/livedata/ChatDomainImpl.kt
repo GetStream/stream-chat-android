@@ -95,10 +95,11 @@ internal class ChatDomainImpl internal constructor(
     override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
-    internal var backgroundSyncEnabled: Boolean = false
+    internal var backgroundSyncEnabled: Boolean = false,
+    internal var appContext: Context
 ) :
     ChatDomain {
-    constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled)
+    internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
 
     private val _initialized = MutableLiveData(false)
     private val _online = MutableLiveData(false)
@@ -109,7 +110,7 @@ internal class ChatDomainImpl internal constructor(
     private val _mutedUsers = MutableLiveData<List<Mute>>()
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
-    private val syncModule by lazy { SyncProvider(client.appContext) }
+    private val syncModule by lazy { SyncProvider(appContext) }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
@@ -222,7 +223,7 @@ internal class ChatDomainImpl internal constructor(
             }
         }
 
-        database = db ?: createDatabase(client.appContext, user, offlineEnabled)
+        database = db ?: createDatabase(appContext, user, offlineEnabled)
 
         repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
 

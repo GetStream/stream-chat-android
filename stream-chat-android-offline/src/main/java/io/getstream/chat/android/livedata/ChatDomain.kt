@@ -94,9 +94,9 @@ public interface ChatDomain {
         private var user: User? = null
     ) {
 
-        public constructor(client: ChatClient) : this(client.appContext, client, null)
+        public constructor(client: ChatClient, appContext: Context) : this(appContext, client, null)
 
-        public constructor(client: ChatClient, user: User?) : this(client.appContext, client, user)
+        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
 
         private var database: ChatDatabase? = null
 
@@ -169,7 +169,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

@@ -1,5 +1,6 @@
 package com.getstream.sdk.chat
 
+import android.content.Context
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler
 import com.getstream.sdk.chat.navigation.ChatNavigator
 import com.getstream.sdk.chat.navigation.ChatNavigatorImpl
@@ -49,15 +50,16 @@ public class ChatUI internal constructor(
 
     public data class Builder(
         private var client: ChatClient,
-        private var chatDomain: ChatDomain
+        private var chatDomain: ChatDomain,
+        private var appContext: Context
     ) {
 
         private val style = ChatStyle.Builder().build()
         private var navigationHandler: ChatNavigationHandler? = null
         private var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
-        private var markdown: ChatMarkdown = ChatMarkdownImpl(client.appContext)
-        private var fonts: ChatFonts = ChatFontsImpl(style, client.appContext)
-        private var strings: ChatStrings = ChatStringsImpl(client.appContext)
+        private var markdown: ChatMarkdown = ChatMarkdownImpl(appContext)
+        private var fonts: ChatFonts = ChatFontsImpl(style, appContext)
+        private var strings: ChatStrings = ChatStringsImpl(appContext)
 
         public fun withMarkdown(markdown: ChatMarkdown): Builder {
             this.markdown = markdown
