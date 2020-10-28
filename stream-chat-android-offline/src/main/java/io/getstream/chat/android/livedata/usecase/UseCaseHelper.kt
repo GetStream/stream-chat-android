@@ -12,6 +12,11 @@ public class UseCaseHelper internal constructor(chatDomainImpl: ChatDomainImpl) 
 
     // getting controllers
     /**
+     * Get channel controller for cid
+     * Returns a channel controller object
+     */
+    public val getChannelController: GetChannelController = GetChannelControllerImpl(chatDomainImpl)
+    /**
      * Watch a channel/ Start listening for events on a channel
      * Returns a channel controller object
      */
