@@ -56,9 +56,9 @@ import io.getstream.chat.android.client.models.User
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
 
-private val LOADING_VIEW_ID = R.id.message_list_loading_view_id
-
 public class MessageListView : ConstraintLayout {
+    private val LOADING_VIEW_ID = R.id.message_list_loading_view_id
+
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
 
