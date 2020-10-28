@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
 
@@ -28,6 +28,6 @@ internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMes
         val runnable = suspend {
             channelController.sendMessage(message, attachmentTransformer)
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

@@ -3,29 +3,31 @@ package io.getstream.chat.android.livedata.utils
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
-internal class CallImpl2<T : Any>(
-    var runnable: suspend () -> Result<T>,
-    var scope: CoroutineScope = GlobalScope
+internal class CoroutineCall<T : Any>(
+    private val scope: CoroutineScope,
+    private val runnable: suspend () -> Result<T>
 ) : Call<T> {
 
-    var canceled: Boolean = false
+    private var job: Job? = null
 
     override fun cancel() {
-        canceled = true
+        job?.cancel()
     }
 
     override fun execute(): Result<T> {
-        return runBlocking(scope.coroutineContext) { runnable() }
+        return runBlocking { runnable() }
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
-        scope.launch(scope.coroutineContext) {
-            if (!canceled) {
-                val result = runnable()
+        job = scope.launch {
+            val result = runnable()
+            withContext(Dispatchers.Main) {
                 callback(result)
             }
         }

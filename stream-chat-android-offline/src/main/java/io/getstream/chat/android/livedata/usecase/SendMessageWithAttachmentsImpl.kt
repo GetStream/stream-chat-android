@@ -7,7 +7,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
 
@@ -35,7 +35,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
                 channelController.sendMessage(message)
             }
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 
     private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Result<List<Attachment>> =

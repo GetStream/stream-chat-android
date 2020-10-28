@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 
 public interface GetTotalUnreadCount {
     /**
@@ -24,6 +24,6 @@ internal class GetTotalUnreadCountImpl(private val domainImpl: ChatDomainImpl) :
         val runnable = suspend {
             Result(domainImpl.totalUnreadCount, null)
         }
-        return CallImpl2(runnable, domainImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

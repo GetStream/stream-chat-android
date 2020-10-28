@@ -5,7 +5,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 
 public interface QueryChannelsLoadMore {
     /**
@@ -28,6 +28,6 @@ internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl)
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)
         }
-        return CallImpl2(runnable, domainImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

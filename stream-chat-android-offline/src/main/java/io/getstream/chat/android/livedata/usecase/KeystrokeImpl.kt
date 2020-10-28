@@ -2,7 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface Keystroke {
@@ -25,6 +25,6 @@ internal class KeystrokeImpl(private val domainImpl: ChatDomainImpl) : Keystroke
         val runnable = suspend {
             channelController.keystroke()
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface ReplayEventsForActiveChannels {
@@ -26,6 +26,6 @@ internal class ReplayEventsForActiveChannelsImpl(private val domainImpl: ChatDom
         val runnable = suspend {
             domainImpl.replayEventsForActiveChannels(cid)
         }
-        return CallImpl2(runnable, domainImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

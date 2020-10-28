@@ -6,7 +6,7 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import kotlinx.coroutines.launch
 
 public interface QueryChannels {
@@ -33,12 +33,12 @@ internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : Query
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
         val runnable = suspend {
             if (limit > 0) {
-                queryChannelsControllerImpl.scope.launch {
+                domainImpl.scope.launch {
                     queryChannelsControllerImpl.query(limit, messageLimit)
                 }
             }
             Result<QueryChannelsController>(queryChannelsControllerImpl, null)
         }
-        return CallImpl2(runnable, queryChannelsControllerImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

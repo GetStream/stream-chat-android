@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface DeleteMessage {
@@ -25,6 +25,6 @@ internal class DeleteMessageImpl(private val domainImpl: ChatDomainImpl) : Delet
         val runnable = suspend {
             channelController.deleteMessage(message)
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

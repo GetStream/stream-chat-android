@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 import kotlinx.coroutines.launch
 
@@ -28,7 +28,7 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
         val channelController = domainImpl.channel(cid)
 
         if (messageLimit> 0) {
-            channelController.scope.launch {
+            domainImpl.scope.launch {
                 channelController.watch(messageLimit)
             }
         }
@@ -36,6 +36,6 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
         val runnable = suspend {
             Result<ChannelController>(channelController, null)
         }
-        return CallImpl2(runnable, channelController.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

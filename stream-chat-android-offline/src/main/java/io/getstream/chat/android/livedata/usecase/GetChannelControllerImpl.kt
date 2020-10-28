@@ -4,7 +4,7 @@ import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface GetChannelController {
@@ -27,6 +27,6 @@ internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) 
         val runnable = suspend {
             Result<ChannelController>(channelControllerImpl, null)
         }
-        return CallImpl2(runnable, channelControllerImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

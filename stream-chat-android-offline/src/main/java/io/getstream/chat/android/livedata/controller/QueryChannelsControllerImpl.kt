@@ -21,9 +21,6 @@ import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.extensions.comparator
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -42,8 +39,6 @@ internal class QueryChannelsControllerImpl(
     override var recoveryNeeded: Boolean = false
 
     val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
-    private val job = SupervisorJob()
-    val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
     private val _endOfChannels = MutableLiveData(false)
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
@@ -187,10 +182,10 @@ internal class QueryChannelsControllerImpl(
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = scope.async { runQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            scope.async { runQueryOnline(pagination) }
+            domainImpl.scope.async { runQueryOnline(pagination) }
         } else { null }
         val channels = queryOfflineJob.await()
 

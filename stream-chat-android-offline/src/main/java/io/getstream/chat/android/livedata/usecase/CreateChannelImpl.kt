@@ -3,7 +3,7 @@ package io.getstream.chat.android.livedata.usecase
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.CallImpl2
+import io.getstream.chat.android.livedata.utils.CoroutineCall
 
 public interface CreateChannel {
     /**
@@ -21,6 +21,6 @@ internal class CreateChannelImpl(private val domainImpl: ChatDomainImpl) : Creat
         val runnable = suspend {
             domainImpl.createChannel(channel)
         }
-        return CallImpl2(runnable, domainImpl.scope)
+        return CoroutineCall(domainImpl.scope, runnable)
     }
 }
