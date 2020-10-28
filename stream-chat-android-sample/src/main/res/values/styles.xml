@@ -1,8 +1,6 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -21,10 +19,10 @@
     </style>
 
     <style name="LoginEditTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.Dense">
-        <item name="boxCornerRadiusTopStart">@dimen/login_controls_corner_radius</item>
-        <item name="boxCornerRadiusTopEnd">@dimen/login_controls_corner_radius</item>
-        <item name="boxCornerRadiusBottomStart">@dimen/login_controls_corner_radius</item>
-        <item name="boxCornerRadiusBottomEnd">@dimen/login_controls_corner_radius</item>
+        <item name="boxCornerRadiusTopStart">@dimen/login_input_field_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/login_input_field_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/login_input_field_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/login_input_field_corner_radius</item>
         <item name="errorEnabled">false</item>
         <item name="boxStrokeWidth">0dp</item>
         <item name="boxStrokeWidthFocused">0dp</item>
