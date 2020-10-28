@@ -1,7 +1,7 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
@@ -15,11 +15,11 @@ public interface MarkRead {
      * True if the mark read event was sent.
      * False if there was no need to mark read (IE the messages are already marked as read)
      */
-    public operator fun invoke(cid: String): Call2<Boolean>
+    public operator fun invoke(cid: String): Call<Boolean>
 }
 
 internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
-    override operator fun invoke(cid: String): Call2<Boolean> {
+    override operator fun invoke(cid: String): Call<Boolean> {
         validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)

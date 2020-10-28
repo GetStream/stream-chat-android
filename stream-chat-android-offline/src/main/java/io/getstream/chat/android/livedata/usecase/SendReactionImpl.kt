@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
@@ -15,11 +15,11 @@ public interface SendReaction {
      * @return A call object with Reaction as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public operator fun invoke(cid: String, reaction: Reaction): Call2<Reaction>
+    public operator fun invoke(cid: String, reaction: Reaction): Call<Reaction>
 }
 
 internal class SendReactionImpl(private val domainImpl: ChatDomainImpl) : SendReaction {
-    override operator fun invoke(cid: String, reaction: Reaction): Call2<Reaction> {
+    override operator fun invoke(cid: String, reaction: Reaction): Call<Reaction> {
         validateCid(cid)
 
         val channelRepo = domainImpl.channel(cid)

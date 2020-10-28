@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelController
-import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
@@ -16,11 +16,11 @@ public interface GetChannelController {
      * @return A call object with ChannelController as the return type
      * @see io.getstream.chat.android.livedata.controller.ChannelController
      */
-    public operator fun invoke(cid: String): Call2<ChannelController>
+    public operator fun invoke(cid: String): Call<ChannelController>
 }
 
 internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) : GetChannelController {
-    override operator fun invoke(cid: String): Call2<ChannelController> {
+    override operator fun invoke(cid: String): Call<ChannelController> {
         validateCid(cid)
         val channelControllerImpl = domainImpl.channel(cid)
 

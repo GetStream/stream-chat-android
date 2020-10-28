@@ -1,12 +1,12 @@
 package io.getstream.chat.android.livedata.usecase
 
 import android.webkit.MimeTypeMap
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 import java.io.File
@@ -17,11 +17,11 @@ public interface SendMessageWithAttachments {
         message = "Use sendMessage() and attachment.upload instead of this useCase",
         level = DeprecationLevel.WARNING
     )
-    public operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call2<Message>
+    public operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call<Message>
 }
 
 internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
-    override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call2<Message> {
+    override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call<Message> {
         validateCid(cid)
         val channel = domainImpl.channel(cid)
         message.cid = cid

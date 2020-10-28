@@ -1,8 +1,8 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
 import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
@@ -14,11 +14,11 @@ public interface CancelMessage {
      * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public operator fun invoke(message: Message): Call2<Boolean>
+    public operator fun invoke(message: Message): Call<Boolean>
 }
 
 internal class CancelMessageImpl(private val domainImpl: ChatDomainImpl) : CancelMessage {
-    override operator fun invoke(message: Message): Call2<Boolean> {
+    override operator fun invoke(message: Message): Call<Boolean> {
         val cid = message.cid
         validateCid(cid)
 
