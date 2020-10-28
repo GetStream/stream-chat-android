@@ -49,7 +49,7 @@ class UsersViewModel(
             image = user.image
             name = user.name
         }
-        Chat.getInstance().setUser(
+        Chat.instance().setUser(
             chatUser,
             user.token,
             object : InitConnectionListener() {
