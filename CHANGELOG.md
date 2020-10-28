@@ -5,6 +5,7 @@
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
 
 ## stream-chat-android
+- `ChannelsViewModelImpl` is now internal, and `ChannelsViewModelFactory` now requires you to pass in `ChannelsViewModel::class` as a parameter
 
 ## stream-chat-android-client
 - Fix guest user authentication
