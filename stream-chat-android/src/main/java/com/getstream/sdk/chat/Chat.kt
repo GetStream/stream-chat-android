@@ -80,6 +80,11 @@ public interface Chat {
         private var instance: Chat? = null
 
         @JvmStatic
+        @Deprecated(
+            message = "Use Chat.instance() instead",
+            replaceWith = ReplaceWith("Chat.instance()"),
+            level = DeprecationLevel.WARNING
+        )
         public fun getInstance(): Chat = instance
             ?: throw IllegalStateException("Chat.Builder::build() must be called before obtaining Chat instance")
 
