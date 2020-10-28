@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 internal class EndlessScrollListener(
-    private val loadMoreListener: OnLoadMoreListener
+    private val loadMoreListener: () -> Unit
 ) : RecyclerView.OnScrollListener() {
 
     var paginationEnabled: Boolean = false
@@ -20,14 +20,17 @@ internal class EndlessScrollListener(
         if (dy >= 0 || !paginationEnabled) {
             return
         }
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager
-        layoutManager?.let {
-            if (scrollStateReset && it.findFirstVisibleItemPosition() <= loadMoreThreshold) {
-                scrollStateReset = false
-                recyclerView.post {
-                    if (paginationEnabled) {
-                        loadMoreListener()
-                    }
+
+        val layoutManager = recyclerView.layoutManager
+        if (layoutManager !is LinearLayoutManager) {
+            throw IllegalStateException("EndlessScrollListener supports only LinearLayoutManager")
+        }
+        val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
+        if (scrollStateReset && firstVisiblePosition <= loadMoreThreshold) {
+            scrollStateReset = false
+            recyclerView.post {
+                if (paginationEnabled) {
+                    loadMoreListener()
                 }
             }
         }
@@ -41,5 +44,3 @@ internal class EndlessScrollListener(
         }
     }
 }
-
-internal typealias OnLoadMoreListener = () -> Unit

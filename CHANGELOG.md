@@ -5,6 +5,7 @@
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
 
 ## stream-chat-android
+- - Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
 
 ## stream-chat-android-client
 - Fix guest user authentication
@@ -25,7 +26,6 @@
 - Provide ChannelViewModelFactory and ChannelsViewModelFactory by the library to simplify setup
 - Fixes for https://github.com/GetStream/stream-chat-android/issues/698 and https://github.com/GetStream/stream-chat-android/issues/723
 - Don't show read state for the current user
-- Add load more threshold for `MessageListView`
 
 ## stream-chat-android-client
 - Fix ConcurrentModificationException in `ChatEventsObservable`
