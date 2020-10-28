@@ -144,7 +144,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            Chat.getInstance()
+            Chat.instance()
                 .navigator
                 .navigate(AttachmentDestination(message, attachment, context))
         }

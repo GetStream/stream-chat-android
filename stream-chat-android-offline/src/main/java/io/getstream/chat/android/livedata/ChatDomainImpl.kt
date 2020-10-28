@@ -5,7 +5,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QuerySort
@@ -252,7 +251,7 @@ internal class ChatDomainImpl private constructor(
     }
 
     override fun getVersion(): String {
-        return BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_TYPE
+        return BuildConfig.STREAM_CHAT_OFFLINE_VERSION + "-" + BuildConfig.BUILD_TYPE
     }
 
     private fun stopClean() {

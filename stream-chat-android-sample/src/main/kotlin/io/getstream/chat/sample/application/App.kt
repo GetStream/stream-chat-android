@@ -3,8 +3,8 @@ package io.getstream.chat.sample.application
 import android.app.Application
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
-import io.getstream.chat.sample.feature.login.loginModule
-import io.getstream.chat.sample.feature.users.usersModule
+import io.getstream.chat.sample.feature.custom_login.customLoginModule
+import io.getstream.chat.sample.feature.user_login.userLoginModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -33,8 +33,8 @@ class App : Application() {
                 listOf(
                     appModule,
                     dataModule,
-                    usersModule,
-                    loginModule
+                    userLoginModule,
+                    customLoginModule
                 )
             )
             koin.createRootScope()

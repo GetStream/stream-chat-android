@@ -7,7 +7,10 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.parser.ChatParser
 import okhttp3.OkHttpClient
 
-internal class ChatModule(appContext: Context, config: ChatClientConfig) : BaseChatModule(appContext, config) {
+internal class ChatModule(
+    appContext: Context,
+    config: ChatClientConfig
+) : BaseChatModule(appContext, config) {
 
     init {
         Stetho.initializeWithDefaults(appContext)
@@ -16,9 +19,14 @@ internal class ChatModule(appContext: Context, config: ChatClientConfig) : BaseC
     override fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
-        return super.clientBuilder(timeout, config, parser)
-            .addNetworkInterceptor(StethoInterceptor())
+        return super.clientBuilder(
+            timeout,
+            config,
+            parser,
+            isAnonymousApi
+        ).addNetworkInterceptor(StethoInterceptor())
     }
 }

@@ -2,10 +2,13 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import com.moczul.ok2curl.CurlInterceptor
+import io.getstream.chat.android.client.api.AnonymousApi
+import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
+import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
@@ -77,9 +80,10 @@ internal open class BaseChatModule(
         endpoint: String,
         timeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean
     ): Retrofit {
-        val okHttpClient = clientBuilder(timeout, config, parser).build()
+        val okHttpClient = clientBuilder(timeout, config, parser, isAnonymousApi).build()
 
         return Retrofit.Builder()
             .baseUrl(endpoint)
@@ -97,7 +101,8 @@ internal open class BaseChatModule(
     protected open fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
-        parser: ChatParser
+        parser: ChatParser,
+        isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
         return baseClientBuilder()
             // timeouts
@@ -106,19 +111,27 @@ internal open class BaseChatModule(
             .writeTimeout(timeout, TimeUnit.MILLISECONDS)
             .readTimeout(timeout, TimeUnit.MILLISECONDS)
             // interceptors
-            .addInterceptor(HeadersInterceptor(config))
+            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
                 TokenAuthInterceptor(
                     config.tokenManager,
-                    parser
-                ) { config.isAnonymous }
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi)
+                )
             )
             .addInterceptor(
                 CurlInterceptor {
                     logger().logI("CURL", it)
                 }
             )
+    }
+
+    private fun getAnonymousProvider(
+        config: ChatClientConfig,
+        isAnonymousApi: Boolean
+    ): () -> Boolean {
+        return { isAnonymousApi || config.isAnonymous }
     }
 
     private fun buildSocket(
@@ -136,27 +149,46 @@ internal open class BaseChatModule(
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi {
         return ChatApi(
             chatConfig.apiKey,
-            buildRetrofitApi(),
+            buildRetrofitApi(RetrofitApi::class.java),
+            buildRetrofitApi(RetrofitAnonymousApi::class.java),
             UuidGeneratorImpl(),
             chatConfig.fileUploader ?: defaultFileUploader
         )
     }
 
-    private fun buildRetrofitApi(): RetrofitApi {
+    private fun <T> buildRetrofitApi(apiClass: Class<T>): T {
         return buildRetrofit(
             config.httpUrl,
             config.baseTimeout,
             config,
-            parser()
-        ).create(RetrofitApi::class.java)
+            parser(),
+            apiClass.isAnonymousApi
+        ).create(apiClass)
     }
 
+    private val Class<*>.isAnonymousApi: Boolean
+        get() {
+            val anon = this.annotations.any { it is AnonymousApi }
+            val auth = this.annotations.any { it is AuthenticatedApi }
+
+            if (anon && auth) {
+                throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both")
+            }
+
+            if (anon) return true
+            if (auth) return false
+
+            throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
+        }
+
     private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+        val apiClass = RetrofitCdnApi::class.java
         return buildRetrofit(
             config.cdnHttpUrl,
             config.cdnTimeout,
             config,
-            parser()
-        ).create(RetrofitCdnApi::class.java)
+            parser(),
+            apiClass.isAnonymousApi
+        ).create(apiClass)
     }
 }

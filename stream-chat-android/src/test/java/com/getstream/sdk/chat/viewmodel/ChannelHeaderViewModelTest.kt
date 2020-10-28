@@ -73,6 +73,7 @@ internal class ChannelHeaderViewModelTest {
         verify(mockObserver).onChanged(eq(members))
     }
 
+    /** [createAnyOtherUserOnlineInput] */
     @ParameterizedTest
     @MethodSource("com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModelTest#createAnyOtherUserOnlineInput")
     fun `Should notify about any other user online`(members: List<Member>, expectedValue: Boolean) {
