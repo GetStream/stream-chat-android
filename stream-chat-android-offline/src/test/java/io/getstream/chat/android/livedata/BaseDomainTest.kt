@@ -29,9 +29,9 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
@@ -112,7 +112,7 @@ internal open class BaseDomainTest {
 
         val result = Result(listOf(data.channel1), null)
         channelMock = mock {
-            on { sendMessage(any()) } doReturn ChatCallTestImpl(
+            on { sendMessage(any()) } doReturn TestCall(
                 Result(
                     data.message1,
                     null
@@ -128,20 +128,20 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 null
             }
-            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
-            on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
+            on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
+            on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
-            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
-            on { getSyncHistory(any(), anyOrNull()) } doReturn ChatCallTestImpl(data.replayEventsResult)
+            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
+            on { getSyncHistory(any(), anyOrNull()) } doReturn TestCall(data.replayEventsResult)
             on {
                 createChannel(
                     any(),
                     any<String>(),
                     any<Map<String, Any>>()
                 )
-            } doReturn ChatCallTestImpl(Result(data.channel1, null))
-            on { sendReaction(any()) } doReturn ChatCallTestImpl(
+            } doReturn TestCall(Result(data.channel1, null))
+            on { sendReaction(any()) } doReturn TestCall(
                 Result(
                     data.reaction1,
                     null
@@ -157,13 +157,13 @@ internal open class BaseDomainTest {
 
         val result = Result(listOf(data.channel1), null)
         channelMock = mock {
-            on { query(any()) } doReturn ChatCallTestImpl(
+            on { query(any()) } doReturn TestCall(
                 Result(
                     data.channel1,
                     null
                 )
             )
-            on { watch(any<WatchChannelRequest>()) } doReturn ChatCallTestImpl(
+            on { watch(any<WatchChannelRequest>()) } doReturn TestCall(
                 Result(
                     data.channel1,
                     null
@@ -178,12 +178,12 @@ internal open class BaseDomainTest {
                 listener.invoke(connectedEvent)
                 null
             }
-            on { getSyncHistory(any(), any()) } doReturn ChatCallTestImpl(eventResults)
-            on { queryChannels(any()) } doReturn ChatCallTestImpl(result)
+            on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
+            on { queryChannels(any()) } doReturn TestCall(result)
             on { channel(any(), any()) } doReturn channelMock
             on { channel(any()) } doReturn channelMock
-            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn ChatCallTestImpl(data.replayEventsResult)
-            on { sendReaction(any()) } doReturn ChatCallTestImpl(
+            on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
+            on { sendReaction(any()) } doReturn TestCall(
                 Result(
                     data.reaction1,
                     null
