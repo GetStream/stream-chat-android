@@ -129,5 +129,5 @@ private class Fixture {
         return this
     }
 
-    fun please() = ChannelsViewModelImpl(chatDomain = chatDomain)
+    fun please() = ChannelsViewModel(chatDomain = chatDomain)
 }
