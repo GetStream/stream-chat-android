@@ -1,27 +1,27 @@
 package io.getstream.chat.android.livedata.entity
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.client.api.models.QuerySort
-import io.getstream.chat.android.client.models.Channel
+import androidx.room.Relation
 import io.getstream.chat.android.client.utils.FilterObject
-import java.util.Date
-import java.util.Objects
 
 @Entity(tableName = "stream_channel_query")
-internal data class QueryChannelsEntity(var filter: FilterObject, val sort: QuerySort<Channel>) {
+internal data class QueryChannelsEntity(
     @PrimaryKey
-    var id: String
+    var id: String,
+    val filter: FilterObject,
+    val cids: List<String>
+)
 
-    init {
-        // ugly hack to cleanup the filter object to prevent issues with filter object equality
-        filter = FilterObject(filter.toMap())
-        id = (Objects.hash(filter.toMap()) + Objects.hash(sort.toMap())).toString()
-    }
-
-    var channelCids: List<String> = listOf()
-
-    /** we track when the query was created and updated so we can clear out old results */
-    var createdAt: Date? = null
-    var updatedAt: Date? = null
+@Entity(tableName = "channel_sort_inner_entity")
+internal data class ChannelSortInnerEntity(val name: String, val direction: Int, val queryId: String) {
+    @PrimaryKey
+    var id: String = name.hashCode().toString() + direction.hashCode().toString() + queryId
 }
+
+internal data class QueryChannelsWithSorts(
+    @Embedded val query: QueryChannelsEntity,
+    @Relation(parentColumn = "id", entityColumn = "queryId", entity = ChannelSortInnerEntity::class)
+    val sortInnerEntities: List<ChannelSortInnerEntity>
+)

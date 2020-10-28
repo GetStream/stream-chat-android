@@ -18,7 +18,6 @@ import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.extensions.comparator
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
@@ -41,7 +40,7 @@ internal class QueryChannelsControllerImpl(
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
 
-    val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
+    val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     private val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
@@ -127,11 +126,11 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryEntity = PerformanceUtils.suspendTask("selectQuery") { domainImpl.repos.queryChannels.select(queryEntity.id) }
+        val queryChannelsSpec = PerformanceUtils.suspendTask("selectQuery") { domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec) }
         var channels: List<Channel>? = null
 
-        if (queryEntity != null) {
-            channels = PerformanceUtils.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination, true) }
+        if (queryChannelsSpec != null) {
+            channels = PerformanceUtils.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryChannelsSpec.cids.toList(), pagination, true) }
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
@@ -196,7 +195,7 @@ internal class QueryChannelsControllerImpl(
             output = result
             if (result.isSuccess) {
                 updateChannelsAndQueryResults(output.data(), pagination.isFirstPage)
-                domainImpl.repos.queryChannels.insert(queryEntity)
+                domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             }
         } else {
             PerformanceUtils.log("Online job is null")
@@ -255,7 +254,7 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun refreshChannels(cIds: List<String>) {
-        val cIdsInQuery = queryEntity.channelCids.intersect(cIds)
+        val cIdsInQuery = queryChannelsSpec.cids.intersect(cIds)
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
         val existingChannelMap = _channels.value?.toMutableMap() ?: mutableMapOf()
 
@@ -277,7 +276,7 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun addToQueryResult(cIds: List<String>) {
-        queryEntity.channelCids = (queryEntity.channelCids + cIds).distinct()
+        queryChannelsSpec.cids = (queryChannelsSpec.cids + cIds).distinct()
         refreshChannels(cIds)
     }
 
@@ -292,7 +291,7 @@ internal class QueryChannelsControllerImpl(
      */
     private fun setQueryResult(cIds: List<String>) {
         // If you query for page 1 we remove the old data
-        queryEntity.channelCids = cIds
+        queryChannelsSpec.cids = cIds
         refreshChannels(cIds)
     }
 }

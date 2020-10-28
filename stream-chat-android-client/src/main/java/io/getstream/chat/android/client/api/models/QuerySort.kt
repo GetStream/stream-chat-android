@@ -32,6 +32,14 @@ public class QuerySort<T : Any> {
         return add(SortSpecification(getSortFeature(fieldName, javaClass), SortDirection.DESC))
     }
 
+    public fun asc(fieldName: String): QuerySort<T> {
+        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
+    }
+
+    public fun desc(fieldName: String): QuerySort<T> {
+        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
+    }
+
     public fun asc(fieldName: String, kClass: KClass<T>): QuerySort<T> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.ASC))
     }
@@ -71,12 +79,12 @@ public class QuerySort<T : Any> {
         public const val KEY_DIRECTION: String = "direction"
         public const val KEY_FIELD_NAME: String = "field"
 
-        public inline fun <reified T : Any> QuerySort<T>.asc(fieldName: String): QuerySort<T> = asc(fieldName, T::class)
-        public inline fun <reified T : Any> QuerySort<T>.desc(fieldName: String): QuerySort<T> =
+        public inline fun <reified T : Any> QuerySort<T>.ascByName(fieldName: String): QuerySort<T> = asc(fieldName, T::class)
+        public inline fun <reified T : Any> QuerySort<T>.descByName(fieldName: String): QuerySort<T> =
             desc(fieldName, T::class)
 
-        public inline fun <reified T : Any> asc(fieldName: String): QuerySort<T> = QuerySort<T>().asc(fieldName)
-        public inline fun <reified T : Any> desc(fieldName: String): QuerySort<T> = QuerySort<T>().desc(fieldName)
+        public inline fun <reified T : Any> asc(fieldName: String): QuerySort<T> = QuerySort<T>().ascByName(fieldName)
+        public inline fun <reified T : Any> desc(fieldName: String): QuerySort<T> = QuerySort<T>().descByName(fieldName)
         public inline fun <reified T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> =
             QuerySort<T>().asc(field)
 

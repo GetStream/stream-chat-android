@@ -30,6 +30,7 @@ import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -196,9 +197,9 @@ internal class ChatDomainImpl private constructor(
                     channel(channelId)
                 }
                 // queries
-                val queries = repos.queryChannels.select(it.activeQueryIds)
-                for (queryEntity in queries) {
-                    queryChannels(queryEntity.filter, queryEntity.sort)
+                val queries = repos.queryChannels.selectById(it.activeQueryIds)
+                for (queryChannelsSpec in queries) {
+                    queryChannels(queryChannelsSpec.filter, queryChannelsSpec.sort)
                 }
             }
             syncState
@@ -236,10 +237,11 @@ internal class ChatDomainImpl private constructor(
     }
 
     internal suspend fun storeSyncState(): SyncStateEntity? {
-        syncState?.let {
-            it.activeChannelIds = activeChannelMapImpl.keys().toList()
-            it.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
-            repos.syncState.insert(it)
+        syncState?.let { syncState ->
+            syncState.activeChannelIds = activeChannelMapImpl.keys().toList()
+            syncState.activeQueryIds =
+                activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
+            repos.syncState.insert(syncState)
         }
 
         return syncState
@@ -674,7 +676,8 @@ internal class ChatDomainImpl private constructor(
         pagination: AnyChannelPaginationRequest,
         shouldLog: Boolean = false
     ): List<Channel> {
-        return repos.selectChannels(channelIds, defaultConfig, pagination, shouldLog).apply { PerformanceUtils.task("applyPagination") { applyPagination(pagination) } }
+        return repos.selectChannels(channelIds, defaultConfig, pagination, shouldLog)
+            .apply { PerformanceUtils.task("applyPagination") { applyPagination(pagination) } }
     }
 
     override fun clean() {

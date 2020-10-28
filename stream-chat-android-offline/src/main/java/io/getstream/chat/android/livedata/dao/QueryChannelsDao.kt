@@ -4,7 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
+import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.entity.QueryChannelsWithSorts
 
 @Dao
 internal interface QueryChannelsDao {
@@ -16,15 +19,26 @@ internal interface QueryChannelsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(sortInnerEntity: ChannelSortInnerEntity)
+
+    @Transaction
+    suspend fun insert(queryWithSorts: QueryChannelsWithSorts) {
+        insert(queryWithSorts.query)
+        queryWithSorts.sortInnerEntities.forEach { sortEntity -> insert(sortEntity) }
+    }
+
+    @Transaction
     @Query(
         "SELECT * FROM stream_channel_query " +
             "WHERE stream_channel_query.id=:id"
     )
-    suspend fun select(id: String): QueryChannelsEntity?
+    suspend fun select(id: String): QueryChannelsWithSorts?
 
+    @Transaction
     @Query(
         "SELECT * FROM stream_channel_query " +
             "WHERE stream_channel_query.id IN (:ids)"
     )
-    suspend fun select(ids: List<String>): List<QueryChannelsEntity>
+    suspend fun select(ids: List<String>): List<QueryChannelsWithSorts>
 }

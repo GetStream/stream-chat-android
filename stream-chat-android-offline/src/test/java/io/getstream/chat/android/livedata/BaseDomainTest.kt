@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.ChatCallTestImpl
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
@@ -53,7 +53,7 @@ internal open class BaseDomainTest {
     lateinit var channelControllerImpl: io.getstream.chat.android.livedata.controller.ChannelControllerImpl
     lateinit var db: ChatDatabase
     lateinit var queryControllerImpl: QueryChannelsControllerImpl
-    lateinit var query: QueryChannelsEntity
+    lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
 
     fun assertSuccess(result: Result<*>) {
@@ -247,7 +247,7 @@ internal open class BaseDomainTest {
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
         channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 
-        query = QueryChannelsEntity(data.filter1, QuerySort())
+        query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
     }
