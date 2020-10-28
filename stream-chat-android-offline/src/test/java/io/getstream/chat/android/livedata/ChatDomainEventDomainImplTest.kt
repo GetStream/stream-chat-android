@@ -52,7 +52,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
-        Truth.assertThat(messages).isEmpty()
+        Truth.assertThat(messages.messages).isEmpty()
     }
 
     @Test
@@ -63,7 +63,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         Truth.assertThat(message).isNull()
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
-        Truth.assertThat(messages).isEmpty()
+        Truth.assertThat(messages.messages).isEmpty()
     }
 
     @Test
@@ -77,7 +77,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         val channelController = chatDomainImpl.channel(data.channel1)
         val messages = channelController.messages.getOrAwaitValue()
         val channelData = channelController.channelData.getOrAwaitValue()
-        Truth.assertThat(messages).isEmpty()
+        Truth.assertThat(messages.messages).isEmpty()
         Truth.assertThat(channelData.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
     }
 

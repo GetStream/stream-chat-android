@@ -11,6 +11,7 @@ import com.getstream.sdk.chat.utils.livedata.getOrAwaitValue
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.MessagesUpdate
 import io.getstream.chat.android.client.models.User
 import org.junit.Rule
 import org.junit.Test
@@ -43,7 +44,7 @@ internal class MessageListItemLiveDataBenchmark {
                 messages.add(message)
             }
         }
-        val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
+        val messagesLd: LiveData<MessagesUpdate> = MutableLiveData(MessagesUpdate(false, messages))
         // user 0 read till the end, user 1 read the first message, user 3 read is missing
         val read1 = ChannelUserRead(messages.first().user, messages.last().createdAt)
         val read2 = ChannelUserRead(messages[10].user, messages.first().createdAt)
@@ -91,12 +92,12 @@ internal class MessageListItemLiveDataBenchmark {
         val messageLd = manyMessages()
         val items = messageLd.getOrAwaitValue().items
 
-        val messages = items.filterIsInstance<MessageListItem.MessageItem>().map { it.message }
+        val messagesUpdate = MessagesUpdate(false, items.filterIsInstance<MessageListItem.MessageItem>().map { it.message })
 
         val duration = measureTimeMillis {
             for (x in 0..100) {
-                val newMessages = messages + createMessage()
-                messageLd.messagesChanged(newMessages)
+                messagesUpdate.copy(messages = messagesUpdate.messages + createMessage())
+                messageLd.messagesChanged(messagesUpdate)
             }
         }
         println("changing messages 100 times on a message list with ${items.size} items took $duration milliseconds")
