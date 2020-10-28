@@ -189,15 +189,13 @@ internal class ChatDomainImpl internal constructor(
         _errorEvent.value = null
         _banned.value = false
         _mutedUsers.value = emptyList()
-        if (activeChannelMapImpl != null ) {
+        if (activeChannelMapImpl != null) {
             activeChannelMapImpl.clear()
         }
 
         if (activeQueryMapImpl != null) {
             activeQueryMapImpl.clear()
         }
-
-
     }
 
     private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
