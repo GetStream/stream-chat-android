@@ -12,9 +12,9 @@
         android:gravity="center"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@id/messageActionButtons"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reactionsRecyclerView"
@@ -28,6 +28,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/messageActionButtons"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#FAFAFA"
@@ -36,9 +37,7 @@
         android:paddingBottom="19dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reactionsContainer"
-        app:layout_constraintVertical_bias="1">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Space
             android:layout_width="match_parent"

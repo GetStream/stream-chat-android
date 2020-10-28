@@ -12,13 +12,9 @@ import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.sample.databinding.ActivitySocketTestsBinding
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.android.synthetic.main.activity_socket_tests.btnConnect
-import kotlinx.android.synthetic.main.activity_socket_tests.btnDisconnect
-import kotlinx.android.synthetic.main.activity_socket_tests.textSocketEvent
-import kotlinx.android.synthetic.main.activity_socket_tests.textSocketState
 
 class SocketTestActivity : AppCompatActivity() {
 
@@ -27,16 +23,19 @@ class SocketTestActivity : AppCompatActivity() {
     val token =
         "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYmVuZGVyIn0.3KYJIoYvSPgTURznP8nWvsA2Yj2-vLqrm-ubqAeOlcQ"
 
+    private lateinit var binding: ActivitySocketTestsBinding
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_socket_tests)
+        binding = ActivitySocketTestsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val client = ChatClient.instance()
 
-        btnConnect.setOnClickListener {
+        binding.btnConnect.setOnClickListener {
 
-            textSocketState.text = "Connecting..."
+            binding.textSocketState.text = "Connecting..."
 
             disposables.add(
                 client.subscribeForSingle<ConnectedEvent> {
@@ -49,19 +48,20 @@ class SocketTestActivity : AppCompatActivity() {
                     Log.d("evt", it::class.java.simpleName)
                     appendEvent(it)
 
-                    when (it) {
+                    binding.textSocketState.text = when (it) {
                         is ConnectedEvent -> {
-                            textSocketState.text = "Connected"
+                            "Connected"
                         }
                         is ErrorEvent -> {
-                            textSocketState.text = "Error: " + it.error.toString()
+                            "Error: " + it.error.toString()
                         }
                         is ConnectingEvent -> {
-                            textSocketState.text = "Connecting..."
+                            "Connecting..."
                         }
                         is DisconnectedEvent -> {
-                            textSocketState.text = "Disconnected"
+                            "Disconnected"
                         }
+                        else -> return@subscribe
                     }
                 }
             )
@@ -69,8 +69,8 @@ class SocketTestActivity : AppCompatActivity() {
             client.setUser(User("bender"), token)
         }
 
-        btnDisconnect.setOnClickListener {
-            textSocketState.text = "Disconnected"
+        binding.btnDisconnect.setOnClickListener {
+            binding.textSocketState.text = "Disconnected"
             client.disconnect()
             disposables.forEach { it.dispose() }
             disposables.clear()
@@ -87,6 +87,6 @@ class SocketTestActivity : AppCompatActivity() {
 
     private fun appendEvent(event: ChatEvent) {
         sb.insert(0, "${event.type}\n")
-        textSocketEvent.text = sb.toString()
+        binding.textSocketEvent.text = sb.toString()
     }
 }
