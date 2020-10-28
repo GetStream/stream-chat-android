@@ -28,6 +28,7 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     state.observe(lifecycleOwner) { state ->
         when (state) {
             is MessageListViewModel.State.Loading -> {
+                view.hideEmptyStateView()
                 view.showLoadingView()
             }
             is MessageListViewModel.State.Result -> {
