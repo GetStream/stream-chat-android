@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
-        android:text="@string/users_advanced_options"
+        android:text="@string/user_login_advanced_options"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textSize="16sp" />
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/padding_medium"
         android:paddingRight="@dimen/padding_medium"
-        android:text="@string/users_stream_test_account"
+        android:text="@string/user_login_user_subtitle"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/grey_dark" />
 

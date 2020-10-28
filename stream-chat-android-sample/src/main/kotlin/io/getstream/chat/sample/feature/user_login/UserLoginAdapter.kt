@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.feature.users
+package io.getstream.chat.sample.feature.user_login
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import io.getstream.chat.sample.data.user.User
 import io.getstream.chat.sample.databinding.ItemOptionsBinding
 import io.getstream.chat.sample.databinding.ItemUserBinding
 
-class UsersListAdapter(
+class UserLoginAdapter(
     val userClickListener: (User) -> Unit,
     val optionsClickListener: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -25,18 +25,16 @@ class UsersListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return if (viewType == VIEW_TYPE_OPTIONS) {
-            ItemOptionsBinding.inflate(inflater, parent, false)
-                .let { FooterViewHolder(it) }
+            OptionsViewHolder(ItemOptionsBinding.inflate(inflater, parent, false))
         } else {
-            ItemUserBinding.inflate(inflater, parent, false)
-                .let { UsersListViewHolder(it) }
+            UserViewHolder(ItemUserBinding.inflate(inflater, parent, false))
         }
     }
 
     override fun getItemCount(): Int = items.size + 1
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if (holder is UsersListViewHolder) {
+        if (holder is UserViewHolder) {
             val user = items[position]
             holder.bindUser(user)
             holder.itemView.setOnClickListener {
@@ -62,9 +60,9 @@ class UsersListAdapter(
     }
 }
 
-class FooterViewHolder(binding: ItemOptionsBinding) : RecyclerView.ViewHolder(binding.root)
+class OptionsViewHolder(binding: ItemOptionsBinding) : RecyclerView.ViewHolder(binding.root)
 
-class UsersListViewHolder(
+class UserViewHolder(
     private val binding: ItemUserBinding
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bindUser(user: User) {

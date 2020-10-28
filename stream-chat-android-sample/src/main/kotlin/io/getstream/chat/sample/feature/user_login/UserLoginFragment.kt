@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.feature.users
+package io.getstream.chat.sample.feature.user_login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,19 +17,19 @@ import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.data.user.User
-import io.getstream.chat.sample.databinding.FragmentUsersBinding
+import io.getstream.chat.sample.databinding.FragmentUserLoginBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class UsersFragment : Fragment() {
+class UserLoginFragment : Fragment() {
 
-    private val viewModel: UsersViewModel by viewModel()
+    private val viewModel: UserLoginViewModel by viewModel()
 
-    private val adapter = UsersListAdapter(
+    private val adapter = UserLoginAdapter(
         userClickListener = { viewModel.userClicked(it) },
-        optionsClickListener = ::redirectToLoginScreen
+        optionsClickListener = ::redirectToCustomLoginScreen
     )
 
-    private var _binding: FragmentUsersBinding? = null
+    private var _binding: FragmentUserLoginBinding? = null
     protected val binding get() = _binding!!
 
     override fun onCreateView(
@@ -37,7 +37,7 @@ class UsersFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentUsersBinding.inflate(inflater, container, false)
+        _binding = FragmentUserLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -80,16 +80,16 @@ class UsersFragment : Fragment() {
     }
 
     private fun redirectToChannelsScreen() {
-        findNavController().navigateSafely(R.id.action_usersFragment_to_channelsFragment)
+        findNavController().navigateSafely(R.id.action_userLoginFragment_to_channelsFragment)
     }
 
-    private fun redirectToLoginScreen() {
-        findNavController().navigateSafely(R.id.action_usersFragment_to_loginFragment)
+    private fun redirectToCustomLoginScreen() {
+        findNavController().navigateSafely(R.id.action_userLoginFragment_to_customLoginFragment)
     }
 
     private fun redirectToChannel(cid: String) {
         findNavController().navigateSafely(
-            UsersFragmentDirections.actionUsersFragmentToChannelFragment(cid)
+            UserLoginFragmentDirections.actionUserLoginFragmentToChannelFragment(cid)
         )
     }
 

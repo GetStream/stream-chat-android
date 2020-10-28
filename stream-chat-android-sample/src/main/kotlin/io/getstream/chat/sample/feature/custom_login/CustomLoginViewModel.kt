@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.feature.login
+package io.getstream.chat.sample.feature.custom_login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,7 +14,7 @@ import io.getstream.chat.sample.data.user.UserRepository
 import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
 
-class LoginViewModel(
+class CustomLoginViewModel(
     private val chatInitializer: ChatInitializer,
     private val userRepository: UserRepository
 ) : ViewModel() {

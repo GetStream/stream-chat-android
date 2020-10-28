@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/users_advanced_options"
+            android:text="@string/user_login_advanced_options"
             android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -53,7 +53,7 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/login_field_api_key_hint">
+        android:hint="@string/custom_login_field_api_key_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/apiKeyEditText"
@@ -67,7 +67,7 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/login_field_user_id_hint">
+        android:hint="@string/custom_login_field_user_id_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userIdEditText"
@@ -81,7 +81,7 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/login_field_user_token">
+        android:hint="@string/custom_login_field_user_token">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userTokenEditText"
@@ -97,7 +97,7 @@
         style="@style/LoginEditTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/login_field_user_name_hint">
+        android:hint="@string/custom_login_field_user_name_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/userNameEditText"
@@ -116,7 +116,7 @@
         android:layout_marginEnd="@dimen/padding_medium"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:text="@string/login_button_text"
+        android:text="@string/custom_login_button_text"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="16sp"

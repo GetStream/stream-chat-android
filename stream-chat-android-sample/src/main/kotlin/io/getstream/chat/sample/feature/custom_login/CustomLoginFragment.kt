@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.feature.login
+package io.getstream.chat.sample.feature.custom_login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,14 +14,14 @@ import io.getstream.chat.sample.common.initToolbar
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
 import io.getstream.chat.sample.common.trimmedText
-import io.getstream.chat.sample.databinding.FragmentLoginBinding
+import io.getstream.chat.sample.databinding.FragmentCustomLoginBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginFragment : Fragment() {
+class CustomLoginFragment : Fragment() {
 
-    private val viewModel: LoginViewModel by viewModel()
+    private val viewModel: CustomLoginViewModel by viewModel()
 
-    private var _binding: FragmentLoginBinding? = null
+    private var _binding: FragmentCustomLoginBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -29,7 +29,7 @@ class LoginFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        _binding = FragmentCustomLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,7 +86,7 @@ class LoginFragment : Fragment() {
                 ValidatedField.USER_ID -> binding.userIdInputLayout
                 ValidatedField.USER_TOKEN -> binding.userTokenInputLayout
             }.run {
-                error = getString(R.string.login_validation_error)
+                error = getString(R.string.custom_login_validation_error)
             }
         }
     }
@@ -98,6 +98,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun redirectToChannelsScreen() {
-        findNavController().navigateSafely(R.id.action_loginFragment_to_channelsFragment)
+        findNavController().navigateSafely(R.id.action_customLoginFragment_to_channelsFragment)
     }
 }
