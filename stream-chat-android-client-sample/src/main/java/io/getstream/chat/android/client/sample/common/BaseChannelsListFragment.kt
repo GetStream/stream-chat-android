@@ -6,14 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.getstream.chat.android.client.sample.R
-import kotlinx.android.synthetic.main.fragment_channels.*
+import io.getstream.chat.android.client.sample.databinding.FragmentChannelsBinding
 
 abstract class BaseChannelsListFragment : Fragment() {
 
+    private var _binding: FragmentChannelsBinding? = null
+    protected val binding get() = _binding!!
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerChannels.layoutManager =
+        binding.recyclerChannels.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
@@ -22,41 +24,53 @@ abstract class BaseChannelsListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_channels, container, false)
+        _binding = FragmentChannelsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     protected fun drawLoading() {
-        viewError.visibility = View.GONE
-        viewLoading.visibility = View.VISIBLE
-        viewAllLoaded.visibility = View.GONE
-        recyclerChannels.visibility = View.VISIBLE
+        binding.apply {
+            viewError.visibility = View.GONE
+            viewLoading.visibility = View.VISIBLE
+            viewAllLoaded.visibility = View.GONE
+            recyclerChannels.visibility = View.VISIBLE
+        }
     }
 
     protected fun drawError(t: Throwable) {
-        viewError.visibility = View.VISIBLE
-        viewLoading.visibility = View.GONE
-        viewAllLoaded.visibility = View.GONE
-        recyclerChannels.visibility = View.VISIBLE
+        binding.apply {
+            viewError.visibility = View.VISIBLE
+            viewLoading.visibility = View.GONE
+            viewAllLoaded.visibility = View.GONE
+            recyclerChannels.visibility = View.VISIBLE
+        }
     }
 
     protected fun drawSuccess(channels: List<Channel>) {
-        viewError.visibility = View.GONE
-        viewLoading.visibility = View.GONE
-        viewAllLoaded.visibility = View.GONE
-        recyclerChannels.visibility = View.VISIBLE
-
-        // updateAdapter(channels)
+        binding.apply {
+            viewError.visibility = View.GONE
+            viewLoading.visibility = View.GONE
+            viewAllLoaded.visibility = View.GONE
+            recyclerChannels.visibility = View.VISIBLE
+        }
     }
 
     protected fun drawAllLoaded() {
-        viewError.visibility = View.GONE
-        viewLoading.visibility = View.GONE
-        viewAllLoaded.visibility = View.VISIBLE
-        recyclerChannels.visibility = View.VISIBLE
+        binding.apply {
+            viewError.visibility = View.GONE
+            viewLoading.visibility = View.GONE
+            viewAllLoaded.visibility = View.VISIBLE
+            recyclerChannels.visibility = View.VISIBLE
+        }
     }
 
     protected open fun updateAdapter(channels: List<Channel>) {
-        recyclerChannels.adapter = ChannelsListAdapter(channels)
+        binding.recyclerChannels.adapter = ChannelsListAdapter(channels)
     }
 
     abstract fun reload()

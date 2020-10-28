@@ -28,44 +28,19 @@ import io.getstream.chat.android.client.models.getUnreadMessagesCount
 import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.sample.App
-import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.sample.databinding.LayoutCommandsBinding
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.utils.observable.Disposable
-import kotlinx.android.synthetic.main.layout_commands.view.btnAddDevice
-import kotlinx.android.synthetic.main.layout_commands.view.btnBanUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnConnect
-import kotlinx.android.synthetic.main.layout_commands.view.btnDisconnect
-import kotlinx.android.synthetic.main.layout_commands.view.btnGet5MinSyncHistory
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetAllSyncHistory
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetMessages
-import kotlinx.android.synthetic.main.layout_commands.view.btnGetOrCreateChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnMarkAllRead
-import kotlinx.android.synthetic.main.layout_commands.view.btnMarkChannelRead
-import kotlinx.android.synthetic.main.layout_commands.view.btnMuteChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnMuteUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryMembers
-import kotlinx.android.synthetic.main.layout_commands.view.btnQueryUsers
-import kotlinx.android.synthetic.main.layout_commands.view.btnRemoveDevice
-import kotlinx.android.synthetic.main.layout_commands.view.btnSearchMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnSendMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnStartWatchingChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnStopWatchingChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnTranslateMessage
-import kotlinx.android.synthetic.main.layout_commands.view.btnUnMuteChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnUnbanUser
-import kotlinx.android.synthetic.main.layout_commands.view.btnUpdateChannel
-import kotlinx.android.synthetic.main.layout_commands.view.btnUploadImage
-import kotlinx.android.synthetic.main.layout_commands.view.textStatus
-import kotlinx.android.synthetic.main.layout_commands.view.textUserId
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+
+    val binding = LayoutCommandsBinding.inflate(LayoutInflater.from(context), this)
+
     init {
         orientation = VERTICAL
-        LayoutInflater.from(context).inflate(R.layout.layout_commands, this, true)
     }
 
     private val disposables = mutableListOf<Disposable>()
@@ -146,7 +121,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
                 ConnectingEvent::class,
                 DisconnectedEvent::class
             ) { event ->
-                textStatus.text = event.type
+                binding.textStatus.text = event.type
                 Log.d("connection-events", event::class.java.simpleName)
             }
         )
@@ -162,9 +137,9 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         )
 
-        textUserId.text = "UserId: ${config.userId}"
+        binding.textUserId.text = "UserId: ${config.userId}"
 
-        btnConnect.setOnClickListener {
+        binding.btnConnect.setOnClickListener {
 
             val user = config.getUser()
             user.extraData.clear()
@@ -180,11 +155,11 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             )
         }
 
-        btnDisconnect.setOnClickListener {
+        binding.btnDisconnect.setOnClickListener {
             client.disconnect()
         }
 
-        btnAddDevice.setOnClickListener {
+        binding.btnAddDevice.setOnClickListener {
             FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
 
                 val token = it.token
@@ -195,7 +170,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnRemoveDevice.setOnClickListener {
+        binding.btnRemoveDevice.setOnClickListener {
 
             FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
 
@@ -206,21 +181,21 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnStartWatchingChannel.setOnClickListener {
+        binding.btnStartWatchingChannel.setOnClickListener {
 
             client.queryChannel(chType, chId, request).enqueue { watchResult ->
                 UtilsMessages.show("started", "not not started:", watchResult)
             }
         }
 
-        btnStopWatchingChannel.setOnClickListener {
+        binding.btnStopWatchingChannel.setOnClickListener {
 
             client.stopWatching(chType, chId).enqueue { stopWatchResult ->
                 UtilsMessages.show("stopped", "not stopped:", stopWatchResult)
             }
         }
 
-        btnUpdateChannel.setOnClickListener {
+        binding.btnUpdateChannel.setOnClickListener {
             val data = mutableMapOf<String, Any>()
             data["name"] = chId
             client.updateChannel(chType, chId, Message("update-msg"), data).enqueue {
@@ -228,7 +203,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnSendMessage.setOnClickListener {
+        binding.btnSendMessage.setOnClickListener {
 
             val messageOut = Message(text = "from llc sample at ${System.currentTimeMillis()}")
             messageOut.extraData["test"] = "zed"
@@ -242,7 +217,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnGetMessages.setOnClickListener {
+        binding.btnGetMessages.setOnClickListener {
             val queryChannelRequest = QueryChannelRequest().withMessages(1)
 
             client.queryChannel(chType, chId, queryChannelRequest).enqueue {
@@ -250,19 +225,19 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnMarkAllRead.setOnClickListener {
+        binding.btnMarkAllRead.setOnClickListener {
             client.markAllRead().enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnMarkChannelRead.setOnClickListener {
+        binding.btnMarkChannelRead.setOnClickListener {
             client.markAllRead().enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnQueryChannel.setOnClickListener {
+        binding.btnQueryChannel.setOnClickListener {
 
             val request = QueryChannelRequest()
                 .withMessages(100)
@@ -284,7 +259,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnTranslateMessage.setOnClickListener {
+        binding.btnTranslateMessage.setOnClickListener {
 
             val language = "nl"
 
@@ -302,7 +277,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnQueryUsers.setOnClickListener {
+        binding.btnQueryUsers.setOnClickListener {
 
             val filter = Filters.eq("id", config.userId)
 
@@ -311,13 +286,13 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnQueryMembers.setOnClickListener {
+        binding.btnQueryMembers.setOnClickListener {
             client.queryMembers(chType, chId, 0, 10, Filters.eq("banned", true)).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnGetOrCreateChannel.setOnClickListener {
+        binding.btnGetOrCreateChannel.setOnClickListener {
 
             val queryChannelRequest = QueryChannelRequest()
                 .withData(mapOf("name" to chId))
@@ -333,7 +308,7 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnGet5MinSyncHistory.setOnClickListener {
+        binding.btnGet5MinSyncHistory.setOnClickListener {
 
             // val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             // val lastSyncAt = format.parse("2020-06-16T11:07:05.699Z")
@@ -368,14 +343,14 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnGetAllSyncHistory.setOnClickListener {
+        binding.btnGetAllSyncHistory.setOnClickListener {
 
             client.getSyncHistory(listOf("$chType:$chId"), Date(0)).enqueue {
                 UtilsMessages.show("History received", "History not received", it)
             }
         }
 
-        btnSearchMessage.setOnClickListener {
+        binding.btnSearchMessage.setOnClickListener {
 
             val channelFiler = Filters.eq("cid", cid)
             val messageFilter = Filters.eq("attachments", Filters.exists(true))
@@ -387,34 +362,34 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
             }
         }
 
-        btnUploadImage.setOnClickListener {
+        binding.btnUploadImage.setOnClickListener {
             // client.sendFile(chType, chId, File())
         }
 
-        btnBanUser.setOnClickListener {
+        binding.btnBanUser.setOnClickListener {
             client.banUser(config.userId, chType, chId, "reason-z", 1).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnUnbanUser.setOnClickListener {
+        binding.btnUnbanUser.setOnClickListener {
             client.unBanUser(config.userId, chType, chId).enqueue {
             }
         }
 
-        btnMuteUser.setOnClickListener {
+        binding.btnMuteUser.setOnClickListener {
             client.muteUser(config.userId).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnMuteChannel.setOnClickListener {
+        binding.btnMuteChannel.setOnClickListener {
             client.muteChannel(chType, chId).enqueue {
                 UtilsMessages.show(it)
             }
         }
 
-        btnUnMuteChannel.setOnClickListener {
+        binding.btnUnMuteChannel.setOnClickListener {
             client.unMuteChannel(chType, chId).enqueue {
                 UtilsMessages.show(it)
             }

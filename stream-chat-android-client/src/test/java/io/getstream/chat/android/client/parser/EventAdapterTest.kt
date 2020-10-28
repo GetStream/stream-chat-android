@@ -32,6 +32,7 @@ internal class EventAdapterTest {
     private val eventAdapter: TypeAdapter<ChatEvent> =
         EventAdapter(gson, gson.getAdapter(ChatEvent::class.java))
 
+    /** [EventArguments.eventAdapterArguments] */
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArguments")
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {

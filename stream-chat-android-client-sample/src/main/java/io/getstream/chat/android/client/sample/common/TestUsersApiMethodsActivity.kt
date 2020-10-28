@@ -10,22 +10,8 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.sample.App
-import io.getstream.chat.android.client.sample.R
+import io.getstream.chat.android.client.sample.databinding.ActivityTestUserApiBinding
 import io.getstream.chat.android.client.utils.FilterObject
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiAddMembersBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiAnonymousBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiBanUserBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiFlagUserBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiFunctionalityGroup
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiGuestBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiLoadingShapeContainer
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiLoginGroup
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiMuteUserBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiQueryUsersBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiRemoveMembersBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiSetRegularUserBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiUnBanUserBtn
-import kotlinx.android.synthetic.main.activity_test_user_api.testUserApiUnMuteUserBtn
 
 class TestUsersApiMethodsActivity : AppCompatActivity() {
 
@@ -33,10 +19,12 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     private val channelId = "new-ch"
     private val channelType = "messaging"
 
+    private lateinit var binding: ActivityTestUserApiBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_test_user_api)
+        binding = ActivityTestUserApiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initViews()
     }
@@ -47,38 +35,40 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-        testUserApiGuestBtn?.setOnClickListener {
-            setGuestUser()
-        }
-        testUserApiAnonymousBtn?.setOnClickListener {
-            setAnonymousUser()
-        }
-        testUserApiSetRegularUserBtn?.setOnClickListener {
-            setRegularUser()
-        }
-        testUserApiQueryUsersBtn?.setOnClickListener {
-            getUsers()
-        }
-        testUserApiAddMembersBtn?.setOnClickListener {
-            addMembers()
-        }
-        testUserApiRemoveMembersBtn?.setOnClickListener {
-            removeMembers()
-        }
-        testUserApiMuteUserBtn?.setOnClickListener {
-            muteUser()
-        }
-        testUserApiUnMuteUserBtn?.setOnClickListener {
-            unMuteUser()
-        }
-        testUserApiFlagUserBtn?.setOnClickListener {
-            flag()
-        }
-        testUserApiBanUserBtn?.setOnClickListener {
-            banUser()
-        }
-        testUserApiUnBanUserBtn?.setOnClickListener {
-            unBanUser()
+        binding.apply {
+            testUserApiGuestBtn.setOnClickListener {
+                setGuestUser()
+            }
+            testUserApiAnonymousBtn.setOnClickListener {
+                setAnonymousUser()
+            }
+            testUserApiSetRegularUserBtn.setOnClickListener {
+                setRegularUser()
+            }
+            testUserApiQueryUsersBtn.setOnClickListener {
+                getUsers()
+            }
+            testUserApiAddMembersBtn.setOnClickListener {
+                addMembers()
+            }
+            testUserApiRemoveMembersBtn.setOnClickListener {
+                removeMembers()
+            }
+            testUserApiMuteUserBtn.setOnClickListener {
+                muteUser()
+            }
+            testUserApiUnMuteUserBtn.setOnClickListener {
+                unMuteUser()
+            }
+            testUserApiFlagUserBtn.setOnClickListener {
+                flag()
+            }
+            testUserApiBanUserBtn.setOnClickListener {
+                banUser()
+            }
+            testUserApiUnBanUserBtn.setOnClickListener {
+                unBanUser()
+            }
         }
     }
 
@@ -216,9 +206,10 @@ class TestUsersApiMethodsActivity : AppCompatActivity() {
     }
 
     private fun initButtons() {
-        testUserApiFunctionalityGroup?.visibility = View.VISIBLE
-        testUserApiLoginGroup?.visibility = View.GONE
-
-        testUserApiLoadingShapeContainer.visibility = View.GONE
+        binding.apply {
+            testUserApiFunctionalityGroup.visibility = View.VISIBLE
+            testUserApiLoginGroup.visibility = View.GONE
+            testUserApiLoadingShapeContainer.visibility = View.GONE
+        }
     }
 }

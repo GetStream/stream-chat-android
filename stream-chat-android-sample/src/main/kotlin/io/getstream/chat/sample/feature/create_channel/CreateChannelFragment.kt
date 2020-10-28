@@ -1,7 +1,9 @@
 package io.getstream.chat.sample.feature.create_channel
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -11,17 +13,34 @@ import io.getstream.chat.sample.R
 import io.getstream.chat.sample.common.hideKeyboard
 import io.getstream.chat.sample.common.showKeyboard
 import io.getstream.chat.sample.common.showToast
-import kotlinx.android.synthetic.main.fragment_new_channel.*
+import io.getstream.chat.sample.databinding.FragmentNewChannelBinding
 
-class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
+class CreateChannelFragment : Fragment() {
+
+    private var _binding: FragmentNewChannelBinding? = null
+    protected val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentNewChannelBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        channelNameInput.showKeyboard()
-        toolbar.setNavigationOnClickListener { goBack() }
+        binding.channelNameInput.showKeyboard()
+        binding.toolbar.setNavigationOnClickListener { goBack() }
 
         val viewModel = CreateChannelViewModel()
-        submitButton.setOnClickListener {
-            val channelName = channelNameInput.text.toString()
+        binding.submitButton.setOnClickListener {
+            val channelName = binding.channelNameInput.text.toString()
             viewModel.onEvent(CreateChannelViewModel.Event.ChannelNameSubmitted(channelName))
         }
         viewModel.state.observe(
@@ -31,19 +50,19 @@ class CreateChannelFragment : Fragment(R.layout.fragment_new_channel) {
                     is CreateChannelViewModel.State.ChannelCreated -> { goBack() }
                     is CreateChannelViewModel.State.ValidationError -> { renderValidationError() }
                     is CreateChannelViewModel.State.BackendError -> { renderBackendError() }
-                    is CreateChannelViewModel.State.Loading -> { progressBar.isVisible = true }
+                    is CreateChannelViewModel.State.Loading -> { binding.progressBar.isVisible = true }
                 }
             }
         )
     }
 
     private fun goBack() {
-        channelNameInput.hideKeyboard()
+        binding.channelNameInput.hideKeyboard()
         findNavController().navigateUp()
     }
 
     private fun renderValidationError() {
-        channelNameInput.error = getString(R.string.create_channel_name_error)
+        binding.channelNameInput.error = getString(R.string.create_channel_name_error)
     }
 
     private fun renderBackendError() {

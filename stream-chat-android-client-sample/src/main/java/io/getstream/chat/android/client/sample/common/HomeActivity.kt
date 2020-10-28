@@ -7,33 +7,36 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.sample.R
-import kotlinx.android.synthetic.main.activity_home.*
+import io.getstream.chat.android.client.sample.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityHomeBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         title = ChatClient.instance().getVersion()
 
-        btnSocket.setOnClickListener {
+        binding.btnSocket.setOnClickListener {
             startActivity(Intent(this, SocketTestActivity::class.java))
         }
 
-        btnChannels.setOnClickListener {
+        binding.btnChannels.setOnClickListener {
             startActivity(Intent(this, ChannelsListActivity::class.java))
         }
 
-        btnTestChannelsApis.setOnClickListener {
+        binding.btnTestChannelsApis.setOnClickListener {
             startActivity(Intent(this, TestChannelsApiMethodsActivity::class.java))
         }
 
-        btnTestUsersApis.setOnClickListener {
+        binding.btnTestUsersApis.setOnClickListener {
             startActivity(Intent(this, TestUsersApiMethodsActivity::class.java))
         }
 
-        btnOneToOne.setOnClickListener {
+        binding.btnOneToOne.setOnClickListener {
             startActivity(Intent(this, OneToOneActivity::class.java))
         }
 
