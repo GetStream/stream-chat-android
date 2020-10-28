@@ -40,7 +40,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
         val event = data.messageUpdatedEvent
         channelControllerImpl.handleEvent(event)
 
-        val messages = channelControllerImpl.messages.getOrAwaitValue()
+        val messages = channelControllerImpl.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages).isEqualTo(listOf(event.message))
     }

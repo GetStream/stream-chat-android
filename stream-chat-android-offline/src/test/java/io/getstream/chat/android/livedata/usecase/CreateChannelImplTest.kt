@@ -46,7 +46,7 @@ internal class CreateChannelImplTest : BaseConnectedIntegrationTest() {
         message.cid = data.channel3.cid
         val result = chatDomain.useCases.sendMessage(message).execute()
         val channelController = chatDomainImpl.channel(data.channel3)
-        val messages = channelController.messages.getOrAwaitValue()
+        val messages = channelController.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.size).isEqualTo(1)
         Truth.assertThat(messages.first().id).isEqualTo(message.id)
     }

@@ -21,11 +21,11 @@ internal class DeleteMessageImplTest : BaseConnectedIntegrationTest() {
         val channelState = chatDomain.useCases.watchChannel(data.channel1.cid, 10).execute().data()
         val result = chatDomain.useCases.sendMessage(message1).execute()
         assertSuccess(result)
-        var messages = channelState.messages.getOrAwaitValue()
+        var messages = channelState.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.last()).isEqualTo(message1)
         val result2 = chatDomain.useCases.deleteMessage(message1).execute()
         assertSuccess(result2)
-        messages = channelState.messages.getOrAwaitValue()
+        messages = channelState.messages.getOrAwaitValue().messages
         Truth.assertThat(messages.last().id).isEqualTo(result.data().id)
         Truth.assertThat(messages.last().deletedAt).isNotNull()
     }

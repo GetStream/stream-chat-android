@@ -86,7 +86,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
             data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
-        var liveMessages = channelControllerImpl.messages.getOrAwaitValue()
+        var liveMessages = channelControllerImpl.messages.getOrAwaitValue().messages
 
         Truth.assertThat(liveMessages.size).isEqualTo(1)
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
@@ -110,7 +110,7 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
             data.userMap,
             AnyChannelPaginationRequest().apply { messageLimit = 10 }
         )
-        liveMessages = channelControllerImpl.messages.getOrAwaitValue()
+        liveMessages = channelControllerImpl.messages.getOrAwaitValue().messages
         Truth.assertThat(liveMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
         Truth.assertThat(roomMessages[0].syncStatus).isEqualTo(SyncStatus.COMPLETED)
     }

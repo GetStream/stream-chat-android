@@ -18,7 +18,7 @@ internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
-        var messages = channelControllerImpl.messages.getOrAwaitValue()
+        var messages = channelControllerImpl.messages.getOrAwaitValue().messages
         val lastMessage = messages.last()
         Truth.assertThat(lastMessage.id).isEqualTo(originalMessage.id)
 
@@ -27,7 +27,7 @@ internal class EditMessageImplUseCaseTest : BaseConnectedIntegrationTest() {
 
         val result2 = channelControllerImpl.editMessage(updatedMessage)
         assertSuccess(result2)
-        messages = channelControllerImpl.messages.getOrAwaitValue()
+        messages = channelControllerImpl.messages.getOrAwaitValue().messages
         val liveLastMessage = messages.last()
         Truth.assertThat(liveLastMessage.id).isEqualTo(originalMessage.id)
         Truth.assertThat(liveLastMessage.extraData).containsAtLeastEntriesIn(updatedMessage.extraData)

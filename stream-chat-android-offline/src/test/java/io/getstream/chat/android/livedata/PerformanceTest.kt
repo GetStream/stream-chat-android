@@ -65,7 +65,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
             DiffUtil.calculateDiff(MessageDiffCallback(old, new), true)
         }
 
-        channelController.messages.observeForever { messages ->
+        channelController.messages.observeForever { (_, messages) ->
             val messageIds = messages.map { it.id }
             println("Message ids is now equal to $messageIds")
             counter.onEvent(messages)
