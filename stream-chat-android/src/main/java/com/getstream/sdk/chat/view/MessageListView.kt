@@ -240,7 +240,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initLoadingView() {
-        loadingView = binding.defaultProgressbar
+        loadingView = binding.defaultLoadingView
         loadingViewContainer = binding.loadingViewContainer
     }
 
