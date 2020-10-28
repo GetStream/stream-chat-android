@@ -187,8 +187,8 @@ internal class ChatDomainImpl internal constructor(
         _errorEvent.value = null
         _banned.value = false
         _mutedUsers.value = emptyList()
-        activeChannelMapImpl = ConcurrentHashMap()
-        activeQueryMapImpl = ConcurrentHashMap()
+        activeChannelMapImpl.clear()
+        activeQueryMapImpl.clear()
     }
 
     private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
@@ -409,9 +409,9 @@ internal class ChatDomainImpl internal constructor(
     private var eventSubscription: Disposable? = null
 
     /** stores the mapping from cid to channelRepository */
-    var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
-    private var activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
