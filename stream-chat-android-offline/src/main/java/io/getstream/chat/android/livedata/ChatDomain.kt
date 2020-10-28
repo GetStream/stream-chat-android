@@ -163,12 +163,21 @@ public interface ChatDomain {
                 storeBackgroundSyncConfig(backgroundSyncConfig)
                 storeNotificationConfig(notificationConfig)
             }
-            instance = buildImpl()
-            return instance
+            val result = buildImpl()
+            instance = result
+            return result
         }
 
         internal fun buildImpl() =
-            factory.create(appContext, client, user, database, offlineEnabled, userPresence, recoveryEnabled)
+            factory.create(
+                appContext,
+                client,
+                user,
+                database,
+                offlineEnabled,
+                userPresence,
+                recoveryEnabled
+            )
 
         private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
             if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
@@ -188,11 +197,13 @@ public interface ChatDomain {
     }
 
     public companion object {
-        private lateinit var instance: ChatDomain
+        private var instance: ChatDomain? = null
 
         @JvmStatic
-        public fun instance(): ChatDomain {
-            return instance
-        }
+        public fun instance(): ChatDomain = instance
+            ?: throw IllegalStateException("ChatDomain.Builder::build() must be called before obtaining ChatDomain instance")
+
+        public val isInitialized: Boolean
+            get() = instance != null
     }
 }

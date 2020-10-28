@@ -11,7 +11,7 @@ public class QuerySort<T : Any> {
     private var sortSpecifications: List<SortSpecification<T>> = emptyList()
 
     public val comparator: Comparator<in T>
-    get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
+        get() = CompositeComparator(sortSpecifications.mapNotNull { it.comparator })
 
     private val SortSpecification<T>.comparator: Comparator<T>?
         get() = (this.sortAttribute as? FieldSortAttribute<T>)?.field?.comparator(this.sortDirection)

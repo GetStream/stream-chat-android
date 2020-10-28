@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.getstream.sdk.chat.view.channels.ChannelListView
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
-import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModelImpl
 import com.getstream.sdk.chat.viewmodel.channels.bindView
 import com.getstream.sdk.chat.viewmodel.factory.ChannelsViewModelFactory
 import io.getstream.chat.sample.R
@@ -21,7 +20,7 @@ import io.getstream.chat.sample.databinding.FragmentChannelsBinding
 
 class ChannelsFragment : Fragment() {
 
-    private val viewModel: ChannelsViewModelImpl by viewModels { ChannelsViewModelFactory() }
+    private val viewModel: ChannelsViewModel by viewModels { ChannelsViewModelFactory() }
 
     private var _binding: FragmentChannelsBinding? = null
     protected val binding get() = _binding!!
@@ -47,7 +46,7 @@ class ChannelsFragment : Fragment() {
             viewLifecycleOwner,
             Observer {
                 if (ChannelsViewModel.State.NavigateToLoginScreen == it) {
-                    findNavController().navigateSafely(R.id.action_to_loginFragment)
+                    findNavController().navigateSafely(R.id.action_to_userLoginFragment)
                 }
             }
         )

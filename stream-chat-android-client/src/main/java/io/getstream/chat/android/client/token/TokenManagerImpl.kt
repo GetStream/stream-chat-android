@@ -61,6 +61,12 @@ internal class TokenManagerImpl : TokenManager {
         return this::provider.isInitialized
     }
 
+    /**
+     * This method is synchronized because this class is not thread safe. Without
+     * synchronization concurrent invocations of [loadAsync] and [loadSync] can lead
+     * to the state when [listeners] are notified several times.
+     */
+    @Synchronized
     private fun onTokenLoaded(token: String?) {
         this.token = token ?: ""
         listeners.forEach { it?.invoke(Result(this.token)) }

@@ -43,7 +43,7 @@ And API reference (generated using Dokka) is available [here](https://getstream.
 To prevent race conditions caused by offline being ready before the client is initialized, be sure to replace
 
 ```kotlin
-Chat.getInstance().getClient().getCurrentUser()
+Chat.instance().getClient().getCurrentUser()
 ```
 
 

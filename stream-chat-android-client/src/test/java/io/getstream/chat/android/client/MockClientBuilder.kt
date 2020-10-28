@@ -4,6 +4,7 @@ import android.content.Context
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -42,6 +43,7 @@ internal class MockClientBuilder {
     private lateinit var fileUploader: FileUploader
 
     internal lateinit var retrofitApi: RetrofitApi
+    internal lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
     private lateinit var api: ChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
@@ -64,16 +66,18 @@ internal class MockClientBuilder {
 
         socket = FakeChatSocket()
         retrofitApi = mock()
+        retrofitAnonymousApi = mock()
         fileUploader = mock()
         notificationsManager = mock()
         api = ChatApi(
             config.apiKey,
             retrofitApi,
+            retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader
         )
 
-        client = ChatClientImpl(config, api, socket, notificationsManager)
+        client = ChatClient(config, api, socket, notificationsManager)
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)

@@ -51,7 +51,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
-        ChatFonts chatFonts = Chat.getInstance().getFonts();
+        ChatFonts chatFonts = Chat.instance().getFonts();
 
         User user = reads.get(0).getUser();
         String image = user.getExtraValue("name", "");
@@ -78,7 +78,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
             Glide.with(getContext())
                     .load(image)
                     //TODO: llc check glide
-                    //.load(StreamChat.getInstance().getUploadStorage().signGlideUrl(image))
+                    //.load(StreamChat.instance().getUploadStorage().signGlideUrl(image))
                     .into(imageView);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(

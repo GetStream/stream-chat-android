@@ -6,7 +6,6 @@ import com.getstream.sdk.chat.viewmodel.ChannelHeaderViewModel
 import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 
-@Suppress("UNCHECKED_CAST")
 /**
  * A ViewModel factory for MessageListViewModel, ChannelHeaderViewModel and MessageInputViewModel
  *
@@ -16,12 +15,18 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
  * @see ChannelHeaderViewModel
  * @see MessageInputViewModel
  */
-public class ChannelViewModelFactory(private val cid: String) :
-    ViewModelProvider.NewInstanceFactory() {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = when (modelClass) {
-        MessageListViewModel::class.java -> MessageListViewModel(cid) as T
-        ChannelHeaderViewModel::class.java -> ChannelHeaderViewModel(cid) as T
-        MessageInputViewModel::class.java -> MessageInputViewModel(cid) as T
-        else -> super.create(modelClass)
+public class ChannelViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
+    private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
+        ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
+        MessageInputViewModel::class.java to { MessageInputViewModel(cid) },
+        MessageListViewModel::class.java to { MessageListViewModel(cid) },
+    )
+
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        val viewModel: ViewModel? = factories[modelClass]?.invoke()
+            ?: throw IllegalArgumentException("ChannelViewModelFactory can only create instances of the following classes: ${factories.keys.joinToString { it.simpleName }}")
+
+        @Suppress("UNCHECKED_CAST")
+        return viewModel as T
     }
 }

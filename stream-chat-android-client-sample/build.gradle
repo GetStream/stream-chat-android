@@ -67,7 +67,7 @@ dependencies {
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
-    implementation Dependencies.recyclerview
+    implementation Dependencies.androidxRecyclerview
 
     // RxJava
     implementation Dependencies.rxjava2Android
@@ -79,6 +79,7 @@ dependencies {
     kapt Dependencies.roomCompiler
 
     // Firebase
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.firebaseCore
 

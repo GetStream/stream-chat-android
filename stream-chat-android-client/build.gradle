@@ -16,12 +16,13 @@ android {
     compileSdkVersion 28
     buildToolsVersion "29.0.3"
     defaultConfig {
-
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName Configuration.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'STREAM_CHAT_CLIENT_VERSION', "\"$version\""
     }
     buildTypes {
         release {
@@ -67,10 +68,12 @@ dependencies {
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
+    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.retrofit
     implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.gson
+    implementation platform(Dependencies.okhttpBom)
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
     debugImplementation Dependencies.stethoOkhttp

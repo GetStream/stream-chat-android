@@ -7,7 +7,6 @@ import com.nhaarman.mockitokotlin2.doAnswer
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClientImpl
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
@@ -62,6 +61,7 @@ internal class ClientConnectionTests {
     private lateinit var api: ChatApi
     private lateinit var socket: ChatSocket
     private lateinit var retrofitApi: RetrofitApi
+    private lateinit var retrofitAnonymousApi: RetrofitAnonymousApi
     private lateinit var fileUploader: FileUploader
     private lateinit var client: ChatClient
     private lateinit var logger: ChatLogger
@@ -73,6 +73,7 @@ internal class ClientConnectionTests {
     fun before() {
         socket = mock()
         retrofitApi = mock()
+        retrofitAnonymousApi = mock()
         fileUploader = mock()
         logger = mock()
         notificationsManager = mock()
@@ -80,6 +81,7 @@ internal class ClientConnectionTests {
         api = ChatApi(
             config.apiKey,
             retrofitApi,
+            retrofitAnonymousApi,
             UuidGeneratorImpl(),
             fileUploader
         )
@@ -89,7 +91,7 @@ internal class ClientConnectionTests {
             socketListener.onEvent(disconnectedEvent)
         }
 
-        client = ChatClientImpl(
+        client = ChatClient(
             config,
             api,
             socket,

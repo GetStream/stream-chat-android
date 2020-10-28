@@ -30,9 +30,9 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     override fun onNewToken(token: String) {
-        try {
+        if (ChatClient.isInitialized) {
             ChatClient.instance().onNewTokenReceived(token, this)
-        } catch (e: UninitializedPropertyAccessException) {
+        } else {
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
             val user = User(id = syncConfig.userId)
             GlobalScope.launch(Dispatchers.IO) {
@@ -57,11 +57,16 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
         val cid = "$channelType:$channelId"
 
         GlobalScope.launch(Dispatchers.IO) {
-            try {
+            if (ChatDomain.isInitialized) {
                 performSync(ChatDomain.instance(), cid)
-                ChatClient.instance()
-                    .onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
-            } catch (e: UninitializedPropertyAccessException) {
+
+                if (ChatClient.isInitialized) {
+                    ChatClient.instance()
+                        .onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
+                }
+            }
+
+            if (ChatDomain.isInitialized.not() || ChatClient.isInitialized.not()) {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
                 if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
                     val user = User(id = syncConfig.userId)
@@ -75,10 +80,10 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
                     performSync(domain, cid)
                     client.onMessageReceived(message, this@OfflineSyncFirebaseMessagingService)
                 }
-            } finally {
-                stopForeground(true)
-                stopSelf()
             }
+
+            stopForeground(true)
+            stopSelf()
         }
     }
 

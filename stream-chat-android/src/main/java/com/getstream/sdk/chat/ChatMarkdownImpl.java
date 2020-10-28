@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+
 import io.noties.markwon.Markwon;
 import io.noties.markwon.core.CorePlugin;
 import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
@@ -11,22 +12,8 @@ import io.noties.markwon.image.ImagesPlugin;
 import io.noties.markwon.linkify.LinkifyPlugin;
 
 class ChatMarkdownImpl implements ChatMarkdown {
-    
-//    private static MarkdownHandler markdownHandler;
-//
-//    public static MarkdownHandler getMarkdownHandler() {
-//        return markdownHandler;
-//    }
-//
-//    public static void setMarkdownHandler(MarkdownHandler markdownHandler) {
-//        MarkdownImpl.markdownHandler = markdownHandler;
-//    }
-//
-//    public interface MarkdownHandler {
-//        void setText(TextView textView, String text);
-//    }
 
-    private Markwon markwon;
+    private final Markwon markwon;
 
     public ChatMarkdownImpl(Context context) {
         markwon = Markwon.builder(context)

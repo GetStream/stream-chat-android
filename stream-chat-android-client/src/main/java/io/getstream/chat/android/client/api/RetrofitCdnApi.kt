@@ -11,6 +11,7 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+@AuthenticatedApi
 internal interface RetrofitCdnApi {
     @Multipart
     @POST("/channels/{type}/{id}/image")
