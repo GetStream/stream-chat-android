@@ -37,6 +37,7 @@ import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
 import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
 import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
 import com.getstream.sdk.chat.view.MessageListView.UserClickListener
+import com.getstream.sdk.chat.view.channels.ChannelsView
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -419,6 +420,11 @@ public class MessageListView : ConstraintLayout {
         setMessageListItemAdapter(adapter)
     }
 
+    /**
+     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
+     */
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
         loadingViewContainer.removeView(loadingView)
         loadingViewContainer.addView(loadingView, layoutParams)
@@ -432,6 +438,11 @@ public class MessageListView : ConstraintLayout {
         loadingViewContainer.isVisible = false
     }
 
+    /**
+     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
+     */
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
         emptyStateViewContainer.removeView(emptyStateView)
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
