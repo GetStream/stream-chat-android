@@ -18,6 +18,7 @@ public class QueryChannelsRequest(
     override var watch: Boolean = true
     override var presence: Boolean = false
 
+    public val sort: List<Map<String, Any>> = querySort.toDto()
     public val filter_conditions: Map<String, Any> = filter.toMap()
 
     public fun withMessages(limit: Int): QueryChannelsRequest {

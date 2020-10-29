@@ -64,9 +64,9 @@ public class QuerySort<T : Any> {
         return add(SortSpecification(getSortFeature(fieldName, kClass), SortDirection.DESC))
     }
 
-    public fun toMap(): Map<String, Any> = sortSpecifications.flatMap { sortSpec ->
-        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value)
-    }.toMap()
+    public fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
+        listOf(KEY_FIELD_NAME to sortSpec.sortAttribute.name, KEY_DIRECTION to sortSpec.sortDirection.value).toMap()
+    }
 
     public fun toList(): List<Pair<String, SortDirection>> = sortSpecifications.map { it.sortAttribute.name to it.sortDirection }
 

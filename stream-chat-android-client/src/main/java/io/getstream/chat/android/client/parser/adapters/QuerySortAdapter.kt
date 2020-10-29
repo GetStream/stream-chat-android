@@ -13,7 +13,7 @@ internal class QuerySortAdapter(
 ) : TypeAdapter<QuerySort<*>>() {
     override fun write(out: JsonWriter, value: QuerySort<*>?) {
         val adapter = gson.getAdapter(ArrayList::class.java)
-        adapter.write(out, value?.toMap() as? ArrayList<*>)
+        adapter.write(out, value?.toDto() as? ArrayList<*>)
     }
 
     override fun read(`in`: JsonReader?): QuerySort<*>? {

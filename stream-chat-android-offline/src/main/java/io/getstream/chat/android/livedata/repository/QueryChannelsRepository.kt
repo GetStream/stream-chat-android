@@ -35,7 +35,7 @@ internal class QueryChannelsRepository(var queryChannelsDao: QueryChannelsDao) {
     companion object {
         // TODO consider how to make it private
         internal fun getId(queryChannelsSpec: QueryChannelsSpec): String {
-            return (Objects.hash(queryChannelsSpec.filter.toMap()) + Objects.hash(queryChannelsSpec.sort.toMap())).toString()
+            return (Objects.hash(queryChannelsSpec.filter.toMap()) + Objects.hash(queryChannelsSpec.sort.toDto())).toString()
         }
 
         private fun toEntity(queryChannelsSpec: QueryChannelsSpec): QueryChannelsWithSorts {
