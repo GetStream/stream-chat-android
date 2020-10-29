@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.controllers
 
+import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -58,9 +59,24 @@ public interface ChannelController {
 
     public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
 
-    public fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
 
     public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    public fun subscribeFor(
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
