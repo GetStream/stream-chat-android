@@ -5,7 +5,11 @@
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
 
 ## stream-chat-android
-- - Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
+- Add empty state views to channel list view and message list view components
+- Allow setting custom empty state views
+- Add loading view to message list view
+- Allow setting custom loading view
+- Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
 
 ## stream-chat-android-client
 - Fix guest user authentication
