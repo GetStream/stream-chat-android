@@ -113,6 +113,7 @@
     <!--Custom ChannelListLayout-->
         <!-- Text of the empty state label -->
         <attr name="streamChannelsEmptyStateLabelText" format="string"/>
+        <attr name="streamChannelsLoadingView" format="reference"/>
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
@@ -374,6 +375,9 @@
 
         <!-- Text of the default empty state label -->
         <attr name="streamMessagesEmptyStateLabelText" format="string"/>
+
+        <!-- Reference to the layout consisting of loading view -->
+        <attr name="streamMessagesLoadingView" format="reference"/>
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
