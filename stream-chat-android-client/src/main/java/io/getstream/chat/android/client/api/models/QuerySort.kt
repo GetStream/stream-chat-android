@@ -131,10 +131,7 @@ public class QuerySort<T : Any> {
 
         public inline fun <reified T : Any> asc(fieldName: String): QuerySort<T> = QuerySort<T>().ascByName(fieldName)
         public inline fun <reified T : Any> desc(fieldName: String): QuerySort<T> = QuerySort<T>().descByName(fieldName)
-        public inline fun <reified T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> =
-            QuerySort<T>().asc(field)
-
-        public inline fun <reified T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> =
-            QuerySort<T>().desc(field)
+        public fun <T : Any> asc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> = QuerySort<T>().asc(field)
+        public fun <T : Any> desc(field: KProperty1<T, Comparable<*>?>): QuerySort<T> = QuerySort<T>().desc(field)
     }
 }
