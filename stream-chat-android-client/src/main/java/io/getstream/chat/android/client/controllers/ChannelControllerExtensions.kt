@@ -5,6 +5,9 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import kotlin.reflect.KClass
 
+/***
+ * Subscribes to events of type [T] in the channel.
+ */
 public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
     crossinline listener: (event: T) -> Unit
 ): Disposable {
@@ -14,6 +17,11 @@ public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
     )
 }
 
+/***
+ * Subscribes to events of type [T] in the channel, in the lifecycle of [lifecycleOwner].
+ *
+ * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+ */
 public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     crossinline listener: (event: T) -> Unit
@@ -25,6 +33,9 @@ public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
     )
 }
 
+/***
+ * Subscribes to the specific [eventTypes] of the channel.
+ */
 public fun ChannelController.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: (event: ChatEvent) -> Unit
@@ -33,6 +44,11 @@ public fun ChannelController.subscribeFor(
     return subscribeFor(*javaClassTypes, listener = listener)
 }
 
+/***
+ * Subscribes to the specific [eventTypes] of the channel, in the lifecycle of [lifecycleOwner].
+ *
+ * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+ */
 public fun ChannelController.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
@@ -42,6 +58,9 @@ public fun ChannelController.subscribeFor(
     return subscribeFor(lifecycleOwner, *javaClassTypes, listener = listener)
 }
 
+/***
+ * Subscribes for the next channel event of type [T].
+ */
 public inline fun <reified T : ChatEvent> ChannelController.subscribeForSingle(
     noinline listener: (event: T) -> Unit
 ): Disposable {

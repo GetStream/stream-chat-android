@@ -289,6 +289,11 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
@@ -325,6 +330,11 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
