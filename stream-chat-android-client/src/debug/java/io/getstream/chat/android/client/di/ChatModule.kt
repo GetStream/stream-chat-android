@@ -10,8 +10,19 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
 
-// TODO: what's the point of this module system, its complexity with no clear benefit
-internal class ChatModule(appContext: Context, config: ChatClientConfig, notificationsHandler: ChatNotificationHandler, uploader: FileUploader? = null, tokenManager: TokenManager) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager) {
+/**
+ * Debug implementation of [BaseChatModule].
+ *
+ * When updating this class, don't forget to update its empty release variant as well, as their
+ * interfaces have to match.
+ */
+internal class ChatModule(
+    appContext: Context,
+    config: ChatClientConfig,
+    notificationsHandler: ChatNotificationHandler,
+    uploader: FileUploader?,
+    tokenManager: TokenManager,
+) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager) {
 
     init {
         Stetho.initializeWithDefaults(appContext)
