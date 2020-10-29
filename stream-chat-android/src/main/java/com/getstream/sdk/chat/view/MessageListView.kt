@@ -435,6 +435,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         loadingViewContainer.removeView(loadingView)
+        loadingView = view
         loadingViewContainer.addView(loadingView, layoutParams)
     }
 
@@ -453,6 +454,7 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         emptyStateViewContainer.removeView(emptyStateView)
+        emptyStateView = view
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
 
