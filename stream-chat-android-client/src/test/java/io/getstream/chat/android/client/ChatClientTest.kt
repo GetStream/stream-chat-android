@@ -20,7 +20,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-internal class ChatClientImplTest {
+internal class ChatClientTest {
 
     companion object {
         val eventA = ConnectedEvent(EventType.HEALTH_CHECK, Date(), User(), "")
@@ -48,16 +48,18 @@ internal class ChatClientImplTest {
             1000,
             false,
             ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationHandler(mock()),
-            tokenManager = FakeTokenManager("")
+
         )
 
         socket = FakeChatSocket()
-        client = ChatClientImpl(
+        client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
-            notifications = mock()
+            notifications = mock(),
+            appContext = mock(),
+            notificationsHandler = ChatNotificationHandler(mock()),
+            tokenManager = FakeTokenManager("")
         )
         result = mutableListOf()
     }

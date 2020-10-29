@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
@@ -9,7 +11,6 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
 import io.getstream.chat.android.livedata.service.sync.NotificationConfigStore.Companion.NotificationConfigUnavailable
 import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
@@ -22,7 +23,8 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
  * Use cases are exposed via chatDomain.useCases
  */
 public interface ChatDomain {
-    /** The current user object */
+
+    /** the current user on the chatDomain object, same as client.getCurrentUser() */
     public var currentUser: User
 
     /** if offline is enabled */
@@ -89,16 +91,19 @@ public interface ChatDomain {
     public data class Builder(
         private var appContext: Context,
         private var client: ChatClient,
-        private var user: User
+        private var user: User? = null
     ) {
-        private val factory: ChatDomainFactory = ChatDomainFactory()
+
+        public constructor(client: ChatClient, appContext: Context) : this(appContext, client, null)
+
+        public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
 
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
-        private var offlineEnabled: Boolean = true
+        private var storageEnabled: Boolean = true
         private var recoveryEnabled: Boolean = true
-        private var backgroundSyncConfig: BackgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        private var backgroundSyncEnabled: Boolean = true
         private var notificationConfig: NotificationConfig = NotificationConfigUnavailable
         private val syncModule by lazy { SyncProvider(appContext) }
 
@@ -107,29 +112,23 @@ public interface ChatDomain {
             return this
         }
 
-        public fun backgroundSyncEnabled(apiKey: String, userToken: String): Builder {
-            // TODO: Consider exposing apiKey and userToken by ChatClient to make this public function more friendly
-            if (apiKey.isEmpty() || user.id.isEmpty() || userToken.isEmpty()) {
-                this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
-                throw IllegalArgumentException("apiKey, userToken must not be empty")
-            } else {
-                this.backgroundSyncConfig = BackgroundSyncConfig(apiKey, user.id, userToken)
-            }
+        public fun enableBackgroundSync(): Builder {
+            backgroundSyncEnabled = true
             return this
         }
 
-        public fun backgroundSyncDisabled(): Builder {
-            this.backgroundSyncConfig = BackgroundSyncConfig.UNAVAILABLE
+        public fun disableBackgroundSync(): Builder {
+            backgroundSyncEnabled = false
             return this
         }
 
         public fun offlineEnabled(): Builder {
-            this.offlineEnabled = true
+            this.storageEnabled = true
             return this
         }
 
         public fun offlineDisabled(): Builder {
-            this.offlineEnabled = false
+            this.storageEnabled = false
             return this
         }
 
@@ -153,38 +152,24 @@ public interface ChatDomain {
             return this
         }
 
+        // TODO: do we even need this, or is it better to have it at the low level client?
         public fun notificationConfig(notificationConfig: NotificationConfig): Builder {
             this.notificationConfig = notificationConfig
             return this
         }
 
         public fun build(): ChatDomain {
-            if (backgroundSyncConfig != BackgroundSyncConfig.UNAVAILABLE) {
-                storeBackgroundSyncConfig(backgroundSyncConfig)
-                storeNotificationConfig(notificationConfig)
-            }
-            val result = buildImpl()
-            instance = result
-            return result
+
+            storeNotificationConfig(notificationConfig)
+
+            ChatDomain.instance = buildImpl()
+
+            return ChatDomain.instance()
         }
 
-        internal fun buildImpl() =
-            factory.create(
-                appContext,
-                client,
-                user,
-                database,
-                offlineEnabled,
-                userPresence,
-                recoveryEnabled
-            )
-
-        private fun storeBackgroundSyncConfig(backgroundSyncConfig: BackgroundSyncConfig) {
-            if (BackgroundSyncConfig.UNAVAILABLE != backgroundSyncConfig) {
-                syncModule.encryptedBackgroundSyncConfigStore.apply {
-                    put(backgroundSyncConfig)
-                }
-            }
+        internal fun buildImpl(): ChatDomainImpl {
+            val handler = Handler(Looper.getMainLooper())
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

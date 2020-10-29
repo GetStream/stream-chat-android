@@ -9,6 +9,10 @@ public class ChatNetworkError private constructor(
     "Status code: $statusCode, with stream code: $streamCode, description: $description",
     cause
 ) {
+    override fun toString(): String {
+        return "ChatNetworkError http status $statusCode, stream error code $streamCode: $description"
+    }
+
     public companion object {
         public fun create(
             code: ChatErrorCode,

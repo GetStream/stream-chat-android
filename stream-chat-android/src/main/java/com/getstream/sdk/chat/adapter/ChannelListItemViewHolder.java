@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.drawable.DrawableCompat;
 
-import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
@@ -143,7 +143,8 @@ public class ChannelListItemViewHolder extends BaseChannelListItemViewHolder {
 
         if (!TextUtils.isEmpty(lastMessage.getText())) {
             String text = StringUtility.getDeletedOrMentionedText(lastMessage);
-            Chat.instance().getMarkdown().setText(tv_last_message, text);
+            ChatUI.instance().getMarkdown().setText(tv_last_message, text);
+
             return;
         }
 

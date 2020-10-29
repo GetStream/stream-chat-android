@@ -20,7 +20,7 @@ import java.util.Date
 
 /**
  * Used for integrations tests.
- * Initialises mock internals of [ChatClientImpl]
+ * Initialises mock internals of [ChatClient]
  */
 internal class MockClientBuilder {
 
@@ -60,8 +60,7 @@ internal class MockClientBuilder {
             1000,
             1000,
             false,
-            ChatLogger.Config(ChatLogLevel.NOTHING, null),
-            ChatNotificationHandler(context),
+            ChatLogger.Config(ChatLogLevel.NOTHING, null)
         )
 
         socket = FakeChatSocket()
@@ -74,10 +73,19 @@ internal class MockClientBuilder {
             retrofitApi,
             retrofitAnonymousApi,
             UuidGeneratorImpl(),
-            fileUploader
+            fileUploader,
+
         )
 
-        client = ChatClientImpl(config, api, socket, notificationsManager)
+        client = ChatClient(
+            config,
+            api,
+            socket,
+            notificationsManager,
+            mock(),
+            ChatNotificationHandler(context),
+        )
+
         client.setUser(user, token)
 
         socket.sendEvent(connectedEvent)

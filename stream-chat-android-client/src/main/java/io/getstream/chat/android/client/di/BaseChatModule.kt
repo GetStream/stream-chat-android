@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.token.TokenManagerImpl
+import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import okhttp3.OkHttpClient
@@ -28,13 +31,16 @@ import java.util.concurrent.TimeUnit
 
 internal open class BaseChatModule(
     private val appContext: Context,
-    private val config: ChatClientConfig
+    private val config: ChatClientConfig,
+    private val notificationsHandler: ChatNotificationHandler,
+    private val fileUploader: FileUploader? = null,
+    private val tokenManager: TokenManager = TokenManagerImpl()
 ) {
 
     private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
     private val defaultParser: ChatParser by lazy { ChatParserImpl() }
     private val defaultNotifications by lazy {
-        buildNotification(config.notificationsHandler, api())
+        buildNotification(notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
@@ -115,10 +121,11 @@ internal open class BaseChatModule(
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
                 TokenAuthInterceptor(
-                    config.tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
+
+                    tokenManager,
+                    parser
+                ) { config.isAnonymous }
+
             )
             .addInterceptor(
                 CurlInterceptor {
@@ -141,7 +148,7 @@ internal open class BaseChatModule(
         return ChatSocketImpl(
             chatConfig.apiKey,
             chatConfig.wssUrl,
-            chatConfig.tokenManager,
+            tokenManager,
             parser
         )
     }
@@ -152,7 +159,7 @@ internal open class BaseChatModule(
             buildRetrofitApi(RetrofitApi::class.java),
             buildRetrofitApi(RetrofitAnonymousApi::class.java),
             UuidGeneratorImpl(),
-            chatConfig.fileUploader ?: defaultFileUploader
+            fileUploader ?: defaultFileUploader
         )
     }
 

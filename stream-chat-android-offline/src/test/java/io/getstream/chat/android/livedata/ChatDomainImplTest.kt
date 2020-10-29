@@ -37,7 +37,7 @@ internal class ChatDomainImplTest {
         val offlineEnabled = true
         val userPresence = true
         val recoveryEnabled = true
-        sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled)
+        sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled, false, mock())
     }
 
     @Test

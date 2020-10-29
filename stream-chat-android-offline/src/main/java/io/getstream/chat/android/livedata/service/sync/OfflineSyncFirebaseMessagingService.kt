@@ -34,15 +34,18 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
             ChatClient.instance().onNewTokenReceived(token, this)
         } else {
             val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-            val user = User(id = syncConfig.userId)
-            GlobalScope.launch(Dispatchers.IO) {
-                val client = initClient(
-                    this@OfflineSyncFirebaseMessagingService,
-                    user,
-                    syncConfig.userToken,
-                    syncConfig.apiKey
-                )
-                client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
+            syncConfig?.let {
+                val config = it
+                val user = User(id = config.userId)
+                GlobalScope.launch(Dispatchers.IO) {
+                    val client = initClient(
+                        this@OfflineSyncFirebaseMessagingService,
+                        user,
+                        config.userToken,
+                        config.apiKey
+                    )
+                    client.onNewTokenReceived(token, this@OfflineSyncFirebaseMessagingService)
+                }
             }
         }
     }
@@ -68,13 +71,15 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
 
             if (ChatDomain.isInitialized.not() || ChatClient.isInitialized.not()) {
                 val syncConfig = syncModule.encryptedBackgroundSyncConfigStore.get()
-                if (BackgroundSyncConfig.UNAVAILABLE != syncConfig) {
-                    val user = User(id = syncConfig.userId)
+
+                syncConfig?.let {
+                    val config = it
+                    val user = User(id = config.userId)
                     val client = initClient(
                         this@OfflineSyncFirebaseMessagingService,
                         user,
-                        syncConfig.userToken,
-                        syncConfig.apiKey
+                        config.userToken,
+                        config.apiKey
                     )
                     val domain = initDomain(user, client)
                     performSync(domain, cid)
@@ -112,7 +117,7 @@ internal class OfflineSyncFirebaseMessagingService : FirebaseMessagingService() 
     }
 
     private fun initDomain(user: User, client: ChatClient): ChatDomain {
-        return ChatDomain.Builder(applicationContext, client, user).build()
+        return ChatDomain.Builder(applicationContext, client, user).build()!!
     }
 
     private suspend fun initClient(
