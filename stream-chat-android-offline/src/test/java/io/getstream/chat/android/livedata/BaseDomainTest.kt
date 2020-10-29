@@ -122,7 +122,7 @@ internal open class BaseDomainTest {
         val events = listOf<ChatEvent>()
         val eventResults = Result(events)
 
-        return mock {
+        val client: ChatClient = mock {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
@@ -148,6 +148,7 @@ internal open class BaseDomainTest {
                 )
             )
         }
+        return client
     }
 
     fun createConnectedMockClient(): ChatClient {
@@ -189,7 +190,6 @@ internal open class BaseDomainTest {
                 )
             )
         }
-
         When calling client.setUser(any(), any<String>(), any()) doAnswer {
             (it.arguments[2] as InitConnectionListener).onSuccess(
                 InitConnectionListener.ConnectionData(it.arguments[0] as User, randomString())

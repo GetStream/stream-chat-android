@@ -5,7 +5,7 @@ internal data class BackgroundSyncConfig(
     val userId: String,
     val userToken: String
 ) {
-    companion object {
-        val UNAVAILABLE = BackgroundSyncConfig("", "", "")
+    public fun isValid(): Boolean {
+        return (apiKey.isNotEmpty() && userId.isNotEmpty() && userToken.isNotEmpty())
     }
 }

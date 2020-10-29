@@ -35,16 +35,13 @@ internal class EncryptedBackgroundSyncConfigStore(context: Context) {
         }.apply()
     }
 
-    fun get(): BackgroundSyncConfig = prefs.run {
-        val apiKey = getString(KEY_API_KEY, "")
-        val userId = getString(KEY_USER_ID, "")
-        val userToken = getString(KEY_USER_TOKEN, "")
+    fun get(): BackgroundSyncConfig? = prefs.run {
+        val apiKey = getString(KEY_API_KEY, "") ?: ""
+        val userId = getString(KEY_USER_ID, "") ?: ""
+        val userToken = getString(KEY_USER_TOKEN, "") ?: ""
 
-        if (apiKey.isNullOrBlank() || userId.isNullOrBlank() || userToken.isNullOrBlank()) {
-            BackgroundSyncConfig.UNAVAILABLE
-        } else {
-            BackgroundSyncConfig(apiKey, userId, userToken)
-        }
+        val config = BackgroundSyncConfig(apiKey, userId, userToken)
+        return if (config.isValid()) config else { null }
     }
 
     fun clear() = prefs.edit().clear().apply()

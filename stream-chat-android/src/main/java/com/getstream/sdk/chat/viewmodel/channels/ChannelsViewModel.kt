@@ -5,8 +5,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.Chat
 import com.getstream.sdk.chat.utils.exhaustive
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -50,9 +50,10 @@ public class ChannelsViewModel(
 
     public fun onEvent(event: Event) {
         when (event) {
+
             is Event.ReachedEndOfList -> requestMoreChannels()
             is Event.LogoutClicked -> {
-                Chat.instance().disconnect()
+                ChatClient.instance().disconnect()
                 stateMerger.postValue(State.NavigateToLoginScreen)
             }
         }.exhaustive
