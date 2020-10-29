@@ -20,6 +20,10 @@ public class ChannelHeaderView @JvmOverloads constructor(
 ) : RelativeLayout(context, attrs, defStyleAttr) {
     private val binding: StreamViewChannelHeaderBinding
     private val style: ChannelHeaderViewStyle
+
+    /***
+     * Callback invoked when the header's back button is clicked.
+     */
     public var onBackClick: () -> Unit = { }
     public var currentChannel: Channel? = null
 

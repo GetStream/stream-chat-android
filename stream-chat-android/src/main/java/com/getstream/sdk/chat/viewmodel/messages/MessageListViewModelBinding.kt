@@ -12,6 +12,10 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Last
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
+/***
+ * Binds [MessageListView] with [MessageListViewModel].
+ * Sets the View's handlers and displays new messages based on the ViewModel's state.
+ */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     view.init(channel, currentUser)
@@ -26,8 +30,20 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
     view.setOnMessageRetryHandler { onEvent(RetryMessage(it)) }
 
     state.observe(lifecycleOwner) { state ->
-        if (state is MessageListViewModel.State.Result) {
-            view.displayNewMessage(state.messageListItem)
+        when (state) {
+            is MessageListViewModel.State.Loading -> {
+                view.hideEmptyStateView()
+                view.showLoadingView()
+            }
+            is MessageListViewModel.State.Result -> {
+                if (state.messageListItem.items.isEmpty()) {
+                    view.showEmptyStateView()
+                } else {
+                    view.hideEmptyStateView()
+                }
+                view.displayNewMessage(state.messageListItem)
+                view.hideLoadingView()
+            }
         }
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
