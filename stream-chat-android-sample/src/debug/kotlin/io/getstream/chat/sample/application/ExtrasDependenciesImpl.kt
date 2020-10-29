@@ -6,8 +6,8 @@ import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
+import io.getstream.chat.android.client.di.networkFlipper
 
 class ExtrasDependenciesImpl : ExtraDependencies {
 
@@ -18,7 +18,7 @@ class ExtrasDependenciesImpl : ExtraDependencies {
             AndroidFlipperClient.getInstance(application).apply {
                 addPlugin(InspectorFlipperPlugin(application, DescriptorMapping.withDefaults()))
                 addPlugin(DatabasesFlipperPlugin(application))
-                addPlugin(NetworkFlipperPlugin())
+                addPlugin(networkFlipper)
             }.start()
         }
     }
