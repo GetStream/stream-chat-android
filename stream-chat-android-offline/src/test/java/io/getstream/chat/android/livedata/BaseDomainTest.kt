@@ -43,6 +43,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import java.util.Date
+import java.util.concurrent.Executors
 
 internal open class BaseDomainTest {
     lateinit var channelMock: ChannelController
@@ -200,11 +201,12 @@ internal open class BaseDomainTest {
     }
 
     fun createRoomDb(): ChatDatabase {
-        db = Room.inMemoryDatabaseBuilder(
+        return Room.inMemoryDatabaseBuilder(
             getApplicationContext(),
             ChatDatabase::class.java
-        ).build()
-        return db
+        )
+            .setTransactionExecutor(Executors.newSingleThreadExecutor())
+            .build()
     }
 
     fun setupChatDomain(client: ChatClient, setUser: Boolean) {

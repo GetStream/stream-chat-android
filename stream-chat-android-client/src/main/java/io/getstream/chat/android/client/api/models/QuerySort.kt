@@ -81,6 +81,21 @@ public class QuerySort<T : Any> {
             ?: SortAttribute.FieldNameSortAttribute(fieldName)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as QuerySort<*>
+
+        if (sortSpecifications != other.sortSpecifications) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return sortSpecifications.hashCode()
+    }
+
     private data class SortSpecification<T>(
         val sortAttribute: SortAttribute<T>,
         val sortDirection: SortDirection
