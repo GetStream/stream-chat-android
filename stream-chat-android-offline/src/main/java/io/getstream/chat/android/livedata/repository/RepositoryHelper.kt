@@ -63,10 +63,7 @@ internal class RepositoryHelper(
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
                 scope.async {
-                    cid to messages.selectMessagesEntitiesForChannel(
-                        cid,
-                        pagination
-                    )
+                    cid to messages.selectMessagesEntitiesForChannel(cid, pagination)
                 }
             }.awaitAll().toMap()
         } else {

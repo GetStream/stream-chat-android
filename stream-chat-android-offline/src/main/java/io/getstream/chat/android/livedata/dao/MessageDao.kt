@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import java.util.Date
@@ -32,11 +31,6 @@ internal interface MessageDao {
 
     @Query("SELECT * from stream_chat_message WHERE cid = :cid ORDER BY createdAt DESC LIMIT :limit")
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
-
-    @Transaction
-    suspend fun messagesForChannel(cids: List<String>, limit: Int = 100): Map<String, List<MessageEntity>> {
-        return cids.map { cid -> cid to messagesForChannel(cid, limit) }.toMap()
-    }
 
     @Query("DELETE from stream_chat_message WHERE cid = :cid AND createdAt < :deleteMessagesBefore")
     suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
