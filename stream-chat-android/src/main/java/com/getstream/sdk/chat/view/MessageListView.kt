@@ -14,7 +14,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
@@ -56,9 +56,7 @@ import io.getstream.chat.android.client.models.User
  * - Customizing the click and longCLick (via the adapter)
  * - The list_item_message template to use (perhaps, multiple ones...?)
  */
-
 public class MessageListView : ConstraintLayout {
-
     private var firstVisiblePosition = 0
     private var lastVisiblePosition = 0
 
@@ -122,6 +120,10 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
+    private val loadMoreListener = EndlessScrollListener {
+        endRegionReachedHandler()
+    }
+
     private lateinit var channel: Channel
     private lateinit var currentUser: User
 
@@ -162,7 +164,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            Chat.instance()
+            ChatUI.instance()
                 .navigator
                 .navigate(AttachmentDestination(message, attachment, context))
         }
@@ -296,6 +298,11 @@ public class MessageListView : ConstraintLayout {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
+        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+            R.styleable.MessageListView_streamLoadMoreThreshold,
+            context.resources.getInteger(R.integer.stream_load_more_threshold)
+        )
+
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
             R.drawable.stream_shape_round
@@ -347,7 +354,12 @@ public class MessageListView : ConstraintLayout {
         return adapter.itemCount - 1
     }
 
+    public fun setLoadingMore(loadingMore: Boolean) {
+        loadMoreListener.paginationEnabled = !loadingMore
+    }
+
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
+        binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
         binding.chatMessagesRV.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -357,9 +369,6 @@ public class MessageListView : ConstraintLayout {
 
                     val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
                     val currentLastVisible = layoutManager.findLastVisibleItemPosition()
-                    if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
-                        endRegionReachedHandler.invoke()
-                    }
 
                     hasScrolledUp = currentLastVisible < lastPosition()
                     lastVisiblePosition = currentLastVisible

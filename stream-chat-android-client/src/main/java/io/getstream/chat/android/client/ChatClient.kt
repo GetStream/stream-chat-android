@@ -1,6 +1,10 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -38,6 +42,8 @@ import io.getstream.chat.android.client.notifications.handler.ChatNotificationHa
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.socket.SocketListener
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.FilterObject
@@ -50,16 +56,23 @@ import java.io.File
 import java.util.Date
 
 public class ChatClient internal constructor(
-    private val config: ChatClientConfig,
+    public val config: ChatClientConfig,
     private val api: ChatApi,
     private val socket: ChatSocket,
-    private val notifications: ChatNotifications
-) {
+    private val notifications: ChatNotifications,
+    private var appContext: Context,
+    private val notificationsHandler: ChatNotificationHandler,
+    private val fileUploader: FileUploader? = null,
+    private val tokenManager: TokenManager = TokenManagerImpl()
+) : LifecycleObserver {
 
     private val state = ClientState()
     private var connectionListener: InitConnectionListener? = null
     private val logger = ChatLogger.get("Client")
     private val eventsObservable = ChatEventsObservable(socket)
+
+    public val disconnectListeners: MutableList<(User?) -> Unit> = mutableListOf<(User?) -> Unit>()
+    public val preSetUserListeners: MutableList<(User) -> Unit> = mutableListOf<(User) -> Unit>()
 
     init {
         eventsObservable.subscribe { event ->
@@ -87,10 +100,26 @@ public class ChatClient internal constructor(
             }
         }
 
+        // disconnect when the app is stopped
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
         logger.logI("Initialised: " + getVersion())
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public fun onResume() {
+        reconnectSocket()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public fun onStopped() {
+        disconnectSocket()
+    }
+
+    //region Set user
+
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
+        state.token = token
         setUser(user, ImmediateTokenProvider(token), listener)
     }
 
@@ -103,9 +132,14 @@ public class ChatClient internal constructor(
             return
         }
         state.user = user
+        // fire a handler here that the chatDomain and chatUX can use
+        for (listener in preSetUserListeners) {
+            listener(user)
+        }
         connectionListener = listener
         config.isAnonymous = false
-        config.tokenManager.setTokenProvider(tokenProvider)
+        tokenManager.setTokenProvider(tokenProvider)
+
         warmUp()
         notifications.onSetUser()
         getTokenAndConnect {
@@ -158,7 +192,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort = QuerySort(),
+        sort: QuerySort = DEFAULT_SORT,
         members: List<Member> = emptyList()
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
@@ -288,10 +322,14 @@ public class ChatClient internal constructor(
     }
 
     public fun disconnect() {
+
+        // fire a handler here that the chatDomain and chatUX can use
+        for (listener in disconnectListeners) {
+            listener(state.user)
+        }
         connectionListener = null
         socket.disconnect()
         state.reset()
-        config.isAnonymous = false
     }
 
     //region: api calls
@@ -564,6 +602,10 @@ public class ChatClient internal constructor(
         return state.user
     }
 
+    public fun getCurrentToken(): String {
+        return state.token
+    }
+
     public fun isSocketConnected(): Boolean {
         return state.socketConnected
     }
@@ -633,7 +675,10 @@ public class ChatClient internal constructor(
     }
 
     private fun getTokenAndConnect(connect: () -> Unit) {
-        config.tokenManager.loadAsync {
+        tokenManager.loadAsync {
+            if (it.isSuccess) {
+                state.token = it.data()
+            }
             connect()
         }
     }
@@ -666,6 +711,7 @@ public class ChatClient internal constructor(
         private var notificationsHandler: ChatNotificationHandler =
             ChatNotificationHandler(appContext)
         private var fileUploader: FileUploader? = null
+        private val tokenManager: TokenManager = TokenManagerImpl()
 
         public fun logLevel(level: ChatLogLevel): Builder {
             logLevel = level
@@ -751,17 +797,20 @@ public class ChatClient internal constructor(
                 cdnTimeout,
                 warmUp,
                 ChatLogger.Config(logLevel, loggerHandler),
-                notificationsHandler,
-                fileUploader
+
             )
 
-            val module = ChatModule(appContext, config)
+            val module = ChatModule(appContext, config, notificationsHandler, fileUploader, tokenManager)
 
             val result = ChatClient(
                 config,
                 module.api(),
                 module.socket(),
-                module.notifications()
+                module.notifications(),
+                appContext,
+                notificationsHandler,
+                fileUploader,
+                tokenManager
             )
             instance = result
 
@@ -771,10 +820,13 @@ public class ChatClient internal constructor(
 
     public companion object {
         private var instance: ChatClient? = null
+        @JvmField
+        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
 
         @JvmStatic
-        public fun instance(): ChatClient = instance
-            ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+        public fun instance(): ChatClient {
+            return instance ?: throw IllegalStateException("ChatClient.Builder::build() must be called before obtaining ChatClient instance")
+        }
 
         public val isInitialized: Boolean
             get() = instance != null

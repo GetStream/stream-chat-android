@@ -4,30 +4,38 @@ import android.content.Context
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
 
+/**
+ * Debug implementation of [BaseChatModule].
+ *
+ * When updating this class, don't forget to update its empty release variant as well, as their
+ * interfaces have to match.
+ */
 internal class ChatModule(
     appContext: Context,
-    config: ChatClientConfig
-) : BaseChatModule(appContext, config) {
+    config: ChatClientConfig,
+    notificationsHandler: ChatNotificationHandler,
+    uploader: FileUploader?,
+    tokenManager: TokenManager,
+) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager) {
 
     init {
         Stetho.initializeWithDefaults(appContext)
     }
 
     override fun clientBuilder(
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
         return super.clientBuilder(
-            connectTimeout,
-            writeTimeout,
-            readTimeout,
+            timeout,
             config,
             parser,
             isAnonymousApi

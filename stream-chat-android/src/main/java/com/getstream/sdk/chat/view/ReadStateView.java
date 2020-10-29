@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.getstream.sdk.chat.Chat;
+import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.LlcMigrationUtils;
@@ -51,7 +51,9 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                 || reads == null
                 || reads.isEmpty()) return;
 
-        ChatFonts chatFonts = Chat.instance().getFonts();
+
+        ChatFonts chatFonts = ChatUI.instance().getFonts();
+
 
         User user = reads.get(0).getUser();
         String image = user.getExtraValue("name", "");

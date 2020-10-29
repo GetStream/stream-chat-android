@@ -3,7 +3,7 @@ package io.getstream.chat.sample.feature.custom_login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.getstream.sdk.chat.Chat
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.ChatInitializer
@@ -51,11 +51,13 @@ class CustomLoginViewModel(
             name = loginCredentials.userName,
             token = loginCredentials.userToken
         )
+    }
 
-        Chat.instance()
+    private fun initChatUser(chatUser: ChatUser, token: String, cid: String? = null) {
+        ChatClient.instance()
             .setUser(
                 chatUser,
-                loginCredentials.userToken,
+                token,
                 object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         _state.postValue(State.RedirectToChannels)

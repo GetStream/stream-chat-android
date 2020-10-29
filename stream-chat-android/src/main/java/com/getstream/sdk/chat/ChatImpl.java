@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers;
 import kotlinx.coroutines.GlobalScope;
 
 class ChatImpl implements Chat {
+    private final ChatNavigationHandler navigationHandler;
     private MutableLiveData<OnlineStatus> onlineStatus = new MutableLiveData<>(OnlineStatus.NOT_INITIALIZED);
     private MutableLiveData<Number> unreadMessages = new MutableLiveData<>();
     private MutableLiveData<Number> unreadChannels = new MutableLiveData<>();
@@ -47,18 +48,6 @@ class ChatImpl implements Chat {
     private final boolean offlineEnabled;
     private final ChatNotificationHandler chatNotificationHandler;
 
-    private StreamLifecycleObserver streamLifecycleObserver = new StreamLifecycleObserver(new LifecycleHandler() {
-        @Override
-        public void resume() {
-            client().reconnectSocket();
-        }
-
-        @Override
-        public void stopped() {
-            client().disconnectSocket();
-        }
-    });
-
     ChatImpl(ChatFonts chatFonts,
              ChatStrings chatStrings,
              @Nullable ChatNavigationHandler navigationHandler,
@@ -73,6 +62,7 @@ class ChatImpl implements Chat {
              @Nullable FileUploader fileUploader) {
         this.chatStrings = chatStrings;
         this.chatFonts = chatFonts;
+        this.navigationHandler = navigationHandler;
         this.urlSigner = urlSigner;
         this.markdown = markdown;
         this.apiKey = apiKey;
@@ -83,7 +73,6 @@ class ChatImpl implements Chat {
         if (navigationHandler != null) {
             navigator.setHandler(navigationHandler);
         }
-
 
         ChatClient.Builder chatBuilder = new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)
@@ -98,6 +87,8 @@ class ChatImpl implements Chat {
         }
 
         chatBuilder.build();
+
+
 
         ChatLogger.Companion.getInstance().logI("Chat", "Initialized: " + getVersion());
     }
@@ -167,16 +158,26 @@ class ChatImpl implements Chat {
                         @NotNull String userToken,
                         @NotNull InitConnectionListener callbacks) {
         final ChatClient client = ChatClient.instance();
+        // this behaviour is wrong, note how ChatClient raises an error if you try to call setUser
+        // while already being connected
         client.disconnect();
         disconnectChatDomainIfAlreadyInitialized();
         final ChatDomain.Builder domainBuilder = new ChatDomain.Builder(context, client, user);
         if (offlineEnabled) {
             domainBuilder.offlineEnabled();
         }
-        domainBuilder
+        ChatDomain domain = domainBuilder
                 .userPresenceEnabled()
-                .backgroundSyncEnabled(apiKey, userToken)
+                .enableBackgroundSync()
                 .notificationConfig(chatNotificationHandler.getConfig()).build();
+
+        // create a copy ChatUX implementation for backward compat
+        ChatUI.Builder uxBuilder = new ChatUI.Builder(client(), domain, context).withFonts(chatFonts).withMarkdown(markdown).withUrlSigner(urlSigner).withStrings(getStrings());
+
+        if (navigationHandler != null) {
+            uxBuilder.withNavigationHandler(navigationHandler);
+        }
+        uxBuilder.build();
 
         client.setUser(user, userToken, new InitConnectionListener() {
             @Override
@@ -197,10 +198,10 @@ class ChatImpl implements Chat {
     public void disconnect() {
         ChatClient.instance().disconnect();
         disconnectChatDomainIfAlreadyInitialized();
-        streamLifecycleObserver.dispose();
     }
 
     private void disconnectChatDomainIfAlreadyInitialized() {
+
         if (!ChatDomain.Companion.isInitialized()) {
             ChatLogger.Companion.getInstance().logD("ChatImpl", "ChatDomain was not initialized yet. No need to disconnect.");
             return;
@@ -215,7 +216,6 @@ class ChatImpl implements Chat {
 
     protected void init() {
         initSocketListener();
-        streamLifecycleObserver.observe();
     }
 
 

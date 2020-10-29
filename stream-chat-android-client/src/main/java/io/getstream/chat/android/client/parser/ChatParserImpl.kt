@@ -1,10 +1,11 @@
 package io.getstream.chat.android.client.parser
 
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.PRIVATE
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -19,6 +20,7 @@ internal class ChatParserImpl : ChatParser {
 
     private val TAG = ChatParser::class.java.simpleName
 
+    @VisibleForTesting(otherwise = PRIVATE)
     val gson: Gson by lazy {
         GsonBuilder()
             .registerTypeAdapterFactory(TypeAdapterFactory())
@@ -47,17 +49,14 @@ internal class ChatParserImpl : ChatParser {
             .create()
     }
 
-    @Synchronized
     override fun toJson(any: Any): String {
         return gson.toJson(any)
     }
 
-    @Synchronized
     override fun <T : Any> fromJson(raw: String, clazz: Class<T>): T {
         return gson.fromJson(raw, clazz)
     }
 
-    @Synchronized
     override fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
         return try {
             Result(
@@ -72,9 +71,7 @@ internal class ChatParserImpl : ChatParser {
         }
     }
 
-    @Synchronized
     override fun toError(okHttpResponse: Response): ChatNetworkError {
-
         val statusCode: Int = okHttpResponse.code
 
         return try {
@@ -97,7 +94,6 @@ internal class ChatParserImpl : ChatParser {
         return builder
             .addConverterFactory(UrlQueryPayloadFactory(gson))
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(this))
     }
 
     private fun toError(body: String?): ErrorResponse? {

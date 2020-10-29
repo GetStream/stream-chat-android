@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.api.HeadersInterceptor
 import io.getstream.chat.android.client.api.HttpLoggingInterceptor
 import io.getstream.chat.android.client.api.RetrofitAnonymousApi
 import io.getstream.chat.android.client.api.RetrofitApi
+import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -19,6 +20,9 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.ChatSocketImpl
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.token.TokenManagerImpl
+import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.utils.UuidGeneratorImpl
 import okhttp3.OkHttpClient
@@ -27,13 +31,16 @@ import java.util.concurrent.TimeUnit
 
 internal open class BaseChatModule(
     private val appContext: Context,
-    private val config: ChatClientConfig
+    private val config: ChatClientConfig,
+    private val notificationsHandler: ChatNotificationHandler,
+    private val fileUploader: FileUploader? = null,
+    private val tokenManager: TokenManager = TokenManagerImpl()
 ) {
 
-    private val defaultLogger = ChatLogger.Builder(config.loggerConfig).build()
-    private val defaultParser by lazy { ChatParserImpl() }
+    private val defaultLogger: ChatLogger = ChatLogger.Builder(config.loggerConfig).build()
+    private val defaultParser: ChatParser by lazy { ChatParserImpl() }
     private val defaultNotifications by lazy {
-        buildNotification(config.notificationsHandler, api())
+        buildNotification(notificationsHandler, api())
     }
     private val defaultApi by lazy { buildApi(config) }
     private val defaultSocket by lazy { buildSocket(config, parser()) }
@@ -46,23 +53,23 @@ internal open class BaseChatModule(
 
     //region Modules
 
-    open fun api(): ChatApi {
+    fun api(): ChatApi {
         return defaultApi
     }
 
-    open fun socket(): ChatSocket {
+    fun socket(): ChatSocket {
         return defaultSocket
     }
 
-    open fun parser(): ChatParser {
+    fun parser(): ChatParser {
         return defaultParser
     }
 
-    open fun logger(): ChatLogger {
+    fun logger(): ChatLogger {
         return defaultLogger
     }
 
-    open fun notifications(): ChatNotifications {
+    fun notifications(): ChatNotifications {
         return defaultNotifications
     }
 
@@ -77,47 +84,48 @@ internal open class BaseChatModule(
 
     private fun buildRetrofit(
         endpoint: String,
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean
     ): Retrofit {
-        val clientBuilder =
-            clientBuilder(connectTimeout, writeTimeout, readTimeout, config, parser, isAnonymousApi)
+        val okHttpClient = clientBuilder(timeout, config, parser, isAnonymousApi).build()
 
-        val builder = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(endpoint)
-            .client(clientBuilder.build())
-
-        return parser.configRetrofit(builder).build()
+            .client(okHttpClient)
+            .also(parser::configRetrofit)
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(parser))
+            .build()
     }
 
+    // Create Builders from a single client to share threadpools
+    private val baseClient: OkHttpClient by lazy { OkHttpClient() }
+    private fun baseClientBuilder(): OkHttpClient.Builder =
+        baseClient.newBuilder().followRedirects(false)
+
     protected open fun clientBuilder(
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
-        return OkHttpClient.Builder()
-            .followRedirects(false)
+        return baseClientBuilder()
             // timeouts
-            .callTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-            .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
-            .writeTimeout(writeTimeout, TimeUnit.MILLISECONDS)
-            .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+            .callTimeout(timeout, TimeUnit.MILLISECONDS)
+            .connectTimeout(timeout, TimeUnit.MILLISECONDS)
+            .writeTimeout(timeout, TimeUnit.MILLISECONDS)
+            .readTimeout(timeout, TimeUnit.MILLISECONDS)
             // interceptors
             .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
             .addInterceptor(HttpLoggingInterceptor())
             .addInterceptor(
                 TokenAuthInterceptor(
-                    config.tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
+
+                    tokenManager,
+                    parser
+                ) { config.isAnonymous }
+
             )
             .addInterceptor(
                 CurlInterceptor {
@@ -140,7 +148,7 @@ internal open class BaseChatModule(
         return ChatSocketImpl(
             chatConfig.apiKey,
             chatConfig.wssUrl,
-            chatConfig.tokenManager,
+            tokenManager,
             parser
         )
     }
@@ -151,15 +159,13 @@ internal open class BaseChatModule(
             buildRetrofitApi(RetrofitApi::class.java),
             buildRetrofitApi(RetrofitAnonymousApi::class.java),
             UuidGeneratorImpl(),
-            chatConfig.fileUploader ?: defaultFileUploader
+            fileUploader ?: defaultFileUploader
         )
     }
 
     private fun <T> buildRetrofitApi(apiClass: Class<T>): T {
         return buildRetrofit(
             config.httpUrl,
-            config.baseTimeout,
-            config.baseTimeout,
             config.baseTimeout,
             config,
             parser(),
@@ -186,8 +192,6 @@ internal open class BaseChatModule(
         val apiClass = RetrofitCdnApi::class.java
         return buildRetrofit(
             config.cdnHttpUrl,
-            config.cdnTimeout,
-            config.cdnTimeout,
             config.cdnTimeout,
             config,
             parser(),

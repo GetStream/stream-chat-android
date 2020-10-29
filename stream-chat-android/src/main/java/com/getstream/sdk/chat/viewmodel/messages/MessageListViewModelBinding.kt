@@ -42,4 +42,5 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
             }
         }
     }
+    loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
 }
