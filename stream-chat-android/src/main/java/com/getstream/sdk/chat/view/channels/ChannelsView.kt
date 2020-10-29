@@ -68,6 +68,7 @@ public class ChannelsView @JvmOverloads constructor(
      */
     public fun setLoadingView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.loadingView)
+        this.loadingView = view
         addView(loadingView, layoutParams)
     }
 
