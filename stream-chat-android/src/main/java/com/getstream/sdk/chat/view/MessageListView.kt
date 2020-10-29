@@ -3,12 +3,15 @@ package com.getstream.sdk.chat.view
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.ChatUI
@@ -26,6 +29,15 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
+import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
+import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
+import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
+import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
+import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
+import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
+import com.getstream.sdk.chat.view.MessageListView.UserClickListener
+import com.getstream.sdk.chat.view.channels.ChannelsView
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -63,6 +75,18 @@ public class MessageListView : ConstraintLayout {
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private lateinit var loadingView: View
+    private lateinit var loadingViewContainer: ViewGroup
+    private lateinit var emptyStateView: View
+    private lateinit var emptyStateViewContainer: ViewGroup
+
+    private val defaultChildLayoutParams by lazy {
+        FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER
+        )
+    }
 
     public var unseenButtonEnabled: Boolean = true
 
@@ -210,6 +234,8 @@ public class MessageListView : ConstraintLayout {
         initRecyclerView()
         initUnseenMessagesButton()
         initUnseenMessagesView()
+        initLoadingView()
+        initEmptyStateView()
 
         if (attr != null) {
             configureAttributes(attr)
@@ -221,6 +247,16 @@ public class MessageListView : ConstraintLayout {
 
         buffer.subscribe(::handleNewWrapper)
         buffer.active()
+    }
+
+    private fun initLoadingView() {
+        loadingView = binding.defaultLoadingView
+        loadingViewContainer = binding.loadingViewContainer
+    }
+
+    private fun initEmptyStateView() {
+        emptyStateView = binding.defaultEmptyStateView
+        emptyStateViewContainer = binding.emptyStateViewContainer
     }
 
     private fun initScrollButtonBehaviour() {
@@ -301,6 +337,15 @@ public class MessageListView : ConstraintLayout {
 
         val scrollButtonArrow = findViewById<ImageView>(R.id.scrollIconIV)
         scrollButtonArrow.setImageResource(arrowIconRes)
+
+        tArray.getText(R.styleable.MessageListView_streamMessagesEmptyStateLabelText)
+            ?.let { emptyStateText ->
+                emptyStateView.let {
+                    if (it is TextView) {
+                        it.text = emptyStateText
+                    }
+                }
+            }
 
         tArray.recycle()
     }
@@ -390,6 +435,44 @@ public class MessageListView : ConstraintLayout {
         adapter.setHasStableIds(true)
 
         setMessageListItemAdapter(adapter)
+    }
+
+    /**
+     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
+     */
+    public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
+        loadingViewContainer.removeView(loadingView)
+        loadingView = view
+        loadingViewContainer.addView(loadingView, layoutParams)
+    }
+
+    public fun showLoadingView() {
+        loadingViewContainer.isVisible = true
+    }
+
+    public fun hideLoadingView() {
+        loadingViewContainer.isVisible = false
+    }
+
+    /**
+     * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
+     * The view should not be added to another [ViewGroup] instance elsewhere.
+     * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
+     */
+    public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
+        emptyStateViewContainer.removeView(emptyStateView)
+        emptyStateView = view
+        emptyStateViewContainer.addView(emptyStateView, layoutParams)
+    }
+
+    public fun showEmptyStateView() {
+        emptyStateViewContainer.isVisible = true
+    }
+
+    public fun hideEmptyStateView() {
+        emptyStateViewContainer.isVisible = false
     }
 
     public fun setScrollButtonBehaviour(scrollButtonBehaviour: ScrollButtonBehaviour) {
