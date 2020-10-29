@@ -11,6 +11,11 @@ import com.getstream.sdk.chat.utils.isInLastMinute
 import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 
+/***
+ * Binds [ChannelHeaderView] with [ChannelHeaderViewModel].
+ * Updates view's state based on data from [ChannelHeaderViewModel.members],
+ * [ChannelHeaderViewModel.channelState], and [ChannelHeaderViewModel.anyOtherUsersOnline].
+ */
 @JvmName("bind")
 public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {
     members.observe(lifecycleOwner) { members ->

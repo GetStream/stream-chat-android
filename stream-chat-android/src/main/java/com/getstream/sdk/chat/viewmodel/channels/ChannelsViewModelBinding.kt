@@ -5,6 +5,12 @@ package com.getstream.sdk.chat.viewmodel.channels
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
+/***
+ * Binds [ChannelsView] with [ChannelsViewModel].
+ * It starts updating view's state based on [ChannelsViewModel.state] and
+ * sets view's [com.getstream.sdk.chat.view.channels.ChannelListView.EndReachedListener]
+ * @see [ChannelsView.setOnEndReachedListener]
+ */
 @JvmName("bind")
 public fun ChannelsViewModel.bindView(
     view: ChannelsView,

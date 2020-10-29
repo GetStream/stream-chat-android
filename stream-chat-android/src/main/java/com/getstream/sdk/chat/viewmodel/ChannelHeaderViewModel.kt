@@ -10,6 +10,14 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 
 private const val MESSAGE_LIMIT = 30
 
+/***
+ * View model class for [com.getstream.sdk.chat.view.ChannelHeaderView].
+ * Responsible for updating channel information.
+ * Uses [ChannelController] for getting information about channel.
+ * Can be bound to the view using [ChannelHeaderViewModel.bindView] function.
+ * @param cid - the full channel id. ie messaging:123
+ * @param chatDomain - entry point for all livedata & offline operations
+ */
 public class ChannelHeaderViewModel @JvmOverloads constructor(
     cid: String,
     messageLimit: Int = MESSAGE_LIMIT,

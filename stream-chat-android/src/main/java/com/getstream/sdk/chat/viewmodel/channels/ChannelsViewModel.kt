@@ -7,7 +7,6 @@ import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModel
 import com.getstream.sdk.chat.utils.exhaustive
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.ChatClient.Companion.DEFAULT_SORT
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
@@ -15,6 +14,16 @@ import io.getstream.chat.android.client.models.Filters.eq
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
+/***
+ * View model class for [com.getstream.sdk.chat.view.channels.ChannelsView].
+ * Responsible for keeping channels list up to date.
+ * Channels data comes from [ChatDomain].
+ * Can be bound to the view using [ChannelsViewModel.bindView] function.
+ * @param chatDomain - entry point for all livedata & offline operations
+ * @param filter - filter for querying channels
+ * @param sort - channels sort
+ * @param limit - channels limit
+ */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),

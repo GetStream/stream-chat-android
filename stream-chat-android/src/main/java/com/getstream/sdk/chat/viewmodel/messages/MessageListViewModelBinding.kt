@@ -12,6 +12,10 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Last
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.RetryMessage
 import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.ThreadModeEntered
 
+/***
+ * Binds [MessageListView] with [MessageListViewModel].
+ * Sets view's handlers and displays new messages based on [MessageListViewModel.state]
+ */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
     view.init(channel, currentUser)

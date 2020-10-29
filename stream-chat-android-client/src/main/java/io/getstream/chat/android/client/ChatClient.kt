@@ -55,6 +55,9 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
+/***
+ * The ChatClient is the main entry point for all low-level operations on chat
+ */
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -118,11 +121,25 @@ public class ChatClient internal constructor(
 
     //region Set user
 
+    /***
+     * Initializes [ChatClient] for specific user using [ImmediateTokenProvider] as token provider
+     * @see ChatClient.setUser with [TokenProvider]
+     */
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         state.token = token
         setUser(user, ImmediateTokenProvider(token), listener)
     }
 
+    /***
+     * Initializes [ChatClient] for specific user.
+     * This method does operations required before connecting with Stream API.
+     * It sets current user, token provider and connection listener.
+     * Moreover, it warm up connection, setup notifications, and connects to socket.
+     * You can use [listener] if you want to get updates about socket connection.
+     * @param user - user to set
+     * @param tokenProvider - [TokenProvider] implementation
+     * @param listener - socket connection listener
+     */
     public fun setUser(
         user: User,
         tokenProvider: TokenProvider,
@@ -278,6 +295,11 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(listener = listener)
     }
 
+    /***
+     * Subscribes for specific event types
+     * @param eventTypes - events to subscribe
+     * @param listener - listener which will be invoked when specific event received
+     */
     public fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
@@ -288,6 +310,11 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes for specific event types
+     * @param eventTypes - events to subscribe
+     * @param listener - listener which will be invoked when specific event received
+     */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
@@ -610,10 +637,21 @@ public class ChatClient internal constructor(
         return state.socketConnected
     }
 
+    /***
+     * Returns a [ChannelController] for given type and id
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     */
     public fun channel(channelType: String, channelId: String): ChannelController {
         return ChannelControllerImpl(channelType, channelId, this)
     }
 
+    /***
+     * Returns a [ChannelController] for given cid
+     *
+     * @param cid the full channel id. ie messaging:123
+     */
     public fun channel(cid: String): ChannelController {
         val type = cid.split(":")[0]
         val id = cid.split(":")[1]
