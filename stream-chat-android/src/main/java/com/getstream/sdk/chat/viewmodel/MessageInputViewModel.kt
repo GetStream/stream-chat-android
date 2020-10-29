@@ -13,6 +13,13 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import java.io.File
 
+/***
+ * ViewModel class for [com.getstream.sdk.chat.view.messageinput.MessageInputView].
+ * Responsible for sending and updating chat messages.
+ * Can be bound to the view using [MessageInputViewModel.bindView] function.
+ * @param cid the full channel id, i.e. "messaging:123"
+ * @param chatDomain entry point for all livedata & offline operations
+ */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,
     private val chatDomain: ChatDomain = ChatDomain.instance()
@@ -27,6 +34,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private var activeThread = MutableLiveData<Message?>()
     public val editMessage: MutableLiveData<Message?> = MutableLiveData()
 
+    /***
+     * Sets and informs about new active thread
+     */
     public fun setActiveThread(parentMessage: Message) {
         activeThread.postValue(parentMessage)
     }
@@ -38,6 +48,9 @@ public class MessageInputViewModel @JvmOverloads constructor(
     private val isThread: Boolean
         get() = activeThread.value != null
 
+    /***
+     * Resets currently active thread
+     */
     public fun resetThread() {
         activeThread.postValue(null)
     }
