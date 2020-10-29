@@ -5,6 +5,7 @@
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
 
 ## stream-chat-android
+- - Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
 
 ## stream-chat-android-client
 - Fix guest user authentication
