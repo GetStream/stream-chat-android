@@ -14,12 +14,11 @@ import io.getstream.chat.android.livedata.controller.ChannelController
 import java.io.File
 
 /***
- * View model class for [com.getstream.sdk.chat.view.messageinput.MessageInputView].
+ * ViewModel class for [com.getstream.sdk.chat.view.messageinput.MessageInputView].
  * Responsible for sending and updating chat messages.
- * Uses [ChatDomain.useCases] for Stream API communication.
  * Can be bound to the view using [MessageInputViewModel.bindView] function.
- * @param cid - the full channel id. ie messaging:123
- * @param chatDomain - entry point for all livedata & offline operations
+ * @param cid the full channel id, i.e. "messaging:123"
+ * @param chatDomain entry point for all livedata & offline operations
  */
 public class MessageInputViewModel @JvmOverloads constructor(
     private val cid: String,

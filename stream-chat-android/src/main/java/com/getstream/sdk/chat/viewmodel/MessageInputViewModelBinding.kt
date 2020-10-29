@@ -3,17 +3,15 @@
 package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
+import com.getstream.sdk.chat.view.ChannelHeaderView
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
 /***
- * Binds [MessageInputView] with [MessageInputViewModel].
- * Sets [MessageInputView.messageSendHandler] responsible for sending messages,
- * and [MessageInputView.typeListeners] for typing detection.
- * Configures commands and members based on [MessageInputViewModel.commands] and [MessageInputViewModel.members]
- * Updates view mode based on [MessageInputViewModel.getActiveThread] and [MessageInputViewModel.editMessage]
- * [ChannelHeaderViewModel.channelState], and [ChannelHeaderViewModel.anyOtherUsersOnline].
+ * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
+ * based on data provided by the ViewModel, and forwarding View events to the ViewModel.
+ * This includes handling typing detection and sending messages.
  */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {

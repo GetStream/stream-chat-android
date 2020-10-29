@@ -15,14 +15,13 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
 /***
- * View model class for [com.getstream.sdk.chat.view.channels.ChannelsView].
- * Responsible for keeping channels list up to date.
- * Channels data comes from [ChatDomain].
+ * ViewModel class for [com.getstream.sdk.chat.view.channels.ChannelsView].
+ * Responsible for keeping the channels list up to date.
  * Can be bound to the view using [ChannelsViewModel.bindView] function.
- * @param chatDomain - entry point for all livedata & offline operations
- * @param filter - filter for querying channels
- * @param sort - channels sort
- * @param limit - channels limit
+ * @param chatDomain entry point for all livedata & offline operations
+ * @param filter filter for querying channels, should never be empty
+ * @param sort defines the ordering of the channels
+ * @param limit the maximum number of channels to fetch
  */
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),

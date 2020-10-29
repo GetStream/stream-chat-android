@@ -12,9 +12,8 @@ import com.getstream.sdk.chat.view.ChannelHeaderView
 import io.getstream.chat.android.client.models.Member
 
 /***
- * Binds [ChannelHeaderView] with [ChannelHeaderViewModel].
- * Updates view's state based on data from [ChannelHeaderViewModel.members],
- * [ChannelHeaderViewModel.channelState], and [ChannelHeaderViewModel.anyOtherUsersOnline].
+ * Binds [ChannelHeaderView] with [ChannelHeaderViewModel], updating the view's state
+ * based on data provided by the ViewModel.
  */
 @JvmName("bind")
 public fun ChannelHeaderViewModel.bindView(view: ChannelHeaderView, lifecycleOwner: LifecycleOwner) {

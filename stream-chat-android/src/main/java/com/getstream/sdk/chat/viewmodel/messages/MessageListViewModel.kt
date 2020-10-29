@@ -17,12 +17,11 @@ import kotlin.properties.Delegates
 
 /***
  * View model class for [com.getstream.sdk.chat.view.MessageListView].
- * Responsible for updating list of messages.
- * Uses both [ChatDomain] and [ChatClient] for Stream API communication.
+ * Responsible for updating the list of messages.
  * Can be bound to the view using [MessageListViewModel.bindView] function.
- * @param cid - the full channel id. ie messaging:123
- * @param domain - entry point for all livedata & offline operations
- * @param client - entry point for all low-level operations
+ * @param cid the full channel id, i.e. "messaging:123"
+ * @param domain entry point for all livedata & offline operations
+ * @param client entry point for all low-level operations
  */
 public class MessageListViewModel @JvmOverloads constructor(
     private val cid: String,
@@ -38,7 +37,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     private var reads: LiveData<List<ChannelUserRead>>
 
     /***
-     * Information if user is viewing a thread
+     * Whether the user is viewing a thread
      * @see Mode
      */
     public val mode: MutableLiveData<Mode> = MutableLiveData(currentMode)
@@ -117,7 +116,7 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     /***
-     * Informs about new [event]
+     * Handles an [event] coming from the View layer
      * @see Event
      */
     public fun onEvent(event: Event) {

@@ -122,8 +122,9 @@ public class ChatClient internal constructor(
     //region Set user
 
     /***
-     * Initializes [ChatClient] for specific user using [ImmediateTokenProvider] as token provider
-     * @see ChatClient.setUser with [TokenProvider]
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     *
+     * @see ChatClient.setUser with [TokenProvider] for advanced use cases
      */
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         state.token = token
@@ -131,14 +132,17 @@ public class ChatClient internal constructor(
     }
 
     /***
-     * Initializes [ChatClient] for specific user.
-     * This method does operations required before connecting with Stream API.
-     * It sets current user, token provider and connection listener.
-     * Moreover, it warm up connection, setup notifications, and connects to socket.
-     * You can use [listener] if you want to get updates about socket connection.
-     * @param user - user to set
-     * @param tokenProvider - [TokenProvider] implementation
-     * @param listener - socket connection listener
+     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
+     * for the initial token, and it's also invoked whenever the user's token has expired, to
+     * fetch a new token.
+     *
+     * This method performs required operations before connecting with the Stream API.
+     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
+     * You can use [listener] to get updates about socket connection.
+     *
+     * @param user the user to set
+     * @param tokenProvider a [TokenProvider] implementation
+     * @param listener socket connection listener
      */
     public fun setUser(
         user: User,
@@ -296,9 +300,9 @@ public class ChatClient internal constructor(
     }
 
     /***
-     * Subscribes for specific event types
-     * @param eventTypes - events to subscribe
-     * @param listener - listener which will be invoked when specific event received
+     * Subscribes to the specific [eventTypes] of the client.
+     *
+     * @see [io.getstream.chat.android.client.models.EventType] for type constants
      */
     public fun subscribeFor(
         vararg eventTypes: String,
@@ -311,9 +315,7 @@ public class ChatClient internal constructor(
     }
 
     /***
-     * Subscribes for specific event types
-     * @param eventTypes - events to subscribe
-     * @param listener - listener which will be invoked when specific event received
+     * Subscribes to the specific [eventTypes] of the client.
      */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
@@ -325,6 +327,9 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes for the next event with the given [eventType].
+     */
     public fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
@@ -335,6 +340,9 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribeSingle(filter, listener)
     }
 
+    /***
+     * Subscribes for the next event with the given [eventType].
+     */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit

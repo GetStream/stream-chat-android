@@ -6,10 +6,9 @@ import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
 /***
- * Binds [ChannelsView] with [ChannelsViewModel].
- * It starts updating view's state based on [ChannelsViewModel.state] and
- * sets view's [com.getstream.sdk.chat.view.channels.ChannelListView.EndReachedListener]
- * @see [ChannelsView.setOnEndReachedListener]
+ * Binds [ChannelsView] with [ChannelsViewModel], updating the view's state
+ * based on data provided by the ViewModel, and forwarding View events to
+ * the ViewModel, to load more channels as the View is scrolled.
  */
 @JvmName("bind")
 public fun ChannelsViewModel.bindView(

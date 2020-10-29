@@ -14,7 +14,7 @@ import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.Thre
 
 /***
  * Binds [MessageListView] with [MessageListViewModel].
- * Sets view's handlers and displays new messages based on [MessageListViewModel.state]
+ * Sets the View's handlers and displays new messages based on the ViewModel's state.
  */
 @JvmName("bind")
 public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: LifecycleOwner) {
