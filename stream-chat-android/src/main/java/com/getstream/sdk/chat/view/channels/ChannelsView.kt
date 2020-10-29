@@ -53,7 +53,7 @@ public class ChannelsView @JvmOverloads constructor(
     /**
      * @param view will be added to the view hierarchy of [ChannelsView] and managed by it.
      * The view should not be added to another [ViewGroup] instance elsewhere.
-     * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
+     * @param layoutParams defines how the view will be situated inside its container ViewGroup.
      */
     public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.emptyStateView)
