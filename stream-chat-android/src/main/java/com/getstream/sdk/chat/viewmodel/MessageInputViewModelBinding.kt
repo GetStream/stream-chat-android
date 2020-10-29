@@ -7,6 +7,11 @@ import com.getstream.sdk.chat.view.messageinput.MessageInputView
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
+/***
+ * Binds [MessageInputView] with [MessageInputViewModel], updating the view's state
+ * based on data provided by the ViewModel, and forwarding View events to the ViewModel.
+ * This includes handling typing detection and sending messages.
+ */
 @JvmName("bind")
 public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
     view.messageSendHandler = object : MessageInputView.MessageSendHandler {
