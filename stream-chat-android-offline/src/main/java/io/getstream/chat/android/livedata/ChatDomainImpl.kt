@@ -1,9 +1,12 @@
 package io.getstream.chat.android.livedata
 
+import android.content.Context
+import android.os.Build
 import android.os.Handler
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.room.Room
 import com.google.gson.Gson
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -34,6 +37,8 @@ import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toAnyChannelPaginationRequest
+import io.getstream.chat.android.livedata.service.sync.BackgroundSyncConfig
+import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
@@ -41,10 +46,12 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -78,15 +85,22 @@ internal val gson = Gson()
  * chatDomain.errorEvents events for errors that happen while interacting with the chat
  *
  */
-internal class ChatDomainImpl private constructor(
+internal class ChatDomainImpl internal constructor(
     internal var client: ChatClient,
-    override var currentUser: User,
+    // the new behaviour for ChatDomain is to follow the ChatClient.setUser
+    // the userOverwrite field is here for backwards compatibility
+    internal var userOverwrite: User? = null,
+    internal var db: ChatDatabase? = null,
     private val mainHandler: Handler,
-    override var offlineEnabled: Boolean = false,
+    override var offlineEnabled: Boolean = true,
     internal var recoveryEnabled: Boolean = true,
-    override var userPresence: Boolean = false
+    override var userPresence: Boolean = false,
+    internal var backgroundSyncEnabled: Boolean = false,
+    internal var appContext: Context
 ) :
     ChatDomain {
+    internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
+
     private val _initialized = MutableLiveData(false)
     private val _online = MutableLiveData(false)
     private val _totalUnreadCount = MutableLiveData<Int>()
@@ -94,6 +108,9 @@ internal class ChatDomainImpl private constructor(
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
     private val _banned = MutableLiveData(false)
     private val _mutedUsers = MutableLiveData<List<Mute>>()
+    override lateinit var currentUser: User
+    lateinit var database: ChatDatabase
+    private val syncModule by lazy { SyncProvider(appContext) }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
     override var useCases: UseCaseHelper = UseCaseHelper(this)
@@ -165,18 +182,50 @@ internal class ChatDomainImpl private constructor(
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
-    internal constructor(
-        client: ChatClient,
-        currentUser: User,
-        db: ChatDatabase,
-        handler: Handler,
-        offlineEnabled: Boolean = true,
-        userPresence: Boolean = true,
-        recoveryEnabled: Boolean = true
-    ) : this(client, currentUser, handler, offlineEnabled, userPresence, recoveryEnabled) {
-        logger.logI("Initializing ChatDomain with version " + getVersion())
+    internal fun clearState() {
+        _initialized.value = false
+        _online.value = false
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
+        _errorEvent.value = null
+        _banned.value = false
+        _mutedUsers.value = emptyList()
+        if (activeChannelMapImpl != null) {
+            activeChannelMapImpl.clear()
+        }
 
-        repos = RepositoryHelper(RepositoryFactory(db, client, currentUser), scope)
+        if (activeQueryMapImpl != null) {
+            activeQueryMapImpl.clear()
+        }
+    }
+
+    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
+        ChatDatabase.getDatabase(context, user.id)
+    } else {
+        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
+    }
+
+    fun isTestRunner(): Boolean {
+        return Build.FINGERPRINT.toLowerCase().contains("robolectric")
+    }
+
+    internal fun setUser(user: User) {
+        clearState()
+
+        currentUser = user
+
+        if (backgroundSyncEnabled && !isTestRunner()) {
+            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken())
+            if (config.isValid()) {
+                syncModule.encryptedBackgroundSyncConfigStore.apply {
+                    put(config)
+                }
+            }
+        }
+
+        database = db ?: createDatabase(appContext, user, offlineEnabled)
+
+        repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
 
         // load channel configs from Room into memory
         initJob = scope.async(scope.coroutineContext) {
@@ -202,15 +251,34 @@ internal class ChatDomainImpl private constructor(
             syncState
         }
 
-        useCases = UseCaseHelper(this)
-
-        // verify that you're not connecting 2 different users
-        if (client.getCurrentUser() != null && client.getCurrentUser()?.id != currentUser.id) {
-            throw IllegalArgumentException("client.getCurrentUser() returns ${client.getCurrentUser()} which is not equal to the user passed to this repo ${currentUser.id} ")
-        }
-
         if (client.isSocketConnected()) {
             setOnline()
+        }
+    }
+
+    init {
+        logger.logI("Initializing ChatDomain with version " + getVersion())
+
+        useCases = UseCaseHelper(this)
+
+        // if the user is already defined, just call setUser ourselves
+        val current = userOverwrite ?: client.getCurrentUser()
+        if (current != null) {
+            setUser(current)
+        }
+        // past behaviour was to set the user on the chat domain
+        // the new syntax is to automatically pick up changes from the client
+        if (userOverwrite == null) {
+            // listen to future user changes
+            client.preSetUserListeners.add {
+                setUser(it)
+            }
+            // disconnect if the low level client disconnects
+            client.disconnectListeners.add {
+                GlobalScope.launch {
+                    disconnect()
+                }
+            }
         }
 
         // start listening for events
@@ -218,8 +286,7 @@ internal class ChatDomainImpl private constructor(
         startListening()
         initClean()
 
-        // monitor connectivity at OS level
-        // TODO
+        // TODO monitor connectivity at OS level
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -354,7 +421,7 @@ internal class ChatDomainImpl private constructor(
     private var eventSubscription: Disposable? = null
 
     /** stores the mapping from cid to channelRepository */
-    var activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 

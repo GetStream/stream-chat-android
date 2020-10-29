@@ -11,7 +11,7 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.getstream.sdk.chat.Chat
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.DefaultBubbleHelper
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentViewHolderFactory
@@ -26,14 +26,6 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
-import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
-import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
-import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageLongClickListener
-import com.getstream.sdk.chat.view.MessageListView.MessageRetryListener
-import com.getstream.sdk.chat.view.MessageListView.ReactionViewClickListener
-import com.getstream.sdk.chat.view.MessageListView.ReadStateClickListener
-import com.getstream.sdk.chat.view.MessageListView.UserClickListener
 import com.getstream.sdk.chat.view.dialog.MessageMoreActionDialog
 import com.getstream.sdk.chat.view.dialog.ReadUsersDialog
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
@@ -144,7 +136,7 @@ public class MessageListView : ConstraintLayout {
         }
     private val DEFAULT_ATTACHMENT_CLICK_LISTENER =
         AttachmentClickListener { message, attachment ->
-            Chat.instance()
+            ChatUI.instance()
                 .navigator
                 .navigate(AttachmentDestination(message, attachment, context))
         }

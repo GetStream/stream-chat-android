@@ -4,6 +4,7 @@ import io.getstream.chat.android.client.models.User
 
 internal class ClientState {
     var user: User? = null
+    var token: String = ""
     var connectionId: String? = null
     var socketConnected: Boolean = false
 

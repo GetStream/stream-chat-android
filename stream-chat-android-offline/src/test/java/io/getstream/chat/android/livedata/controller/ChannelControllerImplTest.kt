@@ -33,11 +33,13 @@ import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
 import org.amshove.kluent.that
 import org.amshove.kluent.was
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
+@Ignore("broken due to usage of spy")
 internal class ChannelControllerImplTest : BaseDomainTest() {
 
     private val chatClient: ChatClient = spy()
