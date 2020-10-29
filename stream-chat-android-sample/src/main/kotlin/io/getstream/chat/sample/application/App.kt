@@ -1,13 +1,6 @@
 package io.getstream.chat.sample.application
 
 import android.app.Application
-import com.facebook.flipper.android.AndroidFlipperClient
-import com.facebook.flipper.android.utils.FlipperUtils
-import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
-import com.facebook.flipper.plugins.inspector.DescriptorMapping
-import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
-import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
-import com.facebook.soloader.SoLoader
 import io.getstream.chat.sample.BuildConfig
 import io.getstream.chat.sample.data.dataModule
 import io.getstream.chat.sample.feature.custom_login.customLoginModule
@@ -27,19 +20,7 @@ class App : Application() {
         initKoin()
         chatInitializer.init(appConfig.apiKey)
 
-        configFlipper()
-    }
-
-    private fun Application.configFlipper() {
-        SoLoader.init(this, false)
-
-        if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
-            AndroidFlipperClient.getInstance(this).apply {
-                addPlugin(InspectorFlipperPlugin(this@App, DescriptorMapping.withDefaults()))
-                addPlugin(DatabasesFlipperPlugin(this@App))
-                addPlugin(NetworkFlipperPlugin())
-            }.start()
-        }
+        ExtrasDependenciesImpl().configFlipper(this)
     }
 
     private fun initKoin() {

@@ -142,7 +142,6 @@ dependencies {
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
-    releaseImplementation Dependencies.flipperNoOp
 
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
