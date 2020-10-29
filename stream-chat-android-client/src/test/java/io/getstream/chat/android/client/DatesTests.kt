@@ -14,7 +14,6 @@ internal class DatesTests {
 
     /**
      * Verifies that [io.getstream.chat.android.client.parser.DateAdapter] parses valid time
-     *
      */
     @Test
     fun multithreadedDateParsing() {
@@ -28,7 +27,7 @@ internal class DatesTests {
                 Thread.sleep((10 * Math.random()).toLong())
                 n--
             }
-        }
+        }.apply { name = "threadA" }
 
         val threadB = Thread {
             var n = 200
@@ -37,7 +36,7 @@ internal class DatesTests {
                 Thread.sleep((10 * Math.random()).toLong())
                 n--
             }
-        }
+        }.apply { name = "threadB" }
 
         threadA.start()
         threadB.start()

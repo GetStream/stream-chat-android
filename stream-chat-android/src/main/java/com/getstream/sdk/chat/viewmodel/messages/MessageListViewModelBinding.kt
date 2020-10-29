@@ -30,4 +30,5 @@ public fun MessageListViewModel.bindView(view: MessageListView, lifecycleOwner: 
             view.displayNewMessage(state.messageListItem)
         }
     }
+    loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
 }
