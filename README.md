@@ -28,15 +28,17 @@
 
 The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
-## Clone the Github Example App
+## Sample App
 
-This repo includes a fully functional example app. To run the example app:
+This repo includes a fully functional example app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage.
+To run the sample app start by cloning this repo:
 
 ```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Open the project in Android Studio and set up your emulator (we're using Pixel 3, API 29 at the moment). Note that the Gradle sync process can take some time when you first open the project. 
+Next download android studio and open up the stream-chat-android folder. You'll want to run the stream-chat-android-sample app.
+Note that the Gradle sync process can take some time when you first open the project. 
 
 ## Docs
 This SDK consists of the following modules / artifacts:
