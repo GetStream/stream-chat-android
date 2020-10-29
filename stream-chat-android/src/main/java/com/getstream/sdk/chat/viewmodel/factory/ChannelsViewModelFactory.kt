@@ -19,7 +19,7 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see Filters
  * @see QuerySort
  */
-public class ChannelsViewModelFactory(
+public class ChannelsViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject = Filters.and(
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id))
