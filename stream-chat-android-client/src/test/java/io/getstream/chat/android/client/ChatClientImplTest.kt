@@ -53,7 +53,7 @@ internal class ChatClientImplTest {
         )
 
         socket = FakeChatSocket()
-        client = ChatClientImpl(
+        client = ChatClient(
             config = config,
             api = mock(),
             socket = socket,
