@@ -107,8 +107,12 @@
             <flag name="bold" value="1"/>
             <flag name="italic" value="2"/>
         </attr>
-        <!--Custom ChannelListLayout-->
         <attr name="streamChannelPreviewLayout" format="reference"/>
+    </declare-styleable>
+    <declare-styleable name="ChannelsView">
+    <!--Custom ChannelListLayout-->
+        <!-- Text of the empty state label -->
+        <attr name="streamChannelsEmptyStateLabelText" format="string"/>
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
@@ -368,6 +372,10 @@
         <attr name="streamUserNameShow" format="boolean"/>
         <attr name="streamMessageDateShow" format="boolean"/>
         <attr name="streamLoadMoreThreshold" format="integer"/>
+
+        <!-- Text of the empty state label -->
+        <attr name="streamMessagesEmptyStateLabelText" format="string"/>
+
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
