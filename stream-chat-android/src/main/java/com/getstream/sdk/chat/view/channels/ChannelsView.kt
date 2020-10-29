@@ -57,6 +57,7 @@ public class ChannelsView @JvmOverloads constructor(
      */
     public fun setEmptyStateView(view: View, layoutParams: LayoutParams = defaultChildLayoutParams()) {
         removeView(this.emptyStateView)
+        this.emptyStateView = view
         addView(emptyStateView, layoutParams)
     }
 
