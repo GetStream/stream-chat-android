@@ -367,6 +367,7 @@
 
         <attr name="streamUserNameShow" format="boolean"/>
         <attr name="streamMessageDateShow" format="boolean"/>
+        <attr name="streamLoadMoreThreshold" format="integer"/>
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
