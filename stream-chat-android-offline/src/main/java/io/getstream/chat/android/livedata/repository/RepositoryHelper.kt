@@ -5,7 +5,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.livedata.entity.ChannelEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -54,48 +53,38 @@ internal class RepositoryHelper(
     internal suspend fun selectChannels(
         channelIds: List<String>,
         defaultConfig: Config,
-        pagination: AnyChannelPaginationRequest? = null,
-        shouldLog: Boolean = false
+        pagination: AnyChannelPaginationRequest? = null
     ): List<Channel> {
-        suspend fun <T> PerformanceUtils.suspendTaskIfNeed(taskName: String, task: suspend () -> T): T {
-            return if (shouldLog) {
-                PerformanceUtils.suspendTask(taskName, task)
-            } else {
-                task()
-            }
-        }
         // fetch the channel entities from room
-        val channelEntities = PerformanceUtils.suspendTaskIfNeed("select channels") { channels.select(channelIds) }
+        val channelEntities = channels.select(channelIds)
         val messageEntitiesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
             // with postgres this could be optimized into a single query instead of N, not sure about sqlite on android
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
-            PerformanceUtils.suspendTaskIfNeed("select messages for channels") {
-                channelIds.map { cid ->
-                    scope.async { cid to messages.selectMessagesEntitiesForChannel(cid, pagination) }
-                }.awaitAll().toMap()
-            }
-            // PerformanceHelper.suspendTaskIfNeed("select messages for channels") { messages.selectMessagesEntitiesForChannels(channelIds, pagination) }
+            channelIds.map { cid ->
+                scope.async {
+                    cid to messages.selectMessagesEntitiesForChannel(
+                        cid,
+                        pagination
+                    )
+                }
+            }.awaitAll().toMap()
         } else {
             emptyMap()
         }
 
         // gather the user ids from channels, members and the last message
-        val userMap = PerformanceUtils.suspendTaskIfNeed("selectUsers") { getUsersForChannels(channelEntities, messageEntitiesMap) }
+        val userMap = getUsersForChannels(channelEntities, messageEntitiesMap)
 
-        val messagesMap = PerformanceUtils.suspendTaskIfNeed("messages map") {
-            messageEntitiesMap.mapValues { entry ->
-                entry.value.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
-            }
+        val messagesMap = messageEntitiesMap.mapValues { entry ->
+            entry.value.map { messageEntity -> MessageRepository.toModel(messageEntity, userMap) }
         }
 
         // convert the channels
-        return PerformanceUtils.suspendTaskIfNeed("channels map") {
-            channelEntities.map { entity ->
-                entity.toChannel(userMap).apply {
-                    config = configs.select(type) ?: defaultConfig
-                    messages = messagesMap[cid] ?: emptyList()
-                }
+        return channelEntities.map { entity ->
+            entity.toChannel(userMap).apply {
+                config = configs.select(type) ?: defaultConfig
+                messages = messagesMap[cid] ?: emptyList()
             }
         }
     }

@@ -14,7 +14,6 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
@@ -47,8 +46,10 @@ internal class QueryChannelsControllerImpl(
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
+
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
+    override var channels: LiveData<List<Channel>> =
+        Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -64,7 +65,13 @@ internal class QueryChannelsControllerImpl(
         memberLimit: Int = MEMBER_LIMIT
     ): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: mapOf()
-        return QueryChannelsPaginationRequest(sort, channels.size, channelLimit, messageLimit, memberLimit)
+        return QueryChannelsPaginationRequest(
+            sort,
+            channels.size,
+            channelLimit,
+            messageLimit,
+            memberLimit
+        )
     }
 
     /**
@@ -109,7 +116,10 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
-    suspend fun loadMore(channelLimit: Int = CHANNEL_LIMIT, messageLimit: Int = MESSAGE_LIMIT): Result<List<Channel>> {
+    suspend fun loadMore(
+        channelLimit: Int = CHANNEL_LIMIT,
+        messageLimit: Int = MESSAGE_LIMIT
+    ): Result<List<Channel>> {
         val pagination = loadMoreRequest(channelLimit, messageLimit)
         return runQuery(pagination)
     }
@@ -119,15 +129,25 @@ internal class QueryChannelsControllerImpl(
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT
     ): Result<List<Channel>> {
-        return runQuery(QueryChannelsPaginationRequest(sort, INITIAL_CHANNEL_OFFSET, channelLimit, messageLimit, memberLimit))
+        return runQuery(
+            QueryChannelsPaginationRequest(
+                sort,
+                INITIAL_CHANNEL_OFFSET,
+                channelLimit,
+                messageLimit,
+                memberLimit
+            )
+        )
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryChannelsSpec = PerformanceUtils.suspendTask("selectQuery") { domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec) }
+        val queryChannelsSpec =
+            domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
         var channels: List<Channel>? = null
 
         if (queryChannelsSpec != null) {
-            channels = PerformanceUtils.suspendTask("selectAndEnrichChannels") { domainImpl.selectAndEnrichChannels(queryChannelsSpec.cids.toList(), pagination, true) }
+            channels =
+                domainImpl.selectAndEnrichChannels(queryChannelsSpec.cids.toList(), pagination)
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
@@ -148,7 +168,12 @@ internal class QueryChannelsControllerImpl(
                 _endOfChannels.postValue(true)
             }
             // first things first, store the configs
-            val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
+            val configEntities = channelsResponse.associateBy { it.type }.values.map {
+                ChannelConfigEntity(
+                    it.type,
+                    it.config
+                )
+            }
             domainImpl.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
 
@@ -160,7 +185,7 @@ internal class QueryChannelsControllerImpl(
         return response
     }
 
-    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> = PerformanceUtils.suspendTask("runQuery") {
+    suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
         val loader = if (pagination.isFirstPage) {
             _loading
         } else {
@@ -168,21 +193,24 @@ internal class QueryChannelsControllerImpl(
         }
         if (loader.value == true) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
-            return@suspendTask Result(null, ChatError("Another query channels request is in progress. Ignoring this request."))
+            return Result(
+                null,
+                ChatError("Another query channels request is in progress. Ignoring this request.")
+            )
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = scope.async { PerformanceUtils.suspendTask("runQueryOffline") { runQueryOffline(pagination) } }
+        val queryOfflineJob = scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            scope.async { PerformanceUtils.suspendTask("runQueryOnline") { runQueryOnline(pagination) } }
-        } else { null }
+            scope.async { runQueryOnline(pagination) }
+        } else {
+            null
+        }
         val channels = queryOfflineJob.await()
 
-        PerformanceUtils.task("updateChannelsAndQueryResults1") {
-            updateChannelsAndQueryResults(channels, pagination.isFirstPage)
-        }
+        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
@@ -195,12 +223,12 @@ internal class QueryChannelsControllerImpl(
                 domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             }
         } else {
-            PerformanceUtils.log("Online job is null")
             recoveryNeeded = true
-            output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
+            output = channels?.let { Result(it) }
+                ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.postValue(false)
-        return@suspendTask output
+        return output
     }
 
     /**

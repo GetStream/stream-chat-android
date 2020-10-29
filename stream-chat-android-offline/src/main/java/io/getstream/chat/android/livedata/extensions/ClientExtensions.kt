@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.PerformanceUtils
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 
 internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user
@@ -42,13 +41,17 @@ internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
 
     val countBeforeFilter = ownReactions.size + latestReactions.size
-    ownReactions = ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
+    ownReactions =
+        ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
+            .toMutableList()
     latestReactions =
-        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
+        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
+            .toMutableList()
     val countAfterFilter = ownReactions.size + latestReactions.size
 
     if (updateCounts) {
-        val shouldDecrement = countBeforeFilter > countAfterFilter || this.latestReactions.size >= 15
+        val shouldDecrement =
+            countBeforeFilter > countAfterFilter || this.latestReactions.size >= 15
         if (shouldDecrement) {
             this.reactionCounts = this.reactionCounts.toMutableMap()
             val currentCount = this.reactionCounts.getOrElse(reaction.type) { 1 }
@@ -73,7 +76,8 @@ internal val Channel.lastMessage: Message?
 
 internal fun Channel.updateLastMessage(message: Message) {
     val createdAt = message.createdAt ?: message.createdLocallyAt
-    val messageCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
+    val messageCreatedAt =
+        checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
     val updateNeeded = message.id == lastMessage?.id
     val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
@@ -133,10 +137,8 @@ public fun ChatError.isPermanent(): Boolean {
     return isPermanent
 }
 
-internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> = asSequence()
-    .let {
-        val comparator = PerformanceUtils.task("Get comparator") { pagination.sort.comparator }
-        PerformanceUtils.task("Sorting") { sortedWith(comparator) }
-    }.drop(pagination.channelOffset).take(pagination.channelLimit).toList()
+internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
+    asSequence().sortedWith(pagination.sort.comparator).drop(pagination.channelOffset)
+        .take(pagination.channelLimit).toList()
 
 internal fun String?.isImageMimetype() = this?.contains("image") ?: false
