@@ -9,7 +9,7 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.soloader.SoLoader
 
-class ExtrasDependenciesImpl: ExtraDependencies {
+class ExtrasDependenciesImpl : ExtraDependencies {
 
     override fun configFlipper(application: Application) {
         SoLoader.init(application, false)
