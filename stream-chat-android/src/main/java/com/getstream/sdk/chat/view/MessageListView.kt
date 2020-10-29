@@ -82,6 +82,14 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
 
+    private val defaultChildLayoutParams by lazy {
+        FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.CENTER
+        )
+    }
+
     public var unseenButtonEnabled: Boolean = true
 
     private var hasScrolledUp = false
@@ -425,7 +433,7 @@ public class MessageListView : ConstraintLayout {
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
      */
-    public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
+    public fun setLoadingView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         loadingViewContainer.removeView(loadingView)
         loadingViewContainer.addView(loadingView, layoutParams)
     }
@@ -443,7 +451,7 @@ public class MessageListView : ConstraintLayout {
      * The view should not be added to another [ViewGroup] instance elsewhere.
      * @param layoutParams defines how the view will be situated inside it's container ViewGroup.
      */
-    public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams()) {
+    public fun setEmptyStateView(view: View, layoutParams: FrameLayout.LayoutParams = defaultChildLayoutParams) {
         emptyStateViewContainer.removeView(emptyStateView)
         emptyStateViewContainer.addView(emptyStateView, layoutParams)
     }
@@ -514,12 +522,6 @@ public class MessageListView : ConstraintLayout {
     public fun scrollToBottom() {
         layoutManager.scrollToPosition(adapter.itemCount - 1)
     }
-
-    private fun defaultChildLayoutParams() = FrameLayout.LayoutParams(
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-        FrameLayout.LayoutParams.WRAP_CONTENT,
-        Gravity.CENTER
-    )
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
         buffer.hold()
