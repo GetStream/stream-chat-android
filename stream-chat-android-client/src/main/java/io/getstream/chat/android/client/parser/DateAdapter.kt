@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.parser
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
+import io.getstream.chat.android.client.utils.threadLocal
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -13,16 +14,19 @@ private const val DATE_FORMAT_WITHOUTH_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 internal class DateAdapter : TypeAdapter<Date>() {
 
-    private val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.US).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }
-    private val dateFormatWithoutNanoseconds = SimpleDateFormat(DATE_FORMAT_WITHOUTH_NANOSECONDS, Locale.US).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
+    private val dateFormat: SimpleDateFormat by threadLocal {
+        SimpleDateFormat(DATE_FORMAT, Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
     }
 
-    @Synchronized
+    private val dateFormatWithoutNanoseconds: SimpleDateFormat by threadLocal {
+        SimpleDateFormat(DATE_FORMAT_WITHOUTH_NANOSECONDS, Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+    }
+
     override fun write(out: JsonWriter, value: Date?) {
-
         if (value == null) {
             out.nullValue()
         } else {
@@ -31,7 +35,6 @@ internal class DateAdapter : TypeAdapter<Date>() {
         }
     }
 
-    @Synchronized
     override fun read(reader: JsonReader): Date? =
         try {
             val rawValue = reader.nextString()

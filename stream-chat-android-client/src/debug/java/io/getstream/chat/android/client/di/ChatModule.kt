@@ -18,17 +18,13 @@ internal class ChatModule(appContext: Context, config: ChatClientConfig, notific
     }
 
     override fun clientBuilder(
-        connectTimeout: Long,
-        writeTimeout: Long,
-        readTimeout: Long,
+        timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean
     ): OkHttpClient.Builder {
         return super.clientBuilder(
-            connectTimeout,
-            writeTimeout,
-            readTimeout,
+            timeout,
             config,
             parser,
             isAnonymousApi
