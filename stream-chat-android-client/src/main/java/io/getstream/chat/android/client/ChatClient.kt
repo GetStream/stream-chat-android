@@ -55,6 +55,9 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 import java.util.Date
 
+/***
+ * The ChatClient is the main entry point for all low-level operations on chat
+ */
 public class ChatClient internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
@@ -118,11 +121,29 @@ public class ChatClient internal constructor(
 
     //region Set user
 
+    /***
+     * Initializes [ChatClient] for a specific user using the given user [token].
+     *
+     * @see ChatClient.setUser with [TokenProvider] for advanced use cases
+     */
     public fun setUser(user: User, token: String, listener: InitConnectionListener? = null) {
         state.token = token
         setUser(user, ImmediateTokenProvider(token), listener)
     }
 
+    /***
+     * Initializes [ChatClient] for a specific user. The [tokenProvider] implementation is used
+     * for the initial token, and it's also invoked whenever the user's token has expired, to
+     * fetch a new token.
+     *
+     * This method performs required operations before connecting with the Stream API.
+     * Moreover, it warms up the connection, sets up notifications, and connects to the socket.
+     * You can use [listener] to get updates about socket connection.
+     *
+     * @param user the user to set
+     * @param tokenProvider a [TokenProvider] implementation
+     * @param listener socket connection listener
+     */
     public fun setUser(
         user: User,
         tokenProvider: TokenProvider,
@@ -278,6 +299,11 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(listener = listener)
     }
 
+    /***
+     * Subscribes to the specific [eventTypes] of the client.
+     *
+     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     */
     public fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
@@ -288,6 +314,9 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes to the specific [eventTypes] of the client.
+     */
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
@@ -298,6 +327,9 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribe(filter, listener)
     }
 
+    /***
+     * Subscribes for the next event with the given [eventType].
+     */
     public fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
@@ -308,6 +340,9 @@ public class ChatClient internal constructor(
         return eventsObservable.subscribeSingle(filter, listener)
     }
 
+    /***
+     * Subscribes for the next event with the given [eventType].
+     */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
@@ -610,10 +645,21 @@ public class ChatClient internal constructor(
         return state.socketConnected
     }
 
+    /***
+     * Returns a [ChannelController] for given type and id
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     */
     public fun channel(channelType: String, channelId: String): ChannelController {
         return ChannelControllerImpl(channelType, channelId, this)
     }
 
+    /***
+     * Returns a [ChannelController] for given cid
+     *
+     * @param cid the full channel id. ie messaging:123
+     */
     public fun channel(cid: String): ChannelController {
         val type = cid.split(":")[0]
         val id = cid.split(":")[1]
