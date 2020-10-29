@@ -8,6 +8,7 @@
 
 ## stream-chat-android-client
 - Fix guest user authentication
+- Changed API of QuerySort class. You have to specify for what model it is being used.
 
 ## stream-chat-android-offline
 - Add GetChannelController use cases which allows to get ChannelController for Channel
