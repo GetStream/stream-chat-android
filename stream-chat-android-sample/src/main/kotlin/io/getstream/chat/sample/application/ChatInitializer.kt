@@ -22,7 +22,7 @@ class ChatInitializer(private val context: Context) {
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
 
         val client = ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler).logLevel(ChatLogLevel.ALL).build()
-        val domain = ChatDomain.Builder(client).offlineEnabled().notificationConfig(notificationConfig).build()
-        val ux = ChatUI.Builder(client, domain).build()
+        val domain = ChatDomain.Builder(client, context).offlineEnabled().notificationConfig(notificationConfig).build()
+        val ux = ChatUI.Builder(client, domain, context).build()
     }
 }
