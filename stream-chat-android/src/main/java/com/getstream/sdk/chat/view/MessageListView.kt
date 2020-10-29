@@ -96,6 +96,10 @@ public class MessageListView : ConstraintLayout {
         throw IllegalStateException("onMessageRetryHandler must be set.")
     }
 
+    private val loadMoreListener = EndlessScrollListener {
+        endRegionReachedHandler()
+    }
+
     private lateinit var channel: Channel
     private lateinit var currentUser: User
 
@@ -258,6 +262,11 @@ public class MessageListView : ConstraintLayout {
         val tArray = context
             .obtainStyledAttributes(attributeSet, R.styleable.MessageListView)
 
+        loadMoreListener.loadMoreThreshold = tArray.getInteger(
+            R.styleable.MessageListView_streamLoadMoreThreshold,
+            context.resources.getInteger(R.integer.stream_load_more_threshold)
+        )
+
         val backgroundRes = tArray.getResourceId(
             R.styleable.MessageListView_streamScrollButtonBackground,
             R.drawable.stream_shape_round
@@ -300,7 +309,12 @@ public class MessageListView : ConstraintLayout {
         return adapter.itemCount - 1
     }
 
+    public fun setLoadingMore(loadingMore: Boolean) {
+        loadMoreListener.paginationEnabled = !loadingMore
+    }
+
     private fun setMessageListItemAdapter(adapter: MessageListItemAdapter) {
+        binding.chatMessagesRV.addOnScrollListener(loadMoreListener)
         binding.chatMessagesRV.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -310,9 +324,6 @@ public class MessageListView : ConstraintLayout {
 
                     val currentFirstVisible = layoutManager.findFirstVisibleItemPosition()
                     val currentLastVisible = layoutManager.findLastVisibleItemPosition()
-                    if (currentFirstVisible < firstVisiblePosition && currentFirstVisible == 0) {
-                        endRegionReachedHandler.invoke()
-                    }
 
                     hasScrolledUp = currentLastVisible < lastPosition()
                     lastVisiblePosition = currentLastVisible
