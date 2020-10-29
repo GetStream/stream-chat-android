@@ -373,7 +373,7 @@
         <attr name="streamUserNameShow" format="boolean"/>
         <attr name="streamMessageDateShow" format="boolean"/>
 
-        <!-- Text of the default empty state label -->
+        <!-- Text of the empty state label -->
         <attr name="streamMessagesEmptyStateLabelText" format="string"/>
 
         <!-- Reference to the layout consisting of loading view -->
