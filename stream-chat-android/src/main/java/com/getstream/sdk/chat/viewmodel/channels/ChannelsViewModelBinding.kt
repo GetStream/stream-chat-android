@@ -26,13 +26,15 @@ public fun ChannelsViewModel.bindView(
                 view.hideEmptyStateView()
                 view.showLoadingView()
             }
-            ChannelsViewModel.State.NoChannelsAvailable -> {
+            is ChannelsViewModel.State.NoChannelsAvailable -> {
                 view.showEmptyStateView()
                 view.hideLoadingView()
             }
         }
     }
-
+    paginationState.observe(lifecycle) {
+        view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
+    }
     view.setOnEndReachedListener {
         onEvent(ChannelsViewModel.Event.ReachedEndOfList)
     }
