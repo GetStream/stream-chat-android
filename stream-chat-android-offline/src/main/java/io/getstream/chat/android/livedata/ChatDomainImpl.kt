@@ -187,7 +187,6 @@ internal class ChatDomainImpl internal constructor(
         _online.value = false
         _totalUnreadCount.value = 0
         _channelUnreadCount.value = 0
-        _errorEvent.value = null
         _banned.value = false
         _mutedUsers.value = emptyList()
         if (activeChannelMapImpl != null) {
