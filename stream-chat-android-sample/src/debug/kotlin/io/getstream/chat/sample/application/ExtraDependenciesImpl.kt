@@ -11,7 +11,7 @@ import io.getstream.chat.android.client.di.networkFlipper
 
 class ExtraDependenciesImpl : ExtraDependencies {
 
-    override fun configFlipper(application: Application) {
+    override fun config(application: Application) {
         SoLoader.init(application, false)
 
         if (FlipperUtils.shouldEnableFlipper(application)) {

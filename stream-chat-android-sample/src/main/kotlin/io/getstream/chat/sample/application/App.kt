@@ -20,7 +20,7 @@ class App : Application() {
         initKoin()
         chatInitializer.init(appConfig.apiKey)
 
-        ExtrasDependenciesImpl().configFlipper(this)
+        ExtraDependenciesImpl().config(this)
     }
 
     private fun initKoin() {

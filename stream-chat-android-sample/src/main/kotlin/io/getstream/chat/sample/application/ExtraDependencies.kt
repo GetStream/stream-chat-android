@@ -4,5 +4,5 @@ import android.app.Application
 
 interface ExtraDependencies {
 
-    fun configFlipper(application: Application)
+    fun config(application: Application)
 }
