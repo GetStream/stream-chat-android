@@ -7,10 +7,18 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.sample.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ChatInitializer(private val context: Context) {
 
+    var client: ChatClient? = null
+    var domain: ChatDomain? = null
+    var ux: ChatUI? = null
+
     fun init(apiKey: String) {
+        disconnectChatsIfNecessary()
 
         val notificationConfig =
             NotificationConfig(
@@ -21,8 +29,18 @@ class ChatInitializer(private val context: Context) {
             )
         val notificationHandler = SampleNotificationHandler(context, notificationConfig)
 
-        val client = ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler).logLevel(ChatLogLevel.ALL).build()
-        val domain = ChatDomain.Builder(client, context).offlineEnabled().notificationConfig(notificationConfig).build()
-        val ux = ChatUI.Builder(client, domain, context).build()
+        client =
+            ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler)
+                .logLevel(ChatLogLevel.ALL).build()
+
+        domain =
+            ChatDomain.Builder(client!!, context).offlineEnabled().notificationConfig(notificationConfig).build()
+        ux = ChatUI.Builder(client!!, domain!!, context).build()
+    }
+
+    private fun disconnectChatsIfNecessary() {
+        client?.disconnect()
+        GlobalScope.launch (Dispatchers.Main) { domain?.disconnect() }
     }
 }
+
