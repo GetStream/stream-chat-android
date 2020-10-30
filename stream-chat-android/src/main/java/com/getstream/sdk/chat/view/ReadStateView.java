@@ -47,7 +47,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
     @SuppressLint("ResourceType")
     private void init() {
         removeAllViews();
-        if (!style.isShowReadState()
+        if (!style.isReadStateEnabled()
                 || reads == null
                 || reads.isEmpty()) return;
 
