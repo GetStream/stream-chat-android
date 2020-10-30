@@ -74,7 +74,9 @@ dependencies {
     implementation Dependencies.gson
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
-    debugImplementation Dependencies.stethoOkhttp
+    debugImplementation Dependencies.flipper
+    debugImplementation Dependencies.flipperNetwork
+    debugImplementation Dependencies.flipperLoader
 
     // Tests
     testImplementation Dependencies.androidxTestJunit
