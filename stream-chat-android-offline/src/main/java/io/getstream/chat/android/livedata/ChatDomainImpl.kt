@@ -286,8 +286,13 @@ internal class ChatDomainImpl internal constructor(
 
         // start listening for events
         eventHandler = EventHandlerImpl(this)
-        startListening()
         initClean()
+
+        _online.observeForever { isOnline ->
+            if (isOnline) {
+               startListening()
+            }
+        }
 
         // TODO monitor connectivity at OS level
     }
