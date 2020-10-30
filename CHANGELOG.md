@@ -36,6 +36,7 @@
 - Fix ConcurrentModificationException in `ChatEventsObservable`
 - Add possibility to replace default FileUploader
 - Fix anonymous user authentication
+- Fix fetching color value from TypedArray
 
 ## stream-chat-android-offline
 - Channel list now correctly updates when you send a new message while offline. This fixes https://github.com/GetStream/stream-chat-android/issues/698
