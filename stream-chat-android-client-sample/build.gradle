@@ -84,10 +84,6 @@ dependencies {
     // Coroutines
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
-
-    // Stetho
-    implementation Dependencies.stetho
-    implementation Dependencies.stethoOkhttp
 }
 
 gradle.taskGraph.useFilter { task ->

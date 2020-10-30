@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import com.facebook.stetho.Stetho
 import com.google.firebase.FirebaseApp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ErrorEvent
@@ -43,8 +42,6 @@ class App : Application() {
         instance = this
 
         initActivityListener()
-
-        Stetho.initializeWithDefaults(this)
 
         FirebaseApp.initializeApp(this)
 

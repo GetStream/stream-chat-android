@@ -19,6 +19,8 @@ class App : Application() {
         DebugMetricsHelper().init()
         initKoin()
         chatInitializer.init(appConfig.apiKey)
+
+        ExtraDependenciesImpl().config(this)
     }
 
     private fun initKoin() {

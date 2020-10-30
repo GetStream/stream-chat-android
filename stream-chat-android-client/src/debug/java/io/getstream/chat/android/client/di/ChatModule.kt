@@ -1,8 +1,6 @@
 package io.getstream.chat.android.client.di
 
 import android.content.Context
-import com.facebook.stetho.Stetho
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
@@ -24,10 +22,6 @@ internal class ChatModule(
     tokenManager: TokenManager,
 ) : BaseChatModule(appContext, config, notificationsHandler, uploader, tokenManager) {
 
-    init {
-        Stetho.initializeWithDefaults(appContext)
-    }
-
     override fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
@@ -39,6 +33,6 @@ internal class ChatModule(
             config,
             parser,
             isAnonymousApi
-        ).addNetworkInterceptor(StethoInterceptor())
+        ).addNetworkInterceptor(flipperInterceptor())
     }
 }
