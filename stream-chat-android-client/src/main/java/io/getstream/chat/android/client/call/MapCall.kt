@@ -27,7 +27,7 @@ internal class MapCall<T : Any, K : Any>(
     }
 
     override fun enqueue(callback: (Result<K>) -> Unit) {
-        call.enqueue callback@ {
+        call.enqueue callback@{
             if (canceled.get()) {
                 return@callback
             }

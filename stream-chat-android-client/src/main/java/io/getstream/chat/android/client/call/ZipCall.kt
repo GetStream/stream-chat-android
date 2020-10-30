@@ -44,7 +44,7 @@ internal object ZipCall {
             }
 
             override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
-                suspend fun performCallback(result: Result<Pair<A,B>>) {
+                suspend fun performCallback(result: Result<Pair<A, B>>) {
                     withContext(Dispatchers.Main) { callback(result) }
                 }
 
