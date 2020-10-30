@@ -1,10 +1,7 @@
-![latest-version](https://jitpack.io/v/GetStream/stream-chat-android-client.svg)
-[![Build Status](https://travis-ci.com/GetStream/stream-chat-android-client.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android-client)
-[![codecov](https://codecov.io/gh/GetStream/stream-chat-android-client/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-android-client)
 
 # Stream Chat Client
 
-`Stream Chat Client` is the official low-level Android SDK for Stream Chat, a service for building chat and messaging applications. This library supports both Kotlin and Java usage. If you can choose we recommend using Kotlin.
+`Stream Chat Client` is the official low-level Android SDK for [Stream Chat](https://github.com/GetStream/stream-chat-android), a service for building chat and messaging applications. This library supports both Kotlin and Java usage, but we strongly recommend using Kotlin.
 
 This library integrates directly with Stream Chat APIs and does not include UI; if you are interested in a SDK that includes UI components, you should check the stream-chat-android which comes with a collection of re-usable and customizable UI components.
 
@@ -185,21 +182,10 @@ client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
 
 ## More
 
-- [Client life cycle](docs/client-lifecycle.md)
-- [Push messages](docs/push-messages.md)
-- [Logging](docs/logging.md)
-- [Token Provider](docs/token-provider.md)
-- [Unread messages](docs/unread-messages.md)
-- SDK architecture
-
-## Examples
-
-- [Basic async](docs/example-basic-async.md)
-- [MVVM + RxJava](docs/example-mvvm-rxjava.md)
-- [MVVM + Coroutines](docs/example-mvvm-coroutines.md)
-- [MVVM + LiveData](docs/example-mvvm-livedata.md)
-- [Pagination: channels](docs/example-pagination-channels.md)
-- [Pagination: messages](docs/example-pagination-messages.md)
+- [Push messages](https://getstream.io/chat/docs/push_android/?language=kotlin)
+- [Logging](https://getstream.io/chat/docs/init_and_users/?language=kotlin#setting-the-user)
+- [Token Provider](https://getstream.io/chat/docs/tokens_and_authentication/?language=kotlin)
+- [Messages](https://getstream.io/chat/docs/send_message/?language=kotlin)
 
 ## Development and support
 
