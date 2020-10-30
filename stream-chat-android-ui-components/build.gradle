@@ -1,0 +1,127 @@
+import com.getstream.sdk.chat.Dependencies
+import com.getstream.sdk.chat.Configuration
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.hiya.jacoco-android'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = Configuration.artifactGroup
+version = Configuration.versionName
+
+android {
+    compileSdkVersion Configuration.compileSdkVersion
+
+    defaultConfig {
+        versionName Configuration.versionName
+
+        buildConfigField 'String', 'STREAM_CHAT_UI_COMPONENTS_VERSION', "\"$version\""
+
+        minSdkVersion Configuration.minSdkVersion
+        targetSdkVersion Configuration.targetSdkVersion
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            unitTests.returnDefaultValues = true
+            // Show the result of every unit test, even if it passes.
+            all {
+                testLogging {
+                    events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        all {
+            it.java.srcDir "src/$it.name/kotlin"
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+        noStdlib = true
+    }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        freeCompilerArgs += [
+                '-progressive',
+                '-Xexplicit-api=strict',
+        ]
+    }
+}
+
+dependencies {
+    api project(":stream-chat-android")
+
+    implementation Dependencies.kotlinStdLib
+    implementation Dependencies.androidxAppCompat
+    implementation Dependencies.constraintLayout
+    implementation Dependencies.androidLegacySupport
+    api Dependencies.androidxRecyclerview
+    implementation Dependencies.activityKtx
+    implementation Dependencies.fragmentKtx
+    implementation Dependencies.androidxLifecycleExtensions
+    implementation Dependencies.androidxLifecycleViewModelKtx
+
+    implementation Dependencies.gson
+
+    implementation Dependencies.glideRedirect
+    implementation(Dependencies.glide) {
+        exclude group: "com.android.support"
+    }
+    kapt Dependencies.glideCompiler
+
+    implementation Dependencies.drawabletoolbox
+    implementation Dependencies.markwonCore
+    implementation Dependencies.markwonLinkify
+    implementation Dependencies.markwonextStrikethrough
+    implementation Dependencies.markwonImage
+
+    implementation Dependencies.fresco
+    implementation Dependencies.photodraweeview
+    implementation Dependencies.keyboardVisibilityEvent
+    implementation Dependencies.dexter
+
+    implementation platform(Dependencies.firebaseBom)
+    implementation Dependencies.firebaseMessaging
+
+    implementation Dependencies.androidxMedia
+    implementation Dependencies.coil
+    implementation Dependencies.coilGif
+
+    // ExoPlayer
+    api Dependencies.exoplayerCore
+    api Dependencies.exoplayerDash
+    api Dependencies.exoplayerHls
+    api Dependencies.exoplayerSmoothstreaming
+
+    // Tests
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+
+    testImplementation Dependencies.truth
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.androidxArchCoreTest
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.coroutinesTest
+}
