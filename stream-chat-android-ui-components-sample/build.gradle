@@ -12,7 +12,7 @@ android {
     compileSdkVersion Configuration.compileSdkVersion
 
     defaultConfig {
-        applicationId "io.getstream.chat.sample"
+        applicationId "io.getstream.chat.ui.sample"
         minSdkVersion Configuration.minSdkVersion
         targetSdkVersion Configuration.targetSdkVersion
         versionCode gitVersioner.versionCode
@@ -20,7 +20,7 @@ android {
         ndkVersion "21.3.6528147"
     }
 
-    File signFile = rootProject.file('stream-chat-android-sample/.sign/keystore.properties')
+    File signFile = rootProject.file('stream-chat-android-ui-components-sample/.sign/keystore.properties')
     if (signFile.exists()) {
         Properties properties = new Properties()
         properties.load(new FileInputStream(signFile))
@@ -35,7 +35,7 @@ android {
     } else {
         signingConfigs {
             release {
-                storeFile rootProject.file('stream-chat-android-sample/.sign/debug.keystore')
+                storeFile rootProject.file('stream-chat-android-ui-components-sample/.sign/debug.keystore')
                 storePassword 'android'
                 keyAlias 'androiddebugkey'
                 keyPassword 'android'
@@ -44,7 +44,7 @@ android {
     }
 
     signingConfigs.debug {
-        storeFile rootProject.file('stream-chat-android-sample/.sign/debug.keystore')
+        storeFile rootProject.file('stream-chat-android-ui-components-sample/.sign/debug.keystore')
         storePassword 'android'
         keyAlias 'androiddebugkey'
         keyPassword 'android'
@@ -101,7 +101,7 @@ android {
 }
 
 dependencies {
-    implementation project(":stream-chat-android")
+    implementation project(":stream-chat-android-ui-components")
 
     implementation Dependencies.kotlinStdLib
 
@@ -121,20 +121,6 @@ dependencies {
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
-    implementation Dependencies.koinAndroidxExt
-    implementation Dependencies.koinAndroidxScope
-    implementation Dependencies.koinAndroidxViewmodel
-    implementation Dependencies.koinCore
-    implementation Dependencies.koinCoreExt
-
-    implementation Dependencies.timber
-
-    debugImplementation Dependencies.flipper
-    debugImplementation Dependencies.flipperNetwork
-    debugImplementation Dependencies.flipperLoader
-
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
-
-    //debugImplementation Dependencies.leakCanary
 }

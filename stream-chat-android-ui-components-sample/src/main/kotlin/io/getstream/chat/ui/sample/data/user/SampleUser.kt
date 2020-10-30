@@ -1,6 +1,6 @@
-package io.getstream.chat.sample.data.user
+package io.getstream.chat.ui.sample.data.user
 
-data class User(
+data class SampleUser(
     val id: String,
     val name: String,
     val token: String,
@@ -8,6 +8,6 @@ data class User(
 ) {
 
     companion object {
-        val None: User = User("", "", "")
+        val None: SampleUser = SampleUser("", "", "")
     }
 }

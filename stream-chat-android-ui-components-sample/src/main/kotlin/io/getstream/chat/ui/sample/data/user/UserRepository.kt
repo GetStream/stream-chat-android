@@ -1,4 +1,4 @@
-package io.getstream.chat.sample.data.user
+package io.getstream.chat.ui.sample.data.user
 
 /**
  * In-memory storage for currently logged-in User

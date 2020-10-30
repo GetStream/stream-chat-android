@@ -1,14 +1,14 @@
-package io.getstream.chat.sample.feature.user_login
+package io.getstream.chat.ui.sample.feature.user_login
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import io.getstream.chat.sample.R
-import io.getstream.chat.sample.data.user.SampleUser
-import io.getstream.chat.sample.databinding.ItemOptionsBinding
-import io.getstream.chat.sample.databinding.ItemUserBinding
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.data.user.SampleUser
+import io.getstream.chat.ui.sample.databinding.ItemOptionsBinding
+import io.getstream.chat.ui.sample.databinding.ItemUserBinding
 
 class UserLoginAdapter(
     val userClickListener: (SampleUser) -> Unit,

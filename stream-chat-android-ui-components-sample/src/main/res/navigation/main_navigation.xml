@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/userLoginFragment">
+
+    <fragment
+        android:id="@+id/userLoginFragment"
+        android:name="io.getstream.chat.ui.sample.feature.user_login.UserLoginFragment"
+        android:label="UserLoginFragment">
+        <action
+            android:id="@+id/action_userLoginFragment_to_channelsFragment"
+            app:destination="@id/channelsFragment" />
+
+        <action
+            android:id="@+id/action_userLoginFragment_to_customLoginFragment"
+            app:destination="@id/customLoginFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/customLoginFragment"
+        android:name="io.getstream.chat.ui.sample.feature.custom_login.CustomLoginFragment"
+        android:label="CustomLoginFragment">
+        <action
+            android:id="@+id/action_customLoginFragment_to_channelsFragment"
+            app:destination="@id/channelsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/channelsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channels.ChannelsFragment"
+        android:label="ChannelsFragment">
+        <action
+            android:id="@+id/action_to_userLoginFragment"
+            app:destination="@id/userLoginFragment" />
+    </fragment>
+</navigation>

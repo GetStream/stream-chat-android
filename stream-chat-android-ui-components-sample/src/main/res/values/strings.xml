@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Stream Chat Sample</string>
+    <string name="backend_error_info">Ups, something went wrong</string>
+    <string name="sdk_version_template">Stream SDK v %s</string>
+
+    <!--User Login Screen-->
+    <string name="user_login_screen_title">Welcome to Stream Chat</string>
+    <string name="user_login_select_user">Select a user to try the Android SDK:</string>
+    <string name="user_login_user_subtitle">Stream test account</string>
+    <string name="user_login_advanced_options">Advanced options</string>
+    <string name="user_login_custom_settings">Custom settings</string>
+
+    <!--Custom Login Screen-->
+    <string name="custom_login_button_text">Login</string>
+    <string name="custom_login_field_api_key_hint">Client API key</string>
+    <string name="custom_login_field_user_id_hint">User ID</string>
+    <string name="custom_login_field_user_token">User token</string>
+    <string name="custom_login_field_user_name_hint">User name (optional)</string>
+    <string name="custom_login_validation_error">This field is required</string>
+
+</resources>

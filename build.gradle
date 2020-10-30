@@ -22,6 +22,7 @@ buildscript {
         classpath Dependencies.firebasePlugin
         classpath Dependencies.ktlintPlugin
         classpath Dependencies.gradleVersionsPlugin
+        classpath Dependencies.navigationSafeArgsGradlePlugin
     }
 }
 

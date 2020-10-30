@@ -1,23 +1,20 @@
-package io.getstream.chat.sample.feature.custom_login
+package io.getstream.chat.ui.sample.feature.custom_login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.socket.InitConnectionListener
-import io.getstream.chat.sample.application.ChatInitializer
-import io.getstream.chat.sample.application.FirebaseLogger
-import io.getstream.chat.sample.common.name
-import io.getstream.chat.sample.data.user.SampleUser
-import io.getstream.chat.sample.data.user.UserRepository
-import timber.log.Timber
+import io.getstream.chat.ui.sample.application.App
+import io.getstream.chat.ui.sample.application.FirebaseLogger
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.android.client.models.User as ChatUser
 
-class CustomLoginViewModel(
-    private val chatInitializer: ChatInitializer,
-    private val userRepository: UserRepository
-) : ViewModel() {
+class CustomLoginViewModel : ViewModel() {
+    private val logger = ChatLogger.get("CustomLoginViewModel")
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
@@ -38,7 +35,7 @@ class CustomLoginViewModel(
      * reinitialize the Chat SDK here with the new API key.
      */
     private fun initChatSdk(credentials: LoginCredentials) {
-        chatInitializer.init(credentials.apiKey)
+        App.instance.chatInitializer.init(credentials.apiKey)
     }
 
     private fun initChatUser(loginCredentials: LoginCredentials) {
@@ -46,7 +43,7 @@ class CustomLoginViewModel(
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        userRepository.user = SampleUser(
+        App.instance.userRepository.user = SampleUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
             token = loginCredentials.userToken
@@ -58,13 +55,13 @@ class CustomLoginViewModel(
                 object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         _state.postValue(State.RedirectToChannels)
-                        Timber.d("User set successfully")
+                        logger.logD("User set successfully")
                         FirebaseLogger.userId = data.user.id
                     }
 
                     override fun onError(error: ChatError) {
                         _state.postValue(State.Error(error.message))
-                        Timber.e("Failed to set user $error")
+                        logger.logD("Failed to set user $error")
                     }
                 }
             )
