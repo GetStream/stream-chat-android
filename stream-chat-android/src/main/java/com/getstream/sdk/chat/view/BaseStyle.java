@@ -116,7 +116,7 @@ public class BaseStyle {
         return avatarBackGroundColor;
     }
 
-    public boolean isShowReadState() {
+    public boolean isReadStateEnabled() {
         return showReadState;
     }
 

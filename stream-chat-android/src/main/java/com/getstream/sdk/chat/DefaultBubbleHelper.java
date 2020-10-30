@@ -33,8 +33,9 @@ public class DefaultBubbleHelper {
                     return ContextCompat.getDrawable(context, style.getMessageBubbleDrawable(mine));
 
                 configParams(style, mine, false);
-                if (isDefaultBubble(style, mine, context))
+                if (isDefaultBubble(style, mine, context)) {
                     applyStyleDefault(positions, mine, context);
+                }
                 if (mine) {
                     // set background for Failed or Error message
                     //if (message.getSyncStatus() == Sync.LOCAL_FAILED
