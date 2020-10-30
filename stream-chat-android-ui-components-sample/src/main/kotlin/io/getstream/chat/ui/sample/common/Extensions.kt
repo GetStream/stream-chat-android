@@ -11,20 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.ui.sample.R
-
-var User.image: String
-    get() = extraData["image"] as String
-    set(value) {
-        extraData["image"] = value
-    }
-
-var User.name: String
-    get() = extraData["name"] as String
-    set(value) {
-        extraData["name"] = value
-    }
 
 fun Activity.showToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_SHORT).show()

@@ -1,7 +1,6 @@
 package io.getstream.chat.ui.sample.application
 
 import android.os.StrictMode
-import timber.log.Timber
 
 object DebugMetricsHelper {
     internal fun init() {
@@ -13,7 +12,5 @@ object DebugMetricsHelper {
             .apply {
                 StrictMode.setThreadPolicy(this)
             }
-
-        Timber.plant(Timber.DebugTree())
     }
 }

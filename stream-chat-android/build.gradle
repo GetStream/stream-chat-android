@@ -93,7 +93,6 @@ dependencies {
 
     implementation Dependencies.roomRuntime
 
-    implementation platform(Dependencies.okhttpBom)
     implementation Dependencies.okhttp
     implementation Dependencies.okhttpLoggingInterceptor
 
@@ -119,7 +118,6 @@ dependencies {
     implementation Dependencies.keyboardVisibilityEvent
     implementation Dependencies.dexter
 
-    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
 
     implementation Dependencies.androidxMedia

@@ -17,7 +17,7 @@ import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.ui.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast
-import io.getstream.chat.ui.sample.data.user.User
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.FragmentUserLoginBinding
 
 class UserLoginFragment : Fragment() {
@@ -86,7 +86,7 @@ class UserLoginFragment : Fragment() {
         findNavController().navigateSafely(R.id.action_userLoginFragment_to_customLoginFragment)
     }
 
-    private fun renderAvailableUsers(users: List<User>) {
+    private fun renderAvailableUsers(users: List<SampleUser>) {
         changeLoadingIndicatorVisibility(false)
         adapter.setUsers(users)
     }

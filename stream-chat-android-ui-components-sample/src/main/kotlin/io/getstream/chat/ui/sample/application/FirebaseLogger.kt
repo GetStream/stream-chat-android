@@ -1,30 +1,30 @@
 package io.getstream.chat.ui.sample.application
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import timber.log.Timber
 
 object FirebaseLogger : ChatLoggerHandler {
-
-    private val logger: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
+    private val logger = ChatLogger.get("FirebaseLogger")
+    private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
     var userId: String? = null
         set(value) {
             field = value
-            value?.let(logger::setUserId)
+            value?.let(crashlytics::setUserId)
         }
 
     private fun log(tag: Any? = null, message: String? = null, error: Throwable? = null) {
         if (tag == null && message == null && error == null) {
-            Timber.d("No data provided; skipping Crashlytics logging")
+            logger.logD("No data provided; skipping Crashlytics logging")
             return
         }
 
         val logTag = tag ?: ""
         val logMsg = message ?: ""
 
-        logger.log("[$logTag] $logMsg")
-        error?.let(logger::recordException)
+        crashlytics.log("[$logTag] $logMsg")
+        error?.let(crashlytics::recordException)
     }
 
     override fun logD(tag: Any, message: String) {

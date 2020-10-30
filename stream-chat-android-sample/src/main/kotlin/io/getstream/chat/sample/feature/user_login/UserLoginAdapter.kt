@@ -6,17 +6,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import io.getstream.chat.sample.R
-import io.getstream.chat.sample.data.user.User
+import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.databinding.ItemOptionsBinding
 import io.getstream.chat.sample.databinding.ItemUserBinding
 
 class UserLoginAdapter(
-    val userClickListener: (User) -> Unit,
+    val userClickListener: (SampleUser) -> Unit,
     val optionsClickListener: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val items = mutableListOf<User>()
+    private val items = mutableListOf<SampleUser>()
 
-    fun setUsers(users: List<User>) {
+    fun setUsers(users: List<SampleUser>) {
         items.clear()
         items.addAll(users)
         notifyDataSetChanged()
@@ -65,7 +65,7 @@ class OptionsViewHolder(binding: ItemOptionsBinding) : RecyclerView.ViewHolder(b
 class UserViewHolder(
     private val binding: ItemUserBinding
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bindUser(user: User) {
+    fun bindUser(user: SampleUser) {
         itemView.apply {
             binding.nameTextView.text = user.name
             Glide.with(this)

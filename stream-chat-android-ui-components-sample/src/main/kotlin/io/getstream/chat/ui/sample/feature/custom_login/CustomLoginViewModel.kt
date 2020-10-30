@@ -5,15 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.models.name
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
-import io.getstream.chat.ui.sample.common.name
-import io.getstream.chat.ui.sample.data.user.User
-import timber.log.Timber
+import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
+    private val logger = ChatLogger.get("CustomLoginViewModel")
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> = _state
 
@@ -42,7 +43,7 @@ class CustomLoginViewModel : ViewModel() {
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        App.instance.userRepository.user = User(
+        App.instance.userRepository.user = SampleUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
             token = loginCredentials.userToken
@@ -54,13 +55,13 @@ class CustomLoginViewModel : ViewModel() {
                 object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         _state.postValue(State.RedirectToChannels)
-                        Timber.d("User set successfully")
+                        logger.logD("User set successfully")
                         FirebaseLogger.userId = data.user.id
                     }
 
                     override fun onError(error: ChatError) {
                         _state.postValue(State.Error(error.message))
-                        Timber.e("Failed to set user $error")
+                        logger.logD("Failed to set user $error")
                     }
                 }
             )
