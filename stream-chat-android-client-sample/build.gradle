@@ -79,9 +79,7 @@ dependencies {
     kapt Dependencies.roomCompiler
 
     // Firebase
-    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
-    implementation Dependencies.firebaseCore
 
     // Coroutines
     implementation Dependencies.coroutinesCore
