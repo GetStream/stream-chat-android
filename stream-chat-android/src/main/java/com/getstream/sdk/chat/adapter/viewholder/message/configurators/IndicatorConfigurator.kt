@@ -46,7 +46,8 @@ internal class IndicatorConfigurator(
             messageItem.messageReadBy.isNotEmpty() ||
             !messageItem.isMine ||
             message.isInThread() ||
-            message.isEphemeral()
+            message.isEphemeral() ||
+            !style.isDeliveredIndicatorEnabled
         ) {
             return
         }
@@ -75,7 +76,8 @@ internal class IndicatorConfigurator(
             message.isFailed() ||
             readBy.isEmpty() ||
             message.isInThread() ||
-            message.isEphemeral()
+            message.isEphemeral() ||
+            !style.isReadStateEnabled
         ) {
             binding.readState.isVisible = false
             return

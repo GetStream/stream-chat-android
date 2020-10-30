@@ -204,11 +204,12 @@
         <attr name="streamReadStateTextFont"/>
         <attr name="streamReadStateTextFontAssets"/>
         <attr name="streamReadStateTextStyle"/>
-
+        <!-- DeliveredStateView -->
+        <attr name="streamShowDeliveredState" format="boolean"/>
         <!--Reaction-->
         <attr name="streamReactionEnabled" format="boolean"/>
         <!--ReactionView-->
-        <attr name="streamrReactionViewBgDrawable" format="reference"/>
+        <attr name="streamReactionViewBgDrawable" format="reference"/>
         <attr name="streamReactionViewBgColor" format="color"/>
         <attr name="streamReactionViewEmojiSize" format="dimension|reference"/>
         <attr name="streamReactionViewEmojiMargin" format="dimension|reference"/>
