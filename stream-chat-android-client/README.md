@@ -182,21 +182,10 @@ client.getMessage("message-id").enqueue { if (it.isSuccess) println(it.data()) }
 
 ## More
 
-- [Client life cycle](../docs/client-lifecycle.md)
-- [Push messages](docs/push-messages.md)
-- [Logging](../docs/logging.md)
-- [Token Provider](../docs/token-provider.md)
-- [Unread messages](../docs/unread-messages.md)
-- SDK architecture
-
-## Examples
-
-- [Basic async](../docs/example-basic-async.md)
-- [MVVM + RxJava](../docs/example-mvvm-rxjava.md)
-- [MVVM + Coroutines](../docs/example-mvvm-coroutines.md)
-- [MVVM + LiveData](../docs/example-mvvm-livedata.md)
-- [Pagination: channels](../docs/example-pagination-channels.md)
-- [Pagination: messages](../docs/example-pagination-messages.md)
+- [Push messages](https://getstream.io/chat/docs/push_android/?language=kotlin)
+- [Logging](https://getstream.io/chat/docs/init_and_users/?language=kotlin#setting-the-user)
+- [Token Provider](https://getstream.io/chat/docs/tokens_and_authentication/?language=kotlin)
+- [Messages](https://getstream.io/chat/docs/send_message/?language=kotlin)
 
 ## Development and support
 
