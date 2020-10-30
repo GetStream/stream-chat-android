@@ -128,7 +128,6 @@ dependencies {
     implementation Dependencies.navigationFragmentKTX
     implementation Dependencies.navigationUIKTX
 
-    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
@@ -139,6 +138,10 @@ dependencies {
     implementation Dependencies.koinCoreExt
 
     implementation Dependencies.timber
+
+    debugImplementation Dependencies.flipper
+    debugImplementation Dependencies.flipperNetwork
+    debugImplementation Dependencies.flipperLoader
 
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler

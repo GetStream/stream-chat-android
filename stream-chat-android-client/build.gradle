@@ -68,15 +68,15 @@ dependencies {
     implementation Dependencies.androidxLifecycleExtensions
     implementation Dependencies.constraintLayout
     implementation Dependencies.coroutinesCore
-    implementation platform(Dependencies.firebaseBom)
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.retrofit
     implementation Dependencies.retrofitGsonConverter
     implementation Dependencies.gson
-    implementation platform(Dependencies.okhttpBom)
     implementation Dependencies.okhttpLoggingInterceptor
     implementation Dependencies.ok2curl
-    debugImplementation Dependencies.stethoOkhttp
+    debugImplementation Dependencies.flipper
+    debugImplementation Dependencies.flipperNetwork
+    debugImplementation Dependencies.flipperLoader
 
     // Tests
     testImplementation Dependencies.androidxTestJunit
