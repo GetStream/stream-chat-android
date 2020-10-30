@@ -9,8 +9,8 @@ import com.getstream.sdk.chat.ChatUI
 public class TextStyle {
     private companion object {
         const val UNSET_SIZE = -1
-        const val UNSET_COLOR = -1
-        const val UNSET_HINT_COLOR = -1
+        const val UNSET_COLOR = Integer.MAX_VALUE
+        const val UNSET_HINT_COLOR = Integer.MAX_VALUE
         const val UNSET_FONT_RESOURCE = -1
     }
 
