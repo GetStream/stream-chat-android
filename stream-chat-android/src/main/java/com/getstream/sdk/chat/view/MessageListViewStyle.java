@@ -200,7 +200,7 @@ public class MessageListViewStyle extends BaseStyle {
         // Reaction
         reactionEnabled = a.getBoolean(R.styleable.MessageListView_streamReactionEnabled, true);
 
-        reactionViewBgDrawable = a.getResourceId(R.styleable.MessageListView_streamrReactionViewBgDrawable, -1);
+        reactionViewBgDrawable = a.getResourceId(R.styleable.MessageListView_streamReactionViewBgDrawable, -1);
         reactionViewBgColor = a.getColor(R.styleable.MessageListView_streamReactionViewBgColor, getColor(R.color.stream_reaction_input_background));
         reactionViewEmojiSize = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionViewEmojiSize, getDimension(R.dimen.stream_reaction_view_emoji_size));
         reactionViewEmojiMargin = a.getDimensionPixelSize(R.styleable.MessageListView_streamReactionViewEmojiMargin, getDimension(R.dimen.stream_reaction_view_emoji_margin));
@@ -235,6 +235,9 @@ public class MessageListViewStyle extends BaseStyle {
                 .font(R.styleable.MessageListView_streamReadStateTextFontAssets, R.styleable.MessageListView_streamReadStateTextFont)
                 .style(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD)
                 .build();
+
+        // Delivered state
+        showDeliveredIndicator = a.getBoolean(R.styleable.MessageListView_streamShowDeliveredState, true);
 
         threadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true);
 

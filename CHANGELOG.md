@@ -11,6 +11,7 @@
 - Allow setting custom loading view
 - Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
 - Fix handling of the `streamShowReadState` attribute on `MessageListView`
+- Add `streamShowDeliveredState` XML attribute to `MessageListView`
 
 ## stream-chat-android-client
 - Fix guest user authentication

@@ -47,7 +47,7 @@ internal class IndicatorConfigurator(
             !messageItem.isMine ||
             message.isInThread() ||
             message.isEphemeral() ||
-            !style.isReadStateEnabled
+            !style.isDeliveredIndicatorEnabled
         ) {
             return
         }

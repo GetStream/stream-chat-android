@@ -32,6 +32,7 @@ public class BaseStyle {
     protected TextStyle readStateText;
 
     protected boolean showReadState;
+    protected boolean showDeliveredIndicator;
     protected int readStateAvatarWidth;
     protected int readStateAvatarHeight;
 
@@ -118,6 +119,10 @@ public class BaseStyle {
 
     public boolean isReadStateEnabled() {
         return showReadState;
+    }
+
+    public boolean isDeliveredIndicatorEnabled() {
+        return showDeliveredIndicator;
     }
 
     public int getReadStateAvatarWidth() {
