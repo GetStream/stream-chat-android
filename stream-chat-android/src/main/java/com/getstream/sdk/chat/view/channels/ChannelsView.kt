@@ -108,6 +108,10 @@ public class ChannelsView @JvmOverloads constructor(
         this.emptyStateView.isVisible = false
     }
 
+    public fun setPaginationEnabled(enabled: Boolean) {
+        channelListView.setPaginationEnabled(enabled)
+    }
+
     private fun defaultChildLayoutParams() =
         LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
 

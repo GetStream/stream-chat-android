@@ -17,7 +17,6 @@ import com.getstream.sdk.chat.adapter.ChannelViewHolderFactory;
 
 import java.util.List;
 
-import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.models.User;
 
@@ -34,6 +33,7 @@ public class ChannelListView extends RecyclerView {
     private ChannelViewHolderFactory viewHolderFactory;
 
     private LinearLayoutManager layoutManager;
+    private final EndReachedScrollListener scrollListener = new EndReachedScrollListener();
 
     public ChannelListView(Context context) {
         super(context);
@@ -123,19 +123,11 @@ public class ChannelListView extends RecyclerView {
     }
 
     private void observeListEndRegion() {
-        final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
-        this.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if (SCROLL_STATE_IDLE == newState) {
-                    final int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
-                    boolean reachedTheEnd = (adapter.getItemCount() - 1) == lastVisiblePosition;
-                    if (reachedTheEnd) {
-                        endReachedListener.onEndReached();
-                    }
-                }
-            }
-        });
+        this.addOnScrollListener(scrollListener);
+    }
+
+    public void setPaginationEnabled(boolean enabled) {
+        scrollListener.setPaginationEnabled(enabled);
     }
 
     public void setChannels(final List<Channel> channels) {
@@ -174,5 +166,25 @@ public class ChannelListView extends RecyclerView {
 
     public interface EndReachedListener {
         void onEndReached();
+    }
+
+    private class EndReachedScrollListener extends RecyclerView.OnScrollListener {
+        private boolean enabled = false;
+
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            if (SCROLL_STATE_IDLE == newState) {
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) getLayoutManager();
+                final int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
+                boolean reachedTheEnd = (adapter.getItemCount() - 1) == lastVisiblePosition;
+                if (reachedTheEnd && enabled) {
+                    endReachedListener.onEndReached();
+                }
+            }
+        }
+
+        public void setPaginationEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 }
