@@ -40,7 +40,6 @@ class ChatInitializer(private val context: Context) {
 
     private fun disconnectChatsIfNecessary() {
         client?.disconnect()
-        GlobalScope.launch (Dispatchers.Main) { domain?.disconnect() }
+        GlobalScope.launch(Dispatchers.Main) { domain?.disconnect() }
     }
 }
-
