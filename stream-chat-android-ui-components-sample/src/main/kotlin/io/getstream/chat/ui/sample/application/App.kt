@@ -5,6 +5,7 @@ import io.getstream.chat.ui.sample.data.user.UserRepository
 
 class App : Application() {
 
+    // this is done for simplicity, a DI framework should be used in a real app
     lateinit var chatInitializer: ChatInitializer
     lateinit var userRepository: UserRepository
 
@@ -15,7 +16,7 @@ class App : Application() {
         chatInitializer = ChatInitializer(this)
         userRepository = UserRepository()
 
-        DebugMetricsHelper().init()
+        DebugMetricsHelper.init()
     }
 
     companion object {

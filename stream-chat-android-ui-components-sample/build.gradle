@@ -132,10 +132,6 @@ dependencies {
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
-    implementation Dependencies.timber
-
     implementation Dependencies.glide
     annotationProcessor Dependencies.glideCompiler
-
-    //debugImplementation Dependencies.leakCanary
 }

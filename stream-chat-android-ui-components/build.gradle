@@ -73,55 +73,5 @@ dependencies {
 
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.androidxAppCompat
-    implementation Dependencies.constraintLayout
     implementation Dependencies.androidLegacySupport
-    api Dependencies.androidxRecyclerview
-    implementation Dependencies.activityKtx
-    implementation Dependencies.fragmentKtx
-    implementation Dependencies.androidxLifecycleExtensions
-    implementation Dependencies.androidxLifecycleViewModelKtx
-
-    implementation Dependencies.gson
-
-    implementation Dependencies.glideRedirect
-    implementation(Dependencies.glide) {
-        exclude group: "com.android.support"
-    }
-    kapt Dependencies.glideCompiler
-
-    implementation Dependencies.drawabletoolbox
-    implementation Dependencies.markwonCore
-    implementation Dependencies.markwonLinkify
-    implementation Dependencies.markwonextStrikethrough
-    implementation Dependencies.markwonImage
-
-    implementation Dependencies.fresco
-    implementation Dependencies.photodraweeview
-    implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.dexter
-
-    implementation platform(Dependencies.firebaseBom)
-    implementation Dependencies.firebaseMessaging
-
-    implementation Dependencies.androidxMedia
-    implementation Dependencies.coil
-    implementation Dependencies.coilGif
-
-    // ExoPlayer
-    api Dependencies.exoplayerCore
-    api Dependencies.exoplayerDash
-    api Dependencies.exoplayerHls
-    api Dependencies.exoplayerSmoothstreaming
-
-    // Tests
-    testImplementation Dependencies.junitJupiterApi
-    testImplementation Dependencies.junitJupiterParams
-    testRuntimeOnly Dependencies.junitJupiterEngine
-
-    testImplementation Dependencies.truth
-    testImplementation Dependencies.mockito
-    testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.androidxArchCoreTest
-    testImplementation Dependencies.kluent
-    testImplementation Dependencies.coroutinesTest
 }

@@ -1,5 +1,5 @@
-package io.getstream.chat.sample.application
+package io.getstream.chat.io.sample.application
 
-class DebugMetricsHelper {
+object DebugMetricsHelper {
     internal fun init() = Unit
 }

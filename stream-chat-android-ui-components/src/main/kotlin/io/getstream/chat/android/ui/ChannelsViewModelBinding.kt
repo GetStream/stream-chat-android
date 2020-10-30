@@ -9,7 +9,7 @@ import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 public fun ChannelsViewModel.bindView(
     view: ChannelsView,
     lifecycle: LifecycleOwner
-): ChannelsViewModel = apply {
+) {
     state.observe(lifecycle) {
         if (it is ChannelsViewModel.State.Result) {
             view.setChannels(it.channels)
