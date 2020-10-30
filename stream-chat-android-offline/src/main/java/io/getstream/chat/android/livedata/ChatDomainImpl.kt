@@ -43,6 +43,8 @@ import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.DefaultRetryPolicy
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
+import io.getstream.chat.android.livedata.utils.getOrPut
+import io.getstream.chat.android.livedata.utils.mutate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -55,7 +57,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.collections.set
 
 private val CHANNEL_CID_REGEX = Regex("^!?[\\w-]+:!?[\\w-]+$")
@@ -99,7 +101,25 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context
 ) :
     ChatDomain {
-    internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
+    internal constructor(
+        client: ChatClient,
+        handler: Handler,
+        offlineEnabled: Boolean,
+        recoveryEnabled: Boolean,
+        userPresence: Boolean,
+        backgroundSyncEnabled: Boolean,
+        appContext: Context
+    ) : this(
+        client,
+        null,
+        null,
+        handler,
+        offlineEnabled,
+        recoveryEnabled,
+        userPresence,
+        backgroundSyncEnabled,
+        appContext
+    )
 
     private val _initialized = MutableLiveData(false)
     private val _online = MutableLiveData(false)
@@ -161,9 +181,10 @@ internal class ChatDomainImpl internal constructor(
     private var eventSubscription: Disposable? = null
 
     /** stores the mapping from cid to channelRepository */
-    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
-
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
+    private val activeChannelMapImpl: AtomicReference<Map<String, ChannelControllerImpl>> =
+        AtomicReference(emptyMap())
+    private val activeQueryMapImpl: AtomicReference<Map<String, QueryChannelsControllerImpl>> =
+        AtomicReference(emptyMap())
 
     // TODO 1.1: We should accelerate online/offline detection
 
@@ -198,15 +219,16 @@ internal class ChatDomainImpl internal constructor(
         _banned.value = false
         _mutedUsers.value = emptyList()
 
-        activeChannelMapImpl.clear()
-        activeQueryMapImpl.clear()
+        activeChannelMapImpl.mutate { emptyMap() }
+        activeQueryMapImpl.mutate { emptyMap() }
     }
 
-    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
-        ChatDatabase.getDatabase(context, user.id)
-    } else {
-        Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
-    }
+    private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) =
+        if (offlineEnabled) {
+            ChatDatabase.getDatabase(context, user.id)
+        } else {
+            Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
+        }
 
     fun isTestRunner(): Boolean {
         return Build.FINGERPRINT.toLowerCase().contains("robolectric")
@@ -218,7 +240,8 @@ internal class ChatDomainImpl internal constructor(
         currentUser = user
 
         if (backgroundSyncEnabled && !isTestRunner()) {
-            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken())
+            val config =
+                BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken())
             if (config.isValid()) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
                     put(config)
@@ -305,8 +328,8 @@ internal class ChatDomainImpl internal constructor(
 
     internal suspend fun storeSyncState(): SyncStateEntity? {
         syncState?.let {
-            it.activeChannelIds = activeChannelMapImpl.keys().toList()
-            it.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
+            it.activeChannelIds = activeChannelMapImpl.get().keys.toList()
+            it.activeQueryIds = activeQueryMapImpl.get().values.toList().map { it.queryEntity.id }
             repos.syncState.insert(it)
         }
 
@@ -381,7 +404,7 @@ internal class ChatDomainImpl internal constructor(
             repos.channels.insertChannel(c)
 
             // Add to query controllers
-            for (query in activeQueryMapImpl.values) {
+            for (query in activeQueryMapImpl.get().values) {
                 query.addChannelIfFilterMatches(c)
             }
 
@@ -421,7 +444,7 @@ internal class ChatDomainImpl internal constructor(
     }
 
     fun isActiveChannel(cid: String): Boolean {
-        return activeChannelMapImpl.containsKey(cid)
+        return activeChannelMapImpl.get().containsKey(cid)
     }
 
     fun setChannelUnreadCount(newCount: Int) {
@@ -484,17 +507,14 @@ internal class ChatDomainImpl internal constructor(
         channelId: String
     ): ChannelControllerImpl {
         val cid = "%s:%s".format(channelType, channelId)
-        if (!activeChannelMapImpl.containsKey(cid)) {
-            val channelRepo =
-                ChannelControllerImpl(
-                    channelType,
-                    channelId,
-                    client,
-                    this
-                )
-            activeChannelMapImpl[cid] = channelRepo
+        return activeChannelMapImpl.getOrPut(cid) {
+            ChannelControllerImpl(
+                channelType,
+                channelId,
+                client,
+                this
+            )
         }
-        return activeChannelMapImpl.getValue(cid)
     }
 
     fun generateMessageId(): String {
@@ -529,9 +549,8 @@ internal class ChatDomainImpl internal constructor(
         return _initialized.value ?: false
     }
 
-    override fun getActiveQueries(): List<QueryChannelsControllerImpl> {
-        return activeQueryMapImpl.values.toList()
-    }
+    override fun getActiveQueries(): List<QueryChannelsControllerImpl> =
+        activeQueryMapImpl.get().values.toList()
 
     /**
      * queryChannels
@@ -541,15 +560,11 @@ internal class ChatDomainImpl internal constructor(
     fun queryChannels(
         filter: FilterObject,
         sort: QuerySort
-    ): QueryChannelsControllerImpl =
-        activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
-            QueryChannelsControllerImpl(
-                filter,
-                sort,
-                client,
-                this
-            )
+    ): QueryChannelsControllerImpl {
+        return activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
+            QueryChannelsControllerImpl(filter, sort, client, this)
         }
+    }
 
     private fun queryEvents(cids: List<String>): Result<List<ChatEvent>> =
         client.getSyncHistory(cids, syncState?.lastSyncedAt ?: Date()).execute()
@@ -564,7 +579,7 @@ internal class ChatDomainImpl internal constructor(
         // wait for the active channel info to load
         initJob.join()
         // make a list of all channel ids
-        val cids = activeChannelMapImpl.keys().toList().toMutableList()
+        val cids = activeChannelMapImpl.get().keys.toMutableList()
         cid?.let {
             channel(it)
             cids.add(it)
@@ -590,7 +605,8 @@ internal class ChatDomainImpl internal constructor(
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        val queriesToRetry =
+            activeQueryMapImpl.get().values.filter { it.recoveryNeeded || recoveryNeeded }.take(3)
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(
                 QueryChannelsPaginationRequest(
@@ -607,7 +623,8 @@ internal class ChatDomainImpl internal constructor(
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }
+        val cids = activeChannelMapImpl.get().entries.toList()
+            .filter { it.value.recoveryNeeded || recoveryNeeded }
             .filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
@@ -711,14 +728,20 @@ internal class ChatDomainImpl internal constructor(
         channelId: String,
         pagination: QueryChannelPaginationRequest
     ): Channel? {
-        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
+        return selectAndEnrichChannels(
+            listOf(channelId),
+            pagination.toAnyChannelPaginationRequest()
+        ).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannel(
         channelId: String,
         pagination: QueryChannelsPaginationRequest
     ): Channel? {
-        return selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
+        return selectAndEnrichChannels(
+            listOf(channelId),
+            pagination.toAnyChannelPaginationRequest()
+        ).getOrNull(0)
     }
 
     suspend fun selectAndEnrichChannels(
@@ -732,11 +755,12 @@ internal class ChatDomainImpl internal constructor(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest
     ): List<Channel> {
-        return repos.selectChannels(channelIds, defaultConfig, pagination).applyPagination(pagination)
+        return repos.selectChannels(channelIds, defaultConfig, pagination)
+            .applyPagination(pagination)
     }
 
     override fun clean() {
-        for (channelRepo in activeChannelMapImpl.values.toList()) {
+        for (channelRepo in activeChannelMapImpl.get().values.toList()) {
             channelRepo.clean()
         }
     }
