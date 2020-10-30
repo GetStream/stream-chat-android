@@ -13,5 +13,6 @@ public data class QueryUsersRequest @JvmOverloads constructor(
     var querySort: QuerySort<User> = QuerySort(),
     var presence: Boolean = false
 ) {
+    val sort: List<Map<String, Any>> = querySort.toDto()
     val filter_conditions: Map<String, Any> = filter.toMap()
 }
