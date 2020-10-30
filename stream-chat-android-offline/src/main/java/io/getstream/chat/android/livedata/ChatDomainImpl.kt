@@ -157,9 +157,17 @@ internal class ChatDomainImpl internal constructor(
      */
     override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
 
+    /** the event subscription, cancel using repo.stopListening */
+    private var eventSubscription: Disposable? = null
+
+    /** stores the mapping from cid to channelRepository */
+    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+
+    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
+
     // TODO 1.1: We should accelerate online/offline detection
 
-    internal lateinit var eventHandler: EventHandlerImpl
+    internal var eventHandler: EventHandlerImpl
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -189,13 +197,9 @@ internal class ChatDomainImpl internal constructor(
         _channelUnreadCount.value = 0
         _banned.value = false
         _mutedUsers.value = emptyList()
-        if (activeChannelMapImpl != null) {
-            activeChannelMapImpl.clear()
-        }
 
-        if (activeQueryMapImpl != null) {
-            activeQueryMapImpl.clear()
-        }
+        activeChannelMapImpl.clear()
+        activeQueryMapImpl.clear()
     }
 
     private fun createDatabase(context: Context, user: User, offlineEnabled: Boolean) = if (offlineEnabled) {
@@ -415,14 +419,6 @@ internal class ChatDomainImpl internal constructor(
             )
         )
     }
-
-    /** the event subscription, cancel using repo.stopListening */
-    private var eventSubscription: Disposable? = null
-
-    /** stores the mapping from cid to channelRepository */
-    private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
-
-    private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
     fun isActiveChannel(cid: String): Boolean {
         return activeChannelMapImpl.containsKey(cid)
