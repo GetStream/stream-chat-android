@@ -9,7 +9,7 @@ import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin
 import com.facebook.soloader.SoLoader
 import io.getstream.chat.android.client.di.networkFlipper
 
-class ExtrasDependenciesImpl : ExtraDependencies {
+class ExtraDependenciesImpl : ExtraDependencies {
 
     override fun configFlipper(application: Application) {
         SoLoader.init(application, false)
