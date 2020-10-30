@@ -40,9 +40,9 @@ Open the project in Android Studio and set up your emulator (we're using Pixel 3
 
 ## Docs
 This SDK consists of the following modules / artifacts:
-- [Chat client](https://github.com/GetStream/stream-chat-android/tree/master/stream-chat-android-client)
-- [Offline support and `LiveData` APIs](https://github.com/GetStream/stream-chat-android/tree/master/stream-chat-android-offline)
-- [Chat UI/UX](https://github.com/GetStream/stream-chat-android/tree/master/stream-chat-android)
+- [Chat client](stream-chat-android-client)
+- [Offline support and `LiveData` APIs](stream-chat-android-offline)
+- [Chat UI/UX](stream-chat-android)
 
 The SDK provides:
 
