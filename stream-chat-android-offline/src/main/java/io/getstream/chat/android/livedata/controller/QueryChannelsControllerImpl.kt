@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 private const val MESSAGE_LIMIT = 10
 private const val MEMBER_LIMIT = 30
@@ -111,8 +112,18 @@ internal class QueryChannelsControllerImpl(
             // update the info for that channel from the channel repo
             logger.logI("received channel event $event")
 
-            // update the channels
-            refreshChannel(event.cid)
+            // refresh the channels
+            // Careful, it's easy to have a race condition here.
+            //
+            // The reason is that we are on the IO thread and update ChannelControlelr using postValue()
+            //  ChannelController.toChannel() can read the old version of the data using livedata.value
+            // Solutions:
+            // - suspend/wait for a few seconds (yuck, lets not do that)
+            // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
+            // - run the refresh channel call below on the UI thread instead of IO thread
+            scope.launch(Dispatchers.Main) {
+                refreshChannel(event.cid)
+            }
         }
     }
 
