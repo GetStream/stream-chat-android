@@ -48,7 +48,7 @@ The SDK provides:
 
 - A low-level client for making API calls and receiving chat events
 - Offline support and LiveData APIs module
-- Ready to use `ViewModel` for list of channels and `ViewModel` for conversation 
+- Ready to use ViewModels for displaying a list of channels and a conversation 
 - Four reusable chat views:
     - [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
