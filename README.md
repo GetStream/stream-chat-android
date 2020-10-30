@@ -60,11 +60,11 @@ The documentation for LiveData and the custom views is available here:
 
 ### Chat client
 
-The low-level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+The [low-level Chat API](stream-chat-android-client) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
 
 ### Offline support and `LiveData` APIs
 
-The Offline support and `LiveData` APIs docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+The [Offline support and `LiveData` APIs](stream-chat-android-offline) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
 
 ## Supported features
 
