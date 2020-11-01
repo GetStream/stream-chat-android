@@ -5,12 +5,16 @@ import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.ColorRes
+import androidx.annotation.DimenRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.getstream.chat.ui.sample.R
 
 fun Activity.showToast(text: String) {
@@ -19,6 +23,14 @@ fun Activity.showToast(text: String) {
 
 fun Fragment.showToast(text: String) {
     Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
+}
+
+fun Context.getColorFromRes(@ColorRes id: Int): Int {
+    return ContextCompat.getColor(this, id)
+}
+
+fun Context.getDimensionPixelSize(@DimenRes id: Int): Int {
+    return resources.getDimensionPixelSize(id)
 }
 
 fun EditText.hideKeyboard() {
@@ -60,4 +72,15 @@ fun Fragment.initToolbar(toolbar: Toolbar) {
             }
         }
     }
+}
+
+fun BottomNavigationView.setBangeNumber(@IdRes menuItemId: Int, badgeNumber: Int) {
+    val badge = getBadge(menuItemId)
+        ?: getOrCreateBadge(menuItemId).apply {
+            horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)
+            verticalOffset = context.getDimensionPixelSize(R.dimen.badge_vertical_offset)
+            backgroundColor = context.getColorFromRes(R.color.bottom_nav_badge_color)
+        }
+    badge.isVisible = badgeNumber > 0
+    badge.number = badgeNumber
 }

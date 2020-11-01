@@ -98,6 +98,6 @@ class CustomLoginFragment : Fragment() {
     }
 
     private fun redirectToChannelsScreen() {
-        findNavController().navigateSafely(R.id.action_customLoginFragment_to_channelsFragment)
+        findNavController().navigateSafely(R.id.action_customLoginFragment_to_homeFragment)
     }
 }

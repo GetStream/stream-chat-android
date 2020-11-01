@@ -1,0 +1,99 @@
+package io.getstream.chat.ui.sample.feature.home
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.client.models.name
+import io.getstream.chat.ui.sample.R
+import io.getstream.chat.ui.sample.common.navigateSafely
+import io.getstream.chat.ui.sample.common.setBangeNumber
+import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
+
+class HomeFragment : Fragment() {
+
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: HomeFragmentViewModel by viewModels()
+
+    private lateinit var avatarImageView: ImageView
+    private lateinit var nameTextView: TextView
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupBottomNavigation()
+        setupNavigationDrawer()
+        viewModel.state.observe(viewLifecycleOwner) {
+            when (it) {
+                is HomeFragmentViewModel.State.Result -> renderState(it)
+                is HomeFragmentViewModel.State.NavigateToLoginScreen -> navigateToLoginScreen()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupBottomNavigation() {
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.hostFragmentContainer) as NavHostFragment
+        binding.bottomNavigationView.setupWithNavController(navHostFragment.navController)
+    }
+
+    private fun setupNavigationDrawer() {
+        AppBarConfiguration(
+            setOf(R.id.directChatFragment, R.id.groupChatFragment),
+            binding.drawerLayout
+        )
+        binding.navigationView.setupWithNavController(findNavController())
+
+        val header = binding.navigationView.getHeaderView(0)
+        avatarImageView = header.findViewById(R.id.avatarImageView)
+        nameTextView = header.findViewById(R.id.nameTextView)
+
+        binding.signOutTextView.setOnClickListener {
+            viewModel.onEvent(HomeFragmentViewModel.UiAction.LogoutClicked)
+        }
+    }
+
+    private fun renderState(state: HomeFragmentViewModel.State.Result) {
+        binding.bottomNavigationView.setBangeNumber(R.id.channels_fragment, state.totalUnreadCount)
+        binding.bottomNavigationView.setBangeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+
+        nameTextView.text = state.user.name
+        Glide.with(this)
+            .load(state.user.image)
+            .centerCrop()
+            .placeholder(R.drawable.ic_avatar_placeholder)
+            .error(R.drawable.ic_avatar_placeholder)
+            .fallback(R.drawable.ic_avatar_placeholder)
+            .transform(CircleCrop())
+            .into(avatarImageView)
+    }
+
+    private fun navigateToLoginScreen() {
+        findNavController().navigateSafely(R.id.action_to_userLoginFragment)
+    }
+}

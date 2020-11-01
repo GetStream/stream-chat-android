@@ -4,4 +4,7 @@
 
     <dimen name="login_input_field_corner_radius">12dp</dimen>
     <dimen name="login_avatar_size">46dp</dimen>
+
+    <dimen name="badge_horizontal_offset">8dp</dimen>
+    <dimen name="badge_vertical_offset">6dp</dimen>
 </resources>
