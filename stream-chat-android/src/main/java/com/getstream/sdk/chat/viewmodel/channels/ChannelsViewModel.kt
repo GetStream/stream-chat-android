@@ -30,12 +30,12 @@ public class ChannelsViewModel(
     private val limit: Int = 30
 ) : ViewModel() {
     private val channelsData: LiveData<State>
-    private val loadingMoreData: LiveData<State.LoadingNextPage>
     private val loadingData = MutableLiveData<State.Loading>()
-    private val endPageData: LiveData<State.EndPageReached>
     private val stateMerger = MediatorLiveData<State>()
-
     public val state: LiveData<State> = stateMerger
+
+    private val paginationStateMerger = MediatorLiveData<PaginationState>()
+    public val paginationState: LiveData<PaginationState> = paginationStateMerger
 
     init {
         val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
@@ -48,13 +48,17 @@ public class ChannelsViewModel(
                     State.Result(channelList.filter { it.hidden == false })
                 }
             }
-            loadingMoreData = map(loadingMore) { State.LoadingNextPage(it) }
-            endPageData = map(endOfChannels) { State.EndPageReached(it) }
+
+            paginationStateMerger.addSource(loadingMore) { loadingMore ->
+                setPaginationState { copy(loadingMore = loadingMore) }
+            }
+            paginationStateMerger.addSource(endOfChannels) { endOfChannels ->
+                setPaginationState { copy(endOfChannels = endOfChannels) }
+            }
         }
 
         stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
         stateMerger.addSource(channelsData) { state -> stateMerger.value = state }
-        stateMerger.addSource(loadingMoreData) { state -> stateMerger.value = state }
     }
 
     public fun onEvent(event: Event) {
@@ -77,14 +81,21 @@ public class ChannelsViewModel(
         chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
     }
 
+    private fun setPaginationState(reducer: PaginationState.() -> PaginationState) {
+        paginationStateMerger.value = reducer(paginationStateMerger.value ?: PaginationState())
+    }
+
     public sealed class State {
-        public data class LoadingNextPage(val isLoading: Boolean) : State()
         public object Loading : State()
         public data class Result(val channels: List<Channel>) : State()
-        public data class EndPageReached(val isEndPage: Boolean) : State()
         public object NoChannelsAvailable : State()
         public object NavigateToLoginScreen : State()
     }
+
+    public data class PaginationState(
+        val loadingMore: Boolean = false,
+        val endOfChannels: Boolean = false
+    )
 
     public sealed class Event {
         public object ReachedEndOfList : Event()

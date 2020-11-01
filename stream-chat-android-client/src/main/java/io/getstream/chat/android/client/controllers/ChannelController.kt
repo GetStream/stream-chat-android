@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.controllers
 
+import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -58,15 +59,50 @@ public interface ChannelController {
 
     public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable
 
-    public fun subscribeFor(vararg eventTypes: String, listener: (event: ChatEvent) -> Unit): Disposable
+    public fun subscribeFor(
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    /***
+     * Subscribes to the specific [eventTypes] of the channel, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     *
+     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
 
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
     ): Disposable
 
+    /***
+     * Subscribes to the specific [eventTypes] of the channel, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable
+
+    /***
+     * Subscribes for the next channel event with the given [eventType].
+     *
+     * @see [io.getstream.chat.android.client.models.EventType] for type constants
+     */
     public fun subscribeForSingle(eventType: String, listener: (event: ChatEvent) -> Unit): Disposable
 
+    /***
+     * Subscribes for the next channel event with the given [eventType].
+     */
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit

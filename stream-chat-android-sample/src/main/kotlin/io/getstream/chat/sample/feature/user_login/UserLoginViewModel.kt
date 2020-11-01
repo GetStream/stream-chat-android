@@ -10,7 +10,7 @@ import io.getstream.chat.sample.application.AppConfig
 import io.getstream.chat.sample.application.ChatInitializer
 import io.getstream.chat.sample.common.image
 import io.getstream.chat.sample.common.name
-import io.getstream.chat.sample.data.user.User
+import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.data.user.UserRepository
 import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
@@ -27,7 +27,7 @@ class UserLoginViewModel(
         _state.postValue(State.AvailableUsers(appConfig.availableUsers))
     }
 
-    fun userClicked(user: User) {
+    fun userClicked(user: SampleUser) {
         _state.postValue(State.Loading)
         initChatSdk()
         initChatUser(user)
@@ -42,7 +42,7 @@ class UserLoginViewModel(
         chatInitializer.init(appConfig.apiKey)
     }
 
-    private fun initChatUser(user: User, cid: String? = null) {
+    private fun initChatUser(user: SampleUser, cid: String? = null) {
         userRepository.user = user
         val chatUser = ChatUser().apply {
             id = user.id
@@ -72,14 +72,14 @@ class UserLoginViewModel(
 
     fun targetChannelDataReceived(cid: String) {
         val user = userRepository.user
-        if (userRepository.user != User.None) {
+        if (userRepository.user != SampleUser.None) {
             initChatUser(user, cid)
         }
     }
 }
 
 sealed class State {
-    data class AvailableUsers(val availableUsers: List<User>) : State()
+    data class AvailableUsers(val availableUsers: List<SampleUser>) : State()
     object RedirectToChannels : State()
     data class RedirectToChannel(val cid: String) : State()
     object Loading : State()

@@ -9,7 +9,7 @@ import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.sample.application.ChatInitializer
 import io.getstream.chat.sample.application.FirebaseLogger
 import io.getstream.chat.sample.common.name
-import io.getstream.chat.sample.data.user.User
+import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.data.user.UserRepository
 import timber.log.Timber
 import io.getstream.chat.android.client.models.User as ChatUser
@@ -46,18 +46,15 @@ class CustomLoginViewModel(
             id = loginCredentials.userId
             name = loginCredentials.userName
         }
-        userRepository.user = User(
+        userRepository.user = SampleUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
             token = loginCredentials.userToken
         )
-    }
-
-    private fun initChatUser(chatUser: ChatUser, token: String, cid: String? = null) {
         ChatClient.instance()
             .setUser(
                 chatUser,
-                token,
+                loginCredentials.userToken,
                 object : InitConnectionListener() {
                     override fun onSuccess(data: ConnectionData) {
                         _state.postValue(State.RedirectToChannels)

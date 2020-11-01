@@ -8,16 +8,6 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'org.jlleitschuh.gradle.ktlint'
 
-buildscript {
-    repositories {
-        jcenter()
-        google()
-    }
-    dependencies {
-        classpath Dependencies.navigationSafeArgsGradlePlugin
-    }
-}
-
 android {
     compileSdkVersion Configuration.compileSdkVersion
 

@@ -16,7 +16,7 @@ import io.getstream.chat.sample.application.EXTRA_CHANNEL_ID
 import io.getstream.chat.sample.application.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.sample.common.navigateSafely
 import io.getstream.chat.sample.common.showToast
-import io.getstream.chat.sample.data.user.User
+import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.databinding.FragmentUserLoginBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -93,7 +93,7 @@ class UserLoginFragment : Fragment() {
         )
     }
 
-    private fun renderAvailableUsers(users: List<User>) {
+    private fun renderAvailableUsers(users: List<SampleUser>) {
         changeLoadingIndicatorVisibility(false)
         adapter.setUsers(users)
     }

@@ -1,6 +1,6 @@
 name: Stream Chat Android CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   stream_chat_android_client:

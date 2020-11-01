@@ -28,22 +28,29 @@
 
 The best place to start is the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#java). It teaches you how to use this SDK and also shows how to make frequently required changes. You can use either [Java](https://getstream.io/tutorials/android-chat/#java) or [Kotlin](https://getstream.io/tutorials/android-chat/#kotlin) depending on your preference.
 
-## Clone the Github Example App
+## Sample App
 
-This repo includes a fully functional example app. To run the example app:
+This repo includes a fully functional example app featuring threads, reactions, typing indicators, optimistic UI updates and offline storage.
+To run the sample app start by cloning this repo:
 
 ```shell
 git clone git@github.com:GetStream/stream-chat-android.git
 ```
 
-Open the project in Android Studio and set up your emulator (we're using Pixel 3, API 29 at the moment). Note that the Gradle sync process can take some time when you first open the project. 
+Next download android studio and open up the stream-chat-android folder. You'll want to run the stream-chat-android-sample app.
+Note that the Gradle sync process can take some time when you first open the project. 
 
 ## Docs
+This SDK consists of the following modules / artifacts:
+- [Chat client](stream-chat-android-client)
+- [Offline support and `LiveData` APIs](stream-chat-android-offline)
+- [Chat UI/UX](stream-chat-android)
 
-This library provides:
+The SDK provides:
 
 - A low-level client for making API calls and receiving chat events
-- `ViewModel` for list of channels and `ViewModel` for channel
+- Offline support and LiveData APIs module
+- Ready to use ViewModels for displaying a list of channels and a conversation 
 - Four reusable chat views:
     - [Channel List](https://getstream.io/chat/docs/channel_list_view/?language=kotlin)
     - [Message List](https://getstream.io/chat/docs/message_list_view/?language=kotlin)
@@ -53,9 +60,13 @@ This library provides:
 The documentation for LiveData and the custom views is available here:
 [https://getstream.io/chat/docs/android_overview/?language=kotlin](https://getstream.io/chat/docs/android_overview/?language=kotlin)
 
-### Chat API
+### Chat client
 
-The low-level Chat API docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+The [low-level Chat API](stream-chat-android-client) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
+
+### Offline support and `LiveData` APIs
+
+The [Offline support and `LiveData` APIs](stream-chat-android-offline) docs are available for both [Kotlin](https://getstream.io/chat/docs/kotlin/) and [Java](https://getstream.io/chat/docs/java/).
 
 ## Supported features
 
@@ -259,43 +270,3 @@ buildscript {
 5.
 
 Hit build/clean project in android studio and build your app.
-
-
-## FAQ
-
-### Channel List loading icons spins forever
-
-Not setting the lifecycle owner on a data binding can cause the channel list loading icon to spin forever.
-
-```java
-mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_chat, container, false);
-mBinding.setLifecycleOwner(this);
-```
-
-It's also possible that the permissions for your app are cached. Try uninstalling the app from your emulator and reinstalling to ensure you have the permissions required by this library.
-
-### Images are not loaded
-In most cases you can try to see the reason in logcat with tag `Glide`. One of the reasons is that app tries to load image from http url, but not https. To fix it you need to define [network security config](https://developer.android.com/training/articles/security-config).
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<network-security-config>
-    <!-- Keep in mind this example allows to make any http request, to define proper security config read Android documentation-->
-    <base-config cleartextTrafficPermitted="true" />
-</network-security-config>
-```
-
-And update your `Manifest`:
-
-```xml
-<application
-    android:networkSecurityConfig="@xml/network_security_config"/>
-```
-
-### Localize the UI with Translations
-
-You can translate all [strings](https://github.com/GetStream/stream-chat-android/blob/master/library/src/main/res/values/strings.xml) of SDK by overriding string keys.<br/>
-The example app has a few examples:
-- [German](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-de/strings.xml)
-- [Spanish](https://github.com/GetStream/stream-chat-android/blob/master/sample/src/main/res/values-es/strings.xml)
-- ...

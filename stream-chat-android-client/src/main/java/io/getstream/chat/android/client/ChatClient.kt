@@ -3,6 +3,7 @@ package io.getstream.chat.android.client
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
@@ -315,6 +316,37 @@ public class ChatClient internal constructor(
     }
 
     /***
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: String,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable {
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
+    }
+
+    /***
      * Subscribes to the specific [eventTypes] of the client.
      */
     public fun subscribeFor(
@@ -325,6 +357,37 @@ public class ChatClient internal constructor(
             eventTypes.any { type -> type.isInstance(event) }
         }
         return eventsObservable.subscribe(filter, listener)
+    }
+
+    /***
+     * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
+     *
+     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
+     */
+    public fun subscribeFor(
+        lifecycleOwner: LifecycleOwner,
+        vararg eventTypes: Class<out ChatEvent>,
+        listener: (event: ChatEvent) -> Unit
+    ): Disposable {
+        val disposable = subscribeFor(
+            *eventTypes,
+            listener = { event ->
+                if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    listener(event)
+                }
+            }
+        )
+
+        lifecycleOwner.lifecycle.addObserver(
+            object : LifecycleObserver {
+                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+                fun onDestroy() {
+                    disposable.dispose()
+                }
+            }
+        )
+
+        return disposable
     }
 
     /***
@@ -438,7 +501,11 @@ public class ChatClient internal constructor(
 
     public fun queryChannels(request: QueryChannelsRequest): Call<List<Channel>> {
         return api.queryChannels(request).map { channels ->
-            channels.map { channel -> channel.messages.forEach { message -> message.cid = channel.cid } }
+            channels.map { channel ->
+                channel.messages.forEach { message ->
+                    message.cid = channel.cid
+                }
+            }
             channels
         }
     }
@@ -589,7 +656,8 @@ public class ChatClient internal constructor(
 
     public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
 
-    public fun translate(messageId: String, language: String): Call<Message> = api.translate(messageId, language)
+    public fun translate(messageId: String, language: String): Call<Message> =
+        api.translate(messageId, language)
 
     public fun banUser(
         targetId: String,
