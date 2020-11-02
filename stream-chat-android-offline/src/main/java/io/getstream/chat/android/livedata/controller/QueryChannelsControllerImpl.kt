@@ -163,7 +163,7 @@ internal class QueryChannelsControllerImpl(
             val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
             domainImpl.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
-
+            domainImpl.repos.queryChannels.insert(queryEntity)
             domainImpl.storeStateForChannels(channelsResponse)
         } else {
             recoveryNeeded = true
@@ -202,7 +202,6 @@ internal class QueryChannelsControllerImpl(
             output = result
             if (result.isSuccess) {
                 updateChannelsAndQueryResults(output.data(), pagination.isFirstPage)
-                domainImpl.repos.queryChannels.insert(queryEntity)
             }
         } else {
             recoveryNeeded = true
