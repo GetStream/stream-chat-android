@@ -11,7 +11,6 @@ import io.getstream.chat.android.livedata.converter.ExtraDataConverter
 import io.getstream.chat.android.livedata.converter.FilterObjectConverter
 import io.getstream.chat.android.livedata.converter.ListConverter
 import io.getstream.chat.android.livedata.converter.MapConverter
-import io.getstream.chat.android.livedata.converter.QuerySortConverter
 import io.getstream.chat.android.livedata.converter.SetConverter
 import io.getstream.chat.android.livedata.converter.SyncStatusConverter
 import io.getstream.chat.android.livedata.dao.ChannelConfigDao
@@ -23,6 +22,7 @@ import io.getstream.chat.android.livedata.dao.SyncStateDao
 import io.getstream.chat.android.livedata.dao.UserDao
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.entity.ChannelEntity
+import io.getstream.chat.android.livedata.entity.ChannelSortInnerEntity
 import io.getstream.chat.android.livedata.entity.MessageEntity
 import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
@@ -32,6 +32,7 @@ import io.getstream.chat.android.livedata.entity.UserEntity
 @Database(
     entities = [
         QueryChannelsEntity::class,
+        ChannelSortInnerEntity::class,
         MessageEntity::class,
         UserEntity::class,
         ReactionEntity::class,
@@ -39,13 +40,12 @@ import io.getstream.chat.android.livedata.entity.UserEntity
         ChannelConfigEntity::class,
         SyncStateEntity::class
     ],
-    version = 26,
+    version = 27,
     exportSchema = false
 )
 
 @TypeConverters(
     FilterObjectConverter::class,
-    QuerySortConverter::class,
     ExtraDataConverter::class,
     ListConverter::class,
     MapConverter::class,

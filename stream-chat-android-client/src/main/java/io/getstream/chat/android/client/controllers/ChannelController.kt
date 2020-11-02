@@ -128,7 +128,7 @@ public interface ChannelController {
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort = QuerySort(),
+        sort: QuerySort<Member> = QuerySort(),
         members: List<Member> = emptyList()
     ): Call<List<Member>>
 }

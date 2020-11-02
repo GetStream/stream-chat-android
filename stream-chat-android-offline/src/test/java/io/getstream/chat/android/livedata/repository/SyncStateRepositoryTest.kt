@@ -16,7 +16,7 @@ internal class SyncStateRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        val syncState = SyncStateEntity(data.user1.id, listOf(data.channel1.id), listOf(data.query1.id), calendar(2020, 2, 2))
+        val syncState = SyncStateEntity(data.user1.id, listOf(data.channel1.id), listOf(QueryChannelsRepository.getId(data.query1)), calendar(2020, 2, 2))
         repo.insert(syncState)
         val syncStateFound = repo.select(data.user1.id)
         Truth.assertThat(syncStateFound).isEqualTo(syncState)

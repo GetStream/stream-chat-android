@@ -15,9 +15,9 @@ internal data class QueryMembersRequest(
     val offset: Int,
     val limit: Int,
     @IgnoreSerialisation
-    var querySort: QuerySort = QuerySort(),
+    var querySort: QuerySort<Member> = QuerySort(),
     val members: List<Member> = emptyList()
 ) {
-    val sort = querySort.data
+    val sort: List<Map<String, Any>> = querySort.toDto()
     val filter_conditions: Map<String, Any> = filter.toMap()
 }

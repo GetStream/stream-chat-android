@@ -4,7 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -16,22 +16,22 @@ internal class QueryChannelsImplRepositoryTest : BaseDomainTest() {
 
     @Test
     fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
-        queryChannelsEntity.channelCids = listOf("a", "b", "c")
-        repo.insert(queryChannelsEntity)
-        val entity = repo.select(queryChannelsEntity.id)
-        Truth.assertThat(queryChannelsEntity).isEqualTo(entity)
+        val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
+        queryChannelsSpec.cids = listOf("a", "b", "c")
+        repo.insert(queryChannelsSpec)
+        val fromDB = repo.selectByFilterAndQuerySort(queryChannelsSpec)
+        Truth.assertThat(queryChannelsSpec).isEqualTo(fromDB)
     }
 
     @Test
     fun testUpdate() = runBlocking(Dispatchers.IO) {
-        val queryChannelsEntity = QueryChannelsEntity(data.filter1, QuerySort())
-        queryChannelsEntity.channelCids = listOf("a", "b", "c")
-        repo.insert(queryChannelsEntity)
-        queryChannelsEntity.channelCids = listOf("a", "b", "c", "d")
-        repo.insert(queryChannelsEntity)
+        val queryChannelsSpec = QueryChannelsSpec(data.filter1, QuerySort())
+        queryChannelsSpec.cids = listOf("a", "b", "c")
+        repo.insert(queryChannelsSpec)
+        queryChannelsSpec.cids = listOf("a", "b", "c", "d")
+        repo.insert(queryChannelsSpec)
 
-        val entity = repo.select(queryChannelsEntity.id)
-        Truth.assertThat(entity).isEqualTo(queryChannelsEntity)
+        val fromDB = repo.selectByFilterAndQuerySort(queryChannelsSpec)
+        Truth.assertThat(fromDB).isEqualTo(queryChannelsSpec)
     }
 }
