@@ -21,9 +21,8 @@ public interface GetUnreadChannelCount {
 
 internal class GetUnreadChannelCountImpl(private val domainImpl: ChatDomainImpl) : GetUnreadChannelCount {
     override operator fun invoke(): Call<LiveData<Int>> {
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             Result(domainImpl.channelUnreadCount, null)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

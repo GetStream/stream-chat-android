@@ -31,14 +31,13 @@ public interface QueryChannels {
 internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : QueryChannels {
     override operator fun invoke(filter: FilterObject, sort: QuerySort, limit: Int, messageLimit: Int): Call<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             if (limit > 0) {
                 domainImpl.scope.launch {
                     queryChannelsControllerImpl.query(limit, messageLimit)
                 }
             }
-            Result<QueryChannelsController>(queryChannelsControllerImpl, null)
+            Result(queryChannelsControllerImpl, null)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

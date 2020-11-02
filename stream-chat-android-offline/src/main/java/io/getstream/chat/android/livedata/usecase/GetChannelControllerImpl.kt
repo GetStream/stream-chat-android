@@ -24,9 +24,8 @@ internal class GetChannelControllerImpl(private val domainImpl: ChatDomainImpl) 
         validateCid(cid)
 
         val channelControllerImpl = domainImpl.channel(cid)
-        val runnable = suspend {
-            Result<ChannelController>(channelControllerImpl, null)
+        return CoroutineCall(domainImpl.scope) {
+            Result(channelControllerImpl, null)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

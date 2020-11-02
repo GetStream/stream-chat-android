@@ -27,9 +27,8 @@ internal class ThreadLoadMoreImpl(private val domainImpl: ChatDomainImpl) : Thre
         val channelController = domainImpl.channel(cid)
         val threadController = channelController.getThread(parentId)
 
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             threadController.loadOlderMessages(messageLimit)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

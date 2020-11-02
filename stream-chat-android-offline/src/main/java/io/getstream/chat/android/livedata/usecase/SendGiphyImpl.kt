@@ -24,9 +24,8 @@ internal class SendGiphyImpl(private val domainImpl: ChatDomainImpl) : SendGiphy
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.sendGiphy(message)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

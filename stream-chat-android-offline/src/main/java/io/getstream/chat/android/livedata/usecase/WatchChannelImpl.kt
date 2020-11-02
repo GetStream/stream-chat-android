@@ -33,9 +33,8 @@ internal class WatchChannelImpl(private val domainImpl: ChatDomainImpl) : WatchC
             }
         }
 
-        val runnable = suspend {
-            Result<ChannelController>(channelController, null)
+        return CoroutineCall(domainImpl.scope) {
+            Result(channelController, null)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

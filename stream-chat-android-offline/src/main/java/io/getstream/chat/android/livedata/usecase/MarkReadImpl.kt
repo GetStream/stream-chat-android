@@ -23,9 +23,8 @@ internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.markRead()
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

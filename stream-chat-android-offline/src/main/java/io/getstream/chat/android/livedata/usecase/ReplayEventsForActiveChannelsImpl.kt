@@ -23,9 +23,8 @@ internal class ReplayEventsForActiveChannelsImpl(private val domainImpl: ChatDom
     override operator fun invoke(cid: String): Call<List<ChatEvent>> {
         validateCid(cid)
 
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             domainImpl.replayEventsForActiveChannels(cid)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

@@ -22,9 +22,8 @@ internal class KeystrokeImpl(private val domainImpl: ChatDomainImpl) : Keystroke
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.keystroke()
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

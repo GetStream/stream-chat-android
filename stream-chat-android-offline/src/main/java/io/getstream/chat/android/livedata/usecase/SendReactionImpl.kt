@@ -23,9 +23,8 @@ internal class SendReactionImpl(private val domainImpl: ChatDomainImpl) : SendRe
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.sendReaction(reaction)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

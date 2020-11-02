@@ -23,9 +23,8 @@ internal class DeleteReactionImpl(private val domainImpl: ChatDomainImpl) : Dele
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.deleteReaction(reaction)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

@@ -21,9 +21,8 @@ internal class StopTypingImpl(private val domainImpl: ChatDomainImpl) : StopTypi
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.stopTyping()
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

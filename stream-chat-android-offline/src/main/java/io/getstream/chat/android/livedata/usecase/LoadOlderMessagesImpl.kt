@@ -23,9 +23,8 @@ internal class LoadOlderMessagesImpl(private val domainImpl: ChatDomainImpl) : L
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.loadOlderMessages(messageLimit)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

@@ -18,9 +18,8 @@ public interface CreateChannel {
 
 internal class CreateChannelImpl(private val domainImpl: ChatDomainImpl) : CreateChannel {
     override operator fun invoke(channel: Channel): Call<Channel> {
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             domainImpl.createChannel(channel)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }

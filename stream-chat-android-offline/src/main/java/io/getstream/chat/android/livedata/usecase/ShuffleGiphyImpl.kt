@@ -24,9 +24,8 @@ internal class ShuffleGiphyImpl(private val domainImpl: ChatDomainImpl) : Shuffl
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             channelController.shuffleGiphy(message)
         }
-        return CoroutineCall(domainImpl.scope, runnable)
     }
 }
