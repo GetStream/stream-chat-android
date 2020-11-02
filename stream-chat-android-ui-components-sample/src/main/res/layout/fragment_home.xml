@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="@dimen/spacing_small"
             android:background="?selectableItemBackground"
             android:drawableStart="@drawable/ic_sign_out"
             android:drawablePadding="@dimen/spacing_medium"

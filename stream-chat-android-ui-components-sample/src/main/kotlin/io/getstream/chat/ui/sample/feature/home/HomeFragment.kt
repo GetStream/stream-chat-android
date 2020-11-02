@@ -16,6 +16,7 @@ import coil.load
 import coil.transform.CircleCropTransformation
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
+import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.setBadgeNumber
@@ -44,7 +45,12 @@ class HomeFragment : Fragment() {
         setupBottomNavigation()
         setupNavigationDrawer()
         viewModel.state.observe(viewLifecycleOwner, ::renderState)
-        viewModel.events.observe(viewLifecycleOwner) { navigateToLoginScreen() }
+        viewModel.events.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                navigateToLoginScreen()
+            }
+        )
     }
 
     override fun onDestroyView() {
