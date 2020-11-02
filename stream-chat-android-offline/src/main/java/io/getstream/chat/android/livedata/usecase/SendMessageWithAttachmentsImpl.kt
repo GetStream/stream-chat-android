@@ -17,11 +17,22 @@ public interface SendMessageWithAttachments {
         message = "Use sendMessage() and attachment.upload instead of this useCase",
         level = DeprecationLevel.WARNING
     )
-    public operator fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit = { }): Call<Message>
+    public operator fun invoke(
+        cid: String,
+        message: Message,
+        files: List<File>,
+        attachmentTransformer: Attachment.(file: File) -> Unit = { }
+    ): Call<Message>
 }
 
-internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) : SendMessageWithAttachments {
-    override fun invoke(cid: String, message: Message, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Call<Message> {
+internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomainImpl) :
+    SendMessageWithAttachments {
+    override fun invoke(
+        cid: String,
+        message: Message,
+        files: List<File>,
+        attachmentTransformer: Attachment.(file: File) -> Unit
+    ): Call<Message> {
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
@@ -37,7 +48,11 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
         }
     }
 
-    private suspend fun uploadFiles(channelControllerImpl: ChannelControllerImpl, files: List<File>, attachmentTransformer: Attachment.(file: File) -> Unit): Result<List<Attachment>> =
+    private suspend fun uploadFiles(
+        channelControllerImpl: ChannelControllerImpl,
+        files: List<File>,
+        attachmentTransformer: Attachment.(file: File) -> Unit
+    ): Result<List<Attachment>> =
         files.fold(Result(emptyList())) { acc, file ->
             if (acc.isError) {
                 acc
@@ -51,7 +66,10 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
             }
         }
 
-    private suspend fun uploadFile(channelControllerImpl: ChannelControllerImpl, file: File): Result<Attachment> =
+    private suspend fun uploadFile(
+        channelControllerImpl: ChannelControllerImpl,
+        file: File
+    ): Result<Attachment> =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(file.extension).let { mimetype ->
             val pathResult = when (mimetype.isImageMimetype()) {
                 true -> channelControllerImpl.sendImage(file)
