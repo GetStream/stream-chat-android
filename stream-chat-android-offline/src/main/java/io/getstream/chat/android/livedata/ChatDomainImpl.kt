@@ -258,7 +258,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            setOnline()
+            postOnline()
         }
         startListening()
         initClean()
