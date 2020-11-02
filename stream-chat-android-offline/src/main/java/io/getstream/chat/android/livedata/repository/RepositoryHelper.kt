@@ -62,7 +62,9 @@ internal class RepositoryHelper(
             // sqlite has window functions: https://sqlite.org/windowfunctions.html
             // but android runs a very dated version: https://developer.android.com/reference/android/database/sqlite/package-summary
             channelIds.map { cid ->
-                scope.async { cid to messages.selectMessagesEntitiesForChannel(cid, pagination) }
+                scope.async {
+                    cid to messages.selectMessagesEntitiesForChannel(cid, pagination)
+                }
             }.awaitAll().toMap()
         } else {
             emptyMap()

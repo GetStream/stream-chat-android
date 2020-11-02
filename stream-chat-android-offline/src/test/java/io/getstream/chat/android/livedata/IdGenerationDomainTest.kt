@@ -3,8 +3,10 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
+import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -31,38 +33,38 @@ internal class IdGenerationDomainTest : BaseDomainTest() {
 
     @Test
     fun queryId() {
-        val query = QueryChannelsEntity(
+        val query = QueryChannelsSpec(
             FilterObject(
                 "type",
                 "messaging"
             ),
             QuerySort()
         )
-        val query2 = QueryChannelsEntity(
+        val query2 = QueryChannelsSpec(
             FilterObject(
                 "type",
                 "messaging"
             ),
             QuerySort()
         )
-        val query3 = QueryChannelsEntity(
+        val query3 = QueryChannelsSpec(
             FilterObject(
                 "type",
                 "commerce"
             ),
             QuerySort()
         )
-        val query4 = QueryChannelsEntity(
+        val query4 = QueryChannelsSpec(
             FilterObject(
                 "type",
                 "messaging"
             ),
-            QuerySort().asc("name")
+            QuerySort<Channel>().asc("name")
         )
         // verify that 1 and 2 are equal
-        Truth.assertThat(query2.id).isEqualTo(query.id)
+        Truth.assertThat(QueryChannelsRepository.getId(query2)).isEqualTo(QueryChannelsRepository.getId(query))
         // verify that 3 and 4 are not equal to 2
-        Truth.assertThat(query2.id).isNotEqualTo(query3.id)
-        Truth.assertThat(query2.id).isNotEqualTo(query4.id)
+        Truth.assertThat(QueryChannelsRepository.getId(query2)).isNotEqualTo(QueryChannelsRepository.getId(query3))
+        Truth.assertThat(QueryChannelsRepository.getId(query2)).isNotEqualTo(QueryChannelsRepository.getId(query4))
     }
 }

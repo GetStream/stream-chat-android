@@ -17,8 +17,6 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
-import io.getstream.chat.android.livedata.extensions.comparator
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
 import kotlinx.coroutines.CoroutineScope
@@ -34,14 +32,14 @@ private const val CHANNEL_LIMIT = 30
 
 internal class QueryChannelsControllerImpl(
     override val filter: FilterObject,
-    override val sort: QuerySort,
+    override val sort: QuerySort<Channel>,
     private val client: ChatClient,
     private val domainImpl: ChatDomainImpl
 ) : QueryChannelsController {
     override var newChannelEventFilter: (Channel, FilterObject) -> Boolean = { _, _ -> true }
     override var recoveryNeeded: Boolean = false
 
-    val queryEntity: QueryChannelsEntity = QueryChannelsEntity(filter, sort)
+    val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
     private val job = SupervisorJob()
     val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
@@ -66,7 +64,13 @@ internal class QueryChannelsControllerImpl(
         memberLimit: Int = MEMBER_LIMIT
     ): QueryChannelsPaginationRequest {
         val channels = _channels.value ?: mapOf()
-        return QueryChannelsPaginationRequest(sort, channels.size, channelLimit, messageLimit, memberLimit)
+        return QueryChannelsPaginationRequest(
+            sort,
+            channels.size,
+            channelLimit,
+            messageLimit,
+            memberLimit
+        )
     }
 
     /**
@@ -121,7 +125,10 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
-    suspend fun loadMore(channelLimit: Int = CHANNEL_LIMIT, messageLimit: Int = MESSAGE_LIMIT): Result<List<Channel>> {
+    suspend fun loadMore(
+        channelLimit: Int = CHANNEL_LIMIT,
+        messageLimit: Int = MESSAGE_LIMIT
+    ): Result<List<Channel>> {
         val pagination = loadMoreRequest(channelLimit, messageLimit)
         return runQuery(pagination)
     }
@@ -131,15 +138,25 @@ internal class QueryChannelsControllerImpl(
         messageLimit: Int = MESSAGE_LIMIT,
         memberLimit: Int = MEMBER_LIMIT
     ): Result<List<Channel>> {
-        return runQuery(QueryChannelsPaginationRequest(sort, INITIAL_CHANNEL_OFFSET, channelLimit, messageLimit, memberLimit))
+        return runQuery(
+            QueryChannelsPaginationRequest(
+                sort,
+                INITIAL_CHANNEL_OFFSET,
+                channelLimit,
+                messageLimit,
+                memberLimit
+            )
+        )
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryEntity = domainImpl.repos.queryChannels.select(queryEntity.id)
+        val queryChannelsSpec =
+            domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
         var channels: List<Channel>? = null
 
-        if (queryEntity != null) {
-            channels = domainImpl.selectAndEnrichChannels(queryEntity.channelCids.toList(), pagination)
+        if (queryChannelsSpec != null) {
+            channels =
+                domainImpl.selectAndEnrichChannels(queryChannelsSpec.cids.toList(), pagination)
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
@@ -161,10 +178,16 @@ internal class QueryChannelsControllerImpl(
                 _endOfChannels.postValue(true)
             }
             // first things first, store the configs
-            val configEntities = channelsResponse.associateBy { it.type }.values.map { ChannelConfigEntity(it.type, it.config) }
+            val configEntities = channelsResponse.associateBy { it.type }.values.map {
+                ChannelConfigEntity(
+                    it.type,
+                    it.config
+                )
+            }
             domainImpl.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
-            domainImpl.repos.queryChannels.insert(queryEntity)
+            updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
+            domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
             updateChannelsAndQueryResults(channelsResponse, pagination.isFirstPage)
         } else {
@@ -172,6 +195,11 @@ internal class QueryChannelsControllerImpl(
             domainImpl.addError(response.error())
         }
         return response
+    }
+
+    private fun updateQueryChannelsSpec(channels: List<Channel>, isFirstPage: Boolean) {
+        val newCids = channels.map(Channel::cid)
+        queryChannelsSpec.cids = if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
@@ -182,7 +210,10 @@ internal class QueryChannelsControllerImpl(
         }
         if (loader.value == true) {
             logger.logI("Another query channels request is in progress. Ignoring this request.")
-            return Result(null, ChatError("Another query channels request is in progress. Ignoring this request."))
+            return Result(
+                null,
+                ChatError("Another query channels request is in progress. Ignoring this request.")
+            )
         }
         loader.postValue(true)
         // start by getting the query results from offline storage
@@ -254,7 +285,7 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun refreshChannels(cIds: List<String>) {
-        val cIdsInQuery = queryEntity.channelCids.intersect(cIds)
+        val cIdsInQuery = queryChannelsSpec.cids.intersect(cIds)
         val newChannels = cIdsInQuery.map { domainImpl.channel(it).toChannel() }
         val existingChannelMap = _channels.value?.toMutableMap() ?: mutableMapOf()
 
@@ -276,7 +307,7 @@ internal class QueryChannelsControllerImpl(
      * @see ChannelController
      */
     private fun addToQueryResult(cIds: List<String>) {
-        queryEntity.channelCids = (queryEntity.channelCids + cIds).distinct()
+        queryChannelsSpec.cids = (queryChannelsSpec.cids + cIds).distinct()
         refreshChannels(cIds)
     }
 
@@ -291,7 +322,7 @@ internal class QueryChannelsControllerImpl(
      */
     private fun setQueryResult(cIds: List<String>) {
         // If you query for page 1 we remove the old data
-        queryEntity.channelCids = cIds
+        queryChannelsSpec.cids = cIds
         refreshChannels(cIds)
     }
 }

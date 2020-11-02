@@ -2,11 +2,12 @@ package io.getstream.chat.android.livedata.request
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Channel
 
 internal class AnyChannelPaginationRequest(var messageLimit: Int = 30) {
     var messageFilterDirection: Pagination? = null
     var messageFilterValue: String = ""
-    var sort: QuerySort = QuerySort()
+    var sort: QuerySort<Channel> = QuerySort()
 
     var channelLimit: Int = 30
     var channelOffset: Int = 0

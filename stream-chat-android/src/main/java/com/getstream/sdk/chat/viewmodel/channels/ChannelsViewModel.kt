@@ -26,7 +26,7 @@ import io.getstream.chat.android.livedata.ChatDomain
 public class ChannelsViewModel(
     private val chatDomain: ChatDomain = ChatDomain.instance(),
     private val filter: FilterObject = Filters.and(eq("type", "messaging"), Filters.`in`("members", listOf(chatDomain.currentUser.id))),
-    private val sort: QuerySort = DEFAULT_SORT,
+    private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModel() {
     private val channelsData: LiveData<State>
@@ -104,6 +104,6 @@ public class ChannelsViewModel(
 
     public companion object {
         @JvmField
-        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
+        public val DEFAULT_SORT: QuerySort<Channel> = QuerySort.desc("last_updated")
     }
 }

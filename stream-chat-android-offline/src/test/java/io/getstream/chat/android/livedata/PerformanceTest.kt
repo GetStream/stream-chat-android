@@ -6,7 +6,7 @@ import com.google.common.truth.Truth
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.ChannelDiffCallback
 import io.getstream.chat.android.livedata.utils.LiveDiffCounter
 import io.getstream.chat.android.livedata.utils.MessageDiffCallback
@@ -35,7 +35,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
             counter.onEvent(channels)
         }
         // Insert a query, channel and message into offline storage
-        val query = QueryChannelsEntity(data.filter1, QuerySort()).apply { channelCids = listOf(data.channel1.cid) }
+        val query = QueryChannelsSpec(data.filter1, QuerySort()).apply { cids = listOf(data.channel1.cid) }
         chatDomainImpl.repos.channels.insertChannel(data.channel1)
         chatDomainImpl.repos.messages.insert(data.message1)
         chatDomainImpl.repos.queryChannels.insert(query)

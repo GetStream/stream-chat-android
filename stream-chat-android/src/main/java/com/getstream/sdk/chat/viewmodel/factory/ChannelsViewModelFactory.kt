@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
@@ -23,7 +24,7 @@ public class ChannelsViewModelFactory @JvmOverloads constructor(
         Filters.eq("type", "messaging"),
         Filters.`in`("members", listOf(ChatDomain.instance().currentUser.id))
     ),
-    private val sort: QuerySort = ChannelsViewModel.DEFAULT_SORT,
+    private val sort: QuerySort<Channel> = ChannelsViewModel.DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

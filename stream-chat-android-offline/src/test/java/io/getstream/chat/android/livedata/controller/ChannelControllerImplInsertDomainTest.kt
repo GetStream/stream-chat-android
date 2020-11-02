@@ -7,7 +7,6 @@ import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.entity.ReactionEntity
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
@@ -129,8 +128,8 @@ internal class ChannelControllerImplInsertDomainTest : BaseConnectedIntegrationT
     @Test
     fun insertQuery() = runBlocking(Dispatchers.IO) {
         val filter = Filters.eq("type", "messaging")
-        val query = QueryChannelsEntity(filter, QuerySort())
-        query.channelCids = listOf("messaging:123", "messaging:234")
+        val query = QueryChannelsSpec(filter, QuerySort())
+        query.cids = listOf("messaging:123", "messaging:234")
         chatDomainImpl.repos.queryChannels.insert(query)
     }
 

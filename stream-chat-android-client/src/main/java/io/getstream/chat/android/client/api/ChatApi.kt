@@ -553,7 +553,7 @@ internal class ChatApi(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort,
+        sort: QuerySort<Member>,
         members: List<Member>
     ): Call<List<Member>> {
         return retrofitApi.queryMembers(

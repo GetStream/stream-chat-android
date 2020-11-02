@@ -383,7 +383,7 @@ internal class ChannelControllerImpl(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort,
+        sort: QuerySort<Member>,
         members: List<Member>
     ): Call<List<Member>> {
         return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)

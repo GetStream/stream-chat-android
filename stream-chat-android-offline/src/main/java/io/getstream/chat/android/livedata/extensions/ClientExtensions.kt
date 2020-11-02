@@ -1,6 +1,5 @@
 package io.getstream.chat.android.livedata.extensions
 
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.models.Channel
@@ -10,10 +9,6 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
-
-private const val EQUAL_ON_COMPARISON = 0
 
 internal fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) + user
 
@@ -46,13 +41,17 @@ internal fun Message.addReaction(reaction: Reaction, isMine: Boolean) {
 internal fun Message.removeReaction(reaction: Reaction, updateCounts: Boolean) {
 
     val countBeforeFilter = ownReactions.size + latestReactions.size
-    ownReactions = ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
+    ownReactions =
+        ownReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
+            .toMutableList()
     latestReactions =
-        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }.toMutableList()
+        latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId }
+            .toMutableList()
     val countAfterFilter = ownReactions.size + latestReactions.size
 
     if (updateCounts) {
-        val shouldDecrement = countBeforeFilter > countAfterFilter || this.latestReactions.size >= 15
+        val shouldDecrement =
+            countBeforeFilter > countAfterFilter || this.latestReactions.size >= 15
         if (shouldDecrement) {
             this.reactionCounts = this.reactionCounts.toMutableMap()
             val currentCount = this.reactionCounts.getOrElse(reaction.type) { 1 }
@@ -77,7 +76,8 @@ internal val Channel.lastMessage: Message?
 
 internal fun Channel.updateLastMessage(message: Message) {
     val createdAt = message.createdAt ?: message.createdLocallyAt
-    val messageCreatedAt = checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
+    val messageCreatedAt =
+        checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
     val updateNeeded = message.id == lastMessage?.id
     val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
@@ -138,53 +138,7 @@ public fun ChatError.isPermanent(): Boolean {
 }
 
 internal fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> =
-    sortedWith(pagination.sort.comparator).drop(pagination.channelOffset).take(pagination.channelLimit)
-
-internal val QuerySort.comparator: Comparator<in Channel>
-    get() =
-        CompositeComparator(data.mapNotNull { it.comparator as? Comparator<Channel> })
-
-private val snakeRegex = "_[a-zA-Z]".toRegex()
-
-/**
- * turns created_at into createdAt
- */
-internal fun String.snakeToLowerCamelCase(): String {
-    return snakeRegex.replace(this) {
-        it.value.replace("_", "")
-            .toUpperCase()
-    }
-}
-
-internal val Map<String, Any>.comparator: Comparator<in Channel>?
-    get() =
-        (this["field"] as? String)?.let { fieldName ->
-            (this["direction"] as? Int)?.let { sortDirection ->
-                Channel::class.declaredMemberProperties
-                    .find { it.name == fieldName.snakeToLowerCamelCase() }
-                    ?.comparator(sortDirection)
-            }
-        }
-
-internal fun KProperty1<Channel, *>?.comparator(sortDirection: Int): Comparator<Channel>? =
-    this?.let { compareProperty ->
-        Comparator { c0, c1 ->
-            (compareProperty.getter.call(c0) as? Comparable<Any>)?.let { a ->
-                (compareProperty.getter.call(c1) as? Comparable<Any>)?.let { b ->
-                    a.compareTo(b) * sortDirection
-                }
-            } ?: EQUAL_ON_COMPARISON
-        }
-    }
-
-internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
-    override fun compare(o1: T, o2: T): Int =
-        comparators.fold(EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->
-            when (currentComparisonValue) {
-                EQUAL_ON_COMPARISON -> comparator.compare(o1, o2)
-                else -> currentComparisonValue
-            }
-        }
-}
+    asSequence().sortedWith(pagination.sort.comparator).drop(pagination.channelOffset)
+        .take(pagination.channelLimit).toList()
 
 internal fun String?.isImageMimetype() = this?.contains("image") ?: false

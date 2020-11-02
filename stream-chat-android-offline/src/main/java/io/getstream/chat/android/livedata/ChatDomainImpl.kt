@@ -31,6 +31,7 @@ import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.users
+import io.getstream.chat.android.livedata.repository.QueryChannelsRepository
 import io.getstream.chat.android.livedata.repository.RepositoryFactory
 import io.getstream.chat.android.livedata.repository.RepositoryHelper
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -246,9 +247,9 @@ internal class ChatDomainImpl internal constructor(
                     channel(channelId)
                 }
                 // queries
-                val queries = repos.queryChannels.select(it.activeQueryIds)
-                for (queryEntity in queries) {
-                    queryChannels(queryEntity.filter, queryEntity.sort)
+                val queries = repos.queryChannels.selectById(it.activeQueryIds)
+                for (queryChannelsSpec in queries) {
+                    queryChannels(queryChannelsSpec.filter, queryChannelsSpec.sort)
                 }
             }
             syncState
@@ -304,10 +305,11 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal suspend fun storeSyncState(): SyncStateEntity? {
-        syncState?.let {
-            it.activeChannelIds = activeChannelMapImpl.keys().toList()
-            it.activeQueryIds = activeQueryMapImpl.values.toList().map { it.queryEntity.id }
-            repos.syncState.insert(it)
+        syncState?.let { syncState ->
+            syncState.activeChannelIds = activeChannelMapImpl.keys().toList()
+            syncState.activeQueryIds =
+                activeQueryMapImpl.values.toList().map { QueryChannelsRepository.getId(it.queryChannelsSpec) }
+            repos.syncState.insert(syncState)
         }
 
         return syncState
@@ -540,7 +542,7 @@ internal class ChatDomainImpl internal constructor(
      */
     fun queryChannels(
         filter: FilterObject,
-        sort: QuerySort
+        sort: QuerySort<Channel>
     ): QueryChannelsControllerImpl =
         activeQueryMapImpl.getOrPut("${filter.hashCode()}-${sort.hashCode()}") {
             QueryChannelsControllerImpl(
@@ -594,7 +596,7 @@ internal class ChatDomainImpl internal constructor(
         for (queryRepo in queriesToRetry) {
             val response = queryRepo.runQueryOnline(
                 QueryChannelsPaginationRequest(
-                    QuerySort(),
+                    QuerySort<Channel>(),
                     INITIAL_CHANNEL_OFFSET,
                     CHANNEL_LIMIT,
                     MESSAGE_LIMIT,
