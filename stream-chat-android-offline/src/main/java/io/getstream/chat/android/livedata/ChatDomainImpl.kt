@@ -53,6 +53,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.InputMismatchException
 import java.util.UUID
@@ -194,15 +195,13 @@ internal class ChatDomainImpl internal constructor(
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
-    private fun clearState() {
-        scope.launch(Dispatchers.Main) {
-            _initialized.value = false
-            _online.value = false
-            _totalUnreadCount.value = 0
-            _channelUnreadCount.value = 0
-            _banned.value = false
-            _mutedUsers.value = emptyList()
-        }
+    private suspend fun clearState() = withContext(Dispatchers.Main) {
+        _initialized.value = false
+        _online.value = false
+        _totalUnreadCount.value = 0
+        _channelUnreadCount.value = 0
+        _banned.value = false
+        _mutedUsers.value = emptyList()
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
     }
@@ -218,8 +217,6 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setUser(user: User) {
-        clearState()
-
         currentUser = user
 
         if (backgroundSyncEnabled && !isTestRunner()) {
@@ -237,6 +234,10 @@ internal class ChatDomainImpl internal constructor(
 
         // load channel configs from Room into memory
         initJob = scope.async(scope.coroutineContext) {
+            clearState()
+            if (client.isSocketConnected()) {
+                setOnline()
+            }
             // fetch the configs for channels
             repos.configs.load()
 
@@ -259,9 +260,6 @@ internal class ChatDomainImpl internal constructor(
             syncState
         }
 
-        if (client.isSocketConnected()) {
-            setOnline()
-        }
         startListening()
         initClean()
     }
@@ -509,11 +507,9 @@ internal class ChatDomainImpl internal constructor(
         _online.postValue(false)
     }
 
-    internal fun setOnline() {
+    internal suspend fun setOnline() = withContext(Dispatchers.Main) {
         isOnline = true
-        scope.launch(Dispatchers.Main) {
-            _online.value = true
-        }
+        _online.value = true
     }
 
     internal fun postOnline() {
