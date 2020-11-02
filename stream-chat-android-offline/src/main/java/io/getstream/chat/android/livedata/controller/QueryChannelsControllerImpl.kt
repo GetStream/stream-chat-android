@@ -143,6 +143,7 @@ internal class QueryChannelsControllerImpl(
             logger.logI("found ${channels.size} channels in offline storage")
         }
 
+        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
         return channels
     }
 
@@ -165,6 +166,7 @@ internal class QueryChannelsControllerImpl(
             logger.logI("api call returned ${channelsResponse.size} channels")
             domainImpl.repos.queryChannels.insert(queryEntity)
             domainImpl.storeStateForChannels(channelsResponse)
+            updateChannelsAndQueryResults(channelsResponse, pagination.isFirstPage)
         } else {
             recoveryNeeded = true
             domainImpl.addError(response.error())
@@ -192,20 +194,13 @@ internal class QueryChannelsControllerImpl(
         } else { null }
         val channels = queryOfflineJob.await()
 
-        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
-
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
-        val output: Result<List<Channel>>
-        if (queryOnlineJob != null) {
-            val result = queryOnlineJob.await()
-            output = result
-            if (result.isSuccess) {
-                updateChannelsAndQueryResults(output.data(), pagination.isFirstPage)
-            }
+        val output: Result<List<Channel>> = if (queryOnlineJob != null) {
+            queryOnlineJob.await()
         } else {
             recoveryNeeded = true
-            output = channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
+            channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.postValue(false)
         return output
