@@ -5,25 +5,22 @@ import androidx.annotation.Nullable
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import io.getstream.chat.android.client.logger.ChatLogger
 import java.util.concurrent.atomic.AtomicBoolean
 
 class SingleLiveEvent<T> : MutableLiveData<T>() {
 
-    private val logger = ChatLogger.get("SingleLiveEvent")
-    private val mPending = AtomicBoolean(false)
+    private val pending = AtomicBoolean(false)
 
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         if (hasActiveObservers()) {
-            logger.logD("Multiple observers registered but only one will be notified of changes.")
+            throw IllegalStateException("SingleLiveEvent can be be observed by only one observer")
         }
 
-        // Observe the internal MutableLiveData
         super.observe(
             owner,
-            { t ->
-                if (mPending.compareAndSet(true, false)) {
-                    observer.onChanged(t)
+            {
+                if (pending.compareAndSet(true, false)) {
+                    observer.onChanged(it)
                 }
             }
         )
@@ -31,7 +28,7 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
 
     @MainThread
     override fun setValue(@Nullable t: T?) {
-        mPending.set(true)
+        pending.set(true)
         super.setValue(t)
     }
 
