@@ -51,7 +51,7 @@ import java.util.Date
  */
 internal class MessageListItemLiveData(
     private val currentUser: User,
-    private val messagesLd: LiveData<List<Message>>,
+    messagesLd: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
@@ -183,7 +183,6 @@ internal class MessageListItemLiveData(
         // start at the end, optimized for the most common scenario that most people are watching the chat
         for ((i, messageItem) in messages.reversed().withIndex()) {
             if (messageItem is MessageListItem.MessageItem) {
-                val messageItem = messageItem as MessageListItem.MessageItem
                 messageItem.message.createdAt?.let {
                     while (sortedReads.isNotEmpty()) {
                         // use the list of sorted reads
