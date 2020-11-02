@@ -185,7 +185,7 @@ internal class ChatDomainImpl internal constructor(
     internal val scope = CoroutineScope(Dispatchers.IO + job)
 
     internal lateinit var repos: RepositoryHelper
-    internal var syncState: SyncStateEntity? = null
+    private var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
     private var isOnline = false
@@ -213,7 +213,7 @@ internal class ChatDomainImpl internal constructor(
         Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
     }
 
-    fun isTestRunner(): Boolean {
+    private fun isTestRunner(): Boolean {
         return Build.FINGERPRINT.toLowerCase().contains("robolectric")
     }
 
