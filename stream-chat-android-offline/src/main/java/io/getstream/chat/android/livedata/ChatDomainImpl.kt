@@ -159,7 +159,10 @@ internal class ChatDomainImpl internal constructor(
     override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
 
     /** the event subscription, cancel using repo.stopListening */
-    private var eventSubscription: Disposable? = null
+    private var eventSubscription: Disposable = object : Disposable {
+        override val isDisposed: Boolean = true
+        override fun dispose() { }
+    }
 
     /** stores the mapping from cid to channelRepository */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
@@ -258,6 +261,8 @@ internal class ChatDomainImpl internal constructor(
         if (client.isSocketConnected()) {
             setOnline()
         }
+        startListening()
+        initClean()
     }
 
     init {
@@ -282,12 +287,6 @@ internal class ChatDomainImpl internal constructor(
                 }
             }
         }
-
-        // start listening for events
-        startListening()
-        initClean()
-
-        // TODO monitor connectivity at OS level
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -447,20 +446,19 @@ internal class ChatDomainImpl internal constructor(
     /**
      * Start listening to chat events and keep the room database in sync
      */
-    fun startListening() {
-        if (eventSubscription != null) {
-            return
-        }
-        eventSubscription = client.subscribe {
-            eventHandler.handleEvents(listOf(it))
+    private fun startListening() {
+        if (eventSubscription.isDisposed) {
+            eventSubscription = client.subscribe {
+                eventHandler.handleEvents(listOf(it))
+            }
         }
     }
 
     /**
      * Stop listening to chat events
      */
-    fun stopListening() {
-        eventSubscription?.dispose()
+    private fun stopListening() {
+        eventSubscription.dispose()
     }
 
     internal fun channel(c: Channel): ChannelControllerImpl {
