@@ -12,6 +12,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.Config
@@ -26,7 +27,6 @@ import io.getstream.chat.android.livedata.usecase.SendMessageWithAttachments
 import io.getstream.chat.android.livedata.usecase.StopTyping
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
-import io.getstream.chat.android.livedata.utils.Call2
 import org.amshove.kluent.Verify
 import org.amshove.kluent.When
 import org.amshove.kluent.any
@@ -51,7 +51,7 @@ internal class MessageInputViewModelTest {
     private val editMessage: EditMessage = mock()
     private val keystroke: Keystroke = mock()
     private val stopTyping: StopTyping = mock()
-    private val channelControllerCall: Call2<ChannelController> = mock()
+    private val channelControllerCall: Call<ChannelController> = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelController: ChannelController = mock()
     private val commands: List<Command> = createCommands()

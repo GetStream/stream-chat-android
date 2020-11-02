@@ -12,6 +12,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.spy
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.utils.Result
@@ -19,7 +20,6 @@ import io.getstream.chat.android.livedata.ChatDomain
 import io.getstream.chat.android.livedata.controller.ChannelController
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
-import io.getstream.chat.android.livedata.utils.Call2
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -36,7 +36,7 @@ internal class ChannelHeaderViewModelTest {
     private val chatDomain: ChatDomain = mock()
     private val useCases: UseCaseHelper = mock()
     private val watchChannel: WatchChannel = mock()
-    private val channelControllerCall: Call2<ChannelController> = mock()
+    private val channelControllerCall: Call<ChannelController> = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelController: ChannelController = mock()
 
