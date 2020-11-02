@@ -7,6 +7,7 @@ import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.viewholder.message.BaseMessageListItemViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.DateSeparatorViewHolder
+import com.getstream.sdk.chat.adapter.viewholder.message.LoadingMoreViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.MessageListItemViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.ThreadSeparatorViewHolder
 import com.getstream.sdk.chat.adapter.viewholder.message.TypingIndicatorViewHolder
@@ -23,6 +24,7 @@ public open class MessageViewHolderFactory {
         public const val MESSAGEITEM_MESSAGE: Int = 2
         public const val MESSAGEITEM_TYPING: Int = 3
         public const val MESSAGEITEM_THREAD_SEPARATOR: Int = 4
+        public const val MESSAGEITEM_LOADING_MORE: Int = 5
     }
 
     public lateinit var listenerContainer: ListenerContainer
@@ -38,6 +40,7 @@ public open class MessageViewHolderFactory {
             is TypingItem -> MESSAGEITEM_TYPING
             is MessageItem -> MESSAGEITEM_MESSAGE
             is ThreadSeparatorItem -> MESSAGEITEM_THREAD_SEPARATOR
+            is MessageListItem.LoadingMoreIndicatorItem -> MESSAGEITEM_LOADING_MORE
             else -> throw IllegalArgumentException("MessageListItem type could not be determined")
         }
     }
@@ -68,12 +71,10 @@ public open class MessageViewHolderFactory {
                     listenerContainer.userClickListener,
                     listenerContainer.readStateClickListener
                 )
-            MESSAGEITEM_TYPING ->
-                TypingIndicatorViewHolder(parent, style)
-            MESSAGEITEM_THREAD_SEPARATOR ->
-                ThreadSeparatorViewHolder(parent)
-            else ->
-                throw IllegalArgumentException("Unhandled message view type ($viewType)")
+            MESSAGEITEM_TYPING -> TypingIndicatorViewHolder(parent, style)
+            MESSAGEITEM_THREAD_SEPARATOR -> ThreadSeparatorViewHolder(parent)
+            MESSAGEITEM_LOADING_MORE -> LoadingMoreViewHolder(parent)
+            else -> throw IllegalArgumentException("Unhandled message view type ($viewType)")
         }
     }
 
