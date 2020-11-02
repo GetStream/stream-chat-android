@@ -194,14 +194,13 @@ internal class ChatDomainImpl internal constructor(
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
-    internal fun clearState() {
-        _initialized.value = false
-        _online.value = false
-        _totalUnreadCount.value = 0
-        _channelUnreadCount.value = 0
-        _banned.value = false
+    private fun clearState() {
+        _initialized.postValue(false)
+        _online.postValue(false)
+        _totalUnreadCount.postValue(0)
+        _channelUnreadCount.postValue(0)
+        _banned.postValue(false)
         _mutedUsers.value = emptyList()
-
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
     }
