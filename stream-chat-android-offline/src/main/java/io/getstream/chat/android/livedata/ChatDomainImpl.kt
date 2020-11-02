@@ -511,7 +511,9 @@ internal class ChatDomainImpl internal constructor(
 
     internal fun setOnline() {
         isOnline = true
-        _online.value = true
+        scope.launch(Dispatchers.Main) {
+            _online.value = true
+        }
     }
 
     internal fun postOnline() {
