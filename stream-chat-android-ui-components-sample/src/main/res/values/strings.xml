@@ -18,4 +18,16 @@
     <string name="custom_login_field_user_name_hint">User name (optional)</string>
     <string name="custom_login_validation_error">This field is required</string>
 
+    <!--Home screen-->
+    <string name="home_drawer_new_direct_message">New Direct Message</string>
+    <string name="home_drawer_new_group">New Group</string>
+    <string name="home_drawer_sign_out">Sign Out</string>
+    <string name="home_bottom_nav_chats">Chats</string>
+    <string name="home_bottom_nav_mentions">Mentions</string>
+
+    <!--Direct chat screen-->
+    <string name="direct_chat_title">New chat</string>
+
+    <!--Group chat screen-->
+    <string name="group_chat_title">New group chat</string>
 </resources>

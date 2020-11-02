@@ -61,7 +61,7 @@ class UserLoginFragment : Fragment() {
             Observer {
                 when (it) {
                     is State.AvailableUsers -> renderAvailableUsers(it.availableUsers)
-                    is State.RedirectToChannels -> redirectToChannelsScreen()
+                    is State.RedirectToChannels -> redirectToHomeScreen()
                     is State.Loading -> changeLoadingIndicatorVisibility(true)
                     is State.Error -> showErrorMessage(it.errorMessage)
                 }
@@ -78,8 +78,8 @@ class UserLoginFragment : Fragment() {
         }
     }
 
-    private fun redirectToChannelsScreen() {
-        findNavController().navigateSafely(R.id.action_userLoginFragment_to_channelsFragment)
+    private fun redirectToHomeScreen() {
+        findNavController().navigateSafely(R.id.action_userLoginFragment_to_homeFragment)
     }
 
     private fun redirectToCustomLoginScreen() {

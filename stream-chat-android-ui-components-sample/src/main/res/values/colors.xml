@@ -11,4 +11,8 @@
     <color name="white">#FFFFFF</color>
 
     <color name="login_text">@color/black</color>
+
+    <color name="bottom_nav_selected_color">@color/black</color>
+    <color name="bottom_nav_unselected_color">@color/grey_dark</color>
+    <color name="bottom_nav_badge_color">#FF3742</color>
 </resources>
