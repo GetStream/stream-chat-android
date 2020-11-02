@@ -3,9 +3,11 @@ package io.getstream.chat.sample.data.user
 data class SampleUser(
     val id: String,
     val name: String,
-    val token: String,
-    val image: String = "https://api.adorable.io/avatars/285/$id.png"
+    val token: String
 ) {
+
+    val image: String
+        get() = "https://getstream.io/random_png?id=$id&name=$name"
 
     companion object {
         val None: SampleUser = SampleUser("", "", "")

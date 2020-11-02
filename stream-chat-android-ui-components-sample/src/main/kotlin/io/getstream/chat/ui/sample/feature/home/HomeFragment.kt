@@ -43,12 +43,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
         setupNavigationDrawer()
-        viewModel.state.observe(viewLifecycleOwner) {
-            when (it) {
-                is HomeFragmentViewModel.State.Result -> renderState(it)
-                is HomeFragmentViewModel.State.NavigateToLoginScreen -> navigateToLoginScreen()
-            }
-        }
+        viewModel.state.observe(viewLifecycleOwner, ::renderState)
+        viewModel.events.observe(viewLifecycleOwner) { navigateToLoginScreen() }
     }
 
     override fun onDestroyView() {
@@ -74,11 +70,11 @@ class HomeFragment : Fragment() {
         nameTextView = header.findViewById(R.id.nameTextView)
 
         binding.signOutTextView.setOnClickListener {
-            viewModel.onEvent(HomeFragmentViewModel.UiAction.LogoutClicked)
+            viewModel.onUiAction(HomeFragmentViewModel.UiAction.LogoutClicked)
         }
     }
 
-    private fun renderState(state: HomeFragmentViewModel.State.Result) {
+    private fun renderState(state: HomeFragmentViewModel.State) {
         binding.bottomNavigationView.setBangeNumber(R.id.channels_fragment, state.totalUnreadCount)
         binding.bottomNavigationView.setBangeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
 
