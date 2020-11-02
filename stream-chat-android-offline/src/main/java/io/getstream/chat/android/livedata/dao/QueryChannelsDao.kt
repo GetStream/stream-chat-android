@@ -24,21 +24,20 @@ internal interface QueryChannelsDao {
 
     @Transaction
     suspend fun insert(queryWithSorts: QueryChannelsWithSorts) {
+        deleteSortEntitiesFor(queryWithSorts.query.id)
         insert(queryWithSorts.query)
         queryWithSorts.sortInnerEntities.forEach { sortEntity -> insert(sortEntity) }
     }
 
     @Transaction
-    @Query(
-        "SELECT * FROM stream_channel_query " +
-            "WHERE stream_channel_query.id=:id"
-    )
+    @Query("DELETE FROM channel_sort_inner_entity WHERE queryId = :queryId")
+    suspend fun deleteSortEntitiesFor(queryId: String)
+
+    @Transaction
+    @Query("SELECT * FROM stream_channel_query WHERE stream_channel_query.id=:id")
     suspend fun select(id: String): QueryChannelsWithSorts?
 
     @Transaction
-    @Query(
-        "SELECT * FROM stream_channel_query " +
-            "WHERE stream_channel_query.id IN (:ids)"
-    )
+    @Query("SELECT * FROM stream_channel_query WHERE stream_channel_query.id IN (:ids)")
     suspend fun select(ids: List<String>): List<QueryChannelsWithSorts>
 }

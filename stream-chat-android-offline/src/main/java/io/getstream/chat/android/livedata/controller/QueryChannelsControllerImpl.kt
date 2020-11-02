@@ -186,11 +186,7 @@ internal class QueryChannelsControllerImpl(
             }
             domainImpl.repos.configs.insert(configEntities)
             logger.logI("api call returned ${channelsResponse.size} channels")
-            // TODO: if you are on the first page, ie pagination.isFirstPage()
-            // you should delete the old results for this query (or even better delete the ones that ar eremoved)
-            // IE first pass you receive channel 1, 2, 3
-            // Second time you come back to the app you receive 2,3,4
-            // you should delete the result item for channel 1
+            updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
             updateChannelsAndQueryResults(channelsResponse, pagination.isFirstPage)
@@ -199,6 +195,11 @@ internal class QueryChannelsControllerImpl(
             domainImpl.addError(response.error())
         }
         return response
+    }
+
+    private fun updateQueryChannelsSpec(channels: List<Channel>, isFirstPage: Boolean) {
+        val newCids = channels.map(Channel::cid)
+        queryChannelsSpec.cids = if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
