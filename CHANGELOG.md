@@ -18,6 +18,7 @@
 
 ## stream-chat-android-offline
 - Add GetChannelController use cases which allows to get ChannelController for Channel
+- Fix not storing channels when run channels fetching after connection recovery.
 
 # Oct 26th, 2020 - 4.4.0
 ## stream-chat-android
