@@ -20,13 +20,13 @@ internal interface QueryChannelsDao {
     suspend fun insert(queryChannelsEntity: QueryChannelsEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(sortInnerEntity: ChannelSortInnerEntity)
+    suspend fun insert(sortInnerEntities: List<ChannelSortInnerEntity>)
 
     @Transaction
     suspend fun insert(queryWithSorts: QueryChannelsWithSorts) {
         deleteSortEntitiesFor(queryWithSorts.query.id)
         insert(queryWithSorts.query)
-        queryWithSorts.sortInnerEntities.forEach { sortEntity -> insert(sortEntity) }
+        insert(queryWithSorts.sortInnerEntities)
     }
 
     @Transaction
