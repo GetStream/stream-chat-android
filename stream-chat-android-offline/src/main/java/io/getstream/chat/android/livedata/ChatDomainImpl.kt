@@ -114,7 +114,7 @@ internal class ChatDomainImpl internal constructor(
     private val syncModule by lazy { SyncProvider(appContext) }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    override var useCases: UseCaseHelper = UseCaseHelper(this)
+    override val useCases: UseCaseHelper = UseCaseHelper(this)
 
     var defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
@@ -168,7 +168,7 @@ internal class ChatDomainImpl internal constructor(
 
     // TODO 1.1: We should accelerate online/offline detection
 
-    internal var eventHandler: EventHandlerImpl
+    internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -263,8 +263,6 @@ internal class ChatDomainImpl internal constructor(
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
-        useCases = UseCaseHelper(this)
-
         // if the user is already defined, just call setUser ourselves
         val current = userOverwrite ?: client.getCurrentUser()
         if (current != null) {
@@ -286,7 +284,6 @@ internal class ChatDomainImpl internal constructor(
         }
 
         // start listening for events
-        eventHandler = EventHandlerImpl(this)
         startListening()
         initClean()
 

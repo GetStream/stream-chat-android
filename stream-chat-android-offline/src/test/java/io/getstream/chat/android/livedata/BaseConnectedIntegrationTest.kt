@@ -42,7 +42,6 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             .recoveryDisabled()
             .buildImpl()
         chatDomain = chatDomainImpl
-        chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {
