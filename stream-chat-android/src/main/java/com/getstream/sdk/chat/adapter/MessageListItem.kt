@@ -1,5 +1,11 @@
 package com.getstream.sdk.chat.adapter
 
+import com.getstream.sdk.chat.adapter.MessageListItem.DateSeparatorItem
+import com.getstream.sdk.chat.adapter.MessageListItem.LoadingMoreIndicatorItem
+import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
+import com.getstream.sdk.chat.adapter.MessageListItem.ReadStateItem
+import com.getstream.sdk.chat.adapter.MessageListItem.ThreadSeparatorItem
+import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
@@ -8,12 +14,14 @@ import java.util.zip.CRC32
 import java.util.zip.Checksum
 
 /**
- * MessageListItem is a sealed class with everything that is typically displayed in a message list
- * - DateSeparatorItem
- * - MessageItem
- * - TypingItem
- * - ThreadSeparatorItem
- * - ReadStateItem
+ * [MessageListItem] represents elements that are displayed in a [com.getstream.sdk.chat.view.MessageListView].
+ * There are the following subclasses of the [MessageListItem] available:
+ * - [DateSeparatorItem]
+ * - [MessageItem]
+ * - [TypingItem]
+ * - [ThreadSeparatorItem]
+ * - [ReadStateItem]
+ * - [LoadingMoreIndicatorItem]
  */
 public sealed class MessageListItem {
 
@@ -25,6 +33,7 @@ public sealed class MessageListItem {
             is MessageItem -> message.id
             is DateSeparatorItem -> date.toString()
             is ReadStateItem -> "read_" + reads.map { it.user.id }.joinToString { "," }
+            is LoadingMoreIndicatorItem -> "id_loading_more_indicator"
         }
         checksum.update(plaintext.toByteArray(), 0, plaintext.toByteArray().size)
         return checksum.value
@@ -55,6 +64,8 @@ public sealed class MessageListItem {
     public data class ThreadSeparatorItem(
         val date: Date = Date(),
     ) : MessageListItem()
+
+    public object LoadingMoreIndicatorItem : MessageListItem()
 
     public enum class Position {
         TOP,
