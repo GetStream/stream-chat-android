@@ -53,10 +53,10 @@
             android:layout_marginBottom="8dp"
             android:background="?selectableItemBackground"
             android:drawableStart="@drawable/ic_sign_out"
-            android:drawablePadding="16dp"
+            android:drawablePadding="@dimen/spacing_medium"
             android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:paddingStart="24dp"
+            android:paddingStart="@dimen/spacing_large"
             android:text="@string/home_drawer_sign_out"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 

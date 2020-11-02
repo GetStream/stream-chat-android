@@ -74,7 +74,7 @@ fun Fragment.initToolbar(toolbar: Toolbar) {
     }
 }
 
-fun BottomNavigationView.setBangeNumber(@IdRes menuItemId: Int, badgeNumber: Int) {
+fun BottomNavigationView.setBadgeNumber(@IdRes menuItemId: Int, badgeNumber: Int) {
     val badge = getBadge(menuItemId)
         ?: getOrCreateBadge(menuItemId).apply {
             horizontalOffset = -context.getDimensionPixelSize(R.dimen.badge_horizontal_offset)

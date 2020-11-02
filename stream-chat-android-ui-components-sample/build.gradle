@@ -121,6 +121,5 @@ dependencies {
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
-    implementation Dependencies.glide
-    annotationProcessor Dependencies.glideCompiler
+    implementation Dependencies.coil
 }

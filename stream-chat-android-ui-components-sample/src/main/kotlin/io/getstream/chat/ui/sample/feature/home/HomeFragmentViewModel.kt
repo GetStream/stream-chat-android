@@ -19,7 +19,7 @@ class HomeFragmentViewModel : ViewModel() {
 
     init {
         _state.value = State(
-            user = ChatClient.instance().getCurrentUser() ?: User(),
+            user = ChatClient.instance().getCurrentUser() ?: unauthorizedUser,
         )
 
         val totalUnreadCount = chatDomain.useCases
@@ -57,5 +57,9 @@ class HomeFragmentViewModel : ViewModel() {
 
     sealed class UiEvent {
         object NavigateToLoginScreen : UiEvent()
+    }
+
+    companion object {
+        val unauthorizedUser = User()
     }
 }

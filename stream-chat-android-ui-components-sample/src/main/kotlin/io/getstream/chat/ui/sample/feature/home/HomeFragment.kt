@@ -12,13 +12,13 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import coil.load
+import coil.transform.CircleCropTransformation
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.name
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.setBangeNumber
+import io.getstream.chat.ui.sample.common.setBadgeNumber
 import io.getstream.chat.ui.sample.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -75,18 +75,16 @@ class HomeFragment : Fragment() {
     }
 
     private fun renderState(state: HomeFragmentViewModel.State) {
-        binding.bottomNavigationView.setBangeNumber(R.id.channels_fragment, state.totalUnreadCount)
-        binding.bottomNavigationView.setBangeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+        binding.bottomNavigationView.setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
+        binding.bottomNavigationView.setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
 
         nameTextView.text = state.user.name
-        Glide.with(this)
-            .load(state.user.image)
-            .centerCrop()
-            .placeholder(R.drawable.ic_avatar_placeholder)
-            .error(R.drawable.ic_avatar_placeholder)
-            .fallback(R.drawable.ic_avatar_placeholder)
-            .transform(CircleCrop())
-            .into(avatarImageView)
+        avatarImageView.load(state.user.image) {
+            placeholder(R.drawable.ic_avatar_placeholder)
+            error(R.drawable.ic_avatar_placeholder)
+            fallback(R.drawable.ic_avatar_placeholder)
+            transformations(CircleCropTransformation())
+        }
     }
 
     private fun navigateToLoginScreen() {
