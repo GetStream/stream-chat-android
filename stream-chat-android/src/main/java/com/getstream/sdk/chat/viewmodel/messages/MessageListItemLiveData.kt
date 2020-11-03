@@ -51,7 +51,7 @@ import java.util.Date
  */
 internal class MessageListItemLiveData(
     private val currentUser: User,
-    private val messagesLd: LiveData<List<Message>>,
+    messagesLd: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
@@ -59,6 +59,7 @@ internal class MessageListItemLiveData(
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
+    private var loadingMoreInProgress: Boolean = false
     private var messageItemsBase = listOf<MessageListItem>()
     private var messageItemsWithReads = listOf<MessageListItem>()
     private var typingUsers = listOf<User>()
@@ -84,7 +85,7 @@ internal class MessageListItemLiveData(
     internal fun messagesChanged(messages: List<Message>) {
         messageItemsBase = groupMessages(messages)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value)
-        val out = messageItemsWithReads + typingItems
+        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
         val wrapped = wrapMessages(out, hasNewMessages)
         value = wrapped
     }
@@ -92,7 +93,7 @@ internal class MessageListItemLiveData(
     @UiThread
     internal fun readsChanged(reads: List<ChannelUserRead>) {
         messageItemsWithReads = addReads(messageItemsBase, reads)
-        val out = messageItemsWithReads + typingItems
+        val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
         value = wrapMessages(out)
     }
 
@@ -107,8 +108,28 @@ internal class MessageListItemLiveData(
         if (newTypingUsers != typingUsers) {
             typingUsers = newTypingUsers
             typingItems = usersAsTypingItems(newTypingUsers)
-            value = wrapMessages(messageItemsWithReads + typingItems)
+            value = wrapMessages(getLoadingMoreItems() + messageItemsWithReads + typingItems)
         }
+    }
+
+    /**
+     * Loading more indicator item should be added at the beginning of the items to indicate
+     * a pending request for the next page of messages.
+     */
+    @UiThread
+    internal fun loadingMoreChanged(loadingMoreInProgress: Boolean) {
+        this.loadingMoreInProgress = loadingMoreInProgress
+        messageItemsWithReads = messageItemsWithReads.filter {
+            it !is MessageListItem.LoadingMoreIndicatorItem
+        }
+        val out = getLoadingMoreItems() + messageItemsWithReads
+        value = wrapMessages(out)
+    }
+
+    private fun getLoadingMoreItems() = if (loadingMoreInProgress) {
+        listOf<MessageListItem>(MessageListItem.LoadingMoreIndicatorItem)
+    } else {
+        emptyList()
     }
 
     /**
@@ -183,7 +204,6 @@ internal class MessageListItemLiveData(
         // start at the end, optimized for the most common scenario that most people are watching the chat
         for ((i, messageItem) in messages.reversed().withIndex()) {
             if (messageItem is MessageListItem.MessageItem) {
-                val messageItem = messageItem as MessageListItem.MessageItem
                 messageItem.message.createdAt?.let {
                     while (sortedReads.isNotEmpty()) {
                         // use the list of sorted reads
