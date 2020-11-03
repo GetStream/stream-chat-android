@@ -3,10 +3,10 @@ package com.getstream.sdk.chat.utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 internal class StartStopBuffer<T>(

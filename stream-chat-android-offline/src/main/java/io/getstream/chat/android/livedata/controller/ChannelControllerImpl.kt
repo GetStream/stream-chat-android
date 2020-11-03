@@ -390,7 +390,6 @@ internal class ChannelControllerImpl(
             } else {
                 updateLiveDataFromLocalChannel(localChannel)
             }
-
         }
         // if we are online we we run the actual API call
 
@@ -776,7 +775,7 @@ internal class ChannelControllerImpl(
         return message
     }
 
-    private fun parseMessages(messages: List<Message>) : Map<String, Message>{
+    private fun parseMessages(messages: List<Message>): Map<String, Message> {
         val copy = _messages.value ?: mapOf()
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
@@ -798,7 +797,7 @@ internal class ChannelControllerImpl(
         }
 
         // return all the fresh messages
-        return  copy + messages.map { it.copy() }.associateBy(Message::id)
+        return copy + messages.map { it.copy() }.associateBy(Message::id)
     }
 
     private fun upsertMessages(messages: List<Message>) {
