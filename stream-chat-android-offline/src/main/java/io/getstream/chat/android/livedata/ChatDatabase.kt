@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.getstream.chat.android.livedata.converter.ConfigConverter
 import io.getstream.chat.android.livedata.converter.DateConverter
 import io.getstream.chat.android.livedata.converter.ExtraDataConverter
@@ -74,7 +75,13 @@ internal abstract class ChatDatabase : RoomDatabase() {
                         context.applicationContext,
                         ChatDatabase::class.java,
                         "stream_chat_database_$userId"
-                    ).fallbackToDestructiveMigration().build()
+                    ).fallbackToDestructiveMigration()
+                        .addCallback(object : Callback() {
+                            override fun onOpen(db: SupportSQLiteDatabase) {
+                                db.execSQL("PRAGMA synchronous = 1")
+                            }
+                        })
+                        .build()
                     INSTANCES[userId] = db
                 }
             }
