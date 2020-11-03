@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.view
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -30,6 +29,7 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
+import com.getstream.sdk.chat.utils.reverseIndexOf
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -48,7 +48,6 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
-import kotlin.math.log
 import kotlin.math.max
 
 /**
@@ -61,7 +60,6 @@ import kotlin.math.max
  */
 public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
-    private var lastViewedPosition = 0
 
     private lateinit var style: MessageListViewStyle
 
@@ -82,9 +80,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
 
-    private val messagesSet: MutableSet<String> = mutableSetOf()
-    private val messagesSet2: MutableSet<Any> = mutableSetOf()
-    private val messagesSet3: MutableSet<MessageItem> = mutableSetOf()
+    private var lastSeenMessage: MessageListItem? = null
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -288,7 +284,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun initUnseenMessagesButton() {
         binding.scrollBottomBtn.setOnClickListener {
-            binding.chatMessagesRV.smoothScrollToPosition(lastPosition())
+            binding.chatMessagesRV.scrollToPosition(lastPosition())
         }
     }
 
@@ -379,15 +375,10 @@ public class MessageListView : ConstraintLayout {
                     hasScrolledUp = currentLastVisible < lastPosition()
                     firstVisiblePosition = currentFirstVisible
 
-                    lastViewedPosition = max(currentLastVisible, lastViewedPosition)
+                    val realLastVisibleMessage = max(currentLastVisible, lastSeenMessagePosition())
+                    lastSeenMessage = adapter.currentList[realLastVisibleMessage]
 
-//                    logger.logI("MessageListView - lastViewedPosition: $lastViewedPosition")
-                    logger.logI("MessageListView - item count: ${layoutManager.itemCount}")
-                    logger.logI("MessageListView - messagesSet: ${messagesSet.size}")
-                    logger.logI("MessageListView - messagesSet2: ${messagesSet2.size}")
-                    logger.logI("MessageListView - messagesSet3: ${messagesSet3.size}")
-
-                    val unseenItems = adapter.itemCount - 1 - lastViewedPosition
+                    val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
                     scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
 
                     if (hasScrolledUp) {
@@ -411,6 +402,10 @@ public class MessageListView : ConstraintLayout {
         }
 
         binding.chatMessagesRV.adapter = adapter
+    }
+
+    private fun lastSeenMessagePosition(): Int = adapter.currentList.reverseIndexOf(lastSeenMessage) { a, b ->
+        a?.getStableId() == b?.getStableId()
     }
 
     public fun init(channel: Channel, currentUser: User) {
@@ -549,7 +544,6 @@ public class MessageListView : ConstraintLayout {
         buffer.hold()
         val entities = listItem.items
 
-
         // Adapter initialization for channel and thread swapping
         val backFromThread = adapter.isThread && listItem.isThread
 
@@ -557,7 +551,7 @@ public class MessageListView : ConstraintLayout {
             adapter.isThread = listItem.isThread
         }
 
-        val oldSize = messagesSet.size
+        val oldSize = adapter.itemCount
 
         adapter.submitList(entities) {
             continueMessageAdd(backFromThread, listItem, entities, oldSize)
@@ -570,29 +564,8 @@ public class MessageListView : ConstraintLayout {
         entities: List<MessageListItem>,
         oldSize: Int
     ) {
-        val newSize = messagesSet.size
-        val sizeGrewBy = newSize - oldSize //This number is wrong
-
-        if (listItem.loadingMore) {
-            adapter.currentList
-
-            messagesSet.addAll(entities.mapNotNull { it.getStableId().toString() })
-            messagesSet2.addAll(entities)
-            messagesSet3.addAll(entities.mapNotNull {
-                if (it is MessageItem) {
-                    it
-                } else {
-                    null
-                }
-            })
-
-            logger.logI("MessageListView - sizeGrewBy: $sizeGrewBy")
-            logger.logI("MessageListView - messagesSet: ${messagesSet.size}")
-            logger.logI("MessageListView - messagesSet2: ${messagesSet2.size}")
-            logger.logI("MessageListView - messagesSet3: ${messagesSet3.size}")
-            logger.logI("MessageListView - item count: ${adapter.itemCount}")
-            lastViewedPosition += messagesSet.size - oldSize
-        }
+        val newSize = adapter.itemCount
+        val sizeGrewBy = newSize - oldSize
 
         // Scroll to origin position on return from thread
         if (backFromThread) {
@@ -661,7 +634,7 @@ public class MessageListView : ConstraintLayout {
             ) {
                 layoutManager.scrollToPosition(adapter.itemCount - 1)
             } else if (!listItem.loadingMore) {
-                val unseenItems = newSize - 1 - lastViewedPosition
+                val unseenItems = newSize - lastSeenMessagePosition() - 1
                 scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
             }
             // we want to mark read if there is a new message
@@ -675,7 +648,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun scrolledBottom(delta: Int): Boolean {
-        return lastViewedPosition + delta >= lastPosition()
+        return lastSeenMessagePosition() + delta >= lastPosition()
     }
 
     /**
