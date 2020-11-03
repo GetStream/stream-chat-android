@@ -165,13 +165,19 @@ public class MessageListViewModel @JvmOverloads constructor(
     }
 
     private fun onEndRegionReached() {
+        messageListData.loadingMoreChanged(true)
         currentMode.run {
             when (this) {
                 is Mode.Normal -> {
-                    domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue()
+                    domain.useCases.loadOlderMessages(cid, MESSAGES_LIMIT).enqueue {
+                        messageListData.loadingMoreChanged(false)
+                    }
                 }
                 is Mode.Thread -> {
-                    domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT).enqueue()
+                    domain.useCases.threadLoadMore(cid, this.parentMessage.id, MESSAGES_LIMIT)
+                        .enqueue {
+                            messageListData.loadingMoreChanged(false)
+                        }
                 }
             }.exhaustive
         }
