@@ -32,11 +32,15 @@ internal class RetrofitCallAdapterFactory private constructor(
     }
 
     companion object {
-        private val mainThreadHandler by lazy { Handler(Looper.getMainLooper()) }
+        val mainThreadExecutor by lazy {
+            Executor { r ->
+                Handler(Looper.getMainLooper()).post(r)
+            }
+        }
 
         fun create(
             chatParser: ChatParser,
-            callbackExecutor: Executor = Executor { r -> mainThreadHandler.post(r) }
+            callbackExecutor: Executor = mainThreadExecutor
         ): RetrofitCallAdapterFactory = RetrofitCallAdapterFactory(chatParser, callbackExecutor)
     }
 }
