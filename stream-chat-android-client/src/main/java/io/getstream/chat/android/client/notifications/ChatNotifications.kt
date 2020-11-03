@@ -9,6 +9,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.call.zipWith
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.logger.ChatLogger
@@ -105,15 +106,12 @@ internal class ChatNotifications private constructor(
     private fun wasNotificationDisplayed(messageId: String) = showedNotifications.contains(messageId)
 
     private fun loadRequiredData(channelType: String, channelId: String, messageId: String) {
-
         val getMessage = client.getMessage(messageId)
         val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
 
         getChannel.zipWith(getMessage).enqueue { result ->
             if (result.isSuccess) {
-
-                val channel = result.data().first
-                val message = result.data().second
+                val (channel, message) = result.data()
 
                 handler.getDataLoadListener()?.onLoadSuccess(channel, message)
                 onRequiredDataLoaded(channel, message)

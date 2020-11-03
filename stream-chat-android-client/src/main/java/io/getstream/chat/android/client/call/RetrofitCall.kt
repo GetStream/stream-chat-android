@@ -6,33 +6,32 @@ import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.ChatRequestError
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
+import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.atomic.AtomicBoolean
 
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
     private val parser: ChatParser
-) : ChatCallImpl<T>() {
+) : Call<T> {
+
+    protected var canceled = AtomicBoolean(false)
+
+    override fun cancel() {
+        canceled.set(true)
+        call.cancel()
+    }
 
     override fun execute(): Result<T> {
-        val result = execute(call)
-        if (!result.isSuccess) errorHandler?.invoke(result.error())
-        else nextHandler?.invoke(result.data())
-        return result
+        return execute(call)
     }
 
     override fun enqueue(callback: (Result<T>) -> Unit) {
         enqueue(call) {
-            if (!canceled) {
-                if (!it.isSuccess) errorHandler?.invoke(it.error())
-                else nextHandler?.invoke(it.data())
+            if (!canceled.get()) {
                 callback(it)
             }
         }
-    }
-
-    override fun cancel() {
-        super.cancel()
-        call.cancel()
     }
 
     private fun execute(call: retrofit2.Call<T>): Result<T> {
@@ -41,8 +40,7 @@ internal class RetrofitCall<T : Any>(
 
     private fun enqueue(call: retrofit2.Call<T>, callback: (Result<T>) -> Unit) {
         call.enqueue(
-            object : retrofit2.Callback<T> {
-
+            object : Callback<T> {
                 override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
                     callback(getResult(response))
                 }
@@ -82,7 +80,6 @@ internal class RetrofitCall<T : Any>(
     }
 
     private fun getResult(retrofitResponse: Response<T>): Result<T> {
-
         var data: T? = null
         var error: ChatError? = null
 

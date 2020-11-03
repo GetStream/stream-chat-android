@@ -32,7 +32,6 @@ import io.getstream.chat.android.livedata.usecase.LoadOlderMessages
 import io.getstream.chat.android.livedata.usecase.ThreadLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.usecase.WatchChannel
-import io.getstream.chat.android.livedata.utils.Call2
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.amshove.kluent.shouldNotBeNull
@@ -70,19 +69,19 @@ internal class MessageListViewModelTest {
     private val client: ChatClient = mock()
     private val useCases: UseCaseHelper = mock()
     private val watchChannel: WatchChannel = mock()
-    private val watchChannelCall: Call2<ChannelController> = mock()
+    private val watchChannelCall: Call<ChannelController> = mock()
     private val channelControllerResult: Result<ChannelController> = mock()
     private val channelController: ChannelController = mock()
     private val threadLoadMore: ThreadLoadMore = mock()
-    private val threadLoadMoreCall: Call2<List<Message>> = mock()
+    private val threadLoadMoreCall: Call<List<Message>> = mock()
     private val threadLoadMoreResult: Result<List<Message>> = mock()
     private val loadOlderMessages: LoadOlderMessages = mock()
-    private val loadOlderMessagesCall: Call2<Channel> = mock()
+    private val loadOlderMessagesCall: Call<Channel> = mock()
     private val loadOlderMessagesResult: Result<Channel> = mock()
     private val getThread: GetThread = mock()
     private val deleteMessage: DeleteMessage = mock()
-    private val deleteMessageCall: Call2<Message> = mock()
-    private val getThreadCall: Call2<ThreadController> = mock()
+    private val deleteMessageCall: Call<Message> = mock()
+    private val getThreadCall: Call<ThreadController> = mock()
     private val getThreadResult: Result<ThreadController> = mock()
     private val threadController: ThreadController = mock()
     private val flagCall: Call<Flag> = mock()

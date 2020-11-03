@@ -16,9 +16,9 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest
-import io.getstream.chat.android.livedata.TestResultCall
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomString
+import io.getstream.chat.android.livedata.utils.TestCall
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -197,14 +197,14 @@ internal class ChannelControllerImplTest : BaseDomainTest() {
     @Test
     fun `Should include hidden property in the toChannel method`() {
         runBlocking(Dispatchers.IO) {
-            When calling chatClient.hideChannel(any(), any(), any()) doReturn TestResultCall(Result(Unit))
+            When calling chatClient.hideChannel(any(), any(), any()) doReturn TestCall(Result(Unit))
 
             channelController.toChannel().hidden shouldBeEqualTo false
         }
     }
 
     private fun givenMockedFileUploads(result: Result<String>) {
-        When calling chatClient.sendImage(any(), any(), any()) doReturn TestResultCall(result)
-        When calling chatClient.sendFile(any(), any(), any()) doReturn TestResultCall(result)
+        When calling chatClient.sendImage(any(), any(), any()) doReturn TestCall(result)
+        When calling chatClient.sendFile(any(), any(), any()) doReturn TestCall(result)
     }
 }

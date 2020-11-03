@@ -19,9 +19,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -40,8 +38,6 @@ internal class QueryChannelsControllerImpl(
     override var recoveryNeeded: Boolean = false
 
     val queryChannelsSpec: QueryChannelsSpec = QueryChannelsSpec(filter, sort)
-    private val job = SupervisorJob()
-    val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
 
     private val _endOfChannels = MutableLiveData(false)
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
@@ -119,7 +115,7 @@ internal class QueryChannelsControllerImpl(
             // - suspend/wait for a few seconds (yuck, lets not do that)
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
-            scope.launch(Dispatchers.Main) {
+            domainImpl.scope.launch(Dispatchers.Main) {
                 refreshChannel(event.cid)
             }
         }
@@ -218,10 +214,10 @@ internal class QueryChannelsControllerImpl(
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = scope.async { runQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            scope.async { runQueryOnline(pagination) }
+            domainImpl.scope.async { runQueryOnline(pagination) }
         } else { null }
         val channels = queryOfflineJob.await()
 

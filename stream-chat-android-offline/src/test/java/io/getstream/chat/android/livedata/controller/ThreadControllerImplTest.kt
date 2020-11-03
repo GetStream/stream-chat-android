@@ -9,11 +9,11 @@ import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.TestResultCall
 import io.getstream.chat.android.livedata.positiveRandomInt
 import io.getstream.chat.android.livedata.randomMessage
 import io.getstream.chat.android.livedata.randomMessages
 import io.getstream.chat.android.livedata.randomString
+import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
@@ -61,7 +61,7 @@ internal class ThreadControllerImplTest {
                 )
             }
             When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
-            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestResultCall(
+            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
                 Result(
                     replies
                 )
@@ -92,7 +92,7 @@ internal class ThreadControllerImplTest {
                 )
             }
             When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
-            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestResultCall(
+            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
                 Result(
                     replies
                 )

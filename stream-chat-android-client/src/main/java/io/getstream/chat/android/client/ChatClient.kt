@@ -17,6 +17,7 @@ import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.map
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.controllers.ChannelControllerImpl
 import io.getstream.chat.android.client.di.ChatModule
