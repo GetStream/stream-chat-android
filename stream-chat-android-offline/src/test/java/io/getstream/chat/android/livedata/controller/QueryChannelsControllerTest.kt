@@ -6,7 +6,6 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +60,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
             queryChannelsController.runQuery(request)
             val event = data.channelUpdatedEvent2
-            Truth.assertThat(event.channel.cid).isNotIn(queryChannelsController.queryEntity.channelCids)
+            Truth.assertThat(event.channel.cid).isNotIn(queryChannelsController.queryChannelsSpec.cids)
 
             queryChannelsController.handleEvent(event)
             val cids = queryChannelsController.channels.getOrAwaitValue().map { it.cid }
@@ -88,8 +87,8 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     @Test
     fun offlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
-        val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCids = listOf(data.channel1.cid)
+        val query = QueryChannelsSpec(query.filter, query.sort)
+        query.cids = listOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
         chatDomainImpl.repos.messages.insert(data.message1)
         chatDomainImpl.storeStateForChannel(data.channel1)
@@ -104,8 +103,8 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     @Test
     fun onlineRunQuery() = runBlocking(Dispatchers.IO) {
         // insert the query result into offline storage
-        val query = QueryChannelsEntity(query.filter, query.sort)
-        query.channelCids = listOf(data.channel1.cid)
+        val query = QueryChannelsSpec(query.filter, query.sort)
+        query.cids = listOf(data.channel1.cid)
         chatDomainImpl.repos.queryChannels.insert(query)
         chatDomainImpl.storeStateForChannel(data.channel1)
         chatDomainImpl.setOffline()

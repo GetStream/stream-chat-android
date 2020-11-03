@@ -215,7 +215,7 @@ public class ChatClient internal constructor(
         offset: Int,
         limit: Int,
         filter: FilterObject,
-        sort: QuerySort = DEFAULT_SORT,
+        sort: QuerySort<Member> = DEFAULT_SORT,
         members: List<Member> = emptyList()
     ): Call<List<Member>> {
         return api.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
@@ -936,7 +936,7 @@ public class ChatClient internal constructor(
     public companion object {
         private var instance: ChatClient? = null
         @JvmField
-        public val DEFAULT_SORT: QuerySort = QuerySort().desc("last_updated")
+        public val DEFAULT_SORT: QuerySort<Member> = QuerySort.desc("last_updated")
 
         @JvmStatic
         public fun instance(): ChatClient {

@@ -1,6 +1,8 @@
 package io.getstream.chat.android.livedata
 
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.api.models.QuerySort.Companion.ascByName
+import io.getstream.chat.android.client.api.models.QuerySort.Companion.descByName
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.extensions.applyPagination
 import io.getstream.chat.android.livedata.request.AnyChannelPaginationRequest
@@ -46,28 +48,28 @@ internal class PaginationTest {
             listOf(randomChannel(cid = "a"), randomChannel(cid = "b")).let {
                 Arguments.of(
                     it,
-                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { asc("cid") } },
+                    AnyChannelPaginationRequest().apply { sort = QuerySort.asc("cid") },
                     it
                 )
             },
             listOf(randomChannel(cid = "b"), randomChannel(cid = "a")).let {
                 Arguments.of(
                     it,
-                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { asc("cid") } },
+                    AnyChannelPaginationRequest().apply { sort = QuerySort.asc("cid") },
                     it.reversed()
                 )
             },
             listOf(randomChannel(cid = "a"), randomChannel(cid = "b")).let {
                 Arguments.of(
                     it,
-                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { desc("cid") } },
+                    AnyChannelPaginationRequest().apply { sort = QuerySort.desc("cid") },
                     it.reversed()
                 )
             },
             listOf(randomChannel(cid = "b"), randomChannel(cid = "a")).let {
                 Arguments.of(
                     it,
-                    AnyChannelPaginationRequest().apply { sort = QuerySort().apply { desc("cid") } },
+                    AnyChannelPaginationRequest().apply { sort = QuerySort.desc("cid") },
                     it
                 )
             },
@@ -79,10 +81,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            asc("cid")
-                            asc("type")
-                        }
+                        sort = QuerySort.asc<Channel>("cid").ascByName("type")
                     },
                     it
                 )
@@ -95,10 +94,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            asc("cid")
-                            asc("type")
-                        }
+                        sort = QuerySort.asc<Channel>("cid").ascByName("type")
                     },
                     listOf(it[0], it[2], it[1])
                 )
@@ -111,10 +107,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            asc("cid")
-                            desc("type")
-                        }
+                        sort = QuerySort.asc<Channel>("cid").descByName("type")
                     },
                     listOf(it[0], it[2], it[1])
                 )
@@ -127,10 +120,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            asc("cid")
-                            desc("type")
-                        }
+                        sort = QuerySort.asc<Channel>("cid").descByName("type")
                     },
                     it
                 )
@@ -143,11 +133,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            asc("cid")
-                            asc("SomeInvalidField")
-                            desc("type")
-                        }
+                        sort = QuerySort.asc<Channel>("cid").ascByName("SomeInvalidField").descByName("type")
                     },
                     it
                 )
@@ -161,9 +147,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            desc("last_updated")
-                        }
+                        sort = QuerySort.desc("last_updated")
                     },
                     listOf(it[1], it[2], it[0])
                 )
@@ -177,9 +161,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            desc("created_at")
-                        }
+                        sort = QuerySort.desc("created_at")
                     },
                     listOf(it[1], it[2], it[0])
                 )
@@ -193,9 +175,7 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
-                        sort = QuerySort().apply {
-                            desc("last_message_at")
-                        }
+                        sort = QuerySort.desc("last_message_at")
                     },
                     listOf(it[1], it[2], it[0])
                 )

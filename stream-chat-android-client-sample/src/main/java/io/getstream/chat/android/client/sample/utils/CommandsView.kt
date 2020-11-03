@@ -9,7 +9,6 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.RemoteMessage
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
@@ -32,7 +31,6 @@ import io.getstream.chat.android.client.sample.App
 import io.getstream.chat.android.client.sample.databinding.LayoutCommandsBinding
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.client.token.TokenProvider
-import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -48,8 +46,6 @@ class CommandsView(context: Context?, attrs: AttributeSet?) : LinearLayout(conte
     private val disposables = mutableListOf<Disposable>()
     lateinit var client: ChatClient
 
-    val filter = FilterObject("type", "messaging")
-    val sort = QuerySort().asc("created_at")
     val request = QueryChannelRequest().withWatch().withMessages(10)
     val stagingEndpoint = "chat-us-east-staging.stream-io-api.com"
 

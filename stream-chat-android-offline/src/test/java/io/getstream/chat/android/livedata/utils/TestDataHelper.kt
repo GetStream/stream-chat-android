@@ -38,7 +38,7 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.entity.QueryChannelsEntity
+import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.entity.SyncStateEntity
 import io.github.cdimascio.dotenv.dotenv
 import java.time.Instant
@@ -73,7 +73,7 @@ internal class TestDataHelper {
     val filter2 =
         Filters.and(Filters.eq("type", "livestream"), Filters.`in`("members", listOf(user1.id)))
 
-    val query1 = QueryChannelsEntity(filter1, QuerySort())
+    val query1 = QueryChannelsSpec(filter1, QuerySort())
 
     val attachment1 =
         Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }

@@ -9,6 +9,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
@@ -94,5 +95,5 @@ private class Fixture {
     }
 
     fun get(): QueryChannelsControllerImpl =
-        QueryChannelsControllerImpl(mock(), mock(), chatClient, chatDomainImpl)
+        QueryChannelsControllerImpl(mock(), QuerySort(), chatClient, chatDomainImpl)
 }
