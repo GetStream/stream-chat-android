@@ -42,20 +42,21 @@ public interface Call<T : Any> {
  *
  * Does not throw exceptions. Any errors will be wrapped in the [Result] that's returned.
  */
-public suspend fun <T : Any> Call<T>.await(): Result<T> = suspendCancellableCoroutine { continuation ->
-    this.enqueue { result ->
-        continuation.resume(result)
-    }
+public suspend fun <T : Any> Call<T>.await(): Result<T> =
+    suspendCancellableCoroutine { continuation ->
+        this.enqueue { result ->
+            continuation.resume(result)
+        }
 
-    continuation.invokeOnCancellation {
-        this.cancel()
+        continuation.invokeOnCancellation {
+            this.cancel()
+        }
     }
-}
 
 internal fun <T : Any, K : Any> Call<T>.map(mapper: (T) -> K): Call<K> {
     return MapCall(this, mapper)
 }
 
 internal fun <T : Any, K : Any> Call<T>.zipWith(call: Call<K>): Call<Pair<T, K>> {
-    return ZipCall.zip(this, call)
+    return ZipCall(this, call)
 }

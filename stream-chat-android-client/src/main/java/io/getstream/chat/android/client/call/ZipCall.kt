@@ -10,64 +10,62 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-internal object ZipCall {
+internal class ZipCall<A : Any, B : Any>(
+    private val callA: Call<A>,
+    private val callB: Call<B>
+) : Call<Pair<A, B>> {
+    private var job: Job? = null
 
-    fun <A : Any, B : Any> zip(callA: Call<A>, callB: Call<B>): Call<Pair<A, B>> {
-        return object : Call<Pair<A, B>> {
-            private var job: Job? = null
+    override fun cancel() {
+        job?.cancel()
+    }
 
-            override fun cancel() {
-                job?.cancel()
+    override fun execute(): Result<Pair<A, B>> {
+        val job = Job()
+        this.job = job
+
+        return runBlocking(job) {
+            val deferredA = async { callA.await() }
+            val deferredB = async { callB.await() }
+
+            val resultA = deferredA.await()
+            if (resultA.isError) {
+                deferredB.cancel()
+                return@runBlocking getErrorA(resultA)
             }
 
-            override fun execute(): Result<Pair<A, B>> {
-                val job = Job()
-                this.job = job
-
-                return runBlocking(job) {
-                    val deferredA = async { callA.await() }
-                    val deferredB = async { callB.await() }
-
-                    val resultA = deferredA.await()
-                    if (resultA.isError) {
-                        deferredB.cancel()
-                        return@runBlocking getErrorA(resultA)
-                    }
-
-                    val resultB = deferredB.await()
-                    if (resultB.isError) {
-                        return@runBlocking getErrorB(resultB)
-                    }
-
-                    Result(Pair(resultA.data(), resultB.data()), null)
-                }
+            val resultB = deferredB.await()
+            if (resultB.isError) {
+                return@runBlocking getErrorB(resultB)
             }
 
-            override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
-                suspend fun performCallback(result: Result<Pair<A, B>>) {
-                    withContext(Dispatchers.Main) { callback(result) }
-                }
+            Result(Pair(resultA.data(), resultB.data()), null)
+        }
+    }
 
-                job = GlobalScope.launch {
-                    val deferredA = async { callA.await() }
-                    val deferredB = async { callB.await() }
+    override fun enqueue(callback: (Result<Pair<A, B>>) -> Unit) {
+        suspend fun performCallback(result: Result<Pair<A, B>>) {
+            withContext(Dispatchers.Main) { callback(result) }
+        }
 
-                    val resultA = deferredA.await()
-                    if (resultA.isError) {
-                        deferredB.cancel()
-                        performCallback(getErrorA(resultA))
-                        return@launch
-                    }
+        job = GlobalScope.launch {
+            val deferredA = async { callA.await() }
+            val deferredB = async { callB.await() }
 
-                    val resultB = deferredB.await()
-                    if (resultB.isError) {
-                        performCallback(getErrorB(resultB))
-                        return@launch
-                    }
-
-                    performCallback(Result(Pair(resultA.data(), resultB.data()), null))
-                }
+            val resultA = deferredA.await()
+            if (resultA.isError) {
+                deferredB.cancel()
+                performCallback(getErrorA(resultA))
+                return@launch
             }
+
+            val resultB = deferredB.await()
+            if (resultB.isError) {
+                performCallback(getErrorB(resultB))
+                return@launch
+            }
+
+            performCallback(Result(Pair(resultA.data(), resultB.data()), null))
         }
     }
 
