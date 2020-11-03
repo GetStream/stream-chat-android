@@ -159,10 +159,7 @@ internal class ChatDomainImpl internal constructor(
     override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
 
     /** the event subscription, cancel using repo.stopListening */
-    private var eventSubscription: Disposable = object : Disposable {
-        override val isDisposed: Boolean = true
-        override fun dispose() { }
-    }
+    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
     /** stores the mapping from cid to channelRepository */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
@@ -743,5 +740,12 @@ internal class ChatDomainImpl internal constructor(
 
     fun postInitialized() {
         _initialized.postValue(true)
+    }
+
+    companion object {
+        val EMPTY_DISPOSABLE = object : Disposable {
+            override val isDisposed: Boolean = true
+            override fun dispose() {}
+        }
     }
 }
