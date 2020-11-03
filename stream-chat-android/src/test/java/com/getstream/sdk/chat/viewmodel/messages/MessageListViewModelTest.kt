@@ -88,6 +88,7 @@ internal class MessageListViewModelTest {
     private val flagResult: Call<Flag> = mock()
 
     private val messages = MutableLiveData<List<Message>>()
+    private val oldMessages = MutableLiveData<List<Message>>()
     private val threadMessages = MutableLiveData<List<Message>>()
     private val typing = MutableLiveData<List<User>>()
     private val reads = MutableLiveData<List<ChannelUserRead>>()
@@ -101,6 +102,7 @@ internal class MessageListViewModelTest {
         whenever(channelControllerResult.data()) doReturn channelController
         whenever(domain.currentUser) doReturn CURRENT_USER
         whenever(channelController.messages) doReturn messages
+        whenever(channelController.oldMessages) doReturn oldMessages
         whenever(channelController.typing) doReturn typing
         whenever(channelController.reads) doReturn reads
         whenever(useCases.threadLoadMore) doReturn threadLoadMore
