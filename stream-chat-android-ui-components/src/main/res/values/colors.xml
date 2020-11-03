@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="avatar_gradient_orange">#FF8A65</color>
+    <color name="avatar_gradient_green">#81C784</color>
+    <color name="avatar_gradient_blue">#4FC3F7</color>
+    <color name="avatar_gradient_brown">#A1887F</color>
+    <color name="avatar_gradient_yellow">#FFF176</color>
+    <color name="avatar_gradient_red">#E57373</color>
+
+    <array name="avatar_gradient_colors">
+        <item>@color/avatar_gradient_orange</item>
+        <item>@color/avatar_gradient_green</item>
+        <item>@color/avatar_gradient_blue</item>
+        <item>@color/avatar_gradient_brown</item>
+        <item>@color/avatar_gradient_yellow</item>
+        <item>@color/avatar_gradient_red</item>
+    </array>
+</resources>

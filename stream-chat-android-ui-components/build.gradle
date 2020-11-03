@@ -72,6 +72,8 @@ dependencies {
     api project(":stream-chat-android")
 
     implementation Dependencies.kotlinStdLib
+    implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
+    implementation Dependencies.coil
 }
