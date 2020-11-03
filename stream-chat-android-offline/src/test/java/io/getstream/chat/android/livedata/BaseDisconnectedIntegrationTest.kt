@@ -47,7 +47,6 @@ internal open class BaseDisconnectedIntegrationTest : BaseDomainTest() {
         chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(
             db
         ).offlineEnabled().userPresenceEnabled().recoveryDisabled().buildImpl()
-        chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {

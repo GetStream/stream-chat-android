@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -127,7 +128,10 @@ internal open class BaseDomainTest {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
-                null
+                object : Disposable {
+                    override val isDisposed: Boolean = true
+                    override fun dispose() { }
+                }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
@@ -177,7 +181,10 @@ internal open class BaseDomainTest {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as (ChatEvent) -> Unit
                 listener.invoke(connectedEvent)
-                null
+                object : Disposable {
+                    override val isDisposed: Boolean = true
+                    override fun dispose() { }
+                }
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
@@ -226,7 +233,6 @@ internal open class BaseDomainTest {
         chatDomainImpl = ChatDomain.Builder(context, client, data.user1).database(db).offlineEnabled()
             .userPresenceEnabled().buildImpl()
 
-        chatDomainImpl.eventHandler = EventHandlerImpl(chatDomainImpl, true)
         chatDomainImpl.retryPolicy = object :
             RetryPolicy {
             override fun shouldRetry(client: ChatClient, attempt: Int, error: ChatError): Boolean {

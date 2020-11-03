@@ -114,7 +114,7 @@ internal class ChatDomainImpl internal constructor(
     private val syncModule by lazy { SyncProvider(appContext) }
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    override var useCases: UseCaseHelper = UseCaseHelper(this)
+    override val useCases: UseCaseHelper = UseCaseHelper(this)
 
     var defaultConfig: Config = Config(isConnectEvents = true, isMutes = true)
 
@@ -159,7 +159,7 @@ internal class ChatDomainImpl internal constructor(
     override val errorEvents: LiveData<Event<ChatError>> = _errorEvent
 
     /** the event subscription, cancel using repo.stopListening */
-    private var eventSubscription: Disposable? = null
+    private var eventSubscription: Disposable = EMPTY_DISPOSABLE
 
     /** stores the mapping from cid to channelRepository */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
@@ -168,7 +168,7 @@ internal class ChatDomainImpl internal constructor(
 
     // TODO 1.1: We should accelerate online/offline detection
 
-    internal var eventHandler: EventHandlerImpl
+    internal val eventHandler: EventHandlerImpl = EventHandlerImpl(this)
 
     private var logger = ChatLogger.get("Domain")
     private val cleanTask = object : Runnable {
@@ -182,7 +182,7 @@ internal class ChatDomainImpl internal constructor(
     internal val scope = CoroutineScope(Dispatchers.IO + job)
 
     internal lateinit var repos: RepositoryHelper
-    internal var syncState: SyncStateEntity? = null
+    private var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
     private var isOnline = false
@@ -191,14 +191,13 @@ internal class ChatDomainImpl internal constructor(
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
 
-    internal fun clearState() {
-        _initialized.value = false
-        _online.value = false
-        _totalUnreadCount.value = 0
-        _channelUnreadCount.value = 0
-        _banned.value = false
+    private fun clearState() {
+        _initialized.postValue(false)
+        _online.postValue(false)
+        _totalUnreadCount.postValue(0)
+        _channelUnreadCount.postValue(0)
+        _banned.postValue(false)
         _mutedUsers.value = emptyList()
-
         activeChannelMapImpl.clear()
         activeQueryMapImpl.clear()
     }
@@ -209,7 +208,7 @@ internal class ChatDomainImpl internal constructor(
         Room.inMemoryDatabaseBuilder(context, ChatDatabase::class.java).build()
     }
 
-    fun isTestRunner(): Boolean {
+    private fun isTestRunner(): Boolean {
         return Build.FINGERPRINT.toLowerCase().contains("robolectric")
     }
 
@@ -256,14 +255,14 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            setOnline()
+            postOnline()
         }
+        startListening()
+        initClean()
     }
 
     init {
         logger.logI("Initializing ChatDomain with version " + getVersion())
-
-        useCases = UseCaseHelper(this)
 
         // if the user is already defined, just call setUser ourselves
         val current = userOverwrite ?: client.getCurrentUser()
@@ -284,13 +283,6 @@ internal class ChatDomainImpl internal constructor(
                 }
             }
         }
-
-        // start listening for events
-        eventHandler = EventHandlerImpl(this)
-        startListening()
-        initClean()
-
-        // TODO monitor connectivity at OS level
     }
 
     internal suspend fun updateCurrentUser(me: User) {
@@ -450,20 +442,19 @@ internal class ChatDomainImpl internal constructor(
     /**
      * Start listening to chat events and keep the room database in sync
      */
-    fun startListening() {
-        if (eventSubscription != null) {
-            return
-        }
-        eventSubscription = client.subscribe {
-            eventHandler.handleEvents(listOf(it))
+    private fun startListening() {
+        if (eventSubscription.isDisposed) {
+            eventSubscription = client.subscribe {
+                eventHandler.handleEvents(listOf(it))
+            }
         }
     }
 
     /**
      * Stop listening to chat events
      */
-    fun stopListening() {
-        eventSubscription?.dispose()
+    private fun stopListening() {
+        eventSubscription.dispose()
     }
 
     internal fun channel(c: Channel): ChannelControllerImpl {
@@ -749,5 +740,12 @@ internal class ChatDomainImpl internal constructor(
 
     fun postInitialized() {
         _initialized.postValue(true)
+    }
+
+    companion object {
+        val EMPTY_DISPOSABLE = object : Disposable {
+            override val isDisposed: Boolean = true
+            override fun dispose() {}
+        }
     }
 }
