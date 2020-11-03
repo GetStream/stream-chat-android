@@ -6,6 +6,7 @@ import kotlinx.coroutines.launch
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
 internal class StartStopBuffer<T>(
@@ -31,7 +32,11 @@ internal class StartStopBuffer<T>(
     private fun propagateData() {
         GlobalScope.launch(ioDispatcher) {
             while (active.get() && events.isNotEmpty()) {
-                events.poll()?.let(func!!)
+                events.poll()?.let {
+                    withContext(Dispatchers.Main) {
+                        func?.invoke(it)
+                    }
+                }
             }
         }
     }

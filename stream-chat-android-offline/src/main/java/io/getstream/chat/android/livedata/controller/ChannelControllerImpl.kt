@@ -98,20 +98,26 @@ internal class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData(false)
     private val _loadingNewerMessages = MutableLiveData(false)
     private val _channelData = MutableLiveData<ChannelData>()
+    private val _oldMessages = MutableLiveData<Map<String, Message>>()
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages: LiveData<List<Message>> =
         Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = Transformations.map(_messages) { messageMap ->
-        // TODO: consider removing this check
-        messageMap.values
-            .asSequence()
-            .filter { it.parentId == null || it.showInChannel }
-            .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-            .sortedBy { it.createdAt ?: it.createdLocallyAt }
-            .toList()
-            .map { it.copy() }
+    override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
+
+    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
+
+    private fun messagesTransformation(messages: MutableLiveData<Map<String, Message>>): LiveData<List<Message>> {
+        return Transformations.map(messages) { messageMap ->
+            messageMap.values
+                .asSequence()
+                .filter { it.parentId == null || it.showInChannel }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .toList()
+                .map { it.copy() }
+        }
     }
 
     /** the number of people currently watching the channel */
@@ -351,7 +357,7 @@ internal class ChannelControllerImpl(
             )
         }
         _loadingOlderMessages.postValue(true)
-        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
+        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN).apply { isLoadingMore = true }
         val result = runChannelQuery(pagination)
         _loadingOlderMessages.postValue(false)
         return result
@@ -379,7 +385,12 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async { runChannelQueryOnline(pagination) } } else { null }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
-            updateLiveDataFromLocalChannel(localChannel)
+            if (pagination.isLoadingMore) {
+                updateOldMessagesFromLocalChannel(localChannel)
+            } else {
+                updateLiveDataFromLocalChannel(localChannel)
+            }
+
         }
         // if we are online we we run the actual API call
 
@@ -765,8 +776,8 @@ internal class ChannelControllerImpl(
         return message
     }
 
-    private fun upsertMessages(messages: List<Message>) {
-        var copy = _messages.value ?: mapOf()
+    private fun parseMessages(messages: List<Message>) : Map<String, Message>{
+        val copy = _messages.value ?: mapOf()
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -786,9 +797,16 @@ internal class ChannelControllerImpl(
             }
         }
 
-        // update all the fresh messages
-        copy = copy + messages.map { it.copy() }.associateBy(Message::id)
-        _messages.postValue(copy)
+        // return all the fresh messages
+        return  copy + messages.map { it.copy() }.associateBy(Message::id)
+    }
+
+    private fun upsertMessages(messages: List<Message>) {
+        parseMessages(messages).let(_messages::postValue)
+    }
+
+    private fun upsertOldMessages(messages: List<Message>) {
+        parseMessages(messages).let(_oldMessages::postValue)
     }
 
     private fun removeLocalMessage(message: Message) {
@@ -1045,6 +1063,12 @@ internal class ChannelControllerImpl(
         updateLiveDataFromChannel(localChannel)
     }
 
+    internal fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+        localChannel.hidden?.let(::setHidden)
+        hideMessagesBefore = localChannel.hiddenMessagesBefore
+        updateOldMessagesFromChannel(localChannel)
+    }
+
     fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
@@ -1056,6 +1080,19 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
+    }
+
+    private fun updateOldMessagesFromChannel(c: Channel) {
+        // Update all the livedata objects based on the channel
+        updateChannelData(c)
+        setWatcherCount(c.watcherCount)
+        updateReads(c.read)
+
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        upsertOldMessages(c.messages)
     }
 
     private fun setMembers(members: List<Member>) {
