@@ -14,7 +14,7 @@ internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : Query
 
     var watcherLimit: Int = 30
     var watcherOffset: Int = 0
-    
+
     fun hasFilter(): Boolean {
         return messageFilterDirection != null
     }
