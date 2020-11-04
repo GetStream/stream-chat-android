@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 
 /**
- * MessageListView renders a list of messages and extends the RecyclerView
+ * MessageListView renders a list of messages and extends the [RecyclerView]
  * The most common customizations are
  * - Disabling Reactions
  * - Disabling Threads
@@ -510,7 +510,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
-     * Use the more explicit setMessageViewHolderFactory method instead.
+     * Use the more explicit [setMessageViewHolderFactory] method instead.
      */
     @Deprecated(
         message = "Use the more explicit setMessageViewHolderFactory method instead.",

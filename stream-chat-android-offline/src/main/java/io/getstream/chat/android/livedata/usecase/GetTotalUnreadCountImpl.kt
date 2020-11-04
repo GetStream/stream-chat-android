@@ -1,10 +1,10 @@
 package io.getstream.chat.android.livedata.usecase
 
 import androidx.lifecycle.LiveData
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
-import io.getstream.chat.android.livedata.utils.CallImpl2
 
 public interface GetTotalUnreadCount {
     /**
@@ -16,17 +16,13 @@ public interface GetTotalUnreadCount {
      * @see io.getstream.chat.android.livedata.usecase.GetUnreadChannelCount
      * @see io.getstream.chat.android.livedata.controller.ChannelController.unreadCount
      */
-    public operator fun invoke(): Call2<LiveData<Int>>
+    public operator fun invoke(): Call<LiveData<Int>>
 }
 
 internal class GetTotalUnreadCountImpl(private val domainImpl: ChatDomainImpl) : GetTotalUnreadCount {
-    override operator fun invoke(): Call2<LiveData<Int>> {
-        val runnable = suspend {
+    override operator fun invoke(): Call<LiveData<Int>> {
+        return CoroutineCall(domainImpl.scope) {
             Result(domainImpl.totalUnreadCount, null)
         }
-        return CallImpl2(
-            runnable,
-            domainImpl.scope
-        )
     }
 }

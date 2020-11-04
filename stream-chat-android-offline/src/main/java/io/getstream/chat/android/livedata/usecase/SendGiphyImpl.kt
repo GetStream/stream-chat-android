@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
-import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface SendGiphy {
@@ -15,20 +15,17 @@ public interface SendGiphy {
      * @return A call object with Message as the return type
      * @see io.getstream.chat.android.livedata.utils.RetryPolicy
      */
-    public operator fun invoke(message: Message): Call2<Message>
+    public operator fun invoke(message: Message): Call<Message>
 }
 
 internal class SendGiphyImpl(private val domainImpl: ChatDomainImpl) : SendGiphy {
-    override operator fun invoke(message: Message): Call2<Message> {
+    override operator fun invoke(message: Message): Call<Message> {
         val cid = message.cid
         validateCid(cid)
 
-        val channelRepo = domainImpl.channel(cid)
-
-        val runnable = suspend {
-            channelRepo.sendGiphy(message)
+        val channelController = domainImpl.channel(cid)
+        return CoroutineCall(domainImpl.scope) {
+            channelController.sendGiphy(message)
         }
-
-        return CallImpl2(runnable, channelRepo.scope)
     }
 }

@@ -77,7 +77,7 @@ public interface ChatDomain {
     public var retryPolicy: RetryPolicy
 
     /** a helper object which lists all the initialized use cases for the chat domain */
-    public var useCases: UseCaseHelper
+    public val useCases: UseCaseHelper
 
     public suspend fun disconnect()
     public fun isOnline(): Boolean

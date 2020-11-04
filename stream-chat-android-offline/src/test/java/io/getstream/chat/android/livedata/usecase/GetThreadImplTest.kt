@@ -53,7 +53,7 @@ internal class GetThreadImplTest {
     @Test
     fun `Should return a ThreadController`() {
         runBlocking {
-            When calling channelController.scope doReturn this
+            When calling chatDomain.scope doReturn this
 
             val result = getThreadImpl(cid, parentId).execute()
 

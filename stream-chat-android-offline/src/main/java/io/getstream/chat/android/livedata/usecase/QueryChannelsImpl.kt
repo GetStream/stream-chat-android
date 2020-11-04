@@ -1,13 +1,13 @@
 package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.api.models.QuerySort
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsController
-import io.getstream.chat.android.livedata.utils.Call2
-import io.getstream.chat.android.livedata.utils.CallImpl2
 import kotlinx.coroutines.launch
 
 public interface QueryChannels {
@@ -26,22 +26,19 @@ public interface QueryChannels {
      * @see io.getstream.chat.android.client.api.models.QuerySort
      * @see <a href="https://getstream.io/chat/docs/query_channels/?language=kotlin">Filter syntax</a>
      */
-    public operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int = 30, messageLimit: Int = 1): Call2<QueryChannelsController>
+    public operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int = 30, messageLimit: Int = 1): Call<QueryChannelsController>
 }
 
 internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : QueryChannels {
-    override operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int, messageLimit: Int): Call2<QueryChannelsController> {
+    override operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int, messageLimit: Int): Call<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
-        val queryChannelsController: QueryChannelsController = queryChannelsControllerImpl
-        val runnable = suspend {
+        return CoroutineCall(domainImpl.scope) {
             if (limit > 0) {
-                queryChannelsControllerImpl.scope.launch { queryChannelsControllerImpl.query(limit, messageLimit) }
+                domainImpl.scope.launch {
+                    queryChannelsControllerImpl.query(limit, messageLimit)
+                }
             }
-            Result(queryChannelsController, null)
+            Result(queryChannelsControllerImpl, null)
         }
-        return CallImpl2(
-            runnable,
-            queryChannelsControllerImpl.scope
-        )
     }
 }

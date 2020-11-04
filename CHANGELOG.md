@@ -3,6 +3,10 @@
 ## Common changes for all artifacts
 - Updated dependencies to latest versions (AGP 4.1, OkHttp 4.9, Coroutines 1.3.9, ExoPlayer 2.12.1, etc.)
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
+- Revamped `Call` implementations
+    - The `Call2` type has been removed, the libraries now all use the same `Call` instead for all APIs
+    - `Call` now guarantees callbacks to happen on the main thread
+    - Coroutine users can now `await()` a `Call` easily with a provided extension
 
 ## stream-chat-android
 - Add empty state views to channel list view and message list view components
@@ -12,6 +16,7 @@
 - Add load more threshold for `MessageListView` and `streamLoadMoreThreshold` attribute
 - Fix handling of the `streamShowReadState` attribute on `MessageListView`
 - Add `streamShowDeliveredState` XML attribute to `MessageListView`
+- Add "loading more" indicator to the `MessageListView`
 
 ## stream-chat-android-client
 - Fix guest user authentication

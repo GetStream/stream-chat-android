@@ -1,9 +1,9 @@
 package io.getstream.chat.android.livedata.usecase
 
+import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.call.CoroutineCall
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
-import io.getstream.chat.android.livedata.utils.Call2
-import io.getstream.chat.android.livedata.utils.CallImpl2
 import io.getstream.chat.android.livedata.utils.validateCid
 
 public interface LoadOlderMessages {
@@ -15,19 +15,16 @@ public interface LoadOlderMessages {
      *
      * @return A call object with Channel as the return type
      */
-    public operator fun invoke(cid: String, messageLimit: Int): Call2<Channel>
+    public operator fun invoke(cid: String, messageLimit: Int): Call<Channel>
 }
 
 internal class LoadOlderMessagesImpl(private val domainImpl: ChatDomainImpl) : LoadOlderMessages {
-    override operator fun invoke(cid: String, messageLimit: Int): Call2<Channel> {
+    override operator fun invoke(cid: String, messageLimit: Int): Call<Channel> {
         validateCid(cid)
-        val channelRepo = domainImpl.channel(cid)
-        val runnable = suspend {
-            channelRepo.loadOlderMessages(messageLimit)
+
+        val channelController = domainImpl.channel(cid)
+        return CoroutineCall(domainImpl.scope) {
+            channelController.loadOlderMessages(messageLimit)
         }
-        return CallImpl2(
-            runnable,
-            channelRepo.scope
-        )
     }
 }

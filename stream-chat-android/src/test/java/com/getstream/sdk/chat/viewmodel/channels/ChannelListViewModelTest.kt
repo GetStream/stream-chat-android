@@ -11,6 +11,7 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.eq
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomain
@@ -18,7 +19,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.usecase.QueryChannels
 import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
-import io.getstream.chat.android.livedata.utils.Call2
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
@@ -83,7 +83,7 @@ private class Fixture {
     private val useCases: UseCaseHelper = mock()
     private val queryChannels: QueryChannels = mock()
     private var queryChannelsLoadMore: QueryChannelsLoadMore = mock()
-    private val queryChannelsCall: Call2<QueryChannelsController> = mock()
+    private val queryChannelsCall: Call<QueryChannelsController> = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
     private val queryChannelsController: QueryChannelsController = mock()
 
@@ -121,7 +121,7 @@ private class Fixture {
     }
 
     fun givenMoreChannels(moreChannels: List<Channel>): Fixture {
-        val mockCall: Call2<List<Channel>> = mock()
+        val mockCall: Call<List<Channel>> = mock()
         When calling queryChannelsLoadMore.invoke(any(), any(), any(), any()) doReturn mockCall
         When calling mockCall.enqueue(any()) doAnswer {
             channelsLiveData.postValue((channelsLiveData.value ?: emptyList()) + moreChannels)

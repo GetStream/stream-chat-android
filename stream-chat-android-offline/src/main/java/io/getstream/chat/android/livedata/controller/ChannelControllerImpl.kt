@@ -59,14 +59,10 @@ import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
 import io.getstream.chat.android.livedata.utils.computeUnreadCount
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import wasCreatedAfter
 import wasCreatedBeforeOrAt
 import java.io.File
@@ -190,9 +186,6 @@ internal class ChannelControllerImpl(
     val channelController = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
-    private val job = SupervisorJob()
-    val scope = CoroutineScope(Dispatchers.IO + domainImpl.job + job)
-
     private val logger = ChatLogger.get("ChatDomain ChannelController")
 
     private val threadControllerMap: ConcurrentHashMap<String, ThreadControllerImpl> =
@@ -201,7 +194,7 @@ internal class ChannelControllerImpl(
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
         ThreadControllerImpl(threadId, this, client)
-            .also { scope.launch { it.watch() } }
+            .also { domainImpl.scope.launch { it.watch() } }
     }
 
     private fun getConfig(): Config {
@@ -381,9 +374,9 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        val queryOfflineJob = scope.async { runChannelQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
         // start the online query before queryOfflineJob.await
-        val queryOnlineJob = if (domainImpl.isOnline()) { scope.async { runChannelQueryOnline(pagination) } } else { null }
+        val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async { runChannelQueryOnline(pagination) } } else { null }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
             updateLiveDataFromLocalChannel(localChannel)
@@ -452,7 +445,7 @@ internal class ChannelControllerImpl(
     suspend fun sendMessage(
         message: Message,
         attachmentTransformer: ((at: Attachment, file: File) -> Attachment)? = null
-    ): Result<Message> = withContext(scope.coroutineContext) {
+    ): Result<Message> {
         val online = domainImpl.isOnline()
         val newMessage = message.copy()
 
@@ -494,7 +487,7 @@ internal class ChannelControllerImpl(
             domainImpl.repos.channels.insert(it)
         }
 
-        return@withContext if (online) {
+        return if (online) {
             // upload attachments
             logger.logI("Uploading attachments for message with id ${newMessage.id} and text ${newMessage.text}")
             newMessage.attachments = newMessage.attachments.map {
@@ -641,12 +634,12 @@ internal class ChannelControllerImpl(
         }
     }
 
-    suspend fun sendImage(file: File): Result<String> = withContext(scope.coroutineContext) {
-        client.sendImage(channelType, channelId, file).execute()
+    suspend fun sendImage(file: File): Result<String> {
+        return client.sendImage(channelType, channelId, file).execute()
     }
 
-    suspend fun sendFile(file: File): Result<String> = withContext(scope.coroutineContext) {
-        client.sendFile(channelType, channelId, file).execute()
+    suspend fun sendFile(file: File): Result<String> {
+        return client.sendFile(channelType, channelId, file).execute()
     }
 
     /**
@@ -1105,7 +1098,7 @@ internal class ChannelControllerImpl(
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
-            val job = scope.async { domainImpl.runAndRetry(runnable) }
+            val job = domainImpl.scope.async { domainImpl.runAndRetry(runnable) }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {

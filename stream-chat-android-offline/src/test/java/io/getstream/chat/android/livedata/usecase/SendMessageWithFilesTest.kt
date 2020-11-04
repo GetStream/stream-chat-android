@@ -11,9 +11,9 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseConnectedMockedTest
-import io.getstream.chat.android.livedata.TestResultCall
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomMessage
+import io.getstream.chat.android.livedata.utils.TestCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.amshove.kluent.When
@@ -41,8 +41,8 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
     private fun mockFileUploads(files: List<File>) {
         for (file in files) {
             val result = Result(file.absolutePath)
-            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
-            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
+            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestCall(result)
+            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestCall(result)
         }
     }
 
@@ -51,8 +51,8 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
         for (file in files) {
             val path: String? = null
             val result = Result(path, file.toChatError())
-            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
-            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestResultCall(result)
+            When calling client.sendFile(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestCall(result)
+            When calling client.sendImage(eq(channelControllerImpl.channelType), eq(channelControllerImpl.channelId), same(file)) doReturn TestCall(result)
         }
     }
 
@@ -72,7 +72,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestResultCall(expectedResult)
+            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
 
             mockFileUploads(files)
 
@@ -177,7 +177,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestResultCall(expectedResult)
+            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
 
             mockFileUploadsFailure(files)
 
