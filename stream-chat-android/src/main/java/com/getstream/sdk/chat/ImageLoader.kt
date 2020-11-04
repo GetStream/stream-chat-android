@@ -16,9 +16,11 @@ import coil.transform.BlurTransformation
 import coil.transform.CircleCropTransformation
 import coil.transform.GrayscaleTransformation
 import coil.transform.RoundedCornersTransformation
+import io.getstream.chat.android.client.internal.InternalStreamChatApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@InternalStreamChatApi
 public object ImageLoader {
     public suspend fun getBitmap(
         context: Context,
