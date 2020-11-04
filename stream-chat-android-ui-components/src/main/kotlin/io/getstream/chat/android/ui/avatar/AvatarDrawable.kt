@@ -41,7 +41,7 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
 
     private fun reconfigureItems() {
         avatarItems = when (avatarBitmaps.size) {
-            0 -> listOf()
+            0 -> emptyList()
             1 -> configureSingleAvatar(avatarBitmaps[0])
             2 -> configureDoubleAvatar(avatarBitmaps[0], avatarBitmaps[1])
             3 -> configureTripleAvatar(avatarBitmaps[0], avatarBitmaps[1], avatarBitmaps[2])
