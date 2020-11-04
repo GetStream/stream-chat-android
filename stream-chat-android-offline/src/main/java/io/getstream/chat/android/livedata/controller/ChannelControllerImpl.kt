@@ -183,7 +183,7 @@ internal class ChannelControllerImpl(
     private var lastMarkReadEvent: Date? = null
     private var lastKeystrokeAt: Date? = null
     private var lastStartTypingEvent: Date? = null
-    val channelController = client.channel(channelType, channelId)
+    private val channelClient = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
@@ -274,7 +274,7 @@ internal class ChannelControllerImpl(
 
     suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
-        val result = channelController.hide(clearHistory).execute()
+        val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
             val channelEntity = domainImpl.repos.channels.select(cid)
             channelEntity?.let {
@@ -294,7 +294,7 @@ internal class ChannelControllerImpl(
 
     suspend fun show(): Result<Unit> {
         setHidden(false)
-        val result = channelController.show().execute()
+        val result = channelClient.show().execute()
         if (result.isSuccess) {
             val channelEntity = domainImpl.repos.channels.select(cid)
             channelEntity?.let {
@@ -411,7 +411,7 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
-        val response = channelController.watch(request).execute()
+        val response = channelClient.watch(request).execute()
 
         if (response.isSuccess) {
             recoveryNeeded = false
@@ -503,7 +503,7 @@ internal class ChannelControllerImpl(
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            val result = domainImpl.runAndRetry { channelController.sendMessage(newMessage) }
+            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -603,7 +603,7 @@ internal class ChannelControllerImpl(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
         )
-        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
         removeLocalMessage(message)
         return if (result.isSuccess) {
             Result(result.data())
@@ -619,7 +619,7 @@ internal class ChannelControllerImpl(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
-        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
         removeLocalMessage(message)
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()

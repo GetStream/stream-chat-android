@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.controllers
+package io.getstream.chat.android.client.channel
 
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.events.ChatEvent
@@ -8,7 +8,7 @@ import kotlin.reflect.KClass
 /***
  * Subscribes to events of type [T] in the channel.
  */
-public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
+public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
     crossinline listener: (event: T) -> Unit
 ): Disposable {
     return this.subscribeFor(
@@ -22,7 +22,7 @@ public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
  *
  * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
  */
-public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
+public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     crossinline listener: (event: T) -> Unit
 ): Disposable {
@@ -36,7 +36,7 @@ public inline fun <reified T : ChatEvent> ChannelController.subscribeFor(
 /***
  * Subscribes to the specific [eventTypes] of the channel.
  */
-public fun ChannelController.subscribeFor(
+public fun ChannelClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: (event: ChatEvent) -> Unit
 ): Disposable {
@@ -49,7 +49,7 @@ public fun ChannelController.subscribeFor(
  *
  * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
  */
-public fun ChannelController.subscribeFor(
+public fun ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
     listener: (event: ChatEvent) -> Unit
@@ -61,7 +61,7 @@ public fun ChannelController.subscribeFor(
 /***
  * Subscribes for the next channel event of type [T].
  */
-public inline fun <reified T : ChatEvent> ChannelController.subscribeForSingle(
+public inline fun <reified T : ChatEvent> ChannelClient.subscribeForSingle(
     noinline listener: (event: T) -> Unit
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)

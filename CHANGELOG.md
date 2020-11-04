@@ -21,6 +21,9 @@
 ## stream-chat-android-client
 - Fix guest user authentication
 - Changed API of QuerySort class. You have to specify for what model it is being used.
+- Rename `ChannelController` to `ChannelClient`. Deprecate `ChannelController`.
+- Replace `ChannelController` subscribe related extension functions with corresponding `ChannelClient` functions
+- Move `ChannelClient` extension functions to `io.getstream.chat.android.client.channel` package
 
 ## stream-chat-android-offline
 - Add GetChannelController use cases which allows to get ChannelController for Channel

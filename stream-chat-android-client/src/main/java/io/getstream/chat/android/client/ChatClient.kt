@@ -18,8 +18,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
-import io.getstream.chat.android.client.controllers.ChannelController
-import io.getstream.chat.android.client.controllers.ChannelControllerImpl
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -715,21 +714,21 @@ public class ChatClient internal constructor(
     }
 
     /***
-     * Returns a [ChannelController] for given type and id
+     * Returns a [ChannelClient] for given type and id
      *
      * @param channelType the channel type. ie messaging
      * @param channelId the channel id. ie 123
      */
-    public fun channel(channelType: String, channelId: String): ChannelController {
-        return ChannelControllerImpl(channelType, channelId, this)
+    public fun channel(channelType: String, channelId: String): ChannelClient {
+        return ChannelClient(channelType, channelId, this)
     }
 
     /***
-     * Returns a [ChannelController] for given cid
+     * Returns a [ChannelClient] for given cid
      *
      * @param cid the full channel id. ie messaging:123
      */
-    public fun channel(cid: String): ChannelController {
+    public fun channel(cid: String): ChannelClient {
         val type = cid.split(":")[0]
         val id = cid.split(":")[1]
         return channel(type, id)

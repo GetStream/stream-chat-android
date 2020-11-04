@@ -18,6 +18,10 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
+@Deprecated(
+    message = "The ChannelController has been replaced by ChannelClient",
+    replaceWith = ReplaceWith("ChannelClient")
+)
 public interface ChannelController {
 
     public val channelType: String

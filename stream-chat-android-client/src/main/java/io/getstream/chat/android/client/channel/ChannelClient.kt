@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.controllers
+package io.getstream.chat.android.client.channel
 
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -72,13 +73,13 @@ import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
-internal class ChannelControllerImpl(
+public class ChannelClient internal constructor(
     override val channelType: String,
     override val channelId: String,
     private val client: ChatClient
 ) : ChannelController {
 
-    override val cid = "$channelType:$channelId"
+    override val cid: String = "$channelType:$channelId"
 
     override fun create(members: List<String>, extraData: Map<String, Any>): Call<Channel> {
         return client.createChannel(channelType, channelId, members, extraData)
