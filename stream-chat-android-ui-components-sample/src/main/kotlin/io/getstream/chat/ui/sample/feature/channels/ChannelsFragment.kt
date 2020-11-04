@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.viewmodel.channels.ChannelsViewModel
@@ -35,6 +36,11 @@ class ChannelsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.bindView(binding.channelsListView, viewLifecycleOwner)
+        viewModel.state.observe(viewLifecycleOwner) {
+            binding.channelsLoadingView
+                .loadingViewContainer
+                .isVisible = it is ChannelsViewModel.State.Loading
+        }
 
         activity?.apply {
             onBackPressedDispatcher.addCallback(

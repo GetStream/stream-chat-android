@@ -69,6 +69,7 @@ private const val TRUTH_VERSION = "1.1"
 private const val WORK_VERSION = "2.4.0"
 private const val FLIPPER_VERSION = "0.63.0"
 private const val FLIPPER_SO_LOADER_VERSION= "0.9.0"
+private const val SHIMMER_VERSION= "0.5.0"
 
 
 object Dependencies {
@@ -171,6 +172,7 @@ object Dependencies {
     const val flipper = "com.facebook.flipper:flipper:$FLIPPER_VERSION"
     const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:$FLIPPER_VERSION"
     const val flipperLoader = "com.facebook.soloader:soloader:$FLIPPER_SO_LOADER_VERSION"
+    const val shimmer = "com.facebook.shimmer:shimmer:$SHIMMER_VERSION"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
