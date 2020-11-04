@@ -7,7 +7,7 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import com.getstream.sdk.chat.style.TextStyle
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.utils.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 
 public class AvatarStyle(context: Context, attrs: AttributeSet?) {
     public val avatarWidth: Int

@@ -1,4 +1,4 @@
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import androidx.annotation.ArrayRes

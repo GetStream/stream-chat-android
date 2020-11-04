@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
 import io.getstream.chat.android.ui.utils.adjustColorLBrightness
-import io.getstream.chat.android.ui.utils.getIntArray
+import io.getstream.chat.android.ui.utils.extensions.getIntArray
 import kotlin.math.abs
 
 internal class AvatarBitmapFactory(private val context: Context) {
