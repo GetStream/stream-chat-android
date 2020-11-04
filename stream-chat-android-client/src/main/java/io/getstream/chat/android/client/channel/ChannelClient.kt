@@ -7,6 +7,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.call.Call
+import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.events.ChannelCreatedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -68,44 +69,42 @@ import io.getstream.chat.android.client.models.Mute
 import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.client.utils.ProgressCallback
+import io.getstream.chat.android.client.utils.observable.ChatObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import java.io.File
 
-public class ChannelClient(
-    public val channelType: String,
-    public val channelId: String,
+public class ChannelClient internal constructor(
+    override val channelType: String,
+    override val channelId: String,
     private val client: ChatClient
-) {
+) : ChannelController {
 
-    public val cid: String = "$channelType:$channelId"
+    override val cid: String = "$channelType:$channelId"
 
-    public fun create(members: List<String>, extraData: Map<String, Any>): Call<Channel> {
+    override fun create(members: List<String>, extraData: Map<String, Any>): Call<Channel> {
         return client.createChannel(channelType, channelId, members, extraData)
     }
 
-    public fun create(extraData: Map<String, Any>): Call<Channel> {
+    override fun create(extraData: Map<String, Any>): Call<Channel> {
         return client.createChannel(channelType, channelId, emptyList())
     }
 
-    public fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
+    override fun events(): ChatObservable {
+        return client.events().filter(this::isRelevantForChannel)
+    }
+
+    override fun subscribe(listener: (event: ChatEvent) -> Unit): Disposable {
         return client.subscribe(filterRelevantEvents(listener))
     }
 
-    public fun subscribeFor(
+    override fun subscribeFor(
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
-    /***
-     * Subscribes to the specific [eventTypes] of the channel, in the lifecycle of [lifecycleOwner].
-     *
-     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
-     *
-     * @see [io.getstream.chat.android.client.models.EventType] for type constants
-     */
-    public fun subscribeFor(
+    override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
         listener: (event: ChatEvent) -> Unit
@@ -117,19 +116,14 @@ public class ChannelClient(
         )
     }
 
-    public fun subscribeFor(
+    override fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
     }
 
-    /***
-     * Subscribes to the specific [eventTypes] of the channel, in the lifecycle of [lifecycleOwner].
-     *
-     * Only receives events when the lifecycle is in a STARTED state, otherwise events are dropped.
-     */
-    public fun subscribeFor(
+    override fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
         listener: (event: ChatEvent) -> Unit
@@ -141,22 +135,14 @@ public class ChannelClient(
         )
     }
 
-    /***
-     * Subscribes for the next channel event with the given [eventType].
-     *
-     * @see [io.getstream.chat.android.client.models.EventType] for type constants
-     */
-    public fun subscribeForSingle(
+    override fun subscribeForSingle(
         eventType: String,
         listener: (event: ChatEvent) -> Unit
     ): Disposable {
         return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
     }
 
-    /***
-     * Subscribes for the next channel event with the given [eventType].
-     */
-    public fun <T : ChatEvent> subscribeForSingle(
+    override fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: (event: T) -> Unit
     ): Disposable {
@@ -230,105 +216,105 @@ public class ChannelClient(
         }
     }
 
-    public fun query(request: QueryChannelRequest): Call<Channel> {
+    override fun query(request: QueryChannelRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }
 
-    public fun watch(request: WatchChannelRequest): Call<Channel> {
+    override fun watch(request: WatchChannelRequest): Call<Channel> {
         return client.queryChannel(channelType, channelId, request)
     }
 
-    public fun watch(data: Map<String, Any>): Call<Channel> {
+    override fun watch(data: Map<String, Any>): Call<Channel> {
         val request = WatchChannelRequest()
         request.data.putAll(data)
         return watch(request)
     }
 
-    public fun watch(): Call<Channel> {
+    override fun watch(): Call<Channel> {
         return client.queryChannel(channelType, channelId, WatchChannelRequest())
     }
 
-    public fun stopWatching(): Call<Unit> {
+    override fun stopWatching(): Call<Unit> {
         return client.stopWatching(channelType, channelId)
     }
 
-    public fun getMessage(messageId: String): Call<Message> {
+    override fun getMessage(messageId: String): Call<Message> {
         return client.getMessage(messageId)
     }
 
-    public fun updateMessage(message: Message): Call<Message> {
+    override fun updateMessage(message: Message): Call<Message> {
         return client.updateMessage(message)
     }
 
-    public fun deleteMessage(messageId: String): Call<Message> {
+    override fun deleteMessage(messageId: String): Call<Message> {
         return client.deleteMessage(messageId)
     }
 
-    public fun sendMessage(message: Message): Call<Message> {
+    override fun sendMessage(message: Message): Call<Message> {
         return client.sendMessage(channelType, channelId, message)
     }
 
-    public fun banUser(targetId: String, reason: String, timout: Int): Call<Unit> {
+    override fun banUser(targetId: String, reason: String, timout: Int): Call<Unit> {
         return client.banUser(targetId, channelType, channelId, reason, timout)
     }
 
-    public fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit> {
+    override fun unBanUser(targetId: String, reason: String, timout: Int): Call<Unit> {
         return client.unBanUser(targetId, channelType, channelId)
     }
 
-    public fun markMessageRead(messageId: String): Call<Unit> {
+    override fun markMessageRead(messageId: String): Call<Unit> {
         return client.markMessageRead(channelType, channelId, messageId)
     }
 
-    public fun markRead(): Call<Unit> {
+    override fun markRead(): Call<Unit> {
         return client.markRead(channelType, channelId)
     }
 
-    public fun delete(): Call<Channel> {
+    override fun delete(): Call<Channel> {
         return client.deleteChannel(channelType, channelId)
     }
 
-    public fun show(): Call<Unit> {
+    override fun show(): Call<Unit> {
         return client.showChannel(channelType, channelId)
     }
 
-    public fun hide(clearHistory: Boolean): Call<Unit> {
+    override fun hide(clearHistory: Boolean): Call<Unit> {
         return client.hideChannel(channelType, channelId, clearHistory)
     }
 
-    public fun sendFile(file: File): Call<String> {
+    override fun sendFile(file: File): Call<String> {
         return client.sendFile(channelType, channelId, file)
     }
 
-    public fun sendImage(file: File): Call<String> {
+    override fun sendImage(file: File): Call<String> {
         return client.sendImage(channelType, channelId, file)
     }
 
-    public fun sendFile(file: File, callback: ProgressCallback): Call<String> {
+    override fun sendFile(file: File, callback: ProgressCallback): Call<String> {
         return client.sendFile(channelType, channelId, file)
     }
 
-    public fun sendImage(file: File, callback: ProgressCallback): Call<String> {
+    override fun sendImage(file: File, callback: ProgressCallback): Call<String> {
         return client.sendImage(channelType, channelId, file)
     }
 
-    public fun sendReaction(reaction: Reaction): Call<Reaction> {
+    override fun sendReaction(reaction: Reaction): Call<Reaction> {
         return client.sendReaction(reaction)
     }
 
-    public fun sendAction(request: SendActionRequest): Call<Message> {
+    override fun sendAction(request: SendActionRequest): Call<Message> {
         return client.sendAction(request)
     }
 
-    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
+    override fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
         return client.deleteReaction(messageId, reactionType)
     }
 
-    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
+    override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
         return client.getReactions(messageId, offset, limit)
     }
 
-    public fun getReactions(
+    override fun getReactions(
         messageId: String,
         firstReactionId: String,
         limit: Int
@@ -336,65 +322,65 @@ public class ChannelClient(
         return client.getRepliesMore(messageId, firstReactionId, limit)
     }
 
-    public fun update(message: Message?, extraData: Map<String, Any>): Call<Channel> {
+    override fun update(message: Message?, extraData: Map<String, Any>): Call<Channel> {
         return client.updateChannel(channelType, channelId, message, extraData)
     }
 
-    public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
+    override fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
         client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
 
-    public fun disableSlowMode(): Call<Channel> =
+    override fun disableSlowMode(): Call<Channel> =
         client.disableSlowMode(channelType, channelId)
 
-    public fun addMembers(vararg userIds: String): Call<Channel> {
+    override fun addMembers(vararg userIds: String): Call<Channel> {
         return client.addMembers(channelType, channelId, userIds.toList())
     }
 
-    public fun removeMembers(vararg userIds: String): Call<Channel> {
+    override fun removeMembers(vararg userIds: String): Call<Channel> {
         return client.removeMembers(channelType, channelId, userIds.toList())
     }
 
-    public fun acceptInvite(message: String): Call<Channel> {
+    override fun acceptInvite(message: String): Call<Channel> {
         return client.acceptInvite(channelType, channelId, message)
     }
 
-    public fun rejectInvite(): Call<Channel> {
+    override fun rejectInvite(): Call<Channel> {
         return client.rejectInvite(channelType, channelId)
     }
 
-    public fun muteCurrentUser(): Call<Mute> {
+    override fun muteCurrentUser(): Call<Mute> {
         return client.muteCurrentUser()
     }
 
-    public fun mute(): Call<Unit> {
+    override fun mute(): Call<Unit> {
         return client.muteChannel(channelType, channelId)
     }
 
-    public fun unmute(): Call<Unit> {
+    override fun unmute(): Call<Unit> {
         return client.unMuteChannel(channelType, channelId)
     }
 
-    public fun muteUser(userId: String): Call<Mute> {
+    override fun muteUser(userId: String): Call<Mute> {
         return client.muteUser(userId)
     }
 
-    public fun unmuteUser(userId: String): Call<Mute> {
+    override fun unmuteUser(userId: String): Call<Mute> {
         return client.unmuteUser(userId)
     }
 
-    public fun unmuteCurrentUser(): Call<Mute> {
+    override fun unmuteCurrentUser(): Call<Mute> {
         return client.unmuteCurrentUser()
     }
 
-    public fun keystroke(): Call<ChatEvent> {
+    override fun keystroke(): Call<ChatEvent> {
         return client.sendEvent(EventType.TYPING_START, channelType, channelId)
     }
 
-    public fun stopTyping(): Call<ChatEvent> {
+    override fun stopTyping(): Call<ChatEvent> {
         return client.sendEvent(EventType.TYPING_STOP, channelType, channelId)
     }
 
-    public fun queryMembers(
+    override fun queryMembers(
         offset: Int,
         limit: Int,
         filter: FilterObject,

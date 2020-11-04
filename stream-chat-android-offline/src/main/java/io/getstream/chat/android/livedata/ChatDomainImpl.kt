@@ -645,7 +645,7 @@ internal class ChatDomainImpl internal constructor(
 
         val messages = repos.messages.selectSyncNeeded(userMap)
         for (message in messages) {
-            val channelClient = client.getChannelClient(message.cid)
+            val channelClient = client.channel(message.cid)
             // support sending, deleting and editing messages here
             val result = when {
                 message.deletedAt != null -> channelClient.deleteMessage(message.id).execute()

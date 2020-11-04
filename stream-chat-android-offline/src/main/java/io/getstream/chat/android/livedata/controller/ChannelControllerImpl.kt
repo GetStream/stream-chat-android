@@ -183,7 +183,7 @@ internal class ChannelControllerImpl(
     private var lastMarkReadEvent: Date? = null
     private var lastKeystrokeAt: Date? = null
     private var lastStartTypingEvent: Date? = null
-    private val channelClient = client.getChannelClient(channelType, channelId)
+    private val channelClient = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")

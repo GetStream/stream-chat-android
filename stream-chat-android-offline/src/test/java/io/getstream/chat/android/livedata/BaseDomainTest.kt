@@ -135,8 +135,8 @@ internal open class BaseDomainTest {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
-            on { getChannelClient(any(), any()) } doReturn channelClientMock
-            on { getChannelClient(any()) } doReturn channelClientMock
+            on { channel(any(), any()) } doReturn channelClientMock
+            on { channel(any()) } doReturn channelClientMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
             on { getSyncHistory(any(), anyOrNull()) } doReturn TestCall(data.replayEventsResult)
             on {
@@ -188,8 +188,8 @@ internal open class BaseDomainTest {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
-            on { getChannelClient(any(), any()) } doReturn channelClientMock
-            on { getChannelClient(any()) } doReturn channelClientMock
+            on { channel(any(), any()) } doReturn channelClientMock
+            on { channel(any()) } doReturn channelClientMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
             on { sendReaction(any()) } doReturn TestCall(
                 Result(
