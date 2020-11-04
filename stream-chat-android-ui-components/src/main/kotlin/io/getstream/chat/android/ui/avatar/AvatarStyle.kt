@@ -63,5 +63,7 @@ public class AvatarStyle(context: Context, attrs: AttributeSet?) {
             R.styleable.AvatarView_streamAvatarOnlineIndicatorEnabled,
             false
         )
+
+        a.recycle()
     }
 }
