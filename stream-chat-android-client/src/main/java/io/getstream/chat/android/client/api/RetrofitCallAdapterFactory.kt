@@ -32,9 +32,10 @@ internal class RetrofitCallAdapterFactory private constructor(
     }
 
     companion object {
-        val mainThreadExecutor by lazy {
-            Executor { r ->
-                Handler(Looper.getMainLooper()).post(r)
+        val mainThreadExecutor: Executor = object : Executor {
+            val handler: Handler by lazy { Handler(Looper.getMainLooper()) }
+            override fun execute(command: Runnable?) {
+                command?.let(handler::post)
             }
         }
 
