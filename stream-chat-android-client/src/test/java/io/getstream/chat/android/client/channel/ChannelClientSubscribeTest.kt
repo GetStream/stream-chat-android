@@ -1,4 +1,4 @@
-package io.getstream.chat.android.client.controllers
+package io.getstream.chat.android.client.channel
 
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.mock
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.Date
 
-internal class ChannelControllerImplSubscribeTest {
+internal class ChannelClientSubscribeTest {
     private companion object {
         const val CHANNEL_TYPE = "messaging"
         const val CHANNEL_ID = "channelId"
@@ -53,14 +53,14 @@ internal class ChannelControllerImplSubscribeTest {
     }
 
     private lateinit var client: ChatClient
-    private lateinit var channelController: ChannelController
+    private lateinit var channelClient: ChannelClient
 
     private lateinit var result: MutableList<ChatEvent>
 
     @BeforeEach
     fun setUp() {
         client = mock()
-        channelController = ChannelControllerImpl(
+        channelClient = ChannelClient(
             CHANNEL_TYPE,
             CHANNEL_ID,
             client
@@ -70,7 +70,7 @@ internal class ChannelControllerImplSubscribeTest {
 
     @Test
     fun `When subscribing to channel events Then only the events of the given channel should be delivered`() {
-        channelController.subscribe {
+        channelClient.subscribe {
             result.add(it)
         }
         val captor = argumentCaptor<(ChatEvent) -> Unit>()

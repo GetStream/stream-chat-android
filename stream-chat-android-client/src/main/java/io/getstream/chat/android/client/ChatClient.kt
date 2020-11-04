@@ -18,6 +18,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdateChannelRequest
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.map
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.controllers.ChannelController
 import io.getstream.chat.android.client.controllers.ChannelControllerImpl
 import io.getstream.chat.android.client.di.ChatModule
@@ -720,6 +721,10 @@ public class ChatClient internal constructor(
      * @param channelType the channel type. ie messaging
      * @param channelId the channel id. ie 123
      */
+    @Deprecated(
+        message = "Use getChannelClient() instead",
+        replaceWith = ReplaceWith("this.getChannelClient")
+    )
     public fun channel(channelType: String, channelId: String): ChannelController {
         return ChannelControllerImpl(channelType, channelId, this)
     }
@@ -729,10 +734,35 @@ public class ChatClient internal constructor(
      *
      * @param cid the full channel id. ie messaging:123
      */
+    @Deprecated(
+        message = "Use getChannelClient() instead",
+        replaceWith = ReplaceWith("this.getChannelClient")
+    )
     public fun channel(cid: String): ChannelController {
         val type = cid.split(":")[0]
         val id = cid.split(":")[1]
         return channel(type, id)
+    }
+
+    /***
+     * Returns a [ChannelClient] for given type and id
+     *
+     * @param channelType the channel type. ie messaging
+     * @param channelId the channel id. ie 123
+     */
+    public fun getChannelClient(channelType: String, channelId: String): ChannelClient {
+        return ChannelClient(channelType, channelId, this)
+    }
+
+    /***
+     * Returns a [ChannelClient] for given cid
+     *
+     * @param cid the full channel id. ie messaging:123
+     */
+    public fun getChannelClient(cid: String): ChannelClient {
+        val type = cid.split(":")[0]
+        val id = cid.split(":")[1]
+        return getChannelClient(type, id)
     }
 
     public fun createChannel(
