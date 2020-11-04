@@ -30,7 +30,6 @@ public class ChannelsViewModel(
     private val sort: QuerySort<Channel> = DEFAULT_SORT,
     private val limit: Int = 30
 ) : ViewModel() {
-    private val channelsData: LiveData<State>
     private val loadingData = MutableLiveData<State.Loading>()
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
@@ -41,27 +40,29 @@ public class ChannelsViewModel(
     public val paginationState: LiveData<PaginationState> = paginationStateMerger
 
     init {
-        val queryChannelsController = chatDomain.useCases.queryChannels(filter, sort, limit).execute().data()
-        queryChannelsController.run {
-            loadingData.postValue(State.Loading)
-            channelsData = map(channels) { channelList ->
-                if (channelList.isEmpty()) {
-                    State.NoChannelsAvailable
-                } else {
-                    State.Result(channelList.filter { it.hidden == false })
+        stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
+        loadingData.postValue(State.Loading)
+        chatDomain.useCases.queryChannels(filter, sort, limit).enqueue { queryChannelsControllerResult ->
+            if (queryChannelsControllerResult.isSuccess) {
+                queryChannelsControllerResult.data().run {
+                    stateMerger.addSource(
+                        map(channels) { channelList ->
+                            if (channelList.isEmpty()) {
+                                State.NoChannelsAvailable
+                            } else {
+                                State.Result(channelList.filter { it.hidden == false })
+                            }
+                        }
+                    ) { state -> stateMerger.value = state }
+                    paginationStateMerger.addSource(loadingMore) { loadingMore ->
+                        setPaginationState { copy(loadingMore = loadingMore) }
+                    }
+                    paginationStateMerger.addSource(endOfChannels) { endOfChannels ->
+                        setPaginationState { copy(endOfChannels = endOfChannels) }
+                    }
                 }
             }
-
-            paginationStateMerger.addSource(loadingMore) { loadingMore ->
-                setPaginationState { copy(loadingMore = loadingMore) }
-            }
-            paginationStateMerger.addSource(endOfChannels) { endOfChannels ->
-                setPaginationState { copy(endOfChannels = endOfChannels) }
-            }
         }
-
-        stateMerger.addSource(loadingData) { state -> stateMerger.value = state }
-        stateMerger.addSource(channelsData) { state -> stateMerger.value = state }
     }
 
     public fun onEvent(event: Event) {

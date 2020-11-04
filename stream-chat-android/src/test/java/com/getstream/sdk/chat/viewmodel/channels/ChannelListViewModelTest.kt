@@ -19,6 +19,7 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsController
 import io.getstream.chat.android.livedata.usecase.QueryChannels
 import io.getstream.chat.android.livedata.usecase.QueryChannelsLoadMore
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
+import io.getstream.chat.android.test.TestCall
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.amshove.kluent.shouldBeEqualTo
@@ -83,8 +84,8 @@ private class Fixture {
     private val useCases: UseCaseHelper = mock()
     private val queryChannels: QueryChannels = mock()
     private var queryChannelsLoadMore: QueryChannelsLoadMore = mock()
-    private val queryChannelsCall: Call<QueryChannelsController> = mock()
     private val queryChannelsControllerResult: Result<QueryChannelsController> = mock()
+    private val queryChannelsCall = TestCall<QueryChannelsController>(queryChannelsControllerResult)
     private val queryChannelsController: QueryChannelsController = mock()
 
     private val channelsLiveData: MutableLiveData<List<Channel>> = MutableLiveData()
@@ -99,7 +100,7 @@ private class Fixture {
             any(),
             any()
         ) doReturn queryChannelsCall
-        When calling queryChannelsCall.execute() doReturn queryChannelsControllerResult
+        When calling queryChannelsControllerResult.isSuccess doReturn true
         When calling queryChannelsControllerResult.data() doReturn queryChannelsController
         When calling useCases.queryChannelsLoadMore doReturn queryChannelsLoadMore
         When calling queryChannelsController.channels doReturn channelsLiveData
