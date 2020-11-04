@@ -14,11 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-public class AvatarView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0
-) : AppCompatImageView(context, attrs, defStyleAttr) {
+public class AvatarView : AppCompatImageView {
     private val bitmapFactory = AvatarBitmapFactory(context)
     private val clipPath = Path()
     private val clipRect = RectF()
@@ -37,7 +33,23 @@ public class AvatarView @JvmOverloads constructor(
     private lateinit var avatarStyle: AvatarStyle
     private var onlineIndicatorVisible: Boolean = false
 
-    init {
+    public constructor(context: Context) : super(context) {
+        init(context, null)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
+        init(context, attrs)
+    }
+
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init(context, attrs)
+    }
+
+    private fun init(context: Context, attrs: AttributeSet?) {
         setStyle(AvatarStyle(context, attrs))
     }
 
