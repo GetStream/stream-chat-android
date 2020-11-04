@@ -3,24 +3,21 @@ package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Attachment;
 import io.getstream.chat.android.client.models.Channel;
@@ -29,9 +26,6 @@ import io.getstream.chat.android.client.models.Member;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
-
-import static com.getstream.sdk.chat.enums.Dates.TODAY;
-import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
 
 public class LlcMigrationUtils {
 
@@ -78,8 +72,9 @@ public class LlcMigrationUtils {
         } else if (lastMessage == null) {
             return true;
         } else {
-            Date date = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
-            return myReadDate.getTime() > (date != null ? date.getTime() : 0);
+            Date lastMessageDate = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
+            boolean shouldBeMarkedRead = myReadDate.getTime() >= (lastMessageDate != null ? lastMessageDate.getTime() : 0);
+            return shouldBeMarkedRead;
         }
     }
 
@@ -107,9 +102,9 @@ public class LlcMigrationUtils {
 
     public static Date getLastActive(List<Member> members) {
         Date lastActive = new Date();
-        for (Member member: members) {
+        for (Member member : members) {
             if (member.getUser().getId() != ChatDomain.instance().getCurrentUser().getId()) {
-                if (member.getUser().getLastActive()!= null) {
+                if (member.getUser().getLastActive() != null) {
                     lastActive = member.getUser().getLastActive();
                 }
 
@@ -225,7 +220,7 @@ public class LlcMigrationUtils {
         return true;
     }
 
-    public static List<User> getOtherUsers( List<Member> members) {
+    public static List<User> getOtherUsers(List<Member> members) {
 
         List<User> result = new ArrayList<>();
 
@@ -355,7 +350,7 @@ public class LlcMigrationUtils {
         return lastMessage;
     }
 
-    public static User getCurrentUser(){
+    public static User getCurrentUser() {
         return ChatDomain.instance().getCurrentUser();
     }
 }

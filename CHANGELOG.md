@@ -17,7 +17,7 @@
 - Fix handling of the `streamShowReadState` attribute on `MessageListView`
 - Add `streamShowDeliveredState` XML attribute to `MessageListView`
 - Add "loading more" indicator to the `MessageListView`
-- Messages in ChannelController were splitted in messages - New messages and oldMessages for messages coming from the history.
+- Messages in ChannelController were split in messages - New messages and oldMessages for messages coming from the history.
 
 ## stream-chat-android-client
 - Fix guest user authentication
