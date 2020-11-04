@@ -7,7 +7,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import kotlinx.coroutines.Dispatchers
@@ -78,11 +80,11 @@ public class AvatarView : AppCompatImageView {
 
     private fun configureImageDrawable(generateAvatarDrawable: suspend () -> AvatarDrawable) {
         GlobalScope.launch(Dispatchers.Main) {
-            layoutParams?.apply {
+            setImageDrawable(generateAvatarDrawable())
+            updateLayoutParams<ViewGroup.LayoutParams> {
                 width = avatarStyle.avatarWidth
                 height = avatarStyle.avatarHeight
-            }?.let(::setLayoutParams)
-            setImageDrawable(generateAvatarDrawable())
+            }
         }
     }
 
