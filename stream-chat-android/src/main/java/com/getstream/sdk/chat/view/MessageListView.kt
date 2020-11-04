@@ -405,8 +405,9 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun lastSeenMessagePosition(): Int {
-        return adapter.currentList.lastIndexOfBiPredicate(lastSeenMessage) { message1, message2 ->
-            message1?.getStableId() == message2?.getStableId()
+        val lastMessageId = lastSeenMessage?.getStableId()
+        return adapter.currentList.indexOfLast { message ->
+            message?.getStableId() == lastMessageId
         }
     }
 
