@@ -19,8 +19,8 @@ import coil.transform.RoundedCornersTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-internal object ImageLoader {
-    suspend fun getBitmap(
+public object ImageLoader {
+    public suspend fun getBitmap(
         context: Context,
         url: String,
         transformation: ImageTransformation = ImageTransformation.None
@@ -39,7 +39,7 @@ internal object ImageLoader {
             }
     }
 
-    fun ImageView.loadWithGifSupport(
+    public fun ImageView.loadWithGifSupport(
         uri: String?,
         @DrawableRes placeholderResId: Int?,
         onStart: () -> Unit = {},
@@ -95,11 +95,14 @@ internal object ImageLoader {
             )
         }
 
-    sealed class ImageTransformation {
-        object None : ImageTransformation()
-        object Circle : ImageTransformation()
-        object Grayscale : ImageTransformation()
-        class Blur(val radius: Float = 10f, val sampling: Float = 1f) : ImageTransformation()
-        class RoundedCorners(val radius: Float) : ImageTransformation()
+    public sealed class ImageTransformation {
+        public object None : ImageTransformation()
+        public object Circle : ImageTransformation()
+        public object Grayscale : ImageTransformation()
+        public class Blur(
+            public val radius: Float = 10f,
+            public val sampling: Float = 1f
+        ) : ImageTransformation()
+        public class RoundedCorners(public val radius: Float) : ImageTransformation()
     }
 }

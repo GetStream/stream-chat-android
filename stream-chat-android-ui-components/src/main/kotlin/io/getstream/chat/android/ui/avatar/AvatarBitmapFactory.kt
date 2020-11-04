@@ -7,9 +7,7 @@ import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
-import coil.Coil
-import coil.request.ImageRequest
+import com.getstream.sdk.chat.ImageLoader
 import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
@@ -18,14 +16,13 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
 import io.getstream.chat.android.ui.utils.adjustColorLBrightness
 import io.getstream.chat.android.ui.utils.getIntArray
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlin.math.abs
 
 internal class AvatarBitmapFactory(private val context: Context) {
     private val gradientBaseColors = context.getIntArray(R.array.avatar_gradient_colors)
 
     internal suspend fun createUserBitmap(user: User, style: AvatarStyle): Bitmap {
-        return createBitmapFromUrl(user.image)
+        return ImageLoader.getBitmap(context, user.image)
             ?: createInitialsBitmap(style, LlcMigrationUtils.getInitials(user))
     }
 
@@ -34,7 +31,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         lastActiveUsers: List<User>,
         style: AvatarStyle
     ): List<Bitmap> {
-        return createBitmapFromUrl(channel.image)
+        return ImageLoader.getBitmap(context, channel.image)
             ?.let { listOf(it) }
             ?: createUsersBitmaps(lastActiveUsers, style).takeUnless { it.isEmpty() }
             ?: listOf(createInitialsBitmap(style, LlcMigrationUtils.getInitials(channel)))
@@ -42,23 +39,6 @@ internal class AvatarBitmapFactory(private val context: Context) {
 
     private suspend fun createUsersBitmaps(users: List<User>, style: AvatarStyle): List<Bitmap> {
         return users.take(MAX_AVATAR_SECTIONS).map { createUserBitmap(it, style) }
-    }
-
-    private suspend fun createBitmapFromUrl(
-        url: String
-    ): Bitmap? = withContext(Dispatchers.IO) {
-        url.takeUnless { it.isBlank() }
-            ?.let {
-                (
-                    Coil.execute(
-                        ImageRequest.Builder(context)
-                            .data(it)
-                            .allowHardware(false)
-                            .build()
-                    )
-                        .drawable as? BitmapDrawable
-                    )?.bitmap
-            }
     }
 
     private fun createInitialsBitmap(
