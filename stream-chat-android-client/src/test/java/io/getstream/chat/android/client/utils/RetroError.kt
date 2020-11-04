@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import okhttp3.MediaType.Companion.toMediaType
@@ -13,7 +14,7 @@ import retrofit2.Response
 internal class RetroError<T : Any>(val statusCode: Int) : Call<T> {
 
     fun toRetrofitCall(): RetrofitCall<T> {
-        return RetrofitCall(this, ChatParserImpl())
+        return RetrofitCall(this, ChatParserImpl(), RetrofitCallAdapterFactory.mainThreadExecutor)
     }
 
     override fun enqueue(callback: Callback<T>) {
