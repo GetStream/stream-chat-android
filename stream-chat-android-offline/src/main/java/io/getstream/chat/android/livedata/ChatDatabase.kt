@@ -76,11 +76,13 @@ internal abstract class ChatDatabase : RoomDatabase() {
                         ChatDatabase::class.java,
                         "stream_chat_database_$userId"
                     ).fallbackToDestructiveMigration()
-                        .addCallback(object : Callback() {
-                            override fun onOpen(db: SupportSQLiteDatabase) {
-                                db.execSQL("PRAGMA synchronous = 1")
+                        .addCallback(
+                            object : Callback() {
+                                override fun onOpen(db: SupportSQLiteDatabase) {
+                                    db.execSQL("PRAGMA synchronous = 1")
+                                }
                             }
-                        })
+                        )
                         .build()
                     INSTANCES[userId] = db
                 }
