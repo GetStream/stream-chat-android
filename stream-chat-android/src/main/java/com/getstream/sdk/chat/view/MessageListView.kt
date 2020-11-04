@@ -29,7 +29,7 @@ import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.navigation.destinations.AttachmentDestination
 import com.getstream.sdk.chat.utils.StartStopBuffer
 import com.getstream.sdk.chat.utils.inflater
-import com.getstream.sdk.chat.utils.reverseIndexOf
+import com.getstream.sdk.chat.utils.lastIndexOfBiPredicate
 import com.getstream.sdk.chat.view.MessageListView.AttachmentClickListener
 import com.getstream.sdk.chat.view.MessageListView.GiphySendListener
 import com.getstream.sdk.chat.view.MessageListView.MessageClickListener
@@ -404,8 +404,10 @@ public class MessageListView : ConstraintLayout {
         binding.chatMessagesRV.adapter = adapter
     }
 
-    private fun lastSeenMessagePosition(): Int = adapter.currentList.reverseIndexOf(lastSeenMessage) { a, b ->
-        a?.getStableId() == b?.getStableId()
+    private fun lastSeenMessagePosition(): Int {
+        return adapter.currentList.lastIndexOfBiPredicate(lastSeenMessage) { message1, message2 ->
+            message1?.getStableId() == message2?.getStableId()
+        }
     }
 
     public fun init(channel: Channel, currentUser: User) {
@@ -601,13 +603,6 @@ public class MessageListView : ConstraintLayout {
                 String.format("Scroll: First load scrolling down to bottom %d", newPosition)
             )
             lastMessageReadHandler.invoke()
-//        } else if (listItem.loadingMore) {
-//            // the load more behaviour is different, scroll positions starts out at 0
-//            // to stay at the relative 0 we should go to 0 + size of new messages...
-//
-//            // TODO ???
-//            val newPosition = layoutManager.findLastCompletelyVisibleItemPosition() + sizeGrewBy
-//            layoutManager.scrollToPosition(newPosition)
         } else {
             if (newSize == 0) {
                 buffer.active()
