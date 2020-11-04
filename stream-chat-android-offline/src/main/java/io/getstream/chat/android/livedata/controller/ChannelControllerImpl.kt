@@ -357,7 +357,7 @@ internal class ChannelControllerImpl(
             )
         }
         _loadingOlderMessages.postValue(true)
-        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN).apply { isLoadingMore = true }
+        val pagination = loadMoreMessagesRequest(limit, Pagination.LESS_THAN)
         val result = runChannelQuery(pagination)
         _loadingOlderMessages.postValue(false)
         return result
@@ -385,7 +385,7 @@ internal class ChannelControllerImpl(
         val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async { runChannelQueryOnline(pagination) } } else { null }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
-            if (pagination.isLoadingMore) {
+            if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
                 updateOldMessagesFromLocalChannel(localChannel)
             } else {
                 updateLiveDataFromLocalChannel(localChannel)
