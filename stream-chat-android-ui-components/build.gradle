@@ -74,4 +74,5 @@ dependencies {
     implementation Dependencies.kotlinStdLib
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
+    implementation Dependencies.androidxCoreKtx
 }
