@@ -101,18 +101,10 @@ public class AvatarView : AppCompatImageView {
 
     private fun drawOnlineStatus(canvas: Canvas) {
         if (onlineIndicatorVisible && avatarStyle.onlineIndicatorEnabled) {
-            canvas.drawCircle(
-                width - (width / 8f),
-                (height / 8f),
-                width / 8f,
-                onlineIndicatorOutlinePaint
-            )
-            canvas.drawCircle(
-                width - (width / 8f),
-                height / 8f,
-                width / 10f,
-                onlineIndicatorPaint
-            )
+            val cx = width - (width / 8f)
+            val cy = height / 8f
+            canvas.drawCircle(cx, cy, width / 8f, onlineIndicatorOutlinePaint)
+            canvas.drawCircle(cx, cy, width / 10f, onlineIndicatorPaint)
         }
     }
 
