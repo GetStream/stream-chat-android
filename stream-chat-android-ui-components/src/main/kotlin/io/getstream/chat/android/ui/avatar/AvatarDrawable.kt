@@ -63,16 +63,16 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
         )
 
     private fun configureDoubleAvatar(
-        topAvatarBitmap: Bitmap,
-        bottomAvatarBitmap: Bitmap
+        leftAvatarBitmap: Bitmap,
+        rightAvatarBitmap: Bitmap
     ): List<AvatarItem> {
         return listOf(
             AvatarItem(
-                topAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
+                leftAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
                 Rect(0, 0, bounds.width(), bounds.height())
             ),
             AvatarItem(
-                bottomAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
+                rightAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
                 Rect(bounds.width() / 2, 0, bounds.width() + bounds.width() / 2, bounds.height())
             )
         )
@@ -85,16 +85,16 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
     ): List<AvatarItem> {
         return listOf(
             AvatarItem(
-                topLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height() / 2),
-                Rect(0, 0, bounds.width(), bounds.height())
+                topLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
+                Rect(0, 0, bounds.width() / 2, bounds.height() / 2)
             ),
             AvatarItem(
                 topRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, bounds.height() / 2, bounds.width() / 2, bounds.height())
+                Rect(bounds.width() / 2, 0, bounds.width(), bounds.height() / 2)
             ),
             AvatarItem(
-                bottomAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(bounds.width() / 2, bounds.height() / 2, bounds.width(), bounds.height())
+                bottomAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height() / 2),
+                Rect(0, bounds.height() / 2, bounds.width(), bounds.height() + bounds.height() / 2)
             )
         )
     }
@@ -112,11 +112,11 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
             ),
             AvatarItem(
                 topRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, bounds.height() / 2, bounds.width() / 2, bounds.height())
+                Rect(bounds.width() / 2, 0, bounds.width(), bounds.height() / 2)
             ),
             AvatarItem(
                 bottomLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(bounds.width() / 2, 0, bounds.width(), bounds.height() / 2)
+                Rect(0, bounds.height() / 2, bounds.width() / 2, bounds.height())
             ),
             AvatarItem(
                 bottomRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
