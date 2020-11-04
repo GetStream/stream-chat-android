@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <solid android:color="@color/stream_input_message_box_background" />
+    <solid android:color="@color/stream_white" />
 
     <corners android:radius="@dimen/stream_composer_corner_radius" />
 </shape>

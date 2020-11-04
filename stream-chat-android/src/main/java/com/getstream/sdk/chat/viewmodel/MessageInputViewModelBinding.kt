@@ -4,6 +4,7 @@ package com.getstream.sdk.chat.viewmodel
 
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.messageinput.MessageInputView
+import com.getstream.sdk.chat.view.messageinput.MessageInputViewNew
 import io.getstream.chat.android.client.models.Message
 import java.io.File
 
@@ -13,63 +14,63 @@ import java.io.File
  * This includes handling typing detection and sending messages.
  */
 @JvmName("bind")
-public fun MessageInputViewModel.bindView(view: MessageInputView, lifecycleOwner: LifecycleOwner) {
-    view.messageSendHandler = object : MessageInputView.MessageSendHandler {
-        override fun sendMessage(messageText: String) {
-            this@bindView.sendMessage(messageText)
-        }
-
-        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
-            this@bindView.sendMessageWithAttachments(message, attachmentsFiles)
-        }
-
-        override fun sendToThread(
-            parentMessage: Message,
-            messageText: String,
-            alsoSendToChannel: Boolean
-        ) {
-            this@bindView.sendMessage(messageText) {
-                this.parentId = parentMessage.id
-                this.showInChannel = alsoSendToChannel
-            }
-        }
-
-        override fun sendToThreadWithAttachments(
-            parentMessage: Message,
-            message: String,
-            alsoSendToChannel: Boolean,
-            attachmentsFiles: List<File>
-        ) {
-            this@bindView.sendMessageWithAttachments(message, attachmentsFiles) {
-                this.parentId = parentMessage.id
-                this.showInChannel = alsoSendToChannel
-            }
-        }
-
-        override fun editMessage(oldMessage: Message, newMessageText: String) {
-            this@bindView.editMessage(oldMessage.apply { text = newMessageText })
-        }
-    }
-    view.addTypeListener(
-        object : MessageInputView.TypeListener {
-            override fun onKeystroke() = keystroke()
-            override fun onStopTyping() = stopTyping()
-        }
-    )
-    getActiveThread().observe(lifecycleOwner) { message ->
-        if (message != null) {
-            view.setThreadMode(message)
-        } else {
-            view.setNormalMode()
-        }
-    }
-    editMessage.observe(lifecycleOwner) { message ->
-        if (message != null) {
-            view.setEditMode(message)
-        } else {
-            view.setNormalMode()
-        }
-    }
-    members.observe(lifecycleOwner) { view.configureMembers(it) }
-    commands.observe(lifecycleOwner) { view.configureCommands(it) }
+public fun MessageInputViewModel.bindView(view: MessageInputViewNew, lifecycleOwner: LifecycleOwner) {
+//    view.messageSendHandler = object : MessageInputView.MessageSendHandler {
+//        override fun sendMessage(messageText: String) {
+//            this@bindView.sendMessage(messageText)
+//        }
+//
+//        override fun sendMessageWithAttachments(message: String, attachmentsFiles: List<File>) {
+//            this@bindView.sendMessageWithAttachments(message, attachmentsFiles)
+//        }
+//
+//        override fun sendToThread(
+//            parentMessage: Message,
+//            messageText: String,
+//            alsoSendToChannel: Boolean
+//        ) {
+//            this@bindView.sendMessage(messageText) {
+//                this.parentId = parentMessage.id
+//                this.showInChannel = alsoSendToChannel
+//            }
+//        }
+//
+//        override fun sendToThreadWithAttachments(
+//            parentMessage: Message,
+//            message: String,
+//            alsoSendToChannel: Boolean,
+//            attachmentsFiles: List<File>
+//        ) {
+//            this@bindView.sendMessageWithAttachments(message, attachmentsFiles) {
+//                this.parentId = parentMessage.id
+//                this.showInChannel = alsoSendToChannel
+//            }
+//        }
+//
+//        override fun editMessage(oldMessage: Message, newMessageText: String) {
+//            this@bindView.editMessage(oldMessage.apply { text = newMessageText })
+//        }
+//    }
+//    view.addTypeListener(
+//        object : MessageInputView.TypeListener {
+//            override fun onKeystroke() = keystroke()
+//            override fun onStopTyping() = stopTyping()
+//        }
+//    )
+//    getActiveThread().observe(lifecycleOwner) { message ->
+//        if (message != null) {
+//            view.setThreadMode(message)
+//        } else {
+//            view.setNormalMode()
+//        }
+//    }
+//    editMessage.observe(lifecycleOwner) { message ->
+//        if (message != null) {
+//            view.setEditMode(message)
+//        } else {
+//            view.setNormalMode()
+//        }
+//    }
+//    members.observe(lifecycleOwner) { view.configureMembers(it) }
+//    commands.observe(lifecycleOwner) { view.configureCommands(it) }
 }

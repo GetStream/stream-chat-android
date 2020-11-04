@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/stream_white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_openAttachment"
+            android:layout_width="@dimen/stream_attachment_button_width"
+            android:layout_height="@dimen/stream_attachment_button_height"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/stream_ic_attachment"
+            tools:src="@drawable/stream_ic_attachment"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_openEmojis"
+            android:layout_width="@dimen/stream_attachment_button_width"
+            android:layout_height="@dimen/stream_attachment_button_height"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="13dp"
+            android:src="@drawable/stream_ic_emoji"
+            tools:src="@drawable/stream_ic_emoji"
+            />
+
+        <com.getstream.sdk.chat.utils.GifEditText
+            android:id="@+id/message_text_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/stream_shape_edit_text_round"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="7"
+            android:padding="17dp"
+            android:textSize="15sp"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_sendMessage"
+            android:layout_width="@dimen/stream_attachment_button_width"
+            android:layout_height="@dimen/stream_attachment_button_height"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/stream_ic_send_message"
+            tools:src="@drawable/stream_ic_send_message"
+            />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
