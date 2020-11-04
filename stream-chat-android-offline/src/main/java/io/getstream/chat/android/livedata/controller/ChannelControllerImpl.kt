@@ -252,10 +252,10 @@ internal class ChannelControllerImpl(
 
         val last = messages.last()
         val lastMessageDate = last.let { it.createdAt ?: it.createdLocallyAt }
-        val shouldNotUpdate =
-            lastMarkReadEvent != null && lastMessageDate?.after(lastMarkReadEvent) == false
+        val shouldUpdate =
+            lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
 
-        if (shouldNotUpdate) {
+        if (!shouldUpdate) {
             logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
             return Result(false, null)
         }
