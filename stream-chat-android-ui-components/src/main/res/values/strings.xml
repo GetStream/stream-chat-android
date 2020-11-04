@@ -35,4 +35,7 @@
     <string name="stream_add_member_hint">Type a name</string>
     <string name="stream_create_group">Create a Group</string>
     <string name="stream_add_channel_user_list_title">On the platform</string>
+
+    <!-- ChannelHeaderView -->
+    <string name="stream_content_description_back_button">Back button</string>
 </resources>
