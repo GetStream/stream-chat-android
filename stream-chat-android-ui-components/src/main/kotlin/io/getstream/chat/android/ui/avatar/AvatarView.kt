@@ -19,14 +19,22 @@ public class AvatarView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
+    private val bitmapFactory = AvatarBitmapFactory(context)
     private val clipPath = Path()
     private val clipRect = RectF()
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
-    private lateinit var avatarStyle: AvatarStyle
-    private val bitmapFactory = AvatarBitmapFactory(context)
+    private val onlineIndicatorOutlinePaint = Paint().apply {
+        style = Paint.Style.FILL
+        color = Color.WHITE
+    }
+    private val onlineIndicatorPaint = Paint().apply {
+        style = Paint.Style.FILL
+        color = Color.GREEN
+    }
 
+    private lateinit var avatarStyle: AvatarStyle
     private var onlineIndicatorVisible: Boolean = false
 
     init {
@@ -79,15 +87,18 @@ public class AvatarView @JvmOverloads constructor(
 
     private fun drawOnlineStatus(canvas: Canvas) {
         if (onlineIndicatorVisible && avatarStyle.onlineIndicatorEnabled) {
-            val outlinePaint = Paint()
-            outlinePaint.style = Paint.Style.FILL
-            outlinePaint.color = Color.WHITE
-            canvas.drawCircle(width - (width / 8f), (height / 8f), width / 8f, outlinePaint)
-
-            val statusPaint = Paint()
-            statusPaint.style = Paint.Style.FILL
-            statusPaint.color = Color.GREEN
-            canvas.drawCircle(width - (width / 8f), height / 8f, width / 10f, statusPaint)
+            canvas.drawCircle(
+                width - (width / 8f),
+                (height / 8f),
+                width / 8f,
+                onlineIndicatorOutlinePaint
+            )
+            canvas.drawCircle(
+                width - (width / 8f),
+                height / 8f,
+                width / 10f,
+                onlineIndicatorPaint
+            )
         }
     }
 
