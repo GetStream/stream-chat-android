@@ -3,6 +3,7 @@ package com.getstream.sdk.chat.utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
@@ -31,7 +32,11 @@ internal class StartStopBuffer<T>(
     private fun propagateData() {
         GlobalScope.launch(ioDispatcher) {
             while (active.get() && events.isNotEmpty()) {
-                events.poll()?.let(func!!)
+                events.poll()?.let {
+                    withContext(Dispatchers.Main) {
+                        func?.invoke(it)
+                    }
+                }
             }
         }
     }
