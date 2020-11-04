@@ -17,7 +17,7 @@
 - Fix handling of the `streamShowReadState` attribute on `MessageListView`
 - Add `streamShowDeliveredState` XML attribute to `MessageListView`
 - Add "loading more" indicator to the `MessageListView`
-- Messages in ChannelController were splitted in messages - New messages and oldMessages for messages coming from the history.
+- Messages in ChannelController were split in messages - New messages and oldMessages for messages coming from the history.
 
 ## stream-chat-android-client
 - Fix guest user authentication
@@ -29,6 +29,7 @@
 ## stream-chat-android-offline
 - Add GetChannelController use cases which allows to get ChannelController for Channel
 - Fix not storing channels when run channels fetching after connection recovery.
+- Fix read state getting stuck in unread state
 
 # Oct 26th, 2020 - 4.4.0
 ## stream-chat-android
