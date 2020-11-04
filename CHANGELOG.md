@@ -1,5 +1,13 @@
 # To be released:
+## Common changes for all artifacts
 
+## stream-chat-android
+
+## stream-chat-android-client
+
+## stream-chat-android-offline
+
+# Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
 - Updated dependencies to latest versions (AGP 4.1, OkHttp 4.9, Coroutines 1.3.9, ExoPlayer 2.12.1, etc.)
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
