@@ -8,11 +8,13 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.utils.Result
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.Executor
 import java.util.concurrent.atomic.AtomicBoolean
 
 internal class RetrofitCall<T : Any>(
     val call: retrofit2.Call<T>,
-    private val parser: ChatParser
+    private val parser: ChatParser,
+    private val callbackExecutor: Executor
 ) : Call<T> {
 
     protected var canceled = AtomicBoolean(false)
@@ -42,11 +44,15 @@ internal class RetrofitCall<T : Any>(
         call.enqueue(
             object : Callback<T> {
                 override fun onResponse(call: retrofit2.Call<T>, response: Response<T>) {
-                    callback(getResult(response))
+                    callbackExecutor.execute {
+                        callback(getResult(response))
+                    }
                 }
 
                 override fun onFailure(call: retrofit2.Call<T>, t: Throwable) {
-                    callback(failedResult(t))
+                    callbackExecutor.execute {
+                        callback(failedResult(t))
+                    }
                 }
             }
         )

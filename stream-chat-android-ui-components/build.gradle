@@ -75,5 +75,6 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
+    implementation Dependencies.androidxCoreKtx
     implementation Dependencies.coil
 }

@@ -1,5 +1,6 @@
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.ChatParserImpl
 import okhttp3.Request
@@ -11,7 +12,7 @@ import retrofit2.Response
 internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
 
     fun toRetrofitCall(): RetrofitCall<T> {
-        return RetrofitCall(this, ChatParserImpl())
+        return RetrofitCall(this, ChatParserImpl(), RetrofitCallAdapterFactory.mainThreadExecutor)
     }
 
     override fun enqueue(callback: Callback<T>) {
