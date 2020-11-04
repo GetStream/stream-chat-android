@@ -115,7 +115,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
     }
 
     private fun createLinearGradientShader(initials: String, height: Int): Shader {
-        val baseColorIndex = initials.hashCode() % (gradientBaseColors.size - 1)
+        val baseColorIndex = abs(initials.hashCode()) % gradientBaseColors.size
         val baseColor = gradientBaseColors[baseColorIndex]
         return LinearGradient(
             0f,
