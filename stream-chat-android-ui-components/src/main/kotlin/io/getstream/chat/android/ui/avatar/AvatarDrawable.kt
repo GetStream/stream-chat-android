@@ -9,8 +9,7 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 
-internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
-    private val avatarBitmaps = bitmaps.take(AvatarView.MAX_AVATAR_SECTIONS)
+internal class AvatarDrawable(private val bitmaps: List<Bitmap>) : Drawable() {
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         isAntiAlias = true
         isFilterBitmap = true
@@ -40,89 +39,77 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
     }
 
     private fun reconfigureItems() {
+        val avatarBitmaps = bitmaps.take(AvatarView.MAX_AVATAR_SECTIONS)
         avatarItems = when (avatarBitmaps.size) {
             0 -> emptyList()
-            1 -> configureSingleAvatar(avatarBitmaps[0])
-            2 -> configureDoubleAvatar(avatarBitmaps[0], avatarBitmaps[1])
-            3 -> configureTripleAvatar(avatarBitmaps[0], avatarBitmaps[1], avatarBitmaps[2])
-            else -> configureQuadrupleAvatar(
-                avatarBitmaps[0],
-                avatarBitmaps[1],
-                avatarBitmaps[2],
-                avatarBitmaps[3]
+            1 -> listOf(
+                avatarBitmaps[0].toAvatarItem(SectionType.FULL_CIRCLE)
+            )
+            2 -> listOf(
+                avatarBitmaps[0].toAvatarItem(SectionType.LEFT),
+                avatarBitmaps[1].toAvatarItem(SectionType.RIGHT)
+            )
+            3 -> listOf(
+                avatarBitmaps[0].toAvatarItem(SectionType.TOP_LEFT),
+                avatarBitmaps[1].toAvatarItem(SectionType.TOP_RIGHT),
+                avatarBitmaps[2].toAvatarItem(SectionType.BOTTOM)
+            )
+            else -> listOf(
+                avatarBitmaps[0].toAvatarItem(SectionType.TOP_LEFT),
+                avatarBitmaps[1].toAvatarItem(SectionType.TOP_RIGHT),
+                avatarBitmaps[2].toAvatarItem(SectionType.BOTTOM_LEFT),
+                avatarBitmaps[3].toAvatarItem(SectionType.BOTTOM_RIGHT)
             )
         }
     }
 
-    private fun configureSingleAvatar(avatarBitmap: Bitmap) =
-        listOf(
-            AvatarItem(
-                avatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, 0, bounds.width(), bounds.height())
-            )
-        )
-
-    private fun configureDoubleAvatar(
-        leftAvatarBitmap: Bitmap,
-        rightAvatarBitmap: Bitmap
-    ): List<AvatarItem> {
-        return listOf(
-            AvatarItem(
-                leftAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
-                Rect(0, 0, bounds.width(), bounds.height())
-            ),
-            AvatarItem(
-                rightAvatarBitmap.scaleCenterCrop(bounds.width() / 2, bounds.height()),
-                Rect(bounds.width() / 2, 0, bounds.width() + bounds.width() / 2, bounds.height())
-            )
-        )
-    }
-
-    private fun configureTripleAvatar(
-        topLeftAvatarBitmap: Bitmap,
-        topRightAvatarBitmap: Bitmap,
-        bottomAvatarBitmap: Bitmap
-    ): List<AvatarItem> {
-        return listOf(
-            AvatarItem(
-                topLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, 0, bounds.width() / 2, bounds.height() / 2)
-            ),
-            AvatarItem(
-                topRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(bounds.width() / 2, 0, bounds.width(), bounds.height() / 2)
-            ),
-            AvatarItem(
-                bottomAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height() / 2),
-                Rect(0, bounds.height() / 2, bounds.width(), bounds.height() + bounds.height() / 2)
-            )
-        )
-    }
-
-    private fun configureQuadrupleAvatar(
-        topLeftAvatarBitmap: Bitmap,
-        topRightAvatarBitmap: Bitmap,
-        bottomLeftAvatarBitmap: Bitmap,
-        bottomRightAvatarBitmap: Bitmap
-    ): List<AvatarItem> {
-        return listOf(
-            AvatarItem(
-                topLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, 0, bounds.width() / 2, bounds.height() / 2)
-            ),
-            AvatarItem(
-                topRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(bounds.width() / 2, 0, bounds.width(), bounds.height() / 2)
-            ),
-            AvatarItem(
-                bottomLeftAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(0, bounds.height() / 2, bounds.width() / 2, bounds.height())
-            ),
-            AvatarItem(
-                bottomRightAvatarBitmap.scaleCenterCrop(bounds.width(), bounds.height()),
-                Rect(bounds.width() / 2, bounds.height() / 2, bounds.width(), bounds.height())
-            )
-        )
+    private fun Bitmap.toAvatarItem(sectionType: SectionType): AvatarItem {
+        val width = bounds.width()
+        val height = bounds.height()
+        return when (sectionType) {
+            SectionType.FULL_CIRCLE -> {
+                AvatarItem(scaleCenterCrop(width, height), Rect(0, 0, width, height))
+            }
+            SectionType.LEFT -> {
+                AvatarItem(scaleCenterCrop(width / 2, height), Rect(0, 0, width, height))
+            }
+            SectionType.RIGHT -> {
+                AvatarItem(
+                    scaleCenterCrop(width / 2, height),
+                    Rect(width / 2, 0, width + width / 2, height)
+                )
+            }
+            SectionType.BOTTOM -> {
+                AvatarItem(
+                    scaleCenterCrop(width, height / 2),
+                    Rect(0, height / 2, width, height + height / 2)
+                )
+            }
+            SectionType.TOP_LEFT -> {
+                AvatarItem(
+                    scaleCenterCrop(width, height),
+                    Rect(0, 0, width / 2, height / 2)
+                )
+            }
+            SectionType.TOP_RIGHT -> {
+                AvatarItem(
+                    scaleCenterCrop(width, height),
+                    Rect(width / 2, 0, width, height / 2)
+                )
+            }
+            SectionType.BOTTOM_LEFT -> {
+                AvatarItem(
+                    scaleCenterCrop(width, height),
+                    Rect(0, height / 2, width / 2, height)
+                )
+            }
+            SectionType.BOTTOM_RIGHT -> {
+                AvatarItem(
+                    scaleCenterCrop(width, height),
+                    Rect(width / 2, height / 2, width, height)
+                )
+            }
+        }
     }
 
     private fun Bitmap.scaleCenterCrop(newWidth: Int, newHeight: Int): Bitmap {
@@ -130,4 +117,15 @@ internal class AvatarDrawable(bitmaps: List<Bitmap>) : Drawable() {
     }
 
     private data class AvatarItem(val bitmap: Bitmap, val position: Rect)
+
+    private enum class SectionType {
+        FULL_CIRCLE,
+        LEFT,
+        RIGHT,
+        BOTTOM,
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    }
 }
