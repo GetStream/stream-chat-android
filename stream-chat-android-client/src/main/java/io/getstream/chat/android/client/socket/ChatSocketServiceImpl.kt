@@ -127,15 +127,18 @@ internal class ChatSocketServiceImpl private constructor(
         apiKey: String,
         user: User?
     ) {
-        state = State.Disconnected
         logger.logI("connect")
         this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
 
         if (networkStateProvider.isConnected()) {
+            state = State.Disconnected
             setupSocket()
+        } else {
+            state = State.NetworkDisconnected
         }
+
         networkStateProvider.subscribe(
             object : NetworkStateProvider.NetworkStateListener {
                 override fun onConnected() {

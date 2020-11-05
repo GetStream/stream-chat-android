@@ -56,4 +56,13 @@ internal class ChatSocketServiceImplTest {
 
         socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.Connecting
     }
+
+    @Test
+    fun `Should not start connecting to socket when connecting and there is no network connectivity`() {
+        When calling networkStateProvider.isConnected() doReturn false
+
+        socketService.connect("", "", null)
+
+        socketService.state shouldBeEqualTo ChatSocketServiceImpl.State.NetworkDisconnected
+    }
 }
