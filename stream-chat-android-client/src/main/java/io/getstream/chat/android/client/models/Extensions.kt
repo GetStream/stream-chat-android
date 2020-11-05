@@ -1,7 +1,15 @@
+@file:JvmName("ContentUtils")
+
 package io.getstream.chat.android.client.models
 
 internal const val EXTRA_IMAGE = "image"
 internal const val EXTRA_NAME = "name"
+
+public val Channel.initials: String
+    get() = name.initials()
+
+public val User.initials: String
+    get() = name.initials()
 
 public fun Message.getTranslation(language: String): String {
     return i18n.get("${language}_text", "")
@@ -63,4 +71,10 @@ internal fun getExternalField(obj: CustomObject, key: String): String {
 
 internal fun <A, B> Map<A, B>.get(key: A, default: B): B {
     return get(key) ?: default
+}
+
+internal fun String.initials(): String {
+    return trim()
+        ?.split("\\s+".toRegex())
+        ?.take(2)?.joinToString(separator = "") { it.take(1).toUpperCase() }
 }

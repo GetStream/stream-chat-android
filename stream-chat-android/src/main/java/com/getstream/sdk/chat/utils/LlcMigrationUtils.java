@@ -7,19 +7,14 @@ import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.AttachmentMetaData;
 import com.getstream.sdk.chat.model.ModelType;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.getstream.chat.android.client.logger.ChatLogger;
 import io.getstream.chat.android.client.models.Attachment;
@@ -30,17 +25,9 @@ import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.models.User;
 import io.getstream.chat.android.livedata.ChatDomain;
 
-import static com.getstream.sdk.chat.enums.Dates.TODAY;
-import static com.getstream.sdk.chat.enums.Dates.YESTERDAY;
-
 public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
-
-    @NonNull
-    public static String getInitials(User user) {
-        return PrimitivesKt.initials((String) user.getExtraData().get("name"));
-    }
 
     @Nullable
     public static String getName(Channel channel) {
@@ -240,11 +227,6 @@ public class LlcMigrationUtils {
         }
 
         return result;
-    }
-
-    @NonNull
-    public static String getInitials(Channel channel) {
-        return PrimitivesKt.initials((String) channel.getExtraData().get("name"));
     }
 
     public static Map<String, String> getReactionTypes() {

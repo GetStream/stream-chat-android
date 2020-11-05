@@ -8,10 +8,10 @@ import android.graphics.Paint
 import android.graphics.Shader
 import android.graphics.Typeface
 import com.getstream.sdk.chat.ImageLoader
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.avatar.AvatarView.Companion.MAX_AVATAR_SECTIONS
 import io.getstream.chat.android.ui.utils.adjustColorLBrightness
@@ -23,7 +23,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
 
     internal suspend fun createUserBitmap(user: User, style: AvatarStyle): Bitmap {
         return ImageLoader.getBitmap(context, user.image)
-            ?: createInitialsBitmap(style, LlcMigrationUtils.getInitials(user))
+            ?: createInitialsBitmap(style, user.initials)
     }
 
     internal suspend fun createChannelBitmaps(
@@ -34,7 +34,7 @@ internal class AvatarBitmapFactory(private val context: Context) {
         return ImageLoader.getBitmap(context, channel.image)
             ?.let { listOf(it) }
             ?: createUsersBitmaps(lastActiveUsers, style).takeUnless { it.isEmpty() }
-            ?: listOf(createInitialsBitmap(style, LlcMigrationUtils.getInitials(channel)))
+            ?: listOf(createInitialsBitmap(style, channel.initials))
     }
 
     private suspend fun createUsersBitmaps(users: List<User>, style: AvatarStyle): List<Bitmap> {
