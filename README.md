@@ -3,7 +3,9 @@
 [![Build Status](https://travis-ci.com/GetStream/stream-chat-android.svg?branch=master)](https://travis-ci.com/GetStream/stream-chat-android) ![version](https://jitpack.io/v/GetStream/stream-chat-android.svg) [![Component Reference](https://img.shields.io/badge/docs-component%20reference-blue.svg)](https://getstream.github.io/stream-chat-android/)
 
 <p align="center">
-  <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://user-images.githubusercontent.com/88735/70033290-6e2b1a00-15af-11ea-8f6d-18caaae68ae4.png" width="60%" /></a>
+  <a href="https://getstream.io/tutorials/android-chat/">
+    <img src="/docs/android-chat-messaging-banner.png" width="100%" />
+  </a>
 </p>
 
 ## 4.x
