@@ -78,5 +78,4 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.coil
 }
