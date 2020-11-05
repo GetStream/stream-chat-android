@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AvatarView">
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
+        <attr name="streamAvatarOnlineIndicatorEnabled" format="boolean" />
+    </declare-styleable>
+</resources>
