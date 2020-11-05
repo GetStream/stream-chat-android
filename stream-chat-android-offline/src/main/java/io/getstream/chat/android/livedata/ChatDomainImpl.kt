@@ -290,6 +290,8 @@ internal class ChatDomainImpl internal constructor(
         currentUser = me
         repos.users.insertMe(me)
         _mutedUsers.postValue(me.mutes)
+        setTotalUnreadCount(me.totalUnreadCount)
+        setChannelUnreadCount(me.unreadChannels)
 
         setBanned(me.banned)
     }
