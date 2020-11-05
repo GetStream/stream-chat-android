@@ -13,13 +13,13 @@ import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.ChatUI;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.ChatFonts;
-import com.getstream.sdk.chat.utils.LlcMigrationUtils;
 import com.getstream.sdk.chat.utils.Utils;
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView;
 
 import java.util.List;
 
 import io.getstream.chat.android.client.models.ChannelUserRead;
+import io.getstream.chat.android.client.models.ContentUtils;
 import io.getstream.chat.android.client.models.User;
 
 public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
@@ -60,7 +60,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
         // Avatar
         CircularImageView imageView = new CircularImageView(getContext());
 
-        String initials = LlcMigrationUtils.getInitials(user);
+        String initials = ContentUtils.getInitials(user);
 
         imageView.setPlaceholder(initials,
                 style.getAvatarBackGroundColor(),
