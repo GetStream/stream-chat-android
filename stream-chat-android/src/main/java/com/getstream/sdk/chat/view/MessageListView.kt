@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import kotlin.math.max
 
 /**
  * MessageListView renders a list of messages and extends the [RecyclerView]
@@ -58,13 +59,11 @@ import io.getstream.chat.android.client.models.User
  */
 public class MessageListView : ConstraintLayout {
     private var firstVisiblePosition = 0
-    private var lastVisiblePosition = 0
 
     private lateinit var style: MessageListViewStyle
 
     private lateinit var binding: StreamMessageListViewBinding
 
-    private var lastViewedPosition = 0
     private var newMessagesTextSingle: String? = null
     private var newMessagesTextPlural: String? = null
 
@@ -79,6 +78,8 @@ public class MessageListView : ConstraintLayout {
     private lateinit var loadingViewContainer: ViewGroup
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
+
+    private var lastSeenMessage: MessageListItem? = null
 
     private val defaultChildLayoutParams by lazy {
         FrameLayout.LayoutParams(
@@ -282,7 +283,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun initUnseenMessagesButton() {
         binding.scrollBottomBtn.setOnClickListener {
-            binding.chatMessagesRV.smoothScrollToPosition(lastPosition())
+            binding.chatMessagesRV.scrollToPosition(lastPosition())
         }
     }
 
@@ -371,12 +372,12 @@ public class MessageListView : ConstraintLayout {
                     val currentLastVisible = layoutManager.findLastVisibleItemPosition()
 
                     hasScrolledUp = currentLastVisible < lastPosition()
-                    lastVisiblePosition = currentLastVisible
                     firstVisiblePosition = currentFirstVisible
 
-                    lastViewedPosition = Math.max(currentLastVisible, lastViewedPosition)
+                    val realLastVisibleMessage = max(currentLastVisible, lastSeenMessagePosition())
+                    lastSeenMessage = adapter.currentList[realLastVisibleMessage]
 
-                    val unseenItems = adapter.itemCount - 1 - lastViewedPosition
+                    val unseenItems = adapter.itemCount - 1 - realLastVisibleMessage
                     scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
 
                     if (hasScrolledUp) {
@@ -400,6 +401,13 @@ public class MessageListView : ConstraintLayout {
         }
 
         binding.chatMessagesRV.adapter = adapter
+    }
+
+    private fun lastSeenMessagePosition(): Int {
+        val lastMessageId = lastSeenMessage?.getStableId()
+        return adapter.currentList.indexOfLast { message ->
+            message?.getStableId() == lastMessageId
+        }
     }
 
     public fun init(channel: Channel, currentUser: User) {
@@ -545,8 +553,10 @@ public class MessageListView : ConstraintLayout {
             adapter.isThread = listItem.isThread
         }
 
+        val oldSize = adapter.itemCount
+
         adapter.submitList(entities) {
-            continueMessageAdd(backFromThread, listItem, entities, adapter.itemCount)
+            continueMessageAdd(backFromThread, listItem, entities, oldSize)
         }
     }
 
@@ -569,7 +579,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         // Scroll to bottom position for typing indicator
-        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2)) {
+        if (listItem.isTyping && scrolledBottom(sizeGrewBy + 2) && !hasScrolledUp) {
             val newPosition = adapter.itemCount - 1
             layoutManager.scrollToPosition(newPosition)
             buffer.active()
@@ -593,13 +603,6 @@ public class MessageListView : ConstraintLayout {
                 String.format("Scroll: First load scrolling down to bottom %d", newPosition)
             )
             lastMessageReadHandler.invoke()
-        } else if (listItem.loadingMore) {
-            // the load more behaviour is different, scroll positions starts out at 0
-            // to stay at the relative 0 we should go to 0 + size of new messages...
-
-            // TODO ???
-            val newPosition = layoutManager.findLastCompletelyVisibleItemPosition() + sizeGrewBy
-            layoutManager.scrollToPosition(newPosition)
         } else {
             if (newSize == 0) {
                 buffer.active()
@@ -625,8 +628,8 @@ public class MessageListView : ConstraintLayout {
                 newMessagesBehaviour == NewMessagesBehaviour.SCROLL_TO_BOTTOM
             ) {
                 layoutManager.scrollToPosition(adapter.itemCount - 1)
-            } else {
-                val unseenItems = newSize - 1 - lastViewedPosition
+            } else if (!listItem.loadingMore) {
+                val unseenItems = newSize - lastSeenMessagePosition() - 1
                 scrollButtonBehaviour.onUnreadMessageCountChanged(unseenItems)
             }
             // we want to mark read if there is a new message
@@ -640,7 +643,7 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun scrolledBottom(delta: Int): Boolean {
-        return lastVisiblePosition + delta >= lastPosition()
+        return lastSeenMessagePosition() + delta >= lastPosition()
     }
 
     /**

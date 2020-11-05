@@ -1,5 +1,13 @@
 # To be released:
+## Common changes for all artifacts
 
+## stream-chat-android
+
+## stream-chat-android-client
+
+## stream-chat-android-offline
+
+# Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
 - Updated dependencies to latest versions (AGP 4.1, OkHttp 4.9, Coroutines 1.3.9, ExoPlayer 2.12.1, etc.)
     - See [PR #757](https://github.com/GetStream/stream-chat-android/pull/757) for full list of version updates
@@ -17,14 +25,19 @@
 - Fix handling of the `streamShowReadState` attribute on `MessageListView`
 - Add `streamShowDeliveredState` XML attribute to `MessageListView`
 - Add "loading more" indicator to the `MessageListView`
+- Messages in ChannelController were split in messages - New messages and oldMessages for messages coming from the history.
 
 ## stream-chat-android-client
 - Fix guest user authentication
 - Changed API of QuerySort class. You have to specify for what model it is being used.
+- Rename `ChannelController` to `ChannelClient`. Deprecate `ChannelController`.
+- Replace `ChannelController` subscribe related extension functions with corresponding `ChannelClient` functions
+- Move `ChannelClient` extension functions to `io.getstream.chat.android.client.channel` package
 
 ## stream-chat-android-offline
 - Add GetChannelController use cases which allows to get ChannelController for Channel
 - Fix not storing channels when run channels fetching after connection recovery.
+- Fix read state getting stuck in unread state
 
 # Oct 26th, 2020 - 4.4.0
 ## stream-chat-android

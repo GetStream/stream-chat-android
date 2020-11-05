@@ -72,7 +72,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
+            When calling channelClientMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
 
             mockFileUploads(files)
 
@@ -177,7 +177,7 @@ internal class SendMessageWithFilesTest : BaseConnectedMockedTest() {
             )
             val files: List<File> = message.attachments.map { it.upload!! }
 
-            When calling channelMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
+            When calling channelClientMock.sendMessage(argThat { id === message.id }) doReturn TestCall(expectedResult)
 
             mockFileUploadsFailure(files)
 

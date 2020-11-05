@@ -64,6 +64,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         messageListData = MessageListItemLiveData(
             currentUser,
             channelController.messages,
+            channelController.oldMessages,
             reads,
             channelController.typing,
             false,
@@ -95,6 +96,7 @@ public class MessageListViewModel @JvmOverloads constructor(
         threadListData = MessageListItemLiveData(
             currentUser,
             threadMessages,
+            MutableLiveData(),
             reads,
             null,
             true,

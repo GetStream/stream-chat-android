@@ -98,20 +98,26 @@ internal class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableLiveData(false)
     private val _loadingNewerMessages = MutableLiveData(false)
     private val _channelData = MutableLiveData<ChannelData>()
+    private val _oldMessages = MutableLiveData<Map<String, Message>>()
     internal var hideMessagesBefore: Date? = null
     val unfilteredMessages: LiveData<List<Message>> =
         Transformations.map(_messages) { it.values.toList() }
 
     /** a list of messages sorted by message.createdAt */
-    override val messages: LiveData<List<Message>> = Transformations.map(_messages) { messageMap ->
-        // TODO: consider removing this check
-        messageMap.values
-            .asSequence()
-            .filter { it.parentId == null || it.showInChannel }
-            .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-            .sortedBy { it.createdAt ?: it.createdLocallyAt }
-            .toList()
-            .map { it.copy() }
+    override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
+
+    override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
+
+    private fun messagesTransformation(messages: MutableLiveData<Map<String, Message>>): LiveData<List<Message>> {
+        return Transformations.map(messages) { messageMap ->
+            messageMap.values
+                .asSequence()
+                .filter { it.parentId == null || it.showInChannel }
+                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .toList()
+                .map { it.copy() }
+        }
     }
 
     /** the number of people currently watching the channel */
@@ -183,7 +189,7 @@ internal class ChannelControllerImpl(
     private var lastMarkReadEvent: Date? = null
     private var lastKeystrokeAt: Date? = null
     private var lastStartTypingEvent: Date? = null
-    val channelController = client.channel(channelType, channelId)
+    private val channelClient = client.channel(channelType, channelId)
     override val cid = "%s:%s".format(channelType, channelId)
 
     private val logger = ChatLogger.get("ChatDomain ChannelController")
@@ -232,24 +238,37 @@ internal class ChannelControllerImpl(
     }
 
     fun markRead(): Result<Boolean> {
-        if (!getConfig().isReadEvents) return Result(false, null)
+        if (!getConfig().isReadEvents) {
+            return Result(false, null)
+        }
+
         // throttle the mark read
         val messages = sortedMessages()
-        if (messages.isNotEmpty()) {
-            val last = messages.last()
-            val lastMessageDate = last.createdAt ?: last.createdLocallyAt
 
-            if (lastMarkReadEvent == null || lastMessageDate!!.after(lastMarkReadEvent)) {
-                lastMarkReadEvent = lastMessageDate
-                val userRead = ChannelUserRead(domainImpl.currentUser).apply {
-                    lastRead = last.createdAt ?: last.createdLocallyAt
-                }
-                _read.postValue(userRead)
-                client.markMessageRead(channelType, channelId, last.id).execute()
-                return Result(true, null)
-            }
+        if (messages.isEmpty()) {
+            logger.logI("No messages; nothing to mark read.")
+            return Result(false, null)
         }
-        return Result(false, null)
+
+        val last = messages.last()
+        val lastMessageDate = last.let { it.createdAt ?: it.createdLocallyAt }
+        val shouldUpdate =
+            lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
+
+        if (!shouldUpdate) {
+            logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
+            return Result(false, null)
+        }
+
+        lastMarkReadEvent = lastMessageDate
+
+        // optimistic UI update via LiveData
+        updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+
+        // generates MessageReadEvent & triggers offline storage updates
+        client.markMessageRead(channelType, channelId, last.id).execute()
+
+        return Result(true, null)
     }
 
     private fun sortedMessages(): List<Message> {
@@ -274,7 +293,7 @@ internal class ChannelControllerImpl(
 
     suspend fun hide(clearHistory: Boolean): Result<Unit> {
         setHidden(true)
-        val result = channelController.hide(clearHistory).execute()
+        val result = channelClient.hide(clearHistory).execute()
         if (result.isSuccess) {
             val channelEntity = domainImpl.repos.channels.select(cid)
             channelEntity?.let {
@@ -294,7 +313,7 @@ internal class ChannelControllerImpl(
 
     suspend fun show(): Result<Unit> {
         setHidden(false)
-        val result = channelController.show().execute()
+        val result = channelClient.show().execute()
         if (result.isSuccess) {
             val channelEntity = domainImpl.repos.channels.select(cid)
             channelEntity?.let {
@@ -375,14 +394,19 @@ internal class ChannelControllerImpl(
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
         val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
+
         // start the online query before queryOfflineJob.await
         val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async { runChannelQueryOnline(pagination) } } else { null }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
-            updateLiveDataFromLocalChannel(localChannel)
+            if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
+                updateOldMessagesFromLocalChannel(localChannel)
+            } else {
+                updateLiveDataFromLocalChannel(localChannel)
+            }
         }
-        // if we are online we we run the actual API call
 
+        // if we are online we we run the actual API call
         return if (queryOnlineJob != null) {
             val response = queryOnlineJob.await()
             if (response.isSuccess) {
@@ -402,7 +426,6 @@ internal class ChannelControllerImpl(
         selectedChannel?.also { channel ->
             channel.config = domainImpl.getChannelConfig(channel.type)
             _loading.postValue(false)
-
             logger.logI("Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages")
         }
 
@@ -411,7 +434,7 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQueryOnline(pagination: QueryChannelPaginationRequest): Result<Channel> {
         val request = pagination.toQueryChannelRequest(domainImpl.userPresence)
-        val response = channelController.watch(request).execute()
+        val response = channelClient.watch(request).execute()
 
         if (response.isSuccess) {
             recoveryNeeded = false
@@ -459,7 +482,11 @@ internal class ChannelControllerImpl(
 
         newMessage.user = domainImpl.currentUser
         // TODO: type should be a sealed/class or enum at the client level
-        newMessage.type = if (newMessage.text.startsWith("/")) { "ephemeral" } else { "regular" }
+        newMessage.type = if (newMessage.text.startsWith("/")) {
+            "ephemeral"
+        } else {
+            "regular"
+        }
         newMessage.createdLocallyAt = newMessage.createdAt ?: newMessage.createdLocallyAt ?: Date()
         newMessage.syncStatus = SyncStatus.IN_PROGRESS
         if (!online) {
@@ -503,7 +530,7 @@ internal class ChannelControllerImpl(
 
             logger.logI("Starting to send message with id ${newMessage.id} and text ${newMessage.text}")
 
-            val result = domainImpl.runAndRetry { channelController.sendMessage(newMessage) }
+            val result = domainImpl.runAndRetry { channelClient.sendMessage(newMessage) }
             if (result.isSuccess) {
                 val processedMessage: Message = result.data()
                 processedMessage.apply {
@@ -515,7 +542,10 @@ internal class ChannelControllerImpl(
                 Result(processedMessage, null)
             } else {
 
-                logger.logE("Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}", result.error())
+                logger.logE(
+                    "Failed to send message with id ${newMessage.id} and text ${newMessage.text}: ${result.error()}",
+                    result.error()
+                )
 
                 if (result.error().isPermanent()) {
                     newMessage.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -603,7 +633,7 @@ internal class ChannelControllerImpl(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SEND)
         )
-        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
         removeLocalMessage(message)
         return if (result.isSuccess) {
             Result(result.data())
@@ -619,7 +649,7 @@ internal class ChannelControllerImpl(
             message.type,
             mapOf(KEY_MESSAGE_ACTION to MESSAGE_ACTION_SHUFFLE)
         )
-        val result = domainImpl.runAndRetry { channelController.sendAction(request) }
+        val result = domainImpl.runAndRetry { channelClient.sendAction(request) }
         removeLocalMessage(message)
         return if (result.isSuccess) {
             val processedMessage: Message = result.data()
@@ -677,7 +707,10 @@ internal class ChannelControllerImpl(
                 domainImpl.repos.reactions.insertReaction(reaction)
                 Result(result.data(), null)
             } else {
-                logger.logE("Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}", result.error())
+                logger.logE(
+                    "Failed to send reaction of type ${reaction.type} on messge ${reaction.messageId}",
+                    result.error()
+                )
 
                 if (result.error().isPermanent()) {
                     reaction.syncStatus = SyncStatus.FAILED_PERMANENTLY
@@ -765,8 +798,8 @@ internal class ChannelControllerImpl(
         return message
     }
 
-    private fun upsertMessages(messages: List<Message>) {
-        var copy = _messages.value ?: mapOf()
+    private fun parseMessages(messages: List<Message>): Map<String, Message> {
+        val copy = _messages.value ?: mapOf()
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -774,8 +807,10 @@ internal class ChannelControllerImpl(
             val oldMessage = copy[message.id]
             var outdated = false
             if (oldMessage != null) {
-                val oldTime = oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
-                val newTime = message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
+                val oldTime =
+                    oldMessage.updatedAt?.time ?: oldMessage.updatedLocallyAt?.time ?: NEVER.time
+                val newTime =
+                    message.updatedAt?.time ?: message.updatedLocallyAt?.time ?: NEVER.time
                 outdated = oldTime > newTime
             }
             if (!outdated) {
@@ -786,9 +821,16 @@ internal class ChannelControllerImpl(
             }
         }
 
-        // update all the fresh messages
-        copy = copy + messages.map { it.copy() }.associateBy(Message::id)
-        _messages.postValue(copy)
+        // return all the fresh messages
+        return copy + messages.map { it.copy() }.associateBy(Message::id)
+    }
+
+    private fun upsertMessages(messages: List<Message>) {
+        parseMessages(messages).let(_messages::postValue)
+    }
+
+    private fun upsertOldMessages(messages: List<Message>) {
+        parseMessages(messages).let(_oldMessages::postValue)
     }
 
     private fun removeLocalMessage(message: Message) {
@@ -933,6 +975,7 @@ internal class ChannelControllerImpl(
             is MessageReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
             }
+
             is NotificationMarkReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
@@ -1017,20 +1060,39 @@ internal class ChannelControllerImpl(
 
     fun upsertMember(member: Member) = upsertMembers(listOf(member))
 
-    fun updateReads(
-        reads: List<ChannelUserRead>
-    ) {
+    fun updateReads(reads: List<ChannelUserRead>) {
         val currentUserId = domainImpl.currentUser.id
-        val copy = _reads.value ?: mutableMapOf()
-        val readMap = reads.associateBy { it.getUserId() }
+        val previousUserIdToReadMap = _reads.value ?: mapOf()
+        val incomingUserIdToReadMap = reads.associateBy(ChannelUserRead::getUserId).toMutableMap()
 
-        // handle the current user
-        val currentUserRead = readMap[currentUserId]
-        currentUserRead?.let {
-            _read.postValue(it)
-            println("updateReads for current user to ${it.lastRead} on channel $cid")
+        /*
+        It's possible that the data coming back from the online channel query has a last read date that's before
+        what we've last pushed to the UI. We want to ignore this, as it will cause an unread state to show in the
+        channel list.
+         */
+
+        incomingUserIdToReadMap[currentUserId]?.let { incomingRead ->
+            // the previous last Read date that is most current
+            val previousLastRead =
+                _read.value?.lastRead ?: previousUserIdToReadMap[currentUserId]?.lastRead
+
+            // Use AFTER to determine if the incoming read is more current.
+            // This prevents updates if it's BEFORE or EQUAL TO the previous Read.
+            val incomingReadMoreCurrent =
+                previousLastRead == null || incomingRead.lastRead?.after(previousLastRead) == true
+
+            if (!incomingReadMoreCurrent) {
+                // if the previous Read was more current, replace the item in the update map
+                incomingUserIdToReadMap[currentUserId] =
+                    ChannelUserRead(domainImpl.currentUser, previousLastRead)
+                return@let // no need to post the incoming read value to the UI if it isn't newer
+            }
+
+            _read.postValue(incomingRead)
         }
-        _reads.postValue(copy + reads.associateBy(ChannelUserRead::getUserId))
+
+        // always post the newly updated map
+        _reads.postValue(previousUserIdToReadMap + incomingUserIdToReadMap)
     }
 
     fun updateRead(
@@ -1045,6 +1107,12 @@ internal class ChannelControllerImpl(
         updateLiveDataFromChannel(localChannel)
     }
 
+    internal fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+        localChannel.hidden?.let(::setHidden)
+        hideMessagesBefore = localChannel.hiddenMessagesBefore
+        updateOldMessagesFromChannel(localChannel)
+    }
+
     fun updateLiveDataFromChannel(c: Channel) {
         // Update all the livedata objects based on the channel
         updateChannelData(c)
@@ -1056,6 +1124,19 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
+    }
+
+    private fun updateOldMessagesFromChannel(c: Channel) {
+        // Update all the livedata objects based on the channel
+        updateChannelData(c)
+        setWatcherCount(c.watcherCount)
+        updateReads(c.read)
+
+        // there are some edge cases here, this code adds to the members, watchers and messages
+        // this means that if the offline sync went out of sync things go wrong
+        setMembers(c.members)
+        setWatchers(c.watchers)
+        upsertOldMessages(c.messages)
     }
 
     private fun setMembers(members: List<Member>) {

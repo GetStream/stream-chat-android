@@ -51,7 +51,8 @@ import java.util.Date
  */
 internal class MessageListItemLiveData(
     private val currentUser: User,
-    messagesLd: LiveData<List<Message>>,
+    newMessagesLd: LiveData<List<Message>>,
+    oldMessagesLd: LiveData<List<Message>>,
     private val readsLd: LiveData<List<ChannelUserRead>>,
     private val typingLd: LiveData<List<User>>? = null,
     private val isThread: Boolean = false,
@@ -68,8 +69,11 @@ internal class MessageListItemLiveData(
     private var lastMessageID = ""
 
     init {
-        addSource(messagesLd) { value ->
-            messagesChanged(value)
+        addSource(newMessagesLd) { value ->
+            messagesChanged(value, true)
+        }
+        addSource(oldMessagesLd) { value ->
+            messagesChanged(value, false)
         }
         addSource(readsLd) { value ->
             readsChanged(value)
@@ -82,11 +86,11 @@ internal class MessageListItemLiveData(
     }
 
     @UiThread
-    internal fun messagesChanged(messages: List<Message>) {
+    internal fun messagesChanged(messages: List<Message>, isNewMessages: Boolean) {
         messageItemsBase = groupMessages(messages)
         messageItemsWithReads = addReads(messageItemsBase, readsLd.value)
         val out = getLoadingMoreItems() + messageItemsWithReads + typingItems
-        val wrapped = wrapMessages(out, hasNewMessages)
+        val wrapped = wrapMessages(out, hasNewMessages, !isNewMessages)
         value = wrapped
     }
 
@@ -229,8 +233,18 @@ internal class MessageListItemLiveData(
         return messagesCopy
     }
 
-    private fun wrapMessages(items: List<MessageListItem>, hasNewMessages: Boolean = false): MessageListItemWrapper {
-        return MessageListItemWrapper(items = items, isThread = isThread, isTyping = typingUsers.isNotEmpty(), hasNewMessages = hasNewMessages)
+    private fun wrapMessages(
+        items: List<MessageListItem>,
+        hasNewMessages: Boolean = false,
+        loadingMore: Boolean = false
+    ): MessageListItemWrapper {
+        return MessageListItemWrapper(
+            items = items,
+            isThread = isThread,
+            isTyping = typingUsers.isNotEmpty(),
+            hasNewMessages = hasNewMessages,
+            loadingMore = loadingMore
+        )
     }
 
     private fun usersAsTypingItems(users: List<User>): List<MessageListItem> {
