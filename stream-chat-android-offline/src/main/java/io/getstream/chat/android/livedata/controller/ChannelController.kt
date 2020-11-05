@@ -27,6 +27,8 @@ public interface ChannelController {
     public val channelId: String
     /** a list of messages sorted by message.createdAt */
     public val messages: LiveData<List<Message>>
+    /** Old messages loaded from history of conversation */
+    public val oldMessages: LiveData<List<Message>>
     /** the number of people currently watching the channel */
     public val watcherCount: LiveData<Int>
     /** the list of users currently watching this channel */

@@ -17,7 +17,7 @@ import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
-import io.getstream.chat.android.client.controllers.ChannelController
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -47,7 +47,7 @@ import java.util.Date
 import java.util.concurrent.Executors
 
 internal open class BaseDomainTest {
-    lateinit var channelMock: ChannelController
+    lateinit var channelClientMock: ChannelClient
     lateinit var database: ChatDatabase
     lateinit var chatDomainImpl: ChatDomainImpl
     lateinit var chatDomain: ChatDomain
@@ -113,7 +113,7 @@ internal open class BaseDomainTest {
         }
 
         val result = Result(listOf(data.channel1), null)
-        channelMock = mock {
+        channelClientMock = mock {
             on { sendMessage(any()) } doReturn TestCall(
                 Result(
                     data.message1,
@@ -135,8 +135,8 @@ internal open class BaseDomainTest {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
-            on { channel(any(), any()) } doReturn channelMock
-            on { channel(any()) } doReturn channelMock
+            on { channel(any(), any()) } doReturn channelClientMock
+            on { channel(any()) } doReturn channelClientMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
             on { getSyncHistory(any(), anyOrNull()) } doReturn TestCall(data.replayEventsResult)
             on {
@@ -161,7 +161,7 @@ internal open class BaseDomainTest {
         val connectedEvent = ConnectedEvent(EventType.HEALTH_CHECK, Date(), data.user1, data.connection1)
 
         val result = Result(listOf(data.channel1), null)
-        channelMock = mock {
+        channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
                 Result(
                     data.channel1,
@@ -188,8 +188,8 @@ internal open class BaseDomainTest {
             }
             on { getSyncHistory(any(), any()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(result)
-            on { channel(any(), any()) } doReturn channelMock
-            on { channel(any()) } doReturn channelMock
+            on { channel(any(), any()) } doReturn channelClientMock
+            on { channel(any()) } doReturn channelClientMock
             on { replayEvents(any(), anyOrNull(), any(), any()) } doReturn TestCall(data.replayEventsResult)
             on { sendReaction(any()) } doReturn TestCall(
                 Result(

@@ -35,6 +35,7 @@ internal class MessageListItemLiveDataBenchmark {
 
     private fun manyMessages(): MessageListItemLiveData {
         val messages = mutableListOf<Message>()
+        val oldMessages = mutableListOf<Message>()
 
         for (i in (0..5)) {
             val user = randomUser()
@@ -44,13 +45,14 @@ internal class MessageListItemLiveDataBenchmark {
             }
         }
         val messagesLd: LiveData<List<Message>> = MutableLiveData(messages)
+        val oldMessagesLd: LiveData<List<Message>> = MutableLiveData(oldMessages)
         // user 0 read till the end, user 1 read the first message, user 3 read is missing
         val read1 = ChannelUserRead(messages.first().user, messages.last().createdAt)
         val read2 = ChannelUserRead(messages[10].user, messages.first().createdAt)
         val reads: LiveData<List<ChannelUserRead>> = MutableLiveData(listOf(read1, read2))
         val typing: LiveData<List<User>> = MutableLiveData(listOf())
 
-        return MessageListItemLiveData(currentUser, messagesLd, reads, typing, false, ::simpleDateGroups)
+        return MessageListItemLiveData(currentUser, messagesLd, oldMessagesLd, reads, typing, false, ::simpleDateGroups)
     }
 
     @Test
@@ -96,7 +98,7 @@ internal class MessageListItemLiveDataBenchmark {
         val duration = measureTimeMillis {
             for (x in 0..100) {
                 val newMessages = messages + createMessage()
-                messageLd.messagesChanged(newMessages)
+                messageLd.messagesChanged(newMessages, true)
             }
         }
         println("changing messages 100 times on a message list with ${items.size} items took $duration milliseconds")

@@ -388,7 +388,7 @@ internal class EventHandlerImpl(
         events.sortedBy { it.createdAt }
         updateOfflineStorageFromEvents(events)
 
-        // step 3 - forward the events to the active chanenls
+        // step 3 - forward the events to the active channels
 
         events.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
