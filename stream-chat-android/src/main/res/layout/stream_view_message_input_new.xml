@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,19 +9,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_openAttachment"
             android:layout_width="@dimen/stream_attachment_button_width"
             android:layout_height="@dimen/stream_attachment_button_height"
             android:layout_marginStart="12dp"
-            android:src="@drawable/stream_ic_attachment"
-            tools:src="@drawable/stream_ic_attachment"
-            />
+            android:src="@drawable/stream_ic_attach"
+            tools:src="@drawable/stream_ic_attach" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_openEmojis"
@@ -30,12 +28,11 @@
             android:layout_height="@dimen/stream_attachment_button_height"
             android:layout_marginStart="18dp"
             android:layout_marginEnd="13dp"
-            android:src="@drawable/stream_ic_emoji"
-            tools:src="@drawable/stream_ic_emoji"
-            />
+            android:src="@drawable/stream_ic_lightning"
+            tools:src="@drawable/stream_ic_lightning" />
 
-        <com.getstream.sdk.chat.utils.GifEditText
-            android:id="@+id/message_text_input"
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_messageTextInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -44,8 +41,9 @@
             android:inputType="textCapSentences|textMultiLine"
             android:maxLines="7"
             android:padding="17dp"
+            android:textColor="@color/stream_black"
             android:textSize="15sp"
-            />
+            tools:text="Hi. I am a text, did you notice?" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_sendMessage"
@@ -53,8 +51,8 @@
             android:layout_height="@dimen/stream_attachment_button_height"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/stream_ic_send_message"
-            tools:src="@drawable/stream_ic_send_message"
-            />
+            android:src="@drawable/stream_ic_filled_right_arrow"
+            tools:src="@drawable/stream_ic_filled_right_arrow" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
