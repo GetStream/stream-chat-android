@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -36,7 +37,8 @@ internal class ChatSocketServiceImpl private constructor(
         }
     )
 
-    private var state: State by Delegates.observable(
+    @VisibleForTesting
+    internal var state: State by Delegates.observable(
         State.Disconnected as State,
         { _, oldState, newState ->
             if (oldState != newState) {
@@ -70,6 +72,7 @@ internal class ChatSocketServiceImpl private constructor(
             }
         }
     )
+        private set
 
     override fun onSocketError(error: ChatError) {
         if (state != State.DisconnectedPermanently) {
@@ -190,7 +193,8 @@ internal class ChatSocketServiceImpl private constructor(
         }
     }
 
-    private sealed class State {
+    @VisibleForTesting
+    internal sealed class State {
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
         object NetworkDisconnected : State()
