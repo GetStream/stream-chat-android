@@ -235,8 +235,6 @@ internal class ChatDomainImpl internal constructor(
             // fetch the configs for channels
             repos.configs.load()
 
-            val me = repos.users.selectMe()
-            me?.let { updateCurrentUser(it) }
             // load the current user from the db
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
