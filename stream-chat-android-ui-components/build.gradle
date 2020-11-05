@@ -64,6 +64,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
+                '-Xopt-in=kotlin.contracts.ExperimentalContracts',
+                '-Xopt-in=io.getstream.chat.android.client.internal.InternalStreamChatApi'
         ]
     }
 }
@@ -72,6 +74,7 @@ dependencies {
     api project(":stream-chat-android")
 
     implementation Dependencies.kotlinStdLib
+    implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidLegacySupport
     implementation Dependencies.androidxCoreKtx

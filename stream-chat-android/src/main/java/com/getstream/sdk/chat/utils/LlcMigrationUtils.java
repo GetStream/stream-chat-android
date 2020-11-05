@@ -3,7 +3,6 @@ package com.getstream.sdk.chat.utils;
 
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.getstream.sdk.chat.R;
@@ -30,11 +29,6 @@ import io.getstream.chat.android.livedata.ChatDomain;
 public class LlcMigrationUtils {
 
     private static Map<String, String> reactionTypes;
-
-    @NonNull
-    public static String getInitials(User user) {
-        return PrimitivesKt.initials((String) user.getExtraData().get("name"));
-    }
 
     @Nullable
     public static String getName(Channel channel) {
@@ -235,11 +229,6 @@ public class LlcMigrationUtils {
         }
 
         return result;
-    }
-
-    @NonNull
-    public static String getInitials(Channel channel) {
-        return PrimitivesKt.initials((String) channel.getExtraData().get("name"));
     }
 
     public static Map<String, String> getReactionTypes() {

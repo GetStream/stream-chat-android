@@ -13,10 +13,10 @@ import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
-import com.getstream.sdk.chat.utils.LlcMigrationUtils
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
+import io.getstream.chat.android.client.models.initials
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -41,7 +41,8 @@ internal class AvatarView @JvmOverloads constructor(
             AvatarDrawable(
                 channel?.createBitmap()?.let { listOf(it) }
                     ?: lastActiveUsers.createBitmaps(style).takeUnless { it.isEmpty() }
-                    ?: LlcMigrationUtils.getInitials(channel)?.let { listOf(createImageRounded(it, style)) }
+                    ?: channel?.initials?.let { listOf(createImageRounded(it, style)) }
+                    ?: emptyList()
             )
         }
     }
@@ -66,7 +67,7 @@ internal class AvatarView @JvmOverloads constructor(
             image,
             ImageLoader.ImageTransformation.Circle
         )
-            ?: createImageRounded(LlcMigrationUtils.getInitials(this), style)
+            ?: createImageRounded(initials, style)
 
     private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
         take(3).map { it.createBitmap(style) }
