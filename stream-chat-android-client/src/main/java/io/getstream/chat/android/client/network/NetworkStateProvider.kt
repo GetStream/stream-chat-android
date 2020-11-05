@@ -24,6 +24,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
         }
     }
 
+    @Volatile
     private var isConnected: Boolean = false
     private var listener: NetworkStateListener? = null
 
