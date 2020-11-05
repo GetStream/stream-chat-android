@@ -63,9 +63,7 @@ internal class EventBatchUpdate private constructor(
 
     suspend fun execute() {
         // actually insert the data
-        val currentUser = domainImpl.currentUser
-        domainImpl.updateCurrentUser(currentUser)
-        userMap -= currentUser.id
+        userMap -= domainImpl.currentUser.id
         domainImpl.repos.users.insert(userMap.values.toList())
         // we only cache messages for which we're receiving events
         domainImpl.repos.messages.insert(messageMap.values.toList(), true)
