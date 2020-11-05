@@ -1,6 +1,7 @@
 package io.getstream.chat.android.client.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import com.moczul.ok2curl.CurlInterceptor
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -14,6 +15,7 @@ import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.TokenAuthInterceptor
 import io.getstream.chat.android.client.logger.ChatLogger
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.ChatNotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
@@ -149,7 +151,8 @@ internal open class BaseChatModule(
             chatConfig.apiKey,
             chatConfig.wssUrl,
             tokenManager,
-            parser
+            parser,
+            NetworkStateProvider(appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
         )
     }
 
