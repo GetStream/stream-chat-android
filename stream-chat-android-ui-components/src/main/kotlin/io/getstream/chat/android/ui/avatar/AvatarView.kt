@@ -72,7 +72,7 @@ public class AvatarView : AppCompatImageView {
         invalidate()
     }
 
-    public fun setStyle(avatarStyle: AvatarStyle) {
+    private fun setStyle(avatarStyle: AvatarStyle) {
         this.avatarStyle = avatarStyle
         borderPaint.color = avatarStyle.avatarBorderColor
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
