@@ -10,7 +10,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
         override fun onAvailable(network: Network?) {
             if (!isConnected) {
                 isConnected = true
-                listener?.onConnected()
+                listeners.forEach { it.onConnected() }
             }
         }
 
@@ -19,14 +19,14 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
             val isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
             if (!isConnected && this@NetworkStateProvider.isConnected) {
                 this@NetworkStateProvider.isConnected = false
-                listener?.onDisconnected()
+                listeners.forEach { it.onDisconnected() }
             }
         }
     }
 
     @Volatile
     private var isConnected: Boolean = false
-    private var listener: NetworkStateListener? = null
+    private var listeners = mutableListOf<NetworkStateListener>()
 
     fun isConnected(): Boolean {
         isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
@@ -34,13 +34,15 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
     }
 
     fun subscribe(listener: NetworkStateListener) {
-        this.listener = listener
+        listeners.add(listener)
         connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
     }
 
-    fun unsubscribe() {
-        listener = null
-        connectivityManager.unregisterNetworkCallback(callback)
+    fun unsubscribe(listener: NetworkStateListener) {
+        listeners.remove(listener)
+        if (listeners.isEmpty()) {
+            connectivityManager.unregisterNetworkCallback(callback)
+        }
     }
 
     interface NetworkStateListener {

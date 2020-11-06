@@ -36,6 +36,18 @@ internal class ChatSocketServiceImpl private constructor(
             }
         }
     )
+    private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
+        override fun onConnected() {
+            if (state == State.Disconnected || state == State.NetworkDisconnected) {
+                logger.logI("network connected, reconnecting socket")
+                reconnect()
+            }
+        }
+
+        override fun onDisconnected() {
+            state = State.NetworkDisconnected
+        }
+    }
 
     @VisibleForTesting
     internal var state: State by Delegates.observable(
@@ -64,7 +76,7 @@ internal class ChatSocketServiceImpl private constructor(
                     }
                     is State.DisconnectedPermanently -> {
                         releaseSocket()
-                        networkStateProvider.unsubscribe()
+                        networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
                     }
@@ -139,20 +151,7 @@ internal class ChatSocketServiceImpl private constructor(
             state = State.NetworkDisconnected
         }
 
-        networkStateProvider.subscribe(
-            object : NetworkStateProvider.NetworkStateListener {
-                override fun onConnected() {
-                    if (state == State.Disconnected || state == State.NetworkDisconnected) {
-                        logger.logI("network connected, reconnecting socket")
-                        reconnect()
-                    }
-                }
-
-                override fun onDisconnected() {
-                    state = State.NetworkDisconnected
-                }
-            }
-        )
+        networkStateProvider.subscribe(networkStateListener)
     }
 
     override fun disconnect() {
