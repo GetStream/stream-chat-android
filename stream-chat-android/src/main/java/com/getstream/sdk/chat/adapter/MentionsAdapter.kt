@@ -6,13 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding
-import com.getstream.sdk.chat.view.BaseStyle
 import com.getstream.sdk.chat.view.messageinput.MessageInputStyle
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.name
 
 internal class MentionsAdapter(
-    private val style: BaseStyle,
+    private val style: MessageInputStyle,
     private val onMentionSelected: (User) -> Unit
 ) : ListAdapter<User, MentionViewHolder>(
     object : DiffUtil.ItemCallback<User>() {
@@ -35,14 +34,14 @@ internal class MentionsAdapter(
 
 internal class MentionViewHolder(
     private val binding: StreamItemMentionBinding,
-    private val style: BaseStyle,
+    private val style: MessageInputStyle,
     private val onUserClicked: (User) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(user: User) {
-        binding.avatar.setUser(user, style)
+        binding.avatar.setUser(user, style.avatarStyle)
         binding.tvUsername.text = user.name
-        (style as? MessageInputStyle)?.inputBackgroundText?.apply(binding.tvUsername)
+        style.inputBackgroundText.apply(binding.tvUsername)
         binding.root.setOnClickListener { onUserClicked(user) }
     }
 }

@@ -50,7 +50,10 @@ public class ChannelHeaderView @JvmOverloads constructor(
     }
 
     public fun configHeaderAvatar(members: List<Member?>?) {
-        binding.avatarGroup.setLastActiveUsers(LlcMigrationUtils.getOtherUsers(members), style)
+        binding.avatarGroup.setLastActiveUsers(
+            LlcMigrationUtils.getOtherUsers(members),
+            style.avatarStyle
+        )
     }
 
     private fun initBinding(context: Context): StreamViewChannelHeaderBinding =

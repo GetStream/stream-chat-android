@@ -17,13 +17,13 @@ import com.getstream.sdk.chat.adapter.viewholder.message.isInThread
 import com.getstream.sdk.chat.databinding.StreamItemMessageBinding
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.view.MessageListView
-import com.getstream.sdk.chat.view.MessageListViewStyle
+import com.getstream.sdk.chat.view.ReadStateStyle
 import io.getstream.chat.android.client.models.ChannelUserRead
 import io.getstream.chat.android.client.utils.SyncStatus
 
 internal class IndicatorConfigurator(
     private val binding: StreamItemMessageBinding,
-    private val style: MessageListViewStyle,
+    private val readStateStyle: ReadStateStyle = ReadStateStyle(),
     private val readStateClickListener: MessageListView.ReadStateClickListener
 ) : Configurator {
 
@@ -47,7 +47,7 @@ internal class IndicatorConfigurator(
             !messageItem.isMine ||
             message.isInThread() ||
             message.isEphemeral() ||
-            !style.isDeliveredIndicatorEnabled
+            !readStateStyle.isDeliveredIndicatorEnabled
         ) {
             return
         }
@@ -77,7 +77,7 @@ internal class IndicatorConfigurator(
             readBy.isEmpty() ||
             message.isInThread() ||
             message.isEphemeral() ||
-            !style.isReadStateEnabled
+            !readStateStyle.isReadStateEnabled
         ) {
             binding.readState.isVisible = false
             return
@@ -85,7 +85,7 @@ internal class IndicatorConfigurator(
 
         binding.readState.apply {
             isVisible = true
-            setReads(readBy, messageItem.isTheirs, style)
+            setReads(readBy, messageItem.isTheirs, readStateStyle)
             setOnClickListener {
                 readStateClickListener.onReadStateClick(readBy)
             }

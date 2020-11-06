@@ -26,10 +26,10 @@ internal class TypingIndicatorViewHolder(
 
         for ((index, user) in messageListItem.users.withIndex()) {
             val avatarView = AvatarView(context)
-            avatarView.setUser(user, style)
+            avatarView.setUser(user, style.avatarStyle)
 
-            val height = style.avatarHeight
-            val width = style.avatarWidth
+            val height = style.avatarStyle.avatarHeight
+            val width = style.avatarStyle.avatarWidth
             val params = LinearLayout.LayoutParams(width, height).apply {
                 updateMargins(
                     left = if (index == 0) 0 else -width / 2,

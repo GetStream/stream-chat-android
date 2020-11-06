@@ -7,12 +7,12 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.PixelFormat
 import android.graphics.Rect
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
+import com.getstream.sdk.chat.view.messages.AvatarStyle
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
@@ -28,14 +28,14 @@ internal class AvatarView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-    fun setLastActiveUsers(lastActiveUsers: List<User>, style: BaseStyle) {
+    fun setLastActiveUsers(lastActiveUsers: List<User>, style: AvatarStyle) {
         configUIs(style) { AvatarDrawable(lastActiveUsers.createBitmaps(style)) }
     }
 
     fun setChannelAndLastActiveUsers(
         channel: Channel?,
         lastActiveUsers: List<User>,
-        style: BaseStyle
+        style: AvatarStyle
     ) {
         configUIs(style) {
             AvatarDrawable(
@@ -47,21 +47,24 @@ internal class AvatarView @JvmOverloads constructor(
         }
     }
 
-    fun setUser(user: User, style: BaseStyle) {
+    fun setUser(user: User, style: AvatarStyle) {
         configUIs(style) { AvatarDrawable(listOfNotNull(user.createBitmap(style))) }
     }
 
-    private fun configUIs(style: BaseStyle, generateAvatarDrawable: suspend () -> AvatarDrawable) {
+    private fun configUIs(
+        style: AvatarStyle,
+        generateAvatarDrawable: suspend () -> AvatarDrawable
+    ) {
         GlobalScope.launch(Dispatchers.Main) {
             layoutParams?.apply {
-                width = style.getAvatarWidth()
-                height = style.getAvatarHeight()
+                width = style.avatarWidth
+                height = style.avatarHeight
             }?.let(::setLayoutParams)
             setImageDrawable(generateAvatarDrawable())
         }
     }
 
-    private suspend fun User.createBitmap(style: BaseStyle): Bitmap =
+    private suspend fun User.createBitmap(style: AvatarStyle): Bitmap =
         ImageLoader.getBitmap(
             context,
             image,
@@ -69,7 +72,7 @@ internal class AvatarView @JvmOverloads constructor(
         )
             ?: createImageRounded(initials, style)
 
-    private suspend fun List<User>.createBitmaps(style: BaseStyle): List<Bitmap> =
+    private suspend fun List<User>.createBitmaps(style: AvatarStyle): List<Bitmap> =
         take(3).map { it.createBitmap(style) }
 
     private suspend fun Channel.createBitmap(): Bitmap? =
@@ -79,18 +82,18 @@ internal class AvatarView @JvmOverloads constructor(
             ImageLoader.ImageTransformation.Circle
         )
 
-    private fun createImageRounded(initials: String, baseStyle: BaseStyle): Bitmap {
+    private fun createImageRounded(initials: String, avatarStyle: AvatarStyle): Bitmap {
         val paintText = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            typeface = baseStyle.avatarInitialText.font ?: Typeface.DEFAULT
+            typeface = avatarStyle.avatarInitialText.font
             textAlign = Paint.Align.CENTER
-            color = baseStyle.avatarInitialText.color
-            textSize = baseStyle.avatarInitialText.size.toFloat()
+            color = avatarStyle.avatarInitialText.color
+            textSize = avatarStyle.avatarInitialText.size.toFloat()
         }
         val paintCircle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             isAntiAlias = true
             style = Paint.Style.FILL
-            color = baseStyle.avatarBackGroundColor
+            color = avatarStyle.avatarBackGroundColor
         }
         val textBounds = Rect()
         paintText.getTextBounds(initials, 0, initials.length, textBounds)
