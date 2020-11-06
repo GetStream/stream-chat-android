@@ -232,8 +232,6 @@ internal class ChatDomainImpl internal constructor(
             // fetch the configs for channels
             repos.configs.load()
 
-            val me = repos.users.selectMe()
-            me?.let { updateCurrentUser(it) }
             // load the current user from the db
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
@@ -293,6 +291,8 @@ internal class ChatDomainImpl internal constructor(
         currentUser = me
         repos.users.insertMe(me)
         _mutedUsers.postValue(me.mutes)
+        setTotalUnreadCount(me.totalUnreadCount)
+        setChannelUnreadCount(me.unreadChannels)
 
         setBanned(me.banned)
     }

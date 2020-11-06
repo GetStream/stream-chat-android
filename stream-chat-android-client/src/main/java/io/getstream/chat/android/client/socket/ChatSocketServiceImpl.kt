@@ -2,6 +2,7 @@ package io.getstream.chat.android.client.socket
 
 import android.os.Handler
 import android.os.Looper
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -9,12 +10,14 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.token.TokenManager
 import kotlin.properties.Delegates
 
 internal class ChatSocketServiceImpl private constructor(
     private val tokenManager: TokenManager,
-    private val socketFactory: SocketFactory
+    private val socketFactory: SocketFactory,
+    private val networkStateProvider: NetworkStateProvider
 ) : ChatSocketService {
     private val logger = ChatLogger.get("SocketService")
     private var endpoint: String = ""
@@ -33,8 +36,21 @@ internal class ChatSocketServiceImpl private constructor(
             }
         }
     )
+    private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
+        override fun onConnected() {
+            if (state == State.Disconnected || state == State.NetworkDisconnected) {
+                logger.logI("network connected, reconnecting socket")
+                reconnect()
+            }
+        }
 
-    private var state: State by Delegates.observable(
+        override fun onDisconnected() {
+            state = State.NetworkDisconnected
+        }
+    }
+
+    @VisibleForTesting
+    internal var state: State by Delegates.observable(
         State.Disconnected as State,
         { _, oldState, newState ->
             if (oldState != newState) {
@@ -48,6 +64,11 @@ internal class ChatSocketServiceImpl private constructor(
                         healthMonitor.start()
                         callListeners { it.onConnected(newState.event) }
                     }
+                    is State.NetworkDisconnected -> {
+                        releaseSocket()
+                        healthMonitor.stop()
+                        callListeners { it.onDisconnected() }
+                    }
                     is State.Disconnected -> {
                         releaseSocket()
                         healthMonitor.onDisconnected()
@@ -55,6 +76,7 @@ internal class ChatSocketServiceImpl private constructor(
                     }
                     is State.DisconnectedPermanently -> {
                         releaseSocket()
+                        networkStateProvider.unsubscribe(networkStateListener)
                         healthMonitor.stop()
                         callListeners { it.onDisconnected() }
                     }
@@ -62,6 +84,7 @@ internal class ChatSocketServiceImpl private constructor(
             }
         }
     )
+        private set
 
     override fun onSocketError(error: ChatError) {
         if (state != State.DisconnectedPermanently) {
@@ -116,12 +139,19 @@ internal class ChatSocketServiceImpl private constructor(
         apiKey: String,
         user: User?
     ) {
-        state = State.Disconnected
         logger.logI("connect")
         this.endpoint = endpoint
         this.apiKey = apiKey
         this.user = user
-        setupSocket()
+
+        if (networkStateProvider.isConnected()) {
+            state = State.Disconnected
+            setupSocket()
+        } else {
+            state = State.NetworkDisconnected
+        }
+
+        networkStateProvider.subscribe(networkStateListener)
     }
 
     override fun disconnect() {
@@ -165,9 +195,11 @@ internal class ChatSocketServiceImpl private constructor(
         }
     }
 
-    private sealed class State {
+    @VisibleForTesting
+    internal sealed class State {
         object Connecting : State()
         data class Connected(val event: ConnectedEvent) : State()
+        object NetworkDisconnected : State()
         object Disconnected : State()
         object DisconnectedPermanently : State()
     }
@@ -176,9 +208,10 @@ internal class ChatSocketServiceImpl private constructor(
         fun create(
             tokenManager: TokenManager,
             socketFactory: SocketFactory,
-            eventsParser: EventsParser
+            eventsParser: EventsParser,
+            networkStateProvider: NetworkStateProvider
         ): ChatSocketServiceImpl {
-            return ChatSocketServiceImpl(tokenManager, socketFactory)
+            return ChatSocketServiceImpl(tokenManager, socketFactory, networkStateProvider)
                 .also { eventsParser.setSocketService(it) }
         }
     }

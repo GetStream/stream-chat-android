@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="StreamBaseAvatarStyle">
+        <item name="streamAvatarBorderWidth">0dp</item>
+        <item name="streamAvatarBorderColor">@color/stream_white</item>
+        <item name="streamAvatarTextColor">@color/stream_white</item>
+        <item name="streamAvatarTextStyle">bold</item>
+    </style>
+
+    <style name="StreamMessageListAvatarStyle" parent="StreamBaseAvatarStyle">
+        <item name="streamAvatarWidth">@dimen/stream_avatar_size_small</item>
+        <item name="streamAvatarHeight">@dimen/stream_avatar_size_small</item>
+        <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_small</item>
+        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamUserAvatarStyle" parent="StreamBaseAvatarStyle">
+        <item name="streamAvatarWidth">@dimen/stream_avatar_size_medium</item>
+        <item name="streamAvatarHeight">@dimen/stream_avatar_size_medium</item>
+        <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
+        <item name="streamAvatarOnlineIndicatorEnabled">false</item>
+    </style>
+
+    <style name="StreamChannelListAvatarStyle" parent="StreamBaseAvatarStyle">
+        <item name="streamAvatarWidth">@dimen/stream_avatar_size_medium</item>
+        <item name="streamAvatarHeight">@dimen/stream_avatar_size_medium</item>
+        <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_medium</item>
+        <item name="streamAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+
+    <style name="StreamGroupActionsAvatarStyle" parent="StreamBaseAvatarStyle">
+        <item name="streamAvatarWidth">@dimen/stream_avatar_size_large</item>
+        <item name="streamAvatarHeight">@dimen/stream_avatar_size_large</item>
+        <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>
+        <item name="streamAvatarOnlineIndicatorEnabled">true</item>
+    </style>
+</resources>

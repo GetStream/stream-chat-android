@@ -1,30 +1,28 @@
-package com.getstream.sdk.chat.utils
+package io.getstream.chat.android.client.models
 
-import com.getstream.sdk.chat.createChannel
-import com.getstream.sdk.chat.createUser
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class LlcMigrationUtilsTest {
+internal class InitialsExtensionsTests {
 
     /** [provideNames] */
     @ParameterizedTest
-    @MethodSource("com.getstream.sdk.chat.utils.LlcMigrationUtilsTest#provideNames")
+    @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the user name`(name: String, initials: String) {
-        val user = createUser(extraData = mutableMapOf<String, Any>("name" to name))
+        val user = User(extraData = mutableMapOf("name" to name))
 
-        LlcMigrationUtils.getInitials(user) `should be equal to` initials
+        user.initials `should be equal to` initials
     }
 
     /** [provideNames] */
     @ParameterizedTest
-    @MethodSource("com.getstream.sdk.chat.utils.LlcMigrationUtilsTest#provideNames")
+    @MethodSource("io.getstream.chat.android.client.models.InitialsExtensionsTests#provideNames")
     fun `Should return initials of the channel name`(name: String, initials: String) {
-        val channel = createChannel(extraData = mutableMapOf<String, Any>("name" to name))
+        val channel = Channel(extraData = mutableMapOf("name" to name))
 
-        LlcMigrationUtils.getInitials(channel) `should be equal to` initials
+        channel.initials `should be equal to` initials
     }
 
     companion object {
