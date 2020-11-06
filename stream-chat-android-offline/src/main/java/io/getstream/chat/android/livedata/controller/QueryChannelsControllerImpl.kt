@@ -92,7 +92,7 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
-    private suspend fun handleEvent(event: ChatEvent) {
+    internal suspend fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)

@@ -4,6 +4,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseDisconnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -16,7 +17,7 @@ import org.junit.runner.RunWith
 internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest() {
 
     @Test
-    fun eventWatcherCountUpdates() {
+    fun eventWatcherCountUpdates() = runBlockingTest {
         Truth.assertThat(channelControllerImpl.watcherCount.getOrAwaitValue()).isEqualTo(100)
 
         val event = data.userStartWatchingEvent
@@ -27,14 +28,14 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun eventNewMessage() {
+    fun eventNewMessage() = runBlockingTest {
         channelControllerImpl.handleEvent(data.newMessageEvent)
         Truth.assertThat(channelControllerImpl.messages.getOrAwaitValue())
             .isEqualTo(listOf(data.newMessageEvent.message))
     }
 
     @Test
-    fun eventUpdatedMessage() {
+    fun eventUpdatedMessage() = runBlockingTest {
 
         channelControllerImpl.handleEvent(data.newMessageEvent)
         val event = data.messageUpdatedEvent
@@ -46,7 +47,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun userChangesFavoriteColor() {
+    fun userChangesFavoriteColor() = runBlockingTest {
         channelControllerImpl.handleEvent(data.newMessageEvent)
         channelControllerImpl.handleEvent(data.reactionEvent)
         channelControllerImpl.handleEvent(data.user1UpdatedEvent)
@@ -60,7 +61,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun memberAddedEvent() {
+    fun memberAddedEvent() = runBlockingTest {
         // ensure the channel data is initialized:
         channelControllerImpl.upsertMember(data.channel1.members[0])
         var members = channelControllerImpl.members.getOrAwaitValue()
@@ -72,7 +73,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun typingEvents() {
+    fun typingEvents() = runBlockingTest {
         channelControllerImpl.handleEvent(data.user1TypingStarted)
         channelControllerImpl.handleEvent(data.user2TypingStarted)
         channelControllerImpl.handleEvent(data.user1TypingStop)
@@ -81,14 +82,14 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun hideEvent() {
+    fun hideEvent() = runBlockingTest {
         channelControllerImpl.handleEvent(data.channelHiddenEvent)
         val hidden = channelControllerImpl.hidden.getOrAwaitValue()
         Truth.assertThat(hidden).isTrue()
     }
 
     @Test
-    fun showEvent() {
+    fun showEvent() = runBlockingTest {
         channelControllerImpl.handleEvent(data.channelHiddenEvent)
         channelControllerImpl.handleEvent(data.channelVisibleEvent)
         val hidden = channelControllerImpl.hidden.getOrAwaitValue()
@@ -96,7 +97,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun readEvents() {
+    fun readEvents() = runBlockingTest {
         channelControllerImpl.handleEvent(data.user1ReadNotification)
         val reads = channelControllerImpl.reads.getOrAwaitValue()
         Truth.assertThat(reads.size).isEqualTo(1)
@@ -104,7 +105,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun readEventNotification() {
+    fun readEventNotification() = runBlockingTest {
         channelControllerImpl.handleEvent(data.user1Read)
         val reads = channelControllerImpl.reads.getOrAwaitValue()
         Truth.assertThat(reads.size).isEqualTo(1)
@@ -112,14 +113,14 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     }
 
     @Test
-    fun eventUpdatedChannel() {
+    fun eventUpdatedChannel() = runBlockingTest {
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
         val channel = channelControllerImpl.channelData.getOrAwaitValue()
         Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
     }
 
     @Test
-    fun eventReaction() {
+    fun eventReaction() = runBlockingTest {
         val messageWithCid = data.reactionEvent.message
 
         channelControllerImpl.handleEvent(data.reactionEvent)
