@@ -76,13 +76,11 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
             channelWithoutNameText =
                 getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText)?.takeIf(
                     String::isNotBlank
-                )
-                    ?: context.getString(R.string.stream_channel_unknown_title)
+                ) ?: context.getString(R.string.stream_channel_unknown_title)
             offlineText =
                 getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText)?.takeIf(
                     String::isNotBlank
-                )
-                    ?: context.getString(R.string.stream_channel_offlineText)
+                ) ?: context.getString(R.string.stream_channel_offlineText)
 
             // Avatar
             avatarStyle.avatarWidth = getDimensionPixelSize(
