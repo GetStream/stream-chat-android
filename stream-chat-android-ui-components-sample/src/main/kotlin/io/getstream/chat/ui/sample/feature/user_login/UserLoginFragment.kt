@@ -76,6 +76,11 @@ class UserLoginFragment : Fragment() {
                 viewModel.targetChannelDataReceived(cid)
             }
         }
+
+        binding.sdkVersion.setOnLongClickListener {
+            redirectToComponentBrowserScreen()
+            true
+        }
     }
 
     private fun redirectToHomeScreen() {
@@ -84,6 +89,10 @@ class UserLoginFragment : Fragment() {
 
     private fun redirectToCustomLoginScreen() {
         findNavController().navigateSafely(R.id.action_userLoginFragment_to_customLoginFragment)
+    }
+
+    private fun redirectToComponentBrowserScreen() {
+        findNavController().navigateSafely(R.id.action_userLoginFragment_to_componentBrowserHomeFragment)
     }
 
     private fun renderAvailableUsers(users: List<SampleUser>) {
