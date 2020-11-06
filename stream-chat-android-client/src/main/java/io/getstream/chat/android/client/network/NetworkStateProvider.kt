@@ -3,6 +3,7 @@ package io.getstream.chat.android.client.network
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import java.util.Collections
 
 internal class NetworkStateProvider(private val connectivityManager: ConnectivityManager) {
 
@@ -26,7 +27,7 @@ internal class NetworkStateProvider(private val connectivityManager: Connectivit
 
     @Volatile
     private var isConnected: Boolean = false
-    private var listeners = mutableListOf<NetworkStateListener>()
+    private val listeners = Collections.synchronizedList(mutableListOf<NetworkStateListener>())
 
     fun isConnected(): Boolean {
         isConnected = connectivityManager.activeNetworkInfo?.isConnected ?: false
