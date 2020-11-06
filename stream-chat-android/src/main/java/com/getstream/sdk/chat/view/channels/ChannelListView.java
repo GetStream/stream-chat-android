@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.models.User;
 
 
 public class ChannelListView extends RecyclerView {
-
     private ChannelListViewStyle style;
+
     // our connection to the channel scope
     private UserClickListener userClickListener;
     private ChannelClickListener channelClickListener;

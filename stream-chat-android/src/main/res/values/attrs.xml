@@ -382,25 +382,27 @@
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
         <attr name="streamChannelHeaderAvatarShow" format="boolean"/>
-        <attr name="streamAvatarWidth"/>
-        <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBorderWidth"/>
-        <attr name="streamAvatarBorderColor"/>
-        <attr name="streamAvatarBackGroundColor"/>
-        <attr name="streamAvatarTextSize"/>
-        <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFont"/>
-        <attr name="streamAvatarTextFontAssets"/>
-        <attr name="streamAvatarTextStyle"/>
-        <attr name="streamChannelWithOutNameTitleText"/>
-        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference"/>
-        <attr name="streamChannelHeaderTitleTextColor" format="color|reference"/>
-        <attr name="streamChannelHeaderTitleTextFont" format="reference"/>
-        <attr name="streamChannelHeaderTitleTextFontAssets" format="string"/>
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
+
+        <!-- ChannelHeaderView -->
+        <attr name="streamChannelWithOutNameTitleText" />
+        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderTitleTextFont" format="reference" />
+        <attr name="streamChannelHeaderTitleTextFontAssets" format="string" />
         <attr name="streamChannelHeaderTitleTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
         <attr name="streamChannelHeaderLastActiveShow" format="boolean"/>
