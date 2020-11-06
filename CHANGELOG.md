@@ -6,6 +6,7 @@
 ## stream-chat-android-client
 
 ## stream-chat-android-offline
+- Fix bug when channels could be shown without names
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
