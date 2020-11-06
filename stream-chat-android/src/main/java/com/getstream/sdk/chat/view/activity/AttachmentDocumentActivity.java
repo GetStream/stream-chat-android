@@ -3,14 +3,17 @@ package com.getstream.sdk.chat.view.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.webkit.*;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.getstream.sdk.chat.Chat;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.utils.Utils;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.logger.ChatLogger;
