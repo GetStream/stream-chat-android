@@ -47,7 +47,6 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
@@ -97,7 +96,8 @@ internal class ChatDomainImpl internal constructor(
     internal var recoveryEnabled: Boolean = true,
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
-    internal var appContext: Context
+    internal var appContext: Context,
+    internal val customScope: CoroutineScope? = null
 ) :
     ChatDomain {
     internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
@@ -177,9 +177,6 @@ internal class ChatDomainImpl internal constructor(
             mainHandler.postDelayed(this, 1000)
         }
     }
-
-    internal val job = SupervisorJob()
-    internal val scope = CoroutineScope(Dispatchers.IO + job)
 
     internal lateinit var repos: RepositoryHelper
     private var syncState: SyncStateEntity? = null
@@ -261,7 +258,11 @@ internal class ChatDomainImpl internal constructor(
         initClean()
     }
 
+    internal val job = SupervisorJob()
+    internal var scope: CoroutineScope
+
     init {
+        scope = customScope ?: CoroutineScope(Dispatchers.IO + job)
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         // if the user is already defined, just call setUser ourselves
@@ -278,7 +279,7 @@ internal class ChatDomainImpl internal constructor(
             }
             // disconnect if the low level client disconnects
             client.disconnectListeners.add {
-                GlobalScope.launch {
+                scope.launch {
                     disconnect()
                 }
             }
