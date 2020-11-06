@@ -76,7 +76,7 @@ internal class QueryChannelsControllerImpl(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-    override fun addChannelIfFilterMatches(
+    override suspend fun addChannelIfFilterMatches(
         channel: Channel
     ) {
         if (newChannelEventFilter(channel, filter)) {
@@ -86,13 +86,13 @@ internal class QueryChannelsControllerImpl(
         }
     }
 
-    fun handleEvents(events: List<ChatEvent>) {
+    internal suspend fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)
         }
     }
 
-    fun handleEvent(event: ChatEvent) {
+    private suspend fun handleEvent(event: ChatEvent) {
         if (event is NotificationAddedToChannelEvent) {
             // this is the only event that adds channels to the query
             addChannelIfFilterMatches(event.channel)
@@ -148,16 +148,12 @@ internal class QueryChannelsControllerImpl(
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
         val queryChannelsSpec =
             domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
-        var channels: List<Channel>? = null
 
-        if (queryChannelsSpec != null) {
-            channels =
-                domainImpl.selectAndEnrichChannels(queryChannelsSpec.cids.toList(), pagination)
-            logger.logI("found ${channels.size} channels in offline storage")
+        return queryChannelsSpec?.let { query ->
+            domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
+                logger.logI("found ${it.size} channels in offline storage")
+            }
         }
-
-        updateChannelsAndQueryResults(channels, pagination.isFirstPage)
-        return channels
     }
 
     suspend fun runQueryOnline(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
@@ -185,7 +181,6 @@ internal class QueryChannelsControllerImpl(
             updateQueryChannelsSpec(channelsResponse, pagination.isFirstPage)
             domainImpl.repos.queryChannels.insert(queryChannelsSpec)
             domainImpl.storeStateForChannels(channelsResponse)
-            updateChannelsAndQueryResults(channelsResponse, pagination.isFirstPage)
         } else {
             recoveryNeeded = true
             domainImpl.addError(response.error())
@@ -195,7 +190,8 @@ internal class QueryChannelsControllerImpl(
 
     private fun updateQueryChannelsSpec(channels: List<Channel>, isFirstPage: Boolean) {
         val newCids = channels.map(Channel::cid)
-        queryChannelsSpec.cids = if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
+        queryChannelsSpec.cids =
+            if (isFirstPage) newCids else (queryChannelsSpec.cids + newCids).distinct()
     }
 
     suspend fun runQuery(pagination: QueryChannelsPaginationRequest): Result<List<Channel>> {
@@ -218,16 +214,31 @@ internal class QueryChannelsControllerImpl(
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
             domainImpl.scope.async { runQueryOnline(pagination) }
-        } else { null }
-        val channels = queryOfflineJob.await()
+        } else {
+            null
+        }
+        val channels = queryOfflineJob.await().also { offlineChannels ->
+            updateChannelsAndQueryResults(
+                offlineChannels,
+                pagination.isFirstPage
+            )
+        }
 
         // we could either wait till we are online
         // or mark ourselves as needing recovery and trigger recovery
         val output: Result<List<Channel>> = if (queryOnlineJob != null) {
-            queryOnlineJob.await()
+            queryOnlineJob.await().also { result ->
+                if (result.isSuccess) {
+                    updateChannelsAndQueryResults(
+                        result.data(),
+                        pagination.isFirstPage
+                    )
+                }
+            }
         } else {
             recoveryNeeded = true
-            channels?.let { Result(it) } ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
+            channels?.let { Result(it) }
+                ?: Result(error = ChatError(message = "Channels Query wasn't run online and the offline storage is empty"))
         }
         loader.postValue(false)
         return output
@@ -241,7 +252,7 @@ internal class QueryChannelsControllerImpl(
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    private fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+    internal suspend fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
         if (channels != null) {
             val cIds = channels.map { it.cid }
             // initialize channel repos for all of these channels
