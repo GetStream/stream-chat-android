@@ -14,17 +14,19 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+@ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class QueryChannelsControllerImplTest {
     @Test
-    fun `when add channel if filter matches should update LiveData from channel to channel controller`() {
-        runBlocking {
+    fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
+        runBlockingTest {
             val channelController = mock<ChannelControllerImpl>()
             val sut = Fixture()
                 .givenNewChannelController(channelController)
@@ -36,11 +38,10 @@ internal class QueryChannelsControllerImplTest {
 
             verify(channelController).updateLiveDataFromChannel(eq(newChannel))
         }
-    }
 
     @Test
-    fun `when add channel if filter matches should post value to liveData with the same channel ID`() {
-        runBlocking {
+    fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
+        runBlockingTest {
             val sut = Fixture()
                 .givenNewChannelController(mock())
                 .setupChatControllersInstantiation()
@@ -53,11 +54,10 @@ internal class QueryChannelsControllerImplTest {
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
         }
-    }
 
     @Test
-    fun `when add channel twice if filter matches should post value to liveData only one value`() {
-        runBlocking {
+    fun `when add channel twice if filter matches should post value to liveData only one value`() =
+        runBlockingTest {
             val sut = Fixture()
                 .givenNewChannelController(mock())
                 .setupChatControllersInstantiation()
@@ -71,7 +71,6 @@ internal class QueryChannelsControllerImplTest {
             result.size shouldBeEqualTo 1
             result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
         }
-    }
 }
 
 private class Fixture {
