@@ -35,4 +35,50 @@
         <item name="streamAvatarTextSize">@dimen/stream_avatar_text_size_large</item>
         <item name="streamAvatarOnlineIndicatorEnabled">true</item>
     </style>
+
+    <!--MessageInputViewNew-->
+    <declare-styleable name="StreamMessageInputView">
+        <!--Attachment Button-->
+        <attr name="showAttachmentButton" format="boolean" />
+        <attr name="attachmentButtonIcon" format="reference" />
+        <attr name="attachmentButtonIconColor" format="color|reference" />
+        <attr name="attachmentButtonIconPressedColor" format="color|reference" />
+        <attr name="attachmentButtonIconDisabledColor" format="color|reference" />
+        <attr name="attachmentButtonSelectedIconColor" format="color|reference" />
+        <attr name="attachmentButtonWidth" format="dimension|reference" />
+        <attr name="attachmentButtonHeight" format="dimension|reference" />
+        <attr name="attachmentCloseButtonBackground" format="reference" />
+
+        <!--Lightning Button-->
+        <attr name="showLightningButton" format="boolean" />
+        <attr name="lightningButtonIcon" format="reference" />
+        <attr name="lightningButtonIconColor" format="color|reference" />
+        <attr name="lightningButtonIconPressedColor" format="color|reference" />
+        <attr name="lightningButtonIconDisabledColor" format="color|reference" />
+        <attr name="lightningButtonSelectedIconColor" format="color|reference" />
+        <attr name="lightningButtonWidth" format="dimension|reference" />
+        <attr name="lightningButtonHeight" format="dimension|reference" />
+
+        <!--Input Text-->
+        <attr name="inputHint" format="string" />
+        <attr name="inputTextSize" format="dimension|reference" />
+        <attr name="inputTextColor" format="color|reference" />
+        <attr name="inputHintTextColor" format="color|reference" />
+        <attr name="inputTextFont" format="reference" />
+        <attr name="inputTextFontAssets" format="string" />
+        <attr name="inputTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+
+        <!--Send Button-->
+        <attr name="inputButtonDefaultIconColor" format="color|reference"/>
+        <attr name="inputButtonEditIconColor" format="color|reference"/>
+        <attr name="inputButtonDefaultIconPressedColor" format="color|reference"/>
+        <attr name="inputButtonDefaultIconDisabledColor" format="color|reference"/>
+        <attr name="inputButtonIcon" format="reference"/>
+        <attr name="inputButtonWidth" format="dimension|reference"/>
+        <attr name="inputButtonHeight" format="dimension|reference"/>
+    </declare-styleable>
 </resources>

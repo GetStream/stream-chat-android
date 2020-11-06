@@ -114,50 +114,6 @@
         <!-- Text of the empty state label -->
         <attr name="streamChannelsEmptyStateLabelText" format="string"/>
     </declare-styleable>
-    <!--MessageInputViewNew-->
-    <declare-styleable name="MessageInputViewNew">
-        <!--Attachment Button-->
-        <attr name="streamShowAttachmentButtonNew" format="boolean" />
-        <attr name="streamShowAttachmentButtonIconNew" format="reference" />
-        <attr name="streamAttachmentButtonDefaultIconColorNew" format="color|reference" />
-        <attr name="streamAttachmentButtonDefaultIconPressedColorNew" format="color|reference" />
-        <attr name="streamAttachmentButtonDefaultIconDisabledColorNew" format="color|reference" />
-        <attr name="streamAttachmentButtonSelectedIconColorNew" format="color|reference" />
-        <attr name="streamAttachmentButtonIconNew" format="reference" />
-        <attr name="streamAttachmentButtonWidthNew" format="dimension|reference" />
-        <attr name="streamAttachmentButtonHeightNew" format="dimension|reference" />
-        <attr name="streamAttachmentCloseButtonBackgroundNew" format="reference" />
-        <!--Lightning Button-->
-        <attr name="streamShowLightningButtonNew" format="boolean" />
-        <attr name="streamShowLightningButtonIconNew" format="reference" />
-        <attr name="streamLightningButtonDefaultIconColorNew" format="color|reference" />
-        <attr name="streamLightningButtonDefaultIconPressedColorNew" format="color|reference" />
-        <attr name="streamLightningButtonDefaultIconDisabledColorNew" format="color|reference" />
-        <attr name="streamLightningButtonSelectedIconColorNew" format="color|reference" />
-        <attr name="streamLightningButtonIconNew" format="reference" />
-        <attr name="streamLightningButtonWidthNew" format="dimension|reference" />
-        <attr name="streamLightningButtonHeightNew" format="dimension|reference" />
-        <!--Input Text-->
-        <attr name="streamInputHintNew" format="string" />
-        <attr name="streamInputTextSizeNew" format="dimension|reference" />
-        <attr name="streamInputTextColorNew" format="color|reference" />
-        <attr name="streamInputHintTextColorNew" format="color|reference" />
-        <attr name="streamInputTextFontNew" format="reference" />
-        <attr name="streamInputTextFontAssetsNew" format="string" />
-        <attr name="streamInputTextStyleNew" format="enum">
-            <enum name="normal" value="0"/>
-            <enum name="bold" value="1"/>
-            <enum name="italic" value="2"/>
-        </attr>
-        <!--Send Button-->
-        <attr name="streamInputButtonDefaultIconColorNew" format="color|reference"/>
-        <attr name="streamInputButtonEditIconColorNew" format="color|reference"/>
-        <attr name="streamInputButtonDefaultIconPressedColorNew" format="color|reference"/>
-        <attr name="streamInputButtonDefaultIconDisabledColorNew" format="color|reference"/>
-        <attr name="streamInputButtonIconNew" format="reference"/>
-        <attr name="streamInputButtonWidthNew" format="dimension|reference"/>
-        <attr name="streamInputButtonHeightNew" format="dimension|reference"/>
-    </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <!--AvatarGroupView(automention)-->

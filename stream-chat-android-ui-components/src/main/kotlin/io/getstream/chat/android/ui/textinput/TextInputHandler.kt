@@ -1,4 +1,4 @@
-package com.getstream.sdk.chat.view.messageinput
+package io.getstream.chat.android.ui.textinput
 
 import android.text.Editable
 import android.text.TextWatcher

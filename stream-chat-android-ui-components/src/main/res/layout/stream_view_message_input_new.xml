@@ -15,24 +15,25 @@
         android:paddingBottom="6dp">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_openAttachment"
+            android:id="@+id/iv_open_attachment"
             android:layout_width="@dimen/stream_attachment_button_width"
             android:layout_height="@dimen/stream_attachment_button_height"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/stream_ic_attach"
             tools:src="@drawable/stream_ic_attach" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_openEmojis"
+            android:id="@+id/iv_open_emojis"
             android:layout_width="@dimen/stream_attachment_button_width"
             android:layout_height="@dimen/stream_attachment_button_height"
-            android:layout_marginStart="18dp"
-            android:layout_marginEnd="13dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/stream_ic_lightning"
             tools:src="@drawable/stream_ic_lightning" />
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/et_messageTextInput"
+            android:id="@+id/et_message_text_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -40,13 +41,16 @@
             android:background="@drawable/stream_shape_edit_text_round"
             android:inputType="textCapSentences|textMultiLine"
             android:maxLines="7"
-            android:padding="17dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
             android:textColor="@color/stream_black"
             android:textSize="15sp"
             tools:text="Hi. I am a text, did you notice?" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_sendMessage"
+            android:id="@+id/iv_send_message"
             android:layout_width="@dimen/stream_attachment_button_width"
             android:layout_height="@dimen/stream_attachment_button_height"
             android:layout_marginStart="10dp"

@@ -17,4 +17,12 @@
         android:id="@+id/channelsLoadingView"
         layout="@layout/channels_loading_view" />
 
+    <io.getstream.chat.android.ui.textinput.StreamMessageInputView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:inputHint="@string/app_name"
+        app:inputHintTextColor="@color/avatar_gradient_blue"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
