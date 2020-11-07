@@ -21,7 +21,7 @@ public interface GetTotalUnreadCount {
 
 internal class GetTotalUnreadCountImpl(private val domainImpl: ChatDomainImpl) : GetTotalUnreadCount {
     override operator fun invoke(): Call<LiveData<Int>> {
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             Result(domainImpl.totalUnreadCount, null)
         }
     }

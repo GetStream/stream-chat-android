@@ -32,9 +32,9 @@ public interface QueryChannels {
 internal class QueryChannelsImpl(private val domainImpl: ChatDomainImpl) : QueryChannels {
     override operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int, messageLimit: Int): Call<QueryChannelsController> {
         val queryChannelsControllerImpl = domainImpl.queryChannels(filter, sort)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             if (limit > 0) {
-                domainImpl.scope.launch {
+                domainImpl.scopeIO.launch {
                     queryChannelsControllerImpl.query(limit, messageLimit)
                 }
             }

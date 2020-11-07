@@ -24,7 +24,7 @@ public interface QueryChannelsLoadMore {
 
 internal class QueryChannelsLoadMoreImpl(private val domainImpl: ChatDomainImpl) : QueryChannelsLoadMore {
     override operator fun invoke(filter: FilterObject, sort: QuerySort<Channel>, limit: Int, messageLimit: Int): Call<List<Channel>> {
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             val queryChannelsController = domainImpl.queryChannels(filter, sort)
             queryChannelsController.loadMore(limit, messageLimit)
         }

@@ -37,7 +37,7 @@ internal class SendMessageWithAttachmentsImpl(private val domainImpl: ChatDomain
 
         val channelController = domainImpl.channel(cid)
         message.cid = cid
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             val attachments = uploadFiles(channelController, files, attachmentTransformer)
             if (attachments.isError) {
                 Result(attachments.error())

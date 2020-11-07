@@ -23,7 +23,7 @@ internal class LoadNewerMessagesImpl(private val domainImpl: ChatDomainImpl) : L
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             channelController.loadNewerMessages(messageLimit)
         }
     }

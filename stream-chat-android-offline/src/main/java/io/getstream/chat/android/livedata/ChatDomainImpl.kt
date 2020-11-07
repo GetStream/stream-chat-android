@@ -97,7 +97,8 @@ internal class ChatDomainImpl internal constructor(
     override var userPresence: Boolean = false,
     internal var backgroundSyncEnabled: Boolean = false,
     internal var appContext: Context,
-    internal val customScope: CoroutineScope? = null
+    internal val customIOScope: CoroutineScope? = null,
+    internal val customMainScope: CoroutineScope? = null
 ) :
     ChatDomain {
     internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
@@ -225,10 +226,10 @@ internal class ChatDomainImpl internal constructor(
 
         database = db ?: createDatabase(appContext, user, offlineEnabled)
 
-        repos = RepositoryHelper(RepositoryFactory(database, client, user), scope)
+        repos = RepositoryHelper(RepositoryFactory(database, client, user), scopeIO)
 
         // load channel configs from Room into memory
-        initJob = scope.async(scope.coroutineContext) {
+        initJob = scopeIO.async(scopeIO.coroutineContext) {
             // fetch the configs for channels
             repos.configs.load()
 
@@ -257,10 +258,12 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal val job = SupervisorJob()
-    internal var scope: CoroutineScope
+    internal var scopeIO: CoroutineScope
+    internal var scopeMain: CoroutineScope
 
     init {
-        scope = customScope ?: CoroutineScope(Dispatchers.IO + job)
+        scopeIO = customIOScope ?: CoroutineScope(Dispatchers.IO + job)
+        scopeMain = customMainScope ?: CoroutineScope(Dispatchers.Main + job)
         logger.logI("Initializing ChatDomain with version " + getVersion())
 
         // if the user is already defined, just call setUser ourselves
@@ -277,7 +280,7 @@ internal class ChatDomainImpl internal constructor(
             }
             // disconnect if the low level client disconnects
             client.disconnectListeners.add {
-                scope.launch {
+                scopeIO.launch {
                     disconnect()
                 }
             }

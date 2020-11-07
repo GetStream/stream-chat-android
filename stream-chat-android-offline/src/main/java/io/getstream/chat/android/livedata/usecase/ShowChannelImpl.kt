@@ -22,7 +22,7 @@ internal class ShowChannelImpl(private val domainImpl: ChatDomainImpl) : ShowCha
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             channelController.show()
         }
     }

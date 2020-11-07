@@ -10,14 +10,15 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
-import kotlinx.coroutines.Dispatchers
+import io.getstream.chat.android.livedata.ChatDomainImpl
 import kotlinx.coroutines.withContext
 import wasCreatedAfterOrAt
 
 internal class ThreadControllerImpl(
     override val threadId: String,
     val channelControllerImpl: ChannelControllerImpl,
-    val client: ChatClient
+    val client: ChatClient,
+    val domain: ChatDomainImpl,
 ) : ThreadController {
     private val logger = ChatLogger.get("ThreadController")
     private val threadMessages: MutableLiveData<Map<String, Message>> = MutableLiveData(mapOf())
@@ -50,7 +51,7 @@ internal class ThreadControllerImpl(
     // TODO: offline storage for thread load more
 
     private suspend fun loadMessages(call: Call<List<Message>>, limit: Int): Result<List<Message>> =
-        withContext(Dispatchers.IO) {
+        withContext(domain.scopeIO.coroutineContext) {
             call.execute().apply {
                 val data = this.takeIf { it.isSuccess }
                     ?.data()

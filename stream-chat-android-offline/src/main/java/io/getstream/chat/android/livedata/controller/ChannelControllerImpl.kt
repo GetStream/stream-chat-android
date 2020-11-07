@@ -199,8 +199,8 @@ internal class ChannelControllerImpl(
     private val messageHelper = MessageHelper()
 
     fun getThread(threadId: String): ThreadControllerImpl = threadControllerMap.getOrPut(threadId) {
-        ThreadControllerImpl(threadId, this, client)
-            .also { domainImpl.scope.launch { it.watch() } }
+        ThreadControllerImpl(threadId, this, client, domainImpl)
+            .also { domainImpl.scopeIO.launch { it.watch() } }
     }
 
     private fun getConfig(): Config {
@@ -393,10 +393,10 @@ internal class ChannelControllerImpl(
 
     suspend fun runChannelQuery(pagination: QueryChannelPaginationRequest): Result<Channel> {
         // first we load the data from room and update the messages and channel livedata
-        val queryOfflineJob = domainImpl.scope.async { runChannelQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scopeIO.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
-        val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scope.async { runChannelQueryOnline(pagination) } } else { null }
+        val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scopeIO.async { runChannelQueryOnline(pagination) } } else { null }
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
@@ -1179,7 +1179,7 @@ internal class ChannelControllerImpl(
             // updating a message should cancel prior runnables editing the same message...
             // cancel previous message jobs
             editJobs[message.id]?.cancelAndJoin()
-            val job = domainImpl.scope.async { domainImpl.runAndRetry(runnable) }
+            val job = domainImpl.scopeIO.async { domainImpl.runAndRetry(runnable) }
             editJobs[message.id] = job
             val result = job.await()
             if (result.isSuccess) {

@@ -41,7 +41,7 @@ internal class ThreadControllerImplTest {
         val parentMessage = randomMessage(id = threadId, parentId = null)
         val channelMessages = (randomMessages() + parentMessage).shuffled()
         When calling channelControllerImpl.unfilteredMessages doReturn MutableLiveData(channelMessages)
-        val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient)
+        val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient, mock())
         threadController.messages.observeForever { }
 
         threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage)
@@ -66,7 +66,7 @@ internal class ThreadControllerImplTest {
                     replies
                 )
             )
-            val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient)
+            val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient, mock())
             threadController.messages.observeForever { }
             threadController.endOfOlderMessages.observeForever { }
 
@@ -97,7 +97,7 @@ internal class ThreadControllerImplTest {
                     replies
                 )
             )
-            val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient)
+            val threadController = ThreadControllerImpl(threadId, channelControllerImpl, chatClient, mock())
             threadController.messages.observeForever { }
             threadController.endOfOlderMessages.observeForever { }
 

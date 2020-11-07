@@ -22,7 +22,7 @@ internal class KeystrokeImpl(private val domainImpl: ChatDomainImpl) : Keystroke
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             channelController.keystroke()
         }
     }

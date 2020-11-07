@@ -99,7 +99,8 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
 
-        private var scope: CoroutineScope? = null
+        private var scopeMain: CoroutineScope? = null
+        private var scopeIO: CoroutineScope? = null
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
@@ -149,8 +150,13 @@ public interface ChatDomain {
             return this
         }
 
-        internal fun withScope(scope: CoroutineScope): Builder {
-            this.scope = scope
+        internal fun withIOScope(scope: CoroutineScope): Builder {
+            this.scopeIO = scope
+            return this
+        }
+
+        internal fun withMainScope(scope: CoroutineScope): Builder {
+            this.scopeMain = scope
             return this
         }
 
@@ -176,7 +182,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext, scope)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext, scopeIO, scopeMain)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

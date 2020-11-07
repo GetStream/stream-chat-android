@@ -25,7 +25,7 @@ internal class SendMessageImpl(private val domainImpl: ChatDomainImpl) : SendMes
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             channelController.sendMessage(message, attachmentTransformer)
         }
     }

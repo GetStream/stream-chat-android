@@ -23,7 +23,7 @@ internal class CancelMessageImpl(private val domainImpl: ChatDomainImpl) : Cance
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
+        return CoroutineCall(domainImpl.scopeIO) {
             channelController.cancelMessage(message)
         }
     }
