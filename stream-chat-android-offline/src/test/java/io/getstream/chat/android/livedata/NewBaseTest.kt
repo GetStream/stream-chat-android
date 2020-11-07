@@ -48,13 +48,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Date
+import java.util.concurrent.Executors
 
 /**
  * BaseDomainTest2 creates an easy to use test environment
  *
- * - Sets up a chat Domain object with a mocked low level client.
+ * - Sets up a chat Domain object with a mocked Chat Client.
  * - We pass a TestCoroutineScope to the chatDomain to correctly handle new coroutines starting
  * - The val rule = InstantTaskExecutorRule() ensures that architecture components immediately
+ * - Use Executors.newSingleThreadExecutor to prevent room transactions from causing deadlocks
  * execute instead of running on a different thread
  *
  * Handling Room and Coroutines is unfortunately quite tricky.
@@ -62,6 +64,9 @@ import java.util.Date
  * * https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
  * * https://medium.com/androiddevelopers/threading-models-in-coroutines-and-android-sqlite-api-6cab11f7eb90
  * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
+ * * https://codelabs.developers.google.com/codelabs/kotlin-coroutines#9
+ * * https://craigrussell.io/2019/11/unit-testing-coroutine-suspend-functions-using-testcoroutinedispatcher/
+ *
  */
 @RunWith(AndroidJUnit4::class)
 internal open class BaseDomainTest2 {
@@ -72,6 +77,8 @@ internal open class BaseDomainTest2 {
     private val testMainDispatcher = TestCoroutineDispatcher()
     private val testMainExecutor = testMainDispatcher.asExecutor()
     internal val testMainScope = TestCoroutineScope(testMainDispatcher)
+
+    val singleThreadExecutor = Executors.newSingleThreadExecutor()
 
     lateinit var channelClientMock: ChannelClient
     lateinit var chatDomainImpl: ChatDomainImpl
@@ -115,33 +122,29 @@ internal open class BaseDomainTest2 {
     }
 
     @Test
-    internal fun `test that room testing setup is configured correctly`() {
-        runBlocking(testIOScope.coroutineContext) {
+    internal fun `test that room testing setup is configured correctly`() = testIODispatcher.runBlockingTest {
+        testIOScope.launch {
             chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
             queryControllerImpl.query(10)
         }
     }
 
     @Test
-    internal fun `test that room testing setup is configured correctly 2`() = testIOScope.runBlockingTest {
-        chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
-        queryControllerImpl.query(10)
-    }
-
-    @Test
     internal fun `channel controller edit message event`() = testIOScope.runBlockingTest {
-        // setup the queryControllerImpl
-        queryControllerImpl.query(10)
+        testIOScope.launch {
+            // setup the queryControllerImpl
+            queryControllerImpl.query(10)
 
-        // update the last message
-        // chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-        channelControllerImpl.handleEvent(data.messageUpdatedEvent)
-        queryControllerImpl.handleEvent(data.messageUpdatedEvent)
+            // update the last message
+            chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
+            // channelControllerImpl.handleEvent(data.messageUpdatedEvent)
+            // queryControllerImpl.handleEvent(data.messageUpdatedEvent)
 
-        // verify that the last message is now updated
-        val channelMap = queryControllerImpl.channels.getOrAwaitValue().associateBy { it.cid }
-        val channel1 = channelMap[data.channel1.cid]
-        Truth.assertThat(channel1!!.messages.last().text).isEqualTo(data.messageUpdatedEvent.message.text)
+            // verify that the last message is now updated
+            val channelMap = queryControllerImpl.channels.getOrAwaitValue().associateBy { it.cid }
+            val channel1 = channelMap[data.channel1.cid]
+            Truth.assertThat(channel1!!.messages.last().text).isEqualTo(data.messageUpdatedEvent.message.text)
+        }
     }
 
     internal fun createClientMock(isConnected: Boolean = true): ChatClient {
@@ -205,9 +208,9 @@ internal open class BaseDomainTest2 {
             ChatDatabase::class.java
         )
             .allowMainThreadQueries()
-
-            //  .setTransactionExecutor(testIOExecutor)
-            // .setQueryExecutor(testMainExecutor)
+            .setTransactionExecutor(singleThreadExecutor)
+            // .setTransactionExecutor(testIOExecutor)
+            .setQueryExecutor(singleThreadExecutor)
             .build()
     }
 
