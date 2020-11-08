@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="stream_spacing_small">8dp</dimen>
+    <dimen name="stream_spacing_medium">16dp</dimen>
+
+    <dimen name="stream_text_small">12sp</dimen>
+    <dimen name="stream_text_medium">14sp</dimen>
+    <dimen name="stream_text_large">16sp</dimen>
+
     <dimen name="stream_avatar_size_small">32dp</dimen>
     <dimen name="stream_avatar_size_medium">40dp</dimen>
     <dimen name="stream_avatar_size_large">64dp</dimen>
 
     <dimen name="stream_avatar_text_size_small">14sp</dimen>
     <dimen name="stream_avatar_text_size_medium">16sp</dimen>
-    <dimen name="stream_avatar_text_size_large">32sp</dimen>
+    <dimen name="stream_avatar_text_size_large">24sp</dimen>
+
+    <dimen name="stream_channel_actions_corners_radius">16dp</dimen>
+    <dimen name="stream_channel_actions_item_height">56dp</dimen>
+    <dimen name="stream_channel_actions_member_height">80dp</dimen>
 </resources>

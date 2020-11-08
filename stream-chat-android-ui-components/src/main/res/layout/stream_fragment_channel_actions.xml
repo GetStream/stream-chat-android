@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@drawable/stream_divider"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/channelMembersTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp"
+            android:textColor="@color/stream_text_black"
+            android:singleLine="true"
+            android:textSize="@dimen/stream_text_large"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/membersInfoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            android:singleLine="true"
+            android:textColor="@color/stream_text_grey"
+            android:textSize="@dimen/stream_text_small" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/stream_spacing_medium"
+            android:layout_marginBottom="24dp"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:overScrollMode="never"
+            android:paddingStart="@dimen/stream_reaction_margin"
+            android:paddingEnd="@dimen/stream_reaction_margin"
+            android:scrollbars="none"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/leaveGroupButton"
+        style="@style/StreamChannelActionsButtonStyle"
+        android:drawableStart="@drawable/stream_ic_leave_group"
+        android:text="@string/stream_channel_actions_leave_group"
+        android:textColor="@color/stream_black" />
+
+    <TextView
+        android:id="@+id/deleteChannelButton"
+        style="@style/StreamChannelActionsButtonStyle"
+        android:drawableStart="@drawable/stream_ic_delete_channel"
+        android:text="@string/stream_channel_actions_leave_group"
+        android:textColor="@color/stream_text_red" />
+
+    <TextView
+        android:id="@+id/deleteContactButton"
+        style="@style/StreamChannelActionsButtonStyle"
+        android:drawableStart="@drawable/stream_ic_delete_channel"
+        android:text="@string/stream_channel_actions_delete_contact"
+        android:textColor="@color/stream_text_red" />
+
+</LinearLayout>
