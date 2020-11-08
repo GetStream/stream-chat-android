@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth
 import com.nhaarman.mockitokotlin2.any
@@ -25,6 +24,7 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.socket.InitConnectionListener
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.livedata.controller.ChannelControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsControllerImpl
 import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
@@ -37,15 +37,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
-import org.amshove.kluent.mock
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
 import java.util.Date
 import java.util.concurrent.Executors
 
@@ -67,8 +63,33 @@ import java.util.concurrent.Executors
  * * https://craigrussell.io/2019/11/unit-testing-coroutine-suspend-functions-using-testcoroutinedispatcher/
  *
  */
-@RunWith(AndroidJUnit4::class)
 internal open class BaseDomainTest2 {
+
+    /** a realistic set of chat data, please only add to this, don't update */
+    var data = TestDataHelper()
+
+    /** the chat domain impl */
+    lateinit var chatDomainImpl: ChatDomainImpl
+    /** the chat domain interface */
+    lateinit var chatDomain: ChatDomain
+
+    /** the mock for the chat client */
+    lateinit var clientMock: ChatClient
+
+    /** a channel controller for data.channel1 */
+    lateinit var channelControllerImpl: ChannelControllerImpl
+
+    /** a queryControllerImpl for the query */
+    lateinit var queryControllerImpl: QueryChannelsControllerImpl
+    /** the query used for the default queryController */
+    lateinit var query: QueryChannelsSpec
+
+    /** a mock for the channel client */
+    lateinit var channelClientMock: ChannelClient
+
+    private lateinit var db: ChatDatabase
+
+    // the code below is used to ensure that coroutines execute the right way during tests
     private val testIODispatcher = TestCoroutineDispatcher()
     private val testIOExecutor = testIODispatcher.asExecutor()
     internal val testIOScope = TestCoroutineScope(testIODispatcher)
@@ -79,37 +100,32 @@ internal open class BaseDomainTest2 {
 
     val singleThreadExecutor = Executors.newSingleThreadExecutor()
 
-    lateinit var channelClientMock: ChannelClient
-    lateinit var chatDomainImpl: ChatDomainImpl
-    lateinit var chatDomain: ChatDomain
-    lateinit var client: ChatClient
-    lateinit var channelControllerImpl: io.getstream.chat.android.livedata.controller.ChannelControllerImpl
-    lateinit var db: ChatDatabase
-    lateinit var queryControllerImpl: QueryChannelsControllerImpl
-    lateinit var query: QueryChannelsSpec
-
+    /**
+     * checks if a response is succesful and raises a clear error message if it's not
+     */
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
             Truth.assertWithMessage(result.error().toString()).that(result.isError).isFalse()
         }
     }
 
+    /**
+     * checks if a response failed and raises a clear error message if it succeeded
+     */
     fun assertFailure(result: Result<*>) {
         if (!result.isError) {
             Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
         }
     }
 
-    var data = TestDataHelper()
-
     @get:Rule
     val rule = InstantTaskExecutorRule()
 
     @Before
     open fun setup() {
-        client = createClientMock()
+        clientMock = createClientMock()
         db = createRoomDb()
-        createChatDomain(client, db)
+        createChatDomain(clientMock, db)
     }
 
     @After
@@ -120,13 +136,14 @@ internal open class BaseDomainTest2 {
         db.close()
     }
 
+    /*
     @Test
     internal fun `test that room testing setup is configured correctly`() = testIODispatcher.runBlockingTest {
         testIOScope.launch {
             chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
             queryControllerImpl.query(10)
         }
-    }
+    }*/
 
     internal fun createClientMock(isConnected: Boolean = true): ChatClient {
 
@@ -237,7 +254,5 @@ internal open class BaseDomainTest2 {
         query = QueryChannelsSpec(data.filter1, QuerySort())
 
         queryControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
-
-        // testIOScope.launch { queryControllerImpl.query(10) }
     }
 }

@@ -3,68 +3,77 @@ package io.getstream.chat.android.livedata.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.livedata.BaseDomainTest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import io.getstream.chat.android.livedata.BaseDomainTest2
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class ChannelRepositoryTest : BaseDomainTest() {
+internal class ChannelRepositoryTest : BaseDomainTest2() {
     val repo by lazy { chatDomainImpl.repos.channels }
 
     @Test
-    fun testInsertAndRead() = runBlocking(Dispatchers.IO) {
-        repo.insertChannel(data.channel1)
-        val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
-        channel.config = data.channel1.config
-        channel.watchers = data.channel1.watchers
-        channel.watcherCount = data.channel1.watcherCount
+    fun `inserting a channel and reading it should be equal`() = testIOScope.runBlockingTest {
+        testIOScope.launch {
+            repo.insertChannel(data.channel1)
+            val entity = repo.select(data.channel1.cid)
+            val channel = entity!!.toChannel(data.userMap)
+            channel.config = data.channel1.config
+            channel.watchers = data.channel1.watchers
+            channel.watcherCount = data.channel1.watcherCount
 
-        Truth.assertThat(channel).isEqualTo(data.channel1)
+            Truth.assertThat(channel).isEqualTo(data.channel1)
+        }
     }
 
     @Test
-    fun testInsertAndDelete() = runBlocking(Dispatchers.IO) {
-        repo.insertChannel(data.channel1)
-        repo.delete(data.channel1.cid)
-        val entity = repo.select(data.channel1.cid)
+    fun `deleting a channel should work`() = testIOScope.runBlockingTest {
+        testIOScope.launch {
+            repo.insertChannel(data.channel1)
+            repo.delete(data.channel1.cid)
+            val entity = repo.select(data.channel1.cid)
 
-        Truth.assertThat(entity).isNull()
+            Truth.assertThat(entity).isNull()
+        }
     }
 
     @Test
-    fun testUpdate() = runBlocking(Dispatchers.IO) {
-        repo.insertChannel(data.channel1)
-        repo.insertChannel(data.channel1Updated)
-        val entity = repo.select(data.channel1.cid)
-        val channel = entity!!.toChannel(data.userMap)
+    fun `updating a channel should work as intended`() = testIOScope.runBlockingTest {
+        testIOScope.launch {
+            repo.insertChannel(data.channel1)
+            repo.insertChannel(data.channel1Updated)
+            val entity = repo.select(data.channel1.cid)
+            val channel = entity!!.toChannel(data.userMap)
 
-        // ignore these 4 fields
-        channel.config = data.channel1.config
-        channel.createdBy = data.channel1.createdBy
-        channel.watchers = data.channel1Updated.watchers
-        channel.watcherCount = data.channel1Updated.watcherCount
-        Truth.assertThat(channel).isEqualTo(data.channel1Updated)
+            // ignore these 4 fields
+            channel.config = data.channel1.config
+            channel.createdBy = data.channel1.createdBy
+            channel.watchers = data.channel1Updated.watchers
+            channel.watcherCount = data.channel1Updated.watcherCount
+            Truth.assertThat(channel).isEqualTo(data.channel1Updated)
+        }
     }
 
     @Test
-    fun testSyncNeeded() = runBlocking(Dispatchers.IO) {
-        data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
-        data.channel2.syncStatus = SyncStatus.COMPLETED
+    fun `sync needed is used for our offline to online recovery flow`() = testIOScope.runBlockingTest {
 
-        repo.insertChannel(listOf(data.channel1, data.channel2))
+        testIOScope.launch {
+            data.channel1.syncStatus = SyncStatus.SYNC_NEEDED
+            data.channel2.syncStatus = SyncStatus.COMPLETED
 
-        var channels = repo.selectSyncNeeded()
-        Truth.assertThat(channels.size).isEqualTo(1)
-        Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
+            repo.insertChannel(listOf(data.channel1, data.channel2))
 
-        channels = repo.retryChannels()
-        Truth.assertThat(channels.size).isEqualTo(1)
-        Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
+            var channels = repo.selectSyncNeeded()
+            Truth.assertThat(channels.size).isEqualTo(1)
+            Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.SYNC_NEEDED)
 
-        channels = repo.selectSyncNeeded()
-        Truth.assertThat(channels.size).isEqualTo(0)
+            channels = repo.retryChannels()
+            Truth.assertThat(channels.size).isEqualTo(1)
+            Truth.assertThat(channels.first().syncStatus).isEqualTo(SyncStatus.COMPLETED)
+
+            channels = repo.selectSyncNeeded()
+            Truth.assertThat(channels.size).isEqualTo(0)
+        }
     }
 }

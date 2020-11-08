@@ -1153,6 +1153,7 @@ internal class ChannelControllerImpl(
     }
 
     suspend fun editMessage(message: Message): Result<Message> {
+        // TODO: should we rename edit message into update message to be similar to llc?
         val online = domainImpl.isOnline()
         var editedMessage = message.copy()
 

@@ -4,7 +4,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -30,26 +32,30 @@ internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 }
 
 @RunWith(AndroidJUnit4::class)
-internal class ConnectedRecoveryTest : BaseConnectedMockedTest() {
+internal class ConnectedRecoveryTest : BaseDomainTest2() {
 
     @Test
-    fun storeSyncState() = runBlocking(Dispatchers.IO) {
-        val cid = "messaging:myspecialchannel"
-        chatDomainImpl.channel(cid)
-        chatDomainImpl.initJob.await()
-        val syncState1 = chatDomainImpl.storeSyncState()
-        val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
-        Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
+    fun `Active channels should be stored in sync state`() = testIOScope.runBlockingTest {
+        testIOScope.launch {
+            val cid = "messaging:myspecialchannel"
+            chatDomainImpl.channel(cid)
+            chatDomainImpl.initJob.await()
+            val syncState1 = chatDomainImpl.storeSyncState()
+            val syncState2 = chatDomainImpl.repos.syncState.select(data.user1.id)
+            Truth.assertThat(syncState2!!.activeChannelIds).contains(cid)
+        }
     }
 
     @Test
-    fun connectionRecovered() = runBlocking(Dispatchers.IO) {
+    fun `Connection recovery should not raise an error`() = testIOScope.runBlockingTest {
         // when the connection is lost and we recover the connection we do the following
         // - query all active channels
         // - repeat all active queries
         // - retry message inserts
         // - replay events
         // - we want to watch channels and enable presence
-        chatDomainImpl.connectionRecovered(true)
+        testIOScope.launch {
+            chatDomainImpl.connectionRecovered(true)
+        }
     }
 }
