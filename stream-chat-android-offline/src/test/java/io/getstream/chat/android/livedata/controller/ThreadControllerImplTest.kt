@@ -16,7 +16,6 @@ import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
@@ -51,7 +50,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     @Test
     fun `Should watch the first messages`() {
 
-        runBlocking {
+        testIOScope.launch {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
             val limit = positiveRandomInt(30)
@@ -82,7 +81,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     @Test
     fun `Should watch the first messages without receive limit messages`() {
 
-        runBlocking {
+        testIOScope.launch {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
             val channelMessages = (randomMessages() + parentMessage).shuffled()
             val limit = positiveRandomInt(30)
