@@ -15,7 +15,7 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.livedata.BaseDomainTest
+import io.getstream.chat.android.livedata.BaseDomainTest2
 import io.getstream.chat.android.livedata.randomAttachmentsWithFile
 import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.TestCall
@@ -40,7 +40,7 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 @Ignore("broken due to usage of spy")
-internal class ChannelControllerImplTest : BaseDomainTest() {
+internal class ChannelControllerImplTest : BaseDomainTest2() {
 
     private val chatClient: ChatClient = spy()
     private val channelType: String = randomString()

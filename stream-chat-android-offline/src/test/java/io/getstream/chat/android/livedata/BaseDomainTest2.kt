@@ -31,7 +31,6 @@ import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.TestDataHelper
-import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
@@ -60,7 +59,7 @@ import java.util.concurrent.Executors
  * execute instead of running on a different thread
  *
  * Handling Room and Coroutines is unfortunately quite tricky.
- * - Using transactions can cause the tests to deadlock
+ * * https://www.youtube.com/watch?v=KMb0Fs8rCRs&feature=youtu.be
  * * https://medium.com/@eyalg/testing-androidx-room-kotlin-coroutines-2d1faa3e674f
  * * https://medium.com/androiddevelopers/threading-models-in-coroutines-and-android-sqlite-api-6cab11f7eb90
  * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
@@ -126,24 +125,6 @@ internal open class BaseDomainTest2 {
         testIOScope.launch {
             chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
             queryControllerImpl.query(10)
-        }
-    }
-
-    @Test
-    internal fun `channel controller edit message event`() = testIOScope.runBlockingTest {
-        testIOScope.launch {
-            // setup the queryControllerImpl
-            queryControllerImpl.query(10)
-
-            // update the last message
-            chatDomainImpl.eventHandler.handleEvent(data.messageUpdatedEvent)
-            // channelControllerImpl.handleEvent(data.messageUpdatedEvent)
-            // queryControllerImpl.handleEvent(data.messageUpdatedEvent)
-
-            // verify that the last message is now updated
-            val channelMap = queryControllerImpl.channels.getOrAwaitValue().associateBy { it.cid }
-            val channel1 = channelMap[data.channel1.cid]
-            Truth.assertThat(channel1!!.messages.last().text).isEqualTo(data.messageUpdatedEvent.message.text)
         }
     }
 
