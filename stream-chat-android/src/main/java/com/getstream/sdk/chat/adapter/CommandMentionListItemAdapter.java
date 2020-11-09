@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import androidx.viewbinding.ViewBinding;
-
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.databinding.StreamItemMentionBinding;
 import com.getstream.sdk.chat.view.MessageListViewStyle;
@@ -16,14 +14,14 @@ import java.util.List;
 
 import io.getstream.chat.android.client.models.User;
 
-public class CommandMentionListItemAdapter<T> extends BaseAdapter {
+public class CommandMentionListItemAdapter extends BaseAdapter {
 
     private final LayoutInflater layoutInflater;
     private final MessageListViewStyle style;
 
-    private List<T> items;
+    private final List<User> items;
 
-    public CommandMentionListItemAdapter(Context context, List<T> items, MessageListViewStyle style) {
+    public CommandMentionListItemAdapter(Context context, List<User> items, MessageListViewStyle style) {
         this.layoutInflater = LayoutInflater.from(context);
         this.items = items;
         this.style = style;
@@ -46,20 +44,20 @@ public class CommandMentionListItemAdapter<T> extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewBinding binding;
+        StreamItemMentionBinding binding;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.stream_item_mention, null);
             binding = StreamItemMentionBinding.bind(convertView);
             convertView.setTag(binding);
         } else {
-            binding = (ViewBinding) convertView.getTag();
+            binding = (StreamItemMentionBinding) convertView.getTag();
         }
-        configMentions((StreamItemMentionBinding) binding, position);
+        configMentions(binding, position);
         return binding.getRoot();
     }
 
     public void configMentions(StreamItemMentionBinding binding, int position) {
-        User user = (User) items.get(position);
+        User user = items.get(position);
         binding.avatar.setUser(user, style.getAvatarStyle());
     }
 }
