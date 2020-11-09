@@ -34,7 +34,7 @@
     <dimen name="stream_input_button_height">25dp</dimen>
 
     <dimen name="stream_composer_stroke_width">2dp</dimen>
-    <dimen name="stream_composer_corner_radius">0dp</dimen>
+    <dimen name="stream_composer_corner_radius">10dp</dimen>
     <dimen name="stream_input_text_size">15sp</dimen>
     <dimen name="stream_input_upload_media_radius">16dp</dimen>
 

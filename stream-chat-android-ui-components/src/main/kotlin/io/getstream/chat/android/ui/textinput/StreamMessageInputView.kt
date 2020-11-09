@@ -11,7 +11,7 @@ import androidx.core.content.res.use
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.databinding.StreamViewMessageInputNewBinding
+import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 
 public class StreamMessageInputView : ConstraintLayout {
 
@@ -31,10 +31,10 @@ public class StreamMessageInputView : ConstraintLayout {
         init(context, attrs)
     }
 
-    private lateinit var binding: StreamViewMessageInputNewBinding
+    private lateinit var binding: StreamMessageInputBinding
 
     private fun init(context: Context, attr: AttributeSet? = null) {
-        binding = StreamViewMessageInputNewBinding.inflate(LayoutInflater.from(context), this, true)
+        binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
         context.obtainStyledAttributes(attr, R.styleable.StreamMessageInputView).use { typedArray ->
             configAttachmentButton(typedArray)
