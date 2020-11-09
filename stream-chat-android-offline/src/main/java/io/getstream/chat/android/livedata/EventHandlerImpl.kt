@@ -310,22 +310,43 @@ internal class EventHandlerImpl(
 
                 is MessageReadEvent -> {
                     // get the channel, update reads, write the channel
-                    batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                    event.cid
+                        ?.let(batch::getCurrentChannel)
+                        ?.apply {
+                            updateReads(
+                                ChannelUserRead(
+                                    user = event.user,
+                                    lastRead = event.createdAt
+                                )
+                            )
                         }
-                        batch.addChannel(updatedChannel)
-                    }
+                        ?.let(batch::addChannel)
+                        ?: batch
+                            .getAllChannels()
+                            .forEach { channel ->
+                                channel.updateReads(ChannelUserRead(event.user, event.createdAt))
+                            }
                 }
-                is NotificationMarkReadEvent -> {
-                    event.totalUnreadCount?.let { domainImpl.setTotalUnreadCount(it) }
 
-                    batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                is NotificationMarkReadEvent -> {
+                    event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
+
+                    event.cid
+                        ?.let(batch::getCurrentChannel)
+                        ?.apply {
+                            updateReads(
+                                ChannelUserRead(
+                                    user = event.user,
+                                    lastRead = event.createdAt
+                                )
+                            )
                         }
-                        batch.addChannel(updatedChannel)
-                    }
+                        ?.let(batch::addChannel)
+                        ?: batch
+                            .getAllChannels()
+                            .forEach { channel ->
+                                channel.updateReads(ChannelUserRead(event.user, event.createdAt))
+                            }
                 }
                 is UserMutedEvent -> {
                     batch.addUser(event.targetUser)
@@ -369,13 +390,22 @@ internal class EventHandlerImpl(
         for (event in events) {
             when (event) {
                 is NotificationChannelTruncatedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(
+                        event.cid,
+                        event.createdAt
+                    )
                 }
                 is ChannelTruncatedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(
+                        event.cid,
+                        event.createdAt
+                    )
                 }
                 is ChannelDeletedEvent -> {
-                    domainImpl.repos.messages.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    domainImpl.repos.messages.deleteChannelMessagesBefore(
+                        event.cid,
+                        event.createdAt
+                    )
                     domainImpl.repos.channels.select(event.cid)?.let {
                         domainImpl.repos.channels.insert(it.apply { deletedAt = event.createdAt })
                     }
@@ -385,29 +415,42 @@ internal class EventHandlerImpl(
     }
 
     private suspend fun handleEventsInternal(events: List<ChatEvent>) {
-        events.sortedBy { it.createdAt }
-        updateOfflineStorageFromEvents(events)
+        val sortedEvents = events.sortedBy { it.createdAt }
+        updateOfflineStorageFromEvents(sortedEvents)
 
         // step 3 - forward the events to the active channels
+        sortedEvents
+            .filterIsInstance<CidEvent>()
+            .let { cidEvents ->
+                // handle CidEvents with non-null CIDs
+                cidEvents.filter { it.cid != null }
+                    .groupBy { it.cid!! }
+                    .forEach {
+                        val (cid, eventList) = it
+                        if (domainImpl.isActiveChannel(cid)) {
+                            domainImpl.channel(cid).handleEvents(eventList)
+                        }
+                    }
 
-        events.filterIsInstance<CidEvent>()
-            .groupBy { it.cid }
-            .filterNot { it.key.isBlank() }
-            .forEach {
-                val (cid, eventList) = it
-                if (domainImpl.isActiveChannel(cid)) {
-                    domainImpl.channel(cid).handleEvents(eventList)
-                }
+                // some CidEvents, like those for marking reads,
+                // can have null channel ids to signal "all channels"
+                cidEvents
+                    .filter { it.cid == null }
+                    .let { eventsForAllChannels ->
+                        domainImpl.allActiveChannels().forEach { channelController ->
+                            channelController.handleEvents(eventsForAllChannels)
+                        }
+                    }
             }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         for (queryRepo in domainImpl.getActiveQueries()) {
-            queryRepo.handleEvents(events)
+            queryRepo.handleEvents(sortedEvents)
         }
 
         // send out the connect events
-        for (event in events) {
+        for (event in sortedEvents) {
 
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {

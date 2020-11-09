@@ -45,6 +45,7 @@ internal class EventBatchUpdate private constructor(
     }
 
     fun getCurrentChannel(cId: String): Channel? = channelMap[cId]
+    fun getAllChannels(): List<Channel> = channelMap.values.toList()
     fun getCurrentMessage(messageId: String): Message? = messageMap[messageId]
 
     fun addMessage(message: Message) {
@@ -71,15 +72,15 @@ internal class EventBatchUpdate private constructor(
     }
 
     internal class Builder {
-        private val channelsToFetch = mutableSetOf<String>()
+        private val channelsToFetch = mutableSetOf<String?>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
 
-        fun addToFetchChannels(cIds: List<String>) {
+        fun addToFetchChannels(cIds: List<String?>) {
             channelsToFetch += cIds
         }
 
-        fun addToFetchChannels(cId: String) {
+        fun addToFetchChannels(cId: String?) {
             channelsToFetch += cId
         }
 

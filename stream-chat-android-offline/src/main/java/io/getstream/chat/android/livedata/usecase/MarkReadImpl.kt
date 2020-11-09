@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.call.CoroutineCall
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.utils.validateCid
 
@@ -19,12 +20,20 @@ public interface MarkRead {
 }
 
 internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
-    override operator fun invoke(cid: String): Call<Boolean> {
-        validateCid(cid)
+    override operator fun invoke(cid: String): Call<Boolean> =
+        domainImpl.channel(validateCid(cid)).let { channelController ->
+            CoroutineCall(domainImpl.scope) {
+                channelController.markRead().let { markedRead ->
+                    if (markedRead) {
+                        domainImpl.client
+                            .markRead(
+                                channelController.channelType,
+                                channelController.channelId
+                            ).execute()
+                    }
 
-        val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scope) {
-            channelController.markRead()
+                    Result(markedRead, null)
+                }
+            }
         }
-    }
 }

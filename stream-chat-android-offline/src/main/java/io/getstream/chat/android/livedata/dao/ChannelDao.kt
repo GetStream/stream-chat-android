@@ -33,6 +33,9 @@ internal interface ChannelDao {
     )
     suspend fun select(cid: String?): ChannelEntity?
 
+    @Query("SELECT * FROM stream_chat_channel_State")
+    suspend fun selectAll(): List<ChannelEntity>
+
     @Query("DELETE from stream_chat_channel_state WHERE cid = :cid")
     suspend fun delete(cid: String)
 }

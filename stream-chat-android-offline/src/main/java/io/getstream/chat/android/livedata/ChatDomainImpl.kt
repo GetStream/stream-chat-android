@@ -508,6 +508,9 @@ internal class ChatDomainImpl internal constructor(
         return activeChannelMapImpl.getValue(cid)
     }
 
+    internal fun allActiveChannels(): List<ChannelControllerImpl> =
+        activeChannelMapImpl.values.toList()
+
     fun generateMessageId(): String {
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }

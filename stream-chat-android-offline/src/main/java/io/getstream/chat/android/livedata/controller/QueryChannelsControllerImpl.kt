@@ -111,14 +111,14 @@ internal class QueryChannelsControllerImpl(
             // refresh the channels
             // Careful, it's easy to have a race condition here.
             //
-            // The reason is that we are on the IO thread and update ChannelControlelr using postValue()
+            // The reason is that we are on the IO thread and update ChannelController using postValue()
             //  ChannelController.toChannel() can read the old version of the data using livedata.value
             // Solutions:
             // - suspend/wait for a few seconds (yuck, lets not do that)
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
             domainImpl.scope.launch(Dispatchers.Main) {
-                refreshChannel(event.cid)
+                event.cid?.let(::refreshChannel) ?: refreshAllChannels()
             }
         }
     }
@@ -285,6 +285,14 @@ internal class QueryChannelsControllerImpl(
      */
     fun refreshChannel(cId: String) {
         refreshChannels(listOf(cId))
+    }
+
+    /**
+     * Refreshes all channels returned in this query.
+     * Supports use cases like marking all channels as read.
+     */
+    fun refreshAllChannels() {
+        queryChannelsSpec.cids.let(::refreshChannels)
     }
 
     /**

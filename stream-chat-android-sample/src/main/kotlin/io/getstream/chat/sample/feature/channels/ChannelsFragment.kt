@@ -68,6 +68,10 @@ class ChannelsFragment : Fragment() {
             findNavController().navigateSafely(R.id.action_to_create_channel)
         }
 
+        binding.markAllReadButton.setOnClickListener {
+            viewModel.markAllRead()
+        }
+
         binding.channelsListView.setOnLongClickListener(
             ChannelListView.ChannelClickListener { channel ->
                 AlertDialog.Builder(requireContext())

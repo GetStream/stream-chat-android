@@ -67,8 +67,8 @@ public class LlcMigrationUtils {
             return true;
         } else {
             Date lastMessageDate = lastMessage.getCreatedAt() != null ? lastMessage.getCreatedAt() : lastMessage.getCreatedLocallyAt();
-            boolean shouldBeMarkedRead = myReadDate.getTime() >= (lastMessageDate != null ? lastMessageDate.getTime() : 0);
-            return shouldBeMarkedRead;
+            long lastMessageTime = lastMessageDate != null ? lastMessageDate.getTime() : 0;
+            return myReadDate.getTime() >= lastMessageTime;
         }
     }
 
