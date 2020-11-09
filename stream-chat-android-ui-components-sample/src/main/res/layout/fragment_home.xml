@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/hostFragmentContainer"
@@ -19,7 +21,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/home_nav_graph" />
+            app:navGraph="@navigation/home_nav_graph"
+            />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
@@ -27,13 +30,13 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:itemIconSize="20dp"
+            app:itemIconTint="@color/bottom_nav_item_color"
+            app:itemTextColor="@color/bottom_nav_item_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:itemIconTint="@color/bottom_nav_item_color"
-            app:itemTextColor="@color/bottom_nav_item_color"
-            app:menu="@menu/menu_bottom_navigation" />
-
+            app:menu="@menu/menu_bottom_navigation"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -43,7 +46,8 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/menu_navigation_drawer">
+        app:menu="@menu/menu_navigation_drawer"
+        >
 
         <TextView
             android:id="@+id/signOutTextView"
@@ -58,8 +62,7 @@
             android:maxLines="1"
             android:paddingStart="@dimen/spacing_large"
             android:text="@string/home_drawer_sign_out"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
-
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            />
     </com.google.android.material.navigation.NavigationView>
-
 </androidx.drawerlayout.widget.DrawerLayout>

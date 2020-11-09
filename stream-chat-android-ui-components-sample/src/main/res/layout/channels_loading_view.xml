@@ -3,20 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/loadingViewContainer"
-    android:layout_marginTop="64dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="64dp"
     app:shimmer_auto_start="true"
     app:shimmer_base_color="@color/channels_shimmer_color"
-    app:shimmer_highlight_color="@color/white"
     app:shimmer_colored="true"
+    app:shimmer_highlight_color="@color/white"
     tools:ignore="MissingDefaultResource"
-    tools:visibility="visible">
+    tools:visibility="visible"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <include layout="@layout/channel_item_loading_view" />
 
@@ -29,7 +31,5 @@
         <include layout="@layout/channel_item_loading_view" />
 
         <include layout="@layout/channel_item_loading_view" />
-
     </LinearLayout>
-
 </com.facebook.shimmer.ShimmerFrameLayout>
