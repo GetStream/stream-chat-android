@@ -133,14 +133,14 @@ public class StreamMessageInputView : ConstraintLayout {
             setTextColor(
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamMessageInputTextColor,
-                    ContextCompat.getColor(context, android.R.color.black)
+                    ContextCompat.getColor(context, R.color.stream_black)
                 )
             )
 
             setHintTextColor(
                 typedArray.getColor(
                     R.styleable.StreamMessageInputView_streamMessageInputHintTextColor,
-                    ContextCompat.getColor(context, android.R.color.darker_gray)
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
                 )
             )
 
