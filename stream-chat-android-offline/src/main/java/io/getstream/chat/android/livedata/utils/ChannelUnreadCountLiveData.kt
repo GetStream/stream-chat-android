@@ -9,13 +9,13 @@ import io.getstream.chat.android.client.models.User
 
 internal class ChannelUnreadCountLiveData(
     val currentUser: User,
-    val readLiveData: LiveData<ChannelUserRead>,
+    val readLiveData: LiveData<ChannelUserRead?>,
     val messagesLiveData: LiveData<List<Message>>
 ) : LiveData<Int>() {
     var read: ChannelUserRead? = null
     var messages: List<Message>? = null
 
-    val readObserver = Observer<ChannelUserRead> { read ->
+    val readObserver = Observer<ChannelUserRead?> { read ->
         this.read = read
         calculateUnreadCount()?.let { value = it }
     }

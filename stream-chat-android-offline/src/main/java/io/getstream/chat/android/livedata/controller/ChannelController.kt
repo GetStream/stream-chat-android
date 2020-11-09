@@ -38,7 +38,7 @@ public interface ChannelController {
     /** how far every user in this channel has read */
     public val reads: LiveData<List<ChannelUserRead>>
     /** read status for the current user */
-    public val read: LiveData<ChannelUserRead>
+    public val read: LiveData<ChannelUserRead?>
     /**
      * unread count for this channel, calculated based on read state (this works even if you're offline)
      */
@@ -58,7 +58,7 @@ public interface ChannelController {
     public val recoveryNeeded: Boolean
     public val cid: String
     /** LiveData object with the channel data */
-    public val channelData: LiveData<ChannelData>
+    public val channelData: LiveData<ChannelData?>
 
     public fun clean()
     public fun toChannel(): Channel
