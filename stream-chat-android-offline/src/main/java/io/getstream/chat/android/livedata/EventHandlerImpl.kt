@@ -312,13 +312,15 @@ internal class EventHandlerImpl(
 
                 // we use syncState to store the last markAllRead date for a given
                 // user since it makes more sense to write to the database once instead of N times.
-                is MarkAllReadEvent -> domainImpl.repos.syncState.apply {
+                is MarkAllReadEvent -> {
                     event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
                     event.unreadChannels.let(domainImpl::setChannelUnreadCount)
 
-                    select(event.user.id)
-                        ?.copy(markedAllReadAt = event.createdAt)
-                        ?.let { insert(it) }
+                    domainImpl.repos.syncState.apply {
+                        select(event.user.id)
+                            ?.copy(markedAllReadAt = event.createdAt)
+                            ?.let { insert(it) }
+                    }
                 }
 
                 // get the channel, update reads, write the channel
