@@ -70,7 +70,7 @@ class UserLoginFragment : Fragment() {
             }
         )
 
-        activity?.intent?.apply {
+        requireActivity().intent?.apply {
             val channelId = getStringExtra(EXTRA_CHANNEL_ID)
             val channelType = getStringExtra(EXTRA_CHANNEL_TYPE)
             if (!channelId.isNullOrBlank() && !channelType.isNullOrBlank()) {
@@ -79,7 +79,7 @@ class UserLoginFragment : Fragment() {
             }
         }
 
-        activity?.apply {
+        requireActivity().apply {
             onBackPressedDispatcher.addCallback(
                 viewLifecycleOwner,
                 object : OnBackPressedCallback(true) {
