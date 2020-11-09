@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -100,6 +101,10 @@ internal class QueryChannelsControllerImpl(
             addChannelIfFilterMatches(event.channel)
         }
 
+        if (event is MarkAllReadEvent) {
+            refreshAllChannels()
+        }
+
         if (event is CidEvent) {
             // skip events that are typically not impacting the query channels overview
             if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
@@ -118,7 +123,7 @@ internal class QueryChannelsControllerImpl(
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
             domainImpl.scope.launch(Dispatchers.Main) {
-                event.cid?.let(::refreshChannel) ?: refreshAllChannels()
+                event.cid.let(::refreshChannel)
             }
         }
     }

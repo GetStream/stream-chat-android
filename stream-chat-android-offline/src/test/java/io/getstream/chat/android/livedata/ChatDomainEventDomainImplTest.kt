@@ -119,7 +119,7 @@ internal class ChatDomainEventDomainImplTest : BaseConnectedIntegrationTest() {
         runBlocking(Dispatchers.IO) { chatDomainImpl.repos.channels.insertChannel(data.channel1) }
         runBlocking(Dispatchers.IO) { chatDomainImpl.eventHandler.handleEvent(data.readEvent) }
         // check channel level read info
-        val cid = data.readEvent.cid!!
+        val cid = data.readEvent.cid
         val channel = runBlocking(Dispatchers.IO) { chatDomainImpl.repos.channels.select(cid) }
         Truth.assertThat(channel!!.reads.size).isEqualTo(1)
         val read = channel.reads.values.first()

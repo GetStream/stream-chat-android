@@ -72,15 +72,15 @@ internal class EventBatchUpdate private constructor(
     }
 
     internal class Builder {
-        private val channelsToFetch = mutableSetOf<String?>()
+        private val channelsToFetch = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
 
-        fun addToFetchChannels(cIds: List<String?>) {
+        fun addToFetchChannels(cIds: List<String>) {
             channelsToFetch += cIds
         }
 
-        fun addToFetchChannels(cId: String?) {
+        fun addToFetchChannels(cId: String) {
             channelsToFetch += cId
         }
 

@@ -16,7 +16,7 @@ public sealed class ChatEvent {
 }
 
 public sealed class CidEvent : ChatEvent() {
-    public abstract val cid: String?
+    public abstract val cid: String
 }
 
 public interface UserEvent {
@@ -168,7 +168,7 @@ public data class MessageReadEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
-    override val cid: String?,
+    override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
     @SerializedName("watcher_count") val watcherCount: Int?
@@ -257,13 +257,22 @@ public data class NotificationMarkReadEvent(
     override val type: String,
     @SerializedName("created_at") override val createdAt: Date,
     override val user: User,
-    override val cid: String?,
+    override val cid: String,
     @SerializedName("channel_type") val channelType: String,
     @SerializedName("channel_id") val channelId: String,
     @SerializedName("watcher_count") val watcherCount: Int?,
     @SerializedName("total_unread_count") val totalUnreadCount: Int?,
     @SerializedName("unread_channels") val unreadChannels: Int?
 ) : CidEvent(), UserEvent
+
+public data class MarkAllReadEvent(
+    override val type: String,
+    @SerializedName("created_at") override val createdAt: Date,
+    override val user: User,
+    @SerializedName("unread_count") val unreadCount: Int?,
+    @SerializedName("total_unread_count") val totalUnreadCount: Int?,
+    @SerializedName("unread_channels") val unreadChannels: Int?
+) : ChatEvent(), UserEvent
 
 public data class NotificationMessageNewEvent(
     override val type: String,

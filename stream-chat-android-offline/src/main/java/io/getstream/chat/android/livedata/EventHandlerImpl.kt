@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -141,7 +142,8 @@ internal class EventHandlerImpl(
                 is ChannelUserBannedEvent,
                 is UserStartWatchingEvent,
                 is UserStopWatchingEvent,
-                is ChannelUserUnbannedEvent -> Unit
+                is ChannelUserUnbannedEvent,
+                is MarkAllReadEvent -> Unit
                 is ReactionNewEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ReactionDeletedEvent -> batchBuilder.addToFetchMessages(event.reaction.messageId)
                 is ChannelMuteEvent -> batchBuilder.addToFetchChannels(event.channelMute.channel.cid)
@@ -308,10 +310,14 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
 
-                is MessageReadEvent -> {
-                    // get the channel, update reads, write the channel
+                is MarkAllReadEvent -> batch.getAllChannels().forEach { channel ->
+                    channel.updateReads(ChannelUserRead(event.user, event.createdAt))
+                }
+
+                // get the channel, update reads, write the channel
+                is MessageReadEvent ->
                     event.cid
-                        ?.let(batch::getCurrentChannel)
+                        .let(batch::getCurrentChannel)
                         ?.apply {
                             updateReads(
                                 ChannelUserRead(
@@ -321,18 +327,12 @@ internal class EventHandlerImpl(
                             )
                         }
                         ?.let(batch::addChannel)
-                        ?: batch
-                            .getAllChannels()
-                            .forEach { channel ->
-                                channel.updateReads(ChannelUserRead(event.user, event.createdAt))
-                            }
-                }
 
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
 
                     event.cid
-                        ?.let(batch::getCurrentChannel)
+                        .let(batch::getCurrentChannel)
                         ?.apply {
                             updateReads(
                                 ChannelUserRead(
@@ -342,11 +342,6 @@ internal class EventHandlerImpl(
                             )
                         }
                         ?.let(batch::addChannel)
-                        ?: batch
-                            .getAllChannels()
-                            .forEach { channel ->
-                                channel.updateReads(ChannelUserRead(event.user, event.createdAt))
-                            }
                 }
                 is UserMutedEvent -> {
                     batch.addUser(event.targetUser)
@@ -410,29 +405,21 @@ internal class EventHandlerImpl(
         updateOfflineStorageFromEvents(sortedEvents)
 
         // step 3 - forward the events to the active channels
-        sortedEvents
-            .filterIsInstance<CidEvent>()
-            .let { cidEvents ->
-                // handle CidEvents with non-null CIDs
-                cidEvents.filter { it.cid != null }
-                    .groupBy { it.cid!! }
-                    .forEach {
-                        val (cid, eventList) = it
-                        if (domainImpl.isActiveChannel(cid)) {
-                            domainImpl.channel(cid).handleEvents(eventList)
-                        }
-                    }
-
-                // some CidEvents, like those for marking reads,
-                // can have null channel ids to signal "all channels"
-                cidEvents
-                    .filter { it.cid == null }
-                    .let { eventsForAllChannels ->
-                        domainImpl.allActiveChannels().forEach { channelController ->
-                            channelController.handleEvents(eventsForAllChannels)
-                        }
-                    }
+        sortedEvents.filterIsInstance<CidEvent>().let { cidEvents ->
+            cidEvents.groupBy { it.cid }.forEach {
+                val (cid, eventList) = it
+                if (domainImpl.isActiveChannel(cid)) {
+                    domainImpl.channel(cid).handleEvents(eventList)
+                }
             }
+        }
+
+        // mark all read applies to all channels
+        sortedEvents.filterIsInstance<MarkAllReadEvent>().firstOrNull()?.let { markAllRead ->
+            domainImpl.allActiveChannels().forEach { channelController ->
+                channelController.handleEvent(markAllRead)
+            }
+        }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
