@@ -93,7 +93,7 @@ internal class AvatarView @JvmOverloads constructor(
         val paintCircle = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             isAntiAlias = true
             style = Paint.Style.FILL
-            color = avatarStyle.avatarBackGroundColor
+            color = avatarStyle.avatarBackgroundColor
         }
         val textBounds = Rect()
         paintText.getTextBounds(initials, 0, initials.length, textBounds)

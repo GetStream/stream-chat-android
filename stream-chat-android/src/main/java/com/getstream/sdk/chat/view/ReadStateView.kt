@@ -59,7 +59,7 @@ public class ReadStateView : RelativeLayout {
         val initials = user.initials
         imageView.setPlaceholder(
             initials,
-            avatarStyle.avatarBackGroundColor,
+            avatarStyle.avatarBackgroundColor,
             readStateStyle.readStateText.color
         )
         val typeface = chatFonts.getFont(readStateStyle.readStateText)

@@ -25,7 +25,7 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
     val optionsButtonBackground: Drawable?
     val offlineText: String
     val channelWithoutNameText: String
-    val avatarStyle: AvatarStyle = AvatarStyle()
+    val avatarStyle: AvatarStyle
 
     private val res = context.resources
 
@@ -83,37 +83,37 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
                 ) ?: context.getString(R.string.stream_channel_offlineText)
 
             // Avatar
-            avatarStyle.avatarWidth = getDimensionPixelSize(
-                R.styleable.ChannelHeaderView_streamAvatarWidth,
-                res.getDimensionPixelSize(R.dimen.stream_channel_avatar_width)
-            )
-            avatarStyle.avatarHeight = getDimensionPixelSize(
-                R.styleable.ChannelHeaderView_streamAvatarHeight,
-                res.getDimensionPixelSize(R.dimen.stream_channel_avatar_height)
-            )
-            avatarStyle.avatarBorderWidth = getDimensionPixelSize(
-                R.styleable.ChannelHeaderView_streamAvatarBorderWidth,
-                res.getDimensionPixelSize(R.dimen.stream_channel_avatar_border_width)
-            )
-            avatarStyle.avatarBorderColor =
-                getColor(R.styleable.ChannelHeaderView_streamAvatarBorderColor, Color.WHITE)
-            avatarStyle.avatarBackGroundColor = getColor(
-                R.styleable.ChannelHeaderView_streamAvatarBackGroundColor,
-                ContextCompat.getColor(context, R.color.stream_gray_dark)
-            )
-
-            avatarStyle.avatarInitialText = TextStyle.Builder(attributes).apply {
-                size(
-                    R.styleable.ChannelHeaderView_streamAvatarTextSize,
-                    res.getDimensionPixelSize(R.dimen.stream_channel_initials)
+            avatarStyle = AvatarStyle.Builder(this, context)
+                .avatarWidth(
+                    R.styleable.ChannelHeaderView_streamAvatarWidth,
+                    R.dimen.stream_channel_avatar_width
                 )
-                color(R.styleable.ChannelHeaderView_streamAvatarTextColor, Color.WHITE)
-                font(
-                    R.styleable.ChannelHeaderView_streamAvatarTextFontAssets,
-                    R.styleable.ChannelHeaderView_streamAvatarTextFont
+                .avatarHeight(
+                    R.styleable.ChannelHeaderView_streamAvatarHeight,
+                    R.dimen.stream_channel_avatar_height
                 )
-                style(R.styleable.ChannelHeaderView_streamAvatarTextStyle, Typeface.BOLD)
-            }.build()
+                .avatarBorderWidth(
+                    R.styleable.ChannelHeaderView_streamAvatarBorderWidth,
+                    R.dimen.stream_channel_avatar_border_width
+                )
+                .avatarBorderColoer(
+                    R.styleable.ChannelHeaderView_streamAvatarBorderColor,
+                    Color.WHITE
+                )
+                .avatarBackgroundColor(
+                    R.styleable.ChannelHeaderView_streamAvatarBackGroundColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                )
+                .avatarInitialText(
+                    avatarTextSizeStyleableId = R.styleable.ChannelHeaderView_streamAvatarTextSize,
+                    avatarTextSizeDefaultValue = R.dimen.stream_channel_initials,
+                    avatarTextColorStyleableId = R.styleable.ChannelHeaderView_streamAvatarTextColor,
+                    avatarTextColorDefaultValue = Color.WHITE,
+                    avatarTextFontAssetsStyleableId = R.styleable.ChannelHeaderView_streamAvatarTextFontAssets,
+                    avatarTextFontStyleableId = R.styleable.ChannelHeaderView_streamAvatarTextFont,
+                    avatarTextStyleStyleableId = R.styleable.ChannelHeaderView_streamAvatarTextStyle
+                )
+                .build()
 
             isLastActiveShow =
                 getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderLastActiveShow, true)

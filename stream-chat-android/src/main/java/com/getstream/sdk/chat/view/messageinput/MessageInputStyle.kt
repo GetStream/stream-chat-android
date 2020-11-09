@@ -47,7 +47,7 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
     private var inputSelectedBackground: Drawable? = null
     private var inputEditBackground: Drawable? = null
 
-    val avatarStyle: AvatarStyle = AvatarStyle()
+    val avatarStyle: AvatarStyle
 
     private fun getSelector(
         @ColorInt normalColor: Int,
@@ -224,30 +224,33 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
             }.build()
 
             // Avatar
-            avatarStyle.avatarWidth = getDimensionPixelSize(
-                R.styleable.MessageInputView_streamAvatarWidth,
-                res.getDimensionPixelSize(R.dimen.stream_message_avatar_width)
-            )
-            avatarStyle.avatarHeight = getDimensionPixelSize(
-                R.styleable.MessageInputView_streamAvatarHeight,
-                res.getDimensionPixelSize(R.dimen.stream_message_avatar_height)
-            )
-            avatarStyle.avatarBackGroundColor = getColor(
-                R.styleable.MessageInputView_streamAvatarBackGroundColor,
-                ContextCompat.getColor(context, R.color.stream_gray_dark)
-            )
-            avatarStyle.avatarInitialText = TextStyle.Builder(this).apply {
-                size(
-                    R.styleable.MessageInputView_streamAvatarTextSize,
-                    res.getDimensionPixelSize(R.dimen.stream_channel_initials)
+            avatarStyle = AvatarStyle.Builder(this, context)
+                .avatarWidth(
+                    R.styleable.MessageInputView_streamAvatarWidth,
+                    R.dimen.stream_message_avatar_width
                 )
-                color(R.styleable.MessageInputView_streamAvatarTextColor, Color.WHITE)
-                font(
-                    R.styleable.MessageInputView_streamAvatarTextFontAssets,
-                    R.styleable.MessageInputView_streamAvatarTextFont
+                .avatarHeight(
+                    R.styleable.MessageInputView_streamAvatarHeight,
+                    R.dimen.stream_message_avatar_height
                 )
-                style(R.styleable.MessageInputView_streamAvatarTextStyle, Typeface.BOLD)
-            }.build()
+                .avatarBorderColoer(
+                    R.styleable.MessageListView_streamAvatarBorderColor,
+                    Color.WHITE
+                )
+                .avatarBackgroundColor(
+                    R.styleable.MessageInputView_streamAvatarBackGroundColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                )
+                .avatarInitialText(
+                    avatarTextSizeStyleableId = R.styleable.MessageInputView_streamAvatarTextSize,
+                    avatarTextSizeDefaultValue = R.dimen.stream_channel_initials,
+                    avatarTextColorStyleableId = R.styleable.MessageInputView_streamAvatarTextColor,
+                    avatarTextColorDefaultValue = Color.WHITE,
+                    avatarTextFontAssetsStyleableId = R.styleable.MessageInputView_streamAvatarTextFontAssets,
+                    avatarTextFontStyleableId = R.styleable.MessageInputView_streamAvatarTextFont,
+                    avatarTextStyleStyleableId = R.styleable.MessageInputView_streamAvatarTextStyle
+                )
+                .build()
 
             inputSendAlsoToChannelTextColor = getColor(
                 R.styleable.MessageInputView_streamSendAlsoToChannel,

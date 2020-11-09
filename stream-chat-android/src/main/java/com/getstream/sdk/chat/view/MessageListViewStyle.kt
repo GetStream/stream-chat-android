@@ -76,7 +76,7 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
     public val dateSeparatorLineWidth: Int
     public val dateSeparatorLineDrawable: Int
 
-    public val avatarStyle: AvatarStyle = AvatarStyle()
+    public val avatarStyle: AvatarStyle
     public val readStateStyle: ReadStateStyle = ReadStateStyle()
 
     public fun getMessageBubbleDrawable(isMine: Boolean): Int {
@@ -469,41 +469,33 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
         )
 
         // Avatar
-        avatarStyle.avatarWidth = a.getDimensionPixelSize(
-            R.styleable.MessageListView_streamAvatarWidth,
-            res.getDimensionPixelSize(
+        avatarStyle = AvatarStyle.Builder(a, c)
+            .avatarWidth(
+                R.styleable.MessageListView_streamAvatarWidth,
                 R.dimen.stream_message_avatar_width
             )
-        )
-        avatarStyle.avatarHeight = a.getDimensionPixelSize(
-            R.styleable.MessageListView_streamAvatarHeight,
-            res.getDimensionPixelSize(
+            .avatarHeight(
+                R.styleable.MessageListView_streamAvatarHeight,
                 R.dimen.stream_message_avatar_height
             )
-        )
-        avatarStyle.avatarBorderWidth = a.getDimensionPixelSize(
-            R.styleable.MessageListView_streamAvatarBorderWidth,
-            res.getDimensionPixelSize(
+            .avatarBorderWidth(
+                R.styleable.MessageListView_streamAvatarBorderWidth,
                 R.dimen.stream_channel_avatar_border_width
             )
-        )
-        avatarStyle.avatarBorderColor =
-            a.getColor(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE)
-        avatarStyle.avatarBackGroundColor = a.getColor(
-            R.styleable.MessageListView_streamAvatarBackGroundColor,
-            ContextCompat.getColor(c, R.color.stream_gray_dark)
-        )
-        avatarStyle.avatarInitialText = TextStyle.Builder(a)
-            .size(
-                R.styleable.MessageListView_streamAvatarTextSize,
-                res.getDimensionPixelSize(R.dimen.stream_channel_initials)
+            .avatarBorderColoer(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE)
+            .avatarBackgroundColor(
+                R.styleable.MessageListView_streamAvatarBackGroundColor,
+                ContextCompat.getColor(c, R.color.stream_gray_dark)
             )
-            .color(R.styleable.MessageListView_streamAvatarTextColor, Color.WHITE)
-            .font(
-                R.styleable.MessageListView_streamAvatarTextFontAssets,
-                R.styleable.MessageListView_streamAvatarTextFont
+            .avatarInitialText(
+                avatarTextSizeStyleableId = R.styleable.MessageListView_streamAvatarTextSize,
+                avatarTextSizeDefaultValue = R.dimen.stream_channel_initials,
+                avatarTextColorStyleableId = R.styleable.MessageListView_streamAvatarTextColor,
+                avatarTextColorDefaultValue = Color.WHITE,
+                avatarTextFontAssetsStyleableId = R.styleable.MessageListView_streamAvatarTextFontAssets,
+                avatarTextFontStyleableId = R.styleable.MessageListView_streamAvatarTextFont,
+                avatarTextStyleStyleableId = R.styleable.MessageListView_streamAvatarTextStyle
             )
-            .style(R.styleable.MessageListView_streamAvatarTextStyle, Typeface.BOLD)
             .build()
 
         // Read State

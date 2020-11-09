@@ -21,7 +21,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public val lastMessageUnread: TextStyle
     public val lastMessageDateText: TextStyle
     public val lastMessageDateUnreadText: TextStyle
-    public val avatarStyle: AvatarStyle = AvatarStyle()
+    public var avatarStyle: AvatarStyle = AvatarStyle()
     public val readStateStyle: ReadStateStyle = ReadStateStyle()
     private val resources = context.resources
 
@@ -34,7 +34,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public var avatarBorderColor: Int
         get() = avatarStyle.avatarBorderColor
         set(@ColorRes value: Int) {
-            avatarStyle.avatarBorderColor = value
+            avatarStyle = avatarStyle.copy(avatarBorderColor = value)
         }
 
     init {
@@ -149,36 +149,37 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
                 R.layout.stream_item_channel
             )
             // Avatar
-            avatarStyle.avatarWidth = getDimensionPixelSize(
-                R.styleable.ChannelListView_streamAvatarWidth,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_avatar_width)
-            )
-            avatarStyle.avatarHeight = getDimensionPixelSize(
-                R.styleable.ChannelListView_streamAvatarHeight,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_avatar_height)
-            )
-            avatarStyle.avatarBorderWidth = getDimensionPixelSize(
-                R.styleable.ChannelListView_streamAvatarBorderWidth,
-                resources.getDimensionPixelSize(R.dimen.stream_channel_avatar_border_width)
-            )
-            avatarStyle.avatarBorderColor =
-                getColor(R.styleable.ChannelListView_streamAvatarBorderColor, Color.WHITE)
-            avatarStyle.avatarBackGroundColor = getColor(
-                R.styleable.ChannelListView_streamAvatarBackGroundColor,
-                ContextCompat.getColor(context, R.color.stream_gray_dark)
-            )
-            avatarStyle.avatarInitialText = TextStyle.Builder(attributes).apply {
-                size(
-                    R.styleable.ChannelListView_streamAvatarTextSize,
-                    resources.getDimensionPixelSize(R.dimen.stream_channel_initials)
+            avatarStyle = AvatarStyle.Builder(this, context)
+                .avatarWidth(
+                    R.styleable.ChannelListView_streamAvatarWidth,
+                    R.dimen.stream_channel_avatar_width
                 )
-                color(R.styleable.ChannelListView_streamAvatarTextColor, Color.WHITE)
-                font(
-                    R.styleable.ChannelListView_streamAvatarTextFontAssets,
-                    R.styleable.ChannelListView_streamAvatarTextFont
+                .avatarHeight(
+                    R.styleable.ChannelListView_streamAvatarHeight,
+                    R.dimen.stream_channel_avatar_height
                 )
-                style(R.styleable.ChannelListView_streamAvatarTextStyle, Typeface.BOLD)
-            }.build()
+                .avatarBorderWidth(
+                    R.styleable.ChannelListView_streamAvatarBorderWidth,
+                    R.dimen.stream_channel_avatar_border_width
+                )
+                .avatarBorderColoer(
+                    R.styleable.ChannelListView_streamAvatarBorderColor,
+                    Color.WHITE
+                )
+                .avatarBackgroundColor(
+                    R.styleable.ChannelListView_streamAvatarBackGroundColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                )
+                .avatarInitialText(
+                    avatarTextSizeStyleableId = R.styleable.ChannelListView_streamAvatarTextSize,
+                    avatarTextSizeDefaultValue = R.dimen.stream_channel_initials,
+                    avatarTextColorStyleableId = R.styleable.ChannelListView_streamAvatarTextColor,
+                    avatarTextColorDefaultValue = Color.WHITE,
+                    avatarTextFontAssetsStyleableId = R.styleable.ChannelListView_streamAvatarTextFontAssets,
+                    avatarTextFontStyleableId = R.styleable.ChannelListView_streamAvatarTextFont,
+                    avatarTextStyleStyleableId = R.styleable.ChannelListView_streamAvatarTextStyle
+                )
+                .build()
 
             // Read State
             readStateStyle.isReadStateEnabled =
