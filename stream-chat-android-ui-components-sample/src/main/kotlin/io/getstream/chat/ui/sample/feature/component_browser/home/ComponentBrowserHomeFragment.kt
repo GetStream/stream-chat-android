@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.getstream.sdk.chat.ChatUI
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.application.App
-import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserHomeBinding
 import io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment
@@ -21,10 +20,8 @@ class ComponentBrowserHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Init Chat SDK if needed, required for font loading
-        if (!App.instance.chatInitializer.isInitialized) {
-            App.instance.chatInitializer.init(AppConfig.apiKey)
-        }
+        // Init ChatUI to have access to fonts
+        ChatUI.Builder(requireContext().applicationContext).build()
     }
 
     override fun onCreateView(
