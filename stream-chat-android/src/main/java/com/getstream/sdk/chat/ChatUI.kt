@@ -36,40 +36,46 @@ public class ChatUI internal constructor(
 
     public class Builder(private val appContext: Context) {
 
-        private val style = ChatStyle.Builder().build()
+        private var style: ChatStyle? = null
         private var navigationHandler: ChatNavigationHandler? = null
-        private var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
-        private var markdown: ChatMarkdown = ChatMarkdownImpl(appContext)
-        private var fonts: ChatFonts = ChatFontsImpl(style, appContext)
-        private var strings: ChatStrings = ChatStringsImpl(appContext)
+        private var urlSigner: UrlSigner? = null
+        private var markdown: ChatMarkdown? = null
+        private var fonts: ChatFonts? = null
+        private var strings: ChatStrings? = null
 
-        public fun withMarkdown(markdown: ChatMarkdown): Builder {
+        public fun withStyle(style: ChatStyle): Builder = apply {
+            this.style = style
+        }
+
+        public fun withMarkdown(markdown: ChatMarkdown): Builder = apply {
             this.markdown = markdown
-            return this
         }
 
-        public fun withUrlSigner(signer: UrlSigner): Builder {
+        public fun withUrlSigner(signer: UrlSigner): Builder = apply {
             this.urlSigner = signer
-            return this
         }
 
-        public fun withNavigationHandler(handler: ChatNavigationHandler): Builder {
+        public fun withNavigationHandler(handler: ChatNavigationHandler): Builder = apply {
             this.navigationHandler = handler
-            return this
         }
 
-        public fun withFonts(fonts: ChatFonts): Builder {
+        public fun withFonts(fonts: ChatFonts): Builder = apply {
             this.fonts = fonts
-            return this
         }
 
-        public fun withStrings(strings: ChatStrings): Builder {
+        public fun withStrings(strings: ChatStrings): Builder = apply {
             this.strings = strings
-            return this
         }
 
         public fun build(): ChatUI {
-            instance = ChatUI(fonts, strings, ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER), markdown, urlSigner)
+            val chatStyle = style ?: ChatStyle.Builder().build()
+            instance = ChatUI(
+                fonts ?: ChatFontsImpl(chatStyle, appContext),
+                strings ?: ChatStringsImpl(appContext),
+                ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER),
+                markdown ?: ChatMarkdownImpl(appContext),
+                urlSigner ?: UrlSigner.DefaultUrlSigner()
+            )
             return instance()
         }
     }
