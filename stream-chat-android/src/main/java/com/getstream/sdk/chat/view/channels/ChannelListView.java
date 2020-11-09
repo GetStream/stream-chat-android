@@ -69,8 +69,9 @@ public class ChannelListView extends RecyclerView {
         if (style.getAvatarBorderColor() == -1) {
             int color = Color.WHITE;
             Drawable background = this.getBackground();
-            if (background instanceof ColorDrawable)
+            if (background instanceof ColorDrawable) {
                 color = ((ColorDrawable) background).getColor();
+            }
             style.setAvatarBorderColor(color);
         }
     }
