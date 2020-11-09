@@ -19,16 +19,16 @@ import com.getstream.sdk.chat.view.messages.AvatarStyle
 /**
  * Style for MessageInputStyle customization by xml attributes
  */
-public class MessageInputStyle(private val context: Context, attrs: AttributeSet?) {
-    public var inputText: TextStyle
-    public var inputBackgroundText: TextStyle
-    public val isShowAttachmentButton: Boolean
-    public val inputButtonWidth: Int
-    public val inputButtonHeight: Int
-    public val attachmentButtonWidth: Int
-    public val attachmentButtonHeight: Int
-    public val attachmentCloseButtonBackground: Drawable?
-    public val inputSendAlsoToChannelTextColor: Int
+internal class MessageInputStyle(private val context: Context, attrs: AttributeSet?) {
+    var inputText: TextStyle
+    var inputBackgroundText: TextStyle
+    val isShowAttachmentButton: Boolean
+    val inputButtonWidth: Int
+    val inputButtonHeight: Int
+    val attachmentButtonWidth: Int
+    val attachmentButtonHeight: Int
+    val attachmentCloseButtonBackground: Drawable?
+    val inputSendAlsoToChannelTextColor: Int
     private var inputHint = ""
     private val attachmentButtonIcon: Int
     private val attachmentButtonDefaultIconColor: Int
@@ -43,11 +43,11 @@ public class MessageInputStyle(private val context: Context, attrs: AttributeSet
     private val res = context.resources
 
     // Inputbox Background
-    public var inputBackground: Drawable? = null
+    var inputBackground: Drawable? = null
     private var inputSelectedBackground: Drawable? = null
     private var inputEditBackground: Drawable? = null
 
-    public val avatarStyle: AvatarStyle = AvatarStyle()
+    val avatarStyle: AvatarStyle = AvatarStyle()
 
     private fun getSelector(
         @ColorInt normalColor: Int,
@@ -69,11 +69,11 @@ public class MessageInputStyle(private val context: Context, attrs: AttributeSet
     private val prefs: SharedPreferences // Used for write/read isShowAttachmentButton from Request permissions
     private val permissionSetKey = "permissionSetKey"
 
-    public fun setCheckPermissions(passedPermissionCheck: Boolean) {
+    fun setCheckPermissions(passedPermissionCheck: Boolean) {
         prefs.edit().putBoolean(permissionSetKey, passedPermissionCheck).apply()
     }
 
-    public fun passedPermissionCheck(): Boolean = prefs.getBoolean(permissionSetKey, false)
+    fun passedPermissionCheck(): Boolean = prefs.getBoolean(permissionSetKey, false)
 
     private fun getMessageInputStyleColorList(normalColor: Int, pressedColor: Int, disabledColor: Int) = ColorStateList(
         arrayOf(
@@ -84,7 +84,7 @@ public class MessageInputStyle(private val context: Context, attrs: AttributeSet
         intArrayOf(normalColor, pressedColor, disabledColor)
     )
 
-    public fun getAttachmentButtonIcon(isSelected: Boolean): Drawable? {
+    fun getAttachmentButtonIcon(isSelected: Boolean): Drawable? {
         return if (attachmentButtonIcon == -1) {
             getSelector(
                 if (isSelected) attachmentButtonSelectedIconColor else attachmentButtonDefaultIconColor,
@@ -98,7 +98,7 @@ public class MessageInputStyle(private val context: Context, attrs: AttributeSet
     }
 
     // Send Button
-    public fun getInputButtonIcon(isEdit: Boolean): Drawable? {
+    fun getInputButtonIcon(isEdit: Boolean): Drawable? {
         return if (inputButtonIcon == -1) {
             getSelector(
                 if (isEdit) inputButtonEditIconColor else inputButtonDefaultIconColor,
@@ -112,7 +112,7 @@ public class MessageInputStyle(private val context: Context, attrs: AttributeSet
     }
 
     // Input Text
-    public fun getInputHint(): String {
+    fun getInputHint(): String {
         return if (TextUtils.isEmpty(inputHint)) context.getString(R.string.stream_input_hint) else inputHint
     }
 
