@@ -14,6 +14,7 @@ import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView
 import com.getstream.sdk.chat.view.messages.AvatarStyle
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
 
 public class ReadStateView : RelativeLayout {
@@ -51,7 +52,7 @@ public class ReadStateView : RelativeLayout {
 
         val chatFonts = ChatUI.instance().fonts
         val user = reads[0].user
-        val image = user.getExtraValue("name", "")
+        val image = user.image
 
         // Avatar
         val imageView = CircularImageView(context)
@@ -75,10 +76,12 @@ public class ReadStateView : RelativeLayout {
                 readStateStyle.readStateText.style
             )
         }
-        if (!Utils.isSVGImage(image)) Glide.with(context)
-            .load(image) // TODO: llc check glide
-            // .load(StreamChat.instance().getUploadStorage().signGlideUrl(image))
-            .into(imageView)
+        if (!Utils.isSVGImage(image)) {
+            Glide.with(context)
+                .load(image) // TODO: llc check glide
+                // .load(StreamChat.instance().getUploadStorage().signGlideUrl(image))
+                .into(imageView)
+        }
         val avatarParams = LayoutParams(
             readStateStyle.readStateAvatarWidth,
             readStateStyle.readStateAvatarHeight
