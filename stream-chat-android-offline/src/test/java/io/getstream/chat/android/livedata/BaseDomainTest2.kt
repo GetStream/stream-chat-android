@@ -37,6 +37,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -49,7 +51,7 @@ import java.util.concurrent.Executors
  * BaseDomainTest2 creates an easy to use test environment
  *
  * - Sets up a chat Domain object with a mocked Chat Client.
- * - We pass a TestCoroutineScope to the chatDomain to correctly handle new coroutines starting
+ * - We pass a TestCoroutineDispatcher to the chatDomain to correctly handle new coroutines starting
  * - The val rule = InstantTaskExecutorRule() ensures that architecture components immediately
  * - Use Executors.newSingleThreadExecutor to prevent room transactions from causing deadlocks
  * execute instead of running on a different thread
@@ -61,7 +63,7 @@ import java.util.concurrent.Executors
  * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
  * * https://codelabs.developers.google.com/codelabs/kotlin-coroutines#9
  * * https://craigrussell.io/2019/11/unit-testing-coroutine-suspend-functions-using-testcoroutinedispatcher/
- *
+ * * https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-test/
  */
 internal open class BaseDomainTest2 {
 
@@ -90,15 +92,35 @@ internal open class BaseDomainTest2 {
     private lateinit var db: ChatDatabase
 
     // the code below is used to ensure that coroutines execute the right way during tests
-    private val testIODispatcher = TestCoroutineDispatcher()
-    private val testIOExecutor = testIODispatcher.asExecutor()
+    internal val testIODispatcher = TestCoroutineDispatcher()
+    internal val testIOExecutor = testIODispatcher.asExecutor()
     internal val testIOScope = TestCoroutineScope(testIODispatcher)
 
-    private val testMainDispatcher = TestCoroutineDispatcher()
-    private val testMainExecutor = testMainDispatcher.asExecutor()
+    internal val testMainDispatcher = TestCoroutineDispatcher()
+    internal val testMainExecutor = testMainDispatcher.asExecutor()
     internal val testMainScope = TestCoroutineScope(testMainDispatcher)
 
     val singleThreadExecutor = Executors.newSingleThreadExecutor()
+
+    @get:Rule
+    val rule = InstantTaskExecutorRule()
+
+    @Before
+    open fun setup() {
+        Dispatchers.setMain(testMainDispatcher)
+        clientMock = createClientMock()
+        db = createRoomDb()
+        createChatDomain(clientMock, db)
+    }
+
+    @After
+    open fun tearDown() = runBlocking(Dispatchers.IO) {
+        Dispatchers.resetMain()
+        testIODispatcher.cleanupTestCoroutines()
+        testMainDispatcher.cleanupTestCoroutines()
+        chatDomainImpl.disconnect()
+        db.close()
+    }
 
     /**
      * checks if a response is succesful and raises a clear error message if it's not
@@ -117,33 +139,6 @@ internal open class BaseDomainTest2 {
             Truth.assertWithMessage(result.data().toString()).that(result.isError).isTrue()
         }
     }
-
-    @get:Rule
-    val rule = InstantTaskExecutorRule()
-
-    @Before
-    open fun setup() {
-        clientMock = createClientMock()
-        db = createRoomDb()
-        createChatDomain(clientMock, db)
-    }
-
-    @After
-    open fun tearDown() = runBlocking(Dispatchers.IO) {
-        testIOScope.cleanupTestCoroutines()
-        testMainScope.cleanupTestCoroutines()
-        chatDomainImpl.disconnect()
-        db.close()
-    }
-
-    /*
-    @Test
-    internal fun `test that room testing setup is configured correctly`() = testIODispatcher.runBlockingTest {
-        testIOScope.launch {
-            chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
-            queryControllerImpl.query(10)
-        }
-    }*/
 
     internal fun createClientMock(isConnected: Boolean = true): ChatClient {
 
@@ -216,7 +211,7 @@ internal open class BaseDomainTest2 {
 
         val context = ApplicationProvider.getApplicationContext() as Context
         chatDomainImpl = ChatDomain.Builder(context, client).database(db).offlineEnabled()
-            .userPresenceEnabled().withIOScope(testIOScope).withMainScope(testMainScope).buildImpl()
+            .userPresenceEnabled().withIODispatcher(testIODispatcher).withMainDispatcher(testMainDispatcher).buildImpl()
 
         // TODO: a chat domain without a user set should raise a clear error
         client.setUser(
