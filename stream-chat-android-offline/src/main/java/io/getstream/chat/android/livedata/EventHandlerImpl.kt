@@ -320,8 +320,7 @@ internal class EventHandlerImpl(
 
                 // get the channel, update reads, write the channel
                 is MessageReadEvent ->
-                    event.cid
-                        .let(batch::getCurrentChannel)
+                    batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
@@ -329,9 +328,7 @@ internal class EventHandlerImpl(
 
                 is NotificationMarkReadEvent -> {
                     event.totalUnreadCount?.let(domainImpl::setTotalUnreadCount)
-
-                    event.cid
-                        .let(batch::getCurrentChannel)
+                    batch.getCurrentChannel(event.cid)
                         ?.apply {
                             updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
@@ -399,14 +396,14 @@ internal class EventHandlerImpl(
         updateOfflineStorageFromEvents(sortedEvents)
 
         // step 3 - forward the events to the active channels
-        sortedEvents.filterIsInstance<CidEvent>().let { cidEvents ->
-            cidEvents.groupBy { it.cid }.forEach {
+        sortedEvents.filterIsInstance<CidEvent>()
+            .groupBy { it.cid }
+            .forEach {
                 val (cid, eventList) = it
                 if (domainImpl.isActiveChannel(cid)) {
                     domainImpl.channel(cid).handleEvents(eventList)
                 }
             }
-        }
 
         // mark all read applies to all channels
         sortedEvents.filterIsInstance<MarkAllReadEvent>().firstOrNull()?.let { markAllRead ->
