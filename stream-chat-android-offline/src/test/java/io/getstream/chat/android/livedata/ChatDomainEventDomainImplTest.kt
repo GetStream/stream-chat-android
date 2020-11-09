@@ -110,7 +110,7 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             val messages = channelController.messages.getOrAwaitValue()
             val channelData = channelController.channelData.getOrAwaitValue()
             Truth.assertThat(messages).isEmpty()
-            Truth.assertThat(channelData.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
+            Truth.assertThat(channelData?.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
         }
     }
 

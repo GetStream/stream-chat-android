@@ -115,7 +115,7 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     fun eventUpdatedChannel() {
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
         val channel = channelControllerImpl.channelData.getOrAwaitValue()
-        Truth.assertThat(channel.extraData["color"]).isEqualTo("green")
+        Truth.assertThat(channel!!.extraData["color"]).isEqualTo("green")
     }
 
     @Test
