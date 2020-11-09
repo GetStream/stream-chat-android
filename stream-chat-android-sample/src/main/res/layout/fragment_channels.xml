@@ -2,14 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/app_title" />
+        app:title="@string/app_title"
+        />
 
     <com.getstream.sdk.chat.view.channels.ChannelsView
         android:id="@+id/channelsListView"
@@ -21,7 +23,8 @@
         app:streamReadStateAvatarHeight="15dp"
         app:streamReadStateAvatarWidth="15dp"
         app:streamReadStateTextSize="9sp"
-        app:streamShowReadState="true" />
+        app:streamShowReadState="true"
+        />
 
     <ProgressBar
         android:id="@+id/loadingProgressbar"
@@ -31,7 +34,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ProgressBar
         android:id="@+id/loadingNextPageProgressbar"
@@ -40,7 +44,8 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/addNewChannelButton"
@@ -50,6 +55,6 @@
         android:text="@string/new_channel_button"
         app:icon="@drawable/ic_add_black_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
-
+        app:layout_constraintRight_toRightOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
