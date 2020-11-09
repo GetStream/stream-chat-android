@@ -240,9 +240,9 @@ internal class ChannelControllerImpl(
     }
 
     /**
-     * Marks the channel as read by
+     * Marks the channel as read by the current user
      *
-     * @return
+     * @return whether the channel was marked as read or not
      */
     internal suspend fun markRead(): Boolean {
         if (!getConfig().isReadEvents) {

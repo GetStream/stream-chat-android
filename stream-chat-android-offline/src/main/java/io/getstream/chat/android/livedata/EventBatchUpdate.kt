@@ -45,7 +45,6 @@ internal class EventBatchUpdate private constructor(
     }
 
     fun getCurrentChannel(cId: String): Channel? = channelMap[cId]
-    fun getAllChannels(): List<Channel> = channelMap.values.toList()
     fun getCurrentMessage(messageId: String): Message? = messageMap[messageId]
 
     fun addMessage(message: Message) {
