@@ -59,7 +59,7 @@ public data class AvatarStyle(
             return this
         }
 
-        public fun avatarBorderColoer(
+        public fun avatarBorderColor(
             @StyleableRes avatarBorderColorStyleableId: Int,
             @ColorInt defaultColor: Int
         ): Builder {

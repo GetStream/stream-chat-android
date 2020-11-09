@@ -162,7 +162,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
                     R.styleable.ChannelListView_streamAvatarBorderWidth,
                     R.dimen.stream_channel_avatar_border_width
                 )
-                .avatarBorderColoer(
+                .avatarBorderColor(
                     R.styleable.ChannelListView_streamAvatarBorderColor,
                     Color.WHITE
                 )

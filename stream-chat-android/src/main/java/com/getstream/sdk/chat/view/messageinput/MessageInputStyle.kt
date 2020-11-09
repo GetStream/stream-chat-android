@@ -233,7 +233,7 @@ internal class MessageInputStyle(private val context: Context, attrs: AttributeS
                     R.styleable.MessageInputView_streamAvatarHeight,
                     R.dimen.stream_message_avatar_height
                 )
-                .avatarBorderColoer(
+                .avatarBorderColor(
                     R.styleable.MessageListView_streamAvatarBorderColor,
                     Color.WHITE
                 )

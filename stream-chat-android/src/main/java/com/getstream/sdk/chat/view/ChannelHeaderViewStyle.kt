@@ -96,7 +96,7 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
                     R.styleable.ChannelHeaderView_streamAvatarBorderWidth,
                     R.dimen.stream_channel_avatar_border_width
                 )
-                .avatarBorderColoer(
+                .avatarBorderColor(
                     R.styleable.ChannelHeaderView_streamAvatarBorderColor,
                     Color.WHITE
                 )

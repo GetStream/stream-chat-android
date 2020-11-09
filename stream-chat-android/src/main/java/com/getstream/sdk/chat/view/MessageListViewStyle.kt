@@ -77,7 +77,7 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
     public val dateSeparatorLineDrawable: Int
 
     public val avatarStyle: AvatarStyle
-    public val readStateStyle: ReadStateStyle = ReadStateStyle()
+    public val readStateStyle: ReadStateStyle
 
     public fun getMessageBubbleDrawable(isMine: Boolean): Int {
         return if (isMine) messageBubbleDrawableMine else messageBubbleDrawableTheirs
@@ -482,7 +482,7 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
                 R.styleable.MessageListView_streamAvatarBorderWidth,
                 R.dimen.stream_channel_avatar_border_width
             )
-            .avatarBorderColoer(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE)
+            .avatarBorderColor(R.styleable.MessageListView_streamAvatarBorderColor, Color.WHITE)
             .avatarBackgroundColor(
                 R.styleable.MessageListView_streamAvatarBackGroundColor,
                 ContextCompat.getColor(c, R.color.stream_gray_dark)
