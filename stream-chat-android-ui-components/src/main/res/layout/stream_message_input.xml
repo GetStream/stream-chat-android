@@ -57,12 +57,14 @@
         android:id="@+id/iv_send_message"
         android:layout_width="@dimen/stream_attachment_button_width"
         android:layout_height="@dimen/stream_attachment_button_height"
+        android:src="@drawable/stream_ic_filled_right_arrow"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/stream_ic_filled_right_arrow"
         app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
-        tools:src="@drawable/stream_ic_filled_right_arrow" />
+        android:visibility="visible"
+        tools:src="@drawable/stream_ic_filled_right_arrow"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

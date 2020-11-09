@@ -49,11 +49,11 @@
         </attr>
 
         <!--Send Button-->
-        <attr name="streamSendButtonDefaultIconColor" format="color|reference"/>
-        <attr name="streamSendButtonEditIconColor" format="color|reference"/>
-        <attr name="streamSendButtonDefaultIconPressedColor" format="color|reference"/>
-        <attr name="streamSendButtonDefaultIconDisabledColor" format="color|reference"/>
-        <attr name="streamSendButtonIcon" format="reference"/>
+        <attr name="streamSendButtonEnabledIconColor" format="color|reference"/>
+        <attr name="streamSendButtonDisabledIconColor" format="color|reference"/>
+        <attr name="streamSendButtonPressedIconColor" format="color|reference"/>
+        <attr name="streamSendButtonEnabledIcon" format="reference"/>
+        <attr name="streamSendButtonDisabledIcon" format="reference"/>
         <attr name="streamSendButtonWidth" format="dimension|reference"/>
         <attr name="streamSendButtonHeight" format="dimension|reference"/>
     </declare-styleable>

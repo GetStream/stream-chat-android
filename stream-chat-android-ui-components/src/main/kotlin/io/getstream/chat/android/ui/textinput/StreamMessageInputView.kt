@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.textinput
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,6 +13,12 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
 import io.getstream.chat.android.ui.utils.getColorList
+
+private const val NO_ICON_MESSAGE_DISABLED_STATE =
+    "No icon for disabled state of send message button. Please set it in XML."
+
+private const val NO_ICON_MESSAGE_ENABLED_STATE =
+    "No icon for enabled state of send message button. Please set it in XML."
 
 public class StreamMessageInputView : ConstraintLayout {
 
@@ -33,6 +40,9 @@ public class StreamMessageInputView : ConstraintLayout {
 
     private lateinit var binding: StreamMessageInputBinding
 
+    private var iconDisabledSendButtonDrawable: Drawable? = null
+    private var iconEnabledSendButtonDrawable: Drawable? = null
+
     private fun init(context: Context, attr: AttributeSet? = null) {
         binding = StreamMessageInputBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -40,6 +50,7 @@ public class StreamMessageInputView : ConstraintLayout {
             configAttachmentButton(typedArray)
             configLightningButton(typedArray)
             configTextInput(typedArray)
+            configSendButton(typedArray)
         }
     }
 
@@ -119,15 +130,15 @@ public class StreamMessageInputView : ConstraintLayout {
     }
 
     private fun showSendMessageEnabled() {
-        binding.ivSendMessage.setImageResource(R.drawable.stream_ic_filled_up_arrow)
+        binding.ivSendMessage.setImageDrawable(iconEnabledSendButtonDrawable)
     }
 
-    private fun hideSendMessageEnabled() {
-        binding.ivSendMessage.setImageResource(R.drawable.stream_ic_filled_right_arrow)
+    private fun showSendMessageDisabled() {
+        binding.ivSendMessage.setImageDrawable(iconDisabledSendButtonDrawable)
     }
 
     private fun configTextInput(typedArray: TypedArray) {
-        TextInputHandler(binding.etMessageTextInput, ::showSendMessageEnabled, ::hideSendMessageEnabled)
+        TextInputHandler(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
 
         binding.etMessageTextInput.run {
             setTextColor(
@@ -152,5 +163,55 @@ public class StreamMessageInputView : ConstraintLayout {
 
             hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)
         }
+    }
+
+    private fun configSendButton(typedArray: TypedArray) {
+        iconDisabledSendButtonDrawable =
+            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonDisabledIcon)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_right_arrow)
+                    ?: throw IllegalStateException(NO_ICON_MESSAGE_DISABLED_STATE)
+
+        iconEnabledSendButtonDrawable =
+            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamSendButtonEnabledIcon)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_filled_up_arrow)
+                    ?: throw IllegalStateException(NO_ICON_MESSAGE_ENABLED_STATE)
+
+        DrawableCompat.setTintList(
+            iconEnabledSendButtonDrawable!!,
+            getColorList(
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonEnabledIconColor,
+                    ContextCompat.getColor(context, R.color.stream_input_message_send_button)
+                ),
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonPressedIconColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                ),
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                )
+            )
+        )
+
+        DrawableCompat.setTintList(
+            iconDisabledSendButtonDrawable!!,
+            getColorList(
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
+                    ContextCompat.getColor(context, R.color.stream_black)
+                ),
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonPressedIconColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                ),
+                typedArray.getColor(
+                    R.styleable.StreamMessageInputView_streamSendButtonDisabledIconColor,
+                    ContextCompat.getColor(context, R.color.stream_gray_dark)
+                )
+            )
+        )
+
+        binding.ivSendMessage.setImageDrawable(iconDisabledSendButtonDrawable)
     }
 }
