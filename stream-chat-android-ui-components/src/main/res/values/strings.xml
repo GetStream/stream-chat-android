@@ -5,5 +5,5 @@
     <string name="stream_command_command_template">/%s %s</string>
 
     <!--Mention Suggestions-->
-    <string name="stream_mention_user_name_template">/%s</string>
+    <string name="stream_mention_user_name_template">\@%s</string>
 </resources>
