@@ -3,8 +3,8 @@ package io.getstream.chat.sample.feature.user_login
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import coil.load
+import coil.transform.CircleCropTransformation
 import io.getstream.chat.sample.R
 import io.getstream.chat.sample.data.user.SampleUser
 import io.getstream.chat.sample.databinding.ItemOptionsBinding
@@ -68,14 +68,12 @@ class UserViewHolder(
     fun bindUser(user: SampleUser) {
         itemView.apply {
             binding.nameTextView.text = user.name
-            Glide.with(this)
-                .load(user.image)
-                .centerCrop()
-                .placeholder(R.drawable.ic_avatar_placeholder)
-                .error(R.drawable.ic_avatar_placeholder)
-                .fallback(R.drawable.ic_avatar_placeholder)
-                .transform(CircleCrop())
-                .into(binding.avatarImageView)
+            binding.avatarImageView.load(user.image) {
+                placeholder(R.drawable.ic_avatar_placeholder)
+                error(R.drawable.ic_avatar_placeholder)
+                fallback(R.drawable.ic_avatar_placeholder)
+                transformations(CircleCropTransformation())
+            }
         }
     }
 }

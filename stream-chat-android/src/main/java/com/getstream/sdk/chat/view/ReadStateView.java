@@ -9,8 +9,8 @@ import android.view.Gravity;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.ChatUI;
+import com.getstream.sdk.chat.ImageLoader;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.style.ChatFonts;
 import com.getstream.sdk.chat.utils.Utils;
@@ -77,11 +77,7 @@ public class ReadStateView<STYLE extends BaseStyle> extends RelativeLayout {
                     style.readStateText.getStyle());
 
         if (!Utils.isSVGImage(image))
-            Glide.with(getContext())
-                    .load(image)
-                    //TODO: llc check glide
-                    //.load(StreamChat.instance().getUploadStorage().signGlideUrl(image))
-                    .into(imageView);
+            ImageLoader.load(imageView, image);
 
         RelativeLayout.LayoutParams avatarParams = new RelativeLayout.LayoutParams(
                 (style.getReadStateAvatarWidth()),

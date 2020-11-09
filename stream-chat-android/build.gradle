@@ -102,12 +102,6 @@ dependencies {
 
     implementation Dependencies.gson
 
-    implementation Dependencies.glideRedirect
-    implementation(Dependencies.glide) {
-        exclude group: "com.android.support"
-    }
-    kapt Dependencies.glideCompiler
-
     implementation Dependencies.drawabletoolbox
     implementation Dependencies.markwonCore
     implementation Dependencies.markwonLinkify
