@@ -13,13 +13,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.livedata.ChatDomain
 
 /**
- * ChatUX handles any configuration for the Chat UI elements. It replaces the older Chat class.
+ * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
  *
- * @param client the low level chat client
- * @param chatDomain the chat domain interface used for offline storage and state
  * @param fonts allows you to overwrite fonts
  * @param strings allows you to customize strings
- * @param navigationHandler navigation handler for customizing things such as the media browsing experience
+ * @param navigator allows you to customize things such as the media browsing experience
  * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
  * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
  *
@@ -29,66 +27,68 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see ChatFonts
  */
 public class ChatUI internal constructor(
-    public val client: ChatClient,
-    public val chatDomain: ChatDomain,
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
-    public val navigationHandler: ChatNavigationHandler? = null,
+    public val navigator: ChatNavigator,
     public val markdown: ChatMarkdown,
     public val urlSigner: UrlSigner
 ) {
     public val version: String
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
-    public val navigator: ChatNavigator = ChatNavigatorImpl()
+    public class Builder(private val appContext: Context) {
 
-    init {
-        if (navigationHandler != null) {
-            navigator.setHandler(navigationHandler)
-        }
-    }
+        @Deprecated(
+            message = "Deprecated constructor, `ChatClient` and `ChatDomain` is not needed " +
+                "anymore to build a `ChatUI` instance",
+            replaceWith = ReplaceWith("ChatUI.Builder(appContext)")
+        )
+        public constructor(
+            client: ChatClient,
+            chatDomain: ChatDomain,
+            appContext: Context
+        ) : this(appContext)
 
-    public data class Builder(
-        private var client: ChatClient,
-        private var chatDomain: ChatDomain,
-        private var appContext: Context
-    ) {
-
-        private val style = ChatStyle.Builder().build()
+        private var style: ChatStyle? = null
         private var navigationHandler: ChatNavigationHandler? = null
-        private var urlSigner: UrlSigner = UrlSigner.DefaultUrlSigner()
-        private var markdown: ChatMarkdown = ChatMarkdownImpl(appContext)
-        private var fonts: ChatFonts = ChatFontsImpl(style, appContext)
-        private var strings: ChatStrings = ChatStringsImpl(appContext)
+        private var urlSigner: UrlSigner? = null
+        private var markdown: ChatMarkdown? = null
+        private var fonts: ChatFonts? = null
+        private var strings: ChatStrings? = null
 
-        public fun withMarkdown(markdown: ChatMarkdown): Builder {
+        public fun withStyle(style: ChatStyle): Builder = apply {
+            this.style = style
+        }
+
+        public fun withMarkdown(markdown: ChatMarkdown): Builder = apply {
             this.markdown = markdown
-            return this
         }
 
-        public fun withUrlSigner(signer: UrlSigner): Builder {
+        public fun withUrlSigner(signer: UrlSigner): Builder = apply {
             this.urlSigner = signer
-            return this
         }
 
-        public fun withNavigationHandler(handler: ChatNavigationHandler): Builder {
+        public fun withNavigationHandler(handler: ChatNavigationHandler): Builder = apply {
             this.navigationHandler = handler
-            return this
         }
 
-        public fun withFonts(fonts: ChatFonts): Builder {
+        public fun withFonts(fonts: ChatFonts): Builder = apply {
             this.fonts = fonts
-            return this
         }
 
-        public fun withStrings(strings: ChatStrings): Builder {
+        public fun withStrings(strings: ChatStrings): Builder = apply {
             this.strings = strings
-            return this
         }
 
         public fun build(): ChatUI {
-
-            instance = ChatUI(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
+            val chatStyle = style ?: ChatStyle.Builder().build()
+            instance = ChatUI(
+                fonts ?: ChatFontsImpl(chatStyle, appContext),
+                strings ?: ChatStringsImpl(appContext),
+                ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER),
+                markdown ?: ChatMarkdownImpl(appContext),
+                urlSigner ?: UrlSigner.DefaultUrlSigner()
+            )
             return instance()
         }
     }

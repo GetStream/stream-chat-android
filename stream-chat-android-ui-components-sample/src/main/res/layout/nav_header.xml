@@ -5,10 +5,11 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/avatarImageView"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <io.getstream.chat.android.ui.avatar.AvatarView
+        android:id="@+id/avatarView"
+        style="@style/StreamUserAvatarStyle"
+        android:layout_width="@dimen/stream_avatar_size_medium"
+        android:layout_height="@dimen/stream_avatar_size_medium"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +29,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/avatarImageView"
+        app:layout_constraintStart_toEndOf="@id/avatarView"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
