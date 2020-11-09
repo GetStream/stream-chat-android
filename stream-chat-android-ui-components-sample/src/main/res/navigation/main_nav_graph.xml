@@ -30,6 +30,10 @@
         <action
             android:id="@+id/action_userLoginFragment_to_customLoginFragment"
             app:destination="@id/customLoginFragment" />
+
+        <action
+            android:id="@+id/action_userLoginFragment_to_componentBrowserHomeFragment"
+            app:destination="@id/componentBrowserHomeFragment" />
     </fragment>
 
     <fragment
@@ -62,5 +66,19 @@
         android:id="@+id/groupChatFragment"
         android:name="io.getstream.chat.ui.sample.feature.group_chat.GroupChatFragment"
         android:label="NewGroupChatFragment" />
+
+    <fragment
+        android:id="@+id/componentBrowserHomeFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment"
+        android:label="ComponentBrowserHomeFragment" >
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment"
+            app:destination="@id/componentBrowserAvatarViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/componentBrowserAvatarViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment"
+        android:label="ComponentBrowserAvatarViewFragment" />
 
 </navigation>
