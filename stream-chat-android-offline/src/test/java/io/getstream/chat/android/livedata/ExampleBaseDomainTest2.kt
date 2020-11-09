@@ -7,7 +7,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-internal class ExampleBaseDomaintTest2 : BaseDomainTest2() {
+internal class ExampleBaseDomainTest2 : BaseDomainTest2() {
     @Test
     internal fun `test that room testing setup is configured correctly`() = testIODispatcher.runBlockingTest {
         testIOScope.launch {
