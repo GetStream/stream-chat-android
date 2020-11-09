@@ -8,7 +8,7 @@ import android.view.Gravity
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.getstream.sdk.chat.ChatUI.Companion.instance
+import com.getstream.sdk.chat.ChatUI
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.utils.Utils
 import com.getstream.sdk.chat.utils.roundedImageView.CircularImageView
@@ -49,7 +49,7 @@ public class ReadStateView : RelativeLayout {
 
         if (!readStateStyle.isReadStateEnabled || reads.isEmpty()) return
 
-        val chatFonts = instance().fonts
+        val chatFonts = ChatUI.instance().fonts
         val user = reads[0].user
         val image = user.getExtraValue("name", "")
 
