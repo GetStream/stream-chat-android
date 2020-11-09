@@ -34,6 +34,10 @@
         android:id="@+id/et_message_text_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/stream_shape_edit_text_round"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLines="7"
@@ -43,14 +47,10 @@
         android:paddingBottom="10dp"
         android:textColor="@color/stream_black"
         android:textSize="15sp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/iv_send_message"
         app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         tools:text="Hi. I am a text, did you notice?" />
 
     <androidx.appcompat.widget.AppCompatImageView
