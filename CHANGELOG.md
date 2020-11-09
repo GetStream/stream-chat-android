@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependecies
 
 ## stream-chat-android-client
 - Depecrate `User::unreadCount` property, replace with `User::totalUnreadCount`
