@@ -2,10 +2,14 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependecies
 
 ## stream-chat-android-client
+- Depecrate `User::unreadCount` property, replace with `User::totalUnreadCount`
 
 ## stream-chat-android-offline
+- Update `totalUnreadCount` when user is connected
+- Update `channelUnreadCount` when user is connected
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts

@@ -2,7 +2,22 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/userLoginFragment">
+    app:startDestination="@id/startupFragment">
+
+    <fragment
+        android:id="@+id/startupFragment"
+        android:name="io.getstream.chat.ui.sample.feature.startup.StartupFragment"
+        android:label="StartupFragment">
+        <action
+            android:id="@+id/action_startupFragmentFragment_to_userLoginFragment"
+            app:destination="@id/userLoginFragment"
+            app:popUpTo="@+id/startupFragment"
+            app:popUpToInclusive="true"/>
+
+        <action
+            android:id="@+id/action_startupFragmentFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/userLoginFragment"
@@ -15,6 +30,10 @@
         <action
             android:id="@+id/action_userLoginFragment_to_customLoginFragment"
             app:destination="@id/customLoginFragment" />
+
+        <action
+            android:id="@+id/action_userLoginFragment_to_componentBrowserHomeFragment"
+            app:destination="@id/componentBrowserHomeFragment" />
     </fragment>
 
     <fragment
@@ -47,5 +66,19 @@
         android:id="@+id/groupChatFragment"
         android:name="io.getstream.chat.ui.sample.feature.group_chat.GroupChatFragment"
         android:label="NewGroupChatFragment" />
+
+    <fragment
+        android:id="@+id/componentBrowserHomeFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment"
+        android:label="ComponentBrowserHomeFragment" >
+        <action
+            android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment"
+            app:destination="@id/componentBrowserAvatarViewFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/componentBrowserAvatarViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment"
+        android:label="ComponentBrowserAvatarViewFragment" />
 
 </navigation>
