@@ -15,6 +15,7 @@ Added new MessageInputView structure
 - Update `totalUnreadCount` when user is connected
 - Update `channelUnreadCount` when user is connected
 - Fix bug when channels could be shown without names
+- Add support for marking all channels as read for the current user
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts

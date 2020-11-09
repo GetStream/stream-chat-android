@@ -25,11 +25,10 @@ internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
             CoroutineCall(domainImpl.scope) {
                 channelController.markRead().let { markedRead ->
                     if (markedRead) {
-                        domainImpl.client
-                            .markRead(
-                                channelController.channelType,
-                                channelController.channelId
-                            ).execute()
+                        domainImpl.client.markRead(
+                            channelController.channelType,
+                            channelController.channelId
+                        ).execute()
                     }
 
                     Result(markedRead, null)
