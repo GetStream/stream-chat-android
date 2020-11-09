@@ -60,28 +60,35 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun getTheme(): Int = R.style.StreamChannelActionsBottomSheetDialog
 
     private fun setupViews() {
-        if (isGroup) {
-            binding.leaveGroupButton.isVisible = true
-            binding.deleteChannelButton.isVisible = true
-            binding.deleteContactButton.isVisible = false
-            binding.leaveGroupButton.setOnClickListener {
-                listener?.onLeaveGroupClicked(cid)
+        with(binding) {
+            if (isGroup) {
+                leaveGroupButton.isVisible = true
+                deleteChannelButton.isVisible = true
+                deleteContactButton.isVisible = false
+                leaveGroupButton.setOnClickListener {
+                    listener?.onLeaveGroupClicked(cid)
+                }
+                deleteChannelButton.setOnClickListener {
+                    listener?.onDeleteChannelClicked(cid)
+                }
+            } else {
+                leaveGroupButton.isVisible = false
+                deleteChannelButton.isVisible = false
+                deleteContactButton.isVisible = true
+                deleteContactButton.setOnClickListener {
+                    listener?.onDeleteContactClicked(cid)
+                }
             }
-            binding.deleteChannelButton.setOnClickListener {
-                listener?.onDeleteChannelClicked(cid)
-            }
-        } else {
-            binding.leaveGroupButton.isVisible = false
-            binding.deleteChannelButton.isVisible = false
-            binding.deleteContactButton.isVisible = true
-            binding.deleteContactButton.setOnClickListener {
-                listener?.onDeleteContactClicked(cid)
-            }
+            recyclerView.adapter = membersAdapter
         }
-        binding.recyclerView.adapter = membersAdapter
     }
 
     private fun bindMemberNames(members: List<Member>) {
@@ -112,6 +119,16 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    interface OnChannelActionSelectedListener {
+        fun onDeleteChannelClicked(cid: String)
+
+        fun onDeleteContactClicked(cid: String)
+
+        fun onLeaveGroupClicked(cid: String)
+
+        fun onMemberSelected(member: Member)
+    }
+
     companion object {
         private const val ARG_CID = "cid"
         private const val ARG_IS_GROUP = "is_group"
@@ -133,14 +150,4 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
             }
         }
     }
-}
-
-public interface OnChannelActionSelectedListener {
-    public fun onDeleteChannelClicked(cid: String)
-
-    public fun onDeleteContactClicked(cid: String)
-
-    public fun onLeaveGroupClicked(cid: String)
-
-    public fun onMemberSelected(member: Member)
 }

@@ -62,14 +62,14 @@
     <TextView
         android:id="@+id/deleteChannelButton"
         style="@style/StreamChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ic_delete_channel"
+        android:drawableStart="@drawable/stream_ic_delete"
         android:text="@string/stream_channel_actions_leave_group"
         android:textColor="@color/stream_text_red" />
 
     <TextView
         android:id="@+id/deleteContactButton"
         style="@style/StreamChannelActionsButtonStyle"
-        android:drawableStart="@drawable/stream_ic_delete_channel"
+        android:drawableStart="@drawable/stream_ic_delete"
         android:text="@string/stream_channel_actions_delete_contact"
         android:textColor="@color/stream_text_red" />
 

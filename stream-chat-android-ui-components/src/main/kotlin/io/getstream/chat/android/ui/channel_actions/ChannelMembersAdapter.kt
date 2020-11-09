@@ -11,17 +11,8 @@ import io.getstream.chat.android.ui.databinding.StreamItemChannelMemberBinding
 
 internal class ChannelMembersAdapter(
     private val onMemberClicked: (Member) -> Unit
-) : ListAdapter<Member, ChannelMemberViewHolder>(
-    object : DiffUtil.ItemCallback<Member>() {
-        override fun areItemsTheSame(oldItem: Member, newItem: Member): Boolean {
-            return oldItem.user.id == newItem.user.id
-        }
+) : ListAdapter<Member, ChannelMembersAdapter.ChannelMemberViewHolder>(ChannelMembersDiffCallback) {
 
-        override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean {
-            return oldItem == newItem
-        }
-    }
-) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
         return StreamItemChannelMemberBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,20 +22,30 @@ internal class ChannelMembersAdapter(
     override fun onBindViewHolder(holder: ChannelMemberViewHolder, position: Int) {
         return holder.bind(getItem(position))
     }
-}
 
-internal class ChannelMemberViewHolder(
-    private val binding: StreamItemChannelMemberBinding,
-    private val onMemberClicked: (Member) -> Unit
-) : RecyclerView.ViewHolder(binding.root) {
+    object ChannelMembersDiffCallback : DiffUtil.ItemCallback<Member>() {
+        override fun areItemsTheSame(oldItem: Member, newItem: Member): Boolean {
+            return oldItem.user.id == newItem.user.id
+        }
 
-    fun bind(member: Member) {
-        binding.apply {
-            val user = member.user
-            avatarView.setUserData(user)
-            avatarView.toggleOnlineIndicatorVisibility(user.online)
-            userNameTextView.text = user.name
-            root.setOnClickListener { onMemberClicked(member) }
+        override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean {
+            return oldItem == newItem
+        }
+    }
+
+    class ChannelMemberViewHolder(
+        private val binding: StreamItemChannelMemberBinding,
+        private val onMemberClicked: (Member) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(member: Member) {
+            binding.apply {
+                val user = member.user
+                avatarView.setUserData(user)
+                avatarView.toggleOnlineIndicatorVisibility(user.online)
+                userNameTextView.text = user.name
+                root.setOnClickListener { onMemberClicked(member) }
+            }
         }
     }
 }
