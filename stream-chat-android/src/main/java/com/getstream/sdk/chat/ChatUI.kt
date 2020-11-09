@@ -9,14 +9,10 @@ import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.livedata.ChatDomain
 
 /**
- * ChatUX handles any configuration for the Chat UI elements. It replaces the older Chat class.
+ * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
  *
- * @param client the low level chat client
- * @param chatDomain the chat domain interface used for offline storage and state
  * @param fonts allows you to overwrite fonts
  * @param strings allows you to customize strings
  * @param navigationHandler navigation handler for customizing things such as the media browsing experience
@@ -29,8 +25,6 @@ import io.getstream.chat.android.livedata.ChatDomain
  * @see ChatFonts
  */
 public class ChatUI internal constructor(
-    public val client: ChatClient,
-    public val chatDomain: ChatDomain,
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
     public val navigationHandler: ChatNavigationHandler? = null,
@@ -48,11 +42,7 @@ public class ChatUI internal constructor(
         }
     }
 
-    public data class Builder(
-        private var client: ChatClient,
-        private var chatDomain: ChatDomain,
-        private var appContext: Context
-    ) {
+    public class Builder(private var appContext: Context) {
 
         private val style = ChatStyle.Builder().build()
         private var navigationHandler: ChatNavigationHandler? = null
@@ -88,7 +78,7 @@ public class ChatUI internal constructor(
 
         public fun build(): ChatUI {
 
-            instance = ChatUI(client, chatDomain, fonts, strings, navigationHandler, markdown, urlSigner)
+            instance = ChatUI(fonts, strings, navigationHandler, markdown, urlSigner)
             return instance()
         }
     }
