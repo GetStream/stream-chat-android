@@ -35,7 +35,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     val chatClient: ChatClient = mock()
 
     @Test
-    fun `should return only one parent message`() = testIOScope.runBlockingTest {
+    fun `should return only one parent message`() = testIODispatcher.runBlockingTest {
         testIOScope.launch {
             val parentMessage = randomMessage(id = threadId, parentId = null)
             val channelMessages = (randomMessages() + parentMessage).shuffled()
@@ -48,7 +48,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `Should watch the first messages`() {
+    fun `Should watch the first messages`() = testIODispatcher.runBlockingTest {
 
         testIOScope.launch {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
@@ -79,7 +79,7 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `Should watch the first messages without receive limit messages`() {
+    fun `Should watch the first messages without receive limit messages`() = testIODispatcher.runBlockingTest {
 
         testIOScope.launch {
             val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
