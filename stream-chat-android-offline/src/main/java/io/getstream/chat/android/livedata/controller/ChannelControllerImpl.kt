@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -990,6 +991,10 @@ internal class ChannelControllerImpl(
             is NotificationMarkReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
+            }
+
+            is MarkAllReadEvent -> {
+                updateRead(ChannelUserRead(event.user, event.createdAt))
             }
         }
     }
