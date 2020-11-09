@@ -4,7 +4,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 
-public class TextInputHandler(
+internal class TextInputHandler(
     editText: EditText,
     public var containsTextListener: () -> Unit = {},
     public var emptyTextListener: () -> Unit = {}
