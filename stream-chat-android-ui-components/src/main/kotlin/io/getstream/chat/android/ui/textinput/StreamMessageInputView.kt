@@ -1,7 +1,6 @@
 package io.getstream.chat.android.ui.textinput
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -12,6 +11,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamMessageInputBinding
+import io.getstream.chat.android.ui.utils.getColorList
 
 public class StreamMessageInputView : ConstraintLayout {
 
@@ -154,12 +154,3 @@ public class StreamMessageInputView : ConstraintLayout {
         }
     }
 }
-
-private fun getColorList(normalColor: Int, pressedColor: Int, disabledColor: Int) = ColorStateList(
-    arrayOf(
-        intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_pressed),
-        intArrayOf(android.R.attr.state_enabled, android.R.attr.state_pressed),
-        intArrayOf(-android.R.attr.state_enabled)
-    ),
-    intArrayOf(normalColor, pressedColor, disabledColor)
-)
