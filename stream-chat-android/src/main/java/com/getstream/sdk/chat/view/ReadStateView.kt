@@ -68,11 +68,13 @@ public class ReadStateView : RelativeLayout {
                 readStateStyle.readStateText.size,
                 typeface
             )
-        } else imageView.setPlaceholderTextSize(
-            TypedValue.COMPLEX_UNIT_PX,
-            readStateStyle.readStateText.size,
-            readStateStyle.readStateText.style
-        )
+        } else {
+            imageView.setPlaceholderTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                readStateStyle.readStateText.size,
+                readStateStyle.readStateText.style
+            )
+        }
         if (!Utils.isSVGImage(image)) Glide.with(context)
             .load(image) // TODO: llc check glide
             // .load(StreamChat.instance().getUploadStorage().signGlideUrl(image))
