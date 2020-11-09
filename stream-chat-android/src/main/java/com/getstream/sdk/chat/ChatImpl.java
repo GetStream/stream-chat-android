@@ -2,9 +2,6 @@ package com.getstream.sdk.chat;
 
 import android.content.Context;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.getstream.sdk.chat.enums.OnlineStatus;
 import com.getstream.sdk.chat.navigation.ChatNavigationHandler;
 import com.getstream.sdk.chat.navigation.ChatNavigator;
@@ -15,6 +12,8 @@ import com.getstream.sdk.chat.utils.strings.ChatStrings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
@@ -38,7 +37,7 @@ class ChatImpl implements Chat {
     private MutableLiveData<Number> unreadChannels = new MutableLiveData<>();
     private MutableLiveData<User> currentUser = new MutableLiveData<>();
 
-    private final ChatNavigator navigator = new ChatNavigatorImpl();
+    private final ChatNavigator navigator;
     private final ChatStrings chatStrings;
     private final ChatFonts chatFonts;
     private final UrlSigner urlSigner;
@@ -70,9 +69,11 @@ class ChatImpl implements Chat {
         this.offlineEnabled = offlineEnabled;
         this.chatNotificationHandler = chatNotificationHandler;
 
-        if (navigationHandler != null) {
-            navigator.setHandler(navigationHandler);
+        ChatNavigationHandler chatNavigationHandler = navigationHandler;
+        if (chatNavigationHandler == null) {
+            chatNavigationHandler = ChatNavigatorImpl.EMPTY_HANDLER;
         }
+        this.navigator = new ChatNavigatorImpl(chatNavigationHandler);
 
         ChatClient.Builder chatBuilder = new ChatClient.Builder(this.apiKey, context)
                 .notifications(chatNotificationHandler)

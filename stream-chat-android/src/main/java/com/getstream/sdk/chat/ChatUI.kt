@@ -15,7 +15,7 @@ import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
  *
  * @param fonts allows you to overwrite fonts
  * @param strings allows you to customize strings
- * @param navigationHandler navigation handler for customizing things such as the media browsing experience
+ * @param navigator allows you to customize things such as the media browsing experience
  * @param markdown interface to to customize the markdown parsing behaviour, useful if you want to use more markdown modules
  * @param urlSigner url signing logic, enables you to add authorization tokens for images, video etc
  *
@@ -27,22 +27,14 @@ import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
 public class ChatUI internal constructor(
     public val fonts: ChatFonts,
     public val strings: ChatStrings,
-    public val navigationHandler: ChatNavigationHandler? = null,
+    public val navigator: ChatNavigator,
     public val markdown: ChatMarkdown,
     public val urlSigner: UrlSigner
 ) {
     public val version: String
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
-    public val navigator: ChatNavigator = ChatNavigatorImpl()
-
-    init {
-        if (navigationHandler != null) {
-            navigator.setHandler(navigationHandler)
-        }
-    }
-
-    public class Builder(private var appContext: Context) {
+    public class Builder(private val appContext: Context) {
 
         private val style = ChatStyle.Builder().build()
         private var navigationHandler: ChatNavigationHandler? = null
@@ -77,8 +69,7 @@ public class ChatUI internal constructor(
         }
 
         public fun build(): ChatUI {
-
-            instance = ChatUI(fonts, strings, navigationHandler, markdown, urlSigner)
+            instance = ChatUI(fonts, strings, ChatNavigatorImpl(navigationHandler ?: ChatNavigatorImpl.EMPTY_HANDLER), markdown, urlSigner)
             return instance()
         }
     }
