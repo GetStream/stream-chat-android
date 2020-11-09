@@ -25,4 +25,8 @@ class ChatInitializer(private val context: Context) {
         val domain = ChatDomain.Builder(client, context).offlineEnabled().notificationConfig(notificationConfig).build()
         val ux = ChatUI.Builder(client, domain, context).build()
     }
+
+    fun isUserSet(): Boolean {
+        return ChatClient.isInitialized && ChatClient.instance().getCurrentUser() != null
+    }
 }

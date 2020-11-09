@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -69,13 +70,24 @@ class UserLoginFragment : Fragment() {
             }
         )
 
-        activity?.intent?.apply {
+        requireActivity().intent?.apply {
             val channelId = getStringExtra(EXTRA_CHANNEL_ID)
             val channelType = getStringExtra(EXTRA_CHANNEL_TYPE)
             if (!channelId.isNullOrBlank() && !channelType.isNullOrBlank()) {
                 val cid = "$channelType:$channelId"
                 viewModel.targetChannelDataReceived(cid)
             }
+        }
+
+        requireActivity().apply {
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        activity?.finish()
+                    }
+                }
+            )
         }
     }
 
