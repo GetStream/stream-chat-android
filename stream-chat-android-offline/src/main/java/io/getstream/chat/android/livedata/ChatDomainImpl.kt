@@ -237,7 +237,7 @@ internal class ChatDomainImpl internal constructor(
         currentUser = user
 
         if (backgroundSyncEnabled && !isTestRunner()) {
-            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken())
+            val config = BackgroundSyncConfig(client.config.apiKey, currentUser.id, client.getCurrentToken() ?: "")
             if (config.isValid()) {
                 syncModule.encryptedBackgroundSyncConfigStore.apply {
                     put(config)
