@@ -12,4 +12,49 @@
         <attr name="streamAvatarTextStyle" />
         <attr name="streamAvatarOnlineIndicatorEnabled" format="boolean" />
     </declare-styleable>
+
+    <!--MessageInputViewNew-->
+    <declare-styleable name="StreamMessageInputView">
+        <!--Attachment Button-->
+        <attr name="streamAttachButtonEnabled" format="boolean" />
+        <attr name="streamAttachButtonIcon" format="reference" />
+        <attr name="streamAttachButtonIconColor" format="color|reference" />
+        <attr name="streamAttachButtonIconPressedColor" format="color|reference" />
+        <attr name="streamAttachButtonIconDisabledColor" format="color|reference" />
+        <attr name="streamAttachButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamAttachButtonWidth" format="dimension|reference" />
+        <attr name="streamAttachButtonHeight" format="dimension|reference" />
+
+        <!--Lightning Button-->
+        <attr name="streamLightningButtonEnabled" format="boolean" />
+        <attr name="streamLightningButtonIcon" format="reference" />
+        <attr name="streamLightningButtonIconColor" format="color|reference" />
+        <attr name="streamLightningButtonIconPressedColor" format="color|reference" />
+        <attr name="streamLightningButtonIconDisabledColor" format="color|reference" />
+        <attr name="streamLightningButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamLightningButtonWidth" format="dimension|reference" />
+        <attr name="streamLightningButtonHeight" format="dimension|reference" />
+
+        <!--Input Text-->
+        <attr name="streamMessageInputHint" format="string" />
+        <attr name="streamMessageInputTextSize" format="dimension|reference" />
+        <attr name="streamMessageInputTextColor" format="color|reference" />
+        <attr name="streamMessageInputHintTextColor" format="color|reference" />
+        <attr name="streamMessageInputTextFont" format="reference" />
+        <attr name="streamMessageInputTextFontAssets" format="string" />
+        <attr name="streamMessageInputTextStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+
+        <!--Send Button-->
+        <attr name="streamSendButtonDefaultIconColor" format="color|reference"/>
+        <attr name="streamSendButtonEditIconColor" format="color|reference"/>
+        <attr name="streamSendButtonDefaultIconPressedColor" format="color|reference"/>
+        <attr name="streamSendButtonDefaultIconDisabledColor" format="color|reference"/>
+        <attr name="streamSendButtonIcon" format="reference"/>
+        <attr name="streamSendButtonWidth" format="dimension|reference"/>
+        <attr name="streamSendButtonHeight" format="dimension|reference"/>
+    </declare-styleable>
 </resources>

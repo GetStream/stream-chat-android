@@ -45,36 +45,36 @@ public class StreamMessageInputView : ConstraintLayout {
 
     private fun configAttachmentButton(typedArray: TypedArray) {
         binding.ivOpenAttachment.run {
-            isVisible = typedArray.getBoolean(R.styleable.StreamMessageInputView_showAttachmentButton, true)
+            isVisible = typedArray.getBoolean(R.styleable.StreamMessageInputView_streamAttachButtonEnabled, true)
 
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_attachmentButtonIcon)
+            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamAttachButtonIcon)
                 ?.let(this::setImageDrawable)
 
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_attachmentButtonIconColor,
+                        R.styleable.StreamMessageInputView_streamAttachButtonIconColor,
                         ContextCompat.getColor(context, R.color.stream_gray_dark)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_attachmentButtonIconPressedColor,
+                        R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
                         ContextCompat.getColor(context, R.color.stream_white)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_attachmentButtonIconPressedColor,
+                        R.styleable.StreamMessageInputView_streamAttachButtonIconPressedColor,
                         ContextCompat.getColor(context, R.color.stream_gray_light)
                     )
                 )
             )
 
             layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_attachmentButtonWidth,
+                R.styleable.StreamMessageInputView_streamAttachButtonWidth,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_attachmentButtonHeight,
+                R.styleable.StreamMessageInputView_streamAttachButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
         }
@@ -83,36 +83,36 @@ public class StreamMessageInputView : ConstraintLayout {
     private fun configLightningButton(typedArray: TypedArray) {
         binding.ivOpenEmojis.run {
             isVisible =
-                typedArray.getBoolean(R.styleable.StreamMessageInputView_showLightningButton, true)
+                typedArray.getBoolean(R.styleable.StreamMessageInputView_streamLightningButtonEnabled, true)
 
-            typedArray.getDrawable(R.styleable.StreamMessageInputView_lightningButtonIcon)
+            typedArray.getDrawable(R.styleable.StreamMessageInputView_streamLightningButtonIcon)
                 ?.let(this::setImageDrawable)
 
             DrawableCompat.setTintList(
                 drawable,
                 getColorList(
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_lightningButtonIconColor,
+                        R.styleable.StreamMessageInputView_streamLightningButtonIconColor,
                         ContextCompat.getColor(context, R.color.stream_gray_dark)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_lightningButtonIconPressedColor,
+                        R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
                         ContextCompat.getColor(context, R.color.stream_white)
                     ),
                     typedArray.getColor(
-                        R.styleable.StreamMessageInputView_lightningButtonIconPressedColor,
+                        R.styleable.StreamMessageInputView_streamLightningButtonIconPressedColor,
                         ContextCompat.getColor(context, R.color.stream_gray_light)
                     )
                 )
             )
 
             layoutParams.width = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_lightningButtonWidth,
+                R.styleable.StreamMessageInputView_streamLightningButtonWidth,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_width)
             )
 
             layoutParams.height = typedArray.getDimensionPixelSize(
-                R.styleable.StreamMessageInputView_lightningButtonHeight,
+                R.styleable.StreamMessageInputView_streamLightningButtonHeight,
                 context.resources.getDimensionPixelSize(R.dimen.stream_attachment_button_height)
             )
         }
@@ -132,25 +132,25 @@ public class StreamMessageInputView : ConstraintLayout {
         binding.etMessageTextInput.run {
             setTextColor(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_inputTextColor,
+                    R.styleable.StreamMessageInputView_streamMessageInputTextColor,
                     ContextCompat.getColor(context, android.R.color.black)
                 )
             )
 
             setHintTextColor(
                 typedArray.getColor(
-                    R.styleable.StreamMessageInputView_inputHintTextColor,
+                    R.styleable.StreamMessageInputView_streamMessageInputHintTextColor,
                     ContextCompat.getColor(context, android.R.color.darker_gray)
                 )
             )
 
             textSize =
                 typedArray.getDimensionPixelSize(
-                    R.styleable.StreamMessageInputView_inputTextSize,
+                    R.styleable.StreamMessageInputView_streamMessageInputTextSize,
                     context.resources.getDimensionPixelSize(R.dimen.stream_text_size_input)
                 ).toFloat()
 
-            hint = typedArray.getText(R.styleable.StreamMessageInputView_inputHint)
+            hint = typedArray.getText(R.styleable.StreamMessageInputView_streamMessageInputHint)
         }
     }
 }
