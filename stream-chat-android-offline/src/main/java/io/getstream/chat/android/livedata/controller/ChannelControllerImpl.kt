@@ -85,7 +85,7 @@ internal class ChannelControllerImpl(
 ) :
     ChannelController {
     private val editJobs = mutableMapOf<String, Job>()
-    private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val _messages = MutableStateFlow<Map<String, Message>?>(null)
     private val _watcherCount = MutableStateFlow<Int>(0)
     private val _typing = MutableStateFlow<Map<String, ChatEvent>>(emptyMap())
     private val _reads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
@@ -100,24 +100,28 @@ internal class ChannelControllerImpl(
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
     private val _channelData = MutableStateFlow<ChannelData?>(null)
-    private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
+    private val _oldMessages = MutableStateFlow<Map<String, Message>?>(emptyMap())
     internal var hideMessagesBefore: Date? = null
-    val unfilteredMessages: LiveData<List<Message>> = _messages.map { it.values.toList() }.asLiveData()
+    val unfilteredMessages: LiveData<List<Message>?> = _messages.map {
+        if (it == null) { null } else { it.values.toList() }
+    }.asLiveData()
 
     /** a list of messages sorted by message.createdAt */
     override val messages: LiveData<List<Message>> = messagesTransformation(_messages)
 
     override val oldMessages: LiveData<List<Message>> = messagesTransformation(_oldMessages)
 
-    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>>): LiveData<List<Message>> {
+    private fun messagesTransformation(messages: MutableStateFlow<Map<String, Message>?>): LiveData<List<Message>> {
         return Transformations.map(messages.asLiveData()) { messageMap ->
-            messageMap.values
-                .asSequence()
-                .filter { it.parentId == null || it.showInChannel }
-                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .toList()
-                .map { it.copy() }
+            if (messageMap == null) { null } else {
+                messageMap.values
+                    .asSequence()
+                    .filter { it.parentId == null || it.showInChannel }
+                    .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                    .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                    .toList()
+                    .map { it.copy() }
+            }
         }
     }
 
@@ -284,7 +288,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun removeMessagesBefore(date: Date) {
-        val copy = _messages.value
+        val copy = _messages.value ?: emptyMap()
         // start off empty
         _messages.value = mutableMapOf()
         // call upsert with the messages that are recent
@@ -787,7 +791,7 @@ internal class ChannelControllerImpl(
     }
 
     override fun getMessage(messageId: String): Message? {
-        val copy = _messages.value
+        val copy = _messages.value ?: emptyMap()
         var message = copy[messageId]
 
         if (hideMessagesBefore != null) {
@@ -800,7 +804,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun parseMessages(messages: List<Message>): Map<String, Message> {
-        val copy = _messages.value
+        val copy = _messages.value ?: emptyMap()
         val newMessages = messageHelper.updateValidAttachmentsUrl(messages, copy)
         // filter out old events
         val freshMessages = mutableListOf<Message>()
@@ -837,7 +841,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun removeLocalMessage(message: Message) {
-        val messages = _messages.value
+        val messages = _messages.value ?: emptyMap()
         _messages.value = messages - message.id
     }
 

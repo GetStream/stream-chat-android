@@ -24,9 +24,7 @@ internal class ThreadControllerImpl(
     private val threadMessages: MutableLiveData<Map<String, Message>> = MutableLiveData(mapOf())
 
     private val channelMessages: LiveData<Map<String, Message>> = Transformations.map(channelControllerImpl.unfilteredMessages) { messages ->
-        messages.asSequence()
-            .filter { it.id == threadId || it.parentId == threadId }
-            .associateBy { it.id }
+        messages?.asSequence()?.filter { it.id == threadId || it.parentId == threadId }?.associateBy { it.id }
     }
     private val mediatorLiveData: MediatorLiveData<Map<String, Message>> = MediatorLiveData<Map<String, Message>>().apply {
         addSource(threadMessages) { postValue(value.plus(it)) }
