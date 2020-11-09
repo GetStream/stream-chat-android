@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
     <include
         android:id="@+id/cl_attachment_media"
@@ -12,7 +13,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <Space
         android:id="@+id/space_media_file"
@@ -20,7 +22,8 @@
         android:layout_height="@dimen/stream_message_same_user_space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media" />
+        app:layout_constraintTop_toBottomOf="@+id/cl_attachment_media"
+        />
 
     <ListView
         android:id="@+id/lv_attachment_file"
@@ -34,6 +37,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/space_media_file"
-        tools:listitem="@layout/stream_item_attach_file" />
-
+        tools:listitem="@layout/stream_item_attach_file"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

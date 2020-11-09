@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="90dp"
     android:layout_height="90dp"
-    android:padding="5dp">
+    android:padding="5dp"
+    >
 
     <com.getstream.sdk.chat.utils.roundedImageView.PorterShapeImageView
         android:id="@+id/iv_media"
@@ -12,17 +12,19 @@
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ImageView
         android:id="@+id/iv_mask"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/stream_round_upload_mask"
-        app:layout_constraintStart_toStartOf="@+id/iv_media"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_media"
         app:layout_constraintEnd_toEndOf="@+id/iv_media"
+        app:layout_constraintStart_toStartOf="@+id/iv_media"
         app:layout_constraintTop_toTopOf="@+id/iv_media"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_media"/>
+        />
 
     <TextView
         android:id="@+id/tv_length"
@@ -32,7 +34,8 @@
         android:layout_margin="5dp"
         android:textColor="@color/stream_white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
 
     <Button
@@ -43,7 +46,8 @@
         android:layout_margin="3dp"
         android:background="@drawable/stream_attach_close"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -56,5 +60,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

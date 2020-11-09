@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:padding="5dp"
+    >
 
     <com.getstream.sdk.chat.view.AvatarView
         android:id="@+id/avatar"
@@ -12,7 +13,8 @@
         android:layout_margin="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_username"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_username" />
+        app:layout_constraintTop_toTopOf="@+id/tv_username"
+        />
 
     <TextView
         android:id="@+id/tv_username"
@@ -21,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/tv_you"
@@ -32,6 +35,6 @@
         android:text="@{null}"
         app:layout_constraintBottom_toBottomOf="@+id/tv_username"
         app:layout_constraintStart_toEndOf="@+id/tv_username"
-        app:layout_constraintTop_toTopOf="@+id/tv_username" />
-
+        app:layout_constraintTop_toTopOf="@+id/tv_username"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

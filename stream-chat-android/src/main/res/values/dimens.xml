@@ -71,7 +71,7 @@
     <dimen name="stream_message_text_padding_end">10dp</dimen>
     <dimen name="stream_message_text_padding_top">5dp</dimen>
     <dimen name="stream_message_text_padding_bottom">5dp</dimen>
-    
+
     <dimen name="stream_message_text_font_size">15sp</dimen>
     <dimen name="stream_message_deleted_text_font_size">13sp</dimen>
     <dimen name="stream_read_state_text_size">8sp</dimen>

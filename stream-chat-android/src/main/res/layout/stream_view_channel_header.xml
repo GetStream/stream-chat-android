@@ -5,7 +5,8 @@
     android:id="@+id/header"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    tools:layout_height="56dp">
+    tools:layout_height="56dp"
+    >
 
     <Button
         android:id="@+id/btn_back"
@@ -15,7 +16,8 @@
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/iv_separator"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <TextView
         android:id="@+id/tv_channel_name"
@@ -32,7 +34,8 @@
         app:layout_constraintEnd_toStartOf="@+id/avatar_group"
         app:layout_constraintStart_toEndOf="@+id/btn_back"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <TextView
         android:id="@+id/tv_active"
@@ -44,7 +47,8 @@
         app:layout_constraintEnd_toEndOf="@+id/tv_channel_name"
         app:layout_constraintStart_toStartOf="@+id/tv_channel_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_channel_name"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        />
 
     <com.getstream.sdk.chat.view.AvatarView
         android:id="@+id/avatar_group"
@@ -53,7 +57,8 @@
         android:layout_marginEnd="@dimen/stream_channel_header_avatar_margin_end"
         app:layout_constraintBottom_toTopOf="@+id/iv_separator"
         app:layout_constraintEnd_toStartOf="@+id/btn_option"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ImageView
         android:id="@+id/iv_active_badge"
@@ -61,14 +66,16 @@
         android:layout_height="@dimen/stream_channel_header_avatar_active"
         app:layout_constraintEnd_toEndOf="@+id/avatar_group"
         app:layout_constraintStart_toEndOf="@+id/avatar_group"
-        app:layout_constraintTop_toTopOf="@+id/avatar_group" />
+        app:layout_constraintTop_toTopOf="@+id/avatar_group"
+        />
 
     <ImageView
         android:id="@+id/iv_separator"
         android:layout_width="match_parent"
         android:layout_height="@dimen/stream_channel_header_separator_height"
         android:background="@color/stream_gray"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <Button
         android:id="@+id/btn_option"
@@ -78,6 +85,6 @@
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/iv_separator"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
