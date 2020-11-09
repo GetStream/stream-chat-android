@@ -316,10 +316,15 @@ internal class EventHandlerImpl(
                     event.totalUnreadCount.let(domainImpl::setTotalUnreadCount)
                     event.unreadChannels.let(domainImpl::setChannelUnreadCount)
 
+                    // only update sync state if the incoming "mark all read" date is newer
+                    // this supports using event handler to restore mark all read state in setUser
+                    // without redundant db writes.
                     domainImpl.repos.syncState.apply {
-                        select(event.user.id)
-                            ?.copy(markedAllReadAt = event.createdAt)
-                            ?.let { insert(it) }
+                        select(event.user.id)?.let { state ->
+                            if (event.createdAt.after(state.markedAllReadAt)) {
+                                insert(state.copy(markedAllReadAt = event.createdAt))
+                            }
+                        }
                     }
                 }
 
