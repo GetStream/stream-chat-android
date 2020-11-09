@@ -9,6 +9,8 @@ import com.getstream.sdk.chat.style.ChatFontsImpl
 import com.getstream.sdk.chat.style.ChatStyle
 import com.getstream.sdk.chat.utils.strings.ChatStrings
 import com.getstream.sdk.chat.utils.strings.ChatStringsImpl
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.livedata.ChatDomain
 
 /**
  * ChatUI handles any configuration for the Chat UI elements. It replaces the older Chat class.
@@ -35,6 +37,17 @@ public class ChatUI internal constructor(
         get() = BuildConfig.BUILD_TYPE + ":" + BuildConfig.STREAM_CHAT_UI_VERSION
 
     public class Builder(private val appContext: Context) {
+
+        @Deprecated(
+            message = "Deprecated constructor, `ChatClient` and `ChatDomain` is not needed " +
+                "anymore to build a `ChatUI` instance",
+            replaceWith = ReplaceWith("ChatUI.Builder(appContext)")
+        )
+        public constructor(
+            client: ChatClient,
+            chatDomain: ChatDomain,
+            appContext: Context
+        ) : this(appContext)
 
         private var style: ChatStyle? = null
         private var navigationHandler: ChatNavigationHandler? = null
