@@ -14,6 +14,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.call.Call
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.logger.ChatLogger
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Config
@@ -257,14 +258,24 @@ internal class ChatDomainImpl internal constructor(
             val initialSyncState = SyncStateEntity(currentUser.id)
             syncState = repos.syncState.select(currentUser.id) ?: initialSyncState
             // set active channels and recover
-            syncState?.let {
-                for (channelId in it.activeChannelIds) {
-                    channel(channelId)
+            syncState?.let { state ->
+                // retrieve the last time the user marked all as read
+                val markAllRead = state.markedAllReadAt?.let {
+                    MarkAllReadEvent(user = currentUser, createdAt = it)
                 }
-                // queries
-                val queries = repos.queryChannels.selectById(it.activeQueryIds)
-                for (queryChannelsSpec in queries) {
-                    queryChannels(queryChannelsSpec.filter, queryChannelsSpec.sort)
+
+                // restore channels and apply the last markAllRead event, if one exists
+                state.activeChannelIds.forEach {
+                    channel(it).apply {
+                        markAllRead?.let(::handleEvent)
+                    }
+                }
+
+                // restore queries and apply the last markAllRead event, if one exists
+                repos.queryChannels.selectById(state.activeQueryIds).forEach { spec ->
+                    queryChannels(spec.filter, spec.sort).apply {
+                        markAllRead?.let(::handleEvent)
+                    }
                 }
             }
             syncState

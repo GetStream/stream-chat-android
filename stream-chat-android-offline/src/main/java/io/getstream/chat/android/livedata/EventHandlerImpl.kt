@@ -310,8 +310,12 @@ internal class EventHandlerImpl(
                     batch.addChannel(event.channel)
                 }
 
-                is MarkAllReadEvent -> batch.getAllChannels().forEach { channel ->
-                    channel.updateReads(ChannelUserRead(event.user, event.createdAt))
+                // we use syncState to store the last markAllRead date for a given
+                // user since it makes more sense to write to the database once instead of N times.
+                is MarkAllReadEvent -> domainImpl.repos.syncState.apply {
+                    select(event.user.id)
+                        ?.copy(markedAllReadAt = event.createdAt)
+                        ?.let { insert(it) }
                 }
 
                 // get the channel, update reads, write the channel
@@ -319,12 +323,7 @@ internal class EventHandlerImpl(
                     event.cid
                         .let(batch::getCurrentChannel)
                         ?.apply {
-                            updateReads(
-                                ChannelUserRead(
-                                    user = event.user,
-                                    lastRead = event.createdAt
-                                )
-                            )
+                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
                         ?.let(batch::addChannel)
 
@@ -334,12 +333,7 @@ internal class EventHandlerImpl(
                     event.cid
                         .let(batch::getCurrentChannel)
                         ?.apply {
-                            updateReads(
-                                ChannelUserRead(
-                                    user = event.user,
-                                    lastRead = event.createdAt
-                                )
-                            )
+                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         }
                         ?.let(batch::addChannel)
                 }

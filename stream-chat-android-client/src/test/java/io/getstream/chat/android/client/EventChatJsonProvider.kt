@@ -656,3 +656,15 @@ private fun createReactionJsonString() =
             "created_at": "2020-06-29T06:14:28.000Z"
         }
     """.trimIndent()
+
+internal fun createMarkAllReadEventStringJson() =
+    """
+        {
+           "unread_count":0.0,
+           "unread_channels":0.0,
+           "total_unread_count":0.0,
+           "created_at":"2020-06-29T06:14:28.000Z",
+           "type":"notification.mark_read",
+           "user":${createUserJsonString()}
+        }
+    """.trimIndent()

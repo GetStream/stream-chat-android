@@ -70,9 +70,6 @@ internal class ChannelRepository(
         return dbChannels
     }
 
-    suspend fun selectAllForCurrentUser(): List<ChannelEntity> =
-        channelDao.selectAll().filter { it.members.keys.contains(currentUser.id) }
-
     suspend fun selectSyncNeeded(): List<ChannelEntity> {
         return channelDao.selectSyncNeeded()
     }
