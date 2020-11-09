@@ -12,7 +12,7 @@ import io.getstream.chat.android.ui.databinding.StreamItemMentionBinding
 
 internal class MentionsAdapter(
     private val onMentionSelected: (User) -> Unit
-) : ListAdapter<User, MentionViewHolder>(
+) : ListAdapter<User, MentionsAdapter.MentionViewHolder>(
     object : DiffUtil.ItemCallback<User>() {
         override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem.id == newItem.id
@@ -32,21 +32,20 @@ internal class MentionsAdapter(
     override fun onBindViewHolder(holder: MentionViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-}
 
-internal class MentionViewHolder(
-    private val binding: StreamItemMentionBinding,
-    private val onUserClicked: (User) -> Unit
-) : RecyclerView.ViewHolder(binding.root) {
+    class MentionViewHolder(
+        private val binding: StreamItemMentionBinding,
+        private val onUserClicked: (User) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(user: User) {
-        binding.avatarView.setUserData(user)
-        binding.avatarView.toggleOnlineIndicatorVisibility(user.online)
-        binding.usernameTextView.text = user.name
-        binding.mentionNameTextView.text = itemView.context.getString(
-            R.string.stream_mention_user_name_template,
-            user.name.toLowerCase()
-        )
-        binding.root.setOnClickListener { onUserClicked(user) }
+        fun bind(user: User) {
+            binding.avatarView.setUserData(user)
+            binding.usernameTextView.text = user.name
+            binding.mentionNameTextView.text = itemView.context.getString(
+                R.string.stream_mention_user_name_template,
+                user.name.toLowerCase()
+            )
+            binding.root.setOnClickListener { onUserClicked(user) }
+        }
     }
 }

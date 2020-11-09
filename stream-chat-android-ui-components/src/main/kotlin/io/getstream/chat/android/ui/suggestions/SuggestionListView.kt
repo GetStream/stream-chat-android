@@ -64,15 +64,15 @@ internal class SuggestionListView : FrameLayout {
             binding.suggestionsCardView.isVisible = false
         }
     }
-}
 
-public interface OnSuggestionClickListener {
-    public fun onMentionClick(user: User)
+    interface OnSuggestionClickListener {
+        fun onMentionClick(user: User)
 
-    public fun onCommandClick(command: Command)
-}
+        fun onCommandClick(command: Command)
+    }
 
-public sealed class Suggestions {
-    public data class MentionSuggestions(val users: List<User>) : Suggestions()
-    public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
+    sealed class Suggestions {
+        data class MentionSuggestions(val users: List<User>) : Suggestions()
+        data class CommandSuggestions(val commands: List<Command>) : Suggestions()
+    }
 }

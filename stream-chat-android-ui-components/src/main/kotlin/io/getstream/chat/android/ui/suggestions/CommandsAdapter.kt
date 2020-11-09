@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.databinding.StreamItemCommandBinding
 
 internal class CommandsAdapter(
     private val onCommandSelected: (Command) -> Unit
-) : ListAdapter<Command, CommandViewHolder>(
+) : ListAdapter<Command, CommandsAdapter.CommandViewHolder>(
     object : DiffUtil.ItemCallback<Command>() {
         override fun areItemsTheSame(oldItem: Command, newItem: Command): Boolean {
             return oldItem.name == newItem.name
@@ -31,20 +31,20 @@ internal class CommandsAdapter(
     override fun onBindViewHolder(holder: CommandViewHolder, position: Int) {
         return holder.bind(getItem(position))
     }
-}
 
-internal class CommandViewHolder(
-    private val binding: StreamItemCommandBinding,
-    private val onCommandClicked: (Command) -> Unit
-) : RecyclerView.ViewHolder(binding.root) {
+    class CommandViewHolder(
+        private val binding: StreamItemCommandBinding,
+        private val onCommandClicked: (Command) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(command: Command) {
-        binding.commandNameTextView.text = command.name.capitalize()
-        binding.commandQueryTextView.text = itemView.context.getString(
-            R.string.stream_command_command_template,
-            command.name,
-            command.args
-        )
-        binding.root.setOnClickListener { onCommandClicked(command) }
+        fun bind(command: Command) {
+            binding.commandNameTextView.text = command.name.capitalize()
+            binding.commandQueryTextView.text = itemView.context.getString(
+                R.string.stream_command_command_template,
+                command.name,
+                command.args
+            )
+            binding.root.setOnClickListener { onCommandClicked(command) }
+        }
     }
 }

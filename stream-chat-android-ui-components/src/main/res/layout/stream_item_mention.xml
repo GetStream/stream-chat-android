@@ -46,6 +46,7 @@
         android:layout_width="@dimen/stream_mention_icon_size"
         android:layout_height="@dimen/stream_mention_icon_size"
         android:src="@drawable/stream_ic_mention"
+        app:tint="@color/stream_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

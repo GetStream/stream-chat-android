@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="stream_blue">#006CFF</color>
+
     <color name="stream_text_black">@color/stream_black</color>
     <color name="stream_text_grey">#808080</color>
 
