@@ -14,7 +14,6 @@ import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -63,7 +62,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
         )
         return chatDomainImpl
     }
-    
+
     @Before
     override fun setup() {
         Dispatchers.setMain(testCoroutineDispatcher)
