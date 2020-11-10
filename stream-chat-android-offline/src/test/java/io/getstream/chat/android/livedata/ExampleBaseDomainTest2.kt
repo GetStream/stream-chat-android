@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 internal class ExampleBaseDomainTest2 : BaseDomainTest2() {
     @Test
-    internal fun `test that room testing setup is configured correctly`() = testIODispatcher.runBlockingTest {
+    internal fun `test that room testing setup is configured correctly`() = runBlockingTest {
         testIOScope.launch {
             chatDomainImpl.repos.channels.select(listOf(data.channel1.cid))
             queryControllerImpl.query(10)
