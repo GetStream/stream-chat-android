@@ -832,7 +832,7 @@ internal class ChannelControllerImpl(
 
     private suspend fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
-        _messages.setOnUi { newMessages }
+        _messages.setOnUi(newMessages)
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
@@ -1094,11 +1094,11 @@ internal class ChannelControllerImpl(
                 return@let // no need to post the incoming read value to the UI if it isn't newer
             }
 
-            _read.setOnUi { incomingRead }
+            _read.setOnUi(incomingRead)
         }
 
         // always post the newly updated map
-        _reads.setOnUi { previousUserIdToReadMap + incomingUserIdToReadMap }
+        _reads.setOnUi(previousUserIdToReadMap + incomingUserIdToReadMap)
     }
 
     private suspend fun updateRead(
@@ -1146,15 +1146,15 @@ internal class ChannelControllerImpl(
     }
 
     private suspend fun setMembers(members: List<Member>) {
-        _members.setOnUi { (_members.value ?: mapOf()) + members.associateBy(Member::getUserId) }
+        _members.setOnUi((_members.value ?: mapOf()) + members.associateBy(Member::getUserId))
     }
 
     private suspend fun updateChannelData(channel: Channel) {
-        _channelData.setOnUi { ChannelData(channel) }
+        _channelData.setOnUi(ChannelData(channel))
     }
 
     private suspend fun setWatchers(watchers: List<User>) {
-        _watchers.setOnUi { (_watchers.value ?: mapOf()) + watchers.associateBy { it.id } }
+        _watchers.setOnUi((_watchers.value ?: mapOf()) + watchers.associateBy { it.id })
     }
 
     suspend fun editMessage(message: Message): Result<Message> {

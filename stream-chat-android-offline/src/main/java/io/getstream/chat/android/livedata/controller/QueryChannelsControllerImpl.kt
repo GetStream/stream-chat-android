@@ -43,8 +43,10 @@ internal class QueryChannelsControllerImpl(
     override val endOfChannels: LiveData<Boolean> = _endOfChannels
 
     private val _channels = MutableLiveData<Map<String, Channel>>()
+
     // Keep the channel list locally sorted
-    override var channels: LiveData<List<Channel>> = Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
+    override var channels: LiveData<List<Channel>> =
+        Transformations.map(_channels) { cMap -> cMap.values.sortedWith(sort.comparator) }
 
     private val logger = ChatLogger.get("ChatDomain QueryChannelsController")
 
@@ -76,7 +78,7 @@ internal class QueryChannelsControllerImpl(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-    override suspend fun addChannelIfFilterMatches(
+    internal suspend fun addChannelIfFilterMatches(
         channel: Channel
     ) {
         if (newChannelEventFilter(channel, filter)) {
@@ -146,13 +148,11 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-        val queryChannelsSpec =
-            domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
+        val query = domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
+            ?: return null
 
-        return queryChannelsSpec?.let { query ->
-            domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
-                logger.logI("found ${it.size} channels in offline storage")
-            }
+        return domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
+            logger.logI("found ${it.size} channels in offline storage")
         }
     }
 
@@ -252,7 +252,10 @@ internal class QueryChannelsControllerImpl(
      * @param isFirstPage if it's the first page we set/replace the list of results. if it's not the first page we add to the list
      *
      */
-    internal suspend fun updateChannelsAndQueryResults(channels: List<Channel>?, isFirstPage: Boolean) {
+    internal suspend fun updateChannelsAndQueryResults(
+        channels: List<Channel>?,
+        isFirstPage: Boolean
+    ) {
         if (channels != null) {
             val cIds = channels.map { it.cid }
             // initialize channel repos for all of these channels
