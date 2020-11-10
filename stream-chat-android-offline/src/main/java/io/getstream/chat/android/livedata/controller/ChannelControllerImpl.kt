@@ -15,6 +15,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
@@ -238,9 +239,14 @@ internal class ChannelControllerImpl(
         return Result(false, null)
     }
 
-    internal suspend fun markRead(): Result<Boolean> {
+    /**
+     * Marks the channel as read by the current user
+     *
+     * @return whether the channel was marked as read or not
+     */
+    internal suspend fun markRead(): Boolean {
         if (!getConfig().isReadEvents) {
-            return Result(false, null)
+            return false
         }
 
         // throttle the mark read
@@ -248,28 +254,28 @@ internal class ChannelControllerImpl(
 
         if (messages.isEmpty()) {
             logger.logI("No messages; nothing to mark read.")
-            return Result(false, null)
+            return false
         }
 
-        val last = messages.last()
-        val lastMessageDate = last.let { it.createdAt ?: it.createdLocallyAt }
-        val shouldUpdate =
-            lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
+        return messages
+            .last()
+            .let { it.createdAt ?: it.createdLocallyAt }
+            .let { lastMessageDate ->
+                val shouldUpdate =
+                    lastMarkReadEvent == null || lastMessageDate?.after(lastMarkReadEvent) == true
 
-        if (!shouldUpdate) {
-            logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
-            return Result(false, null)
-        }
+                if (!shouldUpdate) {
+                    logger.logI("Last message date [$lastMessageDate] is not after last read event [$lastMarkReadEvent]; no need to update.")
+                    return false
+                }
 
-        lastMarkReadEvent = lastMessageDate
+                lastMarkReadEvent = lastMessageDate
 
-        // optimistic UI update via LiveData
-        updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
+                // update live data with new read
+                updateRead(ChannelUserRead(domainImpl.currentUser, lastMarkReadEvent))
 
-        // generates MessageReadEvent & triggers offline storage updates
-        client.markMessageRead(channelType, channelId, last.id).execute()
-
-        return Result(true, null)
+                shouldUpdate
+            }
     }
 
     private fun sortedMessages(): List<Message> {
@@ -985,6 +991,10 @@ internal class ChannelControllerImpl(
             is NotificationMarkReadEvent -> {
                 updateRead(ChannelUserRead(event.user, event.createdAt))
                 event.watcherCount?.let { setWatcherCount(it) }
+            }
+
+            is MarkAllReadEvent -> {
+                updateRead(ChannelUserRead(event.user, event.createdAt))
             }
         }
     }

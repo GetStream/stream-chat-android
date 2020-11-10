@@ -77,6 +77,10 @@ public class ChannelsViewModel(
         chatDomain.useCases.hideChannel(channel.cid, true).enqueue()
     }
 
+    public fun markAllRead() {
+        chatDomain.useCases.markAllRead().enqueue()
+    }
+
     private fun requestMoreChannels() {
         chatDomain.useCases.queryChannelsLoadMore(filter, sort).enqueue()
     }
