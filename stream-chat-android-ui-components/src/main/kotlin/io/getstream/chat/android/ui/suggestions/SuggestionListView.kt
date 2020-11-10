@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ConcatAdapter
 import io.getstream.chat.android.client.models.Command
 import io.getstream.chat.android.client.models.User
