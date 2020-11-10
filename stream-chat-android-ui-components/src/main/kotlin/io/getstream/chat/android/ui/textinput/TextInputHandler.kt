@@ -6,15 +6,19 @@ import android.widget.EditText
 
 internal object TextInputHandler {
 
+    var containsText = false
+
     fun bindEditText(editText: EditText, containsTextListener: () -> Unit = {}, emptyTextListener: () -> Unit = {}) {
         object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
             }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
-                if (charSequence?.length == 0) {
+                if (charSequence?.length == 0 && containsText) {
                     emptyTextListener()
-                } else {
+                    containsText = false
+                } else if (!containsText) {
+                    containsText = true
                     containsTextListener()
                 }
             }

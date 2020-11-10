@@ -51,25 +51,43 @@
         android:textColor="@color/stream_black"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/iv_send_message"
+        app:layout_constraintEnd_toStartOf="@id/fl_send_button_container"
         app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Hi. I am a text, did you notice?"
         />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/iv_send_message"
-        android:layout_width="@dimen/stream_attachment_button_width"
-        android:layout_height="@dimen/stream_attachment_button_height"
-        android:src="@drawable/stream_ic_filled_right_arrow"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+    <FrameLayout
+        android:id="@+id/fl_send_button_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/et_message_text_input"
-        android:visibility="visible"
-        tools:src="@drawable/stream_ic_filled_right_arrow"
-        tools:visibility="visible"
-        />
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_send_message_disabled"
+            android:layout_width="@dimen/stream_attachment_button_width"
+            android:layout_height="@dimen/stream_attachment_button_height"
+            android:src="@drawable/stream_ic_filled_right_arrow"
+            android:visibility="visible"
+            tools:src="@drawable/stream_ic_filled_right_arrow"
+            tools:visibility="gone"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_send_message_enabled"
+            android:layout_width="@dimen/stream_attachment_button_width"
+            android:layout_height="@dimen/stream_attachment_button_height"
+            android:src="@drawable/stream_ic_filled_up_arrow"
+            android:visibility="visible"
+            tools:src="@drawable/stream_ic_filled_up_arrow"
+            tools:visibility="visible"
+            />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

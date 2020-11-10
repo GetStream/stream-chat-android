@@ -1,5 +1,7 @@
 package io.getstream.chat.android.ui.textinput
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
@@ -20,6 +22,8 @@ private const val NO_ICON_MESSAGE_DISABLED_STATE =
 private const val NO_ICON_MESSAGE_ENABLED_STATE =
     "No icon for enabled state of send message button. Please set it in XML."
 
+private const val ANIMATION_DURATION = 100L
+
 public class StreamMessageInputView : ConstraintLayout {
 
     public constructor(context: Context) : super(context) {
@@ -37,6 +41,8 @@ public class StreamMessageInputView : ConstraintLayout {
     ) {
         init(context, attrs)
     }
+
+    private var currentAnimatorSet: AnimatorSet? = null
 
     private lateinit var binding: StreamMessageInputBinding
 
@@ -130,11 +136,37 @@ public class StreamMessageInputView : ConstraintLayout {
     }
 
     private fun showSendMessageEnabled() {
-        binding.ivSendMessage.setImageDrawable(iconEnabledSendButtonDrawable)
+        val fadeAnimator = binding.ivSendMessageDisabled.run {
+            ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
+        }
+
+        val appearAnimator = binding.ivSendMessageEnabled.run {
+            ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
+        }
+
+        currentAnimatorSet?.cancel()
+
+        currentAnimatorSet = AnimatorSet().apply {
+            playSequentially(fadeAnimator, appearAnimator)
+            start()
+        }
     }
 
     private fun showSendMessageDisabled() {
-        binding.ivSendMessage.setImageDrawable(iconDisabledSendButtonDrawable)
+        val fadeAnimator = binding.ivSendMessageEnabled.run {
+            ObjectAnimator.ofFloat(this, "alpha", alpha, 0F).setDuration(ANIMATION_DURATION)
+        }
+
+        val appearAnimator = binding.ivSendMessageDisabled.run {
+            ObjectAnimator.ofFloat(this, "alpha", alpha, 1F).setDuration(ANIMATION_DURATION)
+        }
+
+        currentAnimatorSet?.cancel()
+
+        currentAnimatorSet = AnimatorSet().apply {
+            playSequentially(fadeAnimator, appearAnimator)
+            start()
+        }
     }
 
     private fun configTextInput(typedArray: TypedArray) {
@@ -212,6 +244,10 @@ public class StreamMessageInputView : ConstraintLayout {
             )
         )
 
-        binding.ivSendMessage.setImageDrawable(iconDisabledSendButtonDrawable)
+        binding.ivSendMessageDisabled.setImageDrawable(iconDisabledSendButtonDrawable)
+        binding.ivSendMessageEnabled.setImageDrawable(iconEnabledSendButtonDrawable)
+
+        binding.ivSendMessageDisabled.alpha = 1F
+        binding.ivSendMessageEnabled.alpha = 0F
     }
 }
