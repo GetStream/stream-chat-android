@@ -2,83 +2,99 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/startupFragment">
+    app:startDestination="@id/startupFragment"
+    >
 
     <fragment
         android:id="@+id/startupFragment"
         android:name="io.getstream.chat.ui.sample.feature.startup.StartupFragment"
-        android:label="StartupFragment">
+        android:label="StartupFragment"
+        >
         <action
             android:id="@+id/action_startupFragmentFragment_to_userLoginFragment"
             app:destination="@id/userLoginFragment"
             app:popUpTo="@+id/startupFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true"
+            />
 
         <action
             android:id="@+id/action_startupFragmentFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/userLoginFragment"
         android:name="io.getstream.chat.ui.sample.feature.user_login.UserLoginFragment"
-        android:label="UserLoginFragment">
+        android:label="UserLoginFragment"
+        >
         <action
             android:id="@+id/action_userLoginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            />
 
         <action
             android:id="@+id/action_userLoginFragment_to_customLoginFragment"
-            app:destination="@id/customLoginFragment" />
+            app:destination="@id/customLoginFragment"
+            />
 
         <action
             android:id="@+id/action_userLoginFragment_to_componentBrowserHomeFragment"
-            app:destination="@id/componentBrowserHomeFragment" />
+            app:destination="@id/componentBrowserHomeFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/customLoginFragment"
         android:name="io.getstream.chat.ui.sample.feature.custom_login.CustomLoginFragment"
-        android:label="CustomLoginFragment">
+        android:label="CustomLoginFragment"
+        >
         <action
             android:id="@+id/action_customLoginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="io.getstream.chat.ui.sample.feature.home.HomeFragment"
-        android:label="HomeFragment">
+        android:label="HomeFragment"
+        >
         <action
             android:id="@+id/action_to_userLoginFragment"
             app:destination="@id/userLoginFragment"
             app:launchSingleTop="true"
             app:popUpTo="@+id/main_navigation"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="true"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/directChatFragment"
         android:name="io.getstream.chat.ui.sample.feature.direct_chat.DirectChatFragment"
-        android:label="NewChatFragment" />
+        android:label="NewChatFragment"
+        />
 
     <fragment
         android:id="@+id/groupChatFragment"
         android:name="io.getstream.chat.ui.sample.feature.group_chat.GroupChatFragment"
-        android:label="NewGroupChatFragment" />
+        android:label="NewGroupChatFragment"
+        />
 
     <fragment
         android:id="@+id/componentBrowserHomeFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment"
-        android:label="ComponentBrowserHomeFragment" >
+        android:label="ComponentBrowserHomeFragment"
+        >
         <action
             android:id="@+id/action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment"
-            app:destination="@id/componentBrowserAvatarViewFragment" />
+            app:destination="@id/componentBrowserAvatarViewFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/componentBrowserAvatarViewFragment"
         android:name="io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment"
-        android:label="ComponentBrowserAvatarViewFragment" />
-
+        android:label="ComponentBrowserAvatarViewFragment"
+        />
 </navigation>

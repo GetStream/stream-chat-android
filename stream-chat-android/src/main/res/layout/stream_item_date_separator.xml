@@ -8,7 +8,8 @@
     android:layout_marginTop="@dimen/stream_date_separator_margin_top"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    app:layout_constraintTop_toTopOf="parent"
+    >
 
     <ImageView
         android:id="@+id/iv_line_left"
@@ -19,7 +20,8 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_date"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <ImageView
         android:id="@+id/iv_line_right"
@@ -30,19 +32,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_date"
         app:layout_constraintTop_toTopOf="@+id/tv_date"
-        tools:ignore="ContentDescription" />
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/tv_date"
-        android:layout_marginStart="@dimen/stream_date_separator_line_margin_start"
-        android:layout_marginEnd="@dimen/stream_date_separator_line_margin_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_date_separator_line_margin_start"
+        android:layout_marginEnd="@dimen/stream_date_separator_line_margin_end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/iv_line_right"
         app:layout_constraintStart_toEndOf="@+id/iv_line_left"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

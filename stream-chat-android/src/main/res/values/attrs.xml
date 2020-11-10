@@ -1,176 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--AvatarGroupView-->
-    <attr name="streamAvatarWidth" format="dimension|reference"/>
-    <attr name="streamAvatarHeight" format="dimension|reference"/>
+    <attr name="streamAvatarWidth" format="dimension|reference" />
+    <attr name="streamAvatarHeight" format="dimension|reference" />
 
-    <attr name="streamAvatarBorderWidth" format="dimension|reference"/>
-    <attr name="streamAvatarBorderColor" format="color|reference"/>
+    <attr name="streamAvatarBorderWidth" format="dimension|reference" />
+    <attr name="streamAvatarBorderColor" format="color|reference" />
 
-    <attr name="streamAvatarBackGroundColor" format="color|reference"/>
+    <attr name="streamAvatarBackGroundColor" format="color|reference" />
 
-    <attr name="streamAvatarTextSize" format="dimension|reference"/>
-    <attr name="streamAvatarTextColor" format="color|reference"/>
-    <attr name="streamAvatarTextFont" format="reference"/>
-    <attr name="streamAvatarTextFontAssets" format="string"/>
+    <attr name="streamAvatarTextSize" format="dimension|reference" />
+    <attr name="streamAvatarTextColor" format="color|reference" />
+    <attr name="streamAvatarTextFont" format="reference" />
+    <attr name="streamAvatarTextFontAssets" format="string" />
     <attr name="streamAvatarTextStyle">
-        <flag name="normal" value="0"/>
-        <flag name="bold" value="1"/>
-        <flag name="italic" value="2"/>
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
     </attr>
 
-    <attr name="streamChannelWithOutNameTitleText" format="string"/>
+    <attr name="streamChannelWithOutNameTitleText" format="string" />
     <!--ReadStateView-->
-    <attr name="streamShowReadState" format="boolean"/>
+    <attr name="streamShowReadState" format="boolean" />
 
-    <attr name="streamReadStateAvatarWidth" format="dimension|reference"/>
-    <attr name="streamReadStateAvatarHeight" format="dimension|reference"/>
+    <attr name="streamReadStateAvatarWidth" format="dimension|reference" />
+    <attr name="streamReadStateAvatarHeight" format="dimension|reference" />
 
-    <attr name="streamReadStateTextSize" format="dimension|reference"/>
-    <attr name="streamReadStateTextColor" format="color|reference"/>
-    <attr name="streamReadStateTextFont" format="reference"/>
-    <attr name="streamReadStateTextFontAssets" format="string"/>
+    <attr name="streamReadStateTextSize" format="dimension|reference" />
+    <attr name="streamReadStateTextColor" format="color|reference" />
+    <attr name="streamReadStateTextFont" format="reference" />
+    <attr name="streamReadStateTextFontAssets" format="string" />
     <attr name="streamReadStateTextStyle">
-        <flag name="normal" value="0"/>
-        <flag name="bold" value="1"/>
-        <flag name="italic" value="2"/>
+        <flag name="normal" value="0" />
+        <flag name="bold" value="1" />
+        <flag name="italic" value="2" />
     </attr>
 
     <!--ChannelListView-->
     <declare-styleable name="ChannelListView">
         <!--AvatarGroupView-->
-        <attr name="streamAvatarWidth"/>
-        <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBorderWidth"/>
-        <attr name="streamAvatarBorderColor"/>
-        <attr name="streamAvatarBackGroundColor"/>
-        <attr name="streamAvatarTextSize"/>
-        <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFont"/>
-        <attr name="streamAvatarTextFontAssets"/>
-        <attr name="streamAvatarTextStyle"/>
-        <attr name="streamChannelWithOutNameTitleText"/>
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
+        <attr name="streamChannelWithOutNameTitleText" />
         <!--ReadStateView-->
-        <attr name="streamShowReadState"/>
-        <attr name="streamReadStateAvatarWidth"/>
-        <attr name="streamReadStateAvatarHeight"/>
-        <attr name="streamReadStateTextSize"/>
-        <attr name="streamReadStateTextColor"/>
-        <attr name="streamReadStateTextFont"/>
-        <attr name="streamReadStateTextFontAssets"/>
-        <attr name="streamReadStateTextStyle"/>
+        <attr name="streamShowReadState" />
+        <attr name="streamReadStateAvatarWidth" />
+        <attr name="streamReadStateAvatarHeight" />
+        <attr name="streamReadStateTextSize" />
+        <attr name="streamReadStateTextColor" />
+        <attr name="streamReadStateTextFont" />
+        <attr name="streamReadStateTextFontAssets" />
+        <attr name="streamReadStateTextStyle" />
         <!--Title-->
-        <attr name="streamChannelTitleTextSize" format="dimension|reference"/>
-        <attr name="streamChannelTitleTextColor" format="color|reference"/>
-        <attr name="streamChannelTitleUnreadTextColor" format="color|reference"/>
-        <attr name="streamChannelTitleTextFont" format="reference"/>
-        <attr name="streamChannelTitleTextFontAssets" format="string"/>
+        <attr name="streamChannelTitleTextSize" format="dimension|reference" />
+        <attr name="streamChannelTitleTextColor" format="color|reference" />
+        <attr name="streamChannelTitleUnreadTextColor" format="color|reference" />
+        <attr name="streamChannelTitleTextFont" format="reference" />
+        <attr name="streamChannelTitleTextFontAssets" format="string" />
         <attr name="streamChannelTitleTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <attr name="streamChannelTitleUnreadTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <!--Last Message-->
-        <attr name="streamLastMessageTextSize" format="dimension|reference"/>
-        <attr name="streamLastMessageTextColor" format="color|reference"/>
-        <attr name="streamLastMessageUnreadTextColor" format="color|reference"/>
-        <attr name="streamLastMessageTextFont" format="reference"/>
-        <attr name="streamLastMessageTextFontAssets" format="string"/>
+        <attr name="streamLastMessageTextSize" format="dimension|reference" />
+        <attr name="streamLastMessageTextColor" format="color|reference" />
+        <attr name="streamLastMessageUnreadTextColor" format="color|reference" />
+        <attr name="streamLastMessageTextFont" format="reference" />
+        <attr name="streamLastMessageTextFontAssets" format="string" />
         <attr name="streamLastMessageTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <attr name="streamLastMessageUnreadTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <!--LastMessageDate-->
-        <attr name="streamLastMessageDateTextSize" format="dimension|reference"/>
-        <attr name="streamLastMessageDateTextColor" format="color|reference"/>
-        <attr name="streamLastMessageDateUnreadTextColor" format="color|reference"/>
-        <attr name="streamLastMessageDateTextFont" format="reference"/>
-        <attr name="streamLastMessageDateTextFontAssets" format="string"/>
+        <attr name="streamLastMessageDateTextSize" format="dimension|reference" />
+        <attr name="streamLastMessageDateTextColor" format="color|reference" />
+        <attr name="streamLastMessageDateUnreadTextColor" format="color|reference" />
+        <attr name="streamLastMessageDateTextFont" format="reference" />
+        <attr name="streamLastMessageDateTextFontAssets" format="string" />
         <attr name="streamLastMessageDateTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <attr name="streamLastMessageDateUnreadTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="streamChannelPreviewLayout" format="reference"/>
+        <attr name="streamChannelPreviewLayout" format="reference" />
     </declare-styleable>
     <declare-styleable name="ChannelsView">
-    <!--Custom ChannelListLayout-->
+        <!--Custom ChannelListLayout-->
         <!-- Text of the empty state label -->
-        <attr name="streamChannelsEmptyStateLabelText" format="string"/>
+        <attr name="streamChannelsEmptyStateLabelText" format="string" />
     </declare-styleable>
     <!--MessageInputView-->
     <declare-styleable name="MessageInputView">
         <!--AvatarGroupView(automention)-->
-        <attr name="streamAvatarWidth"/>
-        <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBackGroundColor"/>
-        <attr name="streamAvatarTextSize"/>
-        <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFont"/>
-        <attr name="streamAvatarTextFontAssets"/>
-        <attr name="streamAvatarTextStyle"/>
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
         <!--Attachment Button-->
-        <attr name="streamShowAttachmentButton" format="boolean"/>
-        <attr name="streamAttachmentButtonDefaultIconColor" format="color|reference"/>
-        <attr name="streamAttachmentButtonDefaultIconPressedColor" format="color|reference"/>
-        <attr name="streamAttachmentButtonDefaultIconDisabledColor" format="color|reference"/>
-        <attr name="streamAttachmentButtonSelectedIconColor" format="color|reference"/>
-        <attr name="streamAttachmentButtonIcon" format="reference"/>
-        <attr name="streamAttachmentButtonWidth" format="dimension|reference"/>
-        <attr name="streamAttachmentButtonHeight" format="dimension|reference"/>
+        <attr name="streamShowAttachmentButton" format="boolean" />
+        <attr name="streamAttachmentButtonDefaultIconColor" format="color|reference" />
+        <attr name="streamAttachmentButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="streamAttachmentButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="streamAttachmentButtonSelectedIconColor" format="color|reference" />
+        <attr name="streamAttachmentButtonIcon" format="reference" />
+        <attr name="streamAttachmentButtonWidth" format="dimension|reference" />
+        <attr name="streamAttachmentButtonHeight" format="dimension|reference" />
         <attr name="streamAttachmentCloseButtonBackground" format="reference" />
         <!--Send Button-->
-        <attr name="streamInputButtonDefaultIconColor" format="color|reference"/>
-        <attr name="streamInputButtonEditIconColor" format="color|reference"/>
-        <attr name="streamInputButtonDefaultIconPressedColor" format="color|reference"/>
-        <attr name="streamInputButtonDefaultIconDisabledColor" format="color|reference"/>
-        <attr name="streamInputButtonIcon" format="reference"/>
-        <attr name="streamInputButtonWidth" format="dimension|reference"/>
-        <attr name="streamInputButtonHeight" format="dimension|reference"/>
+        <attr name="streamInputButtonDefaultIconColor" format="color|reference" />
+        <attr name="streamInputButtonEditIconColor" format="color|reference" />
+        <attr name="streamInputButtonDefaultIconPressedColor" format="color|reference" />
+        <attr name="streamInputButtonDefaultIconDisabledColor" format="color|reference" />
+        <attr name="streamInputButtonIcon" format="reference" />
+        <attr name="streamInputButtonWidth" format="dimension|reference" />
+        <attr name="streamInputButtonHeight" format="dimension|reference" />
         <!--Input Text-->
-        <attr name="streamInputHint" format="string"/>
-        <attr name="streamInputTextSize" format="dimension|reference"/>
-        <attr name="streamInputTextColor" format="color|reference"/>
-        <attr name="streamInputTextFont" format="reference"/>
-        <attr name="streamInputTextFontAssets" format="string"/>
+        <attr name="streamInputHint" format="string" />
+        <attr name="streamInputTextSize" format="dimension|reference" />
+        <attr name="streamInputTextColor" format="color|reference" />
+        <attr name="streamInputTextFont" format="reference" />
+        <attr name="streamInputTextFontAssets" format="string" />
         <attr name="streamInputTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="streamInputHintColor" format="color|reference"/>
+        <attr name="streamInputHintColor" format="color|reference" />
         <!--Input Background-->
-        <attr name="streamInputBackground" format="reference"/>
-        <attr name="streamInputSelectedBackground" format="reference"/>
-        <attr name="streamInputEditBackground" format="reference"/>
+        <attr name="streamInputBackground" format="reference" />
+        <attr name="streamInputSelectedBackground" format="reference" />
+        <attr name="streamInputEditBackground" format="reference" />
 
-        <attr name="streamInputBackgroundTextSize" format="dimension|reference"/>
-        <attr name="streamInputBackgroundTextColor" format="color|reference"/>
-        <attr name="streamInputBackgroundTextFont" format="reference"/>
-        <attr name="streamInputBackgroundTextFontAssets" format="string"/>
+        <attr name="streamInputBackgroundTextSize" format="dimension|reference" />
+        <attr name="streamInputBackgroundTextColor" format="color|reference" />
+        <attr name="streamInputBackgroundTextFont" format="reference" />
+        <attr name="streamInputBackgroundTextFontAssets" format="string" />
         <attr name="streamInputBackgroundTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamSendAlsoToChannel" format="color|reference"/>
+        <attr name="streamSendAlsoToChannel" format="color|reference" />
     </declare-styleable>
     <!--MessageListView-->
     <declare-styleable name="MessageListView">
@@ -181,61 +181,61 @@
         <attr name="streamNewMessagesTextSingle" format="string" />
         <attr name="streamNewMessagesTextPlural" format="string" />
         <attr name="streamNewMessagesBehaviour" format="enum">
-            <enum name="scroll_to_bottom" value="0"/>
-            <enum name="count_new_messages" value="1"/>
+            <enum name="scroll_to_bottom" value="0" />
+            <enum name="count_new_messages" value="1" />
         </attr>
         <!--AvatarGroupView-->
-        <attr name="streamAvatarWidth"/>
-        <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBorderWidth"/>
-        <attr name="streamAvatarBorderColor"/>
-        <attr name="streamAvatarBackGroundColor"/>
-        <attr name="streamAvatarTextSize"/>
-        <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFont"/>
-        <attr name="streamAvatarTextFontAssets"/>
-        <attr name="streamAvatarTextStyle"/>
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
         <!--ReadStateView-->
-        <attr name="streamShowReadState"/>
-        <attr name="streamReadStateAvatarWidth"/>
-        <attr name="streamReadStateAvatarHeight"/>
-        <attr name="streamReadStateTextSize"/>
-        <attr name="streamReadStateTextColor"/>
-        <attr name="streamReadStateTextFont"/>
-        <attr name="streamReadStateTextFontAssets"/>
-        <attr name="streamReadStateTextStyle"/>
+        <attr name="streamShowReadState" />
+        <attr name="streamReadStateAvatarWidth" />
+        <attr name="streamReadStateAvatarHeight" />
+        <attr name="streamReadStateTextSize" />
+        <attr name="streamReadStateTextColor" />
+        <attr name="streamReadStateTextFont" />
+        <attr name="streamReadStateTextFontAssets" />
+        <attr name="streamReadStateTextStyle" />
         <!-- DeliveredStateView -->
-        <attr name="streamShowDeliveredState" format="boolean"/>
+        <attr name="streamShowDeliveredState" format="boolean" />
         <!--Reaction-->
-        <attr name="streamReactionEnabled" format="boolean"/>
+        <attr name="streamReactionEnabled" format="boolean" />
         <!--ReactionView-->
-        <attr name="streamReactionViewBgDrawable" format="reference"/>
-        <attr name="streamReactionViewBgColor" format="color"/>
-        <attr name="streamReactionViewEmojiSize" format="dimension|reference"/>
-        <attr name="streamReactionViewEmojiMargin" format="dimension|reference"/>
+        <attr name="streamReactionViewBgDrawable" format="reference" />
+        <attr name="streamReactionViewBgColor" format="color" />
+        <attr name="streamReactionViewEmojiSize" format="dimension|reference" />
+        <attr name="streamReactionViewEmojiMargin" format="dimension|reference" />
         <!--Reaction Dialog-->
-        <attr name="streamReactionInputbgColor" format="color"/>
-        <attr name="streamReactionInputEmojiSize" format="dimension|reference"/>
-        <attr name="streamReactionInputEmojiMargin" format="dimension|reference"/>
+        <attr name="streamReactionInputbgColor" format="color" />
+        <attr name="streamReactionInputEmojiSize" format="dimension|reference" />
+        <attr name="streamReactionInputEmojiMargin" format="dimension|reference" />
         <!--Message-->
-        <attr name="streamMessageTextSizeMine" format="dimension|reference"/>
-        <attr name="streamMessageTextSizeTheirs" format="dimension|reference"/>
+        <attr name="streamMessageTextSizeMine" format="dimension|reference" />
+        <attr name="streamMessageTextSizeTheirs" format="dimension|reference" />
 
-        <attr name="streamMessageTextColorMine" format="color"/>
-        <attr name="streamMessageTextColorTheirs" format="color"/>
-        <attr name="streamMessageTextFontMine" format="reference"/>
-        <attr name="streamMessageTextFontMineAssets" format="string"/>
-        <attr name="streamMessageTextFontTheirs" format="reference"/>
-        <attr name="streamMessageTextFontTheirsAssets" format="string"/>
+        <attr name="streamMessageTextColorMine" format="color" />
+        <attr name="streamMessageTextColorTheirs" format="color" />
+        <attr name="streamMessageTextFontMine" format="reference" />
+        <attr name="streamMessageTextFontMineAssets" format="string" />
+        <attr name="streamMessageTextFontTheirs" format="reference" />
+        <attr name="streamMessageTextFontTheirsAssets" format="string" />
         <attr name="streamMessageTextStyleMine">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
         <attr name="streamMessageTextStyleTheirs">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
         <attr name="streamMessageUserNameTextSize" format="dimension|reference" />
@@ -271,53 +271,53 @@
         <attr name="streamMessageBubbleDrawableMine" format="reference" />
         <attr name="streamMessageBubbleDrawableTheirs" format="reference" />
 
-        <attr name="streamMessageTopLeftCornerRadiusMine" format="dimension|reference"/>
-        <attr name="streamMessageTopRightCornerRadiusMine" format="dimension|reference"/>
-        <attr name="streamMessageBottomRightCornerRadiusMine" format="dimension|reference"/>
-        <attr name="streamMessageBottomLeftCornerRadiusMine" format="dimension|reference"/>
-        <attr name="streamMessageTopLeftCornerRadiusTheirs" format="dimension|reference"/>
-        <attr name="streamMessageTopRightCornerRadiusTheirs" format="dimension|reference"/>
-        <attr name="streamMessageBottomRightCornerRadiusTheirs" format="dimension|reference"/>
-        <attr name="streamMessageBottomLeftCornerRadiusTheirs" format="dimension|reference"/>
+        <attr name="streamMessageTopLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageTopRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageBottomRightCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageBottomLeftCornerRadiusMine" format="dimension|reference" />
+        <attr name="streamMessageTopLeftCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageTopRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageBottomRightCornerRadiusTheirs" format="dimension|reference" />
+        <attr name="streamMessageBottomLeftCornerRadiusTheirs" format="dimension|reference" />
 
-        <attr name="streamMessageBackgroundColorMine" format="color"/>
-        <attr name="streamMessageBackgroundColorTheirs" format="color"/>
-        <attr name="streamMessageBorderColorMine" format="color"/>
-        <attr name="streamMessageBorderColorTheirs" format="color"/>
-        <attr name="streamMessageBorderWidthMine" format="dimension|reference"/>
-        <attr name="streamMessageBorderWidthTheirs" format="dimension|reference"/>
-        <attr name="streamMessageLinkTextColorMine" format="color"/>
-        <attr name="streamMessageLinkTextColorTheirs" format="color"/>
+        <attr name="streamMessageBackgroundColorMine" format="color" />
+        <attr name="streamMessageBackgroundColorTheirs" format="color" />
+        <attr name="streamMessageBorderColorMine" format="color" />
+        <attr name="streamMessageBorderColorTheirs" format="color" />
+        <attr name="streamMessageBorderWidthMine" format="dimension|reference" />
+        <attr name="streamMessageBorderWidthTheirs" format="dimension|reference" />
+        <attr name="streamMessageLinkTextColorMine" format="color" />
+        <attr name="streamMessageLinkTextColorTheirs" format="color" />
         <!-- Attachment-->
-        <attr name="streamAttachmentTitleTextSizeMine" format="dimension|reference"/>
-        <attr name="streamAttachmentTitleTextColorMine" format="color"/>
-        <attr name="streamAttachmentTitleTextFontMine" format="reference"/>
-        <attr name="streamAttachmentTitleTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentTitleTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentTitleTextColorMine" format="color" />
+        <attr name="streamAttachmentTitleTextFontMine" format="reference" />
+        <attr name="streamAttachmentTitleTextFontAssetsMine" format="string" />
         <attr name="streamAttachmentTitleTextStyleMine">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentTitleTextSizeTheirs" format="dimension|reference"/>
-        <attr name="streamAttachmentTitleTextColorTheirs" format="color"/>
-        <attr name="streamAttachmentTitleTextFontTheirs" format="reference"/>
-        <attr name="streamAttachmentTitleTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentTitleTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentTitleTextColorTheirs" format="color" />
+        <attr name="streamAttachmentTitleTextFontTheirs" format="reference" />
+        <attr name="streamAttachmentTitleTextFontAssetsTheirs" format="string" />
         <attr name="streamAttachmentTitleTextStyleTheirs">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
         <attr name="streamAttachmentBackgroundColorMine" format="color" />
         <attr name="streamAttachmentBackgroundColorTheirs" format="color" />
-        <attr name="streamAttachmentBorderColorMine" format="color"/>
-        <attr name="streamAttachmentBorderColorTheirs" format="color"/>
+        <attr name="streamAttachmentBorderColorMine" format="color" />
+        <attr name="streamAttachmentBorderColorTheirs" format="color" />
 
         <attr name="streamAttachmentDescriptionTextSizeMine" format="dimension|reference" />
         <attr name="streamAttachmentDescriptionTextColorMine" format="color" />
-        <attr name="streamAttachmentDescriptionTextFontMine" format="reference"/>
-        <attr name="streamAttachmentDescriptionTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentDescriptionTextFontMine" format="reference" />
+        <attr name="streamAttachmentDescriptionTextFontAssetsMine" format="string" />
         <attr name="streamAttachmentDescriptionTextStyleMine">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
@@ -326,105 +326,105 @@
 
         <attr name="streamAttachmentDescriptionTextSizeTheirs" format="dimension|reference" />
         <attr name="streamAttachmentDescriptionTextColorTheirs" format="color" />
-        <attr name="streamAttachmentDescriptionTextFontTheirs" format="reference"/>
-        <attr name="streamAttachmentDescriptionTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentDescriptionTextFontTheirs" format="reference" />
+        <attr name="streamAttachmentDescriptionTextFontAssetsTheirs" format="string" />
         <attr name="streamAttachmentDescriptionTextStyleTheirs">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentFileSizeTextSizeMine" format="dimension|reference"/>
-        <attr name="streamAttachmentFileSizeTextColorMine" format="color"/>
-        <attr name="streamAttachmentFileSizeTextFontMine" format="reference"/>
-        <attr name="streamAttachmentFileSizeTextFontAssetsMine" format="string"/>
+        <attr name="streamAttachmentFileSizeTextSizeMine" format="dimension|reference" />
+        <attr name="streamAttachmentFileSizeTextColorMine" format="color" />
+        <attr name="streamAttachmentFileSizeTextFontMine" format="reference" />
+        <attr name="streamAttachmentFileSizeTextFontAssetsMine" format="string" />
         <attr name="streamAttachmentFileSizeTextStyleMine">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamAttachmentFileSizeTextSizeTheirs" format="dimension|reference"/>
-        <attr name="streamAttachmentFileSizeTextColorTheirs" format="color"/>
-        <attr name="streamAttachmentFileSizeTextFontTheirs" format="reference"/>
-        <attr name="streamAttachmentFileSizeTextFontAssetsTheirs" format="string"/>
+        <attr name="streamAttachmentFileSizeTextSizeTheirs" format="dimension|reference" />
+        <attr name="streamAttachmentFileSizeTextColorTheirs" format="color" />
+        <attr name="streamAttachmentFileSizeTextFontTheirs" format="reference" />
+        <attr name="streamAttachmentFileSizeTextFontAssetsTheirs" format="string" />
         <attr name="streamAttachmentFileSizeTextStyleTheirs">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="streamAttachmentPreviewMaxLines" format="integer"/>
+        <attr name="streamAttachmentPreviewMaxLines" format="integer" />
 
-        <attr name="streamThreadEnabled" format="boolean"/>
+        <attr name="streamThreadEnabled" format="boolean" />
         <!--Date Separator-->
-        <attr name="streamDateSeparatorDateTextSize" format="dimension|reference"/>
-        <attr name="streamDateSeparatorDateTextColor" format="color"/>
-        <attr name="streamDateSeparatorDateTextFont" format="reference"/>
-        <attr name="streamDateSeparatorDateTextFontAssets" format="string"/>
+        <attr name="streamDateSeparatorDateTextSize" format="dimension|reference" />
+        <attr name="streamDateSeparatorDateTextColor" format="color" />
+        <attr name="streamDateSeparatorDateTextFont" format="reference" />
+        <attr name="streamDateSeparatorDateTextFontAssets" format="string" />
         <attr name="streamDateSeparatorDateTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
-        <attr name="streamDateSeparatorLineWidth" format="dimension|reference"/>
-        <attr name="streamDateSeparatorLineColor" format="color"/>
-        <attr name="streamDateSeparatorLineDrawable" format="reference"/>
+        <attr name="streamDateSeparatorLineWidth" format="dimension|reference" />
+        <attr name="streamDateSeparatorLineColor" format="color" />
+        <attr name="streamDateSeparatorLineDrawable" format="reference" />
 
-        <attr name="streamUserNameShow" format="boolean"/>
-        <attr name="streamMessageDateShow" format="boolean"/>
-        <attr name="streamLoadMoreThreshold" format="integer"/>
+        <attr name="streamUserNameShow" format="boolean" />
+        <attr name="streamMessageDateShow" format="boolean" />
+        <attr name="streamLoadMoreThreshold" format="integer" />
 
         <!-- Text of the empty state label -->
-        <attr name="streamMessagesEmptyStateLabelText" format="string"/>
+        <attr name="streamMessagesEmptyStateLabelText" format="string" />
 
     </declare-styleable>
     <!--ChannelHeaderView-->
     <declare-styleable name="ChannelHeaderView">
         <!--AvatarGroupView-->
-        <attr name="streamChannelHeaderAvatarShow" format="boolean"/>
-        <attr name="streamAvatarWidth"/>
-        <attr name="streamAvatarHeight"/>
-        <attr name="streamAvatarBorderWidth"/>
-        <attr name="streamAvatarBorderColor"/>
-        <attr name="streamAvatarBackGroundColor"/>
-        <attr name="streamAvatarTextSize"/>
-        <attr name="streamAvatarTextColor"/>
-        <attr name="streamAvatarTextFont"/>
-        <attr name="streamAvatarTextFontAssets"/>
-        <attr name="streamAvatarTextStyle"/>
-        <attr name="streamChannelWithOutNameTitleText"/>
-        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference"/>
-        <attr name="streamChannelHeaderTitleTextColor" format="color|reference"/>
-        <attr name="streamChannelHeaderTitleTextFont" format="reference"/>
-        <attr name="streamChannelHeaderTitleTextFontAssets" format="string"/>
+        <attr name="streamChannelHeaderAvatarShow" format="boolean" />
+        <attr name="streamAvatarWidth" />
+        <attr name="streamAvatarHeight" />
+        <attr name="streamAvatarBorderWidth" />
+        <attr name="streamAvatarBorderColor" />
+        <attr name="streamAvatarBackGroundColor" />
+        <attr name="streamAvatarTextSize" />
+        <attr name="streamAvatarTextColor" />
+        <attr name="streamAvatarTextFont" />
+        <attr name="streamAvatarTextFontAssets" />
+        <attr name="streamAvatarTextStyle" />
+        <attr name="streamChannelWithOutNameTitleText" />
+        <attr name="streamChannelHeaderTitleTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderTitleTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderTitleTextFont" format="reference" />
+        <attr name="streamChannelHeaderTitleTextFontAssets" format="string" />
         <attr name="streamChannelHeaderTitleTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamChannelHeaderLastActiveShow" format="boolean"/>
-        <attr name="streamChannelHeaderLastActiveTextSize" format="dimension|reference"/>
-        <attr name="streamChannelHeaderLastActiveTextColor" format="color|reference"/>
-        <attr name="streamChannelHeaderLastActiveTextFont" format="reference"/>
-        <attr name="streamChannelHeaderLastActiveTextFontAssets" format="string"/>
+        <attr name="streamChannelHeaderLastActiveShow" format="boolean" />
+        <attr name="streamChannelHeaderLastActiveTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderLastActiveTextColor" format="color|reference" />
+        <attr name="streamChannelHeaderLastActiveTextFont" format="reference" />
+        <attr name="streamChannelHeaderLastActiveTextFontAssets" format="string" />
         <attr name="streamChannelHeaderLastActiveTextStyle">
-            <flag name="normal" value="0"/>
-            <flag name="bold" value="1"/>
-            <flag name="italic" value="2"/>
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
-        <attr name="streamChannelHeaderBackButtonBackground" format="reference"/>
+        <attr name="streamChannelHeaderBackButtonBackground" format="reference" />
 
-        <attr name="streamChannelHeaderOfflineText" format="string"/>
-        <attr name="streamChannelHeaderBackButtonShow" format="boolean"/>
+        <attr name="streamChannelHeaderOfflineText" format="string" />
+        <attr name="streamChannelHeaderBackButtonShow" format="boolean" />
 
-        <attr name="streamChannelHeaderOptionsButtonBackground" format="reference"/>
-        <attr name="streamChannelHeaderOptionsButtonShow" format="boolean"/>
-        <attr name="streamChannelHeaderOptionsButtonTextSize" format="dimension|reference"/>
-        <attr name="streamChannelHeaderOptionsButtonWidth" format="dimension|reference"/>
-        <attr name="streamChannelHeaderOptionsButtonHeight" format="dimension|reference"/>
+        <attr name="streamChannelHeaderOptionsButtonBackground" format="reference" />
+        <attr name="streamChannelHeaderOptionsButtonShow" format="boolean" />
+        <attr name="streamChannelHeaderOptionsButtonTextSize" format="dimension|reference" />
+        <attr name="streamChannelHeaderOptionsButtonWidth" format="dimension|reference" />
+        <attr name="streamChannelHeaderOptionsButtonHeight" format="dimension|reference" />
 
-        <attr name="streamChannelHeaderActiveBadgeShow" format="boolean"/>
+        <attr name="streamChannelHeaderActiveBadgeShow" format="boolean" />
     </declare-styleable>
 </resources>

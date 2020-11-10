@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <RelativeLayout
         android:id="@+id/reactionsContainer"
@@ -14,7 +15,8 @@
         android:paddingEnd="10dp"
         app:layout_constraintBottom_toTopOf="@id/messageActionButtons"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reactionsRecyclerView"
@@ -24,7 +26,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/stream_item_dialog_reaction" />
+            tools:listitem="@layout/stream_item_dialog_reaction"
+            />
     </RelativeLayout>
 
     <LinearLayout
@@ -37,11 +40,13 @@
         android:paddingBottom="19dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        >
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_height="15dp"
+            />
 
         <LinearLayout
             android:id="@+id/startThreadButton"
@@ -50,16 +55,19 @@
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:src="@drawable/stream_ic_reply" />
+                android:src="@drawable/stream_ic_reply"
+                />
 
             <TextView
                 android:layout_width="34dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <TextView
                 style="@style/text"
@@ -67,7 +75,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Start a thread"
-                android:textColor="#8A000000" />
+                android:textColor="#8A000000"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -77,16 +86,19 @@
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:src="@drawable/stream_ic_copy" />
+                android:src="@drawable/stream_ic_copy"
+                />
 
             <TextView
                 android:layout_width="34dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <TextView
                 style="@style/text"
@@ -94,7 +106,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Copy"
-                android:textColor="#8A000000" />
+                android:textColor="#8A000000"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -104,16 +117,19 @@
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:src="@drawable/stream_ic_flag" />
+                android:src="@drawable/stream_ic_flag"
+                />
 
             <TextView
                 android:layout_width="34dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <TextView
                 style="@style/text"
@@ -121,7 +137,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Flag"
-                android:textColor="#8A000000" />
+                android:textColor="#8A000000"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -131,16 +148,19 @@
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:src="@drawable/stream_ic_edit" />
+                android:src="@drawable/stream_ic_edit"
+                />
 
             <TextView
                 android:layout_width="34dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <TextView
                 style="@style/text"
@@ -148,7 +168,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Edit"
-                android:textColor="#8A000000" />
+                android:textColor="#8A000000"
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -158,16 +179,19 @@
             android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            >
 
             <ImageView
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:src="@drawable/stream_ic_delete" />
+                android:src="@drawable/stream_ic_delete"
+                />
 
             <TextView
                 android:layout_width="34dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                />
 
             <TextView
                 style="@style/text"
@@ -175,11 +199,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Delete"
-                android:textColor="#8A000000" />
+                android:textColor="#8A000000"
+                />
         </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="19dp" />
+            android:layout_height="19dp"
+            />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-        android:color="#66EEEEEE">
+    android:color="#66EEEEEE"
+    >
 
     <item>
         <selector android:constantSize="true">
@@ -8,11 +9,12 @@
                 <shape android:shape="oval">
 
                     <!-- The drawable is used as a mask, so the color is overridden-->
-                    <solid android:color="#66EEEEEE"/>
+                    <solid android:color="#66EEEEEE" />
 
                     <size
                         android:width="@dimen/stream_exomedia_leanback_ripple_selector_size"
-                        android:height="@dimen/stream_exomedia_leanback_ripple_selector_size"/>
+                        android:height="@dimen/stream_exomedia_leanback_ripple_selector_size"
+                        />
                 </shape>
             </item>
         </selector>
