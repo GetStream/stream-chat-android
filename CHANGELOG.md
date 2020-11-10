@@ -7,6 +7,9 @@ Added new MessageInputView structure
 ## stream-chat-android
 - Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependencies
 - Replace Glide with Coil - SDK doesn't depend on Glide anymore.
+- Remove `BaseStyle` class and extract it's properties into `AvatarStyle` and `ReadStateStyle`.
+    - Use composition with `AvatarStyle` and `ReadStateStyle` instead of inheriting from `BaseStyle`.
+    - Convert to kotlin: `ReadStateView`, `MessageListViewStyle`
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
