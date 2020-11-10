@@ -13,25 +13,25 @@ internal class MarkAllReadImplTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun markAllRead() = runBlocking {
-        // set up unread states
-        chatDomainImpl.allActiveChannels().forEach { channel ->
-            channel.handleEvent(data.newMessageFromUser2)
-            channel.unreadCount
-                .getOrAwaitValue()
-                .let(Truth::assertThat)
-                .isEqualTo(1)
-        }
+        chatDomainImpl.allActiveChannels().let { activeChannels ->
 
-        // mark all as read
-        chatDomainImpl.useCases.markAllRead().execute()
+            // set up unread states
+            activeChannels.forEach { channel ->
+                channel.handleEvent(data.newMessageFromUser2)
+                channel.unreadCount.getOrAwaitValue().let { unreadCount ->
+                    Truth.assertThat(unreadCount).isEqualTo(1)
+                }
+            }
 
-        // verify result
-        chatDomainImpl.allActiveChannels().forEach { channel ->
-            channel.handleEvent(data.newMessageFromUser2)
-            channel.unreadCount
-                .getOrAwaitValue()
-                .let(Truth::assertThat)
-                .isEqualTo(0)
+            // mark all as read
+            chatDomainImpl.useCases.markAllRead().execute()
+
+            // verify result
+            activeChannels.forEach { channel ->
+                channel.unreadCount.getOrAwaitValue().let { unreadCount ->
+                    Truth.assertThat(unreadCount).isEqualTo(0)
+                }
+            }
         }
     }
 }

@@ -14,19 +14,15 @@ public interface MarkAllRead {
 
 internal data class MarkAllReadImpl(private val domain: ChatDomainImpl) : MarkAllRead {
     override fun invoke(): Call<Boolean> = CoroutineCall(domain.scope) {
-        domain.scope.let { scope ->
-            scope.async(Dispatchers.IO) {
-                // update the UI first
-                domain.allActiveChannels().map { channel ->
-                    scope.async(Dispatchers.Main) {
-                        channel.markRead()
-                    }
-                }.awaitAll() // wait for the UI updates to avoid races
-
-                // then update via remote API
-                domain.client.markAllRead().execute()
-                Result(true, null)
+        // update the UI first
+        domain.allActiveChannels().map { channel ->
+            domain.scope.async(Dispatchers.Main) {
+                channel.markRead()
             }
-        }.await()
+        }.awaitAll() // wait for the UI updates to avoid races
+
+        // then update via remote API
+        domain.client.markAllRead().execute()
+        Result(true, null)
     }
 }

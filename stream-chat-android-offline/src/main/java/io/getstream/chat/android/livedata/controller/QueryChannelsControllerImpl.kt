@@ -123,7 +123,7 @@ internal class QueryChannelsControllerImpl(
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
             domainImpl.scope.launch(Dispatchers.Main) {
-                event.cid.let(::refreshChannel)
+                refreshChannel(event.cid)
             }
         }
     }
@@ -296,8 +296,8 @@ internal class QueryChannelsControllerImpl(
      * Refreshes all channels returned in this query.
      * Supports use cases like marking all channels as read.
      */
-    fun refreshAllChannels() {
-        queryChannelsSpec.cids.let(::refreshChannels)
+    private fun refreshAllChannels() {
+        refreshChannels(queryChannelsSpec.cids)
     }
 
     /**

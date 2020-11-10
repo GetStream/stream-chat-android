@@ -20,19 +20,19 @@ public interface MarkRead {
 }
 
 internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
-    override operator fun invoke(cid: String): Call<Boolean> =
-        domainImpl.channel(validateCid(cid)).let { channelController ->
-            CoroutineCall(domainImpl.scope) {
-                channelController.markRead().let { markedRead ->
-                    if (markedRead) {
-                        domainImpl.client.markRead(
-                            channelController.channelType,
-                            channelController.channelId
-                        ).execute()
-                    }
+    override operator fun invoke(cid: String): Call<Boolean> {
+        val channelController = domainImpl.channel(validateCid(cid))
 
-                    Result(markedRead, null)
+        return CoroutineCall(domainImpl.scope) {
+            channelController.markRead().let { markedRead ->
+                if (markedRead) {
+                    domainImpl.client
+                        .markRead(channelController.channelType, channelController.channelId)
+                        .execute()
                 }
+
+                Result(markedRead, null)
             }
         }
+    }
 }

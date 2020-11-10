@@ -10,5 +10,5 @@ internal data class SyncStateEntity(
     var activeChannelIds: List<String> = mutableListOf(),
     var activeQueryIds: List<String> = mutableListOf(),
     var lastSyncedAt: Date? = null,
-    var markedAllReadAt: Date? = null
+    var markedAllReadAt: Date? = null,
 )

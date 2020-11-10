@@ -319,11 +319,11 @@ internal class EventHandlerImpl(
                     // only update sync state if the incoming "mark all read" date is newer
                     // this supports using event handler to restore mark all read state in setUser
                     // without redundant db writes.
-                    domainImpl.repos.syncState.apply {
-                        select(event.user.id)?.let { state ->
-                            if (state.markedAllReadAt == null || state.markedAllReadAt?.before(event.createdAt) == true) {
-                                insert(state.copy(markedAllReadAt = event.createdAt))
-                            }
+                    val syncStateRepo = domainImpl.repos.syncState
+
+                    syncStateRepo.select(event.user.id)?.let { state ->
+                        if (state.markedAllReadAt == null || state.markedAllReadAt?.before(event.createdAt) == true) {
+                            syncStateRepo.insert(state.copy(markedAllReadAt = event.createdAt))
                         }
                     }
                 }

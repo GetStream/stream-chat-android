@@ -287,7 +287,7 @@ internal object EventArguments {
         Arguments.of(createNewMessageEventStringJson(), newMessageEvent),
         Arguments.of(createUnknownEventStringJson(), unknownEvent),
         Arguments.of(createUnknownEventStringJson("some.unknown.type"), otherUnknownEvent),
-        Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent)
+        Arguments.of(createMarkAllReadEventStringJson(), markAllReadEvent),
     )
 
     @JvmStatic
