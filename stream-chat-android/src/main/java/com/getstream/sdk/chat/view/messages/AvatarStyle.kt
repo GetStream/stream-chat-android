@@ -17,7 +17,7 @@ public data class AvatarStyle(
     public val avatarBackgroundColor: Int = 0,
     public val avatarInitialText: TextStyle = TextStyle()
 ) {
-    internal class Builder(private val a: TypedArray, private val c: Context) {
+    internal class Builder(private val a: TypedArray, c: Context) {
         private val res = c.resources
 
         private var avatarWidth: Int = 0
