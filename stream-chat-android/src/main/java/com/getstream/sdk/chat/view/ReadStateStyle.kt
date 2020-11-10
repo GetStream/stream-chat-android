@@ -15,7 +15,7 @@ public data class ReadStateStyle(
     public val readStateAvatarWidth: Int = 0,
     public val readStateAvatarHeight: Int = 0,
 ) {
-    public class Builder(private val a: TypedArray, c: Context) {
+    internal class Builder(private val a: TypedArray, c: Context) {
         private val res = c.resources
 
         private var readStateText: TextStyle = TextStyle()
@@ -24,7 +24,7 @@ public data class ReadStateStyle(
         private var readStateAvatarWidth: Int = 0
         private var readStateAvatarHeight: Int = 0
 
-        public fun readStateText(
+        fun readStateText(
             @StyleableRes textSize: Int,
             @DimenRes defaultTextSize: Int,
             @StyleableRes textColor: Int,
@@ -43,7 +43,7 @@ public data class ReadStateStyle(
             return this
         }
 
-        public fun isReadStateEnabled(
+        fun isReadStateEnabled(
             @StyleableRes isReadStateEnabled: Int,
             defaultValue: Boolean
         ): Builder {
@@ -51,7 +51,7 @@ public data class ReadStateStyle(
             return this
         }
 
-        public fun isDeliveredIndicatorEnabled(
+        fun isDeliveredIndicatorEnabled(
             @StyleableRes isDeliveredIndicatorEnabled: Int,
             defaultValue: Boolean
         ): Builder {
@@ -60,7 +60,7 @@ public data class ReadStateStyle(
             return this
         }
 
-        public fun readStateAvatarWidth(
+        fun readStateAvatarWidth(
             @StyleableRes readStateAvatarWidth: Int,
             defaultValue: Int
         ): Builder {
@@ -68,7 +68,7 @@ public data class ReadStateStyle(
             return this
         }
 
-        public fun readStateAvatarHeight(
+        fun readStateAvatarHeight(
             @StyleableRes readStateAvatarHeight: Int,
             defaultValue: Int
         ): Builder {
@@ -77,7 +77,7 @@ public data class ReadStateStyle(
             return this
         }
 
-        public fun build(): ReadStateStyle = ReadStateStyle(
+        fun build(): ReadStateStyle = ReadStateStyle(
             readStateText,
             isReadStateEnabled,
             isDeliveredIndicatorEnabled,
