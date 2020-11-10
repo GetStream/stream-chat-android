@@ -14,6 +14,7 @@ Added new MessageInputView structure
 ## stream-chat-android-offline
 - Update `totalUnreadCount` when user is connected
 - Update `channelUnreadCount` when user is connected
+- Fix bug when channels could be shown without names
 
 # Nov 4th, 2020 - 4.4.1
 ## Common changes for all artifacts
