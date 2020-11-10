@@ -2,11 +2,14 @@
 <paths>
     <external-cache-path
         name="picturesext"
-        path="/" />
+        path="/"
+        />
     <external-files-path
         name="external-files"
-        path="/" />
+        path="/"
+        />
     <cache-path
         name="cache"
-        path="/" />
+        path="/"
+        />
 </paths>

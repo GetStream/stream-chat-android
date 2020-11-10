@@ -1,11 +1,15 @@
 # To be released:
 ## Common changes for all artifacts
 
+## stream-chat-android-ui-component
+Added new MessageInputView structure
+
 ## stream-chat-android
-Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependecies
+- Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependencies
+- Replace Glide with Coil - SDK doesn't depend on Glide anymore.
 
 ## stream-chat-android-client
-- Depecrate `User::unreadCount` property, replace with `User::totalUnreadCount`
+- Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`
 
 ## stream-chat-android-offline
 - Update `totalUnreadCount` when user is connected
@@ -94,7 +98,7 @@ Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependecies
 - Removed many internal implementation classes and methods from the SDK's public API
 - Significant performance improvements to offline storage
 - Default message limit for the queryChannels use case changed from 10 to 1. This is a more sensible default for the channel list view of most chat apps
-- Fix QuerySort 
+- Fix QuerySort
 - Update client to 1.16.8: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.8
 
 # 1.16.8 - Fri 16th of Oct 2020 (stream-chat-android-client)
@@ -184,7 +188,7 @@ Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependecies
 - Update Stream Livedata to the last version. See changes: https://github.com/GetStream/stream-chat-android-livedata/releases/tag/0.8.1
 
 # Sep 30th, 2020 - 0.8.1 (stream-chat-android-offline)
-- Handle the new `ChannelUpdatedByUserEvent` 
+- Handle the new `ChannelUpdatedByUserEvent`
 - Update client to 1.16.1: See changes: https://github.com/GetStream/stream-chat-android-client/releases/tag/1.16.1
 - Improve online status handling
 - Replace posting an empty channels map when the channels query wasn't run online and offline storage is empty with error
@@ -244,8 +248,8 @@ We recommend using one of these alternatives:
 
 # Sep 18th, 2020 - 4.2.11-beta-12 (stream-chat-android)
 - Implement Giphy actions handler
-- Fix .gif preview rendering on message list 
-- Fix thread shown issue after sending message to a channel 
+- Fix .gif preview rendering on message list
+- Fix thread shown issue after sending message to a channel
 - Remove border related attributes from MessageInputView. Add close button background attribute to MessageInputView.
 - Improve setting user in sample app
 - Add updating message read state after loading first messages
@@ -809,7 +813,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Fix disconnection NPE
 - Minor bugfixes
 - Remove file/image support
-- Expose members and watchers pagination options for query channel 
+- Expose members and watchers pagination options for query channel
 
 #### Breaking changes
 - `Channel.update` signature has changed
@@ -817,7 +821,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 ## Oct 16th, 2019 - 2.3.0 (stream-chat-android)
 - Added support for `getReactions` endpoint
 - Calls to `ChannelListViewModel#setChannelFilter` will reload the list of channels if necessary
-- Added support for `channel.stopWatching()` 
+- Added support for `channel.stopWatching()`
 - Improved error message for uploading large files
 - Remove error messages after you send a message (similar behaviour to Slack)
 - Fixed slash command support on threads
@@ -845,7 +849,7 @@ To keep the same behavior pass `new HideChannelRequest()` as request parameter t
 - Fixed thread safety issues on Client.java
 - Fixed serialization of custom fields for message/user/channel and attachment types
 - Added support for distinct channels
-- Added support to Channel hide/show 
+- Added support to Channel hide/show
 - Improved client error reporting (we now return a parsed error response when available)
 - General improvements to Message Input View
 - Added ReactionViewClickListener

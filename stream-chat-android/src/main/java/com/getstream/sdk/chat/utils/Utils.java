@@ -21,18 +21,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.getstream.sdk.chat.ChatUI;
 
 import java.io.ByteArrayOutputStream;
@@ -64,23 +59,6 @@ public class Utils {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
-    }
-
-    public static void circleImageLoad(ImageView view, String url) {
-        Glide.with(view.getContext())
-                .asBitmap()
-                //TODO: llc add glide signing
-                //.load(StreamChat.instance().getUploadStorage().signGlideUrl(url))
-                .centerCrop()
-                .into(new BitmapImageViewTarget(view) {
-                    @Override
-                    protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(view.getContext().getResources(), resource);
-                        circularBitmapDrawable.setCircular(true);
-                        view.setImageDrawable(circularBitmapDrawable);
-                    }
-                });
     }
 
     public static boolean isSVGImage(String url) {

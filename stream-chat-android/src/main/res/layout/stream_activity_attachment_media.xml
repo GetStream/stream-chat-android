@@ -4,21 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.AttachmentMediaActivity">
+    tools:context=".view.activity.AttachmentMediaActivity"
+    >
+
     <com.getstream.sdk.chat.utils.exomedia.ui.widget.VideoView
-        android:background="@color/stream_black"
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:stream_useDefaultControls="true"/>
+        android:background="@color/stream_black"
+        app:stream_useDefaultControls="true"
+        />
+
     <ImageView
         android:id="@+id/iv_audio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.45"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@drawable/stream_ic_audio"/>
+        android:background="@drawable/stream_ic_audio"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

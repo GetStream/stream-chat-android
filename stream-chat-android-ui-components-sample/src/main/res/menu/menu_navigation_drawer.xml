@@ -3,9 +3,11 @@
     <item
         android:id="@+id/directChatFragment"
         android:icon="@drawable/ic_new_direct_message"
-        android:title="@string/home_drawer_new_direct_message" />
+        android:title="@string/home_drawer_new_direct_message"
+        />
     <item
         android:id="@+id/groupChatFragment"
         android:icon="@drawable/ic_new_group"
-        android:title="@string/home_drawer_new_group" />
+        android:title="@string/home_drawer_new_group"
+        />
 </menu>

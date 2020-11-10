@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.databinding.StreamItemSelectPhotoBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.getstream.sdk.chat.utils.Constant
@@ -56,9 +56,7 @@ internal class MediaAttachmentAdapter(
         private val listener: (attachmentMetaData: AttachmentMetaData) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(attachment: AttachmentMetaData) {
-            Glide.with(binding.ivMedia.context)
-                .load(attachment.uri)
-                .into(binding.ivMedia)
+            binding.ivMedia.load(attachment.uri)
             binding.ivSelectMark.isVisible = attachment.isSelected
             binding.ivLargeFileMark.isVisible = attachment.size > Constant.MAX_UPLOAD_FILE_SIZE
             itemView.setOnClickListener { listener(attachment) }

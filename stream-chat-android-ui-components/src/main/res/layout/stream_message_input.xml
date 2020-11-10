@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/stream_white"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_open_attachment"
+        android:layout_width="@dimen/stream_attachment_button_width"
+        android:layout_height="@dimen/stream_attachment_button_height"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/stream_ic_attach"
+        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        tools:src="@drawable/stream_ic_attach"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_open_emojis"
+        android:layout_width="@dimen/stream_attachment_button_width"
+        android:layout_height="@dimen/stream_attachment_button_height"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/stream_ic_lightning"
+        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintStart_toEndOf="@id/iv_open_attachment"
+        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        tools:src="@drawable/stream_ic_lightning"
+        />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_message_text_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/stream_shape_edit_text_round"
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLines="7"
+        android:paddingStart="16dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/stream_black"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_send_message"
+        app:layout_constraintStart_toEndOf="@id/iv_open_emojis"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Hi. I am a text, did you notice?"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_send_message"
+        android:layout_width="@dimen/stream_attachment_button_width"
+        android:layout_height="@dimen/stream_attachment_button_height"
+        android:src="@drawable/stream_ic_filled_right_arrow"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toBottomOf="@id/et_message_text_input"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_message_text_input"
+        android:visibility="visible"
+        tools:src="@drawable/stream_ic_filled_right_arrow"
+        tools:visibility="visible"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

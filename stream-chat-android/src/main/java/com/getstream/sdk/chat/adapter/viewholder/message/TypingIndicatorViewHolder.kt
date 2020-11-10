@@ -4,7 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.updateMargins
-import com.bumptech.glide.Glide
+import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.MessageListItem.TypingItem
 import com.getstream.sdk.chat.adapter.inflater
@@ -43,9 +43,6 @@ internal class TypingIndicatorViewHolder(
             binding.llTypingIndicator.addView(avatarView)
         }
 
-        Glide.with(context)
-            .asGif()
-            .load(R.raw.stream_typing)
-            .into(binding.ivTypingIndicator)
+        binding.ivTypingIndicator.load(R.raw.stream_typing)
     }
 }

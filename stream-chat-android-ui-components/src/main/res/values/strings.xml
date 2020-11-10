@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Command Suggestions-->
+    <string name="stream_commands_instant_commands">Instant Commands</string>
+    <string name="stream_command_command_template">/%s %s</string>
+
+    <!--Mention Suggestions-->
+    <string name="stream_mention_user_name_template">\@%s</string>
+
+    <!--Channel Actions-->
+    <string name="stream_channel_actions_leave_group">Leave Group</string>
+    <string name="stream_channel_actions_delete_channel">Delete</string>
+    <string name="stream_channel_actions_delete_contact">Delete Contact</string>
+    <string name="stream_channel_actions_last_seen">Last seen %s</string>
+    <plurals name="stream_channel_actions_members_count">
+        <item quantity="one">%1d Member, %2d Online</item>
+        <item quantity="other">%1d Members, %2d Online</item>
+    </plurals>
+</resources>
