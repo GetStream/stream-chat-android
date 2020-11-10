@@ -30,4 +30,17 @@
         <item name="hintTextColor">@color/grey_dark</item>
         <item name="errorIconDrawable">@null</item>
     </style>
+
+    <style name="ComponentBrowserSeparator">
+        <item name="android:background">@color/stream_gray_light</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginVertical">16dp</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ComponentBrowserLabel">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
 </resources>
