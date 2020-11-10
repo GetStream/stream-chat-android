@@ -778,7 +778,7 @@ internal class ChannelControllerImpl(
     }
 
     // This one needs to be public for flows such as running a message action
-    override suspend fun upsertMessage(message: Message) {
+    internal suspend fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
 
