@@ -127,14 +127,13 @@ dependencies {
     implementation Dependencies.koinCore
     implementation Dependencies.koinCoreExt
 
+    implementation Dependencies.coil
+
     implementation Dependencies.timber
 
     debugImplementation Dependencies.flipper
     debugImplementation Dependencies.flipperNetwork
     debugImplementation Dependencies.flipperLoader
-
-    implementation Dependencies.glide
-    annotationProcessor Dependencies.glideCompiler
 
     //debugImplementation Dependencies.leakCanary
 }
