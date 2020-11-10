@@ -42,7 +42,6 @@ internal class ChannelMembersAdapter(
             binding.apply {
                 val user = member.user
                 avatarView.setUserData(user)
-                avatarView.toggleOnlineIndicatorVisibility(user.online)
                 userNameTextView.text = user.name
                 root.setOnClickListener { onMemberClicked(member) }
             }
