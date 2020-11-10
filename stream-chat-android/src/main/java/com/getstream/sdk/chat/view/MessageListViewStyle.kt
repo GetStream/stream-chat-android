@@ -499,36 +499,28 @@ public class MessageListViewStyle(c: Context, attrs: AttributeSet?) {
             .build()
 
         // Read State
-        readStateStyle.isReadStateEnabled =
-            a.getBoolean(R.styleable.MessageListView_streamShowReadState, true)
-        readStateStyle.readStateAvatarWidth = a.getDimensionPixelSize(
-            R.styleable.MessageListView_streamReadStateAvatarWidth,
-            res.getDimensionPixelSize(
-                R.dimen.stream_read_state_avatar_width
+        readStateStyle = ReadStateStyle.Builder(a, c)
+            .isReadStateEnabled(R.styleable.MessageListView_streamShowReadState, true)
+            .readStateAvatarWidth(
+                R.styleable.MessageListView_streamReadStateAvatarWidth,
+                res.getDimensionPixelSize(R.dimen.stream_read_state_avatar_width)
             )
-        )
-        readStateStyle.readStateAvatarHeight = a.getDimensionPixelSize(
-            R.styleable.MessageListView_streamReadStateAvatarHeight,
-            res.getDimensionPixelSize(
-                R.dimen.stream_read_state_avatar_height
+            .readStateAvatarHeight(
+                R.styleable.MessageListView_streamReadStateAvatarHeight,
+                res.getDimensionPixelSize(R.dimen.stream_read_state_avatar_height)
             )
-        )
-        readStateStyle.readStateText = TextStyle.Builder(a)
-            .size(
-                R.styleable.MessageListView_streamReadStateTextSize,
-                res.getDimensionPixelSize(R.dimen.stream_read_state_text_size)
+            .readStateText(
+                textSize = R.styleable.MessageListView_streamReadStateTextSize,
+                defaultTextSize = R.dimen.stream_read_state_text_size,
+                textColor = R.styleable.MessageListView_streamReadStateTextColor,
+                defaultTextColor = Color.BLACK,
+                textFontAssetsStyleableId = R.styleable.MessageListView_streamReadStateTextFontAssets,
+                textFontStyleableId = R.styleable.MessageListView_streamReadStateTextFont,
+                textStyleStyleableId = R.styleable.MessageListView_streamReadStateTextStyle,
             )
-            .color(R.styleable.MessageListView_streamReadStateTextColor, Color.BLACK)
-            .font(
-                R.styleable.MessageListView_streamReadStateTextFontAssets,
-                R.styleable.MessageListView_streamReadStateTextFont
-            )
-            .style(R.styleable.MessageListView_streamReadStateTextStyle, Typeface.BOLD)
+            .isDeliveredIndicatorEnabled(R.styleable.MessageListView_streamShowDeliveredState, true)
             .build()
 
-        // Delivered state
-        readStateStyle.isDeliveredIndicatorEnabled =
-            a.getBoolean(R.styleable.MessageListView_streamShowDeliveredState, true)
         isThreadEnabled = a.getBoolean(R.styleable.MessageListView_streamThreadEnabled, true)
         dateSeparatorDateText = TextStyle.Builder(a)
             .size(

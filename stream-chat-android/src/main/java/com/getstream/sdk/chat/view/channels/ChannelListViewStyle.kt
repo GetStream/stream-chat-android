@@ -22,7 +22,7 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
     public val lastMessageDateText: TextStyle
     public val lastMessageDateUnreadText: TextStyle
     public var avatarStyle: AvatarStyle = AvatarStyle()
-    public val readStateStyle: ReadStateStyle = ReadStateStyle()
+    public val readStateStyle: ReadStateStyle
     private val resources = context.resources
 
     private var channelWithoutNameText = ""
@@ -182,28 +182,28 @@ public class ChannelListViewStyle(context: Context, attrs: AttributeSet?) {
                 .build()
 
             // Read State
-            readStateStyle.isReadStateEnabled =
-                getBoolean(R.styleable.ChannelListView_streamShowReadState, true)
-            readStateStyle.readStateAvatarWidth = getDimensionPixelSize(
-                R.styleable.ChannelListView_streamReadStateAvatarWidth,
-                resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_width)
-            )
-            readStateStyle.readStateAvatarHeight = getDimensionPixelSize(
-                R.styleable.ChannelListView_streamReadStateAvatarHeight,
-                resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_height)
-            )
-            readStateStyle.readStateText = TextStyle.Builder(attributes).apply {
-                size(
-                    R.styleable.ChannelListView_streamReadStateTextSize,
-                    resources.getDimensionPixelSize(R.dimen.stream_read_state_text_size)
+
+            readStateStyle = ReadStateStyle.Builder(this, context)
+                .isReadStateEnabled(R.styleable.ChannelListView_streamShowReadState, true)
+                .readStateAvatarWidth(
+                    R.styleable.ChannelListView_streamReadStateAvatarWidth,
+                    resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_width)
                 )
-                color(R.styleable.ChannelListView_streamReadStateTextColor, Color.BLACK)
-                font(
-                    R.styleable.ChannelListView_streamReadStateTextFontAssets,
-                    R.styleable.ChannelListView_streamReadStateTextFont
+                .readStateAvatarHeight(
+                    R.styleable.ChannelListView_streamReadStateAvatarHeight,
+                    resources.getDimensionPixelSize(R.dimen.stream_read_state_avatar_height)
                 )
-                style(R.styleable.ChannelListView_streamReadStateTextStyle, Typeface.BOLD)
-            }.build()
+                .readStateText(
+                    textSize = R.styleable.ChannelListView_streamReadStateTextSize,
+                    defaultTextSize = R.dimen.stream_read_state_text_size,
+                    textColor = R.styleable.ChannelListView_streamReadStateTextColor,
+                    defaultTextColor = Color.BLACK,
+                    textFontAssetsStyleableId = R.styleable.ChannelListView_streamReadStateTextFontAssets,
+                    textFontStyleableId = R.styleable.ChannelListView_streamReadStateTextFont,
+                    textStyleStyleableId = R.styleable.ChannelListView_streamReadStateTextStyle,
+                    textStyleDefault = Typeface.BOLD
+                )
+                .build()
 
             recycle()
         }
