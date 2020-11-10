@@ -61,6 +61,33 @@ jobs:
           name: testReleaseUnitTest
           path: stream-chat-android/build/reports/tests/testReleaseUnitTest
 
+  stream_chat_android_ui_components:
+    name: stream-chat-android-ui-components
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: ktlint
+        run: ./gradlew :stream-chat-android-ui-components:ktlintCheck :stream-chat-android-ui-components-sample:ktlintCheck
+      - name: Unit tests
+        run: ./gradlew :stream-chat-android-ui-components:test :stream-chat-android-ui-components-sample:test --stacktrace
+      - name: Upload testDebugUnitTest results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: testDebugUnitTest
+          path: stream-chat-android-ui-components/build/reports/tests/testDebugUnitTest
+      - name: Upload testDebugUnitTest results
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: testReleaseUnitTest
+          path: stream-chat-android-ui-components/build/reports/tests/testReleaseUnitTest
+
   stream_chat_android_offline:
     name: stream-chat-android-offline
     runs-on: ubuntu-18.04
