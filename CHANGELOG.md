@@ -2,6 +2,8 @@
 ## Common changes for all artifacts
 
 ## stream-chat-android
+- Remove `ChatClient` and `ChatDomain` as `ChatUI`'s dependencies
+- Replace Glide with Coil - SDK doesn't depend on Glide anymore.
 
 ## stream-chat-android-client
 - Deprecate `User::unreadCount` property, replace with `User::totalUnreadCount`

@@ -23,7 +23,7 @@ class ChatInitializer(private val context: Context) {
 
         val client = ChatClient.Builder(apiKey, context).loggerHandler(FirebaseLogger).notifications(notificationHandler).logLevel(ChatLogLevel.ALL).build()
         val domain = ChatDomain.Builder(client, context).offlineEnabled().notificationConfig(notificationConfig).build()
-        val ux = ChatUI.Builder(client, domain, context).build()
+        val ui = ChatUI.Builder(context).build()
     }
 
     fun isUserSet(): Boolean {
