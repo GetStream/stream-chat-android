@@ -38,6 +38,9 @@ import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -57,6 +60,8 @@ internal open class BaseDomainTest {
     lateinit var queryControllerImpl: QueryChannelsControllerImpl
     lateinit var query: QueryChannelsSpec
     lateinit var filter: FilterObject
+
+    protected val testCoroutineDispatcher = TestCoroutineDispatcher()
 
     fun assertSuccess(result: Result<*>) {
         if (result.isError) {
@@ -89,6 +94,7 @@ internal open class BaseDomainTest {
 
     @Before
     open fun setup() {
+        Dispatchers.setMain(testCoroutineDispatcher)
         client = createDisconnectedMockClient()
         setupChatDomain(client, false)
     }
@@ -97,6 +103,8 @@ internal open class BaseDomainTest {
     open fun tearDown() = runBlocking(Dispatchers.IO) {
         chatDomainImpl.disconnect()
         db.close()
+        Dispatchers.resetMain()
+        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 
     fun createClient(): ChatClient {
@@ -216,7 +224,7 @@ internal open class BaseDomainTest {
             .build()
     }
 
-    fun setupChatDomain(client: ChatClient, setUser: Boolean) {
+    fun setupChatDomain(client: ChatClient, setUser: Boolean) = runBlocking {
 
         if (setUser) {
             runBlocking {

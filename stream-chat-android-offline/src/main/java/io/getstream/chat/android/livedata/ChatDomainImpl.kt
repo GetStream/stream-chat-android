@@ -100,7 +100,25 @@ internal class ChatDomainImpl internal constructor(
     internal var appContext: Context
 ) :
     ChatDomain {
-    internal constructor(client: ChatClient, handler: Handler, offlineEnabled: Boolean, recoveryEnabled: Boolean, userPresence: Boolean, backgroundSyncEnabled: Boolean, appContext: Context) : this(client, null, null, handler, offlineEnabled, recoveryEnabled, userPresence, backgroundSyncEnabled, appContext)
+    internal constructor(
+        client: ChatClient,
+        handler: Handler,
+        offlineEnabled: Boolean,
+        recoveryEnabled: Boolean,
+        userPresence: Boolean,
+        backgroundSyncEnabled: Boolean,
+        appContext: Context
+    ) : this(
+        client,
+        null,
+        null,
+        handler,
+        offlineEnabled,
+        recoveryEnabled,
+        userPresence,
+        backgroundSyncEnabled,
+        appContext
+    )
 
     private val _initialized = MutableLiveData(false)
     private val _online = MutableLiveData(false)
@@ -583,24 +601,28 @@ internal class ChatDomainImpl internal constructor(
 
         // 1 update the results for queries that are actively being shown right now
         val updatedChannelIds = mutableSetOf<String>()
-        val queriesToRetry = activeQueryMapImpl.values.toList().filter { it.recoveryNeeded || recoveryNeeded }.take(3)
+        val queriesToRetry = activeQueryMapImpl.values
+            .toList()
+            .filter { it.recoveryNeeded || recoveryNeeded }
+            .take(3)
         for (queryRepo in queriesToRetry) {
-            val response = queryRepo.runQueryOnline(
-                QueryChannelsPaginationRequest(
-                    QuerySort<Channel>(),
-                    INITIAL_CHANNEL_OFFSET,
-                    CHANNEL_LIMIT,
-                    MESSAGE_LIMIT,
-                    MEMBER_LIMIT
-                )
+            val pagination = QueryChannelsPaginationRequest(
+                QuerySort<Channel>(),
+                INITIAL_CHANNEL_OFFSET,
+                CHANNEL_LIMIT,
+                MESSAGE_LIMIT,
+                MEMBER_LIMIT
             )
+            val response = queryRepo.runQueryOnline(pagination)
             if (response.isSuccess) {
+                queryRepo.updateChannelsAndQueryResults(response.data(), pagination.isFirstPage)
                 updatedChannelIds.addAll(response.data().map { it.cid })
             }
         }
         // 2 update the data for all channels that are being show right now...
         // exclude ones we just updated
-        val cids = activeChannelMapImpl.entries.toList().filter { it.value.recoveryNeeded || recoveryNeeded }
+        val cids = activeChannelMapImpl.entries.toList()
+            .filter { it.value.recoveryNeeded || recoveryNeeded }
             .filterNot { updatedChannelIds.contains(it.key) }.take(30)
 
         logger.logI("connection established: recoveryNeeded= $recoveryNeeded, retrying ${queriesToRetry.size} queries and ${cids.size} channels")
