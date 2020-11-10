@@ -118,7 +118,7 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
                 getBoolean(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonShow, true)
             backButtonBackground =
                 getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderBackButtonBackground)
-                    ?: ContextCompat.getDrawable(context, R.drawable.stream_arrow_left)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_arrow_left)
 
             // Avatar
             isAvatarGroupShow =
@@ -135,7 +135,7 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
             )
             optionsButtonBackground =
                 getDrawable(R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonBackground)
-                    ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_settings)
+                ?: ContextCompat.getDrawable(context, R.drawable.stream_ic_settings)
             optionsButtonTextSize = getDimension(
                 R.styleable.ChannelHeaderView_streamChannelHeaderOptionsButtonTextSize,
                 res.getDimensionPixelSize(R.dimen.stream_channel_header_initials).toFloat()
