@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.databinding.StreamItemAttachedMediaBinding
 import com.getstream.sdk.chat.model.AttachmentMetaData
@@ -76,9 +76,7 @@ internal class MediaAttachmentSelectedAdapter(
                     .build()
             )
             if (attachment.uri != null) {
-                Glide.with(itemView.context)
-                    .load(attachment.uri)
-                    .into(binding.ivMedia)
+                binding.ivMedia.load(attachment.uri)
             } else {
                 if (attachment.mimeType == ModelType.attach_mime_mov || attachment.mimeType == ModelType.attach_mime_mp4) {
                     binding.ivMedia.setImageResource(R.drawable.stream_placeholder)

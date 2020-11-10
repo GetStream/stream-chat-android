@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import com.getstream.sdk.chat.ImageLoader.loadWithGifSupport
+import com.getstream.sdk.chat.ImageLoader.load
 import com.getstream.sdk.chat.R
 import com.getstream.sdk.chat.adapter.AttachmentListItem
 import com.getstream.sdk.chat.adapter.MessageListItem.MessageItem
@@ -66,7 +66,7 @@ internal class AttachmentViewHolderMedia(
         val thumbUrl = attachment.thumbUrl
         val imageUrl = if (thumbUrl.isNullOrEmpty()) attachment.imageUrl else thumbUrl
 
-        binding.ivMediaThumb.loadWithGifSupport(
+        binding.ivMediaThumb.load(
             imageUrl,
             placeholderResId = R.drawable.stream_placeholder,
             onStart = { binding.progressBar.isVisible = true },
