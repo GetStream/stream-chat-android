@@ -62,12 +62,13 @@ public class AvatarView : AppCompatImageView {
     }
 
     public fun setUserData(user: User) {
+        this.onlineIndicatorVisible = user.online
         configureImageDrawable {
             AvatarDrawable(listOfNotNull(bitmapFactory.createUserBitmap(user, avatarStyle)))
         }
     }
 
-    public fun toggleOnlineIndicatorVisibility(visible: Boolean) {
+    public fun showOnlineIndicator(visible: Boolean) {
         this.onlineIndicatorVisible = visible
         invalidate()
     }

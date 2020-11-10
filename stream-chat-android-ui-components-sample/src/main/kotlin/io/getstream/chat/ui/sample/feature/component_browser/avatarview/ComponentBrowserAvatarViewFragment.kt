@@ -98,15 +98,12 @@ class ComponentBrowserAvatarViewFragment : Fragment() {
 
         binding.avatarViewSmallIndicator.apply {
             setUserData(randomUser())
-            toggleOnlineIndicatorVisibility(true)
         }
         binding.avatarViewMediumIndicator.apply {
             setUserData(randomUser())
-            toggleOnlineIndicatorVisibility(true)
         }
         binding.avatarViewLargeIndicator.apply {
             setUserData(randomUser())
-            toggleOnlineIndicatorVisibility(true)
         }
     }
 
