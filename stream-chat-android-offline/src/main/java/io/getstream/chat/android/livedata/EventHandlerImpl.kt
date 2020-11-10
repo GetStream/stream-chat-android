@@ -321,7 +321,7 @@ internal class EventHandlerImpl(
                     // without redundant db writes.
                     domainImpl.repos.syncState.apply {
                         select(event.user.id)?.let { state ->
-                            if (event.createdAt.after(state.markedAllReadAt)) {
+                            if (state.markedAllReadAt == null || state.markedAllReadAt?.before(event.createdAt) == true) {
                                 insert(state.copy(markedAllReadAt = event.createdAt))
                             }
                         }
