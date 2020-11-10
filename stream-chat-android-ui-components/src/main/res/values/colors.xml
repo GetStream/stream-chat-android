@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="stream_text_black">@color/stream_black</color>
+    <color name="stream_text_grey">#808080</color>
+    <color name="stream_text_red">#FF3742</color>
+
     <color name="avatar_gradient_orange">#FF8A65</color>
     <color name="avatar_gradient_green">#81C784</color>
     <color name="avatar_gradient_blue">#4FC3F7</color>
