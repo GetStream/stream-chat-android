@@ -1,6 +1,7 @@
 package com.getstream.sdk.chat.view
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -73,14 +74,8 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
         }.build()
 
         with(attributes) {
-            channelWithoutNameText =
-                getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText)?.takeIf(
-                    String::isNotBlank
-                ) ?: context.getString(R.string.stream_channel_unknown_title)
-            offlineText =
-                getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText)?.takeIf(
-                    String::isNotBlank
-                ) ?: context.getString(R.string.stream_channel_offlineText)
+            channelWithoutNameText = getChannelWithoutNameText(context)
+            offlineText = getOfflineText(context)
 
             // Avatar
             avatarStyle = AvatarStyle.Builder(this, context)
@@ -155,5 +150,17 @@ internal class ChannelHeaderViewStyle(context: Context, attrs: AttributeSet?) {
             )
             recycle()
         }
+    }
+
+    private fun TypedArray.getOfflineText(context: Context): String {
+        return getString(R.styleable.ChannelHeaderView_streamChannelHeaderOfflineText)?.takeIf(
+            String::isNotBlank
+        ) ?: context.getString(R.string.stream_channel_offlineText)
+    }
+
+    private fun TypedArray.getChannelWithoutNameText(context: Context): String {
+        return getString(R.styleable.ChannelHeaderView_streamChannelWithOutNameTitleText)?.takeIf(
+            String::isNotBlank
+        ) ?: context.getString(R.string.stream_channel_unknown_title)
     }
 }

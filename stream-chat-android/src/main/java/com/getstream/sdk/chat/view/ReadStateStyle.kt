@@ -33,48 +33,41 @@ public data class ReadStateStyle(
             @StyleableRes textFontStyleableId: Int,
             @StyleableRes textStyleStyleableId: Int,
             textStyleDefault: Int = Typeface.BOLD
-        ): Builder {
+        ) = apply {
             readStateText = TextStyle.Builder(a)
                 .size(textSize, res.getDimensionPixelSize(defaultTextSize))
                 .color(textColor, defaultTextColor)
                 .font(textFontAssetsStyleableId, textFontStyleableId)
                 .style(textStyleStyleableId, textStyleDefault)
                 .build()
-            return this
         }
 
         fun isReadStateEnabled(
             @StyleableRes isReadStateEnabled: Int,
             defaultValue: Boolean
-        ): Builder {
+        ) = apply {
             this.isReadStateEnabled = a.getBoolean(isReadStateEnabled, defaultValue)
-            return this
         }
 
         fun isDeliveredIndicatorEnabled(
             @StyleableRes isDeliveredIndicatorEnabled: Int,
             defaultValue: Boolean
-        ): Builder {
-            this.isDeliveredIndicatorEnabled =
-                a.getBoolean(isDeliveredIndicatorEnabled, defaultValue)
-            return this
+        ) = apply {
+            this.isDeliveredIndicatorEnabled = a.getBoolean(isDeliveredIndicatorEnabled, defaultValue)
         }
 
         fun readStateAvatarWidth(
             @StyleableRes readStateAvatarWidth: Int,
             defaultValue: Int
-        ): Builder {
+        ) = apply {
             this.readStateAvatarWidth = a.getDimensionPixelSize(readStateAvatarWidth, defaultValue)
-            return this
         }
 
         fun readStateAvatarHeight(
             @StyleableRes readStateAvatarHeight: Int,
             defaultValue: Int
-        ): Builder {
-            this.readStateAvatarHeight =
-                a.getDimensionPixelSize(readStateAvatarHeight, defaultValue)
-            return this
+        ) = apply {
+            this.readStateAvatarHeight = a.getDimensionPixelSize(readStateAvatarHeight, defaultValue)
         }
 
         fun build(): ReadStateStyle = ReadStateStyle(
