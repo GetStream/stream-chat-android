@@ -16,7 +16,7 @@ import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -99,8 +99,8 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
 
-        private var scopeMain: CoroutineScope? = null
-        private var scopeIO: CoroutineScope? = null
+        private var dispatcherMain: CoroutineDispatcher? = null
+        private var dispatcherIO: CoroutineDispatcher? = null
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
@@ -150,13 +150,13 @@ public interface ChatDomain {
             return this
         }
 
-        internal fun withIOScope(scope: CoroutineScope): Builder {
-            this.scopeIO = scope
+        internal fun withIODispatcher(scope: CoroutineDispatcher): Builder {
+            this.dispatcherIO = scope
             return this
         }
 
-        internal fun withMainScope(scope: CoroutineScope): Builder {
-            this.scopeMain = scope
+        internal fun withMainDispatcher(scope: CoroutineDispatcher): Builder {
+            this.dispatcherMain = scope
             return this
         }
 
@@ -182,7 +182,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext, scopeIO, scopeMain)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext, dispatcherIO, dispatcherMain)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

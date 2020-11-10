@@ -69,7 +69,7 @@ internal class EventHandlerImpl(
 ) {
 
     internal fun handleEvents(events: List<ChatEvent>) {
-        domainImpl.scopeIO.launch {
+        domainImpl.scope.launch(domainImpl.dispatcherIO) {
             handleEventsInternal(events)
         }
     }

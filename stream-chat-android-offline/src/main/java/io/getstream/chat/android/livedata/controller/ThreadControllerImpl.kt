@@ -49,7 +49,7 @@ internal class ThreadControllerImpl(
     // TODO: offline storage for thread load more
 
     private suspend fun loadMessages(call: Call<List<Message>>, limit: Int): Result<List<Message>> =
-        withContext(domain.scopeIO.coroutineContext) {
+        withContext(domain.dispatcherIO) {
             call.execute().apply {
                 val data = this.takeIf { it.isSuccess }
                     ?.data()
