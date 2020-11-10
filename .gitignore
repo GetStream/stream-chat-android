@@ -85,23 +85,15 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/tasks.xml
-/.idea/jarRepositories.xml
-/.idea/gradle.xml
-/.idea/usage.statistics.xml
-/.idea/runConfigurations.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+/.idea/*
+!/.idea/compiler.xml
+!/.idea/misc.xml
+!/.idea/codeStyles/
+!/.idea/inspectionProfiles/
 .DS_Store
 /build
 /captures
-stream-chat-android-components-sample/app-config-custom.json
 /attachments/*
 .cxx
 /projectFilesBackup/
 /projectFilesBackup1/
-/sample/app-config-custom.json
