@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.getstream.sdk.chat.ChatUI;
+import com.getstream.sdk.chat.ImageLoader;
 import com.getstream.sdk.chat.R;
 import com.getstream.sdk.chat.model.ModelType;
 import com.getstream.sdk.chat.utils.Utils;
@@ -100,10 +100,7 @@ public class AttachmentActivity extends AppCompatActivity {
         iv_image.setVisibility(View.VISIBLE);
         webView.setVisibility(View.GONE);
 
-        Glide.with(this)
-                .load(ChatUI.instance().getUrlSigner().signImageUrl(url))
-                .placeholder(R.drawable.stream_placeholder)
-                .into(iv_image);
+        ImageLoader.load(iv_image, ChatUI.instance().getUrlSigner().signImageUrl(url), R.drawable.stream_placeholder);
     }
 
     private class AppWebViewClients extends WebViewClient {
