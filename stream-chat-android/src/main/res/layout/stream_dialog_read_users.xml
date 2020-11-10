@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <ListView
         android:id="@+id/lv_read_user"
@@ -14,5 +15,6 @@
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/stream_item_command" />
+        tools:listitem="@layout/stream_item_command"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
