@@ -42,6 +42,7 @@ class ComponentBrowserHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupAvatarView()
+        setupSearchView()
     }
 
     private fun setupAvatarView() {
@@ -53,6 +54,12 @@ class ComponentBrowserHomeFragment : Fragment() {
         )
         binding.avatarViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)
+        }
+    }
+
+    private fun setupSearchView() {
+        binding.searchViewContainer.setOnClickListener {
+            findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserSearchViewFragment)
         }
     }
 }

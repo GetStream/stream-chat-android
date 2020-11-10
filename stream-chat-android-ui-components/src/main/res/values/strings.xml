@@ -16,4 +16,9 @@
         <item quantity="one">%1d Member, %2d Online</item>
         <item quantity="other">%1d Members, %2d Online</item>
     </plurals>
+
+    <!--SearchView-->
+    <string name="stream_search_view_hint">Search</string>
+    <string name="stream_search_view_search_icon_description">Search</string>
+    <string name="stream_search_view_clear_input_description">Clear</string>
 </resources>
