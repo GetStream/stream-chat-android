@@ -51,7 +51,6 @@ class ComponentBrowserHomeFragment : Fragment() {
                 ComponentBrowserAvatarViewFragment.randomUser(),
             ),
         )
-        binding.avatarView.toggleOnlineIndicatorVisibility(true)
         binding.avatarViewContainer.setOnClickListener {
             findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)
         }

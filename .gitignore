@@ -8,7 +8,6 @@ stream-chat-android-sample/.sign/release.keystore
 stream-chat-android-sample/.sign/release.keystore.asc
 .gradle
 /local.properties
-/.idea/
 
 # Built application files
 *.apk
@@ -51,9 +50,6 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# IntelliJ
-.idea/*
-
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.
 #*.jks
@@ -92,6 +88,11 @@ lint/tmp/
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
+/.idea/tasks.xml
+/.idea/jarRepositories.xml
+/.idea/gradle.xml
+/.idea/usage.statistics.xml
+/.idea/runConfigurations.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml

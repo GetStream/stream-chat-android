@@ -1,18 +1,23 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="25dp"
+    android:height="26dp"
     android:viewportWidth="25"
     android:viewportHeight="26"
-    android:width="25dp"
-    android:height="26dp">
+    >
     <group
         android:translateX="-114"
-        android:translateY="-1335">
+        android:translateY="-1335"
+        >
         <group
             android:translateX="114"
-            android:translateY="1328">
+            android:translateY="1328"
+            >
             <path
-                android:pathData="M1.10880525 6.98766581C-0.980581669 11.485627 0.285409122 15.5653635 1.6194193 17.9899677C2.95336253 20.4145719 6.51360179 22.9933118 8.51207302 26.4955923C9.84407476 28.8302225 10 31 10 33C11.6407669 30.0120193 13.3173483 27.7465122 16.0052523 26.2044843C18.6942274 24.6624564 21.6728875 23.9249648 24.9413664 23.9940208"
+                android:fillAlpha="1"
                 android:fillColor="#000000"
-                android:fillAlpha="1" />
+                android:pathData="M1.10880525 6.98766581C-0.980581669 11.485627 0.285409122 15.5653635 1.6194193 17.9899677C2.95336253 20.4145719 6.51360179 22.9933118 8.51207302 26.4955923C9.84407476 28.8302225 10 31 10 33C11.6407669 30.0120193 13.3173483 27.7465122 16.0052523 26.2044843C18.6942274 24.6624564 21.6728875 23.9249648 24.9413664 23.9940208"
+                />
         </group>
     </group>
 </vector>

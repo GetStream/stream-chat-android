@@ -8,4 +8,5 @@
     android:layout_height="match_parent"
     app:defaultNavHost="true"
     app:navGraph="@navigation/main_nav_graph"
-    tools:context="io.getstream.chat.ui.sample.feature.HostActivity" />
+    tools:context="io.getstream.chat.ui.sample.feature.HostActivity"
+    />

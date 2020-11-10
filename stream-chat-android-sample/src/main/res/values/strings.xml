@@ -29,5 +29,4 @@
     <string name="custom_login_field_user_token">User token</string>
     <string name="custom_login_field_user_name_hint">User name (optional)</string>
     <string name="custom_login_validation_error">This field is required</string>
-
 </resources>
