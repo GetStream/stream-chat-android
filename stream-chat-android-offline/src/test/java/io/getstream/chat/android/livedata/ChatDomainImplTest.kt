@@ -6,9 +6,14 @@ import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.User
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -19,9 +24,11 @@ import org.junit.jupiter.api.extension.ExtendWith
 internal class ChatDomainImplTest {
 
     private lateinit var sut: ChatDomainImpl
+    private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
     @BeforeEach
     fun setUp() {
+        Dispatchers.setMain(testCoroutineDispatcher)
         val client: ChatClient = mock()
         val currentUser = randomUser()
         val db: ChatDatabase = mock {
@@ -38,6 +45,12 @@ internal class ChatDomainImplTest {
         val userPresence = true
         val recoveryEnabled = true
         sut = ChatDomainImpl(client, currentUser, db, handler, offlineEnabled, userPresence, recoveryEnabled, false, mock())
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 
     @Test

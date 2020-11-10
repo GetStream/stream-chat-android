@@ -14,57 +14,63 @@ import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.randomChannel
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+@ExperimentalCoroutinesApi
 @ExtendWith(InstantExecutorExtension::class)
 internal class QueryChannelsControllerImplTest {
     @Test
-    fun `when add channel if filter matches should update LiveData from channel to channel controller`() {
-        val channelController = mock<ChannelControllerImpl>()
-        val sut = Fixture()
-            .givenNewChannelController(channelController)
-            .setupChatControllersInstantiation()
-            .get()
-        val newChannel = randomChannel()
+    fun `when add channel if filter matches should update LiveData from channel to channel controller`() =
+        runBlockingTest {
+            val channelController = mock<ChannelControllerImpl>()
+            val sut = Fixture()
+                .givenNewChannelController(channelController)
+                .setupChatControllersInstantiation()
+                .get()
+            val newChannel = randomChannel()
 
-        sut.addChannelIfFilterMatches(newChannel)
+            sut.addChannelIfFilterMatches(newChannel)
 
-        verify(channelController).updateLiveDataFromChannel(eq(newChannel))
-    }
-
-    @Test
-    fun `when add channel if filter matches should post value to liveData with the same channel ID`() {
-        val sut = Fixture()
-            .givenNewChannelController(mock())
-            .setupChatControllersInstantiation()
-            .get()
-        val newChannel = randomChannel(cid = "ChannelType:ChannelID")
-
-        sut.addChannelIfFilterMatches(newChannel)
-
-        val result = sut.channels.getOrAwaitValue()
-        result.size shouldBeEqualTo 1
-        result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
-    }
+            verify(channelController).updateLiveDataFromChannel(eq(newChannel))
+        }
 
     @Test
-    fun `when add channel twice if filter matches should post value to liveData only one value`() {
-        val sut = Fixture()
-            .givenNewChannelController(mock())
-            .setupChatControllersInstantiation()
-            .get()
-        val newChannel = randomChannel(cid = "ChannelType:ChannelID")
+    fun `when add channel if filter matches should post value to liveData with the same channel ID`() =
+        runBlockingTest {
+            val sut = Fixture()
+                .givenNewChannelController(mock())
+                .setupChatControllersInstantiation()
+                .get()
+            val newChannel = randomChannel(cid = "ChannelType:ChannelID")
 
-        sut.addChannelIfFilterMatches(newChannel)
-        sut.addChannelIfFilterMatches(newChannel)
+            sut.addChannelIfFilterMatches(newChannel)
 
-        val result = sut.channels.getOrAwaitValue()
-        result.size shouldBeEqualTo 1
-        result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
-    }
+            val result = sut.channels.getOrAwaitValue()
+            result.size shouldBeEqualTo 1
+            result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
+        }
+
+    @Test
+    fun `when add channel twice if filter matches should post value to liveData only one value`() =
+        runBlockingTest {
+            val sut = Fixture()
+                .givenNewChannelController(mock())
+                .setupChatControllersInstantiation()
+                .get()
+            val newChannel = randomChannel(cid = "ChannelType:ChannelID")
+
+            sut.addChannelIfFilterMatches(newChannel)
+            sut.addChannelIfFilterMatches(newChannel)
+
+            val result = sut.channels.getOrAwaitValue()
+            result.size shouldBeEqualTo 1
+            result.first().cid shouldBeEqualTo "ChannelType:ChannelID"
+        }
 }
 
 private class Fixture {

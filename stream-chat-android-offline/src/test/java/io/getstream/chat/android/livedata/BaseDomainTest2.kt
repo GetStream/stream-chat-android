@@ -241,10 +241,9 @@ internal open class BaseDomainTest2 {
 
         testIOScope.launch {
             chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
+            channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
+            channelControllerImpl.updateLiveDataFromChannel(data.channel1)
         }
-
-        channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-        channelControllerImpl.updateLiveDataFromChannel(data.channel1)
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
 
