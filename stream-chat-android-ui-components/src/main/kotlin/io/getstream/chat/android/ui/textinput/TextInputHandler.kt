@@ -4,14 +4,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 
-internal class TextInputHandler(
-    editText: EditText,
-    public var containsTextListener: () -> Unit = {},
-    public var emptyTextListener: () -> Unit = {}
-) {
+internal class TextInputHandler() {
 
-    init {
-        val textWatcher: TextWatcher = object : TextWatcher {
+    fun bindEditText(editText: EditText, containsTextListener: () -> Unit = {}, emptyTextListener: () -> Unit = {}) {
+        object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
             }
 
@@ -25,8 +21,6 @@ internal class TextInputHandler(
 
             override fun afterTextChanged(editable: Editable?) {
             }
-        }
-
-        editText.addTextChangedListener(textWatcher)
+        }.let(editText::addTextChangedListener)
     }
 }

@@ -138,7 +138,7 @@ public class StreamMessageInputView : ConstraintLayout {
     }
 
     private fun configTextInput(typedArray: TypedArray) {
-        TextInputHandler(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
+        TextInputHandler().bindEditText(binding.etMessageTextInput, ::showSendMessageEnabled, ::showSendMessageDisabled)
 
         binding.etMessageTextInput.run {
             setTextColor(
