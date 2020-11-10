@@ -19,3 +19,5 @@
         android:id="@+id/channelsLoadingView"
         layout="@layout/channels_loading_view"
         />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
