@@ -882,9 +882,7 @@ internal class ChannelControllerImpl(
     }
 
     private fun setHidden(hidden: Boolean) {
-        if (_hidden.value != hidden) {
-            _hidden.value = hidden
-        }
+        _hidden.value = hidden
     }
 
     internal suspend fun handleEvents(events: List<ChatEvent>) {
@@ -896,7 +894,7 @@ internal class ChannelControllerImpl(
     }
 
     fun isHidden(): Boolean {
-        return _hidden.value ?: false
+        return _hidden.value
     }
 
     internal suspend fun handleEvent(event: ChatEvent) {
@@ -1152,11 +1150,11 @@ internal class ChannelControllerImpl(
         _members.value = (copy + members.associateBy(Member::getUserId))
     }
 
-    fun updateChannelData(channel: Channel) {
+    private fun updateChannelData(channel: Channel) {
         _channelData.value = (ChannelData(channel))
     }
 
-    fun setWatchers(watchers: List<User>) {
+    private fun setWatchers(watchers: List<User>) {
         _watchers.value = (_watchers.value + watchers.associateBy { it.id })
     }
 
@@ -1254,9 +1252,9 @@ internal class ChannelControllerImpl(
         val channelData = _channelData.value ?: ChannelData(channelType, channelId)
 
         val messages = sortedMessages()
-        val members = (_members.value ?: mutableMapOf()).values.toList()
-        val watchers = (_watchers.value ?: mutableMapOf()).values.toList()
-        val reads = (_reads.value ?: mutableMapOf()).values.toList()
+        val members = _members.value.values.toList()
+        val watchers = _watchers.value.values.toList()
+        val reads = _reads.value.values.toList()
         val watcherCount = _watcherCount.value ?: 0
 
         val channel = channelData.toChannel(messages, members, reads, watchers, watcherCount)
