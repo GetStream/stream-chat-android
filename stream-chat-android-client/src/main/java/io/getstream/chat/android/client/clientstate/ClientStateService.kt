@@ -10,7 +10,7 @@ internal class ClientStateService {
     }
 
     fun onDisconnected() {
-        stateMachine.sendEvent(ChatClientEvent.Disconnected)
+        stateMachine.sendEvent(ChatClientEvent.DisconnectedEvent)
     }
 
     fun onSetUser(user: User) {
@@ -31,7 +31,7 @@ internal class ClientStateService {
         defaultHandler { state, event -> state.inappropriateStateError("handling event $event") }
 
         state<ClientState.Idle> {
-            onEvent<ChatClientEvent.Disconnected> { _, _ -> stay() }
+            onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay() }
         }
 
         state<ClientState.Idle> {
@@ -56,9 +56,13 @@ internal class ClientStateService {
         }
 
         state<ClientState.UserState.UserAuthorized.Connected> {
-            onEvent<ChatClientEvent.Disconnected> { state, _ ->
+            onEvent<ChatClientEvent.DisconnectedEvent> { state, _ ->
                 ClientState.UserState.UserAuthorized.Disconnected(state.connectionId, state.user, state.token)
             }
+        }
+
+        state<ClientState.UserState.UserAuthorized.Disconnected> {
+            onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay()  }
         }
 
         state<ClientState.AnonymousUserState.AnonymousUserPending.AnonymousPendingWithoutToken> {
@@ -78,13 +82,17 @@ internal class ClientStateService {
         }
 
         state<ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserConnected> {
-            onEvent<ChatClientEvent.Disconnected> { state, _ ->
+            onEvent<ChatClientEvent.DisconnectedEvent> { state, _ ->
                 ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected(
                     state.connectionId,
                     state.anonymousUser,
                     state.token
                 )
             }
+        }
+
+        state<ClientState.AnonymousUserState.AnonymousUserAuthorized.AnonymousUserDisconnected> {
+            onEvent<ChatClientEvent.DisconnectedEvent> { _, _ -> stay()  }
         }
     }
 
@@ -95,6 +103,6 @@ internal class ClientStateService {
         object SetAnonymousUserEvent : ChatClientEvent()
         class TokenReceivedEvent(val token: String) : ChatClientEvent()
         class ConnectedEvent(val user: User, val connectionId: String) : ChatClientEvent()
-        object Disconnected : ChatClientEvent()
+        object DisconnectedEvent : ChatClientEvent()
     }
 }

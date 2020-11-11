@@ -15,9 +15,17 @@ internal class FiniteStateMachine<S : State, E : Event>(
     private val mutex = Mutex()
     private var _state: S = initialState
 
+    private suspend fun <T> Mutex.withLockIfNot(action: () -> T): T {
+        return if (isLocked.not()) {
+            withLock { action() }
+        } else {
+            action()
+        }
+    }
+
     public val state: S
         get() = runBlocking {
-            mutex.withLock { _state }
+            mutex.withLockIfNot { _state }
         }
 
     fun sendEvent(event: E) = runBlocking {
@@ -35,7 +43,7 @@ internal class FiniteStateMachine<S : State, E : Event>(
      * Keeps current FSM into the current state.
      */
     fun transitionTo(state: S) = runBlocking {
-        mutex.withLock {
+        mutex.withLockIfNot {
             _state = state
         }
     }
