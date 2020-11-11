@@ -1147,7 +1147,7 @@ internal class ChannelControllerImpl(
         setMembers(c.members)
         setWatchers(c.watchers)
         upsertMessages(c.messages)
-        lastMessageAt.setOnUi(c.lastMessageAt)
+        lastMessageAt.value = c.lastMessageAt
     }
 
     private suspend fun updateOldMessagesFromChannel(c: Channel) {

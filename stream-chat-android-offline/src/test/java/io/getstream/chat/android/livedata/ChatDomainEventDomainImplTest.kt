@@ -103,30 +103,18 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             Truth.assertThat(messages).isEmpty()
             Truth.assertThat(channelData?.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
         }
-}
 
-@Test
-fun `state flow should convert to LiveData and still update counts`() = testIODispatcher.runBlockingTest {
-    testIOScope.launch {
-        val count = MutableStateFlow(1)
-        val ld = count.asLiveData()
-        count.value = 2
-        count.value = 3
-        count.collect()
-        val newCount = ld.getOrAwaitValue()
-        Truth.assertThat(newCount).isEqualTo(3)
-    }
-
-    @Ignore
     @Test
-    fun `test the online and initialization livedata`() = runBlocking {
-        chatDomainImpl.eventHandler.handleEvent(data.connectedEvent)
-        Truth.assertThat(chatDomainImpl.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(chatDomainImpl.online.getOrAwaitValue()).isTrue()
-        chatDomainImpl.eventHandler.handleEvent(data.disconnectedEvent)
-        Truth.assertThat(chatDomainImpl.initialized.getOrAwaitValue()).isTrue()
-        Truth.assertThat(chatDomainImpl.online.getOrAwaitValue()).isFalse()
-    }
+    fun `state flow should convert to LiveData and still update counts`() =
+        runBlocking {
+            val count = MutableStateFlow(1)
+            val ld = count.asLiveData()
+            count.value = 2
+            count.value = 3
+            count.collect()
+            val newCount = ld.getOrAwaitValue()
+            Truth.assertThat(newCount).isEqualTo(3)
+        }
 
     @Test
     fun `the current user information should be stored using users insertMe`() = runBlocking {

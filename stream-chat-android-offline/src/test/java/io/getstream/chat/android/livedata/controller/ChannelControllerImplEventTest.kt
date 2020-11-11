@@ -7,7 +7,6 @@ import io.getstream.chat.android.livedata.utils.getOrAwaitValue
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.lang.Thread.sleep
 
 /**
  * This test suite verifies that ChatChannelRepo implements event handling correctly and updates it's local state
@@ -116,7 +115,6 @@ internal class ChannelControllerImplEventTest : BaseDisconnectedIntegrationTest(
     @Test
     fun eventUpdatedChannel() = runBlockingTest {
         channelControllerImpl.handleEvent(data.channelUpdatedEvent)
-        sleep(1000)
         val channel = channelControllerImpl.channelData.getOrAwaitValue()
         Truth.assertThat(channel!!.extraData["color"]).isEqualTo("green")
     }
