@@ -1,9 +1,9 @@
 package io.getstream.chat.android.client.call
 
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.internal.InternalStreamChatApi
 import io.getstream.chat.android.client.utils.Result
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -28,7 +28,7 @@ public class CoroutineCall<T : Any>(
     override fun enqueue(callback: (Result<T>) -> Unit) {
         job = scope.launch {
             val result = runnable()
-            withContext(Dispatchers.Main) {
+            withContext(DispatcherProvider.Main) {
                 callback(result)
             }
         }

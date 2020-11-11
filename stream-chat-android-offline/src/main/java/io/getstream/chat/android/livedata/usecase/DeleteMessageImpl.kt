@@ -22,7 +22,7 @@ internal class DeleteMessageImpl(private val domainImpl: ChatDomainImpl) : Delet
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scopeIO) {
+        return CoroutineCall(domainImpl.scope) {
             channelController.deleteMessage(message)
         }
     }

@@ -13,11 +13,11 @@ import android.media.ThumbnailUtils
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatImageView
 import com.getstream.sdk.chat.ImageLoader
+import io.getstream.chat.android.client.internal.DispatcherProvider
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.image
 import io.getstream.chat.android.client.models.initials
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -52,7 +52,7 @@ internal class AvatarView @JvmOverloads constructor(
     }
 
     private fun configUIs(style: BaseStyle, generateAvatarDrawable: suspend () -> AvatarDrawable) {
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(DispatcherProvider.Main) {
             layoutParams?.apply {
                 width = style.getAvatarWidth()
                 height = style.getAvatarHeight()

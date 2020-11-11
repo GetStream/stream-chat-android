@@ -15,7 +15,6 @@ import io.getstream.chat.android.livedata.randomMessages
 import io.getstream.chat.android.livedata.randomString
 import io.getstream.chat.android.livedata.utils.TestCall
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.When
 import org.amshove.kluent.`should be equal to`
@@ -35,77 +34,69 @@ internal class ThreadControllerImplTest : BaseDomainTest2() {
     val chatClient: ChatClient = mock()
 
     @Test
-    fun `should return only one parent message`() = testIODispatcher.runBlockingTest {
-        testIOScope.launch {
-            val parentMessage = randomMessage(id = threadId, parentId = null)
-            val channelMessages = (randomMessages() + parentMessage).shuffled()
-            When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
-            val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, mock())
-            threadController.messages.observeForever { }
+    fun `should return only one parent message`() = testCoroutines.scope.runBlockingTest {
+        val parentMessage = randomMessage(id = threadId, parentId = null)
+        val channelMessages = (randomMessages() + parentMessage).shuffled()
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, mock())
+        threadController.messages.observeForever { }
 
-            threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage)
-        }
+        threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage)
     }
 
     @Test
-    fun `Should watch the first messages`() = testIODispatcher.runBlockingTest {
-
-        testIOScope.launch {
-            val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
-            val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positiveRandomInt(30)
-            val replies = randomMessages(limit) {
-                randomMessage(
-                    parentId = threadId,
-                    createdAt = Date((it).toLong())
-                )
-            }
-            When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
-            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
-                Result(
-                    replies
-                )
+    fun `Should watch the first messages`() = testCoroutines.scope.runBlockingTest {
+        val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
+        val channelMessages = (randomMessages() + parentMessage).shuffled()
+        val limit = positiveRandomInt(30)
+        val replies = randomMessages(limit) {
+            randomMessage(
+                parentId = threadId,
+                createdAt = Date((it).toLong())
             )
-            val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, chatDomainImpl)
-            threadController.messages.observeForever { }
-            threadController.endOfOlderMessages.observeForever { }
-
-            val result = threadController.watch(limit)
-
-            result `should be equal to result` Result(replies)
-            threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
-            threadController.endOfOlderMessages.getOrAwaitValue().`should be false`()
         }
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
+            Result(
+                replies
+            )
+        )
+        val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, chatDomainImpl)
+        threadController.messages.observeForever { }
+        threadController.endOfOlderMessages.observeForever { }
+
+        val result = threadController.watch(limit)
+
+        result `should be equal to result` Result(replies)
+        threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
+        threadController.endOfOlderMessages.getOrAwaitValue().`should be false`()
     }
 
     @Test
-    fun `Should watch the first messages without receive limit messages`() = testIODispatcher.runBlockingTest {
-
-        testIOScope.launch {
-            val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
-            val channelMessages = (randomMessages() + parentMessage).shuffled()
-            val limit = positiveRandomInt(30)
-            val replies = randomMessages(limit - 1) {
-                randomMessage(
-                    parentId = threadId,
-                    createdAt = Date((it).toLong())
-                )
-            }
-            When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
-            When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
-                Result(
-                    replies
-                )
+    fun `Should watch the first messages without receive limit messages`() = testCoroutines.scope.runBlockingTest {
+        val parentMessage = randomMessage(threadId, parentId = null, createdAt = Date(0))
+        val channelMessages = (randomMessages() + parentMessage).shuffled()
+        val limit = positiveRandomInt(30)
+        val replies = randomMessages(limit - 1) {
+            randomMessage(
+                parentId = threadId,
+                createdAt = Date((it).toLong())
             )
-            val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, chatDomainImpl)
-            threadController.messages.observeForever { }
-            threadController.endOfOlderMessages.observeForever { }
-
-            val result = threadController.watch(limit)
-
-            result `should be equal to result` Result(replies)
-            threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
-            threadController.endOfOlderMessages.getOrAwaitValue().`should be true`()
         }
+        When calling channelControllerImpl2.unfilteredMessages doReturn MutableLiveData(channelMessages)
+        When calling chatClient.getReplies(eq(threadId), eq(limit)) doReturn TestCall(
+            Result(
+                replies
+            )
+        )
+        val threadController = ThreadControllerImpl(threadId, channelControllerImpl2, chatClient, chatDomainImpl)
+        threadController.messages.observeForever { }
+        threadController.endOfOlderMessages.observeForever { }
+
+        val result = threadController.watch(limit)
+
+        result `should be equal to result` Result(replies)
+        threadController.messages.getOrAwaitValue() `should be equal to` listOf(parentMessage) + replies
+        threadController.endOfOlderMessages.getOrAwaitValue().`should be true`()
     }
 }

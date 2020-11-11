@@ -2,7 +2,6 @@ package com.getstream.sdk.chat.utils
 
 import com.getstream.sdk.chat.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -16,7 +15,7 @@ internal class StartStopBufferTest {
 
     @Test
     fun `data should only be propagated when enqueueData and subscribe are done`() {
-        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+        StartStopBuffer<String>().run {
             val data = randomString()
             var resultText = ""
 
@@ -32,26 +31,25 @@ internal class StartStopBufferTest {
     }
 
     @Test
-    fun `data should not be propagated if hold is called before subscribe`() =
-        testCoroutines.scope.runBlockingTest {
-            StartStopBuffer<String>(testCoroutines.dispatcher).run {
-                val initialValue = randomString()
-                val data = randomString()
-                var resultText = initialValue
+    fun `data should not be propagated if hold is called before subscribe`() {
+        StartStopBuffer<String>().run {
+            val initialValue = randomString()
+            val data = randomString()
+            var resultText = initialValue
 
-                enqueueData(data)
-                hold()
-                subscribe { result ->
-                    resultText = result
-                }
-
-                resultText `should be equal to` initialValue
+            enqueueData(data)
+            hold()
+            subscribe { result ->
+                resultText = result
             }
+
+            resultText `should be equal to` initialValue
         }
+    }
 
     @Test
     fun `buffer should hold until active is called`() {
-        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+        StartStopBuffer<String>().run {
             var lastNumber = "0"
             val data1 = randomString()
 
@@ -73,7 +71,7 @@ internal class StartStopBufferTest {
 
     @Test
     fun `buffer hold should correctly stop the buffer`() {
-        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+        StartStopBuffer<String>().run {
             var lastNumber = "0"
             val data1 = randomString()
             val data2 = randomString()
@@ -100,7 +98,7 @@ internal class StartStopBufferTest {
 
     @Test
     fun `buffer should be able to handle many events`() {
-        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+        StartStopBuffer<String>().run {
             var lastNumber = "0"
             val data1 = randomString()
             val data2 = randomString()
@@ -126,7 +124,7 @@ internal class StartStopBufferTest {
 
     @Test
     fun `it should be possible use buffer with one item per active`() {
-        StartStopBuffer<String>(testCoroutines.dispatcher).run {
+        StartStopBuffer<String>().run {
             var lastNumber = "0"
             val data1 = "data1"
             val data2 = "data2"

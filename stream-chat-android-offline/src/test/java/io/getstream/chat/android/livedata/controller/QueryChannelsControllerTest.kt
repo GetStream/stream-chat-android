@@ -8,7 +8,6 @@ import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -18,7 +17,7 @@ import org.junit.runner.RunWith
 internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
-    fun newChannelAdded() = runBlocking(Dispatchers.IO) {
+    fun newChannelAdded() = runBlocking {
         val request = QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0)
         queryControllerImpl.runQuery(request)
         var channels = queryControllerImpl.channels.getOrAwaitValue()
@@ -34,7 +33,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun newChannelFiltered() = runBlocking(Dispatchers.IO) {
+    fun newChannelFiltered() = runBlocking {
         val request = QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0)
         val queryChannelsController = chatDomainImpl.queryChannels(data.filter2, QuerySort())
         queryChannelsController.newChannelEventFilter = { channel: Channel, filterObject: FilterObject ->
@@ -54,7 +53,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     fun `events for channels not part of the query should be ignored`() {
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             val request = QueryChannelsPaginationRequest(QuerySort(), 0, 30, 10, 0)
             val queryChannelsController = chatDomainImpl.queryChannels(data.filter2, QuerySort())
 
@@ -70,7 +69,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
 
     @Test
     @Ignore("mock me")
-    fun testLoadMore() = runBlocking(Dispatchers.IO) {
+    fun testLoadMore() = runBlocking {
         val paginate = QueryChannelsPaginationRequest(QuerySort(), 0, 2, 10, 0)
         val result = queryControllerImpl.runQuery(paginate)
         assertSuccess(result)
@@ -85,7 +84,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun offlineRunQuery() = runBlocking(Dispatchers.IO) {
+    fun offlineRunQuery() = runBlocking {
         // insert the query result into offline storage
         val query = QueryChannelsSpec(query.filter, query.sort)
         query.cids = listOf(data.channel1.cid)
@@ -101,7 +100,7 @@ internal class QueryChannelsControllerTest : BaseConnectedIntegrationTest() {
     }
 
     @Test
-    fun onlineRunQuery() = runBlocking(Dispatchers.IO) {
+    fun onlineRunQuery() = runBlocking {
         // insert the query result into offline storage
         val query = QueryChannelsSpec(query.filter, query.sort)
         query.cids = listOf(data.channel1.cid)

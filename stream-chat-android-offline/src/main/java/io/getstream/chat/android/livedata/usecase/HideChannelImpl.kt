@@ -23,7 +23,7 @@ internal class HideChannelImpl(private val domainImpl: ChatDomainImpl) : HideCha
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scopeIO) {
+        return CoroutineCall(domainImpl.scope) {
             val clearHistory = !keepHistory
             channelController.hide(clearHistory)
         }

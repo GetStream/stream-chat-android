@@ -30,15 +30,10 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.EventObserver
 import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestCall
+import io.getstream.chat.android.livedata.utils.TestCoroutineRule
 import io.getstream.chat.android.livedata.utils.TestDataHelper
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.amshove.kluent.When
 import org.amshove.kluent.calling
 import org.junit.After
@@ -91,33 +86,23 @@ internal open class BaseDomainTest2 {
 
     private lateinit var db: ChatDatabase
 
-    // the code below is used to ensure that coroutines execute the right way during tests
-    internal val testIODispatcher = TestCoroutineDispatcher()
-    internal val testIOExecutor = testIODispatcher.asExecutor()
-    internal val testIOScope = TestCoroutineScope(testIODispatcher)
-
-    internal val testMainDispatcher = TestCoroutineDispatcher()
-    internal val testMainExecutor = testMainDispatcher.asExecutor()
-    internal val testMainScope = TestCoroutineScope(testMainDispatcher)
-
     val singleThreadExecutor = Executors.newSingleThreadExecutor()
 
     @get:Rule
-    val rule = InstantTaskExecutorRule()
+    val testCoroutines = TestCoroutineRule()
+
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Before
     open fun setup() {
-        Dispatchers.setMain(testMainDispatcher)
         clientMock = createClientMock()
         db = createRoomDb()
         createChatDomain(clientMock, db)
     }
 
     @After
-    open fun tearDown() = runBlocking(Dispatchers.IO) {
-        Dispatchers.resetMain()
-        testIODispatcher.cleanupTestCoroutines()
-        testMainDispatcher.cleanupTestCoroutines()
+    open fun tearDown() = runBlocking {
         chatDomainImpl.disconnect()
         db.close()
     }
@@ -201,17 +186,19 @@ internal open class BaseDomainTest2 {
             ChatDatabase::class.java
         )
             .allowMainThreadQueries()
-            .setTransactionExecutor(singleThreadExecutor)
-            // .setTransactionExecutor(testIOExecutor)
-            .setQueryExecutor(singleThreadExecutor)
+            .setTransactionExecutor(Executors.newSingleThreadExecutor())
+            .setQueryExecutor(testCoroutines.dispatcher.asExecutor())
             .build()
     }
 
     internal fun createChatDomain(client: ChatClient, db: ChatDatabase) {
 
         val context = ApplicationProvider.getApplicationContext() as Context
-        chatDomainImpl = ChatDomain.Builder(context, client).database(db).offlineEnabled()
-            .userPresenceEnabled().withIODispatcher(testIODispatcher).withMainDispatcher(testMainDispatcher).buildImpl()
+        chatDomainImpl = ChatDomain.Builder(context, client)
+            .database(db)
+            .offlineEnabled()
+            .userPresenceEnabled()
+            .buildImpl()
 
         // TODO: a chat domain without a user set should raise a clear error
         client.setUser(
@@ -239,12 +226,15 @@ internal open class BaseDomainTest2 {
             }
         )
 
-        testIOScope.launch {
+        runBlocking {
             chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1))
         }
 
         channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
-        channelControllerImpl.updateLiveDataFromChannel(data.channel1)
+
+        runBlocking {
+            channelControllerImpl.updateLiveDataFromChannel(data.channel1)
+        }
 
         query = QueryChannelsSpec(data.filter1, QuerySort())
 

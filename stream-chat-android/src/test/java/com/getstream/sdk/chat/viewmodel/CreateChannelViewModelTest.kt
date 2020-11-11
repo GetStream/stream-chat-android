@@ -76,7 +76,6 @@ internal class CreateChannelViewModelTest {
         val viewModel = CreateChannelViewModel(
             domain = chatDomain,
             client = chatClient,
-            ioDispatcher = testCoroutines.dispatcher
         )
         val states = viewModel.state.observeAll()
         val channelNameCandidate = "channel name"
@@ -94,7 +93,6 @@ internal class CreateChannelViewModelTest {
             val viewModel = CreateChannelViewModel(
                 domain = chatDomain,
                 client = chatClient,
-                ioDispatcher = testCoroutines.dispatcher
             )
             val states = viewModel.state.observeAll()
             val channelNameCandidate = "channel name"

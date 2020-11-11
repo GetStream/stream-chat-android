@@ -4,7 +4,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.BaseConnectedIntegrationTest
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -15,7 +14,7 @@ internal class GetUnreadChannelCountImplTest : BaseConnectedIntegrationTest() {
 
     @Ignore("Failing for unknown reasons")
     @Test
-    fun getUnreadCount() = runBlocking(Dispatchers.IO) {
+    fun getUnreadCount() = runBlocking {
         // use case style syntax
         val result = chatDomain.useCases.getUnreadChannelCount().execute()
         assertSuccess(result)

@@ -12,16 +12,13 @@ import io.getstream.chat.android.livedata.utils.RetryPolicy
 import io.getstream.chat.android.livedata.utils.TestDataHelper
 import io.getstream.chat.android.livedata.utils.TestLoggerHandler
 import io.getstream.chat.android.livedata.utils.waitForSetUser
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 
 internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
-    companion object {
 
+    companion object {
         var data = TestDataHelper()
         var client: ChatClient? = null
 
@@ -65,20 +62,17 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
     @Before
     override fun setup() {
-        Dispatchers.setMain(testCoroutineDispatcher)
         runBlocking {
             if (Companion.client == null) {
                 // do one time setup here
                 // doing this here since context is not available in before all
                 // see https://github.com/android/android-test/issues/409
                 Companion.client = Companion.createClient()
-                runBlocking {
-                    waitForSetUser(
-                        Companion.client!!,
-                        Companion.data.user1,
-                        Companion.data.user1Token
-                    )
-                }
+                waitForSetUser(
+                    Companion.client!!,
+                    Companion.data.user1,
+                    Companion.data.user1Token
+                )
                 Truth.assertThat(Companion.client!!.isSocketConnected()).isTrue()
             }
 
@@ -88,7 +82,7 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
             println("setup")
 
             // setup channel controller and query controllers for tests
-            runBlocking(Dispatchers.IO) { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
+            runBlocking { chatDomainImpl.repos.configs.insertConfigs(mutableMapOf("messaging" to data.config1)) }
             channelControllerImpl = chatDomainImpl.channel(data.channel1.type, data.channel1.id)
             channelControllerImpl.updateLiveDataFromChannel(data.channel1)
             query = QueryChannelsSpec(data.filter1, QuerySort())
@@ -103,12 +97,10 @@ internal open class BaseConnectedIntegrationTest : BaseDomainTest() {
 
     @After
     override fun tearDown() {
-        runBlocking(Dispatchers.IO) {
+        runBlocking {
             // things to do after each test
             println("tearDown")
             chatDomainImpl.disconnect()
         }
-        Dispatchers.resetMain()
-        testCoroutineDispatcher.cleanupTestCoroutines()
     }
 }

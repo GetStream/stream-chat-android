@@ -23,7 +23,7 @@ internal class EditMessageImpl(private val domainImpl: ChatDomainImpl) : EditMes
         validateCid(cid)
 
         val channelController = domainImpl.channel(cid)
-        return CoroutineCall(domainImpl.scopeIO) {
+        return CoroutineCall(domainImpl.scope) {
             channelController.editMessage(message)
         }
     }

@@ -23,7 +23,7 @@ internal class MarkReadImpl(private val domainImpl: ChatDomainImpl) : MarkRead {
     override operator fun invoke(cid: String): Call<Boolean> {
         val channelController = domainImpl.channel(validateCid(cid))
 
-        return CoroutineCall(domainImpl.scopeIO) {
+        return CoroutineCall(domainImpl.scope) {
             channelController.markRead().let { markedRead ->
                 if (markedRead) {
                     domainImpl.client

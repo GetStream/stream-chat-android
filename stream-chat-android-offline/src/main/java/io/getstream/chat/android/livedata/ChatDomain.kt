@@ -16,7 +16,6 @@ import io.getstream.chat.android.livedata.service.sync.SyncProvider
 import io.getstream.chat.android.livedata.usecase.UseCaseHelper
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.livedata.utils.RetryPolicy
-import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * The ChatDomain is the main entry point for all livedata & offline operations on chat
@@ -99,8 +98,6 @@ public interface ChatDomain {
 
         public constructor(client: ChatClient, user: User?, appContext: Context) : this(appContext, client, user)
 
-        private var dispatcherMain: CoroutineDispatcher? = null
-        private var dispatcherIO: CoroutineDispatcher? = null
         private var database: ChatDatabase? = null
 
         private var userPresence: Boolean = false
@@ -150,16 +147,6 @@ public interface ChatDomain {
             return this
         }
 
-        internal fun withIODispatcher(scope: CoroutineDispatcher): Builder {
-            this.dispatcherIO = scope
-            return this
-        }
-
-        internal fun withMainDispatcher(scope: CoroutineDispatcher): Builder {
-            this.dispatcherMain = scope
-            return this
-        }
-
         public fun userPresenceDisabled(): Builder {
             this.userPresence = false
             return this
@@ -182,7 +169,7 @@ public interface ChatDomain {
 
         internal fun buildImpl(): ChatDomainImpl {
             val handler = Handler(Looper.getMainLooper())
-            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext, dispatcherIO, dispatcherMain)
+            return ChatDomainImpl(client, user, database, handler, storageEnabled, userPresence, recoveryEnabled, backgroundSyncEnabled, appContext)
         }
 
         private fun storeNotificationConfig(notificationConfig: NotificationConfig) {

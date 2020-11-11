@@ -3,10 +3,8 @@ package io.getstream.chat.android.livedata
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -14,7 +12,7 @@ import org.junit.runner.RunWith
 internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 
     @Test
-    fun replayEventsForActiveChannels() = runBlocking(Dispatchers.IO) {
+    fun replayEventsForActiveChannels() = runBlocking {
         // - when you receive a push notification you want to sync all data for the specific channel you received the push on
         // - alternatively we could sync all channels you are interested in
         // - in theory (new channel) you could not be watching the channel yet
@@ -35,8 +33,8 @@ internal class DisconnectedRecoveryTest : BaseDisconnectedMockedTest() {
 internal class ConnectedRecoveryTest : BaseDomainTest2() {
 
     @Test
-    fun `Active channels should be stored in sync state`() = testIOScope.runBlockingTest {
-        testIOScope.launch {
+    fun `Active channels should be stored in sync state`(): Unit = runBlocking {
+        launch {
             val cid = "messaging:myspecialchannel"
             chatDomainImpl.channel(cid)
             chatDomainImpl.initJob.await()
@@ -47,15 +45,13 @@ internal class ConnectedRecoveryTest : BaseDomainTest2() {
     }
 
     @Test
-    fun `Connection recovery should not raise an error`() = testIOScope.runBlockingTest {
+    fun `Connection recovery should not raise an error`() = runBlocking {
         // when the connection is lost and we recover the connection we do the following
         // - query all active channels
         // - repeat all active queries
         // - retry message inserts
         // - replay events
         // - we want to watch channels and enable presence
-        testIOScope.launch {
-            chatDomainImpl.connectionRecovered(true)
-        }
+        chatDomainImpl.connectionRecovered(true)
     }
 }

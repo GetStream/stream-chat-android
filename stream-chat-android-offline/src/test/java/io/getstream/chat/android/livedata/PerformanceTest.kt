@@ -10,7 +10,6 @@ import io.getstream.chat.android.livedata.controller.QueryChannelsSpec
 import io.getstream.chat.android.livedata.utils.ChannelDiffCallback
 import io.getstream.chat.android.livedata.utils.LiveDiffCounter
 import io.getstream.chat.android.livedata.utils.MessageDiffCallback
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test
@@ -21,7 +20,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
 
     @Ignore("Failing for unknown reasons")
     @Test
-    fun channels() = runBlocking(Dispatchers.IO) {
+    fun channels() = runBlocking {
         var channelControllerImpl = chatDomainImpl.channel(data.channel1)
         val queryChannelsControllerImpl = chatDomainImpl.queryChannels(data.filter1, QuerySort())
 
@@ -58,7 +57,7 @@ internal class PerformanceTest : BaseConnectedMockedTest() {
     }
 
     @Test
-    fun messages() = runBlocking(Dispatchers.IO) {
+    fun messages() = runBlocking {
         val channelController = chatDomainImpl.channel(data.channel1)
 
         val counter = LiveDiffCounter { old: List<Message>, new: List<Message> ->
