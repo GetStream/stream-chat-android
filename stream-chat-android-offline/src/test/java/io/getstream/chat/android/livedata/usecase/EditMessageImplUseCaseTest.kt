@@ -2,6 +2,7 @@ package io.getstream.chat.android.livedata.usecase
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.livedata.BaseDomainTest2
@@ -22,7 +23,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         // TODO: this test is slow for unknown reasons
         val originalMessage = data.createMessage()
 
-        When calling channelClientMock.sendMessage(originalMessage) doReturn TestCall(Result(originalMessage))
+        When calling channelClientMock.sendMessage(any()) doReturn TestCall(Result(originalMessage))
         val result = channelControllerImpl.sendMessage(originalMessage)
         assertSuccess(result)
 
@@ -33,7 +34,7 @@ internal class EditMessageImplUseCaseTest : BaseDomainTest2() {
         // need to use result.data and not originalMessage as the created At date is different
         val updatedMessage = result.data().copy(extraData = mutableMapOf("plaid" to true))
 
-        When calling clientMock.updateMessage(updatedMessage) doReturn TestCall(Result(updatedMessage))
+        When calling clientMock.updateMessage(any()) doReturn TestCall(Result(updatedMessage))
         val result2 = channelControllerImpl.editMessage(updatedMessage)
 
         assertSuccess(result2)
