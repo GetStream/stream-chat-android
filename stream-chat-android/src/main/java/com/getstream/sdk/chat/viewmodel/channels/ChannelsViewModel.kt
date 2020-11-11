@@ -11,6 +11,7 @@ import io.getstream.chat.android.client.api.models.QuerySort
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.models.Filters.eq
+import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.utils.FilterObject
 import io.getstream.chat.android.livedata.ChatDomain
 
@@ -33,6 +34,8 @@ public class ChannelsViewModel(
     private val loadingData = MutableLiveData<State.Loading>()
     private val stateMerger = MediatorLiveData<State>()
     public val state: LiveData<State> = stateMerger
+    public val typingEvents: LiveData<Pair<String, List<User>>>
+        get() = chatDomain.typingUpdates
 
     private val paginationStateMerger = MediatorLiveData<PaginationState>()
     public val paginationState: LiveData<PaginationState> = paginationStateMerger

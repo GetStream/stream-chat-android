@@ -76,6 +76,9 @@ public interface ChatDomain {
     /** The retry policy for retrying failed requests */
     public var retryPolicy: RetryPolicy
 
+
+    public val typingUpdates: LiveData<Pair<String, List<User>>>
+
     /** a helper object which lists all the initialized use cases for the chat domain */
     public val useCases: UseCaseHelper
 

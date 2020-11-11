@@ -2,6 +2,7 @@
 
 package com.getstream.sdk.chat.viewmodel.channels
 
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import com.getstream.sdk.chat.view.channels.ChannelsView
 
@@ -38,4 +39,5 @@ public fun ChannelsViewModel.bindView(
     view.setOnEndReachedListener {
         onEvent(ChannelsViewModel.Event.ReachedEndOfList)
     }
+    typingEvents.observe(lifecycle) { (channelId, users) -> view.showTypingInChannel(channelId, users) }
 }
