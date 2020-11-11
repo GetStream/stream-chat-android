@@ -132,6 +132,7 @@ internal class ChatDomainImpl internal constructor(
     private val _errorEvent = MutableLiveData<Event<ChatError>>()
     private val _banned = MutableLiveData(false)
     private val _mutedUsers = MutableLiveData<List<Mute>>()
+    private val _typingChannels = MediatorLiveData<Pair<String, List<User>>>()
     override lateinit var currentUser: User
     lateinit var database: ChatDatabase
     private val syncModule by lazy { SyncProvider(appContext) }
@@ -186,6 +187,8 @@ internal class ChatDomainImpl internal constructor(
 
     /** stores the mapping from cid to channelRepository */
     private val activeChannelMapImpl: ConcurrentHashMap<String, ChannelControllerImpl> = ConcurrentHashMap()
+
+    override val typingUpdates: LiveData<Pair<String, List<User>>> = _typingChannels
 
     private val activeQueryMapImpl: ConcurrentHashMap<String, QueryChannelsControllerImpl> = ConcurrentHashMap()
 
@@ -511,9 +514,14 @@ internal class ChatDomainImpl internal constructor(
                     this
                 )
             activeChannelMapImpl[cid] = channelRepo
+            GlobalScope.launch(Dispatchers.Main) {
+                addTypingChannel(channelRepo)
+            }
         }
         return activeChannelMapImpl.getValue(cid)
     }
+
+
 
     internal fun allActiveChannels(): List<ChannelControllerImpl> =
         activeChannelMapImpl.values.toList()
@@ -522,22 +530,21 @@ internal class ChatDomainImpl internal constructor(
         return currentUser.id + "-" + UUID.randomUUID().toString()
     }
 
-    override val typingUpdates: LiveData<Pair<String, List<User>>>
-        get() {
-            val typingEvents: List<LiveData<Pair<String, List<User>>>> = allActiveChannels().map { channelController ->
-                channelController.typing.map { userList ->
-                    channelController.channelId to userList
-                }
-            }
-
-            val merger: MediatorLiveData<Pair<String, List<User>>> = MediatorLiveData()
-
-            typingEvents.forEach { liveData ->
-                merger.addSource(liveData) { merger.postValue(it) }
-            }
-
-            return merger
+    private fun addTypingChannel(channelController: ChannelControllerImpl) {
+        val typingEvent: LiveData<Pair<String, List<User>>> = channelController.typing.map { userList ->
+            channelController.channelId to userList
         }
+
+        _typingChannels.addSource(typingEvent, _typingChannels::postValue)
+    }
+
+    private fun removeTypingChannel(channelController: ChannelControllerImpl) {
+        val typingEvent: LiveData<Pair<String, List<User>>> = channelController.typing.map { userList ->
+            channelController.channelId to userList
+        }
+
+        _typingChannels.removeSource(typingEvent)
+    }
 
     internal fun setOffline() {
         _online.value = false
