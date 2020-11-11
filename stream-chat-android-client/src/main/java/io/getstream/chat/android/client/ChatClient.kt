@@ -425,8 +425,8 @@ public class ChatClient internal constructor(
             }
         }
         connectionListener = null
+        clientStateService.onDisconnectRequested()
         socket.disconnect()
-        clientStateService.onDisconnected()
     }
 
     //region: api calls
