@@ -218,7 +218,7 @@ internal class QueryChannelsControllerImpl(
         val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            domainImpl.scope.async { runQueryOnline(pagination) }
+            domainImpl.scopeIO.async { runQueryOnline(pagination) }
         } else {
             null
         }
