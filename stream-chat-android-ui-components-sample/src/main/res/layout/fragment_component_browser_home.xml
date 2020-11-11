@@ -94,7 +94,7 @@
         android:focusable="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/avatarViewContainer"
+        app:layout_constraintTop_toBottomOf="@id/channelsHeaderViewContainer"
         >
 
         <TextView
