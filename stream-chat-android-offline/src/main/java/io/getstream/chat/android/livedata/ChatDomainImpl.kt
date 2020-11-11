@@ -207,8 +207,6 @@ internal class ChatDomainImpl internal constructor(
     private var syncState: SyncStateEntity? = null
     internal lateinit var initJob: Deferred<SyncStateEntity?>
 
-    private var isOnline = false
-
     /** The retry policy for retrying failed requests */
     override var retryPolicy: RetryPolicy =
         DefaultRetryPolicy()
@@ -275,7 +273,7 @@ internal class ChatDomainImpl internal constructor(
         }
 
         if (client.isSocketConnected()) {
-            postOnline()
+            setOnline()
         }
         startListening()
         initClean()
@@ -526,31 +524,23 @@ internal class ChatDomainImpl internal constructor(
     }
 
     internal fun setOffline() {
-        isOnline = false
-        _online.value = false
-    }
-
-    internal fun postOffline() {
-        isOnline = false
         _online.value = false
     }
 
     internal fun setOnline() {
-        isOnline = true
         _online.value = true
     }
 
-    internal fun postOnline() {
-        isOnline = true
-        _online.value = true
+    internal fun setInitialized() {
+        _initialized.value = true
     }
 
-    override fun isOnline(): Boolean = isOnline
+    override fun isOnline(): Boolean = _online.value
 
-    override fun isOffline(): Boolean = !isOnline
+    override fun isOffline(): Boolean = !_online.value
 
     override fun isInitialized(): Boolean {
-        return _initialized.value ?: false
+        return _initialized.value
     }
 
     override fun getActiveQueries(): List<QueryChannelsControllerImpl> {
@@ -771,10 +761,6 @@ internal class ChatDomainImpl internal constructor(
 
     override fun getChannelConfig(channelType: String): Config {
         return repos.configs.select(channelType) ?: defaultConfig
-    }
-
-    fun postInitialized() {
-        _initialized.value = true
     }
 
     companion object {

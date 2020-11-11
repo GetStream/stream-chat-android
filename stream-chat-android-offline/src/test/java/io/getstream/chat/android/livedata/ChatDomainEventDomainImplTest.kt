@@ -1,8 +1,11 @@
 package io.getstream.chat.android.livedata
 
+import androidx.lifecycle.asLiveData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import io.getstream.chat.android.livedata.utils.getOrAwaitValue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
@@ -111,6 +114,19 @@ internal class ChatDomainEventDomainImplTest : BaseDomainTest2() {
             val channelData = channelController.channelData.getOrAwaitValue()
             Truth.assertThat(messages).isEmpty()
             Truth.assertThat(channelData?.deletedAt).isEqualTo(data.channelDeletedEvent.createdAt)
+        }
+    }
+
+    @Test
+    fun `state flow should convert to LiveData and still update counts`() = testIODispatcher.runBlockingTest {
+        testIOScope.launch {
+            val count = MutableStateFlow(1)
+            val ld = count.asLiveData()
+            count.value = 2
+            count.value = 3
+            count.collect()
+            val newCount = ld.getOrAwaitValue()
+            Truth.assertThat(newCount).isEqualTo(3)
         }
     }
 
