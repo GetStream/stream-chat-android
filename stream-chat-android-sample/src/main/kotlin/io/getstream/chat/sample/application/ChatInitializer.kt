@@ -29,8 +29,4 @@ class ChatInitializer(private val context: Context) {
     fun isUserSet(): Boolean {
         return ChatClient.isInitialized && ChatClient.instance().getCurrentUser() != null
     }
-
-    fun isUserSet(): Boolean {
-        return ChatClient.isInitialized && ChatClient.instance().getCurrentUser() != null
-    }
 }

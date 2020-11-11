@@ -56,7 +56,6 @@ import io.getstream.chat.android.livedata.extensions.addReaction
 import io.getstream.chat.android.livedata.extensions.isImageMimetype
 import io.getstream.chat.android.livedata.extensions.isPermanent
 import io.getstream.chat.android.livedata.extensions.removeReaction
-import io.getstream.chat.android.livedata.extensions.setOnUi
 import io.getstream.chat.android.livedata.repository.MessageRepository
 import io.getstream.chat.android.livedata.request.QueryChannelPaginationRequest
 import io.getstream.chat.android.livedata.utils.ChannelUnreadCountLiveData
@@ -244,16 +243,12 @@ internal class ChannelControllerImpl(
         return Result(false, null)
     }
 
-<<<<<<< HEAD
-    internal suspend fun markRead(): Result<Boolean> {
-=======
     /**
      * Marks the channel as read by the current user
      *
      * @return whether the channel was marked as read or not
      */
     internal suspend fun markRead(): Boolean {
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         if (!getConfig().isReadEvents) {
             return false
         }
@@ -412,16 +407,11 @@ internal class ChannelControllerImpl(
         val queryOfflineJob = domainImpl.scopeIO.async { runChannelQueryOffline(pagination) }
 
         // start the online query before queryOfflineJob.await
-<<<<<<< HEAD
-        val queryOnlineJob = if (domainImpl.isOnline()) { domainImpl.scopeIO.async { runChannelQueryOnline(pagination) } } else { null }
-
-=======
         val queryOnlineJob = if (domainImpl.isOnline()) {
-            domainImpl.scope.async { runChannelQueryOnline(pagination) }
+            domainImpl.scopeIO.async { runChannelQueryOnline(pagination) }
         } else {
             null
         }
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         val localChannel = queryOfflineJob.await()
         if (localChannel != null) {
             if (pagination.messageFilterDirection == Pagination.LESS_THAN) {
@@ -798,11 +788,8 @@ internal class ChannelControllerImpl(
     }
 
     // This one needs to be public for flows such as running a message action
-<<<<<<< HEAD
-    override suspend fun upsertMessage(message: Message) {
-=======
+
     internal suspend fun upsertMessage(message: Message) {
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         upsertMessages(listOf(message))
     }
 
@@ -856,11 +843,7 @@ internal class ChannelControllerImpl(
 
     private suspend fun upsertMessages(messages: List<Message>) {
         val newMessages = parseMessages(messages)
-<<<<<<< HEAD
         _messages.value = newMessages
-=======
-        _messages.setOnUi(newMessages)
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
     }
 
     private fun upsertOldMessages(messages: List<Message>) {
@@ -1125,19 +1108,11 @@ internal class ChannelControllerImpl(
                 return@let // no need to post the incoming read value to the UI if it isn't newer
             }
 
-<<<<<<< HEAD
             _read.value = incomingRead
         }
 
         // always post the newly updated map
         _reads.value = (previousUserIdToReadMap + incomingUserIdToReadMap)
-=======
-            _read.setOnUi(incomingRead)
-        }
-
-        // always post the newly updated map
-        _reads.setOnUi(previousUserIdToReadMap + incomingUserIdToReadMap)
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
     }
 
     private suspend fun updateRead(

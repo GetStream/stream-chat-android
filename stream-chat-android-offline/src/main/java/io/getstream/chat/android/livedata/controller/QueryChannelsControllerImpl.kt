@@ -20,6 +20,7 @@ import io.getstream.chat.android.livedata.ChatDomainImpl
 import io.getstream.chat.android.livedata.entity.ChannelConfigEntity
 import io.getstream.chat.android.livedata.request.QueryChannelsPaginationRequest
 import io.getstream.chat.android.livedata.request.toQueryChannelsRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -78,11 +79,7 @@ internal class QueryChannelsControllerImpl(
      *
      * We allow you to specify a newChannelEventFilter callback to determine if this query matches the given channel
      */
-<<<<<<< HEAD
-    override suspend fun addChannelIfFilterMatches(
-=======
     internal suspend fun addChannelIfFilterMatches(
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         channel: Channel
     ) {
         if (newChannelEventFilter(channel, filter)) {
@@ -125,7 +122,7 @@ internal class QueryChannelsControllerImpl(
             // - suspend/wait for a few seconds (yuck, lets not do that)
             // - post the refresh on a livedata object with only channel ids, and transform that into channels (this ensures it will get called after postValue completes)
             // - run the refresh channel call below on the UI thread instead of IO thread
-            domainImpl.scope.launch(domainImpl.dispatcherIO) {
+            domainImpl.scope.launch(Dispatchers.Main) {
                 refreshChannel(event.cid)
             }
         }
@@ -156,21 +153,11 @@ internal class QueryChannelsControllerImpl(
     }
 
     suspend fun runQueryOffline(pagination: QueryChannelsPaginationRequest): List<Channel>? {
-<<<<<<< HEAD
-        val queryChannelsSpec =
-            domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
-
-        return queryChannelsSpec?.let { query ->
-            domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
-                logger.logI("found ${it.size} channels in offline storage")
-            }
-=======
         val query = domainImpl.repos.queryChannels.selectByFilterAndQuerySort(queryChannelsSpec)
             ?: return null
 
         return domainImpl.selectAndEnrichChannels(query.cids.toList(), pagination).also {
             logger.logI("found ${it.size} channels in offline storage")
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         }
     }
 
@@ -228,15 +215,10 @@ internal class QueryChannelsControllerImpl(
         loader.postValue(true)
         // start by getting the query results from offline storage
 
-        val queryOfflineJob = domainImpl.scopeIO.async { runQueryOffline(pagination) }
+        val queryOfflineJob = domainImpl.scope.async { runQueryOffline(pagination) }
         // start the query online job before waiting for the query offline job
         val queryOnlineJob = if (domainImpl.isOnline()) {
-<<<<<<< HEAD
-
-            domainImpl.scopeIO.async { runQueryOnline(pagination) }
-=======
             domainImpl.scope.async { runQueryOnline(pagination) }
->>>>>>> 42a0fed3a993ec640279f7705520e96a7f490a28
         } else {
             null
         }
